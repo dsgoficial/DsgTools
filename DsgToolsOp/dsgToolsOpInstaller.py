@@ -32,7 +32,6 @@ from PyQt4.Qt import QObject
 class DsgToolsOpInstaller(QObject):
     def __init__(self):
         super(DsgToolsOpInstaller,self).__init__()
-        pass
     
     def createAuxFolder(self):
         currentPath = os.path.dirname(__file__)
@@ -71,11 +70,13 @@ class DsgToolsOpInstaller(QObject):
                 pass
             raise e
     
-    def copyFiles(self):
-        pass
-    
     def checkIfInstalled(self):
-        return True
+        installPath = os.path.join(os.path.dirname(__file__),'MilitaryTools')
+        w = os.walk('/home/borba/.qgis2/python/plugins/DsgTools/DsgToolsOp/MilitaryTools/').next()[2]
+        if len(w)<=2:
+            return False
+        else:
+            return True
     
     def checkInstalledVersion(self):
         pass
@@ -94,4 +95,8 @@ class DsgToolsOpInstaller(QObject):
 if __name__ == '__main__':
     fullZipPath = '/home/borba/MilitarySimbologyTools.zip'
     dsgToolsOpInstaller = DsgToolsOpInstaller()
+    print 'initial state'
+    print dsgToolsOpInstaller.checkIfInstalled()
     dsgToolsOpInstaller.installDsgToolsOp(fullZipPath)
+    print 'final state'
+    print dsgToolsOpInstaller.checkIfInstalled()
