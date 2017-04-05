@@ -56,6 +56,7 @@ from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumArea
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
+from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
 
 from qgis.utils import showPluginHelp
 try:
@@ -242,6 +243,8 @@ class DsgTools:
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
         rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
+        dsgtoolsop = self.addMenu(self.dsgTools, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), ':/plugins/DsgTools/icons/militarySimbology.png')
+        self.createMilitaryMenu(dsgtoolsop, ':/plugins/DsgTools/icons/militarySimbology.png')
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
@@ -594,14 +597,18 @@ class DsgTools:
         
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
-
-        self.createMilitaryMenu(self.dsgTools)
     
-    def createMilitaryMenu(self, parentMenu):
-        self.opInstaller = DsgToolsOpInstaller(parent = self)
+    def createMilitaryMenu(self, parentMenu, icon_path):
+        self.opInstaller = DsgToolsOpInstaller(parent = self, parentMenu = parentMenu)
+        action = self.add_action(
+            icon_path,
+            text=self.tr('DsgTools Op Installer'),
+            callback=self.installDsgToolsOp,
+            parent=parentMenu,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        parentMenu.addAction(action)
         if self.opInstaller.checkIfInstalled():
-            dsgtoolsop = self.addMenu(parentMenu, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), icon_path)
-            self.opInstaller.setParentMenu(dsgtoolsop)
             self.opInstaller.loadTools(icon_path)
 
     def unload(self):
@@ -638,6 +645,16 @@ class DsgTools:
         """
         dlg = AboutDialog()
         dlg.exec_()
+
+    def installDsgToolsOp(self):
+        """
+        Installs DsgTools Op
+        """
+        dlg = DsgToolsOpInstallerDialog(self.opInstaller)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
 
     def showHelp(self):
         """
