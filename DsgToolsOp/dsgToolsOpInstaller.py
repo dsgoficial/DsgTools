@@ -30,8 +30,11 @@ import codecs, os, json, binascii
 from PyQt4.Qt import QObject
 
 class DsgToolsOpInstaller(QObject):
-    def __init__(self):
+    def __init__(self, parent = None, parentMenu = None):
         super(DsgToolsOpInstaller,self).__init__()
+        self.parentMenu = parentMenu
+        self.parent = parent
+        self.icon_path = ':/plugins/DsgTools/icons/militarySimbology.png'
     
     def createAuxFolder(self):
         currentPath = os.path.dirname(__file__)
@@ -84,10 +87,10 @@ class DsgToolsOpInstaller(QObject):
     def checkFilesVersion(self, filesFolder):
         pass
     
-    def loadTools(self, parentMenu, parent, icon_path):
+    def loadTools(self, icon_path):
         try:
             from DsgTools.DsgToolsOp.MilitaryTools.toolLoader import ToolLoader
-            self.toolLoader = ToolLoader(parentMenu, parent, icon_path)
+            self.toolLoader = ToolLoader(self.parentMenu, self.parent, self.icon_path)
             self.toolLoader.loadTools()
         except:
             raise Exception(self.tr('DsgToolsOp not installed!'))

@@ -598,11 +598,11 @@ class DsgTools:
         self.createMilitaryMenu(self.dsgTools)
     
     def createMilitaryMenu(self, parentMenu):
-        self.opInstaller = DsgToolsOpInstaller()
+        self.opInstaller = DsgToolsOpInstaller(parent = self)
         if self.opInstaller.checkIfInstalled():
-            icon_path = ':/plugins/DsgTools/icons/militarySimbology.png'
             dsgtoolsop = self.addMenu(parentMenu, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), icon_path)
-            self.opInstaller.loadTools(dsgtoolsop, self, icon_path)
+            self.opInstaller.setParentMenu(dsgtoolsop)
+            self.opInstaller.loadTools(icon_path)
 
     def unload(self):
         """
