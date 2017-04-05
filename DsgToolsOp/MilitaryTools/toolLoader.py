@@ -54,9 +54,3 @@ class ToolLoader:
             else:
                 self.parent.militaryDock = MilitarySimbologyDock(self.parent.iface)
             self.parent.iface.addDockWidget(Qt.LeftDockWidgetArea, self.parent.militaryDock)
-    
-    def uninstallDsgToolsOp(self):
-        """
-        Uninstall dsgtoolsop
-        """
-        self.opInstaller.uninstallDsgToolsOp(self.iface)

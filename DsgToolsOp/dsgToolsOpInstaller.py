@@ -70,6 +70,7 @@ class DsgToolsOpInstaller(QObject):
     def removeMenus(self, iface):
         for item in self.toolList:
             iface.removePluginMenu(item)
+        self.toolList = []
 
     def installDsgToolsOp(self, fullZipPath, parentUi = None):
         try:
@@ -98,6 +99,17 @@ class DsgToolsOpInstaller(QObject):
             except:
                 pass
             raise e
+    
+    def addUninstall(self, icon_path, parent, parentMenu):
+        action = self.add_action(
+            icon_path,
+            text=self.tr('DsgTools Op Uninstaller'),
+            callback=parent.uninstallDsgToolsOp,
+            parent=parentMenu,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        parentMenu.addAction(action)
+        return action
     
     def unzipFiles(self, fullZipPath, auxFolder):
         zip = zipfile.ZipFile(fullZipPath)
@@ -139,6 +151,7 @@ class DsgToolsOpInstaller(QObject):
         try:
             from DsgTools.DsgToolsOp.MilitaryTools.toolLoader import ToolLoader
             self.toolLoader = ToolLoader(self.parentMenu, self.parent, self.icon_path)
-            return self.toolLoader.loadTools()
+            toolList = self.toolLoader.loadTools()
+
         except:
             raise Exception(self.tr('DsgToolsOp not installed!'))

@@ -664,6 +664,12 @@ class DsgTools:
         result = dlg.exec_()
         if result:
             pass
+    
+    def uninstallDsgToolsOp(self):
+        """
+        Uninstall dsgtoolsop
+        """
+        self.opInstaller.uninstallDsgToolsOp(self.iface)
 
     def showHelp(self):
         """
