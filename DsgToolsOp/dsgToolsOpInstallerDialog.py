@@ -32,7 +32,6 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'dsgToolsOpInstallerDialog.ui'))
 
 class DsgToolsOpInstallerDialog(QtGui.QDialog, FORM_CLASS):
-    selectionChanged = pyqtSignal(list,str)
 
     def __init__(self, dsgToolsInstaller, parent = None):
         """Constructor."""
@@ -46,8 +45,8 @@ class DsgToolsOpInstallerDialog(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         fileZipPath = self.fileSelector.fileNameList
-        if fileZipPath == '':
+        if fileZipPath == [] or fileZipPath == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to install!'))
             return
-        self.dsgToolsInstaller.installDsgToolsOp(fileZipPath)
+        self.dsgToolsInstaller.installDsgToolsOp(fileZipPath, parentUi = self)
         pass

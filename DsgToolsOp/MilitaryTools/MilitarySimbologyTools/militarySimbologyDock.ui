@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>militarySimbology</class>
+ <widget class="QDockWidget" name="militarySimbology">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>251</width>
+    <height>185</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string/>
+  </property>
+  <widget class="QWidget" name="militarySimbology_2">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QPushButton" name="createSqliteButton">
+      <property name="text">
+       <string>Create database</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QPushButton" name="loadEnemyButton">
+      <property name="text">
+       <string>Load enemies</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QPushButton" name="loadAlliedButton">
+      <property name="text">
+       <string>Load allies</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="SelectFileWidget" name="widget" native="true"/>
+    </item>
+    <item row="5" column="0">
+     <widget class="QPushButton" name="locateStyleButton">
+      <property name="text">
+       <string>Locate styles</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SelectFileWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.selectFileWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

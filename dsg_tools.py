@@ -609,7 +609,16 @@ class DsgTools:
             add_to_toolbar=False)
         parentMenu.addAction(action)
         if self.opInstaller.checkIfInstalled():
-            self.opInstaller.loadTools(icon_path)
+            action = self.add_action(
+                icon_path,
+                text=self.tr('DsgTools Op Uninstaller'),
+                callback=self.uninstallDsgToolsOp,
+                parent=parentMenu,
+                add_to_menu=False,
+                add_to_toolbar=False)
+            parentMenu.addAction(action)
+            self.opInstaller.toolList.append(action)
+            self.opInstaller.loadTools()
 
     def unload(self):
         """
