@@ -1978,13 +1978,14 @@ class PostgisDb(AbstractDb):
             schemaList.append(query.value(0))
         return schemaList
     
-    def getGeomDict(self, geomTypeDict):
+    def getGeomDict(self, geomTypeDict, insertCategory = False):
         """
         returns a dict like this:
         {'tablePerspective' : {
             'layerName' :
         """
         self.checkAndOpenDb()
+        edgvVersion = self.getDatabaseVersion()
         sql = self.gen.getGeomTablesFromGeometryColumns()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -2011,9 +2012,14 @@ class PostgisDb(AbstractDb):
                 geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
                 geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
                 geomDict['tablePerspective'][layerName]['tableName'] = tableName
+                if insertCategory:
+                    if edgvVersion == 'Non_EDGV':
+                        geomDict['tablePerspective'][layerName]['category'] = ''
+                    else:
+                        geomDict['tablePerspective'][layerName]['category'] = layerName.split('_')[0]
         return geomDict
     
-    def getDbDomainDict(self, auxGeomDict):
+    def getDbDomainDict(self, auxGeomDict, buildOtherInfo = False):
         """
         returns a dict like this:
         {'adm_posto_fiscal_a': {
@@ -2022,6 +2028,9 @@ class PostgisDb(AbstractDb):
                 'situacaofisica': {'references':'dominios.situacaofisica', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
                 'tipopostofisc': {'references':'dominios.tipopostofisc', 'refPk':'code', 'otherKey':'code_name', 'values':{-dict of code_name:value -}, 'nullable':False, 'constraintList':[1,2,3], 'isMulti':False}
                 }
+            'schema': schemaName
+            'geometryColum': geometryColumn
+            'primaryKey': primaryKey
             }
         }
         """
@@ -2083,6 +2092,7 @@ class PostgisDb(AbstractDb):
                             geomDict[tableName]['columns'][fkAttribute]['refPk'] = 'code'
                             geomDict[tableName]['columns'][fkAttribute]['otherKey'] = 'code_name'
                             geomDict[tableName]['columns'][fkAttribute]['values'] = dict()
+            
         return geomDict
     
     def getCheckConstraintDict(self):

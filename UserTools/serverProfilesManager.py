@@ -51,8 +51,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.permissionManager = permissionManager
-        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2}
-
+        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2, 'Non_EDGV':3}
         
     def createItem(self, parent, text):
         """
@@ -181,7 +180,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         """
         Slot that opens the create profile dialog
         """
-        dlg = CreateProfileWithProfileManager(self.permissionManager)
+        dlg = CreateProfileWithProfileManager(self.permissionManager, self.abstractDb)
         dlg.profileCreated.connect(self.updateInterface)
         dlg.exec_()
     

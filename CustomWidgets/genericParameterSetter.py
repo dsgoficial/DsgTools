@@ -36,6 +36,13 @@ class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
+    
+    def validateUi(self):
+        if self.customNameLineEdit.text() == '':
+            return False
+        if self.connectionWidget.abstractDb == None:
+            return False
+        return True
 
     def getParameters(self):
-        return (self.versionSelectionComboBox.currentText() , self.customNameLineEdit.text())
+        return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())

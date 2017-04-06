@@ -39,7 +39,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
     profileCreated = pyqtSignal(str, str)
     
-    def __init__(self, permissionManager, parent = None):
+    def __init__(self, permissionManager, abstractDb, parent = None):
         """
         Constructor
         """
@@ -51,7 +51,7 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.permissionManager = permissionManager
-        self.abstractDb = None
+        self.abstractDb = abstractDb
         self.abstractDbFactory = DbFactory()
 
         self.populateTreeDict()
@@ -63,66 +63,32 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
         if self.abstractDb:
             del self.abstractDb
             self.abstractDb = None
-        
-    def getDbInfo(self):
-        """
-        Gets database info. This info is used to create a profile model that will be adjusted by the user
-        """
-        currentPath = os.path.dirname(__file__)
-        if self.versionCombo.currentText() == '2.1.3':
-            edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', '213', 'seed_edgv213.sqlite')
-        elif self.versionCombo.currentText() == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
-
-        self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
-        if not self.abstractDb:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('A problem occurred! Check log for details.'))
-            return
-        self.abstractDb.connectDatabase(edgvPath)
-
-        try:
-            self.abstractDb.checkAndOpenDb()
-        except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
     def populateTreeDict(self):
         """
         Makes a tree widget were the user can define profile properties
         """
-        self.getDbInfo()
-
-        tables = []
         try:
-            tables = self.abstractDb.getTablesFromDatabase()
+            geomTypeDict = self.abstractDb.getGeomTypeDict()
+            geomDict = self.abstractDb.getGeomDict(geomTypeDict, insertCategory = True)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return
         
         self.profile = dict()
         categories = dict()
-        for tableName in tables:
-            #proceed only for edgv tables
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" or tableName.split("_")[-1] == "a" or tableName.split("_")[0] == 'complexos' or tableName.split("_")[0] == 'dominios':
-                layerName = tableName.split('_')[0]+'.'+'_'.join(tableName.split('_')[1::])
-                split = tableName.split('_')
-                
-                if len(split) < 2:
-                    continue
-                
-                schema = split[0]
-                category = split[1]
-                if schema not in categories.keys():
-                    categories[schema] = dict()
-                    
-                if category not in categories[schema].keys():
-                    categories[schema][category] = dict()
-
-                if layerName not in categories[schema][category]:
-                    categories[schema][category][layerName] = dict()
-                    categories[schema][category][layerName]['read'] = '0'
-                    categories[schema][category][layerName]['write'] = '0'
-                    
+        for layerName in geomDict.keys():
+            schema = geomDict[layerName]['schema']
+            category = geomDict[layerName]['category']
+            if schema not in categories.keys():
+                categories[schema] = dict()
+            if category not in categories[schema].keys():
+                categories[schema][category] = dict()
+            if layerName not in categories[schema][category]:
+                categories[schema][category][layerName] = dict()
+                categories[schema][category][layerName]['read'] = '0'
+                categories[schema][category][layerName]['write'] = '0'
         self.profile['database'+'_'+self.versionCombo.currentText()] = categories
 
     @pyqtSlot()
