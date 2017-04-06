@@ -152,6 +152,9 @@ class DsgToolsOpInstaller(QObject):
             from DsgTools.DsgToolsOp.MilitaryTools.toolLoader import ToolLoader
             self.toolLoader = ToolLoader(self.parentMenu, self.parent, self.icon_path)
             toolList = self.toolLoader.loadTools()
+            uninstallAction = self.addUninstall(self.icon_path, self.parent, self.parentMenu)
+            toolList.append(uninstallAction)
+            return toolList
 
         except:
             raise Exception(self.tr('DsgToolsOp not installed!'))

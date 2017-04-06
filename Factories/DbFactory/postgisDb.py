@@ -2627,12 +2627,12 @@ class PostgisDb(AbstractDb):
                     grantedRolesDict[aux['profile']].append(user)
         return grantedRolesDict
     
-    def updatePermissionProfile(self, name, edgvversion, newjsondict):
+    def updatePermissionProfile(self, name, edgvVersion, newjsondict):
         """
         Updates public.permission_profile with new definition.
         """
         self.checkAndOpenDb()
-        sql = self.gen.updatePermisisonProfile(name, edgvversion, newjsondict)
+        sql = self.gen.updateRecordFromPropertyTable('Permission', name, edgvVersion, newjsondict)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr("Problem updating permission profile: ")+query.lastError().text())
