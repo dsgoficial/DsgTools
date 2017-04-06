@@ -1103,7 +1103,8 @@ class PostgisDb(AbstractDb):
         
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        uri.setDataSource(schema, layer_name, geomColumn, sql, 'id')
+        id = self.getPrimaryKeyColumn(table)
+        uri.setDataSource(schema, layer_name, geomColumn, sql, id)
         uri.disableSelectAtId(True)
         
         return uri
