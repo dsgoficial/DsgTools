@@ -24,7 +24,7 @@ import os
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt4.QtGui import QTreeWidgetItem, QMessageBox, QMenu, QApplication, QCursor
+from PyQt4.QtGui import QTreeWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
 
 from qgis.core import QgsMessageLog
 
@@ -130,8 +130,8 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             dlg = ServerProfilesManager(self.permissionManager)
             dlg.profilesChanged.connect(self.refresh)
             dlg.exec_()
-        except:
-            pass
+        except Exception as e:
+            QMessageBox.warning(self, self.tr('Error!'), e.args[0])
         self.refresh()
     
     def createMenuAssigned(self, position):
@@ -258,3 +258,73 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Error!'), e)
         self.refresh()
+
+    @pyqtSlot(bool)
+    def on_importPushButton_clicked(self):
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
+        if filename == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.importSetting(filename)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully imported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])
+        self.refreshProfileList()
+    
+    @pyqtSlot(bool)
+    def on_exportPushButton_clicked(self):
+        if not self.profilesListWidget.currentItem():
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a profile to export!'))
+            return
+        fd = QFileDialog()
+        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        if folder == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            return
+        profileName = self.profilesListWidget.currentItem().text()
+        edgvVersion = self.versionSelectionComboBox.currentText()
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.exportSetting(profileName, edgvVersion, folder)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully exported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
+        
+    @pyqtSlot(bool)
+    def on_batchExportPushButton_clicked(self):
+        fd = QFileDialog()
+        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        if folder == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.batchExportSettings(folder)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully exported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
+    
+    @pyqtSlot(bool)
+    def on_batchImportPushButton_clicked(self):
+        fd = QFileDialog()
+        folder = fd.getExistingDirectory(caption = self.tr('Select a folder with permissions: '))
+        if folder == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
+            return
+        try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.permissionManager.batchImportSettings(folder)
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully imported.'))
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])

@@ -51,7 +51,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.permissionManager = permissionManager
-        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2, 'Non_EDGV':3}
+        self.refreshProfileList()
         
     def createItem(self, parent, text):
         """
@@ -160,20 +160,14 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         """
         self.close()
     
-    @pyqtSlot(int)
-    def on_versionSelectionComboBox_currentIndexChanged(self):
-        self.refreshProfileList()
-    
     def refreshProfileList(self):
-        index = self.versionSelectionComboBox.currentIndex()
         self.profilesListWidget.clear()
         self.treeWidget.clear()
         self.setEnabled(False)
-        if index <> 0:
-            edgvVersion = self.versionSelectionComboBox.currentText()
-            profilesDict = self.permissionManager.getSettings()
-            if edgvVersion in profilesDict.keys():
-                self.profilesListWidget.addItems(profilesDict[edgvVersion])
+        profilesDict = self.permissionManager.getSettings()
+        for edgvVersion in profilesDict.keys():
+            self.profilesListWidget.addItems([i + ' ({0})'.format(edgvVersion) for i in profilesDict[edgvVersion]] )
+        self.profilesListWidget.sortItems(order = Qt.AscendingOrder)
     
     @pyqtSlot(bool)
     def on_createPermissionPushButton_clicked(self):
@@ -192,7 +186,8 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot()
     def on_profilesListWidget_itemSelectionChanged(self):
-        profileName = self.profilesListWidget.currentItem().text()
+        profileName, edgvVersion = self.profilesListWidget.currentItem().text().split(' (')
+        edgvVersion = edgvVersion.replace(')','')
         try:
             self.setEnabled(True)
             edgvVersion = self.versionSelectionComboBox.currentText()
@@ -237,73 +232,3 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem updating permission: ') + e.args[0])
-    
-    @pyqtSlot(bool)
-    def on_importPushButton_clicked(self):
-        fd = QFileDialog()
-        filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
-        if filename == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
-            return
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.importSetting(filename)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully imported.'))
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])
-        self.refreshProfileList()
-    
-    @pyqtSlot(bool)
-    def on_exportPushButton_clicked(self):
-        if not self.profilesListWidget.currentItem():
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a profile to export!'))
-            return
-        fd = QFileDialog()
-        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
-        if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
-            return
-        profileName = self.profilesListWidget.currentItem().text()
-        edgvVersion = self.versionSelectionComboBox.currentText()
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.exportSetting(profileName, edgvVersion, folder)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully exported.'))
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
-        
-    @pyqtSlot(bool)
-    def on_batchExportPushButton_clicked(self):
-        fd = QFileDialog()
-        folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
-        if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
-            return
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.batchExportSettings(folder)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully exported.'))
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
-    
-    @pyqtSlot(bool)
-    def on_batchImportPushButton_clicked(self):
-        fd = QFileDialog()
-        folder = fd.getExistingDirectory(caption = self.tr('Select a folder with permissions: '))
-        if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
-            return
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.batchImportSettings(folder)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully imported.'))
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])

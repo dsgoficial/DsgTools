@@ -101,9 +101,9 @@ class DsgToolsOpInstaller(QObject):
             raise e
     
     def addUninstall(self, icon_path, parent, parentMenu):
-        action = self.add_action(
+        action = parent.add_action(
             icon_path,
-            text=self.tr('DsgTools Op Uninstaller'),
+            text=parent.tr('DsgTools Op Uninstaller'),
             callback=parent.uninstallDsgToolsOp,
             parent=parentMenu,
             add_to_menu=False,
@@ -156,5 +156,5 @@ class DsgToolsOpInstaller(QObject):
             toolList.append(uninstallAction)
             return toolList
 
-        except:
-            raise Exception(self.tr('DsgToolsOp not installed!'))
+        except Exception as e:
+            raise Exception(self.tr('DsgToolsOp not installed!\n')+e.args[0])

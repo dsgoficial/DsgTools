@@ -75,7 +75,7 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return
-        
+        version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()
         categories = dict()
         for layerName in geomDict.keys():
@@ -89,7 +89,7 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
                 categories[schema][category][layerName] = dict()
                 categories[schema][category][layerName]['read'] = '0'
                 categories[schema][category][layerName]['write'] = '0'
-        self.profile['database'+'_'+self.versionCombo.currentText()] = categories
+        self.profile['database'+'_'+version] = categories
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
