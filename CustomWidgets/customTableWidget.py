@@ -34,6 +34,21 @@ from PyQt4.QtGui import QFileDialog
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customTableWidget.ui'))
 
+class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
+    def defineValidatorList(self, validatorList):
+        self.validatorList = validatorList
+
+    def createEditor(self, widget, option, index):
+        if not index.isValid():
+            return 0
+        idx = index.column()
+        if self.validatorList[idx]:
+            editor = QtGui.QLineEdit(widget)
+            validator = QtGui.QRegExpValidator(self.validatorList[idx], editor)
+            editor.setValidator(validator)
+            return editor
+        return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
+
 class CustomTableWidget(QtGui.QWidget, FORM_CLASS):
     filesSelected = pyqtSignal()
     def __init__(self, parent = None):
@@ -47,22 +62,22 @@ class CustomTableWidget(QtGui.QWidget, FORM_CLASS):
             self.tableWidget.insertColumn(currColumn)
         self.tableWidget.setHorizontalHeaderLabels(headerList)
     
+    def setValidator(self, validatorList):
+        itemDelegate = ValidatedItemDelegate()
+        itemDelegate.defineValidatorList(validatorList)
+        self.tableWidget.setItemDelegate(itemDelegate)
+    
     @pyqtSlot(bool)
     def on_addPushButton_clicked(self):
         rowCount = self.tableWidget.rowCount()
         self.tableWidget.insertRow(rowCount)
         for column in range(self.tableWidget.columnCount()):
-            self.tableWidget.setItem(rowCount+1, column, QtGui.QTableWidgetItem(""))
+            self.tableWidget.setItem(rowCount+1, column, QtGui.QTableWidgetItem(''))
         
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
-        selectedIndexes = self.tableWidget.selectedIndexes()
-        
-        removeList = []        
-        for index in selectedIndexes:
-            row = index.row()
-            if row not in removeList:
-                removeList.append(row)
-        removeList.sort(reverse = True)
-        for idx in removeList:
-            self.tableWidget.removeRow(idx)
+        selected = self.tableWidget.selectedIndexes()
+        rowList = [i.row() for i in selected]
+        rowList.sort(reverse=True)
+        for row in rowList:
+            self.tableWidget.removeRow(row)
