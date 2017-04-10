@@ -67,17 +67,32 @@ class CustomTableWidget(QtGui.QWidget, FORM_CLASS):
         itemDelegate.defineValidatorList(validatorList)
         self.tableWidget.setItemDelegate(itemDelegate)
     
-    @pyqtSlot(bool)
-    def on_addPushButton_clicked(self):
+    @pyqtSlot(bool, name = 'on_addPushButton_clicked')
+    def addItems(self, itemList = []):
+        if isinstance(itemList, bool):
+            oneItemList = ['' for i in range(self.tableWidget.columnCount())]
+            self.addOneItem(oneItemList)
+        else:
+            for item in itemList:
+                self.addOneItem(item)
+    
+    def addOneItem(self, oneItemList):
         rowCount = self.tableWidget.rowCount()
         self.tableWidget.insertRow(rowCount)
-        for column in range(self.tableWidget.columnCount()):
-            self.tableWidget.setItem(rowCount+1, column, QtGui.QTableWidgetItem(''))
+        for i in range(len(oneItemList)):
+            newItem = QtGui.QTableWidgetItem(oneItemList[i])
+            self.tableWidget.setItem(rowCount, i, newItem)
         
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         selected = self.tableWidget.selectedIndexes()
         rowList = [i.row() for i in selected]
+        rowList.sort(reverse=True)
+        for row in rowList:
+            self.tableWidget.removeRow(row)
+    
+    def clearItems(self):
+        rowList = range(self.tableWidget.rowCount())
         rowList.sort(reverse=True)
         for row in rowList:
             self.tableWidget.removeRow(row)

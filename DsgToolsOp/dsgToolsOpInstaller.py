@@ -42,13 +42,13 @@ class DsgToolsOpInstaller(QObject):
         self.toolList = []
     
     def createAuxFolder(self):
-        currentPath = os.path.dirname(__file__)
+        currentPath = os.path.abspath(os.path.dirname(__file__))
         auxFolder = os.path.join(currentPath, 'aux')
         os.makedirs(auxFolder)
         return auxFolder
     
     def deleteAuxFolder(self):
-        currentPath = os.path.dirname(__file__)
+        currentPath = os.path.abspath(os.path.dirname(__file__))
         top = os.path.join(currentPath, 'aux')
         shutil.rmtree(top, ignore_errors=True)
     
@@ -56,7 +56,7 @@ class DsgToolsOpInstaller(QObject):
         parentUi = iface.mainWindow()
         if QMessageBox.question(parentUi, self.tr('Question'), self.tr('DsgToolsOp is going to be uninstalled. Would you like to continue?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
-        currentPath = os.path.dirname(__file__)
+        currentPath = os.path.abspath(os.path.dirname(__file__))
         toolsPath = os.path.join(currentPath,'MilitaryTools')
         for name in os.listdir(toolsPath):
             top = os.path.join(currentPath, 'MilitaryTools', name)
@@ -74,7 +74,7 @@ class DsgToolsOpInstaller(QObject):
 
     def installDsgToolsOp(self, fullZipPath, parentUi = None):
         try:
-            currentPath = os.path.dirname(__file__)
+            currentPath = os.path.abspath(os.path.dirname(__file__))
             auxFolder = self.createAuxFolder()
             destFolder = os.path.join(currentPath, 'MilitaryTools')
             self.unzipFiles(fullZipPath, auxFolder)
@@ -130,7 +130,7 @@ class DsgToolsOpInstaller(QObject):
         self.toolList = self.loadTools()
     
     def checkIfInstalled(self):
-        installPath = os.path.join(os.path.dirname(__file__),'MilitaryTools')
+        installPath = os.path.join(os.path.abspath(os.path.dirname(__file__)),'MilitaryTools')
         w = os.walk(installPath).next()[2]
         if len(w)<=2:
             return False
@@ -138,7 +138,7 @@ class DsgToolsOpInstaller(QObject):
             return True
     
     def getInstalledVersion(self):
-        versionPath = os.path.join(os.path.dirname(__file__), 'MilitaryTools', 'dsgtoolsop_version.json')
+        versionPath = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'MilitaryTools', 'dsgtoolsop_version.json')
         jsonDict = self.utils.readJsonFile(versionPath)
         return jsonDict['version']
     
