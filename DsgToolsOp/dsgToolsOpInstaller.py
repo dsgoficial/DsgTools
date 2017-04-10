@@ -43,13 +43,13 @@ class DsgToolsOpInstaller(QObject):
     
     def createAuxFolder(self):
         currentPath = os.path.abspath(os.path.dirname(__file__))
-        auxFolder = os.path.join(currentPath, 'aux')
+        auxFolder = os.path.join(currentPath, 'auxiliar')
         os.makedirs(auxFolder)
         return auxFolder
     
     def deleteAuxFolder(self):
         currentPath = os.path.abspath(os.path.dirname(__file__))
-        top = os.path.join(currentPath, 'aux')
+        top = os.path.join(currentPath, 'auxiliar')
         shutil.rmtree(top, ignore_errors=True)
     
     def uninstallDsgToolsOp(self, iface):
