@@ -103,7 +103,10 @@ class InspectFeatures(QWidget,FORM_CLASS):
         zoom = self.mScaleWidget.scale()
         
         #getting all features ids
-        featIdList = currentLayer.allFeatureIds()
+        if self.onlySelectedRadioButton.isChecked():
+            featIdList = currentLayer.selectedFeaturesIds()
+        else:
+            featIdList = currentLayer.allFeatureIds()
         #sort is faster than sorted (but sort is just available for lists)
         featIdList.sort()
         
@@ -137,8 +140,11 @@ class InspectFeatures(QWidget,FORM_CLASS):
             self.idSpinBox.setValue(id)
 
             #selecting and zooming to the feature
-            self.selectLayer(id, currentLayer)
-            self.zoomFeature(zoom)
+            if not self.onlySelectedRadioButton.isChecked():
+                self.selectLayer(id, currentLayer)
+                self.zoomFeature(zoom)
+            else:
+                self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})
         else:
             self.errorMessage()
             
@@ -157,12 +163,22 @@ class InspectFeatures(QWidget,FORM_CLASS):
             currentLayer.removeSelection()
             currentLayer.select(index)
 
-    def zoomFeature(self, zoom):
+    def zoomFeature(self, zoom, idDict = {}):
         """
         Zooms to current layer selected features according to a specific zoom
         zoom: zoom to be applied
         """
-        self.iface.actionZoomToSelected().trigger()
+        if idDict == {}:
+            self.iface.actionZoomToSelected().trigger()
+        else:
+            id = idDict['id']
+            lyr = idDict['lyr']
+            selectIdList = lyr.selectedFeaturesIds()
+            lyr.removeSelection()
+            lyr.setSelectedFeatures([id])
+            self.iface.actionZoomToSelected().trigger()
+            lyr.setSelectedFeatures(selectIdList)
+
         if self.canvas.currentLayer().geometryType() == QGis.Point:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
