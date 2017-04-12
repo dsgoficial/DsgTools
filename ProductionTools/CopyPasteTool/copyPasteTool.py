@@ -8,7 +8,6 @@ from qgis.core import QgsPoint , QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRe
 from qgis.gui import QgsMessageBar, QgsMapTool
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, QSize
 from PyQt4.QtGui import QIcon, QMessageBox, QCursor, QPixmap, QAction
-from icons import icon1, icon2
 from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
 from DsgTools.ProductionTools.CopyPasteTool.interface_copyPaste import CopyPaste
 
@@ -34,7 +33,7 @@ class CopyPasteTool:
             layer = self.iface.activeLayer().selectedFeatures()[0]
             dialog = QtGui.QDialog(self.iface.mainWindow())
             self.d = CopyPaste(self.iface, layer, dialog)
-            self.tool1.finished.connect(self.d.setSelectedLayers)
+            #self.tool1.finished.connect(self.d.setSelectedLayers)
             self.d.show()
         else:
             self.iface.messageBar().pushMessage(u"Atenção", u"Selecione apenas uma feição",

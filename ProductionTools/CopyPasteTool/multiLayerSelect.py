@@ -45,7 +45,7 @@ class MultiLayerSelection(QgsMapTool):
         w = self.canvas.mapUnitsPerPixel() * 10
         rect = QgsRectangle(p.x()-w, p.y()-w, p.x()+w, p.y()+w)
         for layer in layers:
-            if (layer.type() == QgsMapLayer.RasterLayer) or (layer.name() == 'moldura'):
+            if (layer.type() == QgsMapLayer.RasterLayer) or ('moldura' in layer.name().lower()):
                 continue
             else:
                 lRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
