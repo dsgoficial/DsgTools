@@ -6,6 +6,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence
 
 class MultiLayerSelection(QgsMapTool):
+    finished = QtCore.pyqtSignal(list)
     def __init__(self, canvas, iface):
         self.iface=iface        
         self.canvas = canvas
@@ -71,7 +72,8 @@ class MultiLayerSelection(QgsMapTool):
             self.setBkpLayersNames(self.getBkpLayerNames())
             self.removerSelecoes(False)
             self.restoreAllLayerNames()
-            self.selectLayers()                
+            self.selectLayers()
+            self.finished.emit(selectionsLayers)                
                 
     def restoreAllLayerNames(self):
         for name in self.getBkpLayerNames():
