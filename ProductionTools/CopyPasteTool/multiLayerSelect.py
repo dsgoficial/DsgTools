@@ -46,7 +46,7 @@ class MultiLayerSelection(QgsMapTool):
         w = self.canvas.mapUnitsPerPixel() * 10
         rect = QgsRectangle(p.x()-w, p.y()-w, p.x()+w, p.y()+w)
         for layer in layers:
-            if (layer.type() == QgsMapLayer.RasterLayer) or ('moldura' in layer.name().lower()):
+            if (layer.type() == QgsMapLayer.RasterLayer) or (layer.name() == 'moldura'):
                 continue
             else:
                 lRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
@@ -61,6 +61,7 @@ class MultiLayerSelection(QgsMapTool):
                     layer.removeSelection()                    
         if not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
             self.setOnlyOneSelection()
+            self.finished.emit(self.getSelectionsLayers())
         else:
             for name in self.getSelectionsLayers():
                 newIds = self.grupo[name].selectedFeaturesIds()
@@ -72,8 +73,8 @@ class MultiLayerSelection(QgsMapTool):
             self.setBkpLayersNames(self.getBkpLayerNames())
             self.removerSelecoes(False)
             self.restoreAllLayerNames()
-            self.selectLayers()
-            self.finished.emit(selectionsLayers)                
+            self.selectLayers() 
+            self.finished.emit(self.getSelectionsLayers())               
                 
     def restoreAllLayerNames(self):
         for name in self.getBkpLayerNames():
@@ -93,7 +94,7 @@ class MultiLayerSelection(QgsMapTool):
             self.ids[l] = list(set(self.ids[l]))
                            
     def getBkpIds(self):
-    	return self.ids
+        return self.ids
  
     def setBkpLayersNames(self, add=None):
         if add:
@@ -150,3 +151,11 @@ class MultiLayerSelection(QgsMapTool):
             for name in self.getBkpLayerNames():
                 self.grupo[name].removeSelection()
             self.selecaoVariada=[]
+    
+        
+
+
+
+
+
+
