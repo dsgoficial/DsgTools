@@ -162,7 +162,7 @@ features</string>
   <customwidget>
    <class>QgsScaleWidget</class>
    <extends>QWidget</extends>
-   <header>qgsscalewidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources>
