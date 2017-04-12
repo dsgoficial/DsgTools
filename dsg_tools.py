@@ -57,6 +57,7 @@ from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeat
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
+from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 
 from qgis.utils import showPluginHelp
 try:
@@ -119,6 +120,7 @@ class DsgTools:
         self.BDGExTools = BDGExTools()
         self.minimumAreaTool = MinimumAreaTool(iface)
         self.inspectFeatures = InspectFeatures(iface)
+        self.copyPasteTool = CopyPasteTool(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -544,6 +546,28 @@ class DsgTools:
             icon_path,
             text=self.tr('Assign Contour Values'),
             callback=self.showCalcContour,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Copy and Paste Attribute Set'),
+            callback=self.copyPasteTool.copyPaste,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/genericSelect.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Generic Selector'),
+            callback=self.copyPasteTool.selectMulti,
             parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
