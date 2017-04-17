@@ -1322,7 +1322,7 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def createPropertyTable(self, settingType):
         tableName = self.getSettingTable(settingType)
-        sql = '''CREATE EXTENSION IF NOT EXISTS "uuid-ossp" 'WITH SCHEMA public;
+        sql = '''CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
         CREATE TABLE IF NOT EXISTS public.{0}(
                 id uuid NOT NULL DEFAULT uuid_generate_v4(),
                 name text,

@@ -271,7 +271,7 @@ class GenericDbManager(QObject):
             recDict = self.adminDb.getRecordFromAdminDb(settingType, configName, edgvVersion)
             try:
                 if not abstractDb.checkIfExistsConfigTable(settingType):
-                    abstractDb.createPropertyTable(settingType)
+                    abstractDb.createPropertyTable(settingType, useTransaction = True)
             except Exception as e:
                 errorDict[dbName] = str(e.args[0])
                 continue
