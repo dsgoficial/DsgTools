@@ -63,25 +63,24 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         dlg = GenericParameterSetter()
         if not dlg.exec_():
             return
-        edgvVersion, propertyName = dlg.getParameters()
+        templateDb, propertyName, edgvVersion = dlg.getParameters()
         if edgvVersion == self.tr('Select EDGV Version'):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a EDGV Version'))
             return
         if propertyName == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a Field Toolbox Configuration Name!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter an Earth Coverage Name!'))
             return
         if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Field Toolbox Configuration Name already exists!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Earth Coverage Name already exists!'))
             return
-        templateDb = self.genericDbManager.instantiateTemplateDb(edgvVersion)
-        fieldSetupDict = self.populateConfigInterface(templateDb)
+        fieldSetupDict = self.populateConfigInterface(templateDb, propertyName = propertyName)
         if fieldSetupDict:
             self.genericDbManager.createSetting(propertyName, edgvVersion, fieldSetupDict)
             self.refresh()
             QMessageBox.information(self, self.tr('Success!'), self.tr('Field Toolbox Configuration ') + propertyName + self.tr(' created successfuly!'))   
 
 
-    def populateConfigInterface(self, templateDb, jsonDict = None):
+    def populateConfigInterface(self, templateDb, jsonDict = None, propertyName = None):
         '''
         Must be reimplemented in each child
         '''
@@ -93,7 +92,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
             propertyList = settings
         else:
             propertyList = []
-        dlg = SetupEarthCoverage(edgvVersion, areas, lines, jsonDict, propertyList)
+        dlg = SetupEarthCoverage(edgvVersion, areas, lines, jsonDict, propertyList, propertyName = propertyName)
         if dlg.exec_():
             return dlg.configDict
         else:

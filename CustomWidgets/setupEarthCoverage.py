@@ -33,7 +33,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
-    def __init__(self, edgvVersion, areas, lines, oldCoverage, propertyList, enableSetupFromFile = True, onlySetup = False, parent=None):
+    def __init__(self, edgvVersion, areas, lines, oldCoverage, propertyList, enableSetupFromFile = True, onlySetup = False, propertyName = None, parent=None):
         """
         Constructor
         """
@@ -42,6 +42,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.utils = Utils()
         self.areas = areas
         self.lines = lines
+        self.propertyName = propertyName
         self.edgvVersion = edgvVersion
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
@@ -80,6 +81,9 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         else:
             self.areasCustomSelector.setFromList(self.areas)
             self.linesCustomSelector.setFromList(self.lines)
+        if self.propertyName:
+            self.nameLineEdit.setText(self.propertyName)
+            self.nameLineEdit.setEnabled(False)
     
     def setupUiFromFile(self, filename):
         """
