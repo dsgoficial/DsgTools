@@ -31,6 +31,7 @@ from qgis.core import QgsMessageLog
 
 # DSGTools imports
 from DsgTools.UserTools.createProfileWithProfileManager import CreateProfileWithProfileManager
+from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 
 import json
 
@@ -174,10 +175,21 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         """
         Slot that opens the create profile dialog
         """
-        dlg = CreateProfileWithProfileManager(self.permissionManager, self.abstractDb)
-        dlg.profileCreated.connect(self.updateInterface)
-        dlg.exec_()
-    
+        #use selector
+        permissionDict = self.permissionManager.getSettings()
+        parameterDlg = GenericParameterSetter(nameList = permissionDict.keys())
+        if not parameterDlg.exec_():
+            return
+        templateDb, profileName, edgvVersion = parameterDlg.getParameters()
+        if edgvVersion in permissionDict.keys():
+            if profileName in permissionDict[edgvVersion]:
+                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
+                return
+        newItem = self.populateTreeDict(templateDb, edgvVersion)
+        jsonDict = json.dumps(newItem, sort_keys=True, indent=4)
+        self.permissionManager.createSetting(profileName, edgvVersion, jsonDict)
+        self.updateInterface(profileName, edgvVersion)
+        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Profile ') + profileName + self.tr(' created successfully!'))
     
     def setEnabled(self, enabled):
         self.treeWidget.setEnabled(enabled)
@@ -190,7 +202,6 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         edgvVersion = edgvVersion.replace(')','')
         try:
             self.setEnabled(True)
-            edgvVersion = self.versionSelectionComboBox.currentText()
             self.treeWidget.clear()
             self.readJsonFromDatabase(profileName, edgvVersion)
         except:
@@ -198,15 +209,13 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
     
     def updateInterface(self, profileName, edgvVersion):
         self.refreshProfileList()
-        idx = self.versionSelectionComboBox.findText(edgvVersion, flags = Qt.MatchExactly)
-        self.versionSelectionComboBox.setCurrentIndex(idx)
-        profileItem = self.profilesListWidget.findItems(profileName, Qt.MatchExactly)[0]
+        profileItem = self.profilesListWidget.findItems(profileName + ' ({0})'.format(edgvVersion), Qt.MatchExactly)[0]
         self.profilesListWidget.setCurrentItem(profileItem)
     
     @pyqtSlot(bool)
     def on_deletePermissionPushButton_clicked(self):
-        profileName = self.profilesListWidget.currentItem().text()
-        edgvVersion = self.versionSelectionComboBox.currentText()
+        profileName, edgvVersion = self.profilesListWidget.currentItem().text().split(' (')
+        edgvVersion = edgvVersion.replace(')','')
         if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
             return
         try:
@@ -221,8 +230,8 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
-        profileName = self.profilesListWidget.currentItem().text()
-        edgvVersion = self.versionSelectionComboBox.currentText()
+        profileName, edgvVersion = self.profilesListWidget.currentItem().text().split(' (')
+        edgvVersion = edgvVersion.replace(')','')
         newProfileDict = self.makeProfileDict()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -232,3 +241,30 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem updating permission: ') + e.args[0])
+
+    def populateTreeDict(self, abstractDb, version):
+        """
+        Makes a tree widget were the user can define profile properties
+        """
+        try:
+            geomTypeDict = abstractDb.getGeomTypeDict()
+            geomDict = abstractDb.getGeomDict(geomTypeDict, insertCategory = True)
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            return
+        profile = dict()
+        categories = dict()
+        for layerName in geomDict['tablePerspective'].keys():
+            schema = geomDict['tablePerspective'][layerName]['schema']
+            category = geomDict['tablePerspective'][layerName]['category']
+            if schema not in categories.keys():
+                categories[schema] = dict()
+            if category not in categories[schema].keys():
+                categories[schema][category] = dict()
+            if layerName not in categories[schema][category]:
+                categories[schema][category][layerName] = dict()
+                categories[schema][category][layerName]['read'] = '0'
+                categories[schema][category][layerName]['write'] = '0'
+        profile['database'+'_'+version] = categories
+        return profile

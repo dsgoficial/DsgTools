@@ -32,17 +32,44 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericParameterSetter.ui'))
 
 class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None):
+    def __init__(self, parent = None, nameList = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
+        self.nameList = nameList
         self.setupUi(self)
     
     def validateUi(self):
         if self.customNameLineEdit.text() == '':
             return False
+        if self.nameList:
+            if self.customNameLineEdit.text() in self.nameList:
+                return False
         if self.connectionWidget.abstractDb == None:
             return False
         return True
+    
+    def validateUiReason(self):
+        validateReason = ''
+        if self.customNameLineEdit.text() == '':
+            validateReason += self.tr('Enter a parameter name!\n')
+        if self.nameList:
+            if self.customNameLineEdit.text() in self.nameList:
+                validateReason += self.tr('Parameter already exists! Choose another name!\n')
+        if self.connectionWidget.abstractDb == None:
+            validateReason += self.tr('Select a template database!\n')
+        return validateReason
+    
+    @pyqtSlot(bool)
+    def on_okPushButton_clicked(self):
+        if not self.validateUi():
+            reason = self.validateUiReason()
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), reason)
+        else:
+            self.done(1)
+    
+    @pyqtSlot(bool)
+    def on_cancelPushButton_clicked(self):   
+        self.done(0)
 
     def getParameters(self):
         return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())

@@ -126,11 +126,10 @@ class PostGISSqlGenerator(SqlGenerator):
         for db in mydict.keys():
             for schema in mydict[db].keys():
                 for cat in mydict[db][schema].keys():
-                    for tableWithSchema in mydict[db][schema][cat].keys():
-                        tableList = tableWithSchema.split('.')
-                        table = '''"{0}"."{1}"'''.format(tableList[0],tableList[1])
-                        read = mydict[db][schema][cat][tableWithSchema]["read"]
-                        write = mydict[db][schema][cat][tableWithSchema]["write"]
+                    for tableName in mydict[db][schema][cat].keys():
+                        table = '''"{0}"."{1}"'''.format(schema,tableName)
+                        read = mydict[db][schema][cat][tableName]["read"]
+                        write = mydict[db][schema][cat][tableName]["write"]
                         if write == '2':
                             sql+="""GRANT ALL ON {0} TO "{1}";\n""".format(table,roleName)
                         elif read == '2':

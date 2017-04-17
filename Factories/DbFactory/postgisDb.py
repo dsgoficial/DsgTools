@@ -555,7 +555,7 @@ class PostgisDb(AbstractDb):
         ret.sort()
         return ret
 
-    def createRole(self, role, dict, permissionManager = False):
+    def createRole(self, role, roleDict, permissionManager = False):
         """
         Creates a role into this database
         role: role name
@@ -566,7 +566,7 @@ class PostgisDb(AbstractDb):
         uuid = str(uuid4()).replace('-', '_')
         role += '_'+uuid
 
-        sql = self.gen.createRole(role, dict)
+        sql = self.gen.createRole(role, roleDict)
         split = sql.split(';')
         query = QSqlQuery(self.db)
         

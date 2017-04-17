@@ -212,7 +212,7 @@ class PermissionManager(GenericDbManager):
                         abstractDb.db.transaction()
                         abstractDb.dropRoleOnDatabase(roleName)
             #after deletion, delete permission profile from public.permission_profile
-            self.adminDb.deletePermissionProfile(settingName, edgvVersion)
+            self.adminDb.removeRecordFromPropertyTable('Permission',settingName, edgvVersion)
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.commit()
         except Exception as e:
