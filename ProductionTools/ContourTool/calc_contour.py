@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QMessageBox
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry
+from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QGis
 from qgis.gui import QgsMessageBar
 
 #DSGTools imports
@@ -94,7 +94,7 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         
         layers = self.iface.mapCanvas().layers()
         for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer:
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QGis.Line:
                 self.layerCombo.addItem(layer.name())
 
     def getLayer(self):
