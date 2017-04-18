@@ -30,6 +30,8 @@ from qgis.core import QgsMessageLog, QgsDataSourceURI, QgsGeometry, QgsFeatureRe
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SpatialRuleEnforcer(ValidationProcess):
+    # signal to update flags
+    ruleTested = pyqtSignal()
     #this relates the predicate with the methods present in the QgsGeometry class
     predicates = {0:'equals',
                   1:'disjoint',
@@ -173,6 +175,9 @@ class SpatialRuleEnforcer(ValidationProcess):
             if breaksPredicate and occurrences == 0:
                 for hexa in flagData:
                     self.makeBreaksPredicateFlag(layer1, featureId, rule, layer2, hexa)
+
+        # updating flags for real time use
+        self.ruleTested.emit()
                     
     def getGeometryProblem(self, geometry, feature):
         """

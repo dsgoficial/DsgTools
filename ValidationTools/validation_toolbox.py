@@ -175,6 +175,12 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.iface)
             self.populateProcessList()
             self.databaseLineEdit.setText(database)
+
+            # adjusting flags table model
+            self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
+            self.projectModel.setTable('validation.aux_flags_validacao')
+            self.projectModel.select()
+            self.tableView.setModel(self.projectModel)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -236,16 +242,13 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
 
-    @pyqtSlot(int)
-    def on_validationTabWidget_currentChanged(self):
+    @pyqtSlot(int, name='on_validationTabWidget_currentChanged')
+    def refreshFlags(self):
         """
         Changes the current tab in the validation tool box
         """
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
-            self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
-            self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()
-            self.tableView.setModel(self.projectModel)  
     
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
@@ -267,8 +270,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         if checked:
             self.ruleEnforcer = SpatialRuleEnforcer(self.validationManager.postgisDb, self.iface)
             self.ruleEnforcer.connectEditingSignals()
+            self.ruleEnforcer.ruleTested.connect(self.refreshFlags)
         else:
             self.ruleEnforcer.disconnectEditingSignals()
+            self.ruleEnforcer.ruleTested.disconnect(self.refreshFlags)
     
     @pyqtSlot(bool)
     def on_attributeRulesEditorPushButton_clicked(self):
