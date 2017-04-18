@@ -325,16 +325,12 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             #TODO: check if frame is created
-            dadsWithGeom = self.abstractDb.getOrphanGeomTablesWithElements()
             earthCoverageDict = json.loads(self.abstractDb.getEarthCoverageDict())
             if len(earthCoverageDict.keys()) == 0:
                 self.setStatus(self.tr('Earth coverage not defined!'), 1)
                 QgsMessageLog.logMessage(self.tr('Earth coverage not defined!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return
-            coverageClassList = []
-            for cl in dadsWithGeom:
-                if cl in earthCoverageDict.keys():
-                    coverageClassList.append(cl)
+            coverageClassList = earthCoverageDict.keys()
             if coverageClassList.__len__() == 0:
                 self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                

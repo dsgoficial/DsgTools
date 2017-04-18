@@ -1329,7 +1329,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="43"/>
         <source>Snap Lines to Frame</source>
-        <translation>Colar Linhas na moldura</translation>
+        <translation>Colar linhas na moldura</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="149"/>
