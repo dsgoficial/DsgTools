@@ -1520,9 +1520,13 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         for cl in classList:
             # getting table schema
-            tableSchema = self.getTableSchemaFromDb(cl)
+            if '.' not in cl:
+                tableSchema = self.getTableSchemaFromDb(cl)
+                fullTableName = tableSchema+'.'+cl
+            else:
+                fullTableName = cl
             # making the query using table schema and table name
-            sql = self.gen.dropCentroid(tableSchema+'.'+cl)
+            sql = self.gen.dropCentroid(fullTableName)
             if not query.exec_(sql):
                 if useTransaction:
                     self.db.rollback()

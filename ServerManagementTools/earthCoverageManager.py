@@ -56,11 +56,11 @@ class EarthCoverageManager(GenericDbManager):
         oldJsonDict = self.utils.instantiateJsonDict(oldPropertyDict['jsondict'])
         abstractDb.updateEarthCoverageDict(newJsonDict, oldJsonDict, useTransaction = True)
     
-    def undoMaterializationFromDatabase(self, abstractDb, propertyDict):
+    def undoMaterializationFromDatabase(self, abstractDb, propertyName, settingType, edgvVersion):
         """
         Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
         """
-        jsonDict = self.utils.instantiateJsonDict(propertyDict['jsondict'])
+        jsonDict = self.utils.instantiateJsonDict(abstractDb.getRecordFromAdminDb(settingType, propertyName, edgvVersion)['jsondict'])
         abstractDb.dropCentroids(jsonDict['earthCoverageDict'].keys(), useTransaction = False)
     
     def hasStructuralChanges(self, dbNameList):

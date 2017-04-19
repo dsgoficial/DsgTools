@@ -339,7 +339,7 @@ class GenericDbManager(QObject):
                 try:
                     abstractDb.db.transaction()
                     self.adminDb.db.transaction()
-                    self.undoMaterializationFromDatabase(abstractDb, propertyDict) #step done when property management involves changing database structure
+                    self.undoMaterializationFromDatabase(abstractDb, configName, settingType, edgvVersion) #step done when property management involves changing database structure
                     abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
                     self.adminDb.uninstallPropertyOnAdminDb(settingType, configName, edgvVersion, dbName = dbName)
                     abstractDb.db.commit()
