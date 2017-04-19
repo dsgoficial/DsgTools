@@ -129,7 +129,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         """
         run difference to determine holes in the coverage
         """
-        frame = QgsVectorLayer(self.abstractDb.getURI('public.aux_moldura_a', False).uri(), 'public.aux_moldura_a', "postgres")
+        frame = self.loadLayerBeforeValidationProcess(self.frameLayer)
         frameFeat = frame.getFeatures().next()
         
         #getting all geometries
