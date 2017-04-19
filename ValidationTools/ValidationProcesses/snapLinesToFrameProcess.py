@@ -44,11 +44,11 @@ class SnapLinesToFrameProcess(ValidationProcess):
             # adjusting process parameters
             self.parameters = {'Snap': 5.0, 'Reference and Layers': (frameWithElem, classesWithElem)}
 
-    def postProcess(self):
-        """
-        Gets the process that should be execute before this one
-        """
-        return self.tr('Snap to Grid')
+#     def postProcess(self):
+#         """
+#         Gets the process that should be execute before this one
+#         """
+#         return self.tr('Snap to Grid')
         
     def execute(self):
         """

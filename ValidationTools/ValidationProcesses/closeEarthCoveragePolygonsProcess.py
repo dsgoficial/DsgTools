@@ -80,16 +80,20 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         """
         Defines a query layer composed by all features from earthCoverage lines and also by frame
         """
-        #TODO: add frame
         epsg = self.abstractDb.findEPSG()
+        
+        # temp layer
         lineLyr = QgsVectorLayer("multilinestring?crs=EPSG:%d" % epsg,"tempLine",'memory')
         for delimiter in delimiterList:
-            lyr = QgsVectorLayer(self.abstractDb.getURI(delimiter, False).uri(), delimiter, "postgres")
+            # loading/getting each line layer
+            lyr = self.loadLayerBeforeValidationProcess(delimiter)
             featureList = []
             for feat in lyr.getFeatures():
                 featureList.append(feat)
             lineLyr.dataProvider().addFeatures(featureList)
-        frame = QgsVectorLayer(self.abstractDb.getURI('public.aux_moldura_a', False).uri(), 'public.aux_moldura_a', "postgres")
+
+        # loading/getting the frame layer
+        frame = self.loadLayerBeforeValidationProcess(self.frameLayer)
         for feat in frame.getFeatures():
             newFeat = QgsFeature(lineLyr.pendingFields())
             newGeom = QgsGeometry.fromPolyline(feat.geometry().asMultiPolygon()[0][0])
@@ -332,10 +336,8 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             propertyName = propertyDict[edgvVersion][0]
             settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
             earthCoverageDict = settingDict['earthCoverageDict']
-            if len(earthCoverageDict.keys()) == 0:
-                self.setStatus(self.tr('Earth coverage not defined!'), 1)
-                QgsMessageLog.logMessage(self.tr('Earth coverage not defined!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return
+            self.frameLayer = settingDict['frameLayer']
+            
             coverageClassList = earthCoverageDict.keys()
             if coverageClassList.__len__() == 0:
                 self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
