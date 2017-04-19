@@ -147,7 +147,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             if feat.geometry().within(hole):
                 #After detecting that feat is indeed a flag (area with conflicted centroids), combines it with the rest of earth coverage
                 combined = combined.combine(feat.geometry())
-                flagTupleList.append((feat['cl'],-1,self.tr('Area with conflicted centroid.'),binascii.hexlify(feat.geometry().asWkb())))
+                flagTupleList.append((feat['cl'], -1, self.tr('Area with conflicted centroid.'), binascii.hexlify(feat.geometry().asWkb()), 'geom'))
         
         destIdx = areaLyr.fieldNameIndex('destid')
         notFlagDict = dict()
@@ -160,7 +160,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         areaLyr.dataProvider().changeAttributeValues(notFlagDict)
         areasWithoutCentroids = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000')))]
         for feat in areasWithoutCentroids:
-                flagTupleList.append((feat['cl'],-1,self.tr('Area without centroid.'),binascii.hexlify(feat.geometry().asWkb())))
+                flagTupleList.append((feat['cl'], -1, self.tr('Area without centroid.'), binascii.hexlify(feat.geometry().asWkb()), 'geom'))
         #finishing the raise flags step
         if len(flagTupleList) > 0:
             self.addFlag(flagTupleList)
@@ -325,7 +325,13 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             #TODO: check if frame is created
-            earthCoverageDict = json.loads(self.abstractDb.getEarthCoverageDict())
+            
+            #getting earth coverage configuration
+            edgvVersion = self.abstractDb.getDatabaseVersion()
+            propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
+            propertyName = propertyDict[edgvVersion][0]
+            settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+            earthCoverageDict = settingDict['earthCoverageDict']
             if len(earthCoverageDict.keys()) == 0:
                 self.setStatus(self.tr('Earth coverage not defined!'), 1)
                 QgsMessageLog.logMessage(self.tr('Earth coverage not defined!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -335,6 +341,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
+            
             self.cleanCentroidsAreas(coverageClassList)
             #making temp layers
             epsg = self.abstractDb.findEPSG()
