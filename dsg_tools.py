@@ -623,7 +623,7 @@ class DsgTools:
         self.toolbar.addWidget(self.inspectFeatures)
     
     def createMilitaryMenu(self, parentMenu, icon_path):
-        self.opInstaller = DsgToolsOpInstaller(parent = self, parentMenu = parentMenu)
+        self.opInstaller = DsgToolsOpInstaller(self.iface, parent=self, parentMenu=parentMenu)
         action = self.add_action(
             icon_path,
             text=self.tr('DsgTools Op Installer'),
@@ -632,16 +632,8 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         parentMenu.addAction(action)
+        # if already installed, make the uninstall action and load tool actions
         if self.opInstaller.checkIfInstalled():
-            action = self.add_action(
-                icon_path,
-                text=self.tr('DsgTools Op Uninstaller'),
-                callback=self.uninstallDsgToolsOp,
-                parent=parentMenu,
-                add_to_menu=False,
-                add_to_toolbar=False)
-            parentMenu.addAction(action)
-            self.opInstaller.toolList.append(action)
             self.opInstaller.loadTools()
 
     def unload(self):
@@ -656,7 +648,6 @@ class DsgTools:
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
-
 
     def run(self):
         """
@@ -693,7 +684,7 @@ class DsgTools:
         """
         Uninstall dsgtoolsop
         """
-        self.opInstaller.uninstallDsgToolsOp(self.iface)
+        self.opInstaller.uninstallDsgToolsOp()
 
     def showHelp(self):
         """

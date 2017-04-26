@@ -27,7 +27,6 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtGui import QMessageBox
 
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'dsgToolsOpInstallerDialog.ui'))
 
@@ -48,5 +47,4 @@ class DsgToolsOpInstallerDialog(QtGui.QDialog, FORM_CLASS):
         if fileZipPath == [] or fileZipPath == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to install!'))
             return
-        self.dsgToolsInstaller.installDsgToolsOp(fileZipPath, parentUi = self)
-        pass
+        self.dsgToolsInstaller.installDsgToolsOp(fileZipPath, parentUi=self)
