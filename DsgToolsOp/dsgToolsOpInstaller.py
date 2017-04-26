@@ -156,7 +156,6 @@ class DsgToolsOpInstaller(QObject):
             add_to_menu=False,
             add_to_toolbar=False)
         parentMenu.addAction(action)
-        return action
     
     def unzipFiles(self, fullZipPath, auxFolder):
         """
@@ -223,9 +222,7 @@ class DsgToolsOpInstaller(QObject):
             self.toolList = []
             from DsgTools.DsgToolsOp.MilitaryTools.toolLoader import ToolLoader
             self.toolLoader = ToolLoader(self.parentMenu, self.parent, self.icon_path)
-            toolAction = self.toolLoader.loadTools()
-            uninstallAction = self.addUninstall(self.icon_path, self.parent, self.parentMenu)
-            self.toolList.append(toolAction)
-            self.toolList.append(uninstallAction)
+            self.toolLoader.loadTools()
+            self.addUninstall(self.icon_path, self.parent, self.parentMenu)
         except Exception as e:
             QMessageBox.critical(self.parentMenu, self.tr('Critical!'), self.tr('Problem installing DsgToolsOp: ') + '|'.join(e.args))

@@ -685,6 +685,8 @@ class DsgTools:
         Uninstall dsgtoolsop
         """
         self.opInstaller.uninstallDsgToolsOp()
+        self.unload()
+        self.initGui()
 
     def showHelp(self):
         """
