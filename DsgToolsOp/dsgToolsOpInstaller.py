@@ -94,10 +94,9 @@ class DsgToolsOpInstaller(QObject):
         """
         Removes created menus
         """
-        for tupple_ in self.toolList:
-            text = tupple_[0]
-            action = tupple_[1]
-            self.iface.removePluginMenu(text, action)
+        for action in self.toolList:
+            self.iface.removePluginMenu(self.tr('&DSG Tools'), action)
+            self.iface.removeToolBarIcon(action)
         self.toolList = []
 
     def installDsgToolsOp(self, fullZipPath, parentUi=None):
@@ -149,16 +148,15 @@ class DsgToolsOpInstaller(QObject):
         """
         Creates the uninstall action menu
         """
-        uninstallText = parent.tr('DsgTools Op Uninstaller')
         action = parent.add_action(
             icon_path,
-            text=uninstallText,
+            text=parent.tr('DsgTools Op Uninstaller'),
             callback=parent.uninstallDsgToolsOp,
             parent=parentMenu,
             add_to_menu=False,
             add_to_toolbar=False)
         parentMenu.addAction(action)
-        return uninstallText, action
+        return action
     
     def unzipFiles(self, fullZipPath, auxFolder):
         """
@@ -225,9 +223,9 @@ class DsgToolsOpInstaller(QObject):
             self.toolList = []
             from DsgTools.DsgToolsOp.MilitaryTools.toolLoader import ToolLoader
             self.toolLoader = ToolLoader(self.parentMenu, self.parent, self.icon_path)
-            toolText, toolAction = self.toolLoader.loadTools()
-            uninstallText, uninstallAction = self.addUninstall(self.icon_path, self.parent, self.parentMenu)
-            self.toolList.append((toolText, toolAction))
-            self.toolList.append((uninstallText, uninstallAction))
+            toolAction = self.toolLoader.loadTools()
+            uninstallAction = self.addUninstall(self.icon_path, self.parent, self.parentMenu)
+            self.toolList.append(toolAction)
+            self.toolList.append(uninstallAction)
         except Exception as e:
             QMessageBox.critical(self.parentMenu, self.tr('Critical!'), self.tr('Problem installing DsgToolsOp: ') + '|'.join(e.args))
