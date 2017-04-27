@@ -40,8 +40,6 @@ class DsgToolsOpInstaller(QObject):
         self.utils = Utils()
         self.parent = parent
         self.icon_path = ':/plugins/DsgTools/icons/militarySimbology.png'
-        # QAction list created when installing
-        self.toolList = []
     
     def createAuxFolder(self):
         """
@@ -57,19 +55,18 @@ class DsgToolsOpInstaller(QObject):
     
     def deleteAuxFolder(self):
         """
-        Deletes the auxiliar folder created by createAuxFolder method
+        Deletes the auxiliar folder
         """
+        # current path point to DsgToolsOp folder
         currentPath = os.path.abspath(os.path.dirname(__file__))
-        top = os.path.join(currentPath, 'auxiliar')
-        shutil.rmtree(top, ignore_errors=True)
+        # working on MilitaryTools folder
+        auxPath = os.path.join(currentPath,'auxiliar')
+        shutil.rmtree(auxPath, ignore_errors=True)
     
     def uninstallDsgToolsOp(self):
         """
         Uninstall all folders and files created
         """
-        # removing the actions previously created by the installer
-        self.removeMenus()
-
         parentUi = self.iface.mainWindow()
         if QMessageBox.question(parentUi, self.tr('Question'), self.tr('DsgToolsOp is going to be uninstalled. Would you like to continue?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
@@ -89,15 +86,6 @@ class DsgToolsOpInstaller(QObject):
                     os.remove(os.path.join(toolsPath, file_))
 
         QMessageBox.information(parentUi, self.tr('Success!'), self.tr('DsgToolsOp uninstalled successfully!'))
-    
-    def removeMenus(self):
-        """
-        Removes created menus
-        """
-        for action in self.toolList:
-            self.iface.removePluginMenu(self.tr('&DSG Tools'), action)
-            self.iface.removeToolBarIcon(action)
-        self.toolList = []
 
     def installDsgToolsOp(self, fullZipPath, parentUi=None):
         """
@@ -113,6 +101,10 @@ class DsgToolsOpInstaller(QObject):
             destFolder = os.path.join(currentPath, 'MilitaryTools')
             # unzipping files into Military tools
             self.unzipFiles(fullZipPath, auxFolder)
+            # checking the zip file before installation
+            if not self.checkZipFile():
+                self.deleteAuxFolder()
+                return
             # check if installed
             if self.checkIfInstalled():
                 # if installed, get the version
@@ -165,6 +157,9 @@ class DsgToolsOpInstaller(QObject):
         """
         zip = zipfile.ZipFile(fullZipPath)
         zip.extractall(auxFolder)
+        currentPath = os.path.abspath(os.path.dirname(__file__))
+        init = open(os.path.join(currentPath, 'auxiliar', '__init__.py'), 'w')
+        init.close()
 
     def copyFiles(self, auxFolder, destFolder):
         """
@@ -214,6 +209,17 @@ class DsgToolsOpInstaller(QObject):
         jsonDict = self.utils.readJsonFile(versionPath)
         return jsonDict['version']
     
+    def checkZipFile(self):
+        """
+        Verifies the zip file prior to install
+        """
+        try:
+            from DsgTools.DsgToolsOp.auxiliar.toolLoader import ToolLoader
+            return True
+        except Exception as e:
+            QMessageBox.critical(self.parentMenu, self.tr('Critical!'), self.tr('Invalid Zip file: ') + '|'.join(e.args))
+            return False
+
     def loadTools(self):
         """
         Loads the tools present in the installer zip file
