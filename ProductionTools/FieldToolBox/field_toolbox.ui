@@ -11,13 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Reclassification Toolbox</string>
+   <string>DSGTools Feature (Re)classification Tool</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0" colspan="2">
-     <widget class="ConnectionWidget" name="widget" native="true"/>
-    </item>
     <item row="1" column="1">
      <spacer name="verticalSpacer">
       <property name="orientation">
@@ -46,14 +43,17 @@
       </item>
      </widget>
     </item>
-    <item row="3" column="0">
-     <widget class="QCheckBox" name="checkBox">
+    <item row="7" column="0" colspan="2">
+     <widget class="QPushButton" name="setupButton">
       <property name="text">
-       <string>Use real time editing</string>
+       <string>Setup</string>
       </property>
      </widget>
     </item>
-    <item row="4" column="0" colspan="2">
+    <item row="0" column="0" colspan="2">
+     <widget class="ConnectionWidget" name="widget" native="true"/>
+    </item>
+    <item row="5" column="0" colspan="2">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
        <bool>true</bool>
@@ -64,14 +64,14 @@
          <x>0</x>
          <y>0</y>
          <width>281</width>
-         <height>219</height>
+         <height>210</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
      </widget>
     </item>
-    <item row="5" column="0" colspan="2">
+    <item row="6" column="0" colspan="2">
      <widget class="QPushButton" name="editCurrentConfigButton">
       <property name="enabled">
        <bool>false</bool>
@@ -81,10 +81,26 @@
       </property>
      </widget>
     </item>
-    <item row="6" column="0" colspan="2">
-     <widget class="QPushButton" name="setupButton">
+    <item row="4" column="0">
+     <widget class="QRadioButton" name="reclassificationRadioButton">
+      <property name="toolTip">
+       <string>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</string>
+      </property>
       <property name="text">
-       <string>Setup</string>
+       <string>Reclassify Feature Mode</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QRadioButton" name="newFeatureRadioButton">
+      <property name="toolTip">
+       <string>After digitizing, the feature is set with the attributes configured in the selected button</string>
+      </property>
+      <property name="text">
+       <string>New Feature Mode</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </item>

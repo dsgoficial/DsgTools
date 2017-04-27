@@ -117,13 +117,13 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #actual button creation step
         self.createButtons(self.reclassificationDict, withTabs)
             
-    @pyqtSlot(int)
-    def on_checkBox_stateChanged(self, state):
+    @pyqtSlot(bool, name = 'on_newFeatureRadioButton_toggled')
+    def turnButtonsOn(self, enabled):
         """
         Adjusts tool behavior. The default state makes the tool work with selected features
         but the user can choose to acquire a feature in real time. When working in real time the buttons must be checkable.
         """
-        if self.checkBox.checkState() == Qt.Checked:
+        if enabled:
             #connecting iface signals
             self.iface.currentLayerChanged.connect(self.acquire)
             for button in self.buttons:
@@ -133,6 +133,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 button.setCheckable(True)
         else:
             #disconnecting iface signals
+            self.disconnectLayerSignals()
             try:self.iface.currentLayerChanged.disconnect(self.acquire)
             except:pass
             for button in self.buttons:
@@ -194,8 +195,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.createButtonsWithTabs(reclassificationDict)
         else:
             self.createButtonsWithoutTabs(reclassificationDict)
-            
-        self.on_checkBox_stateChanged(0)
+        self.turnButtonsOn(self.newFeatureRadioButton.isChecked())
             
     def createButtonsWithoutTabs(self, reclassificationDict):
         """
