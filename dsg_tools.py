@@ -54,6 +54,7 @@ from DsgTools.AttributeTools.attributes_viewer import AttributesViewer
 from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
+from DsgTools.ProductionTools.StyleManagerTool.styleManagerTool import StyleManagerTool
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
@@ -120,6 +121,7 @@ class DsgTools:
         self.BDGExTools = BDGExTools()
         self.minimumAreaTool = MinimumAreaTool(iface)
         self.inspectFeatures = InspectFeatures(iface)
+        self.styleManagerTool = StyleManagerTool(iface)
         self.copyPasteTool = CopyPasteTool(iface)
 
     # noinspection PyMethodMayBeStatic
@@ -621,6 +623,7 @@ class DsgTools:
         
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
+        self.toolbar.addWidget(self.styleManagerTool)
     
     def createMilitaryMenu(self, parentMenu, icon_path):
         self.opInstaller = DsgToolsOpInstaller(self.iface, parent=self, parentMenu=parentMenu)

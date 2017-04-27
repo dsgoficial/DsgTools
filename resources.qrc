@@ -42,5 +42,6 @@
                 <file>icons/custom_tools.png</file>
 		<file>icons/genericSelect.png</file>  
 		<file>icons/attributeSelector.png</file> 
+                <file>icons/refresh.png</file> 
     </qresource>
 </RCC>
