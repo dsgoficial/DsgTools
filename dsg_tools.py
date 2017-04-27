@@ -522,8 +522,19 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/fieldToolbox.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Feature reclassification tool'),
+            text=self.tr('Feature (Re)classification Tool'),
             callback=self.showFieldToolbox,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/frame.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Create Frame'),
+            callback=self.createFrame,
             parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
@@ -602,17 +613,6 @@ class DsgTools:
             icon_path,
             text=self.tr('Load Auxiliar Structure'),
             callback=self.loadAuxStruct,
-            parent=layers,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        layers.addAction(action)
-        self.layerButton.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/frame.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create Frame'),
-            callback=self.createFrame,
             parent=layers,
             add_to_menu=False,
             add_to_toolbar=False)
