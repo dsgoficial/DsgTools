@@ -228,6 +228,8 @@
 					DbTools/BatchDbCreator/createBatchIncrementing.py \
 					DbTools/BatchDbCreator/__init__.py \
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
+					ProductionTools/StyleManagerTool/__init__.py \
+					ProductionTools/StyleManagerTool/styleManagerTool.py \
 
 
  FORMS         =	ui_about.ui \
@@ -313,6 +315,7 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.ui \
 					DbTools/BatchDbCreator/createBatchIncrementing.ui \
 					DbTools/BatchDbCreator/batchDbCreator.ui \
+					ProductionTools/StyleManagerTool/styleManagerTool.ui \
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
