@@ -2198,6 +2198,18 @@ class PostgisDb(AbstractDb):
             geomDict[aux['table_name']]=aux['attributes']
         return geomDict
     
+    def getTablesJsonList(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getTablesJsonList()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting tables dict from db: ")+query.lastError().text())
+        geomList = []
+        while query.next():
+            geomList.append(json.loads(query.value(0)))
+        return geomList
+            
+    
     def getGeomTypeDict(self):
         self.checkAndOpenDb()
         sql = self.gen.getGeomByPrimitive()

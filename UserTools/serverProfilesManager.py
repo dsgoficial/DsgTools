@@ -247,17 +247,21 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         Makes a tree widget were the user can define profile properties
         """
         try:
-            geomTypeDict = abstractDb.getGeomTypeDict()
-            geomDict = abstractDb.getGeomDict(geomTypeDict, insertCategory = True)
+            #get a dict with all tables from database
+            geomList = abstractDb.getTablesJsonList()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return
         profile = dict()
         categories = dict()
-        for layerName in geomDict['tablePerspective'].keys():
-            schema = geomDict['tablePerspective'][layerName]['schema']
-            category = geomDict['tablePerspective'][layerName]['category']
+        for jsonItem in geomList:
+            layerName = jsonItem['table_name']
+            schema = jsonItem['table_schema']
+            if version <> 'Non_EDGV':
+                category = layerName.split('_')[0]
+            else:
+                category = schema
             if schema not in categories.keys():
                 categories[schema] = dict()
             if category not in categories[schema].keys():

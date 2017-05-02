@@ -968,6 +968,10 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select row_to_json(a) from (select type as geomtype, array_agg(f_table_name) as classlist from public.geometry_columns where f_table_schema not in ('views','topology') group by type) as a"""
         return sql
     
+    def getTablesJsonList(self):
+        sql = """select row_to_json(a) from (select table_schema::text, table_name::text from information_schema.tables where table_type = 'BASE TABLE' and table_schema not in ('pg_catalog', 'information_schema') order by table_schema, table_name) as a"""
+        return sql
+
     def getGeomColumnDict(self):
         sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology')"""
         return sql
