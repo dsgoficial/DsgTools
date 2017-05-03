@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="pt_BR">
 <context>
     <name>@default</name>
     <message>
@@ -947,7 +948,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../ServerTools/batchDbManager.ui" line="405"/>
         <source>Field Toolbox Configuration</source>
-        <translation>Ajuster de Reclassificação</translation>
+        <translation>Ajustes de Reclassificação</translation>
     </message>
     <message>
         <location filename="../ServerTools/batchDbManager.py" line="176"/>
@@ -1315,7 +1316,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="63"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
 </context>
 <context>
@@ -4000,27 +4001,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../dsg_tools.py" line="250"/>
         <source>Dsg Tools Military Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas Militares do Dsg Tools</translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="525"/>
         <source>Feature (Re)classification Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramenta de (Re)classificação de feições</translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="569"/>
         <source>Copy and Paste Attribute Set</source>
-        <translation type="unfinished"></translation>
+        <translation>Copiar e Colar Conjunto de Atributos</translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="580"/>
         <source>Generic Selector</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleção Genérica de Feições</translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="630"/>
         <source>DsgTools Op Installer</source>
-        <translation type="unfinished"></translation>
+        <translation>Instalador do DsgTools Op</translation>
     </message>
 </context>
 <context>
@@ -4149,12 +4150,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="71"/>
         <source>Warning! Enter an Earth Coverage Name!</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro! Entre um nome para a Cobertura Terrestre!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="74"/>
         <source>Warning! Earth Coverage Name already exists!</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
     </message>
 </context>
 <context>
@@ -4594,7 +4595,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="67"/>
         <source>Warning! Select a template database!</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro! Selecione um banco como modelo!</translation>
     </message>
 </context>
 <context>
@@ -4698,27 +4699,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="14"/>
         <source>DSGTools Feature (Re)classification Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>DSGTools: Ferramenta de (Re)classificação</translation>
     </message>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="87"/>
         <source>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
     </message>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="90"/>
         <source>Reclassify Feature Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de Reclassificação de Feições</translation>
     </message>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="97"/>
         <source>After digitizing, the feature is set with the attributes configured in the selected button</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="100"/>
         <source>New Feature Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de Aquisição de Feições</translation>
     </message>
 </context>
 <context>
@@ -4851,12 +4852,14 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="101"/>
         <source>Set Zoom:</source>
-        <translation>Ajustar aproximação:</translation>
+        <translation>Ajustar 
+aproximação:</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="111"/>
         <source>Initial feat ID</source>
-        <translation>ID iniciação de feição</translation>
+        <translation>ID iniciação 
+de feição</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="135"/>
@@ -4897,7 +4900,8 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="153"/>
         <source>Only on selected 
 features</source>
-        <translation type="unfinished"></translation>
+        <translation>Apenas Feições
+Selecionadas</translation>
     </message>
 </context>
 <context>
@@ -5307,40 +5311,40 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.ui" line="35"/>
         <source>Property Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome da Propriedade</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.ui" line="61"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.ui" line="68"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.py" line="55"/>
         <source>Enter a parameter name!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Entre um nome para o parâmetro!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.py" line="58"/>
         <source>Parameter already exists! Choose another name!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Parâmetro existente! Escolha outro nome para o parâmetro!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.py" line="60"/>
         <source>Select a template database!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um banco como modelo!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/genericParameterSetter.py" line="67"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Alerta!</translation>
     </message>
 </context>
 <context>
@@ -5398,7 +5402,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="68"/>
         <source>Running process</source>
-        <translation type="unfinished"></translation>
+        <translation>Executando processo</translation>
     </message>
 </context>
 <context>
@@ -5451,7 +5455,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="68"/>
         <source>Running process</source>
-        <translation type="unfinished"></translation>
+        <translation>Executando processo</translation>
     </message>
 </context>
 <context>
@@ -5509,7 +5513,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="68"/>
         <source>Running process</source>
-        <translation type="unfinished"></translation>
+        <translation>Executando processo</translation>
     </message>
 </context>
 <context>
@@ -5708,7 +5712,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="74"/>
         <source>Small Line.</source>
-        <translation type="unfinished"></translation>
+        <translation>Linha pequena.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="79"/>
@@ -7026,102 +7030,102 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../CustomWidgets/permissionWidget.ui" line="59"/>
         <source>Import</source>
-        <translation type="unfinished">Importar</translation>
+        <translation>Importar</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.ui" line="66"/>
         <source>Batch Import</source>
-        <translation type="unfinished">Importar em lote</translation>
+        <translation>Importar em lote</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.ui" line="73"/>
         <source>Export</source>
-        <translation type="unfinished">Exportar</translation>
+        <translation>Exportar</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.ui" line="80"/>
         <source>Batch Export</source>
-        <translation type="unfinished">Exportar em lote</translation>
+        <translation>Exportar em lote</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="265"/>
         <source>Select a dsgtools profile</source>
-        <translation type="unfinished">Selecione um perfil dsgtools</translation>
+        <translation>Selecione um perfil dsgtools</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="265"/>
         <source>json file (*.json)</source>
-        <translation type="unfinished">arquivo json (*.json)</translation>
+        <translation>arquivo json (*.json)</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="330"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Alerta!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="267"/>
         <source>Error! Select a file to import!</source>
-        <translation type="unfinished">Erro! Selecione um arquivo para importar!</translation>
+        <translation>Erro! Selecione um arquivo para importar!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="327"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="273"/>
         <source>Permission successfully imported.</source>
-        <translation type="unfinished">Permissão importada com sucesso.</translation>
+        <translation>Permissão importada com sucesso.</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="330"/>
         <source>Error! Problem importing permission: </source>
-        <translation type="unfinished">Erro! Problema importando permissão: </translation>
+        <translation>Erro! Problema importando permissão: </translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="282"/>
         <source>Error! Select a profile to export!</source>
-        <translation type="unfinished">Erro! Selecione um perfil para exportar!</translation>
+        <translation>Erro! Selecione um perfil para exportar!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="303"/>
         <source>Select a folder to output</source>
-        <translation type="unfinished">Selecione um diretório de saída</translation>
+        <translation>Selecione um diretório de saída</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="305"/>
         <source>Error! Select a output!</source>
-        <translation type="unfinished">Erro! Selecione uma saída!</translation>
+        <translation>Erro! Selecione uma saída!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="295"/>
         <source>Permission successfully exported.</source>
-        <translation type="unfinished">Permissão exportada com sucesso.</translation>
+        <translation>Permissão exportada com sucesso.</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="314"/>
         <source>Error! Problem exporting permission: </source>
-        <translation type="unfinished">Erro! Problema exportando permissão: </translation>
+        <translation>Erro! Problema exportando permissão: </translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="311"/>
         <source>Permissions successfully exported.</source>
-        <translation type="unfinished">Permissões exportadas com sucesso.</translation>
+        <translation>Permissões exportadas com sucesso.</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="319"/>
         <source>Select a folder with permissions: </source>
-        <translation type="unfinished">Selecione um diretório com permissões: </translation>
+        <translation>Selecione um diretório com permissões: </translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="321"/>
         <source>Error! Select a input folder!</source>
-        <translation type="unfinished">Erro! Selecione um diretório de entrada!</translation>
+        <translation>Erro! Selecione um diretório de entrada!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/permissionWidget.py" line="327"/>
         <source>Permissions successfully imported.</source>
-        <translation type="unfinished">Permissões importadas com sucesso.</translation>
+        <translation>Permissões importadas com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -7889,7 +7893,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../Factories/DbFactory/postgisDb.py" line="3138"/>
         <source>Problem getting primary key column: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao identificar a coluna de chave primária:</translation>
     </message>
 </context>
 <context>
@@ -7945,7 +7949,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/processParametersDialog.py" line="93"/>
         <source>Select layers to be snapped</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione as camadas a serem atraídas</translation>
     </message>
 </context>
 <context>
@@ -8212,7 +8216,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="54"/>
         <source>There are no duplicated geometries.</source>
-        <translation>Não há geometrias duplicadas</translation>
+        <translation>Não há geometrias duplicadas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
@@ -8765,32 +8769,32 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="192"/>
         <source>Profile </source>
-        <translation type="unfinished">Perfil </translation>
+        <translation>Perfil </translation>
     </message>
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="186"/>
         <source> for EDGV </source>
-        <translation type="unfinished"> para EDGV </translation>
+        <translation> para EDGV </translation>
     </message>
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="186"/>
         <source> already exists!</source>
-        <translation type="unfinished"> já existe!</translation>
+        <translation> já existe!</translation>
     </message>
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="192"/>
         <source> created successfully!</source>
-        <translation type="unfinished"></translation>
+        <translation>criado com sucesso!</translation>
     </message>
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="253"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="253"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
 </context>
 <context>
@@ -9093,7 +9097,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="62"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
 </context>
 <context>
@@ -9141,7 +9145,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="60"/>
         <source>One reference must be selected! Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uma camada de referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="75"/>
@@ -9156,18 +9160,18 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="87"/>
         <source>All features from </source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições de </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="87"/>
         <source> snapped to reference </source>
-        <translation type="unfinished"></translation>
+        <translation>atraídas para a referência </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="87"/>
         <source> succesfully.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -9225,7 +9229,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="73"/>
         <source>One reference must be selected! Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation>Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="81"/>
@@ -9523,22 +9527,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished">Formulário</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="50"/>
         <source>Inspect Features Tool</source>
-        <translation type="unfinished">Ferramenta de inspeção de feições</translation>
+        <translation>Ferramenta de inspeção de feições</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="90"/>
         <source>Refresh database list</source>
-        <translation type="unfinished"></translation>
+        <translation>Recarregar lista de bancos de dados</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="67"/>
         <source>Select Database</source>
-        <translation type="unfinished">Selecione o Banco de Dados</translation>
+        <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="93"/>
@@ -9548,22 +9552,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="105"/>
         <source>Error setting style </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao ajustar o estilo</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="171"/>
         <source>Select Style</source>
-        <translation type="unfinished">Selecionar estilo</translation>
+        <translation>Selecionar estilo</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="137"/>
         <source>No available styles</source>
-        <translation type="unfinished">Sem estilos disponíveis</translation>
+        <translation>Sem estilos disponíveis</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="156"/>
         <source>Feature only implemented for PostGIS and Spatialite</source>
-        <translation type="unfinished"></translation>
+        <translation>Funcionalidade implementada apenas para PostGIS e Spatialite</translation>
     </message>
 </context>
 <context>
@@ -9804,7 +9808,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source>Processo</source>
         <translation type="obsolete">Processo</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
         <source>Situação</source>
         <translation type="obsolete">Situação</translation>
@@ -10249,22 +10253,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source>SIZES</source>
         <translation>TAMANHOS</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="73"/>
         <source>4mm²</source>
         <translation></translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="78"/>
         <source>0.8x0.8mm²</source>
         <translation></translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="83"/>
         <source>25mm²</source>
         <translation></translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="88"/>
         <source>1x1mm²</source>
         <translation></translation>
