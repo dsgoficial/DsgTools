@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>736</width>
-    <height>418</height>
+    <width>746</width>
+    <height>436</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -353,24 +353,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
-           <widget class="QPushButton" name="applyModsFromFilePushButton">
-            <property name="text">
-             <string>Apply selected modification to selected databases</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QPushButton" name="resetToFactoryPushButton">
-            <property name="text">
-             <string>Reset selected databases to original state</string>
-            </property>
-           </widget>
-          </item>
          </layout>
-         <zorder>applyModsFromFilePushButton</zorder>
-         <zorder>resetToFactoryPushButton</zorder>
-         <zorder>customizationManagerWidget</zorder>
         </widget>
        </item>
       </layout>
@@ -418,7 +401,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
