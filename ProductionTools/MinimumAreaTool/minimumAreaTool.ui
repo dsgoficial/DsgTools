@@ -48,17 +48,17 @@
       </item>
       <item>
        <property name="text">
-        <string>25</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>100</string>
        </property>
       </item>
       <item>
        <property name="text">
         <string>50</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>25</string>
        </property>
       </item>
      </widget>
@@ -70,17 +70,17 @@
       </item>
       <item>
        <property name="text">
+        <string>25mm²</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
         <string>4mm²</string>
        </property>
       </item>
       <item>
        <property name="text">
         <string>0.8x0.8mm²</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>25mm²</string>
        </property>
       </item>
       <item>
