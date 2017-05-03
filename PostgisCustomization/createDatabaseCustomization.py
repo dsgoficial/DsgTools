@@ -50,29 +50,19 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
 
 class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, serverAbstractDb, customizationManager, customJsonDict = None, parent = None):
+    def __init__(self, abstractDb, edgvVersion, customizationManager, customJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
-        self.serverAbstractDb = serverAbstractDb
         self.customizationManager = customizationManager
+        self.abstractDb = abstractDb
+        self.edgvVersion = edgvVersion
         self.contentsDict = dict()
         self.populateCustomizationCombo()
-        self.setWidgetsEnabled(False)
+        self.setWidgetsEnabled(True)
         self.utils = Utils()
         if customJsonDict:
             self.createWidgetsFromCustomJsonDict(customJsonDict)
-    
-    @pyqtSlot(int, name='on_versionSelectionComboBox_currentIndexChanged')
-    def setUiState(self, comboIdx = 0):
-        if comboIdx == 0:
-            self.clearWidgets()
-            self.setWidgetsEnabled(False)
-            self.abstractDb = None
-        else:
-            self.setWidgetsEnabled(True)
-            edgvVersion = self.versionSelectionComboBox.currentText()
-            self.abstractDb = self.customizationManager.instantiateTemplateDb(edgvVersion)
 
     def clearWidgets(self):
         rootItem = self.customizationTreeWidget.invisibleRootItem()

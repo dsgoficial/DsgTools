@@ -73,3 +73,21 @@ class CustomizationManager(GenericDbManager):
         if viewType == 'database': {databaseName: ['-list of customizations with customization']}
         """
         return self.adminDb.getCustomizationPerspectiveDict(viewType)
+
+    def materializeIntoDatabase(self, abstractDb, propertyDict):
+        """
+        Method that is reimplemented in each child when installing a property involves changing any sort of database structure
+        """
+        pass
+
+    def undoMaterializationFromDatabase(self, abstractDb, configName, settingType, edgvVersion):
+        """
+        Method that is reimplemented in each child when uninstalling a property involves changing any sort of database structure
+        """
+        pass
+    
+    def hasStructuralChanges(self, dbNameList):
+        """
+        Method that is reimplemented in each child
+        """
+        return []

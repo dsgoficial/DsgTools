@@ -29,27 +29,21 @@ from DsgTools.PostgisCustomization.CustomJSONTools.customJSONValidator import Cu
 from DsgTools.Factories.DbCustomizationFactory.dbCustomizationFactory import DbCustomizationFactory
 
 class DbCustomizer(QObject):
-    def __init__(self, postgisDb):
+    def __init__(self):
         super(DbCustomizer, self).__init__()
-        self.utils = Utils()
-        self.postgisDb = postgisDb
         self.customJSONValidator = None
         self.dbCustomizationFactory = DbCustomizationFactory()
     
-    def importFromJSON(self, customJSON):
-        self.customJSONValidator = CustomJSONValidator(customJSON)
+    def buildCustomizationSQL(self, customJSON):
+        sql = ''
+        for customizationTag in customJSON.keys():
+            customCreator = self.dbCustomizationFactory.createCustomization(customizationTag, customJSON[customizationTag])
+            sql += customCreator.buildSql()
+        return sql
     
-    def materializeIntoDb(self):
-        pass
-    
-    def removeFromDb(self):
-        pass
-    
-    def logOperation(self):
-        pass
-    
-    def buildCustomizer(self, jsonFile, type):
-        pass
-    
-    def getAvailableCustomizationsDict(self):
-        pass
+    def buildUndoCustomizationSQL(self, customJSON):
+        sql = ''
+        for customizationTag in customJSON.keys():
+            customCreator = self.dbCustomizationFactory.createCustomization(customizationTag, customJSON[customizationTag])
+            sql += customCreator.buildUndoSql()
+        return sql

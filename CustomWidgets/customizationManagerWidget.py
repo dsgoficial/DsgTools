@@ -29,9 +29,11 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
 from DsgTools.ServerManagementTools.customizationManager import CustomizationManager
+from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.PostgisCustomization.createDatabaseCustomization import CreateDatabaseCustomization
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.Utils.utils import Utils
+from DsgTools.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
@@ -57,7 +59,20 @@ class CustomizationManagerWidget(GenericManagerWidget):
         '''
         Slot that opens the create profile dialog
         '''
-        dlg = CreateDatabaseCustomization(self.serverAbstractDb, self.genericDbManager)
+        paramDlg = GenericParameterSetter()
+        if not paramDlg.exec_():
+            return
+        templateDb, propertyName, edgvVersion = paramDlg.getParameters()
+        if edgvVersion == self.tr('Select EDGV Version'):
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a EDGV Version'))
+            return
+        if propertyName == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter an Earth Coverage Name!'))
+            return
+        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Earth Coverage Name already exists!'))
+            return
+        dlg = CreateDatabaseCustomization(templateDb, edgvVersion, self.genericDbManager)
         dlg.exec_()
     
     @pyqtSlot(bool)
