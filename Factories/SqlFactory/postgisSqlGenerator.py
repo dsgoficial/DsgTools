@@ -140,7 +140,8 @@ class PostGISSqlGenerator(SqlGenerator):
                 sql += """GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
                 sql += """GRANT USAGE ON ALL SEQUENCES IN SCHEMA "{0}" TO "{1}";\n""".format(schema,roleName)
         
-        sql += """GRANT SELECT ON db_metadata TO "{0}";\n""".format(roleName)
+        # not needed anymore due to our generic approach
+        #sql += """GRANT SELECT ON db_metadata TO "{0}";\n""".format(roleName)
         sql += """GRANT SELECT ON public.geometry_columns TO "{0}";\n""".format(roleName)
         sql += """GRANT ALL ON ALL TABLES IN SCHEMA information_schema TO "{0}";\n""".format(roleName)
         sql += """GRANT ALL ON ALL TABLES IN SCHEMA pg_catalog TO "{0}";\n""".format(roleName)
