@@ -56,20 +56,20 @@ class RemoveDuplicatesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in flagsClasses:
                 # preparation
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl)
                 localProgress.step()
                 #running the process in the temp table
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 problems = self.abstractDb.removeFeatures(processTableName,self.flagsDict[cl], keyColumn)
                 localProgress.step()
                 numberOfProblems += problems
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage(self.tr('{0} duplicated features from {1} were removed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.setStatus(self.tr('{0} duplicated features were removed.').format(numberOfProblems), 1)
+                QgsMessageLog.logMessage(str(problems) + self.tr(' duplicated features from ') + cl + self.tr(' were removed.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.setStatus(str(numberOfProblems) + self.tr(' duplicated features were removed.'), 1)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

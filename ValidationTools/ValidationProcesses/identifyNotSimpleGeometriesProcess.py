@@ -8,7 +8,7 @@
         begin                : 2016-02-18
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -65,7 +65,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 localProgress.step()
                     
             # running the process
-            localProgress = ProgressWidget(0, 1, self.tr('Running process').format(cl), parent=self.iface.mapCanvas())
+            localProgress = ProgressWidget(0, 1, self.tr('Running process ') + cl, parent=self.iface.mapCanvas())
             localProgress.step()
             result = self.abstractDb.getNotSimpleRecords(classesWithGeom, geometryColumn, keyColumn)
             localProgress.step()
@@ -86,7 +86,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 numberOfProblems = self.addFlag(recordList)
                 for tuple in recordList:
                     self.addClassesToBeDisplayedList(tuple[0])
-                msg = self.tr('{} features are not simple. Check flags.').format(numberOfProblems)        
+                msg = str(numberOfProblems) + self.tr(' features are not simple. Check flags.')        
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:

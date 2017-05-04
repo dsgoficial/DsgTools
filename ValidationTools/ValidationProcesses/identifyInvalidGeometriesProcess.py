@@ -8,7 +8,7 @@
         begin                : 2016-02-18
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -80,7 +80,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 numberOfInvGeom = self.addFlag(invalidGeomRecordList)
                 for tuple in invalidGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])  
-                msg = self.tr('{} features are invalid. Check flags.').format(numberOfInvGeom)
+                msg = str(numberOfInvGeom) + self.tr(' features are invalid. Check flags.').format()
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:

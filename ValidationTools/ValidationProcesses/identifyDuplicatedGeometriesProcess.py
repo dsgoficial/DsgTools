@@ -8,7 +8,7 @@
         begin                : 2016-02-18
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -87,7 +87,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 for tuple in dupGeomRecordList:
                     self.addClassesToBeDisplayedList(tuple[0])
-                msg =  self.tr('{} features are duplicated. Check flags.').format(numberOfDupGeom)     
+                msg =  str(numberOfDupGeom) + self.tr(' features are duplicated. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
