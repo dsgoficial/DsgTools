@@ -1285,12 +1285,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
         <source>{0} feature(s) from {1} with cleaning errors. Check flags.</source>
-        <translation>{0} feições(s) de {1} com erros de limpeza. Verifique as flags.</translation>
+        <translation type="obsolete">{0} feições(s) de {1} com erros de limpeza. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="110"/>
         <source>There are no cleaning errors on {0}.</source>
-        <translation>Não há erros de limpeza em {0}.</translation>
+        <translation type="obsolete">Não há erros de limpeza em {0}.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="112"/>
@@ -1317,6 +1317,21 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
         <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
+        <source> feature(s) from </source>
+        <translation>feição(ões) da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
+        <source> with cleaning errors. Check flags.</source>
+        <translation>com erros de limpeza. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="110"/>
+        <source>There are no cleaning errors on </source>
+        <translation>Não há erros de limpeza em </translation>
     </message>
 </context>
 <context>
@@ -1360,7 +1375,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="327"/>
         <source>Starting </source>
-        <translation>Iniciando.</translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="327"/>
@@ -1384,8 +1399,8 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="358"/>
-        <source>Processing earth coverage on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Processing earth coverage on </source>
+        <translation>Processando a cobertura terrestre na camada </translation>
     </message>
 </context>
 <context>
@@ -1825,7 +1840,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
@@ -2608,13 +2623,13 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="59"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="65"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
     </message>
 </context>
 <context>
@@ -3650,24 +3665,19 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>DSGTools: Linha Cotadora</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="23"/>
-        <source>After digitizing, the feature is set with the attributes configured in the selected button</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="26"/>
         <source>Ascending Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo Ascendente</translation>
     </message>
     <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="36"/>
         <source>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</source>
-        <translation type="unfinished">Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
+        <translation type="obsolete">Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
     </message>
     <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="39"/>
         <source>Descending Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo Descendente</translation>
     </message>
     <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="114"/>
@@ -3675,14 +3685,14 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Reativar</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow_base.ui" line="14"/>
-        <source>DSGTools Manage Complex Structures</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../AttributeTools/code_list.ui" line="14"/>
         <source>DSGTools: Code List Viewer</source>
         <translation>DSGTools: Visualizador de Code List</translation>
+    </message>
+    <message>
+        <location filename="../ComplexTools/complexWindow_base.ui" line="14"/>
+        <source>DSGTools: Manage Complex Structures</source>
+        <translation>DSGTools: Gerenciar Estruturas Complexas</translation>
     </message>
 </context>
 <context>
@@ -4853,13 +4863,13 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="65"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="70"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
     </message>
 </context>
 <context>
@@ -5452,7 +5462,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="90"/>
         <source>{} features are duplicated. Check flags.</source>
-        <translation>{} feições estão duplicadas. Verifique as flags.</translation>
+        <translation type="obsolete">{} feições estão duplicadas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="94"/>
@@ -5475,14 +5485,19 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Geometria Duplicada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="60"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="68"/>
         <source>Running process</source>
         <translation>Executando processo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="60"/>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="90"/>
+        <source> features are duplicated. Check flags.</source>
+        <translation>feições estão duplicadas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -5510,7 +5525,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="83"/>
         <source>{} features are invalid. Check flags.</source>
-        <translation>{} feições estão inválida. Verifique as flags.</translation>
+        <translation type="obsolete">{} feições estão inválida. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="87"/>
@@ -5528,14 +5543,19 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="60"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="68"/>
         <source>Running process</source>
         <translation>Executando processo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="60"/>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="83"/>
+        <source> features are invalid. Check flags.</source>
+        <translation>feições são inválidas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -5563,7 +5583,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="89"/>
         <source>{} features are not simple. Check flags.</source>
-        <translation>{} feições são não simples. Verifique as flags.</translation>
+        <translation type="obsolete">{} feições são não simples. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="93"/>
@@ -5586,14 +5606,24 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Geometria não simples.</translation>
     </message>
     <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="68"/>
+        <source>Running process</source>
+        <translation type="obsolete">Executando processo</translation>
+    </message>
+    <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="60"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="68"/>
-        <source>Running process</source>
+        <source>Running process </source>
         <translation>Executando processo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="89"/>
+        <source> features are not simple. Check flags.</source>
+        <translation>feições são não simples. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -5626,12 +5656,12 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
         <source>{0} features from {1} have out of bounds angle(s). Check flags.</source>
-        <translation>{0} feições de {1} tem ângulo(s) fora de limites. Verifique as flags.</translation>
+        <translation type="obsolete">{0} feições de {1} tem ângulo(s) fora de limites. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="86"/>
         <source>There are no out of bounds angles on {0}.</source>
-        <translation>Não há ângulos fora de limites em {0}.</translation>
+        <translation type="obsolete">Não há ângulos fora de limites em {0}.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="88"/>
@@ -5660,13 +5690,28 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="61"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="68"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
+        <source> features from</source>
+        <translation>feições da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
+        <source> have out of bounds angle(s). Check flags.</source>
+        <translation>tem ângulos fora do limite. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="86"/>
+        <source>There are no out of bounds angles on </source>
+        <translation>Não há ângulos fora de limites na camada </translation>
     </message>
 </context>
 <context>
@@ -5694,7 +5739,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="78"/>
         <source>{0} features have small areas. Check flags.</source>
-        <translation>{0} feições tem áreas pequenas. Verifique as flags.</translation>
+        <translation type="obsolete">{0} feições tem áreas pequenas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="82"/>
@@ -5718,13 +5763,18 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="62"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="69"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="78"/>
+        <source> features have small areas. Check flags.</source>
+        <translation>feições tem áreas pequenas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -5780,24 +5830,24 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Comprimento pequeno.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="63"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="70"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="74"/>
         <source>Small Line.</source>
         <translation>Linha pequena.</translation>
     </message>
     <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="63"/>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="70"/>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="79"/>
-        <source>{0} features have small lines. Check flags.</source>
-        <translation type="unfinished"></translation>
+        <source> features have small lines. Check flags.</source>
+        <translation>feições tem pequeenas linhas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -5840,12 +5890,12 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
         <source>{0} features from {1} have vertex(es) near edge(s). Check flags.</source>
-        <translation>{0} feiçoões de {1} possuem vértice(s) próximo à arestas. Verifique as flags.</translation>
+        <translation type="obsolete">{0} feiçoões de {1} possuem vértice(s) próximo à arestas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="86"/>
         <source>There are no vertexes near edges on {}.</source>
-        <translation>Não há vértices próximo à arestas em {}.</translation>
+        <translation type="obsolete">Não há vértices próximo à arestas em {}.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="88"/>
@@ -5869,13 +5919,28 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="61"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="68"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
+        <source> features from</source>
+        <translation>feições da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
+        <source> have vertex(es) near edge(s). Check flags.</source>
+        <translation>têm vértices próximos à arestas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="86"/>
+        <source>There are no vertexes near edges on </source>
+        <translation>Não há vértices próximos a arestas na camada  </translation>
     </message>
 </context>
 <context>
@@ -7978,7 +8043,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../Factories/DbFactory/postgisDb.py" line="2210"/>
         <source>Problem getting tables dict from db: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo tabelas do bd: </translation>
     </message>
 </context>
 <context>
@@ -8306,22 +8371,37 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
         <source>{0} duplicated features from {1} were removed.</source>
-        <translation>{0} feiç˜ões duplicadas de {1} foram removidas.</translation>
+        <translation type="obsolete">{0} feiç˜ões duplicadas de {1} foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="72"/>
         <source>{0} duplicated features were removed.</source>
-        <translation>{0} feições duplicadas foram removidas.</translation>
+        <translation type="obsolete">{0} feições duplicadas foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="59"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="64"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
+        <source> duplicated features from </source>
+        <translation>feições duplicadas da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
+        <source> were removed.</source>
+        <translation>foram removidas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="72"/>
+        <source> duplicated features were removed.</source>
+        <translation>feições duplicadas foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -8368,13 +8448,13 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="58"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="64"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
     </message>
 </context>
 <context>
@@ -8435,12 +8515,12 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
         <source>{0} features from {1} were removed.</source>
-        <translation>{0} feições de {1} foram removidas.</translation>
+        <translation type="obsolete">{0} feições de {1} foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="75"/>
         <source>{} features were removed.</source>
-        <translation>{} feições foram removidas.</translation>
+        <translation type="obsolete">{} feições foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="33"/>
@@ -8449,13 +8529,28 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="59"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="65"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
+        <source> features from </source>
+        <translation>feições da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
+        <source> were removed.</source>
+        <translation>foram removidas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="75"/>
+        <source> features were removed.</source>
+        <translation>feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -8493,12 +8588,12 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="74"/>
         <source>{0} features from {1}were changed.</source>
-        <translation>{0} feições de {1} foram modificados.</translation>
+        <translation type="obsolete">{0} feições de {1} foram modificados.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="75"/>
         <source>{} features were removed.</source>
-        <translation>{} feições foram removidas.</translation>
+        <translation type="obsolete">{} feições foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="54"/>
@@ -8507,13 +8602,28 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="59"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="65"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="74"/>
+        <source> features from </source>
+        <translation>feições da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="74"/>
+        <source> were changed.</source>
+        <translation>foram modificadas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="75"/>
+        <source> features were removed.</source>
+        <translation>feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -9151,12 +9261,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="109"/>
         <source>{0} feature(s) of class {1} with snapping errors. Check flags.</source>
-        <translation>{0} feiçõe(s) da classe {1} com erros de snap. Verifique as flags.</translation>
+        <translation type="obsolete">{0} feiçõe(s) da classe {1} com erros de snap. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="111"/>
         <source>There are no snapping errors on {}.</source>
-        <translation>Não há erros de snap em {}.</translation>
+        <translation type="obsolete">Não há erros de snap em {}.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="113"/>
@@ -9183,6 +9293,21 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
         <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="109"/>
+        <source> feature(s) of layer </source>
+        <translation>feição(ões) da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="109"/>
+        <source> with snapping errors. Check flags.</source>
+        <translation>com problemas de atração. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="111"/>
+        <source>There are no snapping errors on </source>
+        <translation>Não há problemas de atração na camada </translation>
     </message>
 </context>
 <context>
@@ -9233,16 +9358,6 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Uma camada de referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="75"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="82"/>
-        <source>Processing features on {}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="87"/>
         <source>All features from </source>
         <translation>Todas as feições de </translation>
@@ -9257,6 +9372,16 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source> succesfully.
 </source>
         <translation>com sucesso.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="75"/>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="82"/>
+        <source>Processing features on </source>
+        <translation>Processando feições na camada </translation>
     </message>
 </context>
 <context>
@@ -9318,13 +9443,13 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="81"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="88"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
     </message>
 </context>
 <context>
@@ -9362,7 +9487,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
         <source>All features snapped successfully.</source>
-        <translation>Todas as feições foram coladas com sucesso.</translation>
+        <translation type="obsolete">Todas as feições foram coladas com sucesso.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="52"/>
@@ -9377,17 +9502,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="80"/>
         <source>All features from {} snapped to grid successfully.</source>
-        <translation>Todas as feições de {} coladas no grid com sucesso.</translation>
+        <translation type="obsolete">Todas as feições de {} coladas no grid com sucesso.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="60"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="71"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
+        <source>All features from </source>
+        <translation>Todas as feições de </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="80"/>
+        <source> snapped to grid successfully.</source>
+        <translation>atraídas à grade com sucesso.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
+        <source> snapped successfully.</source>
+        <translation>atraídas com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -9480,7 +9620,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="117"/>
         <source>{} features are invalid. Check flags.</source>
-        <translation>{} feições são inválidas. Verifique as flags.</translation>
+        <translation type="obsolete">{} feições são inválidas. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="121"/>
@@ -9489,13 +9629,18 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="96"/>
-        <source>Preparing execution for {}</source>
-        <translation type="unfinished"></translation>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="104"/>
-        <source>Running process on {}</source>
-        <translation type="unfinished"></translation>
+        <source>Running process on </source>
+        <translation>Executando o proccsso na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="117"/>
+        <source> features are invalid. Check flags.</source>
+        <translation>feições são inválidas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -9632,7 +9777,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="93"/>
         <source>Loading style {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando o estilo {0}</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="105"/>
@@ -9657,7 +9802,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="50"/>
         <source>Manage Styles Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramenta de Gerência de Estilo</translation>
     </message>
 </context>
 <context>
