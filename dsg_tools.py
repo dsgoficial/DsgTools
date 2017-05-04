@@ -651,6 +651,8 @@ class DsgTools:
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
+        del self.dsgTools
+        del self.toolbar
 
     def run(self):
         """
