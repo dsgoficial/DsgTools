@@ -71,14 +71,14 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
 
                 # snapping lyr to reference
                 features = [feature for feature in lyr.getFeatures()]
-                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on {}').format(cl), parent=self.iface.mapCanvas())
+                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + cl, parent=self.iface.mapCanvas())
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)

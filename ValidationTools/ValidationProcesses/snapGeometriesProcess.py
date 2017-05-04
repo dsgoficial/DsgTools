@@ -106,9 +106,9 @@ class SnapGeometriesProcess(ValidationProcess):
                         recordList.append((cl, tupple[0], self.tr('Snapping error.'), tupple[1], geometryColumn))
                         self.addClassesToBeDisplayedList(cl) 
                     numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(self.tr('{0} feature(s) of class {1} with snapping errors. Check flags.').format(numberOfProblems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) of layer ') + cl + self.tr(' with snapping errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
-                    QgsMessageLog.logMessage(self.tr('There are no snapping errors on {}.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('There are no snapping errors on ') + cl +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
                 self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
             else:

@@ -56,13 +56,13 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
 
                 allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 lyr.startEditing()
                 provider = lyr.dataProvider()
                 uri = QgsDataSourceURI(provider.dataSourceUri())

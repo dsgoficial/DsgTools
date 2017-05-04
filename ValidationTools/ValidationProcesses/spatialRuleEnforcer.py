@@ -222,7 +222,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
-        geometryColumn = 'geom'
+        geometryColumn = 'geom' #WHY?????????? DEATH TO HARDCODED VALUES!!!!!!!!!
         reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
         self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
 

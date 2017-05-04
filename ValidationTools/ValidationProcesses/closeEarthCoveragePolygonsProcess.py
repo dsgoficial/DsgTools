@@ -355,7 +355,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             
             relateDict = dict()
             for cl in coverageClassList:
-                localProgress = ProgressWidget(0, 1, self.tr('Processing earth coverage on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Processing earth coverage on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 #must gather all lines (including frame) to close areas
                 lineLyr = self.defineQueryLayer(earthCoverageDict[cl])

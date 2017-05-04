@@ -62,12 +62,12 @@ class ForceValidityGeometriesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in classesWithFlags:
                 # preparation
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl)
                 localProgress.step()
                 #running the process in the temp table
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 problems = self.abstractDb.forceValidity(processTableName, self.flagsDict[cl], keyColumn)
                 localProgress.step()

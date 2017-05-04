@@ -56,13 +56,13 @@ class RemoveSmallLinesProcess(ValidationProcess):
             numberOfProblems = 0
             for cl in flagsClasses:
                 # preparation
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
                 
                 #running the process on cl
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 problems = len(self.flagsDict[cl])
                 smallIds = [int(flag['id']) for flag in self.flagsDict[cl]]
@@ -71,7 +71,7 @@ class RemoveSmallLinesProcess(ValidationProcess):
                 localProgress.step()
                 numberOfProblems += problems
                 
-                QgsMessageLog.logMessage(self.tr('{0} features from {1}were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(str(problems) + self.tr(' features from ')+cl+self.tr(' were changed.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.setStatus(self.tr('{} features were removed.').format(numberOfProblems), 1) #Finished with flags
             return 1
         except Exception as e:

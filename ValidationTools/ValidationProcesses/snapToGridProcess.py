@@ -57,7 +57,7 @@ class SnapToGridProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 localProgress.step()
@@ -68,7 +68,7 @@ class SnapToGridProcess(ValidationProcess):
                 srid = self.abstractDb.findEPSG(parameters=parameters)                
 
                 #running the process in the temp table
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 self.abstractDb.snapToGrid([processTableName], tol, srid, geometryColumn)
                 localProgress.step()
@@ -77,9 +77,9 @@ class SnapToGridProcess(ValidationProcess):
                 self.postProcessSteps(processTableName, lyr)
                 
                 #setting status
-                QgsMessageLog.logMessage(self.tr('All features from {} snapped to grid successfully.').format(cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('All features from ') + cl + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #returning success
-            self.setStatus(self.tr('All features snapped successfully.').format(cl), 1) #Finished
+            self.setStatus(self.tr('All features from ') + cl + self.tr(' snapped successfully.'), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

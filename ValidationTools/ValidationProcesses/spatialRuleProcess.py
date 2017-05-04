@@ -93,15 +93,15 @@ class SpatialRuleProcess(ValidationProcess):
             rules = self.getRules()
             for rule in rules:
                 # preparation
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(rule[0]), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + rule[0], parent=self.iface.mapCanvas())
                 localProgress.step()
                 class_a, lyrA, aKeyColumn = self.prepareExecution(rule[0])
                 class_b, lyrB, bKeyColumn = self.prepareExecution(rule[3])
                 localProgress.step()
-                geometryColumn = 'geom'
+                geometryColumn = 'geom' #WHY???????? Death to hardcoded values!!!!!!!!
 
                 #running the process in the temp table
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(class_a), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + class_a, parent=self.iface.mapCanvas())
                 localProgress.step()
                 invalidGeomRecordList = self.abstractDb.testSpatialRule(class_a, rule[1], rule[2], class_b, rule[4], rule[5], rule[6], geometryColumn)
                 localProgress.step()
@@ -114,7 +114,7 @@ class SpatialRuleProcess(ValidationProcess):
                     numberOfInvGeom = self.addFlag(invalidGeomRecordList)
                     for tuple in invalidGeomRecordList:
                         self.addClassesToBeDisplayedList(tuple[0])
-                    msg = self.tr('{} features are invalid. Check flags.').format(numberOfInvGeom)
+                    msg = str(numberOfInvGeom) + self.tr(' features are invalid. Check flags.')
                     self.setStatus(msg, 4) #Finished with flags
                     QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:

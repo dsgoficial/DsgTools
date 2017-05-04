@@ -57,7 +57,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 if processTableName not in classesWithGeom:

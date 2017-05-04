@@ -78,14 +78,14 @@ class SnapLinesToFrameProcess(ValidationProcess):
             for classAndGeom in lines:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
                 frameTableName, frameLyr, frameKeyColumn = self.prepareExecution(frame, frameGeometryColumn)
                 localProgress.step()
 
                 #running the process in the temp table
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 self.abstractDb.snapLinesToFrame([processTableName], frameTableName, tol, geometryColumn, keyColumn, frameGeometryColumn)
                 self.abstractDb.densifyFrame([processTableName], frameTableName, tol, geometryColumn, frameGeometryColumn)

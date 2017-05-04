@@ -59,14 +59,14 @@ class IdentifySmallAreasProcess(ValidationProcess):
             for classAndGeom in classesWithElem:
                 # preparation
                 cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 localProgress.step()
 
                 allIds = lyr.allFeatureIds()
                 tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on {}').format(cl), parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
                 for feat in lyr.getFeatures():
                     if feat.geometry().area() < tol:
                         geometry = binascii.hexlify(feat.geometry().asWkb())
@@ -75,7 +75,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
 
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
-                msg = self.tr('{0} features have small areas. Check flags.').format(numberOfProblems) 
+                msg = str(numberOfProblems) + self.tr(' features have small areas. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
