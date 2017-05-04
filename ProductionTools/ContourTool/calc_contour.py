@@ -67,6 +67,7 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         QgsMapLayerRegistry.instance().layersAdded.connect(self.addLayers)
         QgsMapLayerRegistry.instance().layersRemoved.connect(self.populateLayers)
 
+    @pyqtSlot(bool, name = 'on_reactivatePushButton_clicked')
     def activateTool(self):
         """
         Sets this tool as the current active qgis tool
@@ -125,7 +126,12 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
 
         #canvas crs to be used in case a reprojection is needed
         canvasCrs = self.iface.mapCanvas().mapRenderer().destinationCrs()
-        ret = self.contourTool.assignValues(self.attributeCombo.currentText(), self.spinBox.value(), geom, canvasCrs)
+        if self.ascendingRadioButton.isChecked():
+            signal = 1
+        else:
+            signal = -1
+        ret = self.contourTool.assignValues(self.attributeCombo.currentText(), signal*self.spinBox.value(), geom, canvasCrs)
+        self.iface.mapCanvas().refresh()
         if ret == 1:
             self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('Layer successfully updated!'), level=QgsMessageBar.INFO, duration=3)
         elif ret == 0:

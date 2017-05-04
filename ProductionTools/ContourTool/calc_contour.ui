@@ -6,35 +6,59 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>585</width>
-    <height>74</height>
+    <width>838</width>
+    <height>97</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Contour Settings</string>
+   <string>DSGTools: Assign Contour Values Tool</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
+    <item row="0" column="6">
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QRadioButton" name="ascendingRadioButton">
+        <property name="toolTip">
+         <string>After digitizing, the feature is set with the attributes configured in the selected button</string>
+        </property>
+        <property name="text">
+         <string>Ascending Mode</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="descendingRadioButton">
+        <property name="toolTip">
+         <string>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</string>
+        </property>
+        <property name="text">
+         <string>Descending Mode</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLabel" name="label_3">
       <property name="text">
-       <string>Layer:</string>
+       <string>Pace:</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QComboBox" name="layerCombo">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+    <item row="0" column="5">
+     <widget class="QSpinBox" name="spinBox">
+      <property name="minimum">
+       <number>0</number>
       </property>
-      <property name="minimumSize">
-       <size>
-        <width>200</width>
-        <height>0</height>
-       </size>
+      <property name="maximum">
+       <number>1000</number>
+      </property>
+      <property name="value">
+       <number>10</number>
       </property>
      </widget>
     </item>
@@ -61,23 +85,33 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="4">
-     <widget class="QLabel" name="label_3">
-      <property name="text">
-       <string>Pace:</string>
+    <item row="0" column="1">
+     <widget class="QComboBox" name="layerCombo">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>200</width>
+        <height>0</height>
+       </size>
       </property>
      </widget>
     </item>
-    <item row="0" column="5">
-     <widget class="QSpinBox" name="spinBox">
-      <property name="minimum">
-       <number>-1000</number>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Layer:</string>
       </property>
-      <property name="maximum">
-       <number>1000</number>
-      </property>
-      <property name="value">
-       <number>10</number>
+     </widget>
+    </item>
+    <item row="0" column="7">
+     <widget class="QPushButton" name="reactivatePushButton">
+      <property name="text">
+       <string>Reactivate</string>
       </property>
      </widget>
     </item>
