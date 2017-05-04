@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Inspect Features Tool</string>
+      <string>Manage Styles Tool</string>
      </property>
      <property name="text">
       <string/>

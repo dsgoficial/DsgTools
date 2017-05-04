@@ -367,7 +367,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="271"/>
         <source>Error in default customization </source>
-        <translation>Erro na customização padrão.</translation>
+        <translation>Erro na customização padrão</translation>
     </message>
 </context>
 <context>
@@ -761,12 +761,12 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Permissão</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.ui" line="380"/>
+        <location filename="../ServerTools/batchDbManager.ui" line="363"/>
         <source>Earth Coverage</source>
         <translation>Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.ui" line="392"/>
+        <location filename="../ServerTools/batchDbManager.ui" line="375"/>
         <source>Line-Centroid Structure</source>
         <translation>Estrutura Linha-Centróide</translation>
     </message>
@@ -938,15 +938,15 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../ServerTools/batchDbManager.ui" line="359"/>
         <source>Apply selected modification to selected databases</source>
-        <translation>Aplicar modificações selecionadas nos bancos selecionados</translation>
+        <translation type="obsolete">Aplicar modificações selecionadas nos bancos selecionados</translation>
     </message>
     <message>
         <location filename="../ServerTools/batchDbManager.ui" line="366"/>
         <source>Reset selected databases to original state</source>
-        <translation>Voltar os bancos de dados selecionados para o estado original</translation>
+        <translation type="obsolete">Voltar os bancos de dados selecionados para o estado original</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.ui" line="405"/>
+        <location filename="../ServerTools/batchDbManager.ui" line="388"/>
         <source>Field Toolbox Configuration</source>
         <translation>Ajustes de Reclassificação</translation>
     </message>
@@ -961,27 +961,27 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
 <context>
     <name>CalcContour</name>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="93"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="94"/>
         <source>Select a Layer</source>
         <translation>Selecione uma camada</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="123"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="124"/>
         <source>Information</source>
         <translation>Informação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="119"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="120"/>
         <source>A layer must be selected!</source>
         <translation>Uma camada deve ser selecionada!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="123"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="124"/>
         <source>A field must be selected!</source>
         <translation>Um campo deve ser selecionado!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="130"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="136"/>
         <source>Layer successfully updated!</source>
         <translation>Camada atualizada com sucesso!</translation>
     </message>
@@ -996,32 +996,32 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="130"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="136"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="138"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="144"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="132"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="138"/>
         <source>Could not update features!</source>
         <translation>Não pôde atualizar feições!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="134"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="140"/>
         <source>Problem ordering the features!</source>
         <translation>Problema ordenando as feições!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="136"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="142"/>
         <source>The line created does not cross any features in the selected layer!</source>
         <translation>A linha criada não cruza nenhuma feição na camada selecionada!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="138"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="144"/>
         <source>Assign a value for the selected attribute of the first crossed feature!</source>
         <translation>Atribua um valor para o atributo selecionado da primeira feição cruzada!</translation>
     </message>
@@ -1106,7 +1106,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="317"/>
         <source>Error in change filter customization </source>
-        <translation>Erro na customização de mudança de filtro.</translation>
+        <translation>Erro na customização de mudança de filtro</translation>
     </message>
 </context>
 <context>
@@ -1540,7 +1540,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="14"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="20"/>
         <source>Form</source>
         <translation>Formulário</translation>
     </message>
@@ -1550,42 +1550,42 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Conexão do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="39"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="51"/>
         <source>PostGIS</source>
         <translation>PostGIS</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="51"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="63"/>
         <source>Connections</source>
         <translation>Conexões</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="76"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="88"/>
         <source>Select database</source>
         <translation>Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="317"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="329"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="372"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="384"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="233"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="245"/>
         <source>Spatialite</source>
         <translation>Spatialite</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="261"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="273"/>
         <source>File                    </source>
         <translation>Arquivo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="294"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="306"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
@@ -1699,112 +1699,112 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateDatabaseCustomization</name>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="152"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="143"/>
         <source>Attribute Customization</source>
         <translation>Customização de atributos</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="156"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="147"/>
         <source>Class Customization</source>
         <translation>Customização de classe</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="160"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="151"/>
         <source>Code Name Customization</source>
         <translation>Customização de code name</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="164"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="155"/>
         <source>Default Customization</source>
         <translation>Customização padrão</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="168"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="159"/>
         <source>Domain Customization</source>
         <translation>Customização de domínio</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="176"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="167"/>
         <source>Attribute Nullity Customization</source>
         <translation>Customização de nulidade de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="137"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="128"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="137"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="128"/>
         <source>Select a custom operation!</source>
         <translation>Selecione uma operação de customização!</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="156"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="147"/>
         <source>New Custom Class</source>
         <translation>Nova classe customizada</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="172"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="163"/>
         <source>Domain Value Customization</source>
         <translation>Customização de valores de dompinio</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="180"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="171"/>
         <source>Attribute Filter Customization</source>
         <translation>Customização de filtro de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="152"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="143"/>
         <source>New Custom Attribute</source>
         <translation>Novo atributo customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="160"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="151"/>
         <source>New Custom Code Name</source>
         <translation>Novo code name customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="164"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="155"/>
         <source>New Custom Default</source>
         <translation>Novo default customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="168"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="159"/>
         <source>New Custom Domain</source>
         <translation>Novo domínio customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="172"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="163"/>
         <source>New Domain Value</source>
         <translation>Novo valor de domínio</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="176"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="167"/>
         <source>New Custom Attribute Nullity</source>
         <translation>Nova customização de nulidade de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="180"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="171"/>
         <source>New Custom Attribute Filter</source>
         <translation>Nova customização de filtro de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="278"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="264"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="242"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="229"/>
         <source>Preparing to export customizations... </source>
         <translation>Preparando para exportar customizações... </translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="275"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="261"/>
         <source>Errors occured while trying to export customs built. Check qgis log for further details.</source>
         <translation>Erros ocorreram durante a exportação de customizaçõe. Verifique o log do qgis para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="277"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="263"/>
         <source>Customization error: </source>
         <translation>Erro de customização: </translation>
     </message>
@@ -1812,15 +1812,30 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="298"/>
         <source>An EDGV Version must be chosen.
 </source>
-        <translation>Uma versão da EDGV deve ser escolhida.
+        <translation type="obsolete">Uma versão da EDGV deve ser escolhida.
 </translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="300"/>
         <source>A name must be input.
 </source>
-        <translation>Um nome deve ser inserido.
+        <translation type="obsolete">Um nome deve ser inserido.
 </translation>
+    </message>
+    <message>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
+        <source>Success!</source>
+        <translation type="unfinished">Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
+        <source>Database Customization </source>
+        <translation>Customização de Bancos de Dados </translation>
+    </message>
+    <message>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
+        <source> created successfuly!</source>
+        <translation>criada com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -2346,39 +2361,59 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Apagar selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="68"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="83"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="68"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="83"/>
         <source>Do you really want to delete customization </source>
         <translation>Você realmente deseja apagar a customização </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="74"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="89"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="74"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="89"/>
         <source>Customization </source>
         <translation>Customização </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="74"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="89"/>
         <source> successfully deleted.</source>
         <translation> apagada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="78"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="93"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="78"/>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="93"/>
         <source>Error! Problem deleting customization: </source>
         <translation>Erro! Problema apagando customização: </translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="66"/>
+        <source>Select EDGV Version</source>
+        <translation>Selecione uma versão da EDGV</translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="67"/>
+        <source>Warning! Enter a EDGV Version</source>
+        <translation>Aviso! Entre com uma versão EDGV</translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="70"/>
+        <source>Warning! Enter an Earth Coverage Name!</source>
+        <translation>Erro! Entre um nome para a Cobertura Terrestre!</translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/customizationManagerWidget.py" line="73"/>
+        <source>Warning! Earth Coverage Name already exists!</source>
+        <translation>Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
     </message>
 </context>
 <context>
@@ -3522,7 +3557,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../ComplexTools/complexWindow_base.ui" line="14"/>
         <source>Complex</source>
-        <translation>Complexo</translation>
+        <translation type="obsolete">Complexo</translation>
     </message>
     <message>
         <location filename="../ComplexTools/complexWindow_base.ui" line="23"/>
@@ -3572,10 +3607,10 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="14"/>
         <source>Contour Settings</source>
-        <translation>Ajustes de Relevo</translation>
+        <translation type="obsolete">Ajustes de Relevo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="21"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="107"/>
         <source>Layer:</source>
         <translation>Camada:</translation>
     </message>
@@ -3585,7 +3620,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Campo:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="67"/>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="48"/>
         <source>Pace:</source>
         <translation>Espaçamento:</translation>
     </message>
@@ -3602,12 +3637,52 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../AttributeTools/code_list.ui" line="14"/>
         <source>Code List Viewer</source>
-        <translation>Visualizador de Code List</translation>
+        <translation type="obsolete">Visualizador de Code List</translation>
     </message>
     <message>
         <location filename="../AttributeTools/code_list.ui" line="50"/>
         <source>Code</source>
         <translation>Código</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="14"/>
+        <source>DSGTools: Assign Contour Values Tool</source>
+        <translation>DSGTools: Linha Cotadora</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="23"/>
+        <source>After digitizing, the feature is set with the attributes configured in the selected button</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="26"/>
+        <source>Ascending Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="36"/>
+        <source>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</source>
+        <translation type="unfinished">Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="39"/>
+        <source>Descending Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="114"/>
+        <source>Reactivate</source>
+        <translation>Reativar</translation>
+    </message>
+    <message>
+        <location filename="../ComplexTools/complexWindow_base.ui" line="14"/>
+        <source>DSGTools Manage Complex Structures</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../AttributeTools/code_list.ui" line="14"/>
+        <source>DSGTools: Code List Viewer</source>
+        <translation>DSGTools: Visualizador de Code List</translation>
     </message>
 </context>
 <context>
@@ -3764,42 +3839,42 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="965"/>
+        <location filename="../dsg_tools.py" line="967"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="972"/>
+        <location filename="../dsg_tools.py" line="974"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="979"/>
+        <location filename="../dsg_tools.py" line="981"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="986"/>
+        <location filename="../dsg_tools.py" line="988"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="993"/>
+        <location filename="../dsg_tools.py" line="995"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1000"/>
+        <location filename="../dsg_tools.py" line="1002"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1007"/>
+        <location filename="../dsg_tools.py" line="1009"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1014"/>
+        <location filename="../dsg_tools.py" line="1016"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
@@ -4682,7 +4757,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="80"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="86"/>
         <source>Edit Current Config</source>
         <translation>Editar configuração atual</translation>
     </message>
@@ -4699,27 +4774,32 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="14"/>
         <source>DSGTools Feature (Re)classification Tool</source>
-        <translation>DSGTools: Ferramenta de (Re)classificação</translation>
+        <translation type="obsolete">DSGTools: Ferramenta de (Re)classificação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="87"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="93"/>
         <source>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</source>
         <translation>Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="90"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="96"/>
         <source>Reclassify Feature Mode</source>
         <translation>Modo de Reclassificação de Feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="97"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="103"/>
         <source>After digitizing, the feature is set with the attributes configured in the selected button</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="100"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="106"/>
         <source>New Feature Mode</source>
         <translation>Modo de Aquisição de Feições</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="14"/>
+        <source>DSGTools: Feature (Re)classification Tool</source>
+        <translation>DSGTools: Ferramenta de (Re)classificação</translation>
     </message>
 </context>
 <context>
@@ -5324,25 +5404,25 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="55"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="56"/>
         <source>Enter a parameter name!
 </source>
         <translation>Entre um nome para o parâmetro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="58"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="59"/>
         <source>Parameter already exists! Choose another name!
 </source>
         <translation>Parâmetro existente! Escolha outro nome para o parâmetro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="60"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="61"/>
         <source>Select a template database!
 </source>
         <translation>Selecione um banco como modelo!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="67"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="68"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -7188,7 +7268,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
 <context>
     <name>PostGISSqlGenerator</name>
     <message>
-        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1117"/>
+        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1122"/>
         <source>Setting type not defined!</source>
         <translation>Tipo de ajuste não definido!</translation>
     </message>
@@ -7239,7 +7319,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2482"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2494"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
@@ -7304,7 +7384,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2472"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2484"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
@@ -7534,7 +7614,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2499"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2511"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
@@ -7544,7 +7624,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2517"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2529"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
@@ -7629,72 +7709,72 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2210"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2222"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2233"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2245"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2259"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2271"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2276"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2288"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2288"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2300"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2308"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2320"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2327"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2339"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2340"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2352"/>
         <source>Problem setting srid: </source>
         <translation>Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2353"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2365"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2537"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2549"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2399"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2411"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2440"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2452"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2440"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2452"/>
         <source> Db will be dropped.</source>
         <translation>Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2458"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2470"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
@@ -7721,179 +7801,184 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
 </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2408"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2420"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2547"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2559"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2561"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2573"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2900"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2912"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2580"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2592"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2591"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2603"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2601"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2613"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2613"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2625"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2628"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2640"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2639"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2651"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2658"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2670"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2668"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2680"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2682"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2694"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2696"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2708"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2760"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2772"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2798"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2810"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2859"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2871"/>
         <source>Problem constraint dict from db: </source>
         <translation>Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2889"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2901"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2904"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2916"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2904"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2916"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2923"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2935"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2935"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2947"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2950"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2962"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2963"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2975"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2972"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2984"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2998"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3010"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3014"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3026"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3023"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3035"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3038"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3050"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3051"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3063"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3059"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3071"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3068"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3080"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3088"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3100"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3129"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3141"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3138"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3150"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária:</translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2210"/>
+        <source>Problem getting tables dict from db: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9532,7 +9617,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="50"/>
         <source>Inspect Features Tool</source>
-        <translation>Ferramenta de inspeção de feições</translation>
+        <translation type="obsolete">Ferramenta de inspeção de feições</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="90"/>
@@ -9568,6 +9653,11 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="156"/>
         <source>Feature only implemented for PostGIS and Spatialite</source>
         <translation>Funcionalidade implementada apenas para PostGIS e Spatialite</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="50"/>
+        <source>Manage Styles Tool</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9746,7 +9836,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="14"/>
         <source>Validation Toolbox</source>
-        <translation>Caixa de Ferramentas de Validação</translation>
+        <translation type="obsolete">Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="25"/>
@@ -9918,6 +10008,11 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <location filename="../ValidationTools/validation_toolbox.py" line="241"/>
         <source>Process canceled by user!</source>
         <translation>Processo cancelado pelo usuário!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/validation_toolbox.ui" line="14"/>
+        <source>DSGTools: Validation Toolbox</source>
+        <translation>DSGTools: Ferramentas de Validação</translation>
     </message>
 </context>
 <context>
@@ -10148,52 +10243,52 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Criar customização de banco de dados</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="122"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="37"/>
         <source>Select customization</source>
         <translation>Selecionar customização</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="168"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="83"/>
         <source>Customization Tree</source>
         <translation>Árvore de customização</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="176"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="91"/>
         <source>Remove Selected</source>
         <translation>Remover selecionados</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="26"/>
         <source>Customization Info</source>
-        <translation>Informação da customização</translation>
+        <translation type="obsolete">Informação da customização</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="41"/>
         <source>Select EDGV Version</source>
-        <translation>Selecione uma versão da EDGV</translation>
+        <translation type="obsolete">Selecione uma versão da EDGV</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="46"/>
         <source>2.1.3</source>
-        <translation>2.1.3</translation>
+        <translation type="obsolete">2.1.3</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="51"/>
         <source>FTer_2a_Ed</source>
-        <translation>FTer_2a_Ed</translation>
+        <translation type="obsolete">FTer_2a_Ed</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="61"/>
         <source>Description</source>
-        <translation>Descrição</translation>
+        <translation type="obsolete">Descrição</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="86"/>
         <source>Custom Name</source>
-        <translation>Nome da customização</translation>
+        <translation type="obsolete">Nome da customização</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="111"/>
+        <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="26"/>
         <source>Customization Elements</source>
         <translation>Elementos da customização</translation>
     </message>
@@ -10234,17 +10329,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>ESCALAS</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="51"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="61"/>
         <source>25</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="56"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="51"/>
         <source>100</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="61"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="56"/>
         <source>50</source>
         <translation></translation>
     </message>
@@ -10254,17 +10349,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>TAMANHOS</translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="73"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="78"/>
         <source>4mm²</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="78"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="83"/>
         <source>0.8x0.8mm²</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="83"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="73"/>
         <source>25mm²</source>
         <translation></translation>
     </message>
