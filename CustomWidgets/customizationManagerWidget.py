@@ -72,7 +72,7 @@ class CustomizationManagerWidget(GenericManagerWidget):
         if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Earth Coverage Name already exists!'))
             return
-        dlg = CreateDatabaseCustomization(templateDb, edgvVersion, self.genericDbManager)
+        dlg = CreateDatabaseCustomization(propertyName, templateDb, edgvVersion, self.genericDbManager)
         dlg.exec_()
     
     @pyqtSlot(bool)

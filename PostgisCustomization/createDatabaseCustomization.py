@@ -50,13 +50,14 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
 
 class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, edgvVersion, customizationManager, customJsonDict = None, parent = None):
+    def __init__(self, customizationName, abstractDb, edgvVersion, customizationManager, customJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
         self.customizationManager = customizationManager
         self.abstractDb = abstractDb
         self.edgvVersion = edgvVersion
+        self.customizationName = customizationName
         self.contentsDict = dict()
         self.populateCustomizationCombo()
         self.setWidgetsEnabled(True)
@@ -215,10 +216,6 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
     
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        if not self.validate():
-            msg = self.validateDiagnosis()
-            QMessageBox.warning(self, self.tr('Error!'), msg)
-            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         exceptionList = []
         customJsonDict = dict()
@@ -251,11 +248,10 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
                 progress.step()
         QApplication.restoreOverrideCursor()
         if self.validateJsonDict(customJsonDict) and len(exceptionList) == 0:
-            edgvVersion = self.versionSelectionComboBox.currentText()
-            versionText = 'database_'+edgvVersion
+            versionText = 'database_'+self.edgvVersion
             finalJsonDict = {versionText:customJsonDict}
-            customizationName = self.customNameLineEdit.text()
-            self.customizationManager.createSetting(customizationName, edgvVersion, finalJsonDict)
+            self.customizationManager.createSetting(self.customizationName, self.edgvVersion, finalJsonDict)
+            QMessageBox.information(self, self.tr('Success!'), self.tr('Database Customization ') + self.customizationName + self.tr(' created successfuly!'))
             #EMIT to reload?
             self.close()
         else:
@@ -272,21 +268,6 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         """
         #TODO
         return True
-    
-    def validate(self):
-        if self.versionSelectionComboBox.currentIndex() == 0:
-            return False
-        if self.customNameLineEdit.text() == '':
-            return False
-        return True
-
-    def validateDiagnosis(self):
-        invalidatedReason = ''
-        if self.versionSelectionComboBox.currentIndex() == 0:
-            invalidatedReason += self.tr('An EDGV Version must be chosen.\n')
-        if self.customNameLineEdit.text() == '':
-            invalidatedReason += self.tr('A name must be input.\n')
-        return invalidatedReason
 
     def populateWidgetsFromSelectedFile(self):
         jsonFileName = self.selectFileWidget.fileNameList
