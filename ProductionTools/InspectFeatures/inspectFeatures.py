@@ -122,6 +122,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
             id = featIdList[index]
 
             #getting max and min ids
+            #this was made because the list is already sorted, there's no need to calculate max and min
             maxIndex = len(featIdList) - 1
             minIndex = 0
             
@@ -139,12 +140,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
             #adjustin the spin box value
             self.idSpinBox.setValue(id)
 
-            #selecting and zooming to the feature
-            if not self.onlySelectedRadioButton.isChecked():
-                self.selectLayer(id, currentLayer)
-                self.zoomFeature(zoom)
-            else:
-                self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})
+            self.makeZoom(zoom, currentLayer, id)
         else:
             self.errorMessage()
             
@@ -191,3 +187,42 @@ class InspectFeatures(QWidget,FORM_CLASS):
             self.splitter.show()
         else:
             self.splitter.hide()
+
+    def setValues(self, featIdList, currentLayer):
+        lyrName = currentLayer.name()
+        featIdList.sort()
+        self.allLayers[lyrName] = 0
+
+        maxIndex = len(featIdList) - 1
+        minIndex = 0
+        
+        self.idSpinBox.setMaximum(featIdList[maxIndex])
+        self.idSpinBox.setMinimum(featIdList[minIndex])
+
+        #getting the new feature id
+        id = featIdList[0]
+
+        #adjustin the spin box value
+        self.idSpinBox.setValue(id)
+
+        zoom = self.mScaleWidget.scale()
+        self.makeZoom(zoom, currentLayer, id)
+
+    def makeZoom(self, zoom, currentLayer, id):
+        #selecting and zooming to the feature
+        if not self.onlySelectedRadioButton.isChecked():
+            self.selectLayer(id, currentLayer)
+            self.zoomFeature(zoom)
+        else:
+            self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})        
+
+    @pyqtSlot(bool)
+    def on_onlySelectedRadioButton_toggled(self, toggled):
+        currentLayer = self.iface.activeLayer()
+        if toggled:
+            featIdList = currentLayer.selectedFeaturesIds()
+            self.setValues(featIdList, currentLayer)
+        else:
+            featIdList = currentLayer.allFeatureIds()
+            self.setValues(featIdList, currentLayer)
+            
