@@ -5003,7 +5003,7 @@ Selecionadas</translation>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="35"/>
         <source>Select a vector layer to enable tool</source>
-        <translation>Selecione uma camada vetorial para ativar a ferramenta</translation>
+        <translation type="obsolete">Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="151"/>
@@ -5964,17 +5964,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
 <context>
     <name>InspectFeatures</name>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="201"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="202"/>
         <source>ERROR:</source>
         <translation>ERRO:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="201"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="202"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="134"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="135"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -5984,9 +5984,14 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Não existe feição de id {0} na camada {1}. Retornando ao id anterior</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="134"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="135"/>
         <source>Selected id does not exist in layer {0}. Returned to previous id.</source>
         <translation>O id selecionado não existe na camada {0}. Retornando ao id anterior.</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="239"/>
+        <source>Select a vector layer to enable tool</source>
+        <translation>Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
 </context>
 <context>

@@ -52,6 +52,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.canvas = self.iface.mapCanvas()
         self.allLayers={}
         self.idxChanged.connect(self.setNewId)
+        self.setToolTip('')
     
     def enableTool(self, enabled = True):
         if enabled == None or not isinstance(enabled, QgsVectorLayer):
@@ -235,6 +236,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         """
         if toggled:
             self.splitter.show()
+            self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
             self.splitter.hide()
 
