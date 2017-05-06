@@ -1,4 +1,26 @@
 # -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+ DsgTools
+                                 A QGIS plugin
+ Brazilian Army Cartographic Production Tools
+                              -------------------
+        begin                : 2016-08-04
+        git sha              : $Format:%H$
+        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
+        Modifyed code found on http://stackoverflow.com/questions/4827207/how-do-i-filter-the-pyqt-qcombobox-items-based-on-the-text-input?rq=1
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QCompleter, QComboBox, QSortFilterProxyModel
 
@@ -34,7 +56,7 @@ class DsgCustomComboBox(QComboBox):
 
     # on model change, update the models of the filter and completer as well 
     def setModel(self, model):
-        super(ExtendedComboBox, self).setModel(model)
+        super(DsgCustomComboBox, self).setModel(model)
         self.pFilterModel.setSourceModel(model)
         self.completer.setModel(self.pFilterModel)
 
@@ -43,4 +65,4 @@ class DsgCustomComboBox(QComboBox):
     def setModelColumn(self, column):
         self.completer.setCompletionColumn(column)
         self.pFilterModel.setFilterKeyColumn(column)
-        super(ExtendedComboBox, self).setModelColumn(column)
+        super(DsgCustomComboBox, self).setModelColumn(column)
