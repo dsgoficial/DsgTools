@@ -31,7 +31,7 @@ from math import sqrt, cos, sin, pi
 class ShapeTool(QgsMapTool):
     #signal emitted when the mouse is clicked. This indicates that the tool finished its job
     toolFinished = pyqtSignal()
-    def __init__(self, canvas, geometryType, param, type):
+    def __init__(self, canvas, geometryType, param, type, color = QColor( 254, 178, 76, 63 )):
         '''
         Constructor
         '''
@@ -43,17 +43,14 @@ class ShapeTool(QgsMapTool):
         self.type=type       
         self.cursor=None
         self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)    
-        self.setColor()
+        self.setColor(color)
         self.reset()
         
-    def setColor(self):
+    def setColor(self, mFillColor):
         '''
         Adjusting the color to create the rubber band
         '''
-        if self.type == self.tr('area'):
-            mFillColor = QColor( 254, 178, 76, 63 )
-        else:
-            mFillColor = QColor( 255, 255, 0, 63 )        
+    
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
     

@@ -48,6 +48,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.setupUi(self)
         self.splitter.hide()
         self.iface = iface
+        self.mScaleWidget.setScaleString('1:100000')
         self.scale = None
         self.shape = None
         self.size = None
@@ -103,10 +104,11 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         Draws the select template shape on the map canvas
         """
-        scale = self.scalesComboBox.currentText()
+        scaleText = self.mScaleWidget.scaleString()
+        scale = int(scaleText.split(':')[-1].replace('.',''))/1000
         size = self.sizesComboBox.currentText()
         shape = self.shapesComboBox.currentText()
-        validated = self.validateCombos(self.scalesComboBox.currentIndex(), self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
+        validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
             crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
             if crs.mapUnits() == 2:
@@ -125,7 +127,9 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
             param = (float(scale)**2)*float(self.sizes[size][self.tr('value')])
         else:
             param = float(scale)*float(self.sizes[size][self.tr('value')])
-        tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size][self.tr('type')] )
+        color = self.mColorButton.color()
+        color.setAlpha(63)
+        tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size][self.tr('type')], color )
         tool.toolFinished.connect(self.refreshCombo)
         self.iface.mapCanvas().setMapTool(tool)
 
@@ -135,11 +139,11 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         self.shapesComboBox.setEnabled(True)
     
-    def validateCombos(self,scale,size,shape):
+    def validateCombos(self,size,shape):
         """
         Checks if all combos correctly selected
         """
-        if scale <> 0 and size <> 0 and shape <> 0:
+        if size <> 0 and shape <> 0:
             return True
         else:
             return False

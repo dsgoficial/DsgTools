@@ -39,6 +39,12 @@
           <iconset resource="../resources.qrc">
            <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
          </property>
+         <property name="iconSize">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
         </widget>
        </item>
       </layout>
@@ -82,6 +88,12 @@
        <property name="icon">
         <iconset resource="../resources.qrc">
          <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
        </property>
       </widget>
      </item>
