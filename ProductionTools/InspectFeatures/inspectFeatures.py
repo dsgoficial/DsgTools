@@ -21,17 +21,19 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QMessageBox, QSpinBox
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
 from qgis.core import QgsMapLayer, QGis
+from qgis.gui import QgsMessageBar
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
-class InspectFeatures(QWidget,FORM_CLASS): 
+class InspectFeatures(QWidget,FORM_CLASS):
+    idxChanged = pyqtSignal(int)
     def __init__(self, iface, parent = None):
         """
         Constructor
@@ -43,8 +45,10 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.iface.currentLayerChanged.connect(self.enableScale)
         self.mScaleWidget.setScaleString('1:40000')
         self.mScaleWidget.setEnabled(False)
+        self.enableScale()
         self.canvas = self.iface.mapCanvas()
         self.allLayers={}
+        self.idxChanged.connect(self.setNewId)
         
     def enableScale(self):
         """
@@ -91,7 +95,46 @@ class InspectFeatures(QWidget,FORM_CLASS):
         """
         method = getattr(self, 'testIndexBackwards')
         self.iterateFeature(method)
-            
+    
+    @pyqtSlot(int, name = 'on_idSpinBox_valueChanged')
+    def setNewId(self, newId):
+        if not isinstance(self.sender(), QSpinBox):
+            self.idSpinBox.setValue(newId)
+        else:
+            currentLayer = self.iface.activeLayer()
+            lyrName = currentLayer.name()
+
+            oldIndex = self.allLayers[lyrName]
+            if oldIndex == 0:
+                return
+            featIdList = self.getFeatIdList(currentLayer)
+            oldId = featIdList[oldIndex]
+            zoom = self.mScaleWidget.scale()
+            if oldId == newId:
+                self.iface.messageBar().pushMessage(self.tr('Error!'), self.tr('Invalid value. Returned to previous id').format(newId, lyrName), level=QgsMessageBar.CRITICAL, duration=3)
+                return
+            try:
+                index = featIdList.index(newId)
+                self.allLayers[lyrName] = index
+                self.makeZoom(zoom, currentLayer, newId)
+            except:
+                self.iface.messageBar().pushMessage(self.tr('Error!'), self.tr('There is no id {0} in layer {1}. Returned to previous id').format(newId, lyrName), level=QgsMessageBar.CRITICAL, duration=3)
+                self.idSpinBox.setValue(oldId)
+                self.makeZoom(zoom, currentLayer, oldId)
+
+
+
+
+    def getFeatIdList(self, currentLayer):
+        #getting all features ids
+        if self.onlySelectedRadioButton.isChecked():
+            featIdList = currentLayer.selectedFeaturesIds()
+        else:
+            featIdList = currentLayer.allFeatureIds()
+        #sort is faster than sorted (but sort is just available for lists)
+        featIdList.sort()
+        return featIdList
+    
     def iterateFeature(self, method):
         """
         Iterates over the features selecting and zooming to the desired one
@@ -102,13 +145,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         
         zoom = self.mScaleWidget.scale()
         
-        #getting all features ids
-        if self.onlySelectedRadioButton.isChecked():
-            featIdList = currentLayer.selectedFeaturesIds()
-        else:
-            featIdList = currentLayer.allFeatureIds()
-        #sort is faster than sorted (but sort is just available for lists)
-        featIdList.sort()
+        featIdList = self.getFeatIdList(currentLayer)
         
         if currentLayer and len(featIdList) > 0:
             #checking if this is the first time for this layer (currentLayer)
@@ -138,7 +175,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
             id = featIdList[index]
 
             #adjustin the spin box value
-            self.idSpinBox.setValue(id)
+            self.idxChanged.emit(id)
 
             self.makeZoom(zoom, currentLayer, id)
         else:
@@ -203,7 +240,8 @@ class InspectFeatures(QWidget,FORM_CLASS):
         id = featIdList[0]
 
         #adjustin the spin box value
-        self.idSpinBox.setValue(id)
+        self.idxChanged.emit(id)
+        #self.idSpinBox.setValue(id)
 
         zoom = self.mScaleWidget.scale()
         self.makeZoom(zoom, currentLayer, id)
@@ -222,7 +260,9 @@ class InspectFeatures(QWidget,FORM_CLASS):
         if toggled:
             featIdList = currentLayer.selectedFeaturesIds()
             self.setValues(featIdList, currentLayer)
+            self.idSpinBox.setEnabled(False)
         else:
             featIdList = currentLayer.allFeatureIds()
             self.setValues(featIdList, currentLayer)
+            self.idSpinBox.setEnabled(True)
             
