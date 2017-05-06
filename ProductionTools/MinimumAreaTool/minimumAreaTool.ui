@@ -139,6 +139,12 @@
       </item>
      </widget>
      <widget class="QgsColorButton" name="mColorButton">
+      <property name="maximumSize">
+       <size>
+        <width>32</width>
+        <height>32</height>
+       </size>
+      </property>
       <property name="toolTip">
        <string>Color Selector</string>
       </property>
