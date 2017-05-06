@@ -67,7 +67,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         :return:
         """
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
-        self.populateConfigFromDb()
+        try:
+            self.populateConfigFromDb()
+        except Exception as e:
+            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def setEditButtonEnabled(self, enabled):
         """
