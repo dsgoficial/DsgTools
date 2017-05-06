@@ -6841,42 +6841,47 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="127"/>
         <source>value</source>
-        <translation>valor</translation>
+        <translation type="obsolete">valor</translation>
     </message>
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="128"/>
         <source>type</source>
-        <translation>tipo</translation>
+        <translation type="obsolete">tipo</translation>
     </message>
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="124"/>
         <source>area</source>
-        <translation>área</translation>
+        <translation type="obsolete">área</translation>
     </message>
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="71"/>
         <source>distance</source>
-        <translation>distância</translation>
+        <translation type="obsolete">distância</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="113"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="123"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="113"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="123"/>
         <source>This tool does not work with angular unit reference system!</source>
         <translation>Esta ferramenta não trabalha com sistemas de referência angulares!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="117"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="127"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="117"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="127"/>
         <source>&lt;font color=red&gt;Shape value not defined :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Define all values to activate tool!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Valor de forma não definido :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Defina todos os valores para ativar a ferramenta!&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="197"/>
+        <source>SIZES</source>
+        <translation>TAMANHOS</translation>
     </message>
 </context>
 <context>
@@ -8835,7 +8840,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation>Criar perfil</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.ui" line="80"/>
+        <location filename="../UserTools/serverProfilesManager.ui" line="86"/>
         <source>Delete Selected</source>
         <translation>Apagar selecionado</translation>
     </message>
@@ -8860,27 +8865,27 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation type="obsolete">Exportar perfis em lote</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.ui" line="110"/>
+        <location filename="../UserTools/serverProfilesManager.ui" line="122"/>
         <source>Permissions</source>
         <translation>Permissões</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.ui" line="146"/>
+        <location filename="../UserTools/serverProfilesManager.ui" line="158"/>
         <source>Read</source>
         <translation>Ler</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.ui" line="151"/>
+        <location filename="../UserTools/serverProfilesManager.ui" line="163"/>
         <source>Write</source>
         <translation>Escrever</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.ui" line="167"/>
+        <location filename="../UserTools/serverProfilesManager.ui" line="179"/>
         <source>Save Changes on Profile</source>
         <translation>Salvar mudanças no perfil</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.ui" line="177"/>
+        <location filename="../UserTools/serverProfilesManager.ui" line="189"/>
         <source>Clear All</source>
         <translation>Limpar Tudo</translation>
     </message>
@@ -9246,20 +9251,20 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="53"/>
         <source>area</source>
-        <translation>area</translation>
+        <translation type="obsolete">area</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="83"/>
+        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="80"/>
         <source>Circle</source>
         <translation>Círculo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="85"/>
+        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="82"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="95"/>
+        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="92"/>
         <source>distance</source>
         <translation>distância</translation>
     </message>
@@ -10509,77 +10514,47 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="64"/>
         <source>SCALES</source>
-        <translation>ESCALAS</translation>
-    </message>
-    <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="79"/>
-        <source>25</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="69"/>
-        <source>100</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="74"/>
-        <source>50</source>
-        <translation></translation>
+        <translation type="obsolete">ESCALAS</translation>
     </message>
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="92"/>
         <source>SIZES</source>
-        <translation>TAMANHOS</translation>
+        <translation type="obsolete">TAMANHOS</translation>
     </message>
-    <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="102"/>
-        <source>4mm²</source>
-        <translation></translation>
-    </message>
-    <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="107"/>
-        <source>0.8x0.8mm²</source>
-        <translation></translation>
-    </message>
-    <message utf8="true">
+    <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="97"/>
-        <source>25mm²</source>
-        <translation></translation>
-    </message>
-    <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="112"/>
-        <source>1x1mm²</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="117"/>
-        <source>0.8mm</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="130"/>
         <source>SHAPES</source>
         <translation>FORMAS</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="135"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="102"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="140"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="107"/>
         <source>Circle</source>
         <translation>Círculo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="152"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="137"/>
         <source>Draw Shape</source>
         <translation>Desenhar forma</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="170"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="50"/>
         <source>Minimum Area Tool</source>
         <translation>Ferramenta de área mínima</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="119"/>
+        <source>Color Selector</source>
+        <translation>Seletor de Cor</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="167"/>
+        <source>Create Custom Size</source>
+        <translation>Criar Tamanho Personalizado </translation>
     </message>
 </context>
 <context>

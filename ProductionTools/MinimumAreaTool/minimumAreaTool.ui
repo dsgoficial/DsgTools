@@ -84,36 +84,6 @@
         <height>32</height>
        </size>
       </property>
-      <item>
-       <property name="text">
-        <string>SIZES</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>25mm²</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>4mm²</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>0.8x0.8mm²</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>1x1mm²</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>0.8mm</string>
-       </property>
-      </item>
      </widget>
      <widget class="QComboBox" name="shapesComboBox">
       <property name="maximumSize">
@@ -159,12 +129,15 @@
      <widget class="QPushButton" name="drawShape">
       <property name="maximumSize">
        <size>
-        <width>16777215</width>
+        <width>32</width>
         <height>32</height>
        </size>
       </property>
-      <property name="text">
+      <property name="toolTip">
        <string>Draw Shape</string>
+      </property>
+      <property name="text">
+       <string/>
       </property>
       <property name="icon">
        <iconset resource="../../resources.qrc">

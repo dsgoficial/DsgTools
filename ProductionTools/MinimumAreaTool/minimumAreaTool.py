@@ -35,6 +35,7 @@ import qgis.utils
 from qgis.gui import QgsMessageBar
 #DsgTools Imports
 from DsgTools.ProductionTools.MinimumAreaTool.shapeTool import ShapeTool
+from DsgTools.ProductionTools.MinimumAreaTool.customSizeSetter import CustomSizeSetter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'minimumAreaTool.ui'))
@@ -52,7 +53,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.scale = None
         self.shape = None
         self.size = None
-        self.createDict()
+        self.populateSizesComboBox()
     
     def initGui(self):
         """
@@ -60,24 +61,31 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         self.iface.addToolBarWidget(self.splitter)
         
-    def createDict(self):
+    def createDict(self, customDict = None):
         """
         Creates the dictionary used to create the geometry templates
         """
         self.sizes = {}
-        self.sizes[u"25mm²"] = {self.tr('value'): 25, self.tr('type'): self.tr('area')}
-        self.sizes[u"4mm²"] = {self.tr('value'): 4, self.tr('type'): self.tr('area')}
-        self.sizes[u"1x1mm²"] = {self.tr('value'): 1, self.tr('type'): self.tr('area')}
-        self.sizes[u"0.8x0.8mm²"] = {self.tr('value'): 0.64, self.tr('type'): self.tr('area')}
-        self.sizes[u"0.8mm"] = {self.tr('value'): 0.8,self.tr('type'): self.tr('distance')}
+        self.sizes[u"25mm²"] = {'value': 25, 'shape': 'area'}
+        self.sizes[u"4mm²"] = {'value': 4, 'shape': 'area'}
+        self.sizes[u"1x1mm²"] = {'value': 1, 'shape': 'area'}
+        self.sizes[u"0.8x0.8mm²"] = {'value': 0.64, 'shape': 'area'}
+        self.sizes[u"0.8mm"] = {'value': 0.8,'shape': 'distance'}
+        if customDict:
+            for key in customDict:
+                self.sizes[key] = customDict[key]
         
     def shapeComboSetter(self):
         """
         Sets the correct index for the shapes combo box according to the text select in the sizes combo box
         """
-        if self.sizesComboBox.currentText() == '0.8mm':
-            self.shapesComboBox.setCurrentIndex(2)
-            self.shapesComboBox.setEnabled(False)
+        if self.sizesComboBox.currentText() in self.sizes.keys():
+            if self.sizes[self.sizesComboBox.currentText()]['shape'] == 'distance':
+                #In this case we should force the use of circle, due to the measurement shape = distance and set the shape combo box enabled(False)
+                self.shapesComboBox.setCurrentIndex(2)
+                self.shapesComboBox.setEnabled(False)
+            else:
+                self.shapesComboBox.setEnabled(True)
         else:
             self.shapesComboBox.setEnabled(True)
     
@@ -123,13 +131,13 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         Runs the ShapeTool and set it as the current map tool
         """
         #checking the selected type
-        if (self.sizes[size][self.tr('type')] == self.tr('area')):
-            param = (float(scale)**2)*float(self.sizes[size][self.tr('value')])
+        if (self.sizes[size]['shape'] == 'area'):
+            param = (float(scale)**2)*float(self.sizes[size]['value'])
         else:
-            param = float(scale)*float(self.sizes[size][self.tr('value')])
+            param = float(scale)*float(self.sizes[size]['value'])
         color = self.mColorButton.color()
         color.setAlpha(63)
-        tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size][self.tr('type')], color )
+        tool = ShapeTool(self.iface.mapCanvas(), shape, param, self.sizes[size]['shape'], color )
         tool.toolFinished.connect(self.refreshCombo)
         self.iface.mapCanvas().setMapTool(tool)
 
@@ -157,3 +165,59 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
             self.splitter.show()
         else:
             self.splitter.hide()
+    
+    def getCustomSizesDict(self):
+        #get custom sizes from qsettings
+        settings = QSettings()
+        settings.beginGroup('DSGTools/CustomSizes/')
+        currentSettings = settings.childGroups()
+        settings.endGroup()
+        customSizesDict = dict()
+        #get each parameter
+        for settingName in currentSettings:
+            customSizesDict[settingName] = dict()
+            settings = QSettings()
+            settings.beginGroup('DSGTools/CustomSizes/'+settingName)
+            customSizesDict[settingName]['shape'] = settings.value('shape')
+            customSizesDict[settingName]['value'] = settings.value('value')
+            settings.endGroup()
+        return customSizesDict
+    
+    def addValueToCustomSizesDict(self, newValueDict):
+        settings = QSettings()
+        if not settings.contains('DSGTools/CustomSizes/'+newValueDict['comboText']+'/shape'):
+            settings.beginGroup('DSGTools/CustomSizes/'+newValueDict['comboText'])
+            settings.setValue('shape', newValueDict['shape'])
+            settings.setValue('value', newValueDict['value'])
+            settings.endGroup()
+        self.populateSizesComboBox()
+    
+    def populateSizesComboBox(self):
+        self.sizesComboBox.clear()
+        self.sizesComboBox.addItem(self.tr('SIZES'))
+        self.sizesComboBox.addItem(u'25mm²')
+        self.sizesComboBox.addItem(u'4mm²')
+        self.sizesComboBox.addItem(u'0.8x0.8mm²')
+        self.sizesComboBox.addItem(u'1x1mm²')
+        self.sizesComboBox.addItem(u'0.8mm')
+        customSizesDict = self.getCustomSizesDict()
+        self.createDict(customDict = customSizesDict)
+        self.populateComboWithCustomSizes(customSizesDict)
+    
+    def populateComboWithCustomSizes(self, customSizesDict):
+        """
+        Add to sizesComboBox values from customSizesDict and adds values to self.sizes 
+        """
+        for size in customSizesDict.keys():
+            #add item to comboBox
+            self.sizesComboBox.addItem(size)
+
+    @pyqtSlot(bool)
+    def on_createCustomSizesPushButton_clicked(self):
+        """
+        Opens custom size setter
+        """
+        customSizesDict = self.getCustomSizesDict()
+        dlg = CustomSizeSetter(customSizesDict)
+        dlg.sizeCreated.connect(self.addValueToCustomSizesDict)
+        dlg.exec_()
