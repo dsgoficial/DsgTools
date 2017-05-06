@@ -12,7 +12,12 @@ class MultiLayerSelection(QgsMapTool):
         self.canvas = canvas
         self.selecaoMulti=[]
         self.initSelectedIds()
+        self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
+
+    def setAction(self, action):
+        self.toolAction = action
+        self.toolAction.setCheckable(True)
        
     def getSelectionsLayers(self):
         if self.selecaoVariada:
@@ -133,10 +138,14 @@ class MultiLayerSelection(QgsMapTool):
                        
     def deactivate(self):
         self.ids = {}
+        if self.toolAction:
+            self.toolAction.setChecked(False)
         if self is not None:
             QgsMapTool.deactivate(self)
 
     def activate(self):
+        if self.toolAction:
+            self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
     
     def removerSelecoes(self, all=True):

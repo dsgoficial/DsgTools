@@ -17,6 +17,10 @@ class CopyPasteTool:
         self.canvas = iface.mapCanvas()
         self.tool1 = MultiLayerSelection(self.iface.mapCanvas(), self.iface)
         self.iface.actionToggleEditing().triggered.connect(self.closeCursor)
+        self.selectorAction = None
+
+    def setSelectorAction(self, action):
+        self.tool1.setAction(action)
 
     def closeCursor(self, a):
         if not a:

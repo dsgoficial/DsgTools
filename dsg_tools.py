@@ -564,28 +564,20 @@ class DsgTools:
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.productionButton.addAction(action)
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
 
-        icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Copy and Paste Attribute Set'),
-            callback=self.copyPasteTool.copyPaste,
-            parent=productiontools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        productiontools.addAction(action)
-        self.productionButton.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/genericSelect.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Generic Selector'),
-            callback=self.copyPasteTool.selectMulti,
-            parent=productiontools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        productiontools.addAction(action)
-        self.productionButton.addAction(action)
+        #removed until bugs are removed
+        # icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
+        # action = self.add_action(
+        #     icon_path,
+        #     text=self.tr('Copy and Paste Attribute Set'),
+        #     callback=self.copyPasteTool.copyPaste,
+        #     parent=productiontools,
+        #     add_to_menu=False,
+        #     add_to_toolbar=False)
+        # productiontools.addAction(action)
+        # self.productionButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/codelist.png'
         action = self.add_action(
@@ -620,10 +612,25 @@ class DsgTools:
             add_to_toolbar=False)
         layers.addAction(action)
         self.layerButton.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/genericSelect.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Generic Selector'),
+            callback=self.copyPasteTool.selectMulti,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+        self.copyPasteTool.setSelectorAction(action)
         
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
         self.toolbar.addWidget(self.styleManagerTool)
+
     
     def createMilitaryMenu(self, parentMenu, icon_path):
         self.opInstaller = DsgToolsOpInstaller(self.iface, parent=self, parentMenu=parentMenu)
@@ -732,6 +739,17 @@ class DsgTools:
             #creating the separate process
             self.processManager.createInventoryProcess(parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo)
             
+    def useGenericSelector(self):
+        """
+        Shows the countour dock
+        """
+        if self.contourDock:
+            self.iface.removeDockWidget(self.contourDock)
+        else:
+            self.contourDock = CalcContour(self.iface)
+        self.contourDock.activateTool()
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.contourDock)
+    
     def showCalcContour(self):
         """
         Shows the countour dock
