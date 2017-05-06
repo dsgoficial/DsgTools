@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
+from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
@@ -38,6 +38,9 @@ class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
         self.nameList = nameList
         self.setupUi(self)
         self.connectionWidget.tabWidget.removeTab(1)
+        regex = QtCore.QRegExp('[a-z][a-z\_0-9]*')
+        validator = QtGui.QRegExpValidator(regex, self.customNameLineEdit)
+        self.customNameLineEdit.setValidator(validator)
     
     def validateUi(self):
         if self.customNameLineEdit.text() == '':
