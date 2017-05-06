@@ -106,18 +106,12 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QComboBox" name="comboBoxPostgis">
+                  <widget class="DsgCustomComboBox" name="comboBoxPostgis" native="true">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                      <horstretch>0</horstretch>
                      <verstretch>0</verstretch>
                     </sizepolicy>
-                   </property>
-                   <property name="minimumSize">
-                    <size>
-                     <width>0</width>
-                     <height>0</height>
-                    </size>
                    </property>
                   </widget>
                  </item>
@@ -441,6 +435,12 @@
    <class>ExploreServerWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.exploreServerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>DsgCustomComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
