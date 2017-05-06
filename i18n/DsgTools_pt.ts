@@ -1580,27 +1580,27 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="329"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="323"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="384"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="378"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="245"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="239"/>
         <source>Spatialite</source>
         <translation>Spatialite</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="273"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="267"/>
         <source>File                    </source>
         <translation>Arquivo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="306"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="300"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
@@ -2609,7 +2609,7 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="87"/>
         <source>All geometries are now single parted.</source>
-        <translation>Todas as geometrias são agora individuais</translation>
+        <translation>Todas as geometrias são agora individuais.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="53"/>
@@ -3744,7 +3744,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>DsgTools</name>
     <message>
-        <location filename="../dsg_tools.py" line="647"/>
+        <location filename="../dsg_tools.py" line="654"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
@@ -3849,42 +3849,42 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="967"/>
+        <location filename="../dsg_tools.py" line="985"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="974"/>
+        <location filename="../dsg_tools.py" line="992"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="981"/>
+        <location filename="../dsg_tools.py" line="999"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="988"/>
+        <location filename="../dsg_tools.py" line="1006"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="995"/>
+        <location filename="../dsg_tools.py" line="1013"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1002"/>
+        <location filename="../dsg_tools.py" line="1020"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1009"/>
+        <location filename="../dsg_tools.py" line="1027"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1016"/>
+        <location filename="../dsg_tools.py" line="1034"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
@@ -4004,7 +4004,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Realizar aquisição de campo</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="614"/>
+        <location filename="../dsg_tools.py" line="606"/>
         <source>Load Auxiliar Structure</source>
         <translation>Carregar Estrutura Auxiliar</translation>
     </message>
@@ -4059,7 +4059,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Construir estruturas complexas</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="591"/>
+        <location filename="../dsg_tools.py" line="583"/>
         <source>View Code List Codes and Values</source>
         <translation>Visualizar Code List e Valores</translation>
     </message>
@@ -4079,7 +4079,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Ferramenta de reclassificação de feições</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="602"/>
+        <location filename="../dsg_tools.py" line="594"/>
         <source>Load Layers</source>
         <translation>Carregar Camadas</translation>
     </message>
@@ -4096,15 +4096,15 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../dsg_tools.py" line="569"/>
         <source>Copy and Paste Attribute Set</source>
-        <translation>Copiar e Colar Conjunto de Atributos</translation>
+        <translation type="obsolete">Copiar e Colar Conjunto de Atributos</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="580"/>
+        <location filename="../dsg_tools.py" line="617"/>
         <source>Generic Selector</source>
         <translation>Seleção Genérica de Feições</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="630"/>
+        <location filename="../dsg_tools.py" line="637"/>
         <source>DsgTools Op Installer</source>
         <translation>Instalador do DsgTools Op</translation>
     </message>
@@ -4696,12 +4696,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Conexão do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="97"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="100"/>
         <source>Setup</source>
         <translation>Ajustar</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="256"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="259"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -4711,27 +4711,27 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="274"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="277"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="263"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="266"/>
         <source>Please, select a database.</source>
         <translation>Por favor, selecione um banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="269"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="272"/>
         <source>Problem obtaining database version! Please, check log for details.</source>
         <translation>Problema obtendo versão do banco de dados! Por favor, verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="274"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="277"/>
         <source>Database version does not match the field toolbox version.</source>
         <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="470"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="475"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -4751,18 +4751,18 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Usar edição em tempo real</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="89"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="92"/>
         <source>First select a database!</source>
         <translation>Selecione um banco de dados antes!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="256"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="259"/>
         <source>Could not load the selected classes!
 </source>
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="493"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="498"/>
         <source>Select Stored Config (optional)</source>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
@@ -4772,12 +4772,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation>Editar configuração atual</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="311"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="314"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DsgTools</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="470"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="475"/>
         <source>{} features reclassified with success!</source>
         <translation>{} feições reclassificadas com sucesso!</translation>
     </message>
@@ -4810,6 +4810,13 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="14"/>
         <source>DSGTools: Feature (Re)classification Tool</source>
         <translation>DSGTools: Ferramenta de (Re)classificação</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="75"/>
+        <source>Error getting stored configuration.
+</source>
+        <translation>Erro ao obter configuração armazenada no banco de dados.
+</translation>
     </message>
 </context>
 <context>
@@ -4930,29 +4937,29 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
         <translation type="obsolete">Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="44"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="59"/>
         <source>Inspect Features Tool</source>
         <translation>Ferramenta de inspeção de feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="83"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="110"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Back inspect&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar anterior&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="101"/>
         <source>Set Zoom:</source>
-        <translation>Ajustar 
+        <translation type="obsolete">Ajustar 
 aproximação:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="111"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="205"/>
         <source>Initial feat ID</source>
         <translation>ID iniciação 
 de feição</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="135"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="245"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Next inspect&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar próximo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -4987,11 +4994,22 @@ de feição</translation>
         <translation>Remover valor</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="153"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="280"/>
         <source>Only on selected 
 features</source>
         <translation>Apenas Feições
 Selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="35"/>
+        <source>Select a vector layer to enable tool</source>
+        <translation>Selecione uma camada vetorial para ativar a ferramenta</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="151"/>
+        <source>Set Zoom</source>
+        <translation>Selecione 
+o Zoom</translation>
     </message>
 </context>
 <context>
@@ -5414,25 +5432,25 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="56"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="59"/>
         <source>Enter a parameter name!
 </source>
         <translation>Entre um nome para o parâmetro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="59"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="62"/>
         <source>Parameter already exists! Choose another name!
 </source>
         <translation>Parâmetro existente! Escolha outro nome para o parâmetro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="61"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="64"/>
         <source>Select a template database!
 </source>
         <translation>Selecione um banco como modelo!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="68"/>
+        <location filename="../CustomWidgets/genericParameterSetter.py" line="71"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -5946,14 +5964,29 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
 <context>
     <name>InspectFeatures</name>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="155"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="201"/>
         <source>ERROR:</source>
         <translation>ERRO:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="155"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="201"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="134"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="134"/>
+        <source>There is no feature with id {0} in layer {1}. Returned to previous id</source>
+        <translation type="obsolete">Não existe feição de id {0} na camada {1}. Retornando ao id anterior</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="134"/>
+        <source>Selected id does not exist in layer {0}. Returned to previous id.</source>
+        <translation>O id selecionado não existe na camada {0}. Retornando ao id anterior.</translation>
     </message>
 </context>
 <context>
@@ -10469,77 +10502,77 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Formulário</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="46"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="64"/>
         <source>SCALES</source>
         <translation>ESCALAS</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="61"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="79"/>
         <source>25</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="51"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="69"/>
         <source>100</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="56"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="74"/>
         <source>50</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="68"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="92"/>
         <source>SIZES</source>
         <translation>TAMANHOS</translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="78"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="102"/>
         <source>4mm²</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="83"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="107"/>
         <source>0.8x0.8mm²</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="73"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="97"/>
         <source>25mm²</source>
         <translation></translation>
     </message>
     <message utf8="true">
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="88"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="112"/>
         <source>1x1mm²</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="93"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="117"/>
         <source>0.8mm</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="100"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="130"/>
         <source>SHAPES</source>
         <translation>FORMAS</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="105"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="135"/>
         <source>Square</source>
         <translation>Quadrado</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="110"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="140"/>
         <source>Circle</source>
         <translation>Círculo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="116"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="152"/>
         <source>Draw Shape</source>
         <translation>Desenhar forma</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="134"/>
+        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="170"/>
         <source>Minimum Area Tool</source>
         <translation>Ferramenta de área mínima</translation>
     </message>

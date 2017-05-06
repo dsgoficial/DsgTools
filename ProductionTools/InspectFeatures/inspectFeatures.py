@@ -26,7 +26,7 @@ from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis
+from qgis.core import QgsMapLayer, QGis, QgsVectorLayer
 from qgis.gui import QgsMessageBar
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -43,12 +43,25 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.splitter.hide()
         self.iface = iface
         self.iface.currentLayerChanged.connect(self.enableScale)
+        if not self.iface.activeLayer():
+            self.enableTool(False)
+        self.iface.currentLayerChanged.connect(self.enableTool)
         self.mScaleWidget.setScaleString('1:40000')
         self.mScaleWidget.setEnabled(False)
         self.enableScale()
         self.canvas = self.iface.mapCanvas()
         self.allLayers={}
         self.idxChanged.connect(self.setNewId)
+    
+    def enableTool(self, enabled = True):
+        if enabled == None or not isinstance(enabled, QgsVectorLayer):
+            enabled = False
+        else:
+            enabled = True
+        self.backInspectButton.setEnabled(enabled)
+        self.nextInspectButton.setEnabled(enabled)
+        self.idSpinBox.setEnabled(enabled)
+        self.onlySelectedRadioButton.setEnabled(enabled)
         
     def enableScale(self):
         """
@@ -111,14 +124,14 @@ class InspectFeatures(QWidget,FORM_CLASS):
             oldId = featIdList[oldIndex]
             zoom = self.mScaleWidget.scale()
             if oldId == newId:
-                self.iface.messageBar().pushMessage(self.tr('Error!'), self.tr('Invalid value. Returned to previous id').format(newId, lyrName), level=QgsMessageBar.CRITICAL, duration=3)
+                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
                 return
             try:
                 index = featIdList.index(newId)
                 self.allLayers[lyrName] = index
                 self.makeZoom(zoom, currentLayer, newId)
             except:
-                self.iface.messageBar().pushMessage(self.tr('Error!'), self.tr('There is no id {0} in layer {1}. Returned to previous id').format(newId, lyrName), level=QgsMessageBar.CRITICAL, duration=3)
+                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
                 self.idSpinBox.setValue(oldId)
                 self.makeZoom(zoom, currentLayer, oldId)
 
