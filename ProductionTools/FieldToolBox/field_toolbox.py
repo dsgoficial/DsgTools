@@ -343,6 +343,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             idx = newFeature.fieldNameIndex(attribute)
             #value to be changed
             value = self.reclassificationDict[self.category][self.edgvClass][self.buttonName][attribute]
+            if value == '':
+                continue
             #actual attribute change
             if editBuffer:
                 #this way we are working with the edit buffer
