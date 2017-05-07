@@ -113,7 +113,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         Draws the select template shape on the map canvas
         """
         scaleText = self.mScaleWidget.scaleString()
-        scale = int(scaleText.split(':')[-1].replace('.',''))/1000
+        scale = int(scaleText.split(':')[-1].replace('.','').replace(',',''))/1000
         size = self.sizesComboBox.currentText()
         shape = self.shapesComboBox.currentText()
         validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
