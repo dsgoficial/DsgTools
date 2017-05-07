@@ -568,16 +568,16 @@ class DsgTools:
         self.iface.registerMainWindowAction(action, '')
 
         #removed until bugs are removed
-        icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Copy and Paste Attribute Set'),
-            callback=self.copyPasteTool.copyPaste,
-            parent=productiontools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        productiontools.addAction(action)
-        self.productionButton.addAction(action)
+        # icon_path = ':/plugins/DsgTools/icons/attributeSelector.png'
+        # action = self.add_action(
+        #     icon_path,
+        #     text=self.tr('Copy and Paste Attribute Set'),
+        #     callback=self.copyPasteTool.copyPaste,
+        #     parent=productiontools,
+        #     add_to_menu=False,
+        #     add_to_toolbar=False)
+        # productiontools.addAction(action)
+        # self.productionButton.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/codelist.png'
         action = self.add_action(
