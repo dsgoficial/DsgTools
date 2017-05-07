@@ -1,4 +1,27 @@
 # -*- coding: utf-8 -*-
+"""
+/***************************************************************************
+multiLayerSelect
+                                 A QGIS plugin
+Builds a temp rubberband with a given size and shape.
+                             -------------------
+        begin                : 2016-08-02
+        git sha              : $Format:%H$
+        copyright            : (C) 2017 by  Jossan Costa - Surveying Technician @ Brazilian Army
+                               (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : jossan.costa@eb.mil.br
+                               borba.philipe@eb.mil.br
+ ***************************************************************************/
+Some parts were inspired by QGIS plugin MultipleLayerSelection
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
 from qgis.gui import *
 from qgis.core import *
 from PyQt4.Qt import *
@@ -14,127 +37,135 @@ class MultiLayerSelection(QgsMapTool):
         self.initSelectedIds()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
+        self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
+        mFillColor = QColor( 254, 178, 76, 63 );
+        self.rubberBand.setColor(mFillColor)
+        self.rubberBand.setWidth(1)
+        self.reset()
+        self.blackList = ['moldura']
+    
+    def reset(self):
+        self.startPoint = self.endPoint = None
+        self.isEmittingPoint = False
+        self.rubberBand.reset(QGis.Polygon)
+
+    def canvasMoveEvent(self, e):
+        if not self.isEmittingPoint:
+            return
+        self.endPoint = self.toMapCoordinates( e.pos() )
+        self.showRect(self.startPoint, self.endPoint)
+
+    def showRect(self, startPoint, endPoint):
+        self.rubberBand.reset(QGis.Polygon)
+        if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
+            return
+        point1 = QgsPoint(startPoint.x(), startPoint.y())
+        point2 = QgsPoint(startPoint.x(), endPoint.y())
+        point3 = QgsPoint(endPoint.x(), endPoint.y())
+        point4 = QgsPoint(endPoint.x(), startPoint.y())
+    
+        self.rubberBand.addPoint(point1, False)
+        self.rubberBand.addPoint(point2, False)
+        self.rubberBand.addPoint(point3, False)
+        self.rubberBand.addPoint(point4, True)    # true to update canvas
+        self.rubberBand.show()
+
+    def rectangle(self):
+        if self.startPoint is None or self.endPoint is None:
+            return None
+        elif self.startPoint.x() == self.endPoint.x() or self.startPoint.y() == self.endPoint.y():
+            return None
+    
+        return QgsRectangle(self.startPoint, self.endPoint)
 
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
-       
-    def getSelectionsLayers(self):
-        if self.selecaoVariada:
-            self.selecaoVariada =  list(set( self.selecaoVariada ))
-            return self.selecaoVariada
-        else:
-            return []
-    
-    def setSelectionsLayers(self, name):
-        self.selecaoVariada.append(name)
-        
+
     def initSelectedIds(self):
         self.ids={}
         for l in self.canvas.layers():
             self.ids[l.name()] = []
-  
+    
+    def canvasReleaseEvent(self, e):
+        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            self.isEmittingPoint = False
+            r = self.rectangle()
+            layers = self.canvas.layers()
+            for layer in layers:
+                if layer.type() == QgsMapLayer.RasterLayer or (self.layerHasPartInBlackList(layer.name())):
+                    continue
+                if r is not None:
+                    selectedIds = [feat.id for feat in layer.selectedFeatures()]
+                    bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
+                    layer.select(bbRect, True)
+            self.rubberBand.hide()
+
     def canvasPressEvent(self, e):
-        if not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
-            self.removerSelecoes()
-            self.initSelectedIds()
+        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            self.isEmittingPoint = True
+            self.startPoint = self.toMapCoordinates(e.pos())
+            self.endPoint = self.startPoint
+            self.isEmittingPoint = True
+            self.showRect(self.startPoint, self.endPoint)
         else:
-            self.setBkpLayersNames()
-            self.setBkpIds()
-            self.removerSelecoes(False)
-        layers = self.canvas.layers()    
-        layer2 = QgsMapLayerRegistry.instance().mapLayers()    
-        self.grupo={}
-        for x in range(len(layer2)):
-            self.grupo[layer2.keys()[x][:-17]]=layer2.get(layer2.keys()[x])            
+            self.isEmittingPoint = False
+            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+            self.selectFeatures(e, keepSelected = selected)
+    
+    def getCursorRect(self, e):
         p = self.toMapCoordinates(e.pos())
         w = self.canvas.mapUnitsPerPixel() * 10
-        rect = QgsRectangle(p.x()-w, p.y()-w, p.x()+w, p.y()+w)
-        for layer in layers:
-            if (layer.type() == QgsMapLayer.RasterLayer) or ('moldura' in layer.name().lower()):
-                continue
-            else:
-                lRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
-                layer.select(lRect, False)
-                if (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier) and (layer.selectedFeatureCount() >= 1):
-                    self.setSelectionsLayers(layer.name())
-                    self.iface.setActiveLayer(self.grupo.get(layer.name()))
-                    self.iface.activeLayer().startEditing()
-                elif layer.selectedFeatureCount() == 1:
-                    self.setSelectionsLayers(layer.name())
-                else:
-                    layer.removeSelection()                    
-        if not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
-            self.setOnlyOneSelection()
-            self.finished.emit(self.getSelectionsLayers())
-        else:
-            for name in self.getSelectionsLayers():
-                newIds = self.grupo[name].selectedFeaturesIds()
-                for i in newIds:
-                    if i in self.getBkpIds()[name]:
-                        self.getBkpIds()[name].remove(i)
-                    elif not(i in self.getBkpIds()[name]):
-                        self.getBkpIds()[name].append(i)
-            self.setBkpLayersNames(self.getBkpLayerNames())
-            self.removerSelecoes(False)
-            self.restoreAllLayerNames()
-            self.selectLayers() 
-            self.finished.emit(self.getSelectionsLayers())               
-                
-    def restoreAllLayerNames(self):
-        for name in self.getBkpLayerNames():
-            self.setSelectionsLayers(name)
-            
-    def selectLayers(self):
-        for name in self.getSelectionsLayers():
-            for Id in self.getBkpIds()[name]:
-                self.grupo[name].select(Id)                         
+        return QgsRectangle(p.x()-w, p.y()-w, p.x()+w, p.y()+w)
     
-    def setBkpIds(self):
-        self.initSelectedIds()
-        for l in self.getSelectionsLayers():
-            if not l in self.ids:
-                self.ids[l] = []
-            self.ids[l]+=self.grupo[l].selectedFeaturesIds()
-            self.ids[l] = list(set(self.ids[l]))
-                           
-    def getBkpIds(self):
-        return self.ids
- 
-    def setBkpLayersNames(self, add=None):
-        if add:
-            self.layersName = self.getSelectionsLayers() + add
-        else:
-            self.layersName = self.getSelectionsLayers()
-        
-    def getBkpLayerNames(self):
-        return self.layersName
-                         
-    def setOnlyOneSelection(self):
-        selections = self.getSelectionsLayers()
-        layers = QgsMapLayerRegistry.instance().mapLayers()    
-        table = []
-        for x in range(len(layers)):
-            if layers.keys()[x][:-17] in selections:
-                table.append([layers.get(layers.keys()[x]).geometryType(), layers.get(layers.keys()[x])])
-        table.sort()
-        geom = None
-        for line in table:
-            if line[0] == 0:
-                geom = line[1]
-                break
-            elif line[0] == 1:
-                geom = line[1]
-                break
-            else: 
-                geom = line[1]
-                break
-        for line in table:
-            if not (line[1] == geom):
-                line[1].removeSelection()
-        self.iface.setActiveLayer(geom)
-        if self.iface.activeLayer():
-            self.iface.activeLayer().startEditing()
+    def layerHasPartInBlackList(self, lyrName):
+        for item in self.blackList:
+            if item.lower() in lyrName.lower():
+                return True
+        return False
+    
+    def getPrimitiveDict(self, keepSelected = False):
+        #these layers are ordered by view order
+        primitiveDict = dict()
+        for lyr in self.iface.legendInterface().layers():
+            geomType = lyr.geometryType()
+            if geomType not in primitiveDict.keys():
+                primitiveDict[geomType] = []
+            if (lyr.type() <> QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
+                continue
+            #removes selection
+            if not keepSelected:
+                lyr.removeSelection()
+            primitiveDict[geomType].append(lyr)
+        return primitiveDict
+    
+    def clearSelection(self):
+        pass
+
+    def selectFeatures(self, e, bbRect = None, keepSelected = False):
+        if not bbRect:   
+            rect = self.getCursorRect(e)
+        if not keepSelected:
+            self.clearSelection()
+        primitiveDict = self.getPrimitiveDict(keepSelected = keepSelected)
+        primitives = primitiveDict.keys()
+        primitives.sort()
+        for primitive in primitives:
+            for lyr in primitiveDict[primitive]:
+                if not bbRect:
+                    bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
+                for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
+                    if feat.geometry().intersects(bbRect):
+                        lyr.startEditing()
+                        if e.button() == QtCore.Qt.RightButton:
+                            #set target, start edit and stop
+                            if not keepSelected:
+                                self.iface.setActiveLayer(lyr)
+                                return
+                        lyr.modifySelection([feat.id()],[])
+                        if not keepSelected:
+                            self.iface.setActiveLayer(lyr)
+                            return
                        
     def deactivate(self):
         self.ids = {}
@@ -147,19 +178,6 @@ class MultiLayerSelection(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
-    
-    def removerSelecoes(self, all=True):
-        if all:
-            for i in range(len(self.iface.mapCanvas().layers())):
-                try:
-                    self.iface.mapCanvas().layers()[i].removeSelection()
-                except:
-                    pass
-            self.selecaoVariada=[]
-        else:
-            for name in self.getBkpLayerNames():
-                self.grupo[name].removeSelection()
-            self.selecaoVariada=[]
     
         
 
