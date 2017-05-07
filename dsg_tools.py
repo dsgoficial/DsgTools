@@ -237,11 +237,9 @@ class DsgTools:
         #Sub menus
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
         database = self.addMenu(self.dsgTools, u'database', self.tr('Database Tools'),':/plugins/DsgTools/icons/database.png')
-        dbcreation = self.addMenu(database, u'dbcreation', self.tr('Database Creation Tools'),':/plugins/DsgTools/icons/database.png')
         layers = self.addMenu(self.dsgTools, u'layers', self.tr('Layer Tools'),':/plugins/DsgTools/icons/layers.png')
         bdgex = self.addMenu(self.dsgTools, u'bdgex', self.tr('BDGEx'),':/plugins/DsgTools/icons/eb.png')
         productiontools = self.addMenu(self.dsgTools, u'productiontools', self.tr('Production Tools'),':/plugins/DsgTools/icons/productiontools.png')
-        validationtools = self.addMenu(productiontools, u'validationtools', self.tr('Validation Tools'),':/plugins/DsgTools/icons/validationtools.png')
         topocharts = self.addMenu(bdgex, u'topocharts', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         coverageLyr = self.addMenu(bdgex, u'coverageLyr', self.tr('Coverage Layers'),':/plugins/DsgTools/icons/eb.png')
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
@@ -480,10 +478,10 @@ class DsgTools:
             icon_path,
             text=self.tr('Create PostGIS'),
             callback=self.createPostGISDatabase,
-            parent=dbcreation,
+            parent=database,
             add_to_menu=False,
             add_to_toolbar=False)
-        dbcreation.addAction(action)
+        database.addAction(action)
         self.databaseButton.addAction(action)
         self.databaseButton.setDefaultAction(action)
 
@@ -492,10 +490,10 @@ class DsgTools:
             icon_path,
             text=self.tr('Create Spatialite'),
             callback=self.createSpatialiteDatabase,
-            parent=dbcreation,
+            parent=database,
             add_to_menu=False,
             add_to_toolbar=False)
-        dbcreation.addAction(action)
+        database.addAction(action)
         self.databaseButton.addAction(action) 
         
         icon_path = ':/plugins/DsgTools/icons/batchDatabase.png'
@@ -503,10 +501,10 @@ class DsgTools:
             icon_path,
             text=self.tr('Batch Database Creation'),
             callback=self.batchDatabaseCreation,
-            parent=dbcreation,
+            parent=database,
             add_to_menu=False,
             add_to_toolbar=False)
-        dbcreation.addAction(action)
+        database.addAction(action)
         self.databaseButton.addAction(action) 
 
         icon_path = ':/plugins/DsgTools/icons/validationtools.png'
@@ -514,10 +512,10 @@ class DsgTools:
             icon_path,
             text=self.tr('Perform database validation'),
             callback=self.showValidationToolbox,
-            parent=validationtools,
+            parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
-        validationtools.addAction(action)
+        productiontools.addAction(action)
         self.productionButton.addAction(action)
         self.productionButton.setDefaultAction(action)
 

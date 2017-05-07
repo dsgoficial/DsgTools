@@ -127,11 +127,11 @@ class MultiLayerSelection(QgsMapTool):
         #these layers are ordered by view order
         primitiveDict = dict()
         for lyr in self.iface.legendInterface().layers():
+            if (lyr.type() <> QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
+                continue
             geomType = lyr.geometryType()
             if geomType not in primitiveDict.keys():
                 primitiveDict[geomType] = []
-            if (lyr.type() <> QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
-                continue
             #removes selection
             if not keepSelected:
                 lyr.removeSelection()

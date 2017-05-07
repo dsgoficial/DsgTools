@@ -1280,7 +1280,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="105"/>
         <source>Cleaning error.</source>
-        <translation>Erro de limpeza</translation>
+        <translation>Erro de limpeza.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
@@ -5465,7 +5465,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="47"/>
         <source>Starting </source>
-        <translation>Iniciando.</translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="47"/>
@@ -5777,7 +5777,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="73"/>
         <source>Small Area.</source>
-        <translation>Área pequena</translation>
+        <translation>Área pequena.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="62"/>
@@ -5810,7 +5810,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="48"/>
         <source>Starting </source>
-        <translation>Iniciando.</translation>
+        <translation>Iniciando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="48"/>
@@ -5873,7 +5873,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="33"/>
         <source>Identify Vertex Near Edge</source>
-        <translation>Identificar vértices próximos à arestas</translation>
+        <translation>Identificar vértices próximos a arestas</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="56"/>
@@ -5903,7 +5903,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="81"/>
         <source>Vertex near edge.</source>
-        <translation>Vértice próximo à aresta</translation>
+        <translation>Vértice próximo a aresta.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
@@ -7075,7 +7075,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ServerManagementTools/permissionManager.py" line="140"/>
         <source>Problem revoking role </source>
-        <translation>Problema ao revogar perfil: </translation>
+        <translation>Problema ao revogar perfil </translation>
     </message>
     <message>
         <location filename="../ServerManagementTools/permissionManager.py" line="140"/>
@@ -8553,7 +8553,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="54"/>
         <source>There are no small areas.</source>
-        <translation>Não há áreas pequenas</translation>
+        <translation>Não há áreas pequenas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
