@@ -22,11 +22,11 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.gui import *
-from qgis.core import *
+from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest
 from PyQt4.Qt import *
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QShortcut, QKeySequence
+from PyQt4.QtGui import QColor
 
 class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
@@ -38,7 +38,7 @@ class MultiLayerSelection(QgsMapTool):
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
-        mFillColor = QColor( 254, 178, 76, 63 );
+        mFillColor = QColor( 254, 178, 76, 63 )
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
         self.reset()
