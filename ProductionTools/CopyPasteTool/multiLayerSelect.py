@@ -24,7 +24,6 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest
-from PyQt4.Qt import *
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor
 
