@@ -85,6 +85,7 @@ class MultiLayerSelection(QgsMapTool):
         self.ids={}
         for l in self.canvas.layers():
             self.ids[l.name()] = []
+
     
     def canvasReleaseEvent(self, e):
         if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
@@ -160,6 +161,9 @@ class MultiLayerSelection(QgsMapTool):
                             #set target, start edit and stop
                             if not keepSelected:
                                 self.iface.setActiveLayer(lyr)
+                                return
+                            else:
+                                self.iface.openFeatureForm(lyr,feat, showModal=False)
                                 return
                         lyr.modifySelection([feat.id()],[])
                         if not keepSelected:
