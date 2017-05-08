@@ -55,6 +55,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.setToolTip('')
     
     def enableTool(self, enabled = True):
+        from qgis.core import QgsVectorLayer
         if enabled == None or not isinstance(enabled, QgsVectorLayer):
             enabled = False
         else:
