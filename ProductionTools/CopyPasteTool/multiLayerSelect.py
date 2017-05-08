@@ -31,7 +31,7 @@ class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
     def __init__(self, canvas, iface):
         """
-        Tool Behaviours:
+        Tool Behaviours: (all behaviours start edition, except for rectangle one)
         1- Left Click: Clears previous selection, selects feature, sets feature layer as active layer. 
         The selection is done with the following priority: Point, Line then Polygon. 
         Selection is only done in visible layer.
