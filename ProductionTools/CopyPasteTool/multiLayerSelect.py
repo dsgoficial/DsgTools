@@ -182,8 +182,6 @@ class MultiLayerSelection(QgsMapTool):
         """
         if not bbRect:   
             rect = self.getCursorRect(e)
-        # if not hasControlModifyer:
-        #     self.clearSelection()
         primitiveDict = self.getPrimitiveDict(e, hasControlModifyer = hasControlModifyer)
         primitives = primitiveDict.keys()
         primitives.sort() #this sort enables search to be done in the order of Point (value 0), Line (value 1) and Polygon (value 2)
@@ -192,7 +190,7 @@ class MultiLayerSelection(QgsMapTool):
                 if not bbRect:
                     bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
                 for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
-                    if feat.geometry().intersects(bbRect):
+                    if feat.geometry().intersects(bbRect): #tests if feature intersects tool bounding box, otherwise skip it
                         lyr.startEditing() #starts layer editting
                         if e.button() == QtCore.Qt.RightButton:
                             #set target, start edit and stop
