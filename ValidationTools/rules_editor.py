@@ -84,6 +84,10 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
         """
         selectedItems = self.tableWidget.selectedItems()
         rows = [self.tableWidget.row(selectedItem) for selectedItem in selectedItems]
+        rows = set(rows)
+        rows = list(rows)
+        rows.sort()
+        rows.reverse()
         for row in rows:
             self.tableWidget.removeRow(row)
         
