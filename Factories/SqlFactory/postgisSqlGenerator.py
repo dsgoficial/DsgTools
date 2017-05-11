@@ -443,14 +443,14 @@ class PostGISSqlGenerator(SqlGenerator):
             if necessity == '\'f\'':
                 sql = """SELECT DISTINCT foo.id, foo.geom FROM
                 (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) = 'f' THEN 1 ELSE 0 END) count, a.geom geom 
-                    FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                    FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
                 WHERE foo.count > 0
                 """% (predicate_function, class_a, class_b, sameClassRestriction)
                 
             elif necessity == '\'t\'':
                 sql = """SELECT DISTINCT foo.id, foo.geom FROM
                 (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) = 'f' THEN 1 ELSE 0 END) count, a.geom geom 
-                    FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                    FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
                 WHERE foo.count = 0
                 """% (predicate_function, class_a, class_b, sameClassRestriction)
         else:
@@ -463,13 +463,13 @@ class PostGISSqlGenerator(SqlGenerator):
                 if max_card == '*':
                     sql = """SELECT DISTINCT foo.id, foo.geom FROM
                     (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
-                        FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                        FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
                     WHERE foo.count < %s
                     """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card)
                 else:
                     sql = """SELECT DISTINCT foo.id, foo.geom FROM
                     (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
-                        FROM %s as a,%s as b %s GROUP BY a.id) as foo
+                        FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
                     WHERE foo.count < %s OR foo.count > %s
                     """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card, max_card)
             elif necessity == '\'t\'':# must not (be)
