@@ -36,9 +36,9 @@ from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoade
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class SpatialiteLayerLoader(EDGVLayerLoader):
-    def __init__(self, iface, abstractDb):
+    def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
-        super(self.__class__, self).__init__(iface, abstractDb)
+        super(self.__class__, self).__init__(iface, abstractDb, loadCentroids)
         
         self.provider = 'spatialite'
         

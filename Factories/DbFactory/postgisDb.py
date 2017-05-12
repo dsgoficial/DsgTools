@@ -2207,10 +2207,9 @@ class PostgisDb(AbstractDb):
         geomList = []
         while query.next():
             geomList.append(json.loads(query.value(0)))
-        return geomList
-            
+        return geomList  
     
-    def getGeomTypeDict(self):
+    def getGeomTypeDict(self, loadCentroids=False):
         self.checkAndOpenDb()
         sql = self.gen.getGeomByPrimitive()
         query = QSqlQuery(sql, self.db)
@@ -2219,7 +2218,7 @@ class PostgisDb(AbstractDb):
         geomDict = dict()
         while query.next():
             aux = json.loads(query.value(0))
-            if aux['geomtype'] == 'POINT':
+            if loadCentroids and aux['geomtype'] == 'POINT':
                 classlist = []
                 for layerName in aux['classlist']:
                     table = layerName.split('_')

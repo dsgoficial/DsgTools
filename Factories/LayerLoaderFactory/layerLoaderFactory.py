@@ -27,7 +27,7 @@ from DsgTools.Factories.LayerLoaderFactory.spatialiteLayerLoader import Spatiali
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
 class LayerLoaderFactory:
-    def makeLoader(self, iface, abstractDb):
+    def makeLoader(self, iface, abstractDb, loadCentroids=False):
         """
         Returns the specific layer loader
         :param iface:
@@ -36,8 +36,8 @@ class LayerLoaderFactory:
         """
         driverName = abstractDb.getType()
         if driverName == "QSQLITE":
-            return SpatialiteLayerLoader(iface, abstractDb)
+            return SpatialiteLayerLoader(iface, abstractDb, loadCentroids)
         if driverName == "QPSQL":
-            return PostGISLayerLoader(iface, abstractDb)
+            return PostGISLayerLoader(iface, abstractDb, loadCentroids)
         else:
             return None

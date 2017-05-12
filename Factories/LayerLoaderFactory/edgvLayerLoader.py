@@ -38,7 +38,7 @@ from DsgTools.Utils.utils import Utils
 
 class EDGVLayerLoader(QObject):
     
-    def __init__(self, iface, abstractDb):
+    def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
         super(EDGVLayerLoader, self).__init__()
         
@@ -48,7 +48,7 @@ class EDGVLayerLoader(QObject):
         self.utils = Utils()
         self.logErrorDict = dict()
         self.errorLog = ''
-        self.geomTypeDict = self.abstractDb.getGeomTypeDict()
+        self.geomTypeDict = self.abstractDb.getGeomTypeDict(loadCentroids)
         self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
         self.correspondenceDict = {'POINT':'Point', 'MULTIPOINT':'Point', 'LINESTRING':'Line','MULTILINESTRING':'Line', 'POLYGON':'Area', 'MULTIPOLYGON':'Area'}
         

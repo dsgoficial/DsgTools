@@ -113,7 +113,7 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
             auxClasses = auxClasses + auxCentroids
             auxClasses.sort(reverse=True)
             auxClasses = [self.widgetConv.settingDict['frameLayer'].split('.')[-1]]+auxClasses
-            factory = self.layerFactory.makeLoader(self.iface, self.widget.abstractDb)
+            factory = self.layerFactory.makeLoader(self.iface, self.widget.abstractDb, loadCentroids=True)
             factory.load(auxClasses, uniqueLoad = True, isEdgv = isEdgv)
         except Exception as e:
                 QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
