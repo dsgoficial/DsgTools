@@ -190,6 +190,7 @@ class MultiLayerSelection(QgsMapTool):
                 if not bbRect:
                     bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
                 for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
+                    selectedIds = lyr.selectedFeaturesIds() #list of selected ids
                     if feat.geometry().intersects(bbRect): #tests if feature intersects tool bounding box, otherwise skip it
                         lyr.startEditing() #starts layer editting
                         if e.button() == QtCore.Qt.RightButton:
@@ -205,7 +206,10 @@ class MultiLayerSelection(QgsMapTool):
                                 self.iface.openFeatureForm(lyr,feat, showModal=False)
                                 return
                         #if code reaches here, it means that it is an incremental selection.
-                        lyr.modifySelection([feat.id()],[])
+                        if feat.id() in selectedIds:
+                            lyr.modifySelection([],[feat.id()])
+                        else:
+                            lyr.modifySelection([feat.id()],[])
                         if not hasControlModifyer:
                             self.iface.setActiveLayer(lyr)
                             return
