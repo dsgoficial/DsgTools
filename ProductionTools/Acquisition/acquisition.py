@@ -32,7 +32,9 @@ class Acquisition:
             else:
                 self.iface.messageBar().pushMessage(u"Aviso", u"Ferramenta utilizada apenas em polígonos !",
                                                                     level=QgsMessageBar.INFO, duration=6)
+                self.tool.deactivate()
         else:
-            self.iface.messageBar().pushMessage(u"Aviso", u"Inicie a Edição da Feição!",
-                                                                    level=QgsMessageBar.INFO, duration=6)
+            self.iface.messageBar().pushMessage(u"Aviso", u"Inicie a Edição da Feição!", level=QgsMessageBar.INFO, duration=6)
+            self.tool.deactivate()
+                                    
             
