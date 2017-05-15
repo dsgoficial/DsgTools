@@ -32,11 +32,11 @@ class Circle(GeometricaAcquisition):
         nPoints = 50
         x = startPoint.x()
         y = startPoint.y()
-        r = sqrt((endPoint.x() - startPoint.x())**2 + (endPoint.y() - startPoint.y())**2)
+        r = math.sqrt((endPoint.x() - startPoint.x())**2 + (endPoint.y() - startPoint.y())**2)
         self.rubberBand.reset(QGis.Polygon)
         for itheta in range(nPoints+1):
-            theta = itheta*(2.0*pi/nPoints)
-            self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
+            theta = itheta*(2.0*math.pi/nPoints)
+            self.rubberBand.addPoint(QgsPoint(x+r*math.cos(theta), y+r*math.sin(theta)))
 
     def endGeometry(self):
         self.geometry = self.rubberBand.asGeometry()
@@ -54,15 +54,5 @@ class Circle(GeometricaAcquisition):
         if self.startPoint:
             self.endPoint = QgsPoint(event.mapPoint())
             self.showCircle(self.startPoint, self.endPoint)
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
+
+
