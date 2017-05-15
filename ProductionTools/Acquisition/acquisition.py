@@ -10,17 +10,24 @@ class Acquisition:
         self.canvas = iface.mapCanvas()
         self.tool = None
 
+    def setPolygonAction(self, action):
+        self.polygonAction = action
+    
+    def setCircleAction(self, action):
+        self.circleAction = action
+
     def acquisitionNinetyDegrees(self):
-        self.run(Polygon)
+        self.run(Polygon, self.polygonAction)
 
     def acquisitionCircle(self):
-        self.run(Circle)
+        self.run(Circle, self.circleAction)
             
-    def run(self, func):
+    def run(self, func, action):
         layer = self.canvas.currentLayer()
         if layer in self.iface.editableLayers():
             if layer.geometryType() == 2:
-                self.tool = func(self.canvas, self.iface)
+                self.tool = func(self.canvas, self.iface, action)
+                self.tool.setAction(action)
                 self.canvas.setMapTool(self.tool)
             else:
                 self.iface.messageBar().pushMessage(u"Aviso", u"Ferramenta utilizada apenas em polígonos !",

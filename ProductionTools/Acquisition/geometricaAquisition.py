@@ -13,20 +13,29 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 
 class GeometricaAcquisition(QgsMapTool):
-    def __init__(self, canvas, iface):
+    def __init__(self, canvas, iface, action):
         super(GeometricaAcquisition, self).__init__(canvas)
         self.iface=iface        
         self.canvas = canvas
         self.rubberBand = None
         self.initVariable()
+        self.setAction(action)
+
+    def setAction(self, action):
+        self.toolAction = action
+        self.toolAction.setCheckable(True)
                 
     def canvasPressEvent(self, e):
         pass
     
     def deactivate(self):
         self.canvas.setMapTool(self)
+        if self.toolAction:
+            self.toolAction.setChecked(False)
     
     def activate(self):
+        if self.toolAction:
+            self.toolAction.setChecked(True)
         self.free = False
         self.cur = QCursor(QPixmap(["18 13 4 1",
                                     "           c None",

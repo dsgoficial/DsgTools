@@ -14,8 +14,8 @@ from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 
 class Circle(GeometricaAcquisition):
-    def __init__(self, canvas, iface):
-        super(Circle, self).__init__(canvas, iface)
+    def __init__(self, canvas, iface, action):
+        super(Circle, self).__init__(canvas, iface, action)
         self.canvas = canvas
         self.iface = iface
         self.rubberBand = None
@@ -42,7 +42,6 @@ class Circle(GeometricaAcquisition):
 
     def endGeometry(self):
         self.geometry = self.rubberBand.asGeometry()
-        print self.geometry
         self.createGeometry(self.geometry)
   
     def canvasReleaseEvent(self, event):

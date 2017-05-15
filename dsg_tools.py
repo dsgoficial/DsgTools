@@ -635,7 +635,7 @@ class DsgTools:
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.toolbar.addAction(action)
-        self.copyPasteTool.setSelectorAction(action)
+        self.acquisition.setPolygonAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/circle.png'
         action = self.add_action(
@@ -647,7 +647,7 @@ class DsgTools:
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.toolbar.addAction(action)
-        self.copyPasteTool.setSelectorAction(action)
+        self.acquisition.setCircleAction(action)
         
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')

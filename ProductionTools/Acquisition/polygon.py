@@ -17,13 +17,12 @@ from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 
 class Polygon(GeometricaAcquisition):
-    def __init__(self, canvas, iface):
-        super(Polygon, self).__init__(canvas, iface)
+    def __init__(self, canvas, iface, action):
+        super(Polygon, self).__init__(canvas, iface, action)
         self.canvas = canvas
         self.iface = iface
         self.rubberBand = None
         self.initVariable()
-       
         
     def initVariable(self):
         if self.rubberBand:
