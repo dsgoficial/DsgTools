@@ -302,7 +302,7 @@ class UtmGrid:
         key = index.split('-')[0]
         otherParts = index.split('-')[1:]
         if (dict.has_key(key)):
-            return dict[key]+'-'+string.join(otherParts,'-')
+            return dict[key]+'-'.join(otherParts)
         else:
             return ''
     
@@ -324,7 +324,6 @@ class UtmGrid:
         for k,v in miDict.iteritems():
             if v == hundredInom:
                 return '-'.join([k]+remains)
-
 
 if (__name__=="__main__"):
     test=UtmGrid()
