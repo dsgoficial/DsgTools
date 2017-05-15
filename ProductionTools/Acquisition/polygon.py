@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os                                                                         
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
-from qgis.utils import iface
+from PyQt4 import QtGui, uic 
+from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
 import math
-from PyQt4.Qt import *
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
+from qgis.core import QgsPoint, QGis, QgsGeometry
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
