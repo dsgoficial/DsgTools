@@ -59,6 +59,7 @@ from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
 from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
+from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
 
 from qgis.utils import showPluginHelp
 try:
@@ -123,6 +124,7 @@ class DsgTools:
         self.inspectFeatures = InspectFeatures(iface)
         self.styleManagerTool = StyleManagerTool(iface)
         self.copyPasteTool = CopyPasteTool(iface)
+        self.acquisition = Acquisition(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -616,6 +618,30 @@ class DsgTools:
             icon_path,
             text=self.tr('Generic Selector'),
             callback=self.copyPasteTool.selectMulti,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+        self.copyPasteTool.setSelectorAction(action)
+        
+        icon_path = ':/plugins/DsgTools/icons/home.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Ninety degrees acquisition'),
+            callback=self.acquisition.acquisitionNinetyDegrees,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+        self.copyPasteTool.setSelectorAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/circle.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Add circle'),
+            callback=self.acquisition.acquisitionCircle,
             parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)

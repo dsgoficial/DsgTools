@@ -43,5 +43,7 @@
 		<file>icons/genericSelect.png</file>  
 		<file>icons/attributeSelector.png</file> 
                 <file>icons/refresh.png</file> 
+                <file>icons/circle.png</file> 
+                <file>icons/home.png</file> 
     </qresource>
 </RCC>
