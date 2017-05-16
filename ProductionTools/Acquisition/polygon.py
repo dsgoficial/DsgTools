@@ -46,14 +46,13 @@ class Polygon(GeometricaAcquisition):
             self.createGeometry(geom)
   
     def canvasReleaseEvent(self, event):
-        pointMap = event.mapPoint() 
+        pointMap = self.snapToLayer(event) 
         if event.button() == Qt.RightButton:
             if self.free:
                 self.endGeometryFree()
             else:
                 self.endGeometry()        
         elif self.free:
-            point = QgsPoint(pointMap)
             self.geometry.append(point)
             self.qntPoint += 1
         else:
@@ -73,7 +72,8 @@ class Polygon(GeometricaAcquisition):
                 self.qntPoint += 1
                
     def canvasMoveEvent(self, event):
-        point = QgsPoint(event.mapPoint())       
+        point = QgsPoint(event.mapPoint())
+        point = self.snapToLayer(event)     
         if self.qntPoint == 1:
             geom = QgsGeometry.fromPolyline([self.geometry[0], point])
             self.rubberBand.setToGeometry(geom, None)
@@ -85,6 +85,25 @@ class Polygon(GeometricaAcquisition):
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
                     geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
-                    self.rubberBand.setToGeometry(geom, None)            
-          
-        
+                    self.rubberBand.setToGeometry(geom, None)
+
+    def snapToLayer(self, event):
+        snapMode = self.canvas.snappingUtils().snapToMapMode()
+        snapper = QgsMapCanvasSnapper(self.canvas)
+        snapMode, snapTolerance, dumpUnits = self.getSnapSettings()
+        (retval,result) = snapper.snapToCurrentLayer(event.pos(), snapMode, snappingTol = snapTolerance)
+        if result <> []:
+            return QgsPoint(result[0].snappedVertex)
+        else:
+            return QgsPoint(event.mapPoint())
+    
+    def getSnapSettings(self):
+        dumpSplit = self.canvas.snappingUtils().dump().split('\n')[2].split(' ') #snappingUtils().dump() returns a string with current snap settins
+        snapMode = dumpSplit[1] #Snap to vertex, segment or both
+        snapTolerance = dumpSplit[5]
+        dumpUnits = dumpSplit[-1]
+        return int(snapMode), int(snapTolerance), int(dumpUnits)
+
+    
+    def createSnapCursor(self, point):
+        pass
