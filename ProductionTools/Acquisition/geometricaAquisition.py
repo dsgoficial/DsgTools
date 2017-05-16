@@ -76,9 +76,13 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         if self.rubberBand:
             self.rubberBand.reset(True)
             self.rubberBand = None
+            self.rubberBand = self.createRubberBand()
         self.qntPoint = 0
-        if self.geometry:
-            self.geometry = []
+        self.geometry = []
+        if self.snapCursorRubberBand:
+            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand.hide()
+            self.snapCursorRubberBand = None
     
     def lineIntersection(self, p1, p2, p3, p4):        
         m1 = (p1.y() - p2.y())/(p1.x() - p2.x())

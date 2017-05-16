@@ -17,21 +17,6 @@ class Polygon(GeometricaAcquisition):
         super(Polygon, self).__init__(canvas, iface, action)
         self.canvas = canvas
         self.iface = iface
-        self.rubberBand = None
-        self.snapCursorRubberBand = None
-        self.initVariable()
-        
-    def initVariable(self):
-        if self.rubberBand:
-            self.rubberBand.reset(True)
-            self.rubberBand = None
-        self.qntPoint = 0
-        self.geometry = []
-        if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
-            self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand = None
-            
 
     def endGeometry(self):
         if len(self.geometry) > 2:
@@ -61,7 +46,7 @@ class Polygon(GeometricaAcquisition):
             else:
                 self.endGeometry()        
         elif self.free:
-            self.geometry.append(point)
+            self.geometry.append(pointMap)
             self.qntPoint += 1
         else:
             if event.button() == Qt.LeftButton:
