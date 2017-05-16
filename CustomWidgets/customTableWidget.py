@@ -7,7 +7,7 @@
                               -------------------
         begin                : 2017-04-07
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba@dsg.eb.mil.br
  ***************************************************************************/
 
@@ -35,8 +35,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customTableWidget.ui'))
 
 class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
-    def defineValidatorList(self, validatorList):
+    def defineValidatorList(self, validatorList, maskList = None):
         self.validatorList = validatorList
+        if not maskList:
+            self.maskList = [None]*len(self.validatorList)
+        else:
+            self.maskList = maskList
 
     def createEditor(self, widget, option, index):
         if not index.isValid():
@@ -90,6 +94,8 @@ class CustomTableWidget(QtGui.QWidget, FORM_CLASS):
         rowList.sort(reverse=True)
         for row in rowList:
             self.tableWidget.removeRow(row)
+            self.validatorList.pop(row)
+            self.maskList.pop(row)
     
     def clearItems(self):
         rowList = range(self.tableWidget.rowCount())

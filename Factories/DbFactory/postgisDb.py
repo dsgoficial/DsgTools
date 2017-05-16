@@ -42,6 +42,12 @@ class PostgisDb(AbstractDb):
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
 
+    def getDatabaseParameters(self):
+        """
+        Gets (host, port, user, password)
+        """
+        return (self.db.host, self.db.port, self.db.userName, self.db.password)
+
     def getDatabaseName(self):
         """
         Gets the database name
@@ -2323,12 +2329,14 @@ class PostgisDb(AbstractDb):
                 geomStructDict[tableName][d['f1']] = yesNoDict[d['f2']]
         return geomStructDict
     
-    def createDbFromTemplate(self,dbName,version,templateName = 'edgv'):
+    def createDbFromTemplate(self, dbName, version = None, templateName = 'edgv'):
         #check if created, if created prompt if drop is needed
         self.checkAndOpenDb()
         if templateName == 'edgv':
+            if not version:
+                raise Exception(self.tr('Version Required!'))    
             templateName = self.getTemplateName(version)
-        sql = self.gen.createFromTemplate(dbName,version,templateName)
+        sql = self.gen.createFromTemplate(dbName,templateName)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())

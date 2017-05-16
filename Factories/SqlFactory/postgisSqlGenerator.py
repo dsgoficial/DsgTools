@@ -1005,7 +1005,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """INSERT INTO public.aux_moldura_a (mi,inom,escala,geom) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
         return sql
     
-    def createFromTemplate(self,dbName, version, templateName):
+    def createFromTemplate(self,dbName, templateName):
         sql = """CREATE DATABASE "{0}" with template = "{1}";""".format(dbName,templateName)
         return sql
     

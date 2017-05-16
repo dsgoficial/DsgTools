@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>391</width>
-    <height>146</height>
+    <width>413</width>
+    <height>279</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -38,9 +38,12 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label_4">
+    <widget class="QRadioButton" name="edgvTemplateRadioButton">
      <property name="text">
-      <string>Select EDGV Version</string>
+      <string>Create from EDGV template</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -64,7 +67,42 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0">
+    <widget class="QRadioButton" name="dbTemplateRadioButton">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="text">
+      <string>Create from a database template</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="ConnectionComboBox" name="comboBoxPostgis" native="true">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QCheckBox" name="selectFrameCheckBox">
+     <property name="text">
+      <string>Select Frame Layer (If this is 
+not checked and frame not selected,
+the frame will not be created</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="DsgCustomComboBox" name="frameComboBox" native="true"/>
+   </item>
+   <item row="4" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="enabled">
       <bool>true</bool>
@@ -97,7 +135,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Prefix</string>
+           <string>Prefix (optional)</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -151,7 +189,7 @@
            </sizepolicy>
           </property>
           <property name="text">
-           <string>Sufix</string>
+           <string>Sufix (optional)</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -170,6 +208,18 @@
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
    <header>qgis.gui</header>
+  </customwidget>
+  <customwidget>
+   <class>DsgCustomComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ConnectionComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.AdvancedConnectionWidgets.connectionComboBox.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

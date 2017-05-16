@@ -31,9 +31,8 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class DbCreator(QObject):
-    def __init__(self, createParam, version, parentWidget = None):
+    def __init__(self, createParam, parentWidget = None):
         super(DbCreator,self).__init__()
-        self.version = version
         self.dbFactory = DbFactory()
         self.parentWidget = parentWidget
         if isinstance(createParam, unicode):

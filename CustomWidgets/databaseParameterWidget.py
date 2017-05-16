@@ -98,9 +98,40 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
                 errorMsg += self.tr('Enter a database name!\n')
         if self.mQgsProjectionSelectionWidget.crs().authid() == '':        
             errorMsg += self.tr('Select a coordinate reference system!\n')
+        if not self.edgvTemplateRadioButton.isChecked() and not self.comboBoxPostgis.currentDb():
+            errorMsg += self.tr('Select a template database!\n')
         
         if errorMsg != '':
             QMessageBox.critical(self, self.tr('Critical!'), errorMsg)
             return False
         else:
             return True
+    
+    @pyqtSlot(bool, name = 'on_edgvTemplateRadioButton_toggled')
+    def changeInterfaceState(self, edgvTemplateToggled, hideInterface = True):
+        if edgvTemplateToggled:
+            self.comboBoxPostgis.setEnabled(False)
+            self.selectFrameCheckBox.setEnabled(False)
+            self.frameComboBox.setEnabled(False)
+            self.versionComboBox.setEnabled(True)
+        else:
+            self.comboBoxPostgis.setEnabled(True)
+            self.selectFrameCheckBox.setEnabled(True)
+            self.frameComboBox.setEnabled(self.selectFrameCheckBox.isChecked())
+            self.versionComboBox.setEnabled(False)
+        if hideInterface:
+            self.comboBoxPostgis.hide()
+            self.dbTemplateRadioButton.hide()
+            self.selectFrameCheckBox.hide()
+            self.frameComboBox.hide()
+        else:
+            self.comboBoxPostgis.show()
+            self.dbTemplateRadioButton.show()
+            self.selectFrameCheckBox.show()
+            self.frameComboBox.show()
+    
+    def getTemplateName(self):
+        if self.edgvTemplateRadioButton.isChecked():
+            return None
+        else:
+            return self.comboBoxPostgis.currentDb()
