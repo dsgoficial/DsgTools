@@ -55,9 +55,9 @@ class StyleManagerWidget(GenericManagerWidget):
 
     @pyqtSlot(bool)
     def on_createPushButton_clicked(self):
-        '''
+        """
         Slot that opens the create profile dialog
-        '''
+        """
         #TODO
         pass        
     

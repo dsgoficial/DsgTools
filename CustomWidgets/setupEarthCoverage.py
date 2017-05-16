@@ -46,10 +46,10 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.edgvVersion = edgvVersion
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
-        self.setupWizard(oldCoverage, enableSetupFromFile)
         self.propertyList = propertyList
         self.button(QtGui.QWizard.NextButton).clicked.connect(self.buildTree)
         self.button(QtGui.QWizard.FinishButton).clicked.connect(self.buildDict)
+        self.setupWizard(oldCoverage, enableSetupFromFile)
         self.configDict = dict()
 
     def setupFromFile(self):
@@ -105,7 +105,8 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.areasCustomSelector.setToList(areasToList)
         self.areasCustomSelector.setFromList(areasFromList)
         self.linesCustomSelector.setToList(linesToList)
-        self.linesCustomSelector.setFromList(linesFromList)  
+        self.linesCustomSelector.setFromList(linesFromList)
+        self.buildTree()
         self.checkDelimiters(jsonDict['earthCoverageDict'])
     
     def populateFrameListWidget(self, areas, frame = None):

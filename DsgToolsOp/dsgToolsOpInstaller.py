@@ -169,6 +169,12 @@ class DsgToolsOpInstaller(QObject):
         """
         for src_dir, dirs, files in os.walk(auxFolder):
             dst_dir = src_dir.replace(auxFolder, destFolder, 1)
+            for dir in dirs:
+                if 'expression' in dir:
+                    for file_ in files:
+                        src_file = os.path.join(src_dir, file_)
+                        dst_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..', '..','expressions')
+                        shutil.move(src_file, dst_dir)
             if not os.path.exists(dst_dir):
                 os.makedirs(dst_dir)
             for file_ in files:
@@ -178,8 +184,12 @@ class DsgToolsOpInstaller(QObject):
                     os.remove(dst_file)
                 shutil.move(src_file, dst_dir)
         # deleting auxiliar folder
+        self.copyToExpressions(auxFolder, destFolder)
         self.deleteAuxFolder()
         self.loadTools()
+    
+    def copyToExpressions(self, auxFolder, destFolder):
+        pass
     
     def checkIfInstalled(self):
         """

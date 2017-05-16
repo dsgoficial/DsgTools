@@ -10,6 +10,7 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
+from qgis.gui import QgsMapMouseEvent
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -17,6 +18,7 @@ class Polygon(GeometricaAcquisition):
         self.canvas = canvas
         self.iface = iface
         self.rubberBand = None
+        self.snapCursorRubberBand = None
         self.initVariable()
         
     def initVariable(self):
@@ -25,6 +27,11 @@ class Polygon(GeometricaAcquisition):
             self.rubberBand = None
         self.qntPoint = 0
         self.geometry = []
+        if self.snapCursorRubberBand:
+            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand.hide()
+            self.snapCursorRubberBand = None
+            
 
     def endGeometry(self):
         if len(self.geometry) > 2:
@@ -41,7 +48,13 @@ class Polygon(GeometricaAcquisition):
             self.createGeometry(geom)
   
     def canvasReleaseEvent(self, event):
-        pointMap = self.snapToLayer(event) 
+        event.snapPoint(QgsMapMouseEvent.SnapProjectConfig) #snap!!!
+        if self.snapCursorRubberBand:
+            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand.hide()
+            self.snapCursorRubberBand = None
+        pointMap = QgsPoint(event.mapPoint())
+        # pointMap = self.snapToLayer(event) 
         if event.button() == Qt.RightButton:
             if self.free:
                 self.endGeometryFree()
@@ -67,8 +80,16 @@ class Polygon(GeometricaAcquisition):
                 self.qntPoint += 1
                
     def canvasMoveEvent(self, event):
+        if self.snapCursorRubberBand:
+            self.snapCursorRubberBand.hide()
+            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand = None
+        oldPoint = QgsPoint(event.mapPoint())
+        event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
         point = QgsPoint(event.mapPoint())
-        point = self.snapToLayer(event)     
+        if oldPoint != point:
+            self.createSnapCursor(point)
+        point = QgsPoint(event.mapPoint())   
         if self.qntPoint == 1:
             geom = QgsGeometry.fromPolyline([self.geometry[0], point])
             self.rubberBand.setToGeometry(geom, None)
@@ -81,24 +102,3 @@ class Polygon(GeometricaAcquisition):
                 if testgeom:
                     geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
                     self.rubberBand.setToGeometry(geom, None)
-
-    def snapToLayer(self, event):
-        snapMode = self.canvas.snappingUtils().snapToMapMode()
-        snapper = QgsMapCanvasSnapper(self.canvas)
-        snapMode, snapTolerance, dumpUnits = self.getSnapSettings()
-        (retval,result) = snapper.snapToCurrentLayer(event.pos(), snapMode, snappingTol = snapTolerance)
-        if result <> []:
-            return QgsPoint(result[0].snappedVertex)
-        else:
-            return QgsPoint(event.mapPoint())
-    
-    def getSnapSettings(self):
-        dumpSplit = self.canvas.snappingUtils().dump().split('\n')[2].split(' ') #snappingUtils().dump() returns a string with current snap settins
-        snapMode = dumpSplit[1] #Snap to vertex, segment or both
-        snapTolerance = dumpSplit[5]
-        dumpUnits = dumpSplit[-1]
-        return int(snapMode), int(snapTolerance), int(dumpUnits)
-
-    
-    def createSnapCursor(self, point):
-        pass

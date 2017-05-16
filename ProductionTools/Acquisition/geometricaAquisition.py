@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis
+from qgis.gui import QgsMapMouseEvent
 import math
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence, QCursor, QPixmap, QColor
 from PyQt4.QtCore import QSettings
 
-class GeometricaAcquisition(QgsMapTool):
+class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def __init__(self, canvas, iface, action):
-        super(GeometricaAcquisition, self).__init__(canvas)
+        super(GeometricaAcquisition, self).__init__(canvas, None)
         self.iface=iface        
         self.canvas = canvas
         self.rubberBand = None
+        self.snapCursorRubberBand = None
         self.initVariable()
         self.setAction(action)
 
@@ -115,6 +117,14 @@ class GeometricaAcquisition(QgsMapTool):
         rubberBand.setWidth(2)
         return rubberBand
     
+    def getSnapRubberBand(self):
+        rubberBand = QgsRubberBand(self.canvas, geometryType = QGis.Point)
+        rubberBand.setFillColor(QColor(255, 0, 0, 40))
+        rubberBand.setBorderColor(QColor(255, 0, 0, 200))
+        rubberBand.setWidth(2)
+        rubberBand.setIcon(QgsRubberBand.ICON_X)
+        return rubberBand        
+    
     def createGeometry(self, geom):
         if geom :
             layer = self.canvas.currentLayer() 
@@ -136,5 +146,9 @@ class GeometricaAcquisition(QgsMapTool):
                 layer.endEditCommand()
                 self.initVariable()    
             else:
-                self.initVariable()    
+                self.initVariable()   
+
+    def createSnapCursor(self, point):
+        self.snapCursorRubberBand = self.getSnapRubberBand()
+        self.snapCursorRubberBand.addPoint(point) 
  

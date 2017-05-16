@@ -10,6 +10,7 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis
+from qgis.gui import QgsMapMouseEvent
 
 class Circle(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -51,6 +52,15 @@ class Circle(GeometricaAcquisition):
             self.endGeometry()
                
     def canvasMoveEvent(self, event):
+        if self.snapCursorRubberBand:
+            self.snapCursorRubberBand.hide()
+            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand = None
+        oldPoint = QgsPoint(event.mapPoint())
+        event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
+        point = QgsPoint(event.mapPoint())
+        if oldPoint != point:
+            self.createSnapCursor(point)
         if self.startPoint:
             self.endPoint = QgsPoint(event.mapPoint())
             self.showCircle(self.startPoint, self.endPoint)
