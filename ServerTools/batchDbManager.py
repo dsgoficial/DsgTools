@@ -380,6 +380,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         if self.edgvComboFilter.currentIndex() != 0:
             edgvVersion = self.correspondenceDict[self.edgvComboFilter.currentText()]
             self.permissionWidget.setParameters(self.serverWidget.abstractDb, dbsDict, edgvVersion)
-            self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb, edgvVersion, dbsDict = dbsDict)
+            # self.customizationManagerWidget.setParameters(self.serverWidget.abstractDb, edgvVersion, dbsDict = dbsDict)
             self.fieldToolBoxConfigManagerWidget.setParameters(self.serverWidget.abstractDb, edgvVersion, dbsDict = dbsDict)
             self.earthCoverageManagerWidget.setParameters(self.serverWidget.abstractDb, edgvVersion, dbsDict = dbsDict)

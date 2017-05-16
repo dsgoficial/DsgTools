@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>691</width>
+    <height>656</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,9 +25,6 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="SelectFileWidget" name="customFileSelector" native="true"/>
-   </item>
-   <item row="2" column="0">
     <widget class="DatabaseParameterWidget" name="databaseParameterWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -35,7 +32,11 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <zorder>customFileSelector</zorder>
     </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="SelectFileWidget" name="customFileSelector" native="true"/>
    </item>
   </layout>
  </widget>

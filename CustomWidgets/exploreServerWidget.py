@@ -34,6 +34,7 @@ from PyQt4.QtGui import QMessageBox
 from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -41,6 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     abstractDbLoaded = pyqtSignal()
+    serverAbstractDbLoaded = pyqtSignal(AbstractDb)
     clearWidgets = pyqtSignal()
     def __init__(self, parent = None):
         """Constructor."""
@@ -186,6 +188,14 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                     except Exception as e:
                         QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 self.abstractDbLoaded.emit()
+        else:
+            try:
+                if self.abstractDb:
+                    self.abstractDb.__del__()
+                    self.abstractDb = None
+            except:
+                pass
+        self.serverAbstractDbLoaded.emit(self.abstractDb)
     
     def getServerParameters(self):
         """

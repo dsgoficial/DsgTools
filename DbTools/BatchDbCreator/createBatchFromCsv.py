@@ -49,6 +49,8 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         self.customFileSelector.setFilter(self.tr('Comma Separated Values File (*.csv)'))
         self.customFileSelector.setType('single')
         self.customFileSelector.setTitle(self.tr('CSV File'))
+        self.tabDbSelectorWidget.tabWidget.currentChanged.connect(self.changeTemplateInterface)
+        self.tabDbSelectorWidget.serverWidget.serverAbstractDbLoaded.connect(self.databaseParameterWidget.comboBoxPostgis.setServerDb)
     
     def getParameters(self):
         #Get outputDir, outputList, refSys
@@ -57,6 +59,7 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['sufix'] = None
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
+        parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
         if self.databaseParameterWidget.prefixLineEdit.text() <> '':
             parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
         if self.databaseParameterWidget.sufixLineEdit.text() <> '':
@@ -84,9 +87,15 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         return True
     
     def createDatabases(self, parameterDict):
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parameterDict['version'], parentWidget = self)
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         (dbList, errorDict)=dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True)
         QApplication.restoreOverrideCursor()
         if len(errorDict.keys())> 0:
             raise Exception(errorDict)
+    
+    def changeTemplateInterface(self):
+        if self.tabDbSelectorWidget.tabWidget.currentIndex() == 1:
+            self.databaseParameterWidget.changeInterfaceState(True, hideInterface = True)
+        else:
+            self.databaseParameterWidget.changeInterfaceState(True, hideInterface = False)

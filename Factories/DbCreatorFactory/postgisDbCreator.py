@@ -26,8 +26,8 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class PostgisDbCreator(DbCreator):
     
-    def __init__(self, createParam, version, parentWidget = None):
-        super(self.__class__,self).__init__(createParam, version)
+    def __init__(self, createParam,  parentWidget = None):
+        super(self.__class__,self).__init__(createParam)
         self.parentWidget = parentWidget
     
     def instantiateNewDb(self, dbName):
@@ -39,16 +39,17 @@ class PostgisDbCreator(DbCreator):
         newDb.connectDatabaseWithParameters(host, port, dbName, user, password)
         return newDb
     
-    def checkAndCreateTemplate(self):
+    def checkAndCreateTemplate(self, version):
         '''
         checks and create an edgv template
         '''
-        hasTemplate = self.abstractDb.checkTemplate(self.version)
-        if not hasTemplate:
-            self.abstractDb.createTemplateDatabase(self.version)
-            templateName = self.abstractDb.getTemplateName(self.version)
-            templateDb = self.instantiateNewDb(templateName)
-            templateDb.setStructureFromSql(self.version, 4674)
+        if version:
+            hasTemplate = self.abstractDb.checkTemplate(version)
+            if not hasTemplate:
+                self.abstractDb.createTemplateDatabase(version)
+                templateName = self.abstractDb.getTemplateName(version)
+                templateDb = self.instantiateNewDb(templateName)
+                templateDb.setStructureFromSql(version, 4674)
     
     def createDb(self, dbName, srid, paramDict = dict()):
         '''
@@ -58,14 +59,23 @@ class PostgisDbCreator(DbCreator):
         '''
         #0. if 'templateDb' in paramDict.keys: use createFromTemplate then end createDb
         if 'templateDb' in paramDict.keys():
-            self.abstractDb.createDbFromTemplate(dbName, self.version, templateName = paramDict['templateDb'])
+            self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateDb'])
             return self.instantiateNewDb(dbName)
         else:
             #1. test if edgv template is created
             #2. if edgv template is not created, create it
-            self.checkAndCreateTemplate()
+            version = None
+            if 'nonDefaultTemplate' in paramDict.keys():
+                if paramDict['nonDefaultTemplate']:
+                    templateName = paramDict['nonDefaultTemplate']
+            else:
+                templateName = 'edgv'
+                if 'version' in paramDict.keys():
+                        version = paramDict['version']
+                self.checkAndCreateTemplate(version)
+
             #3. create db from template
-            self.abstractDb.createDbFromTemplate(dbName, self.version)
+            self.abstractDb.createDbFromTemplate(dbName, version = version, templateName = templateName)
             newDb = self.instantiateNewDb(dbName)
             newDb.updateDbSRID(srid)
             return newDb

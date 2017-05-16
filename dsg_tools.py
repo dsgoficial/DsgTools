@@ -616,7 +616,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/genericSelect.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Generic Selector'),
+            text=self.tr('DSGTools: Generic Selector'),
             callback=self.copyPasteTool.selectMulti,
             parent=productiontools,
             add_to_menu=False,
@@ -624,11 +624,14 @@ class DsgTools:
         productiontools.addAction(action)
         self.toolbar.addAction(action)
         self.copyPasteTool.setSelectorAction(action)
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
+        action.setToolTip(self.tr("DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband."))
         
         icon_path = ':/plugins/DsgTools/icons/home.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Ninety degrees acquisition'),
+            text=self.tr('DSGTools: Right Degree Angle Digitizing'),
             callback=self.acquisition.acquisitionNinetyDegrees,
             parent=productiontools,
             add_to_menu=False,
@@ -636,11 +639,14 @@ class DsgTools:
         productiontools.addAction(action)
         self.toolbar.addAction(action)
         self.acquisition.setPolygonAction(action)
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
+        action.setToolTip(self.tr("DSGTools: Right Degree Angle Digitizing\nControl modifyer: disables tool while control is pressed."))
 
         icon_path = ':/plugins/DsgTools/icons/circle.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Add circle'),
+            text=self.tr('DSGTools: Circle Digitizing'),
             callback=self.acquisition.acquisitionCircle,
             parent=productiontools,
             add_to_menu=False,
@@ -648,7 +654,6 @@ class DsgTools:
         productiontools.addAction(action)
         self.toolbar.addAction(action)
         self.acquisition.setCircleAction(action)
-        
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
         self.toolbar.addWidget(self.minimumAreaTool)

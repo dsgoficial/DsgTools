@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
 
-import os
+import os                                                                         
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
-from qgis.utils import iface
+from PyQt4 import QtGui, uic 
+from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
 import math
-from PyQt4.Qt import *
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
+from qgis.core import QgsPoint, QGis, QgsGeometry
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -85,6 +80,7 @@ class Polygon(GeometricaAcquisition):
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
                     geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
+<<<<<<< HEAD
                     self.rubberBand.setToGeometry(geom, None)
 
     def snapToLayer(self, event):
@@ -107,3 +103,8 @@ class Polygon(GeometricaAcquisition):
     
     def createSnapCursor(self, point):
         pass
+=======
+                    self.rubberBand.setToGeometry(geom, None)            
+          
+        
+>>>>>>> 9b05e8229f8a9fbe0fe183f250f122fac342d01a

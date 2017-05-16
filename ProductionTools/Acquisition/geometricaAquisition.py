@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog
 from qgis.utils import iface
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry
 import math
-from PyQt4.Qt import *
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QShortcut, QKeySequence
+from PyQt4.QtGui import QShortcut, QKeySequence, QCursor, QPixmap, QColor
 from PyQt4.QtCore import QSettings
 
 class GeometricaAcquisition(QgsMapTool):
@@ -66,7 +63,7 @@ class GeometricaAcquisition(QgsMapTool):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Control:
             self.free = True
-        if event.key() == Qt.Key_Delete:
+        if event.key() == Qt.Key_Backspace:
             if self.geometry:
                 self.geometry.pop()
                 geom = QgsGeometry.fromPolygon([self.geometry])
