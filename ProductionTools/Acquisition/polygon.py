@@ -80,7 +80,6 @@ class Polygon(GeometricaAcquisition):
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
                     geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
-<<<<<<< HEAD
                     self.rubberBand.setToGeometry(geom, None)
 
     def snapToLayer(self, event):
@@ -103,8 +102,3 @@ class Polygon(GeometricaAcquisition):
     
     def createSnapCursor(self, point):
         pass
-=======
-                    self.rubberBand.setToGeometry(geom, None)            
-          
-        
->>>>>>> 9b05e8229f8a9fbe0fe183f250f122fac342d01a
