@@ -400,14 +400,15 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
     
-    def insertFlagIntoDb(self,layer,feat_id,reason,geom,srid,processName, dimension, geometryColumn):
-        sql = ''
+    def insertFlagIntoDb(self, layer, feat_id, reason, geom, srid, processName, dimension, geometryColumn, flagSRID):
         if dimension == 0:
-            sql = "INSERT INTO validation.aux_flags_validacao_p (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s, '%s');" % (processName, layer, str(feat_id), reason, geom, srid, dimension, geometryColumn)
+            tableName = 'aux_flags_validacao_p'
         elif dimension == 1:
-            sql = "INSERT INTO validation.aux_flags_validacao_l (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s, '%s');" % (processName, layer, str(feat_id), reason, geom, srid, dimension, geometryColumn)
+            tableName = 'aux_flags_validacao_l'
         elif dimension == 2:
-            sql = "INSERT INTO validation.aux_flags_validacao_a (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values ('%s','%s',%s,'%s',ST_SetSRID(ST_Multi('%s'),%s), %s, '%s');" % (processName, layer, str(feat_id), reason, geom, srid, dimension, geometryColumn)
+            tableName = 'aux_flags_validacao_a'
+        sql = """INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values 
+        ('{1}','{2}',{3},'{4}',ST_Transform(ST_SetSRID(ST_Multi('{5}'),{6}),{7}), {8}, '{9}');""".format(tableName, processName, layer, str(feat_id), reason, geom, srid, flagSRID, dimension, geometryColumn)
         return sql
     
     def getRunningProc(self):
@@ -432,6 +433,7 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
         #TODO: Add geometry column
+        #TODO: Add SRIDS
         class_a = '"'+'"."'.join(class_a.replace('"','').split('.'))+'"'
         class_b = '"'+'"."'.join(class_b.replace('"','').split('.'))+'"'
         if predicate_function == 'ST_Disjoint':

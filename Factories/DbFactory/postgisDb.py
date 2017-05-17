@@ -916,7 +916,8 @@ class PostgisDb(AbstractDb):
                 # specific EPSG search
                 parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':record[4]}
                 srid = self.findEPSG(parameters=parameters)
-                sql = self.gen.insertFlagIntoDb(record[0], record[1], record[2], record[3], srid, processName, dimension, record[4])
+                flagSRID = self.findEPSG(parameters={'tableSchema':'validation', 'tableName':'aux_flags_validacao_p', 'geometryColumn':'geom'})
+                sql = self.gen.insertFlagIntoDb(record[0], record[1], record[2], record[3], srid, processName, dimension, record[4], flagSRID)
                 if not query.exec_(sql):
                     if useTransaction:
                         self.db.rollback()
