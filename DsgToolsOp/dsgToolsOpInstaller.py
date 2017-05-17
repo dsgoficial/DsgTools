@@ -172,9 +172,12 @@ class DsgToolsOpInstaller(QObject):
             for dir in dirs:
                 if 'expression' in dir:
                     for file_ in files:
-                        src_file = os.path.join(src_dir, file_)
-                        dst_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..', '..','expressions')
-                        shutil.move(src_file, dst_dir)
+                        try:
+                            src_file = os.path.join(src_dir, file_)
+                            dst_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..', '..','expressions')
+                            shutil.move(src_file, dst_dir)
+                        except:
+                            pass
             if not os.path.exists(dst_dir):
                 os.makedirs(dst_dir)
             for file_ in files:
