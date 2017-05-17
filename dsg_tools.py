@@ -733,8 +733,9 @@ class DsgTools:
         """
         Shows the help
         """
-        index = os.path.join(os.path.dirname(__file__), 'help', 'index')
-        showPluginHelp('DsgTools', index)
+        self.iface.openURL("http://www.geoportal.eb.mil.br/images/dsgtools/help/index.html", False)
+        #index = os.path.join(os.path.dirname(__file__), 'help', 'index')
+        #showPluginHelp('DsgTools', index)
 
     def showConvertDatabase(self):
         """
