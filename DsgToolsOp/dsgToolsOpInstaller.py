@@ -168,24 +168,24 @@ class DsgToolsOpInstaller(QObject):
         :param auxFolder: source folder
         """
         for src_dir, dirs, files in os.walk(auxFolder):
-            dst_dir = src_dir.replace(auxFolder, destFolder, 1)
-            for dir in dirs:
-                if 'expression' in dir:
-                    for file_ in files:
-                        try:
-                            src_file = os.path.join(src_dir, file_)
-                            dst_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..', '..','expressions')
-                            shutil.move(src_file, dst_dir)
-                        except:
-                            pass
-            if not os.path.exists(dst_dir):
-                os.makedirs(dst_dir)
-            for file_ in files:
-                src_file = os.path.join(src_dir, file_)
-                dst_file = os.path.join(dst_dir, file_)
-                if os.path.exists(dst_file):
-                    os.remove(dst_file)
-                shutil.move(src_file, dst_dir)
+            if 'expression' == src_dir.split(os.path.sep)[-1]:
+                for file_ in files:
+                    src_file = os.path.join(src_dir, file_)
+                    expression_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..', '..','expressions')
+                    expression_file = os.path.join(expression_dir, file_)
+                    if os.path.exists(expression_file):
+                        os.remove(expression_file)
+                    shutil.move(src_file, expression_dir)
+            else:
+                dst_dir = src_dir.replace(auxFolder, destFolder, 1)
+                if not os.path.exists(dst_dir):
+                    os.makedirs(dst_dir)
+                for file_ in files:
+                    src_file = os.path.join(src_dir, file_)
+                    dst_file = os.path.join(dst_dir, file_)
+                    if os.path.exists(dst_file):
+                        os.remove(dst_file)
+                    shutil.move(src_file, dst_dir)
         # deleting auxiliar folder
         self.copyToExpressions(auxFolder, destFolder)
         self.deleteAuxFolder()
