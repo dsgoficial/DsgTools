@@ -10,7 +10,7 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis
-from qgis.gui import QgsMapMouseEvent
+from qgis.gui import QgsMapMouseEvent, QgsMapTool
 
 class Circle(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -64,5 +64,3 @@ class Circle(GeometricaAcquisition):
         if self.startPoint:
             self.endPoint = QgsPoint(event.mapPoint())
             self.showCircle(self.startPoint, self.endPoint)
-
-

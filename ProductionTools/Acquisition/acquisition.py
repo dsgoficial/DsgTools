@@ -26,15 +26,17 @@ class Acquisition:
         layer = self.canvas.currentLayer()
         if layer in self.iface.editableLayers():
             if layer.geometryType() == 2:
+                if self.tool:
+                    self.tool.deactivate()
                 self.tool = func(self.canvas, self.iface, action)
                 self.tool.setAction(action)
                 self.canvas.setMapTool(self.tool)
             else:
                 self.iface.messageBar().pushMessage(u"Aviso", u"Ferramenta utilizada apenas em polígonos !",
-                                                                    level=QgsMessageBar.INFO, duration=6)
+                                                                    level=QgsMessageBar.INFO, duration=3)
                 self.tool.deactivate() if self.tool else ""
         else:
-            self.iface.messageBar().pushMessage(u"Aviso", u"Inicie a Edição da Feição!", level=QgsMessageBar.INFO, duration=6)
+            self.iface.messageBar().pushMessage(u"Aviso", u"Inicie a Edição da Feição!", level=QgsMessageBar.INFO, duration=3)
             self.tool.deactivate() if self.tool else ""
                                     
             

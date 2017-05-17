@@ -10,7 +10,7 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
-from qgis.gui import QgsMapMouseEvent
+from qgis.gui import QgsMapMouseEvent, QgsMapTool
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
