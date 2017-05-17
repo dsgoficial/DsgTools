@@ -161,11 +161,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         else:
             primitives = []
             if self.checkBoxPoint.isChecked():
-                primitives.append('Point')
+                primitives.append(self.tr('Point'))
             if self.checkBoxLine.isChecked():
-                primitives.append('Line')
+                primitives.append(self.tr('Line'))
             if self.checkBoxPolygon.isChecked():
-                primitives.append('Area')
+                primitives.append(self.tr('Area'))
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None

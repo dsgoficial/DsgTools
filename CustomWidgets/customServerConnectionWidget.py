@@ -47,11 +47,6 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.utils = Utils()
         self.dbFactory = DbFactory()
@@ -59,7 +54,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
         self.customFileSelector.filesSelected.connect(self.populateSpatialiteSelector)
-        self.comboDict = {self.tr('Load EDGV v. 2.1.3'):'2.1.3', self.tr('Load EDGV v. FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Non EDGV'):'Non_EDGV'}
+        self.comboDict = {self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3', self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Other Database Models'):'Non_EDGV'}
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
         self.selectedDbsDict = dict()
         self.stylesDict = dict()
@@ -183,8 +178,6 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.dbDict[dbversion].append(dbname)
             else:
                 self.dbDict['Non_EDGV'].append(dbname)
-#         if len(self.dbDict['2.1.3']) == 0:
-#             self.postgisEdgvComboFilter.setCurrentIndex(1)
         comboText = self.postgisEdgvComboFilter.currentText()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
