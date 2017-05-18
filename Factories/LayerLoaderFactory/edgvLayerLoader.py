@@ -129,7 +129,9 @@ class EDGVLayerLoader(QObject):
         for geomNode in groupNodeList:
             groupDict[geomNode] = dict()
             aux = self.createGroup(groupList, geomNode, parent)
-            for catNode in lyrDict[geomNode].keys():
+            catList = lyrDict[geomNode].keys()
+            catList.sort()
+            for catNode in catList:
                 groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, aux)
         return groupDict
     
