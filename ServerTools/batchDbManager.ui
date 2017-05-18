@@ -65,10 +65,13 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_12">
+      <property name="topMargin">
+       <number>20</number>
+      </property>
       <item row="0" column="0">
        <widget class="QComboBox" name="edgvComboFilter">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -80,17 +83,17 @@
         </item>
         <item>
          <property name="text">
-          <string>Load EDGV v. 2.1.3</string>
+          <string>Load Database Model EDGV Version 2.1.3</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Load EDGV v. FTer_2a_Ed</string>
+          <string>Load Database Model EDGV Version FTer_2a_Ed</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Load Non EDGV</string>
+          <string>Load Other Database Models</string>
          </property>
         </item>
        </widget>
@@ -100,9 +103,12 @@
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::MinimumExpanding</enum>
+        </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>520</width>
+          <width>200</width>
           <height>20</height>
          </size>
         </property>

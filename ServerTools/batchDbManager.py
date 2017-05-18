@@ -85,6 +85,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
 
         dbList.sort()
         for (dbname, dbversion) in dbList:
+            if dbversion not in self.dbDict.keys():
+                dbversion = 'Non_EDGV'
             self.dbDict[dbversion].append(dbname)
 
     def setDatabases(self):
