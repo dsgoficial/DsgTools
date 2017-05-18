@@ -403,7 +403,7 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/server.png'
         action = self.add_action(
             icon_path,
-            text=self.tr('Manage Dbs from Server'),
+            text=self.tr('Manage Databases from Server'),
             callback=self.batchDbManager,
             parent=server,
             add_to_menu=False,

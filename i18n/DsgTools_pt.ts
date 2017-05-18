@@ -781,106 +781,106 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Bancos de Dados do Servidor</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="105"/>
+        <location filename="../ServerTools/batchDbManager.py" line="107"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="103"/>
+        <location filename="../ServerTools/batchDbManager.py" line="105"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="103"/>
+        <location filename="../ServerTools/batchDbManager.py" line="105"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
         <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="138"/>
+        <location filename="../ServerTools/batchDbManager.py" line="140"/>
         <source>
 Successful databases: </source>
         <translation>
 Bancos de dados com sucesso: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="141"/>
+        <location filename="../ServerTools/batchDbManager.py" line="143"/>
         <source>Operation Complete!</source>
         <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="148"/>
+        <location filename="../ServerTools/batchDbManager.py" line="150"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erro:</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="150"/>
+        <location filename="../ServerTools/batchDbManager.py" line="152"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="152"/>
+        <location filename="../ServerTools/batchDbManager.py" line="154"/>
         <source>Error for database </source>
         <translation>Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="227"/>
+        <location filename="../ServerTools/batchDbManager.py" line="229"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="159"/>
+        <location filename="../ServerTools/batchDbManager.py" line="161"/>
         <source>Please select one or more databases to drop!</source>
         <translation>Por favor, selecione um ou mais bancos para apagar!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="160"/>
+        <location filename="../ServerTools/batchDbManager.py" line="162"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="160"/>
+        <location filename="../ServerTools/batchDbManager.py" line="162"/>
         <source>Do you really want to drop databases: </source>
         <translation>Você realmente quer apagar os bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="166"/>
+        <location filename="../ServerTools/batchDbManager.py" line="168"/>
         <source>Drop operation complete. 
 </source>
         <translation>Operação de deleção completa. </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="227"/>
+        <location filename="../ServerTools/batchDbManager.py" line="229"/>
         <source>Multiple edgv versions are not allowed!</source>
         <translation>Múltiplas versões da edgv não são permitidas!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="239"/>
+        <location filename="../ServerTools/batchDbManager.py" line="241"/>
         <source>Import operation complete. 
 </source>
         <translation>Operação de importação completa. </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="333"/>
+        <location filename="../ServerTools/batchDbManager.py" line="335"/>
         <source>Delete operation complete. 
 </source>
         <translation>Operação de deleção completa. </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="353"/>
+        <location filename="../ServerTools/batchDbManager.py" line="355"/>
         <source>Select a SQL file</source>
         <translation>Selecione um arquivo SQL</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="353"/>
+        <location filename="../ServerTools/batchDbManager.py" line="355"/>
         <source>sql file (*.sql)</source>
         <translation>arquivo-sql (*.sql)</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="363"/>
+        <location filename="../ServerTools/batchDbManager.py" line="365"/>
         <source>Customize from SQL file operation complete. 
 </source>
         <translation>Operação Cutomizar a partir de arquivo SQL completa. </translation>
@@ -936,7 +936,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Ajustes de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="176"/>
+        <location filename="../ServerTools/batchDbManager.py" line="178"/>
         <source>Upgrade Posgtis operation complete. 
 </source>
         <translation>Operação de atualização do PostGIS completa. 
@@ -4099,7 +4099,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../dsg_tools.py" line="404"/>
         <source>Manage Dbs from Server</source>
-        <translation>Gerenciar Dbs de servidor</translation>
+        <translation type="obsolete">Gerenciar Dbs de servidor</translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="502"/>
@@ -4205,6 +4205,11 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <location filename="../dsg_tools.py" line="647"/>
         <source>DSGTools: Circle Digitizing</source>
         <translation>DSGTools: Ferramenta de Aquisição de Círculos</translation>
+    </message>
+    <message>
+        <location filename="../dsg_tools.py" line="404"/>
+        <source>Manage Databases from Server</source>
+        <translation>Gerenciar bancos de dados de um servidor</translation>
     </message>
 </context>
 <context>
