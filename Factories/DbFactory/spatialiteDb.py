@@ -416,7 +416,7 @@ class SpatialiteDb(AbstractDb):
     def getStylesFromDb(self,dbVersion):
         return None
 
-    def getGeomTypeDict(self):
+    def getGeomTypeDict(self, loadCentroids=False):
         self.checkAndOpenDb()
         sql = self.gen.getGeomByPrimitive()
         query = QSqlQuery(sql, self.db)
