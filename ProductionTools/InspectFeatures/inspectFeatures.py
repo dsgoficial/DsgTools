@@ -226,30 +226,26 @@ class InspectFeatures(QWidget,FORM_CLASS):
             currentLayer.removeSelection()
             currentLayer.select(index)
     
-    def zoomToLayer(self):
-        currentLayer = self.getIterateLayer()
-        activeLayer = self.iface.activeLayer()
-        if currentLayer == activeLayer:
-            self.iface.actionZoomToSelected().trigger()
-        else:
-            self.iface.setActiveLayer(currentLayer)
-            self.iface.actionZoomToSelected().trigger()
-            self.iface.setActiveLayer(activeLayer)
+    def zoomToLayer(self, layer):
+        box = layer.boundingBoxOfSelected()
+        self.iface.mapCanvas().setExtent(box)
+        self.iface.mapCanvas().refresh()
 
     def zoomFeature(self, zoom, idDict = {}):
         """
         Zooms to current layer selected features according to a specific zoom
         zoom: zoom to be applied
         """
+        currentLayer = self.getIterateLayer()
         if idDict == {}:
-            self.zoomToLayer()
+            self.zoomToLayer(currentLayer)
         else:
             id = idDict['id']
             lyr = idDict['lyr']
             selectIdList = lyr.selectedFeaturesIds()
             lyr.removeSelection()
             lyr.setSelectedFeatures([id])
-            self.zoomToLayer()
+            self.zoomToLayer(layer = lyr)
             lyr.setSelectedFeatures(selectIdList)
 
         if self.getIterateLayer().geometryType() == QGis.Point:
