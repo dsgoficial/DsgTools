@@ -22,7 +22,7 @@ Builds a temp rubberband with a given size and shape.
 """
 import os
 from PyQt4.QtGui import QMessageBox, QSpinBox
-from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
+from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
@@ -43,9 +43,11 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.splitter.hide()
         self.iface = iface
         self.iface.currentLayerChanged.connect(self.enableScale)
-        if not self.iface.activeLayer():
+        self.mMapLayerComboBox.layerChanged.connect(self.enableScale)
+        if not self.iface.activeLayer() and self.activeLayerCheckBox.isChecked():
             self.enableTool(False)
         self.iface.currentLayerChanged.connect(self.enableTool)
+        self.mMapLayerComboBox.layerChanged.connect(self.enableTool)
         self.mScaleWidget.setScaleString('1:40000')
         self.mScaleWidget.setEnabled(False)
         self.enableScale()
@@ -54,6 +56,19 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.idxChanged.connect(self.setNewId)
         self.setToolTip('')
     
+    def getIterateLayer(self):
+        if self.activeLayerCheckBox.isChecked():
+            return self.iface.activeLayer()
+        else:
+            return self.mMapLayerComboBox.currentLayer()
+    
+    @pyqtSlot(int)
+    def on_activeLayerCheckBox_stateChanged(self, state):   
+        if state == Qt.Checked:
+            self.mMapLayerComboBox.setEnabled(False)
+        else:
+            self.mMapLayerComboBox.setEnabled(True)
+
     def enableTool(self, enabled = True):
         from qgis.core import QgsVectorLayer
         if enabled == None or not isinstance(enabled, QgsVectorLayer):
@@ -69,7 +84,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         """
         The scale combo should only be enabled for point layers
         """
-        currentLayer = self.iface.activeLayer()
+        currentLayer = self.getIterateLayer()
         if QgsMapLayer is not None and currentLayer:
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
                     if currentLayer.geometryType() == QGis.Point:
@@ -116,7 +131,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         if not isinstance(self.sender(), QSpinBox):
             self.idSpinBox.setValue(newId)
         else:
-            currentLayer = self.iface.activeLayer()
+            currentLayer = self.getIterateLayer()
             lyrName = currentLayer.name()
 
             oldIndex = self.allLayers[lyrName]
@@ -155,7 +170,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
         Iterates over the features selecting and zooming to the desired one
         method: method used to determine the desired feature index
         """
-        currentLayer = self.iface.activeLayer()
+        currentLayer = self.getIterateLayer()
         lyrName = currentLayer.name()
         
         zoom = self.mScaleWidget.scale()
@@ -210,6 +225,16 @@ class InspectFeatures(QWidget,FORM_CLASS):
         if currentLayer:
             currentLayer.removeSelection()
             currentLayer.select(index)
+    
+    def zoomToLayer(self):
+        currentLayer = self.getIterateLayer()
+        activeLayer = self.iface.activeLayer()
+        if currentLayer == activeLayer:
+            self.iface.actionZoomToSelected().trigger()
+        else:
+            self.iface.setActiveLayer(currentLayer)
+            self.iface.actionZoomToSelected().trigger()
+            self.iface.setActiveLayer(activeLayer)
 
     def zoomFeature(self, zoom, idDict = {}):
         """
@@ -217,17 +242,17 @@ class InspectFeatures(QWidget,FORM_CLASS):
         zoom: zoom to be applied
         """
         if idDict == {}:
-            self.iface.actionZoomToSelected().trigger()
+            self.zoomToLayer()
         else:
             id = idDict['id']
             lyr = idDict['lyr']
             selectIdList = lyr.selectedFeaturesIds()
             lyr.removeSelection()
             lyr.setSelectedFeatures([id])
-            self.iface.actionZoomToSelected().trigger()
+            self.zoomToLayer()
             lyr.setSelectedFeatures(selectIdList)
 
-        if self.canvas.currentLayer().geometryType() == QGis.Point:
+        if self.getIterateLayer().geometryType() == QGis.Point:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
     @pyqtSlot(bool)
@@ -272,7 +297,7 @@ class InspectFeatures(QWidget,FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_onlySelectedRadioButton_toggled(self, toggled):
-        currentLayer = self.iface.activeLayer()
+        currentLayer = self.getIterateLayer()
         if toggled:
             featIdList = currentLayer.selectedFeaturesIds()
             self.setValues(featIdList, currentLayer)
