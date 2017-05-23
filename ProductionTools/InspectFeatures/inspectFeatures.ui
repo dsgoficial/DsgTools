@@ -95,7 +95,7 @@
        </size>
       </property>
       <property name="filters">
-       <set>QgsMapLayerProxyModel::HasGeometry|QgsMapLayerProxyModel::LineLayer|QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer|QgsMapLayerProxyModel::PolygonLayer</set>
+       <set>QgsMapLayerProxyModel::LineLayer|QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer|QgsMapLayerProxyModel::PolygonLayer</set>
       </property>
      </widget>
      <widget class="QCheckBox" name="activeLayerCheckBox">
