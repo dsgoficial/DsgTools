@@ -232,7 +232,7 @@ class ValidationProcess(QObject):
                     featureMap[featid] = feat
         return featureMap
     
-    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None):
+    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None):
         """
         Updates the original layer using the grass output layer
         pgInputLyr: postgis input layer
@@ -254,6 +254,10 @@ class ValidationProcess(QObject):
             if qgisOutputVector:
                 for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("{0}={1}".format(keyColumn, id)))):
                     outFeats.append(gf)
+            elif featureTupleList:
+                for gfid, gf in featureTupleList:
+                    if gfid == id and gf['classname'] == pgInputLayer.name():
+                        outFeats.append(gf)
             else:
                 for gf in [gf for gf in featureList if gf.id() == id]:
                     outFeats.append(gf)
@@ -369,4 +373,16 @@ class ValidationProcess(QObject):
         
         #inserting new features into layer
         coverage.addFeatures(featlist, True)
+        coverage.commitChanges()
+        return coverage
+
+    def splitUnifiedLayer(self, coverage, layerList):
+        """
+        Updates all original layers making requests with the class name
+        """
+        for layer in layerList:
+            classname = layer.name()
+            tupplelist = [(feature['featid'], feature) for feature in coverage.getFeatures()]
+            self.updateOriginalLayer(layer, None, featureTupleList=tupplelist)
+                    
                     
