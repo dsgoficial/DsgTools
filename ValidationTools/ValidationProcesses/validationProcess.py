@@ -23,10 +23,11 @@
 import binascii
 # Qt imports
 from PyQt4.QtGui import QMessageBox
+from PyQt4.QtCore import QVariant
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression
+from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -338,3 +339,34 @@ class ValidationProcess(QObject):
         self.updateOriginalLayer(lyr, outputLayer)
         #dropping the temp table as we don't need it anymore
         self.abstractDb.dropTempTable(processTableName)
+
+    def createUnifiedLayer(self, layerList, geomtype):
+        """
+        Creates a unified layer from a list of layers
+        """
+        #getting srid from something like 'EPSG:31983'
+        srid = layerList[0].crs().authid().split(':')[-1]
+        # creating the layer
+        coverage = self.iface.addVectorLayer("MultiPolygon?crs=epsg:{}".format(srid), "coverage", "memory")
+        provider = coverage.dataProvider()
+        coverage.startEditing()
+
+        #defining fields
+        fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String)]
+        provider.addAttributes(fields)
+        coverage.updateFields()
+
+        featlist = []
+        for layer in layerList:
+            # recording class name
+            classname = layer.name()
+            for feature in layer.getFeatures():
+                newfeat = QgsFeature(coverage.pendingFields())
+                newfeat.setGeometry(feature.geometry())
+                newfeat['featid'] = feature.id()
+                newfeat['classname'] = classname
+                featlist.append(newfeat)
+        
+        #inserting new features into layer
+        coverage.addFeatures(featlist, True)
+                    
