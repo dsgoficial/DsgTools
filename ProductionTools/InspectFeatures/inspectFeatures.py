@@ -57,10 +57,13 @@ class InspectFeatures(QWidget,FORM_CLASS):
         self.setToolTip('')
     
     def getIterateLayer(self):
-        if self.activeLayerCheckBox.isChecked():
-            return self.iface.activeLayer()
+        if self.activeLayerCheckBox:
+            if self.activeLayerCheckBox.isChecked():
+                return self.iface.activeLayer()
+            else:
+                return self.mMapLayerComboBox.currentLayer()
         else:
-            return self.mMapLayerComboBox.currentLayer()
+            return None
     
     @pyqtSlot(int)
     def on_activeLayerCheckBox_stateChanged(self, state):   
