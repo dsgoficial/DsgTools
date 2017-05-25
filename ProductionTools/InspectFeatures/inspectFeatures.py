@@ -29,10 +29,11 @@ from PyQt4.Qt import QWidget, QObject
 from qgis.core import QgsMapLayer, QGis, QgsVectorLayer
 from qgis.gui import QgsMessageBar
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'inspectFeatures.ui'))
+from DsgTools.ProductionTools.InspectFeatures.inspectFeatures_ui import Ui_Form
+# FORM_CLASS, _ = uic.loadUiType(os.path.join(
+#     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
-class InspectFeatures(QWidget,FORM_CLASS):
+class InspectFeatures(QWidget,Ui_Form):
     idxChanged = pyqtSignal(int)
     def __init__(self, iface, parent = None):
         """
