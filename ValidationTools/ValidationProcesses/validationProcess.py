@@ -344,7 +344,7 @@ class ValidationProcess(QObject):
         #dropping the temp table as we don't need it anymore
         self.abstractDb.dropTempTable(processTableName)
 
-    def createUnifiedLayer(self, layerList, geomtype):
+    def createUnifiedLayer(self, layerList, geomtype, attributeTupple = False):
         """
         Creates a unified layer from a list of layers
         """
@@ -356,7 +356,10 @@ class ValidationProcess(QObject):
         coverage.startEditing()
 
         #defining fields
-        fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String)]
+        if not attributeTupple:
+            fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String)]
+        else:
+            fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String), QgsField('tupple', QVariant.String)]
         provider.addAttributes(fields)
         coverage.updateFields()
 
@@ -364,11 +367,20 @@ class ValidationProcess(QObject):
         for layer in layerList:
             # recording class name
             classname = layer.name()
+            uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+            keyColumn = uri.keyColumn()
             for feature in layer.getFeatures():
                 newfeat = QgsFeature(coverage.pendingFields())
                 newfeat.setGeometry(feature.geometry())
                 newfeat['featid'] = feature.id()
                 newfeat['classname'] = classname
+                if attributeTupple:
+                    attributeList = []
+                    attributes = [field.name() for field in feature.fields() if (field.type() != 6 and field.name() <> keyColumn)]
+                    for attribute in attributes:
+                        attributeList.append('{0}'.format(feature[attribute]))
+                    tup = ','.join(attributeList)
+                    newfeat['tupple'] = tup
                 featlist.append(newfeat)
         
         #inserting new features into layer

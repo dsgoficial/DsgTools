@@ -2,6 +2,8 @@
 					ValidationTools/attributeRulesEditor.py \
 					ValidationTools/validation_history.py \
 					ValidationTools/rules_editor.py \
+					ValidationTools/ValidationProcesses/topologicalCleanProcess.py \
+					ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py \
 					ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py \
 					ValidationTools/ValidationProcesses/recursiveSnapProcess.py \
 					ValidationTools/ValidationProcesses/removeSmallAreasProcess.py \

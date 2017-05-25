@@ -3631,6 +3631,60 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     </message>
 </context>
 <context>
+    <name>DissolvePolygonsWithCommonAttributesProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="33"/>
+        <source>Dissolve polygons with common attributes</source>
+        <translation>Dissolver polígonos com atributos comuns</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="47"/>
+        <source>Deaggregate Geometries</source>
+        <translation>Desagregar geometrias</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="60"/>
+        <source>Problem executing qgis:dissolve. Check your installed libs.
+</source>
+        <translation>Problema ao executar qgis:dissolve. Verifique suas bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="71"/>
+        <source>Starting </source>
+        <translation>Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="71"/>
+        <source> Process.</source>
+        <translation> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="73"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="77"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="78"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="89"/>
+        <source>There are dissolve errors. Check log.</source>
+        <translation>Ocorreram erros ao executar o dissolve. Verifique o log.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="91"/>
+        <source>Dissolve finished.</source>
+        <translation>Dissolve executado com sucesso.</translation>
+    </message>
+</context>
+<context>
     <name>DockWidget</name>
     <message>
         <location filename="../ComplexTools/complexWindow_base.ui" line="14"/>
@@ -4930,54 +4984,54 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Forçar validade de geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="42"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="43"/>
         <source>Identify Invalid Geometries</source>
         <translation>Identificar geometrias inválidas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="49"/>
         <source>Deaggregate Geometries</source>
         <translation>Desagregar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="55"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="55"/>
         <source>Process.
 </source>
         <translation>Processo.
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="56"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="57"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="60"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="65"/>
         <source>There are no invalid geometries.</source>
         <translation>Não há geometrias inválidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="77"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="82"/>
         <source>{0} features from {1} were changed.</source>
         <translation>{0} feições de {1} foram modificadas..</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="83"/>
         <source>{0} features were changed.</source>
         <translation>{0} feições foram modificadas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="65"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="70"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="70"/>
+        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="75"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
@@ -5045,7 +5099,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Ferramenta de inspeção de feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="110"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="138"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Back inspect&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar anterior&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -5056,13 +5110,13 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 aproximação:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="205"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="233"/>
         <source>Initial feat ID</source>
         <translation>ID iniciação 
 de feição</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="245"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="273"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Next inspect&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar próximo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -5097,7 +5151,7 @@ de feição</translation>
         <translation>Remover valor</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="280"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="308"/>
         <source>Only on selected 
 features</source>
         <translation>Apenas Feições
@@ -5109,10 +5163,17 @@ Selecionadas</translation>
         <translation type="obsolete">Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="151"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="179"/>
         <source>Set Zoom</source>
         <translation>Selecione 
 o Zoom</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="114"/>
+        <source>Active
+Layer</source>
+        <translation>Camada
+Ativa</translation>
     </message>
 </context>
 <context>
@@ -6067,17 +6128,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
 <context>
     <name>InspectFeatures</name>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="203"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="222"/>
         <source>ERROR:</source>
         <translation>ERRO:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="203"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="222"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="136"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="155"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
@@ -6087,12 +6148,12 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Não existe feição de id {0} na camada {1}. Retornando ao id anterior</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="136"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="155"/>
         <source>Selected id does not exist in layer {0}. Returned to previous id.</source>
         <translation>O id selecionado não existe na camada {0}. Retornando ao id anterior.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="240"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="265"/>
         <source>Select a vector layer to enable tool</source>
         <translation>Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
@@ -8515,7 +8576,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="58"/>
         <source>There are no duplicated geometries.</source>
         <translation>Não há geometrias duplicadas.</translation>
     </message>
@@ -8530,27 +8591,27 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">{0} feições duplicadas foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="59"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="64"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="68"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="75"/>
         <source> duplicated features from </source>
         <translation>feições duplicadas da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="75"/>
         <source> were removed.</source>
         <translation>foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="72"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="76"/>
         <source> duplicated features were removed.</source>
         <translation>feições duplicadas foram removidas.</translation>
     </message>
@@ -8659,7 +8720,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="58"/>
         <source>There are no small areas.</source>
         <translation>Não há áreas pequenas.</translation>
     </message>
@@ -8679,27 +8740,27 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Remover áreas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="59"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="65"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="69"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="78"/>
         <source> features from </source>
         <translation>feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="78"/>
         <source> were removed.</source>
         <translation>foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="75"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="79"/>
         <source> features were removed.</source>
         <translation>feições foram removidas.</translation>
     </message>
@@ -8747,32 +8808,32 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">{} feições foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="58"/>
         <source>There are no small lines.</source>
         <translation>Não há linhas pequenas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="59"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="65"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="69"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="74"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="78"/>
         <source> features from </source>
         <translation>feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="74"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="78"/>
         <source> were changed.</source>
         <translation>foram modificadas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="75"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="79"/>
         <source> features were removed.</source>
         <translation>feições foram removidas.</translation>
     </message>
@@ -9983,6 +10044,75 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
 </context>
 <context>
+    <name>TopologicalCleanProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="33"/>
+        <source>Topological Clean</source>
+        <translation>Limpeza Topológica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="63"/>
+        <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
+</source>
+        <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="76"/>
+        <source>Starting </source>
+        <translation>Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="76"/>
+        <source> Process.</source>
+        <translation> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="78"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="82"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="83"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="104"/>
+        <source>Cleaning error.</source>
+        <translation>Erro de limpeza.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="107"/>
+        <source> feature(s) from </source>
+        <translation>feição(ões) da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="107"/>
+        <source> with cleaning errors. Check flags.</source>
+        <translation>com erros de limpeza. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="109"/>
+        <source>There are no cleaning errors on </source>
+        <translation>Não há erros de limpeza em </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="112"/>
+        <source>There are cleaning errors. Check log.</source>
+        <translation>Não há erros de limpeza. Verifique o log.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="114"/>
+        <source>There are no cleaning errors.</source>
+        <translation>Não há erros de limpeza.</translation>
+    </message>
+</context>
+<context>
     <name>ValidatedItemDelegate</name>
     <message>
         <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="54"/>
@@ -10097,32 +10227,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 <context>
     <name>ValidationProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="164"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="165"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="164"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="165"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="43"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="44"/>
         <source>Instantianting process</source>
         <translation>Instanciando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="49"/>
         <source>Validation Process</source>
         <translation>Processo de validação</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="172"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="173"/>
         <source>Process finished with errors.</source>
         <translation>Processo terminado com erros.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="120"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="121"/>
         <source>A problem occurred inserting flags! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
