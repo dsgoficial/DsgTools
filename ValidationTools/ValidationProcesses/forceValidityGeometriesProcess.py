@@ -32,8 +32,9 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Force Geometries Validity')
         
-        self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
-        self.parameters = {'Classes': self.flagsDict.keys()}
+        # we should use this code here when the pre Process is used
+        #self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
+        #self.parameters = {'Classes': self.flagsDict.keys()}
         
     def preProcess(self):
         """
@@ -54,7 +55,11 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            classesWithFlags = self.parameters['Classes']
+
+            # getting parameters after the execution of our pre process
+            self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
+            
+            classesWithFlags = self.flagsDict.keys()
             if len(classesWithFlags) == 0:
                 self.setStatus(self.tr('There are no invalid geometries.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('There are no invalid geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -2692,7 +2692,7 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="65"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
 </context>
 <context>
@@ -4979,7 +4979,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="70"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
 </context>
 <context>
@@ -5817,7 +5817,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="68"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
@@ -5890,7 +5890,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="69"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="78"/>
@@ -5963,7 +5963,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="70"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="79"/>
@@ -6046,7 +6046,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="68"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
@@ -8537,7 +8537,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="64"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
@@ -8605,7 +8605,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="64"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
 </context>
 <context>
@@ -8686,7 +8686,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="65"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
@@ -8759,7 +8759,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="65"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="74"/>
@@ -9600,7 +9600,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="88"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
 </context>
 <context>
@@ -9663,7 +9663,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="71"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
@@ -9786,7 +9786,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="104"/>
         <source>Running process on </source>
-        <translation>Executando o proccsso na camada  </translation>
+        <translation>Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="117"/>

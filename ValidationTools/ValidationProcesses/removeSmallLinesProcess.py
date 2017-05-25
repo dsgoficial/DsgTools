@@ -32,8 +32,8 @@ class RemoveSmallLinesProcess(ValidationProcess):
         super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Remove Small Lines')
         
-        self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
-        self.parameters = {'Classes': self.flagsDict.keys()}
+        #self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
+        #self.parameters = {'Classes': self.flagsDict.keys()}
     
     def preProcess(self):
         """
@@ -48,7 +48,11 @@ class RemoveSmallLinesProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            flagsClasses = self.parameters['Classes']
+
+            # getting parameters after the execution of our pre process
+            self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
+
+            flagsClasses = self.flagsDict.keys()
             if len(flagsClasses) == 0:
                 self.setStatus(self.tr('There are no small lines.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('There are no small lines.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
