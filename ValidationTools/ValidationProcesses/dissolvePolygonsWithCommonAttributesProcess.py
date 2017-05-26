@@ -69,20 +69,32 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
     
     def addDissolveField(self, layer, fieldList, tol):
         #add virtual field
-        layer.addExpressionField('$id', QgsField('d_id', QVariant.Double))
+        idField = QgsField('d_id',QVariant.Int)
+        layer.dataProvider().addAttributes([idField])
+        layer.updateFields()
+        # layer.addExpressionField('$id', QgsField('d_id', QVariant.Double))
         fieldList.append('d_id')
+        idx = layer.fieldNameIndex('d_id')
         smallFeatureList = [feat for feat in layer.getFeatures(QgsFeatureRequest(QgsExpression('''"area_otf" < {0}'''.format(tol))))]
         featureList = [feat for feat in layer.getFeatures(QgsFeatureRequest(QgsExpression("area_otf >= {0}".format(tol))))]
         #spatial index to speed things up
         smallFeatureSpatialIndex = QgsSpatialIndex()
         for feat in featureList:
             bbox = feat.geometry().boundingBox()
-            candidates = self.getCandidates(smallFeatureSpatialIndex, bbox)
-            for candidate in candidates:
-                sfeat = [i for i in feat.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
-                if sfeat['d_id'] == sfeat.id() and sfeat.geometry().intersects(feat.geometry()):
-                    sfeat['d_id'] = feat.id()
+            # candidates = self.getCandidates(smallFeatureSpatialIndex, bbox)
+            for sfeat in layer.getFeatures(QgsFeatureRequest(bbox)):
+                # sfeat = [i for i in feat.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
+                if sfeat['d_id'] == sfeat.id() and sfeat.geometry().intersects(feat.geometry()) and feat.id() != sfeat.id():
+                    layer.dataProvider().changeAttributeValues({sfeat.id():{idx:feat.id()}})
         return layer, fieldList
+    
+    def isMergeable(self, feat, sfeat):
+        featAttributes = feat.attributes()
+        sfeatAttributes = sfeat.attributes()
+        if featAttributes == sfeatAttributes:
+            return True
+        else:
+            return False
 
     
     def getCandidates(self, idx, bbox):

@@ -95,7 +95,7 @@
        </size>
       </property>
       <property name="filters">
-       <set>QgsMapLayerProxyModel::LineLayer|QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer|QgsMapLayerProxyModel::PolygonLayer</set>
+       <set>QgsMapLayerProxyModel::HasGeometry|QgsMapLayerProxyModel::LineLayer|QgsMapLayerProxyModel::NoGeometry|QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer|QgsMapLayerProxyModel::PolygonLayer|QgsMapLayerProxyModel::VectorLayer</set>
       </property>
      </widget>
      <widget class="QCheckBox" name="activeLayerCheckBox">
@@ -317,12 +317,12 @@ features</string>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsScaleWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsscalewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
