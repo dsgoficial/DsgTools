@@ -85,8 +85,8 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
                 feat['d_id'] = feat.id()
             except:
                 auxFeat = QgsFeature(layer.pendingFields())
-                for attr in feat.attributes():
-                    auxFeat[attr.name()] = feat[attr.name()]
+                for field in feat.fields():
+                    auxFeat[field.name()] = feat[field.name()]
                 auxFeat['d_id'] = feat.id()
                 feat = auxFeat
             if feat['area_otf'] < float(tol):
