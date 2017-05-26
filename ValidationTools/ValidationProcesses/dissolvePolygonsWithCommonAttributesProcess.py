@@ -64,28 +64,43 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
         self.updateOriginalLayer(layer, outputLayer)
-        
+        if self.parameters['MaxDissolveArea'] > 0:
+            idx = layer.fieldNameIndex('d_id')
+            layer.deleteAttribute(idx)
         return outputLayer
     
     def addDissolveField(self, layer, fieldList, tol):
-        #add virtual field
+        #add temp field
         idField = QgsField('d_id',QVariant.Int)
-        layer.dataProvider().addAttributes([idField])
+        layer.addAttribute(idField)
         layer.updateFields()
-        # layer.addExpressionField('$id', QgsField('d_id', QVariant.Double))
         fieldList.append('d_id')
         idx = layer.fieldNameIndex('d_id')
-        smallFeatureList = [feat for feat in layer.getFeatures(QgsFeatureRequest(QgsExpression('''"area_otf" < {0}'''.format(tol))))]
-        featureList = [feat for feat in layer.getFeatures(QgsFeatureRequest(QgsExpression("area_otf >= {0}".format(tol))))]
-        #spatial index to speed things up
-        smallFeatureSpatialIndex = QgsSpatialIndex()
-        for feat in featureList:
-            bbox = feat.geometry().boundingBox()
-            # candidates = self.getCandidates(smallFeatureSpatialIndex, bbox)
-            for sfeat in layer.getFeatures(QgsFeatureRequest(bbox)):
-                # sfeat = [i for i in feat.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
-                if sfeat['d_id'] == sfeat.id() and sfeat.geometry().intersects(feat.geometry()) and feat.id() != sfeat.id():
-                    layer.dataProvider().changeAttributeValues({sfeat.id():{idx:feat.id()}})
+        #small feature list
+        smallFeatureList = []
+        bigFeatureList = []
+        featureMap = self.mapInputLayer(layer)
+        for feat in featureMap.values():
+            try:
+                feat['d_id'] = feat.id()
+            except:
+                auxFeat = QgsFeature(layer.pendingFields())
+                for attr in feat.attributes():
+                    auxFeat[attr.name()] = feat[attr.name()]
+                auxFeat['d_id'] = feat.id()
+                feat = auxFeat
+            if feat['area_otf'] < float(tol):
+                smallFeatureList.append(feat)
+            else:
+                bigFeatureList.append(feat)
+        
+        
+        for bfeat in bigFeatureList:
+            for sfeat in smallFeatureList:
+                if sfeat['d_id'] == sfeat.id() and sfeat.geometry().intersects(bfeat.geometry()) and bfeat.id() != sfeat.id():
+                    sfeat['d_id'] = bfeat.id()
+        for feat in smallFeatureList + bigFeatureList:
+            layer.updateFeature(feat)
         return layer, fieldList
     
     def isMergeable(self, feat, sfeat):
