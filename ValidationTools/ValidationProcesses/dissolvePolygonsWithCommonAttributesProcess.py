@@ -58,7 +58,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         fieldList = [field.name() for field in layer.pendingFields() if (field.type() != 6 and field.name() <> keyColumn) ]
         if self.parameters['MaxDissolveArea'] > 0:
             layer, fieldList = self.addDissolveField(layer, fieldList, self.parameters['MaxDissolveArea'])
-        ret = processing.runalg(alg, layer, False, fieldList, None)
+        ret = processing.runalg(alg, layer, False, 'd_id', None)
         if not ret:
             raise Exception(self.tr('Problem executing qgis:dissolve. Check your installed libs.\n'))
         #updating original layer
@@ -84,16 +84,16 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
             try:
                 feat['d_id'] = feat.id()
             except:
-                auxFeat = QgsFeature(layer.pendingFields())
+                auxFeat = QgsFeature(layer.pendingFields(), feat.id())
                 for field in feat.fields():
                     auxFeat[field.name()] = feat[field.name()]
                 auxFeat['d_id'] = feat.id()
+                auxFeat.setGeometry(feat.geometry())
                 feat = auxFeat
-            if feat['area_otf'] < float(tol):
+            if feat.geometry().area() < float(tol):
                 smallFeatureList.append(feat)
             else:
                 bigFeatureList.append(feat)
-        
         
         for bfeat in bigFeatureList:
             for sfeat in smallFeatureList:
@@ -110,7 +110,6 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
             return True
         else:
             return False
-
     
     def getCandidates(self, idx, bbox):
         return idx.intersects(bbox)
