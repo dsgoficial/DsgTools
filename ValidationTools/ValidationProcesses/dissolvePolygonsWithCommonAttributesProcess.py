@@ -55,41 +55,28 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #field.type() != 6 stands for virtual columns such as area_otf
-        fieldList = [field.name() for field in layer.pendingFields() if (field.type() != 6 and field.name() <> keyColumn) ]
+        auxLayer = self.createUnifiedLayer([layer], None, attributeTupple = True)
         if self.parameters['MaxDissolveArea'] > 0:
-            layer, fieldList = self.addDissolveField(layer, fieldList, self.parameters['MaxDissolveArea'])
-        ret = processing.runalg(alg, layer, False, 'd_id', None)
+            auxLayer = self.addDissolveField(auxLayer, self.parameters['MaxDissolveArea'])
+        ret = processing.runalg(alg, auxLayer, False, 'tupple', None)
         if not ret:
             raise Exception(self.tr('Problem executing qgis:dissolve. Check your installed libs.\n'))
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
-        self.updateOriginalLayer(layer, outputLayer)
-        if self.parameters['MaxDissolveArea'] > 0:
-            idx = layer.fieldNameIndex('d_id')
-            layer.deleteAttribute(idx)
+        QgsMapLayerRegistry.instance().removeMapLayer(auxLayer.id())
+        self.splitUnifiedLayer(outputLayer, [layer])
         return outputLayer
     
-    def addDissolveField(self, layer, fieldList, tol):
+    def addDissolveField(self, layer, tol):
         #add temp field
         idField = QgsField('d_id',QVariant.Int)
-        layer.addAttribute(idField)
+        layer.dataProvider().addAttributes([idField])
         layer.updateFields()
-        fieldList.append('d_id')
-        idx = layer.fieldNameIndex('d_id')
         #small feature list
         smallFeatureList = []
         bigFeatureList = []
-        featureMap = self.mapInputLayer(layer)
-        for feat in featureMap.values():
-            try:
-                feat['d_id'] = feat.id()
-            except:
-                auxFeat = QgsFeature(layer.pendingFields(), feat.id())
-                for field in feat.fields():
-                    auxFeat[field.name()] = feat[field.name()]
-                auxFeat['d_id'] = feat.id()
-                auxFeat.setGeometry(feat.geometry())
-                feat = auxFeat
+        for feat in layer.getFeatures():
+            feat['d_id'] = feat['featid']
             if feat.geometry().area() < float(tol):
                 smallFeatureList.append(feat)
             else:
@@ -97,19 +84,16 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         
         for bfeat in bigFeatureList:
             for sfeat in smallFeatureList:
-                if sfeat['d_id'] == sfeat.id() and sfeat.geometry().intersects(bfeat.geometry()) and bfeat.id() != sfeat.id():
-                    sfeat['d_id'] = bfeat.id()
+                if sfeat['d_id'] == sfeat['featid'] and sfeat.geometry().intersects(bfeat.geometry()) and sfeat['tupple'] == bfeat['tupple']:
+                    sfeat['d_id'] = bfeat['featid']
+        idx = layer.fieldNameIndex('tupple')
+        
+        updateDict = dict()
         for feat in smallFeatureList + bigFeatureList:
-            layer.updateFeature(feat)
-        return layer, fieldList
-    
-    def isMergeable(self, feat, sfeat):
-        featAttributes = feat.attributes()
-        sfeatAttributes = sfeat.attributes()
-        if featAttributes == sfeatAttributes:
-            return True
-        else:
-            return False
+            newValue = '{0},{1}'.format(feat['tupple'], feat['d_id'])
+            updateDict[feat.id()] = {idx:newValue}
+        layer.dataProvider().changeAttributeValues(updateDict)
+        return layer
     
     def getCandidates(self, idx, bbox):
         return idx.intersects(bbox)

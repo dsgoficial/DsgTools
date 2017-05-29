@@ -388,13 +388,13 @@ class ValidationProcess(QObject):
         coverage.commitChanges()
         return coverage
 
-    def splitUnifiedLayer(self, coverage, layerList):
+    def splitUnifiedLayer(self, outputLayer, layerList):
         """
         Updates all original layers making requests with the class name
         """
         for layer in layerList:
             classname = layer.name()
-            tupplelist = [(feature['featid'], feature) for feature in coverage.getFeatures()]
+            tupplelist = [(feature['featid'], feature) for feature in outputLayer.getFeatures()]
             self.updateOriginalLayer(layer, None, featureTupleList=tupplelist)
                     
                     
