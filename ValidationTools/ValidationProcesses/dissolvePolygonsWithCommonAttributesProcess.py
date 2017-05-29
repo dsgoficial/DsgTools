@@ -75,19 +75,24 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         #small feature list
         smallFeatureList = []
         bigFeatureList = []
+        bigFeatIndex = QgsSpatialIndex()
         for feat in layer.getFeatures():
             feat['d_id'] = feat['featid']
             if feat.geometry().area() < float(tol):
                 smallFeatureList.append(feat)
             else:
+                bigFeatIndex.insertFeature(feat)
                 bigFeatureList.append(feat)
         
-        for bfeat in bigFeatureList:
-            for sfeat in smallFeatureList:
+        # using spatial index to speed up the process
+        for sfeat in smallFeatureList:
+            candidates = bigFeatIndex.intersects(sfeat.geometry().boundingBox())
+            for candidate in candidates:
+                bfeat = [i for i in layer.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
                 if sfeat['d_id'] == sfeat['featid'] and sfeat.geometry().intersects(bfeat.geometry()) and sfeat['tupple'] == bfeat['tupple']:
                     sfeat['d_id'] = bfeat['featid']
+
         idx = layer.fieldNameIndex('tupple')
-        
         updateDict = dict()
         for feat in smallFeatureList + bigFeatureList:
             newValue = '{0},{1}'.format(feat['tupple'], feat['d_id'])
