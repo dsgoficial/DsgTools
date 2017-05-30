@@ -95,7 +95,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         idx = layer.fieldNameIndex('tupple')
         updateDict = dict()
         for feat in smallFeatureList + bigFeatureList:
-            newValue = '{0},{1}'.format(feat['tupple'], feat['d_id'])
+            newValue = u'{0},{1}'.format(feat['tupple'], feat['d_id'])
             updateDict[feat.id()] = {idx:newValue}
         layer.dataProvider().changeAttributeValues(updateDict)
         return layer

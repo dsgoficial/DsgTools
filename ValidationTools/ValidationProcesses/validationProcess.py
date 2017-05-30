@@ -376,9 +376,9 @@ class ValidationProcess(QObject):
                 newfeat['classname'] = classname
                 if attributeTupple:
                     attributeList = []
-                    attributes = [field.name() for field in feature.fields() if (field.type() != 6 and field.name() <> keyColumn)]
+                    attributes = [field.name() for field in feature.fields() if (field.type() != 6 and field.name() != keyColumn)]
                     for attribute in attributes:
-                        attributeList.append('{0}'.format(feature[attribute]))
+                        attributeList.append(u'{0}'.format(feature[attribute])) #done due to encode problems
                     tup = ','.join(attributeList)
                     newfeat['tupple'] = tup
                 featlist.append(newfeat)

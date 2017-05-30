@@ -204,18 +204,19 @@ class PostGISLayerLoader(EDGVLayerLoader):
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
-        vlayer.setCrs(crs)
-        if useQml:
-            vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
-        else:
-            vlayer = self.setDomainsAndRestrictions(vlayer, lyrName, domainDict, multiColumnsDict, domLayerDict)
-        if stylePath:
-            fullPath = self.getStyle(stylePath, lyrName)
-            if fullPath:
-                vlayer.applyNamedStyle(fullPath)
-        iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
-        if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        if vlayer:
+            vlayer.setCrs(crs)
+            if useQml:
+                vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
+            else:
+                vlayer = self.setDomainsAndRestrictions(vlayer, lyrName, domainDict, multiColumnsDict, domLayerDict)
+            if stylePath:
+                fullPath = self.getStyle(stylePath, lyrName)
+                if fullPath:
+                    vlayer.applyNamedStyle(fullPath)
+            iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
+            if not vlayer.isValid():
+                QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
 
