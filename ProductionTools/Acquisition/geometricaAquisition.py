@@ -3,7 +3,7 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem
 from qgis.gui import QgsMapMouseEvent
 import math
 from PyQt4 import QtCore, QtGui
@@ -132,7 +132,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     
     def createGeometry(self, geom):
         if geom :
-            layer = self.canvas.currentLayer() 
+            layer = self.canvas.currentLayer()
             feature = QgsFeature()
             fields = layer.pendingFields()
             feature.setGeometry(geom)
@@ -157,3 +157,27 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.snapCursorRubberBand = self.getSnapRubberBand()
         self.snapCursorRubberBand.addPoint(point) 
  
+    def reprojectRubberBand(self, geom):
+        """
+        Reprojects the geometry
+        geom: QgsGeometry
+        """
+        # Defining the crs from src and destiny
+        epsg = self.canvas.mapSettings().destinationCrs().authid()
+        crsSrc = QgsCoordinateReferenceSystem(epsg)
+        #getting srid from something like 'EPSG:31983'
+        layer = self.canvas.currentLayer()
+        srid = layer.crs().authid().split(':')[-1]
+        crsDest = QgsCoordinateReferenceSystem(srid)
+        # Creating a transformer
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        # Transforming the points
+        poly = geom.asPolygon()
+        newPolyline = []
+        for j in xrange(len(poly)):
+            line = poly[j]
+            for i in xrange(len(line)):
+                point = line[i]
+                newPolyline.append(coordinateTransformer.transform(point))
+        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])                
+        return qgsPolygon    
