@@ -360,7 +360,7 @@ class ValidationProcess(QObject):
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
 
-    def createUnifiedLayer(self, layerList, geomtype, attributeTupple = False):
+    def createUnifiedLayer(self, layerList, attributeTupple = False):
         """
         Creates a unified layer from a list of layers
         """

@@ -55,7 +55,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #field.type() != 6 stands for virtual columns such as area_otf
-        auxLayer = self.createUnifiedLayer([layer], None, attributeTupple = True)
+        auxLayer = self.createUnifiedLayer([layer], attributeTupple = True)
         if self.parameters['MaxDissolveArea'] > 0:
             auxLayer = self.addDissolveField(auxLayer, self.parameters['MaxDissolveArea'])
         ret = processing.runalg(alg, auxLayer, False, 'tupple', None)

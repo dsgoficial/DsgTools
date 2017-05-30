@@ -90,7 +90,7 @@ class TopologicalCleanProcess(ValidationProcess):
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 classlist.append(lyr)
 
-            coverage = self.createUnifiedLayer(classlist, None)
+            coverage = self.createUnifiedLayer(classlist)
             result, output = self.runProcessinAlg(coverage)
             self.splitUnifiedLayer(output, classlist)
             QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
