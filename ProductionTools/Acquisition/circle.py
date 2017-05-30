@@ -41,7 +41,7 @@ class Circle(GeometricaAcquisition):
 
     def endGeometry(self):
         self.geometry = self.rubberBand.asGeometry()
-        self.createGeometry(self.reprojectRubberBand(self.geometry))
+        self.createGeometry(self.geometry)
   
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:

@@ -3,7 +3,7 @@ from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMapMouseEvent
 import math
 from PyQt4 import QtCore, QtGui
@@ -131,6 +131,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         return rubberBand        
     
     def createGeometry(self, geom):
+        geom = self.reprojectRubberBand(geom)
         if geom :
             layer = self.canvas.currentLayer()
             feature = QgsFeature()
@@ -167,8 +168,8 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         crsSrc = QgsCoordinateReferenceSystem(epsg)
         #getting srid from something like 'EPSG:31983'
         layer = self.canvas.currentLayer()
-        srid = layer.crs().authid().split(':')[-1]
-        crsDest = QgsCoordinateReferenceSystem(srid)
+        srid = layer.crs().authid()
+        crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
         # Transforming the points
