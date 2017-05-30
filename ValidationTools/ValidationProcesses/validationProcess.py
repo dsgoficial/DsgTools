@@ -27,7 +27,7 @@ from PyQt4.QtCore import QVariant
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField
+from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -343,6 +343,22 @@ class ValidationProcess(QObject):
         self.updateOriginalLayer(lyr, outputLayer)
         #dropping the temp table as we don't need it anymore
         self.abstractDb.dropTempTable(processTableName)
+    
+    def getGeometryTypeText(self, geomtype):
+        if geomtype == QGis.WKBPoint:
+            return 'Point'
+        elif geomtype == QGis.WKBMultiPoint:
+            return 'MultiPoint'
+        elif geomtype == QGis.WKBLineString:
+            return 'Linestring'
+        elif geomtype == QGis.WKBMultiLineString:
+            return 'MultiLinestring'
+        elif geomtype == QGis.WKBPolygon:
+            return 'Polygon'
+        elif geomtype == QGis.WKBMultiPolygon:
+            return 'MultiPolygon'
+        else:
+            raise Exception(self.tr('Operation not defined with provided geometry type!'))
 
     def createUnifiedLayer(self, layerList, geomtype, attributeTupple = False):
         """
@@ -351,7 +367,12 @@ class ValidationProcess(QObject):
         #getting srid from something like 'EPSG:31983'
         srid = layerList[0].crs().authid().split(':')[-1]
         # creating the layer
-        coverage = self.iface.addVectorLayer("MultiPolygon?crs=epsg:{}".format(srid), "coverage", "memory")
+        geomtype = layerList[0].dataProvider().geometryType()
+        for lyr in layerList:
+            if lyr.dataProvider().geometryType() != geomtype:
+                raise Exception(self.tr('Error! Different geometry primitives!'))
+
+        coverage = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid), "coverage", "memory")
         provider = coverage.dataProvider()
         coverage.startEditing()
 
@@ -363,6 +384,10 @@ class ValidationProcess(QObject):
         provider.addAttributes(fields)
         coverage.updateFields()
 
+        totalCount = 0
+        for layer in layerList:
+            totalCount += layer.pendingFeatureCount()
+        self.localProgress = ProgressWidget(1, totalCount - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
         featlist = []
         for layer in layerList:
             # recording class name
@@ -382,6 +407,7 @@ class ValidationProcess(QObject):
                     tup = ','.join(attributeList)
                     newfeat['tupple'] = tup
                 featlist.append(newfeat)
+                self.localProgress.step()
         
         #inserting new features into layer
         coverage.addFeatures(featlist, True)
