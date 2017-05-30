@@ -217,8 +217,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         """
         Filters the items to make it easier to spot and select them
         """
-        classes = [edgvClass for edgvClass in self.fromLs if text in edgvClass]
-        filteredClasses = [i for i in classes if i not in self.toLs]
+        classes = [edgvClass for edgvClass in self.fromLs if text.lower() in edgvClass.lower()]
+        filteredClasses = [i for i in classes if i.lower() not in [j.lower() for j in self.toLs]]
         self.fromList.clear()
         self.fromList.addItems(classes)
         self.fromList.sortItems()
