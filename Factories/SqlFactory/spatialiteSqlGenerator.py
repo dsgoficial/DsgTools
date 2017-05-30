@@ -193,6 +193,6 @@ class SpatialiteSqlGenerator(SqlGenerator):
         return self.getElementCountFromLayer(layer)
     
     def getFullTablesName(self, name):
-        sql = "SELECT name FROM sqlite_master WHERE type='table' AND name LIKE '%{0}%' ORDER BY name".format(name)
+        sql = "SELECT f_table_name as name FROM geometry_columns WHERE f_table_name LIKE '%{0}%' ORDER BY name".format(name)
         return sql
     
