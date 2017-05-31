@@ -332,6 +332,7 @@ class PostgisDb(AbstractDb):
 
     def getDomainDict(self):
         """
+        SHOULD BE DEPRECATED OR IN FOR A MAJOR REFACTORY!!!!!
         Gets the domain dictionary for the edgv database used
         """
         self.checkAndOpenDb()        
@@ -388,6 +389,7 @@ class PostgisDb(AbstractDb):
 
     def getTableSchema(self,lyr):
         """
+        DEPRECATED
         Gets the table schema
         lyr: layer name
         """
@@ -2141,6 +2143,9 @@ class PostgisDb(AbstractDb):
         fkAttribute = fkText.split(')')[0].replace('FOREIGN KEY (','')
         subtextList = fkText.split(' REFERENCES ')[-1].replace(' MATCH FULL','').split('(')
         domainTable = subtextList[0]
+        if '.' not in domainTable:
+            auxDomain = domainTable.replace('"','')
+            domainTable = '''"{0}"."{1}"'''.format(self.getTableSchemaFromDb(auxDomain), auxDomain)
         domainReferencedAttribute = subtextList[1].replace(')','') 
         return tableName.replace('"',''), fkAttribute.replace('"',''), domainTable, domainReferencedAttribute
 
@@ -2305,7 +2310,7 @@ class PostgisDb(AbstractDb):
         while query.next():
             aux = json.loads(query.value(0))
             if not otherKey:
-                otherKey = [key for key in aux.keys() if key <> 'code'][0]
+                otherKey = [key for key in aux.keys() if key <> refPk][0]
             domainDict[aux[refPk]] = aux[otherKey]
         return domainDict, otherKey
     
