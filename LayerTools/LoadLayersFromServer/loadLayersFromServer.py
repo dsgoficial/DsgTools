@@ -59,8 +59,8 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
         self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
+        self.layersCustomSelector.setHeaders([self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry Column'), self.tr('Geometry Type')])
         self.lyrDict = dict()
-        self.changePrimitiveCheckboxState(False)
     
     def resetInterface(self):
         """
@@ -71,7 +71,6 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         #TODO: refresh optional parameters
         self.checkBoxOnlyWithElements.setCheckState(0)
         self.onlyParentsCheckBox.setCheckState(0)
-        self.changePrimitiveCheckboxState(False)
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
