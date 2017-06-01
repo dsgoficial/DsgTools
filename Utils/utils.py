@@ -217,4 +217,3 @@ class Utils:
             return jsonDict
         else:
             return json.loads(jsonDict)
-

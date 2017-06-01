@@ -71,16 +71,38 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.fromTreeWidget.clear()
         self.fromTreeWidget.clear()
         self.setFromDictList(fromDictList, unique)
-
+    
+    def getParentNode(self, parentNode, textList):
+        nodeFound = True
+        for i in range(parentNode.childCount()):
+            childNode = parentNode.child(i)
+            for j in range(len(textList)):
+                if childNode.text(j) != textString[j]:
+                    nodeFound = False
+                    break
+            if nodeFound:
+                return childNode
+        return None
 
     def addItemsToTree(self, addItemDictList):
         rootNode = self.treeWidget.invisibleRootItem()
+        for dictItem in addItemDictList:
+            childNode = self.getParentNode(rootNode, [self.headerList[0],'',''])
+            if childNode:
+                pass #continue here
 
-        self.utils.createWidgetItem(rootNode, key, 0)
-        dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
-        self.treeWidget.expandAll()
-        self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-        self.treeWidget.header().setStretchLastSection(False)
+
+
+        # for idx in range(rootNode.childCount()):
+        #     childItem = rootNode.child(idx)
+        #     if childItem.text(columnNumber) == targetName:
+        # nodeIndex = self.headerList.index(self.filterColumnKey)
+        # parentNode = self.utils.findChildNode(rootNode, )
+        # self.utils.createWidgetItem(rootNode, key, 0)
+        # dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
+        # self.treeWidget.expandAll()
+        # self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        # self.treeWidget.header().setStretchLastSection(False)
 
     def addItems(self, addItemDictList, sort = True, unique = False):
         """

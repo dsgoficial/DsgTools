@@ -173,6 +173,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
        </widget>
       </item>
       <item row="1" column="0">
@@ -184,8 +189,39 @@
          </sizepolicy>
         </property>
         <property name="selectionMode">
-         <enum>QAbstractItemView::MultiSelection</enum>
+         <enum>QAbstractItemView::ExtendedSelection</enum>
         </property>
+        <column>
+         <property name="text">
+          <string>Category</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Table_Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Geometry_Column</string>
+         </property>
+        </column>
+        <item>
+         <property name="text">
+          <string>HID</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>HID</string>
+          </property>
+          <property name="text">
+           <string>Trecho_Drenagem_L</string>
+          </property>
+          <property name="text">
+           <string>geom</string>
+          </property>
+         </item>
+        </item>
        </widget>
       </item>
      </layout>
