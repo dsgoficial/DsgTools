@@ -1419,3 +1419,7 @@ class PostGISSqlGenerator(SqlGenerator):
         AND    i.indisprimary;        
         '''.format(tableName)
         return sql
+    
+    def getGeometryTablesCount(self):
+        sql = '''select count(*) from public.geometry_columns'''
+        return sql

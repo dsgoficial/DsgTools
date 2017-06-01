@@ -782,16 +782,23 @@ class PostgisDb(AbstractDb):
             db.setUserName(self.db.userName())
             db.setPassword(self.db.password())
             if not db.open():
-                raise Exception(self.tr("Problem opening EDGV databases: ")+db.lastError().databaseText())
+                raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
 
             query2 = QSqlQuery(db)
-            if query2.exec_(self.gen.getEDGVVersion()):
+            if query2.exec_(self.gen.getGeometryTablesCount()):
                 while query2.next():
-                    version = query2.value(0)
-                    if version:
-                        edvgDbList.append((database,version))
-            else:
-                edvgDbList.append((database,'Non_EDGV'))
+                    count = query2.value(0)
+                    if count > 0:
+                        query3 = QSqlQuery(db)
+                        if query3.exec_(self.gen.getEDGVVersion()):
+                            while query3.next():
+                                version = query3.value(0)
+                                if version:
+                                    edvgDbList.append((database,version))
+                                else:
+                                    edvgDbList.append((database,'Non_EDGV'))
+                        else:
+                            edvgDbList.append((database,'Non_EDGV'))
             if parentWidget:
                 progress.step()
         return edvgDbList
