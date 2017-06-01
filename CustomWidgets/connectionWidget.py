@@ -191,7 +191,9 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                 self.edgvPostgisVersionEdit.setText(self.abstractDb.getDatabaseVersion())
                 serverName = self.serverWidget.serversCombo.currentText()
-                self.mGroupBox.setTitle(dbName + self.tr(' on ') + serverName)
+                newText = dbName + self.tr(' on ') + serverName 
+                self.mGroupBox.setToolTip(newText)
+                # self.mGroupBox.setTitle(newText)
 
             self.abstractDb.checkAndOpenDb()
             self.dbLoaded = True

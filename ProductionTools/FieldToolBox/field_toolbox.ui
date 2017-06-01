@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>229</width>
-    <height>382</height>
+    <width>230</width>
+    <height>329</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>DSGTools: Feature (Re)classification Tool</string>
@@ -36,6 +42,12 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <item>
        <property name="text">
         <string>Select Stored Config (optional)</string>
@@ -45,6 +57,12 @@
     </item>
     <item row="7" column="0" colspan="2">
      <widget class="QPushButton" name="setupButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Setup</string>
       </property>
@@ -56,7 +74,7 @@
     <item row="5" column="0" colspan="2">
      <widget class="QScrollArea" name="scrollArea">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="MinimumExpanding">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -69,8 +87,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>209</width>
-         <height>144</height>
+         <width>210</width>
+         <height>72</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2"/>
@@ -82,6 +100,12 @@
       <property name="enabled">
        <bool>false</bool>
       </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Edit Current Config</string>
       </property>
@@ -89,6 +113,12 @@
     </item>
     <item row="4" column="0">
      <widget class="QRadioButton" name="reclassificationRadioButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="toolTip">
        <string>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</string>
       </property>
@@ -99,6 +129,12 @@
     </item>
     <item row="3" column="0">
      <widget class="QRadioButton" name="newFeatureRadioButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="toolTip">
        <string>After digitizing, the feature is set with the attributes configured in the selected button</string>
       </property>
