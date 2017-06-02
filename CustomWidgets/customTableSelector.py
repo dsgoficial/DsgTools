@@ -75,7 +75,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.fromTreeWidget.clear()
         self.setFromDictList(fromDictList, unique)
     
-    def getParentNode(self, parentNode, textList):
+    def getChildNode(self, parentNode, textList):
         nodeFound = True
         for i in range(parentNode.childCount()):
             childNode = parentNode.child(i)
@@ -87,12 +87,16 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                 return childNode
         return None
 
-    def addItemsToTree(self, addItemDictList):
-        rootNode = self.treeWidget.invisibleRootItem()
+    def addItemsToTree(self, treeWidget, addItemDictList, unique = False):
+        rootNode = treeWidget.invisibleRootItem()
         for dictItem in addItemDictList:
-            childNode = self.getParentNode(rootNode, [self.headerList[0],'',''])
-            if not childNode:
-                childNode = self.utils.createWidgetItem(rootNode,dictItem[self.headerList[0]],0)
+            firstColumnChild = self.getChildNode(rootNode, [self.headerList[0],'',''])
+            if not firstColumnChild:
+                firstColumnChild = self.utils.createWidgetItem(rootNode,dictItem[self.headerList[0]],0)
+            if unique:
+                textList = [self.headerList[i] for i in range(1,len(self.headerList)-1)]
+                childNode = self.getParentNode()
+
             for i in range(1,len(self.headerList)-1):
                 childNode.setText(i, dictItem[self.headerList[i]])
 
