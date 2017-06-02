@@ -26,6 +26,8 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
+from DsgTools.Utils.utils import Utils
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customTableSelector.ui'))
@@ -38,6 +40,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         super(self.__class__, self).__init__(parent)
         self.fromLs = []
         self.toLs = []
+        self.utils = Utils()
         self.setupUi(self)
     
     def setFilterColumn(self, customNumber = None):
@@ -77,7 +80,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         for i in range(parentNode.childCount()):
             childNode = parentNode.child(i)
             for j in range(len(textList)):
-                if childNode.text(j) != textString[j]:
+                if childNode.text(j) != textList[j]:
                     nodeFound = False
                     break
             if nodeFound:
@@ -88,8 +91,11 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         rootNode = self.treeWidget.invisibleRootItem()
         for dictItem in addItemDictList:
             childNode = self.getParentNode(rootNode, [self.headerList[0],'',''])
-            if childNode:
-                pass #continue here
+            if not childNode:
+                childNode = self.utils.createWidgetItem(rootNode,dictItem[self.headerList[0]],0)
+            for i in range(1,len(self.headerList)-1):
+                childNode.setText(i, dictItem[self.headerList[i]])
+
 
 
 
