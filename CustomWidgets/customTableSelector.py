@@ -65,7 +65,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.toTreeWidget.setHeaderLabels(headerList)
         self.setFilterColumn(customNumber = customNumber)
     
-    def setInitialState(self, fromListDict, unique=False):
+    def setInitialState(self, fromDictList, unique=False):
         """
         Sets the initial state
         """
@@ -76,8 +76,11 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.setFromDictList(fromDictList, unique)
     
     def getChildNode(self, parentNode, textList):
-        nodeFound = True
+        """
+        Returns child node with columns equals to textList items. If no node is found, return None
+        """
         for i in range(parentNode.childCount()):
+            nodeFound = True
             childNode = parentNode.child(i)
             for j in range(len(textList)):
                 if childNode.text(j) != textList[j]:
@@ -88,31 +91,23 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         return None
 
     def addItemsToTree(self, treeWidget, addItemDictList, unique = False):
-        rootNode = treeWidget.invisibleRootItem()
+        """
+        Adds items from addItemDictList in treeWidget.
+        addItemDictList = [-list of dicts with keys corresponding to header list texts-]
+        unique: only adds item if it is not in already in tree
+        """
+        rootNode = treeWidget.invisibleRootItem() #invisible root item
         for dictItem in addItemDictList:
-            firstColumnChild = self.getChildNode(rootNode, [self.headerList[0],'',''])
+            firstColumnChild = self.getChildNode(rootNode, [self.headerList[0]]+['']*(len(self.headerList)-1)) #looks for a item in the format ['first column text', '','',...,'']
             if not firstColumnChild:
                 firstColumnChild = self.utils.createWidgetItem(rootNode,dictItem[self.headerList[0]],0)
+            textList = [dictItem[self.headerList[i]] for i in range(1,len(self.headerList))]
             if unique:
-                textList = [self.headerList[i] for i in range(1,len(self.headerList)-1)]
-                childNode = self.getParentNode()
-
-            for i in range(1,len(self.headerList)-1):
-                childNode.setText(i, dictItem[self.headerList[i]])
-
-
-
-
-        # for idx in range(rootNode.childCount()):
-        #     childItem = rootNode.child(idx)
-        #     if childItem.text(columnNumber) == targetName:
-        # nodeIndex = self.headerList.index(self.filterColumnKey)
-        # parentNode = self.utils.findChildNode(rootNode, )
-        # self.utils.createWidgetItem(rootNode, key, 0)
-        # dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
-        # self.treeWidget.expandAll()
-        # self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
-        # self.treeWidget.header().setStretchLastSection(False)
+                childNode = self.getChildNode(firstColumnChild, textList)
+                if not childNode:
+                    self.utils.createWidgetItem(firstColumnChild,textList)
+            else:
+                self.utils.createWidgetItem(firstColumnChild,textList)
 
     def addItems(self, addItemDictList, sort = True, unique = False):
         """

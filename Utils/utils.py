@@ -188,10 +188,15 @@ class Utils:
                 itemList.append(key)
             self.getAllItemsInDict(inputDict[key], itemList)
 
-    def createWidgetItem(self, parent, text, column):
+    def createWidgetItem(self, parent, text, column = None):
         item = QtGui.QTreeWidgetItem(parent)
-        item.setText(column, text)
-        return item
+        if isinstance(text,list) and column == None:
+            for i in range(len(text)):
+                item.setText(text[i],i)
+                return item
+        else:
+            item.setText(column, text)
+            return item
 
     def createTreeWidgetFromDict(self, parentNode, inputDict, treeWidget, column):
         for key in inputDict.keys():
