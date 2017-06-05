@@ -173,6 +173,12 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="selectionMode">
+         <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+        <property name="textElideMode">
+         <enum>Qt::ElideMiddle</enum>
+        </property>
         <column>
          <property name="text">
           <string notr="true">1</string>
@@ -190,6 +196,9 @@
         </property>
         <property name="selectionMode">
          <enum>QAbstractItemView::ExtendedSelection</enum>
+        </property>
+        <property name="textElideMode">
+         <enum>Qt::ElideMiddle</enum>
         </property>
         <column>
          <property name="text">
@@ -215,7 +224,34 @@
            <string>HID</string>
           </property>
           <property name="text">
+           <string>Ponto_Inicio_Drenagem_P</string>
+          </property>
+          <property name="text">
+           <string>geom</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>HID</string>
+          </property>
+          <property name="text">
            <string>Trecho_Drenagem_L</string>
+          </property>
+          <property name="text">
+           <string>geom</string>
+          </property>
+         </item>
+        </item>
+        <item>
+         <property name="text">
+          <string>TRA</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>TRA</string>
+          </property>
+          <property name="text">
+           <string>Trecho_Rodoviario_L</string>
           </property>
           <property name="text">
            <string>geom</string>

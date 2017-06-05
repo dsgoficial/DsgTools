@@ -24,7 +24,8 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
+from PyQt4.QtGui import QTreeWidgetItem
 
 from DsgTools.Utils.utils import Utils
 
@@ -42,6 +43,20 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.toLs = []
         self.utils = Utils()
         self.setupUi(self)
+    
+    def resizeTrees(self):
+        self.fromTreeWidget.expandAll()
+        self.fromTreeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.fromTreeWidget.header().setStretchLastSection(False)
+        self.toTreeWidget.expandAll()
+        self.toTreeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.toTreeWidget.header().setStretchLastSection(False)
+    
+    def setTitle(self,title):
+        """
+        Setting the title
+        """
+        self.groupBox.setTitle(title)
     
     def setFilterColumn(self, customNumber = None):
         if isinstance(customNumber, int):
@@ -90,7 +105,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                 return childNode
         return None
 
-    def addItemsToTree(self, treeWidget, addItemDictList, unique = False):
+    def addItemsToTree(self, treeWidget, addItemDictList, controlList, unique = False):
         """
         Adds items from addItemDictList in treeWidget.
         addItemDictList = [-list of dicts with keys corresponding to header list texts-]
@@ -108,59 +123,13 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                     self.utils.createWidgetItem(firstColumnChild,textList)
             else:
                 self.utils.createWidgetItem(firstColumnChild,textList)
-
-    def addItems(self, addItemDictList, sort = True, unique = False):
-        """
-        Adding "from" items (QListWidget and python list)
-        """
-        toAddList = []
-        for i in addItemDictList:
-            if unique:
-                if (i not in self.fromLs) and (i not in self.toLs):
-                    toAddList.append(i)
-            else:
-                toAddList.append(i)
-                self.fromLs.append(i)
-        if toAddList <> []:
-            self.fromList.addItems(toAddList)
-            self.fromList.sortItems()
-            if sort:
-                self.fromLs.sort()
-    
-    def setFromDictList(self, fromDictList, unique=False):
-        """
-        Setting the "from" items (QListWidget and python list)
-        """
-        if unique:
-            uniqueList = []
-            for i in fromDictList:
-                if i not in uniqueList:
-                    uniqueList.append(i)
-            self.fromLs = uniqueList
-            self.fromList.addItems(uniqueList)
-            self.fromList.sortItems()
-        else:
-            self.fromLs = fromDictList
-            self.fromLs.sort()
-            self.fromList.addItems(fromDictList)
-            self.fromList.sortItems()
-    
-    def addItems(self, addList, unique=False):
-        """
-        Adding "from" items (QListWidget and python list)
-        """
-        toAddList = []
-        for i in addList:
-            if unique:
-                if (i not in self.fromLs) and (i not in self.toLs):
-                    toAddList.append(i)
-            else:
-                toAddList.append(i)
-                self.fromLs.append(i)
-        if toAddList <> []:
-            self.fromList.addItems(toAddList)
-            self.fromList.sortItems()
-            self.fromLs.sort()
+            for text in textList:
+                if unique:
+                    if text not in controlList:
+                        controlList.append(text)
+                else:
+                    controlList.append(text)
+        self.resizeTrees()
     
     def removeItem(self, removeItem):
         """
@@ -180,102 +149,102 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                     item = self.toList.takeItem(i)
 
 
-    def setToList(self, toList):
+    def setToList(self, toList, unique = True):
         """
         Setting the "to" items (QListWidget and python list)
         """
-        self.toLs = toList
-        self.toList.addItems(toList)
+        self.addItemsToTree(self.toList, toList, self.toLs, unique = unique)
         self.toList.sortItems()
+
+    def setFromList(self, fromList, unique = True):
+        """
+        Setting the "from" items (QListWidget and python list)
+        """
+        self.addItemsToTree(self.fromLs, fromList, self.fromLs, unique = unique)
+        self.fromList.sortItems()
     
-    def setTitle(self,title):
-        """
-        Setting the title
-        """
-        self.groupBox.setTitle(title)
+    def getLists(self, sender):
+        text = sender.text()
+        if text == '>':
+            return self.fromTreeWidget, self.fromLs, self.toTreeWidget, self.toLs, False
+        if text == '>>':
+            return self.fromTreeWidget, self.fromLs, self.toTreeWidget, self.toLs, True
+        if text == '<':
+            return self.toTreeWidget, self.toLs, self.fromTreeWidget, self.fromLs, False
+        if text == '<<':
+            return self.toTreeWidget, self.toLs, self.fromTreeWidget, self.fromLs, True
 
     @pyqtSlot(bool, name='on_pushButtonSelectOne_clicked')
+    @pyqtSlot(bool, name='on_pushButtonDeselectOne_clicked')
+    @pyqtSlot(bool, name='on_pushButtonSelectAll_clicked')
+    @pyqtSlot(bool, name='on_pushButtonDeselectAll_clicked')
     def selectItems(self, isSelected, selectedItems=[]):
         """
         Adds the selected items to the "to" list
         """
-        if len(selectedItems) <> 0:
-            listedItems = []
-            for i in range(self.fromList.__len__()):
-                itemToSelect = self.fromList.item(i)
-                if itemToSelect.text() in selectedItems:
-                    listedItems.append(i)
-            listedItems.sort(reverse=True)
+        #gets lists
+        originTreeWidget, originControlLs, destinationTreeWidget, destinationControlLs, allItems = self.getLists(self.sender())
+        #root nodes
+        originRoot = originTreeWidget.invisibleRootItem()
+        destinationRoot = destinationTreeWidget.invisibleRootItem()
+        selectedItemList = []
+        self.getSelectedItems(originRoot, selectedItemList)
+        for i in range(originRoot.childCount())[::-1]:
+            catChild = originRoot.child(i)
+            #if son of originRootNode is selected, adds it to destinationRootNode
+            moveNode = allItems or (catChild in selectedItemList)
+            #get destination parent, creates one in destination if not exists
+            destinationCatChild = self.getDestinationNode(destinationRoot, catChild)
+            for j in range(catChild.childCount())[::-1]:
+                moveChild = (catChild.child(j) in selectedItemList) or moveNode
+                self.moveChild(catChild, j, destinationCatChild, moveChild)
+            destinationCatChild.sortChildren(1, Qt.AscendingOrder)
+            if catChild.childCount() == 0:
+                originRoot.takeChild(i)
+            destinationRoot.sortChildren(0, Qt.AscendingOrder)
+        for i in range(destinationRoot.childCount())[::-1]:
+            if destinationRoot.child(i).childCount() == 0:
+                destinationRoot.takeChild(i)
+        destinationRoot.sortChildren(0, Qt.AscendingOrder)
+        self.resizeTrees()
+
+    def getSelectedItems(self, treeWidgetNode, itemList):
+        """
+        Recursive method to get all selected nodes of treeWidget
+        """
+        for i in range(treeWidgetNode.childCount()):
+            childItem = treeWidgetNode.child(i)
+            if childItem.isSelected() and (childItem not in itemList):
+                itemList.append(childItem)
+            for j in range(childItem.childCount()):
+                self.getSelectedItems(childItem, itemList)
+    
+    def moveChild(self, parentNode, idx, destinationNode, isSelected):
+        if isSelected:
+            child = parentNode.takeChild(idx)
+            destinationNode.addChild(child)
+            return True
         else:
-            listedItems = self.fromList.selectedItems()
-        added = []
-        for i in listedItems:
-            if isinstance(i, int):
-                item = self.fromList.takeItem(i)
-            else:
-                item = self.fromList.takeItem(self.fromList.row(i))
-            self.toList.addItem(item)
-            self.toLs.append(item.text())
-            self.fromLs.remove(item.text())
-            added.append(item.text())
-        self.toList.sortItems()
-        #emits added items
-        if len(added) > 0:
-            self.selectionChanged.emit(added,'added')
-        
-    @pyqtSlot(bool)
-    def on_pushButtonSelectAll_clicked(self):
-        """
-        Adds all items to the "to" list
-        """
-        tam = self.fromList.__len__()
-        added = []
-        for i in range(tam+1,1,-1):
-            item = self.fromList.takeItem(i-2)
-            self.toList.addItem(item)
-            self.toLs.append(item.text())
-            added.append(item.text())
-            self.fromLs.remove(item.text())
-        self.toList.sortItems()
-        #emits added items
-        if len(added) > 0:
-            self.selectionChanged.emit(added,'added')
+            return False
 
-    @pyqtSlot(bool)
-    def on_pushButtonDeselectOne_clicked(self):
+    def getDestinationNode(self, destinationRoot, catChild, returnNew = True):
         """
-        Removes the selected items from the "to" list
+        Looks for node in destination and returns it. If none is found, creates one and returns it
         """
-        listedItems = self.toList.selectedItems()
-        removed = []
-        for i in listedItems:
-            item = self.toList.takeItem(self.toList.row(i))
-            self.fromLs.append(item.text())
-            self.toLs.remove(item.text())
-            removed.append(item.text())
-            self.fromList.addItem(item)
-        self.fromList.sortItems()
-        #emits removed items
-        if len(removed) > 0:
-            self.selectionChanged.emit(removed,'removed')
-
-    @pyqtSlot(bool)
-    def on_pushButtonDeselectAll_clicked(self):
-        """
-        Removes all items from the "to" list
-        """
-        tam = self.toList.__len__()
-        removed = []
-        for i in range(tam+1,1,-1):
-            item = self.toList.takeItem(i-2)
-            self.fromLs.append(item.text())
-            self.toLs.remove(item.text())
-            self.fromList.addItem(item)
-            removed.append(item.text())
-        self.fromList.sortItems()
-        #emits removed items
-        if len(removed) > 0:
-            self.selectionChanged.emit(removed,'removed')
+        #get destination parent, creates one in destination if not exists
+        destinationCatChild = None
+        for i in range(destinationRoot.childCount()):
+            candidate = destinationRoot.child(i)
+            if candidate.text(0) == catChild.text(0):
+                #if candidate is found, returns candidate
+                return candidate
+        #if candidate is not found, creates one and returns it
+        if returnNew:
+            if not destinationCatChild:
+                itemTextList = [catChild.text(i) for i in range(catChild.columnCount())]
+                return QTreeWidgetItem(destinationRoot,itemTextList)
+        else:
+            return None
     
     def on_filterLineEdit_textChanged(self, text):
         """
