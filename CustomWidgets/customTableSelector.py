@@ -88,7 +88,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.toLs = []
         self.fromTreeWidget.clear()
         self.fromTreeWidget.clear()
-        self.setFromDictList(fromDictList, unique)
+        self.addItemsToTree(self.fromTreeWidget, fromDictList, self.fromLs, unique = unique)
     
     def getChildNode(self, parentNode, textList):
         """
@@ -113,56 +113,29 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         """
         rootNode = treeWidget.invisibleRootItem() #invisible root item
         for dictItem in addItemDictList:
-            firstColumnChild = self.getChildNode(rootNode, [self.headerList[0]]+['']*(len(self.headerList)-1)) #looks for a item in the format ['first column text', '','',...,'']
+            firstColumnChild = self.getChildNode(rootNode, [dictItem[self.headerList[0]]]+['']*(len(self.headerList)-1)) #looks for a item in the format ['first column text', '','',...,'']
             if not firstColumnChild:
                 firstColumnChild = self.utils.createWidgetItem(rootNode,dictItem[self.headerList[0]],0)
-            textList = [dictItem[self.headerList[i]] for i in range(1,len(self.headerList))]
+            textList = [dictItem[self.headerList[i]] for i in range(len(self.headerList))]
             if unique:
                 childNode = self.getChildNode(firstColumnChild, textList)
                 if not childNode:
-                    self.utils.createWidgetItem(firstColumnChild,textList)
+                    item = self.utils.createWidgetItem(firstColumnChild,textList)
+                    itemList = self.getItemList(item)
+                    if itemList not in controlList:
+                        controlList.append(itemList)
             else:
-                self.utils.createWidgetItem(firstColumnChild,textList)
-            for text in textList:
-                if unique:
-                    if text not in controlList:
-                        controlList.append(text)
-                else:
-                    controlList.append(text)
+                item = self.utils.createWidgetItem(firstColumnChild,textList)
+                itemList = self.getItemList(item)
+                controlList.append(itemList)
         self.resizeTrees()
     
-    def removeItem(self, removeItem):
-        """
-        Removing items (QListWidget and python list)
-        """
-        for i in range(self.fromList.__len__()):
-            fromItem = self.fromList.item(i)
-            if fromItem:
-                if fromItem.text() == removeItem:
-                    item = self.fromList.takeItem(i)
-                    self.fromLs.remove(fromItem.text())
-        for i in range(self.toList.__len__()):
-            toItem = self.toList.item(i)
-            if toItem:
-                if toItem.text() == removeItem:
-                    self.toLs.remove(toItem.text())
-                    item = self.toList.takeItem(i)
+    def getItemList(self, item):
+        itemList = []
+        for i in range(item.columnCount()):
+            itemList.append(item.text(i))
+        return itemList
 
-
-    def setToList(self, toList, unique = True):
-        """
-        Setting the "to" items (QListWidget and python list)
-        """
-        self.addItemsToTree(self.toList, toList, self.toLs, unique = unique)
-        self.toList.sortItems()
-
-    def setFromList(self, fromList, unique = True):
-        """
-        Setting the "from" items (QListWidget and python list)
-        """
-        self.addItemsToTree(self.fromLs, fromList, self.fromLs, unique = unique)
-        self.fromList.sortItems()
-    
     def getLists(self, sender):
         text = sender.text()
         if text == '>':
@@ -196,8 +169,12 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
             #get destination parent, creates one in destination if not exists
             destinationCatChild = self.getDestinationNode(destinationRoot, catChild)
             for j in range(catChild.childCount())[::-1]:
-                moveChild = (catChild.child(j) in selectedItemList) or moveNode
-                self.moveChild(catChild, j, destinationCatChild, moveChild)
+                nodeChild = catChild.child(j)
+                moveChild = (nodeChild in selectedItemList) or moveNode
+                if self.moveChild(catChild, j, destinationCatChild, moveChild):
+                    itemList = self.getItemList(nodeChild)
+                    destinationControlLs.append(itemList)
+                    originControlLs.pop(originControlLs.index(itemList))
             destinationCatChild.sortChildren(1, Qt.AscendingOrder)
             if catChild.childCount() == 0:
                 originRoot.takeChild(i)
@@ -233,15 +210,23 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         """
         #get destination parent, creates one in destination if not exists
         destinationCatChild = None
+        if isinstance(catChild,list):
+            comparisonText = catChild[0]
+            if returnNew:
+                itemTextList = [catChild[i] for i in range(len(catChild))]
+        else:
+            comparisonText = catChild.text(0)
+            if returnNew:
+                itemTextList = [catChild.text(i) for i in range(catChild.columnCount())]
+
         for i in range(destinationRoot.childCount()):
             candidate = destinationRoot.child(i)
-            if candidate.text(0) == catChild.text(0):
+            if candidate.text(0) == comparisonText:
                 #if candidate is found, returns candidate
                 return candidate
         #if candidate is not found, creates one and returns it
         if returnNew:
             if not destinationCatChild:
-                itemTextList = [catChild.text(i) for i in range(catChild.columnCount())]
                 return QTreeWidgetItem(destinationRoot,itemTextList)
         else:
             return None
@@ -250,8 +235,24 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         """
         Filters the items to make it easier to spot and select them
         """
-        classes = [edgvClass for edgvClass in self.fromLs if text.lower() in edgvClass.lower()]
-        filteredClasses = [i for i in classes if i.lower() not in [j.lower() for j in self.toLs]]
-        self.fromList.clear()
-        self.fromList.addItems(classes)
-        self.fromList.sortItems()
+        classes = [node[1].lower() for node in self.fromLs if text.lower() in node[1].lower()] #text list
+        filteredClasses = [i for i in classes if i.lower() not in [j[1].lower() for j in self.toLs]] #text list
+        self.filterTree(self.fromTreeWidget, self.fromLs, filteredClasses, 1)
+        self.resizeTrees()
+    
+    def filterTree(self, treeWidget, controlList, filterList, columnIdx):
+        '''
+        Actual filter
+        '''
+        treeWidget.clear()
+        rootNode = treeWidget.invisibleRootItem()
+        #remove items that are not in filterList
+        for item in controlList:
+            if item[columnIdx].lower() in filterList:
+                firstColumnChild = self.getChildNode(rootNode, [item[0]]+['']*(len(item)-1)) #looks for a item in the format ['first column text', '','',...,'']
+                if not firstColumnChild:
+                    firstColumnChild = self.utils.createWidgetItem(rootNode, item[0], 0)
+                QTreeWidgetItem(firstColumnChild, item)
+        rootNode.sortChildren(0, Qt.AscendingOrder)
+        for i in range(rootNode.childCount()):
+            rootNode.child(i).sortChildren(1, Qt.AscendingOrder)

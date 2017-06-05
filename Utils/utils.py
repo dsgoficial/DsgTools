@@ -192,8 +192,8 @@ class Utils:
         item = QtGui.QTreeWidgetItem(parent)
         if isinstance(text,list) and column == None:
             for i in range(len(text)):
-                item.setText(text[i],i)
-                return item
+                item.setText(i, text[i])
+            return item
         else:
             item.setText(column, text)
             return item

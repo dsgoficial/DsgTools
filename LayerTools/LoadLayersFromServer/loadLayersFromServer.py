@@ -59,7 +59,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
         self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
-        self.layersCustomSelector.setHeaders([self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry Column'), self.tr('Geometry Type')])
+        self.layersCustomSelector.setHeaders([self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')])
+        fromDictList = [{self.tr('Category'):'HID', self.tr('Layer Name'):'Trecho_Drenagem_L', self.tr('Geometry\nColumn'):'geom', self.tr('Geometry\nType'):'MULTILINESTRING', self.tr('Layer\nType'):'TABLE'},
+        {self.tr('Category'):'HID', self.tr('Layer Name'):'Ponto_Drenagem_P', self.tr('Geometry\nColumn'):'geom', self.tr('Geometry\nType'):'MULTIPOINT', self.tr('Layer\nType'):'TABLE'},
+        {self.tr('Category'):'TRA', self.tr('Layer Name'):'Trecho_Rodoviario_L', self.tr('Geometry\nColumn'):'geom', self.tr('Geometry\nType'):'MULTILINESTRING', self.tr('Layer\nType'):'TABLE'}]
+        self.layersCustomSelector.setInitialState(fromDictList, unique = True)
         self.lyrDict = dict()
     
     def resetInterface(self):
@@ -90,15 +94,21 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             for dbName in dbList:
                 try:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                    geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
-                    for geom in geomDict.keys():
-                        for lyrName in geomDict[geom]:
-                            if lyrName not in self.lyrDict.keys():
-                                self.lyrDict[lyrName] = dict()
-                                self.lyrDict[lyrName]['dbList'] = []
-                            self.lyrDict[lyrName]['cat'] = lyrName.split('_')[0]
-                            if dbName not in self.lyrDict[lyrName]['dbList']:
-                                self.lyrDict[lyrName]['dbList'].append(dbName)
+                    geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
+                    for tableSchema, tableName, geom, geomType, tableType in geomList:
+                        if self.customServerConnectionWidget.edgvType == 'Non_EDGV':
+                            lyrName = tableName
+                            cat = tableSchema
+                        else:
+                            lyrName = '_'.join(tableName.split('_')[1::])
+                            cat = tableName.split('_')[0]
+                        if lyrName not in self.lyrDict.keys():
+                            self.lyrDict[lyrName] = dict()
+                            self.lyrDict[lyrName]['dbList'] = []
+                            self.lyrDict[lyrName]['geom'] = geom
+                        self.lyrDict[lyrName]['cat'] = lyrName.split('_')[0] #modify here
+                        if dbName not in self.lyrDict[lyrName]['dbList']:
+                            self.lyrDict[lyrName]['dbList'].append(dbName)
                 except Exception as e:
                     errorDict[dbName] = str(e.args[0])
                     QApplication.restoreOverrideCursor()
