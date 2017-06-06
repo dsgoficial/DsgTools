@@ -44,7 +44,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
         """
         Runs the actual grass process
         """
-        alg = 'grass7:v.generalize.simplify'
+        alg = 'grass7:v.generalize'
 
         #setting tools
         tools = 'break,rmsa,rmdangle'
@@ -59,7 +59,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
         snap = self.parameters['Snap']
         minArea = self.parameters['MinArea']
         
-        ret = processing.runalg(alg, layer, 0, tol, 7, 50, False, True, extent, snap, minArea, 0, None)
+        ret = processing.runalg(alg, layer, 0, tol, 7, 50, 0.5, 3, 0, 0, 0, 1, 1, 1,False, True, extent, snap, minArea, 0, None)
         if not ret:
             raise Exception(self.tr('Problem executing grass7:v.generalize.simplify. Check your installed libs.\n'))
         
