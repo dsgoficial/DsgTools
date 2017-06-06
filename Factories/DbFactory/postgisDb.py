@@ -2269,7 +2269,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
         geomList = []
         while query.next():
-            geomList.append(query.value(0), query.value(1), query.value(2), query.value(3), query.value(4))
+            geomList.append((query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)))
         return geomList
     
     def getLayersFilterByInheritance(self, layerList):

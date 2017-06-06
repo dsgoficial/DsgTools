@@ -94,7 +94,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             for dbName in dbList:
                 try:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                    geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
+                    geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnTupleList()
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
                         if self.customServerConnectionWidget.edgvType == 'Non_EDGV':
                             lyrName = tableName
