@@ -52,6 +52,12 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.toTreeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         self.toTreeWidget.header().setStretchLastSection(False)
     
+    def sortItems(self, treeWidget):
+        rootNode = treeWidget.invisibleRootItem()
+        rootNode.sortChildren(0, Qt.AscendingOrder)
+        for i in range(rootNode.childCount()):
+            rootNode.child(i).sortChildren(1, Qt.AscendingOrder)
+    
     def setTitle(self,title):
         """
         Setting the title
@@ -129,6 +135,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                 itemList = self.getItemList(item)
                 controlList.append(itemList)
         self.resizeTrees()
+        self.sortItems(treeWidget)
     
     def getItemList(self, item):
         itemList = []
