@@ -111,11 +111,15 @@ class AbstractDb(QObject):
         self.checkAndOpenDb()
         lyrWithElemList = []
         for layer in layerList:
-            if '.' in layer:
-                schema, lyr = layer.replace('"','').split('.')
+            if isinstance(layer, dict):
+                schema = layer['tableSchema']
+                lyr = layer['tableName']
             else:
-                lyr = layer
-                schema = self.getTableSchemaFromDb(lyr)
+                if '.' in layer:
+                    schema, lyr = layer.replace('"','').split('.')
+                else:
+                    lyr = layer
+                    schema = self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
             query = QSqlQuery(sql,self.db)
             query.next()

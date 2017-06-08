@@ -263,3 +263,18 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         rootNode.sortChildren(0, Qt.AscendingOrder)
         for i in range(rootNode.childCount()):
             rootNode.child(i).sortChildren(1, Qt.AscendingOrder)
+    
+    def getSelectedNodes(self, concatenated = True):
+        selected = []
+        rootNode = self.toTreeWidget.invisibleRootNode()
+        for i in range(rootNode.childCount()):
+            catNode = rootNode.child(i)
+            for j in range(catNode.childCount()):
+                item = catNode.child(j)
+                if concatenated:
+                    catList = [item.text(i) for i in range(item.columnCount())]
+                    selected.append(','.join(catList))
+                else:
+                    selected.append(item)
+        return selected
+

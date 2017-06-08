@@ -102,7 +102,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                         key = ','.join([cat, lyrName, geom, geomType, tableType])
                         if key not in self.lyrDict.keys():
                             self.lyrDict[key] = dict()
-                        self.lyrDict[key][dbName] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType}
+                        self.lyrDict[key][dbName] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
                 except Exception as e:
                     errorDict[dbName] = str(e.args[0])
                     QApplication.restoreOverrideCursor()
@@ -149,14 +149,8 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         Loads the selected classes/categories
         """
         #1- filter classes if categories is checked and build list.
-        selected = self.layersCustomSelector.toLs
-        selectedClasses = []
-        if self.showCategoriesRadioButton.isChecked():
-            for lyr in self.lyrDict.keys():
-                if self.lyrDict[lyr]['cat'] in selected and lyr not in selectedClasses:
-                    selectedClasses.append(lyr)
-        else:
-            selectedClasses = self.layersCustomSelector.toLs
+        selectedKeys = self.layersCustomSelector.getSelectedNodes()
+
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
@@ -179,6 +173,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
+                selectedClasses = [self.lyr[i][dbName] for i in selectedKeys]
                 factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, parent=self)
                 progress.step()
             except Exception as e:
