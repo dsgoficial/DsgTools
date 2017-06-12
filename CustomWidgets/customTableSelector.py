@@ -266,7 +266,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
     
     def getSelectedNodes(self, concatenated = True):
         selected = []
-        rootNode = self.toTreeWidget.invisibleRootNode()
+        rootNode = self.toTreeWidget.invisibleRootItem()
         for i in range(rootNode.childCount()):
             catNode = rootNode.child(i)
             for j in range(catNode.childCount()):
