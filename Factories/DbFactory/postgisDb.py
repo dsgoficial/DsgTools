@@ -2258,12 +2258,12 @@ class PostgisDb(AbstractDb):
             geomDict[aux['f2']].append(aux['f1'])
         return geomDict
 
-    def getGeomColumnTupleList(self):
+    def getGeomColumnTupleList(self, showViews = False):
         """
         Dict in the form 'geomName':[-list of table names-]
         """
         self.checkAndOpenDb()
-        sql = self.gen.getGeomColumnTupleList()
+        sql = self.gen.getGeomColumnTupleList(showViews = showViews)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())

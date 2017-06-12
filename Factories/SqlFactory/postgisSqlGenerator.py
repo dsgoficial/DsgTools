@@ -979,8 +979,11 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology')"""
         return sql
 
-    def getGeomColumnTupleList(self):
-        sql = """select gc.f_table_schema, gc.f_table_name, gc.f_geometry_column, gc.type, infs.table_type from public.geometry_columns as gc left join information_schema.tables as infs on gc.f_table_name = infs.table_name"""
+    def getGeomColumnTupleList(self, showViews = False):
+        if not showViews:
+            sql = """select gc.f_table_schema, gc.f_table_name, gc.f_geometry_column, gc.type, infs.table_type from public.geometry_columns as gc left join information_schema.tables as infs on gc.f_table_name = infs.table_name where infs.table_type = 'BASE TABLE'"""
+        else:
+            sql = """select gc.f_table_schema, gc.f_table_name, gc.f_geometry_column, gc.type, infs.table_type from public.geometry_columns as gc left join information_schema.tables as infs on gc.f_table_name = infs.table_name"""
         return sql
     
     def getNotNullDict(self):

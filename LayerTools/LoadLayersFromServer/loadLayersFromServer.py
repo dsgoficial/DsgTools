@@ -80,7 +80,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         """
         self.close()
     
-    def updateLayersFromDbs(self, type, dbList):
+    def updateLayersFromDbs(self, type, dbList, showViews = False):
         """
         
         """
@@ -91,7 +91,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             for dbName in dbList:
                 try:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                    geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnTupleList()
+                    geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnTupleList(showViews = showViews)
                     for tableSchema, tableName, geom, geomType, tableType in geomList:
                         if self.customServerConnectionWidget.edgvType == 'Non_EDGV':
                             lyrName = tableName
