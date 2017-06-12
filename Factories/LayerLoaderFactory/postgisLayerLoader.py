@@ -163,7 +163,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         localProgress.step()
         return loadedDict
 
-    def loadLayer(self, 0, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion):
+    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion):
         """
         Loads a layer
         :param lyrName: Layer nmae
