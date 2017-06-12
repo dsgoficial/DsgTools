@@ -121,27 +121,6 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             cat, lyrName, geom, geomType, tableType = key.split(',')
             interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
         self.layersCustomSelector.setInitialState(interfaceDictList,unique = True)
-    
-    @pyqtSlot(bool)
-    def on_showCategoriesRadioButton_toggled(self, enabled):
-        """
-        Shows database categories that can be chosen
-        """
-        self.changePrimitiveCheckboxState(enabled)
-        if self.lyrDict != dict():
-            cats = []
-            for lyr in self.lyrDict.keys():
-                 if self.lyrDict[lyr]['cat'] not in cats:
-                     cats.append(self.lyrDict[lyr]['cat'])
-            self.layersCustomSelector.setInitialState(cats,unique = True)
-    
-    @pyqtSlot(bool)
-    def on_showClassesRadioButton_toggled(self):
-        """
-        Shows database classes that can be chosen
-        """
-        if self.lyrDict != dict():
-            self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
             
     @pyqtSlot()
     def on_buttonBox_accepted(self):
@@ -173,7 +152,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                selectedClasses = [self.lyr[i][dbName] for i in selectedKeys]
+                selectedClasses = [self.lyrDict[i][dbName] for i in selectedKeys]
                 factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, parent=self)
                 progress.step()
             except Exception as e:
@@ -217,21 +196,3 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 self.styleComboBox.addItem(styleList[i])
         else:
             self.styleComboBox.addItem(self.tr('No available styles'))
-    
-    def changePrimitiveCheckboxState(self, enabled):
-        """
-        Changes the primitives that will be loaded.
-        """
-        self.checkBoxPoint.setEnabled(enabled)
-        self.checkBoxLine.setEnabled(enabled)
-        self.checkBoxPolygon.setEnabled(enabled)
-        self.checkBoxAll.setEnabled(enabled)
-    
-    @pyqtSlot(bool)
-    def on_checkBoxAll_toggled(self, toggled):
-        """
-        Checks all primitives to be loaded
-        """
-        self.checkBoxPoint.setChecked(toggled)
-        self.checkBoxLine.setChecked(toggled)
-        self.checkBoxPolygon.setChecked(toggled)

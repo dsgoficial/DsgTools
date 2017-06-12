@@ -70,8 +70,8 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="checkBoxOnlyWithElements">
+      <item row="1" column="2">
+       <widget class="QComboBox" name="styleComboBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -80,12 +80,9 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>120</width>
-          <height>0</height>
+          <width>25</width>
+          <height>25</height>
          </size>
-        </property>
-        <property name="text">
-         <string>Only layers with Elements</string>
         </property>
        </widget>
       </item>
@@ -124,6 +121,25 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkBoxOnlyWithElements">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Only layers with Elements</string>
+        </property>
+       </widget>
+      </item>
       <item row="1" column="1">
        <widget class="QLabel" name="label">
         <property name="sizePolicy">
@@ -137,19 +153,10 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QComboBox" name="styleComboBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>25</width>
-          <height>25</height>
-         </size>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="showViewsCheckBox">
+        <property name="text">
+         <string>Show Views</string>
         </property>
        </widget>
       </item>
@@ -172,7 +179,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
