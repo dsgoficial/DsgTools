@@ -600,6 +600,8 @@ class AbstractDb(QObject):
             styleDir = os.path.join(styleDir, 'edgv_213')
         elif dbVersion == 'FTer_2a_Ed':
             styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
+        else:
+            styleDir = os.path.join(styleDir, 'Non_EDGV')
         styleList = os.walk(styleDir).next()[1]
         styleDict = dict()
         try:
