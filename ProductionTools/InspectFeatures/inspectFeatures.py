@@ -232,11 +232,11 @@ class InspectFeatures(QWidget,Ui_Form):
 
         # Defining the crs from src and destiny
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
-        crsSrc = QgsCoordinateReferenceSystem(epsg)
+        crsDest = QgsCoordinateReferenceSystem(epsg)
         #getting srid from something like 'EPSG:31983'
         layer = self.iface.mapCanvas().currentLayer()
         srid = layer.crs().authid()
-        crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
+        crsSrc = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
         newBox = coordinateTransformer.transform(box)
