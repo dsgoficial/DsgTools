@@ -170,7 +170,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.clearPostgisTab()
                 return
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             self.clearPostgisTab()
         dbList.sort()
         for (dbname, dbversion) in dbList:
@@ -198,7 +198,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 dbList.append((dbName,version))
                 self.spatialiteDict[dbName] = dbPath
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             self.clearSpatialiteTab()
         dbList.sort()
         for (dbname, dbversion) in dbList:

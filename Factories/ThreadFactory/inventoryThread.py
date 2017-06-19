@@ -170,15 +170,15 @@ class InventoryThread(GenericThread):
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
         except csv.Error, e:
             csvfile.close()
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+str(e), "DSG Tools Plugin", QgsMessageLog.INFO)
-            return (0, self.messenger.getInventoryErrorMessage()+'\n'+str(e))
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e, "DSG Tools Plugin", QgsMessageLog.INFO)
+            return (0, self.messenger.getInventoryErrorMessage()+'\n'+e)
         except OSError, e:
             csvfile.close()
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
         except Exception as e:
             csvfile.close()
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.args[0], "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage())
         csvfile.close()
         
@@ -255,8 +255,8 @@ class InventoryThread(GenericThread):
                 elif gdalSrc:
                     self.copyGDALDataSource(gdalSrc, newFileName)
             except Exception as e:
-                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.args[0], "DSG Tools Plugin", QgsMessageLog.INFO)
-                return (0, self.messenger.getCopyErrorMessage()+'\n'+e.args[0])
+                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.INFO)
+                return (0, self.messenger.getCopyErrorMessage()+'\n'+':'.join(e.args))
         
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())

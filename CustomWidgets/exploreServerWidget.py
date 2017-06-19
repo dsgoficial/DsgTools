@@ -101,7 +101,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                     QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
                     return []
             except Exception as e:
-                QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         if canLoad:
             progress = ProgressWidget(1,len(dbList),self.tr('Loading databases from server... '), parent = self)
             progress.initBar()
@@ -186,7 +186,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
                             self.serversCombo.setCurrentIndex(0)
                             return
                     except Exception as e:
-                        QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                        QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
                 self.abstractDbLoaded.emit()
         else:
             try:

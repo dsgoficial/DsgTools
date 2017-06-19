@@ -237,7 +237,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
                     jsonTagList = currentWidget.getJSONTag()
                     jsonUi = currentWidget.getUiParameterJsonDict()
                 except Exception as e:
-                    exceptionList.append(e.args[0])
+                    exceptionList.append(':'.join(e.args))
                 if len(exceptionList) == 0:
                     currJsonItem['jsonUi'] = jsonUi
                     for jsonItem in jsonTagList:

@@ -76,7 +76,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         try:
             self.abstractDb.createUser(user, password, isSuperUser)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             self.refreshScreen()
             return
 

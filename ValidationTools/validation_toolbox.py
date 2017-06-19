@@ -260,7 +260,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg = RulesEditor(self.configWindow.widget.abstractDb)
             dlg.exec_()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
             
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
@@ -285,4 +285,4 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg = AttributeRulesEditor(self.configWindow.widget.abstractDb)
             dlg.exec_()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+str(e.args[0]))
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))

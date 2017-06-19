@@ -162,7 +162,7 @@ class GenericDbManager(QObject):
                 for abstractDb in rollbackList:
                     abstractDb.db.rollback()
                 self.adminDb.db.rollback()
-                errorDict[dbName] = str(e.args[0])
+                errorDict[dbName] = ':'.join(e.args)
         return (successList, errorDict)
 
     def importSetting(self, fullFilePath):
@@ -188,7 +188,7 @@ class GenericDbManager(QObject):
         try:
             self.createSetting(settingName, edgvVersion, inputJson)
         except Exception as e:
-            raise Exception(self.tr("Error importing setting ") + settingName +': '+e.args[0])
+            raise Exception(self.tr("Error importing setting ") + settingName +': '+':'.join(e.args))
 
     def batchImportSettings(self, profilesDir):
         """
@@ -273,7 +273,7 @@ class GenericDbManager(QObject):
                 if not abstractDb.checkIfExistsConfigTable(settingType):
                     abstractDb.createPropertyTable(settingType, useTransaction = True)
             except Exception as e:
-                errorDict[dbName] = str(e.args[0])
+                errorDict[dbName] = ':'.join(e.args)
                 continue
             try:
                 abstractDb.db.transaction()
@@ -287,7 +287,7 @@ class GenericDbManager(QObject):
             except Exception as e:
                 abstractDb.db.rollback()
                 self.adminDb.db.rollback()
-                errorDict[dbName] = str(e.args[0])
+                errorDict[dbName] = ':'.join(e.args)
             successList.append(dbName)
         return (successList, errorDict)
     
@@ -315,7 +315,7 @@ class GenericDbManager(QObject):
                 except Exception as e:
                     abstractDb.db.rollback()
                     self.adminDb.db.rollback()
-                    errorDict[dbName] = str(e.args[0])
+                    errorDict[dbName] = ':'.join(e.args)
                 successList.append(dbName)
         return (successList, errorDict)
 
@@ -347,7 +347,7 @@ class GenericDbManager(QObject):
                 except Exception as e:
                     abstractDb.db.rollback()
                     self.adminDb.db.rollback()
-                    errorDict[dbName] = str(e.args[0])
+                    errorDict[dbName] = ':'.join(e.args)
                 successList.append(dbName)
         return (successList, errorDict)
     

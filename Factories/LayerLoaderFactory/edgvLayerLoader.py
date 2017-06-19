@@ -177,7 +177,7 @@ class EDGVLayerLoader(QObject):
             qmldir = self.abstractDb.getQmlDir()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
         vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
         #treat case of qml with multi

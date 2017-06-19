@@ -85,7 +85,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
                 self.abstractDb.alterUserPass(user, newpassword)
                 successList.append(user)
             except Exception as e:
-                exceptionDict[user] = str(e.args[0])
+                exceptionDict[user] = ':'.join(e.args)
         header = self.tr('Alter operation on server ')+self.abstractDb.getHostName()+self.tr(' complete!\n')
         self.outputMessage(header, successList, exceptionDict)
     

@@ -137,7 +137,7 @@ class PermissionManager(GenericDbManager):
             try:
                 self.dbDict[dbName].revokeRole(userName, realRoleName)
             except Exception as e:
-                raise Exception(self.tr('Problem revoking role ') + permissionName + self.tr(' on database ') + dbName +':\n' + e)
+                raise Exception(self.tr('Problem revoking role ') + permissionName + self.tr(' on database ') + dbName +':\n' + ':'.join(e.args))
     
     def isPermissionInstalled(self, abstractDb, dbName, permissionName):
         '''
@@ -187,7 +187,7 @@ class PermissionManager(GenericDbManager):
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Unable to update profile ') + settingName +': ' +e.args[0])
+            raise Exception(self.tr('Unable to update profile ') + settingName +': ' +':'.join(e.args))
     
     def deleteSetting(self, settingName, edgvVersion):
         '''
@@ -218,7 +218,7 @@ class PermissionManager(GenericDbManager):
         except Exception as e:
             for abstractDb in abstractDbsToRollBack:
                 abstractDb.db.rollback()
-            raise Exception(self.tr('Problem deleting permission: ')+e.args[0])
+            raise Exception(self.tr('Problem deleting permission: ')+':'.join(e.args))
     
     def validateJsonProfile(self, inputJsonDict):
         '''

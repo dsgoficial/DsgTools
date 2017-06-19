@@ -94,4 +94,4 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                     covItem.setText(1,cl)
                     covItem.setExpanded(True)
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Earth Coverage not loaded! Check log for details.')+str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Earth Coverage not loaded! Check log for details.')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

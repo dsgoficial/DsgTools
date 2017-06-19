@@ -225,7 +225,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             with open(path, 'w') as outfile:
                 json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
             return
             
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
@@ -250,7 +250,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             try:
                 os.remove(os.path.join(self.folder,profileName+'.json'))
             except Exception as e:
-                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+e.args[0])
+                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+':'.join(e.args))
                 return
             self.getProfiles()
             self.setInitialState()

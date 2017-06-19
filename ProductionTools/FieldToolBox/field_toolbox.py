@@ -70,7 +70,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         try:
             self.populateConfigFromDb()
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def setEditButtonEnabled(self, enabled):
         """
@@ -253,7 +253,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         try:
             return self.layerLoader.load([layer], uniqueLoad=True)[layer]
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+str(e.args[0]))
+            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+':'.join(e.args))
             
     def checkConditions(self):
         """
@@ -267,7 +267,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             version = self.widget.abstractDb.getDatabaseVersion()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem obtaining database version! Please, check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return False
             
         if self.reclassificationDict['version'] != version:

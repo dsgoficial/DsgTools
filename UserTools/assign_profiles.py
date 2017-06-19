@@ -103,7 +103,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
         try:
             ret = self.widget.abstractDb.getRoles()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         self.assignedProfiles.addItems(ret)
 
@@ -127,7 +127,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
                 self.widget.abstractDb.createRole(role, dict)
             except Exception as e:
                 QApplication.restoreOverrideCursor()
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
                 return
             
         QApplication.restoreOverrideCursor()
@@ -171,7 +171,7 @@ class AssignProfiles(QtGui.QDialog, FORM_CLASS):
             except Exception as e:
                 problem = True
                 QApplication.restoreOverrideCursor()
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         if not problem:
             QApplication.restoreOverrideCursor()

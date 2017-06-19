@@ -67,7 +67,7 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         try:
             dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         dbList.sort()
         for (dbname, dbversion) in dbList:
@@ -108,7 +108,7 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
             else:
                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
     
     def createItem(self, parent, text, column):
         '''
@@ -135,7 +135,7 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         try:
             candidateUserList = self.localDb.getUsers()
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         for candidate in candidateUserList:
             installed,assigned = self.localDb.getUserRelatedRoles(candidate)
@@ -165,7 +165,7 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
         try:
             permissionsDict = self.localDb.getRolePrivileges(permission, dbname)
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         dlg = PermissionProperties(permissionsDict)
         dlg.exec_()
@@ -190,7 +190,7 @@ class ExploreDb(QtGui.QDialog, FORM_CLASS):
             self.clearQSettings(localDbName)
         except Exception as e:
             QApplication.restoreOverrideCursor()            
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         self.clearAll()
         self.populateListWithDatabasesFromServer()
 

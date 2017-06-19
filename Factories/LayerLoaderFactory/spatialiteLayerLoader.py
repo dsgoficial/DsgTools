@@ -45,7 +45,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         try:
             dbVersion = abstractDb.getDatabaseVersion()
         except Exception as e:
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return
 
         self.buildUri()
@@ -118,7 +118,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                         vlayer = self.loadLayer(lyr, loadedLayers, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
                         loadedDict[lyr]=vlayer
                     except Exception as e:
-                        self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
+                        self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+':'.join(e.args)
                         self.logError()
                     if parent:
                         localProgress.step()

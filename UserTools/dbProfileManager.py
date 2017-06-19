@@ -69,7 +69,7 @@ class DbProfileManager(QtGui.QDialog, FORM_CLASS):
                 self.permissionManager.revokePermission(self.dbName, profileName, self.userName) #TODO: add error treatment
                 successList.append(profileName)
             except Exception as e:
-                errorDict[profileName] = str(e.args[0])
+                errorDict[profileName] = ':'.join(e.args)
         QApplication.restoreOverrideCursor()
         self.outputMessage(header, successList, errorDict)
         self.close()

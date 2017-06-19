@@ -83,15 +83,9 @@ class DbCreator(QObject):
                 outputDbDict[dbName] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
-                    try:
-                        errorDict[dbName] = e.args[0]
-                    except:
-                        errorDict[dbName] = e
+                    errorDict[dbName] = ':'.join(e.args)
                 else:
-                    try:
-                        errorDict[dbName] += '\n' + e.args[0]
-                    except:
-                        errorDict[dbName] += '\n' + e
+                    errorDict[dbName] += '\n' + ':'.join(e.args)
             if self.parentWidget:
                 progress.step()
         return outputDbDict, errorDict
@@ -119,15 +113,9 @@ class DbCreator(QObject):
                 outputDbDict[mi] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
-                    try:
-                        errorDict[dbName] = e.args[0]
-                    except:
-                        errorDict[dbName] = e
+                    errorDict[dbName] = ':'.join(e.args)
                 else:
-                    try:
-                        errorDict[dbName] += '\n' + e.args[0]
-                    except:
-                        errorDict[dbName] += '\n' + e
+                    errorDict[dbName] += '\n' + ':'.join(e.args)
             if self.parentWidget:
                 progress.step()
         if createFrame:
@@ -137,15 +125,9 @@ class DbCreator(QObject):
                     outputDbDict[key].createFrame('mi',scale,key)
                 except Exception as e:
                     if dbName not in errorDict.keys():
-                        try:
-                            errorDict[dbName] = e.args[0]
-                        except:
-                            errorDict[dbName] = e
+                        errorDict[dbName] = ':'.join(e.args)
                     else:
-                        try:
-                            errorDict[dbName] += '\n' + e.args[0]
-                        except:
-                            errorDict[dbName] += '\n' + e
+                        errorDict[dbName] += '\n' + ':'.join(e.args)
                 if self.parentWidget:
                     progress.step()
         return outputDbDict, errorDict

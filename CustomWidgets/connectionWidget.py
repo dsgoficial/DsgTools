@@ -208,7 +208,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.setCRS()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
 
     def setCRS(self):
         """
@@ -228,7 +228,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                     self.postGISCrsEdit.setReadOnly(True)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
         
     def isDBConnected(self):
@@ -246,7 +246,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             ret = self.abstractDb.getDatabaseVersion()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return ret
     
     def getQmlPath(self):
@@ -258,7 +258,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
             ret = self.abstractDb.getQmlDir()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return ret
     
     def getDatabasesFromServer(self):
@@ -279,7 +279,7 @@ class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
                 self.setInitialState()
                 return
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             self.setInitialState()
             self.setInitialState()
         QApplication.restoreOverrideCursor()

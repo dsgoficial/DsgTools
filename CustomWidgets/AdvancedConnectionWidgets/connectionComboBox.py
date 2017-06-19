@@ -72,7 +72,7 @@ class ConnectionComboBox(DsgCustomComboBox):
                 self.abstractDb = None
                 return
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         QApplication.restoreOverrideCursor()
     
     def addItems(self, items):
@@ -110,4 +110,4 @@ class ConnectionComboBox(DsgCustomComboBox):
         except Exception as e:
             self.closeDatabase()
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)   

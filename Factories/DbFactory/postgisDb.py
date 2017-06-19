@@ -1900,7 +1900,7 @@ class PostgisDb(AbstractDb):
                 try:
                     self.importStyle(styleFolder, tableName, localStyle, tableSchema, useTransaction = useTransaction)
                 except Exception as e:
-                    raise Exception(self.tr('Problem importing style ')+style+':'+str(e.args[0]))
+                    raise Exception(self.tr('Problem importing style ')+style+':'+':'.join(e.args))
 
     def getTableSchemaFromDb(self,table):
         self.checkAndOpenDb()
@@ -2163,7 +2163,7 @@ class PostgisDb(AbstractDb):
             else:
                 return self.parseCheckConstraintWithOr(queryValue0, queryValue1)
         except Exception as e:
-            raise Exception(self.tr("Error parsing check constraint!\n"+e.args[0]))
+            raise Exception(self.tr("Error parsing check constraint!\n"+':'.join(e.args))
     
     def parseCheckConstraintWithOr(self, queryValue0, queryValue1):
         if '.' in queryValue0:

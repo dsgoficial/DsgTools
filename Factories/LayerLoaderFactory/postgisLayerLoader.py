@@ -157,7 +157,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                             loadedLayers.append(vlayer)
                             loadedDict[lyr]=vlayer
                     except Exception as e:
-                        self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
+                        self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+':'.join(e.args)
                         self.logError()
                     if parent:
                         localProgress.step()

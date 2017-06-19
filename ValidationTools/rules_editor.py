@@ -176,7 +176,7 @@ class RulesEditor(QtGui.QDialog, FORM_CLASS):
                 for line in self.makeRulesList():
                     outfile.write(line + '\n')
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+e.args[0])
+            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
             return
             
         QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))

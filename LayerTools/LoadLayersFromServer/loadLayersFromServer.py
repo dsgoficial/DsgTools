@@ -101,7 +101,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                             if dbName not in self.lyrDict[lyrName]['dbList']:
                                 self.lyrDict[lyrName]['dbList'].append(dbName)
                 except Exception as e:
-                    errorDict[dbName] = str(e.args[0])
+                    errorDict[dbName] = ':'.join(e.args)
                     QApplication.restoreOverrideCursor()
                 progress.step()
                 QApplication.restoreOverrideCursor()

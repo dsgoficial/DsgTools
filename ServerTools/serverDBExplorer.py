@@ -116,7 +116,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         try:
             dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer()
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         dbList.sort()
 
         for (dbname, dbversion) in dbList:
@@ -176,7 +176,7 @@ class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
         try:
             dbList = self.serverWidget.abstractDb.getDbsFromServer()
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         for candidate in candidates:
             candidateSettings = QSettings()

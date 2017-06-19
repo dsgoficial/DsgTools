@@ -226,7 +226,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             self.refreshProfileList()
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting permission: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting permission: ') + ':'.join(e.args))
     
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
@@ -240,7 +240,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully updated.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem updating permission: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem updating permission: ') + ':'.join(e.args))
 
     def populateTreeDict(self, abstractDb, version):
         """
@@ -251,7 +251,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
             geomList = abstractDb.getTablesJsonList()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return
         profile = dict()
         categories = dict()

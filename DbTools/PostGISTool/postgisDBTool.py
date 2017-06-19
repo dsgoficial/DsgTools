@@ -118,7 +118,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
             else:
                 self.epsg = 4326
         except:
-            QMessageBox.warning(self, self.tr("Warning!"), self.tr(message))
+            QMessageBox.warning(self, self.tr("Warning!"), message)
 
 
     def createDatabase(self, name):

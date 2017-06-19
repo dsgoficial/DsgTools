@@ -63,5 +63,5 @@ class CreateView(QtGui.QDialog, FORM_CLASS):
             QMessageBox.information(self, self.tr('Success!'), self.tr('Views created successfully on database ')+self.dBLineEdit.text())
         except Exception as e:
             QApplication.restoreOverrideCursor()            
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             

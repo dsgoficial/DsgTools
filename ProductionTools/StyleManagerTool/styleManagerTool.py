@@ -102,7 +102,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             self.iface.mapCanvas().refreshAllLayers()
             QApplication.restoreOverrideCursor()
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Error setting style ') + styleName + ': ' +e, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Error setting style ') + styleName + ': ' +':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             QApplication.restoreOverrideCursor()
 
     

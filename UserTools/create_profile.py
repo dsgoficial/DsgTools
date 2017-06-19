@@ -85,7 +85,7 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
             self.abstractDb.checkAndOpenDb()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
     def populateTreeDict(self):
         """
@@ -98,7 +98,7 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
             tables = self.abstractDb.getTablesFromDatabase()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         
         self.profile = dict()
         categories = dict()

@@ -186,7 +186,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
             abstractDb.checkAndOpenDb()
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             return False
         return True
     

@@ -131,7 +131,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             dlg.profilesChanged.connect(self.refresh)
             dlg.exec_()
         except Exception as e:
-            QMessageBox.warning(self, self.tr('Error!'), e.args[0])
+            QMessageBox.warning(self, self.tr('Error!'), ':'.join(e.args))
         self.refresh()
     
     def createMenuAssigned(self, position):
@@ -198,7 +198,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr(' complete.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Error!'), e)
+            QMessageBox.warning(self, self.tr('Error!'), ':'.join(e.args))
         self.refresh()
 
     def revokeAll(self):
@@ -256,7 +256,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Revoke Complete!'), self.tr('Revoke for user ') + userName + self.tr(' on profile ') + permissionName + self.tr(' of database ') + dbName + self.tr(' complete.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Error!'), e)
+            QMessageBox.warning(self, self.tr('Error!'), ':'.join(e.args))
         self.refresh()
 
     @pyqtSlot(bool)
@@ -273,7 +273,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + ':'.join(e.args))
         self.refreshProfileList()
     
     @pyqtSlot(bool)
@@ -295,7 +295,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + ':'.join(e.args))
         
     @pyqtSlot(bool)
     def on_batchExportPushButton_clicked(self):
@@ -311,7 +311,7 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem exporting permission: ') + ':'.join(e.args))
     
     @pyqtSlot(bool)
     def on_batchImportPushButton_clicked(self):
@@ -327,4 +327,4 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Success!'), self.tr('Permissions successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + ':'.join(e.args))

@@ -140,7 +140,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + ':'.join(e.args))
         self.refresh()
     
     @pyqtSlot(bool)
@@ -166,7 +166,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + ':'.join(e.args))
         
     @pyqtSlot(bool)
     def on_batchExportPushButton_clicked(self):
@@ -185,7 +185,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + ':'.join(e.args))
     
     @pyqtSlot(bool)
     def on_batchImportPushButton_clicked(self):
@@ -204,7 +204,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + e.args[0])
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') + self.widgetName + ': ' + ':'.join(e.args))
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):

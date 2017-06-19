@@ -90,4 +90,4 @@ class CustomizationManagerWidget(GenericManagerWidget):
             self.refreshProfileList()
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting customization: ') + e.args[0])
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting customization: ') + ':'.join(e.args))

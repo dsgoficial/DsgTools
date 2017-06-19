@@ -81,7 +81,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         try:
             dbList = self.serverWidget.abstractDb.getEDGVDbsFromServer(parentWidget = self)
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         dbList.sort()
         for (dbname, dbversion) in dbList:
@@ -104,7 +104,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             else:
                 QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection refused. Connect with a super user to inspect server.'))
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
     def getSelectedDbList(self):
         return self.dbsCustomSelector.toLs
@@ -131,7 +131,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             try:
                 dbsDict[dbName].db.close()
             except Exception as e:
-                exceptionDict[dbName] =  str(e.args[0])
+                exceptionDict[dbName] =  ':'.join(e.args)
         return exceptionDict
 
     def outputMessage(self, header, successList, exceptionDict):
@@ -193,7 +193,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                     dbsDict[dbName].upgradePostgis()
                     successList.append(dbName)
             except Exception as e:
-                exceptionDict[dbName] =  e.args[0]
+                exceptionDict[dbName] =  ':'.join(e.args)
         return successList, exceptionDict
 
     def batchDropDbs(self, dbList):
@@ -206,7 +206,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 self.serverWidget.abstractDb.dropDatabase(dbName)
                 successList.append(dbName)
             except Exception as e:
-                exceptionDict[dbName] =  e.args[0]
+                exceptionDict[dbName] =  ':'.join(e.args)
         return successList, exceptionDict
     
     @pyqtSlot(bool)
@@ -221,7 +221,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 if version not in versionList:
                     versionList.append(version)
             except Exception as e:
-                exceptionDict[dbName] = e.args[0]
+                exceptionDict[dbName] = ':'.join(e.args)
         if len(exceptionDict.keys())>0:
             self.logInternalError(exceptionDict)
         if len(versionList) > 1:
@@ -268,7 +268,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                     dbsDict[dbName].importStylesIntoDb(style)
                     successList.append(dbName)
                 except Exception as e:
-                    exceptionDict[dbName] =  str(e.args[0])
+                    exceptionDict[dbName] =  ':'.join(e.args)
         return successList, exceptionDict
     
     def getStyleDir(self, versionList):
@@ -289,7 +289,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 newDict =dbsDict[dbName].getAllStylesDict(perspective)
                 allStylesDict = self.utils.mergeDict(newDict, allStylesDict)
             except Exception as e:
-                exceptionDict[dbName] = e.args[0]
+                exceptionDict[dbName] = ':'.join(e.args)
         if len(exceptionDict.keys())>0:
             self.logInternalError(exceptionDict)
         return allStylesDict
@@ -346,7 +346,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                     dbsDict[dbName].deleteStyle(style)
                     successList.append(dbName)
                 except Exception as e:
-                    exceptionDict[dbName] =  str(e.args[0])
+                    exceptionDict[dbName] =  ':'.join(e.args)
         return successList, exceptionDict
     
     def getSQLFile(self):
@@ -374,7 +374,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 dbsDict[dbName].runSqlFromFile(sqlFilePath)
                 successList.append(dbName)
             except Exception as e:
-                exceptionDict[dbName] =  str(e.args[0])
+                exceptionDict[dbName] =  ':'.join(e.args)
         return successList, exceptionDict
 
     def populateOtherInterfaces(self):

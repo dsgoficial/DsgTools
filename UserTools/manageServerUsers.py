@@ -59,7 +59,7 @@ class ManageServerUsers(QtGui.QDialog, FORM_CLASS):
         try:
             ret = self.abstractDb.getUsersFromServer()
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         for user, type in ret:
             userNameItem = self.createItem(rootNode, user, 0)
             userNameItem.setText(1,self.userTypeDict[type])
@@ -97,7 +97,7 @@ class ManageServerUsers(QtGui.QDialog, FORM_CLASS):
                 self.abstractDb.reassignAndDropUser(user)
                 successList.append(user)
             except Exception as e:
-                exceptionDict[user] =  str(e.args[0])
+                exceptionDict[user] =  ':'.join(e.args)
         header = self.tr('Drop user(s) operation complete!\n')
         self.outputMessage(header, successList, exceptionDict)
         self.populateUsers()               

@@ -155,7 +155,7 @@ class PostgisDbThread(GenericThread):
                 self.connectToTemplate()
                 self.signals.stepProcessed.emit(self.getId())
             except Exception as e:
-                return (0, self.messenger.getProblemFeedbackMessage()+'\n'+str(e.args[0]))
+                return (0, self.messenger.getProblemFeedbackMessage()+'\n'+':'.join(e.args))
             self.db.open()
             self.db.transaction()
             query = QSqlQuery(self.db)
