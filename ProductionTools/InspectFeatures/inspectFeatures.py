@@ -26,7 +26,7 @@ from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis, QgsVectorLayer
+from qgis.core import QgsMapLayer, QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.gui import QgsMessageBar
 
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures_ui import Ui_Form
@@ -156,9 +156,6 @@ class InspectFeatures(QWidget,Ui_Form):
                 self.idSpinBox.setValue(oldId)
                 self.makeZoom(zoom, currentLayer, oldId)
 
-
-
-
     def getFeatIdList(self, currentLayer):
         #getting all features ids
         if self.onlySelectedRadioButton.isChecked():
@@ -232,7 +229,19 @@ class InspectFeatures(QWidget,Ui_Form):
     
     def zoomToLayer(self, layer):
         box = layer.boundingBoxOfSelected()
-        self.iface.mapCanvas().setExtent(box)
+
+        # Defining the crs from src and destiny
+        epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
+        crsSrc = QgsCoordinateReferenceSystem(epsg)
+        #getting srid from something like 'EPSG:31983'
+        layer = self.iface.mapCanvas().currentLayer()
+        srid = layer.crs().authid()
+        crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
+        # Creating a transformer
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        newBox = coordinateTransformer.transform(box)
+
+        self.iface.mapCanvas().setExtent(newBox)
         self.iface.mapCanvas().refresh()
 
     def zoomFeature(self, zoom, idDict = {}):

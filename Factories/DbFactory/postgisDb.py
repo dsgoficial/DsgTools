@@ -2163,7 +2163,7 @@ class PostgisDb(AbstractDb):
             else:
                 return self.parseCheckConstraintWithOr(queryValue0, queryValue1)
         except Exception as e:
-            raise Exception(self.tr("Error parsing check constraint!\n"+':'.join(e.args))
+            raise Exception(self.tr("Error parsing check constraint!\n"+':'.join(e.args)))
     
     def parseCheckConstraintWithOr(self, queryValue0, queryValue1):
         if '.' in queryValue0:
