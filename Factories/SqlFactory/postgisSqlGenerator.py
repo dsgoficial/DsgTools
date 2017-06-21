@@ -980,14 +980,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getGeomColumnTupleList(self, showViews = False):
+        sql = """select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
+            left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc"""
         if not showViews:
-            sql = """select * from (select distinct f_table_schema, f_table_name, f_geometry_column, type from public.geometry_columns as gc 
-                    --where row(f_table_schema, f_table_name) in (select table_schema, table_name from information_schema.tables as infs where infs.table_type = 'BASE TABLE') 
-                    )
-                    as inn
-                left join information_schema.tables as infs on inn.f_table_name = infs.table_name order by """
-        else:
-            sql = """select gc.f_table_schema, gc.f_table_name, gc.f_geometry_column, gc.type, infs.table_type from public.geometry_columns as gc left join information_schema.tables as infs on gc.f_table_name = infs.table_name"""
+            sql += """ where table_type = 'BASE TABLE'"""
         return sql
     
     def getNotNullDict(self):

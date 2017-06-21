@@ -51,7 +51,17 @@ class EDGVLayerLoader(QObject):
         self.geomTypeDict = self.abstractDb.getGeomTypeDict(loadCentroids)
         self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
         self.correspondenceDict = {'POINT':'Point', 'MULTIPOINT':'Point', 'LINESTRING':'Line','MULTILINESTRING':'Line', 'POLYGON':'Area', 'MULTIPOLYGON':'Area'}
-        
+    
+    def preLoadStep(self, inputList):
+        if len(inputList) == 0:
+            return []
+        else:
+            if isinstance(inputList[0], dict):
+                lyrList = [i['table_name'] for i in inputList]
+                return lyrList
+            else:
+                return inputList
+
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
         return None
     

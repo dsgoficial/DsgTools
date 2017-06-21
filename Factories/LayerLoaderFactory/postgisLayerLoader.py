@@ -107,7 +107,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = semifinalList
         return finalList
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
+    def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
         """
         1. Get loaded layers
         2. Filter layers;
@@ -116,6 +116,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
+        layerList = self.preLoadStep(inputList)
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
@@ -163,7 +164,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         localProgress.step()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion):
+    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False):
         """
         Loads a layer
         :param lyrName: Layer nmae
