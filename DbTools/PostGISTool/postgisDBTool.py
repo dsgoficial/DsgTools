@@ -152,7 +152,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
             self.abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
 
         if not self.abstractDb.db.open():
-            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.abstractDb.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
         return self.abstractDb
 
@@ -168,6 +168,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
             return
         else:
             db.setPassword(password)
+            db.setUserName(user)
             if not db.open():
                 self.setCredentials(db, conInfo, user)
             else:
