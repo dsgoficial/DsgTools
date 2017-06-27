@@ -839,6 +839,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         if self.checkSuperUser():
+            self.dropAllConections(candidateName)
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
@@ -3164,4 +3165,15 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting primary key column: ")+query.lastError().text())
         while query.next():
-            return query.value(0)        
+            return query.value(0)
+    
+    def dropAllConections(self, dbName):
+        """
+        Terminates all database conections
+        """
+        self.checkAndOpenDb()
+        if self.checkSuperUser():
+            sql = self.gen.dropAllConections(dbName)
+            query = QSqlQuery(self.db)
+            if not query.exec_(sql):
+                raise Exception(self.tr('Problem dropping database conections: ') + query.lastError().text())

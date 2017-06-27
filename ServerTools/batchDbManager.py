@@ -87,7 +87,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         for (dbname, dbversion) in dbList:
             if dbversion not in self.dbDict.keys():
                 dbversion = 'Non_EDGV'
-            self.dbDict[dbversion].append(dbname)
+            if dbname not in self.dbDict[dbversion]:
+                self.dbDict[dbversion].append(dbname)
 
     def setDatabases(self):
         self.populateListWithDatabasesFromServer()
@@ -164,6 +165,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.setDatabases()
         header = self.tr('Drop operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)
+        self.dbsCustomSelector.setInitialState(self.dbsCustomSelector.fromLs)
 
     @pyqtSlot(bool)
     def on_upgradePostgisPushButton_clicked(self):
