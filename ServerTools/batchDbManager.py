@@ -124,8 +124,6 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         return dbsDict
 
     def closeAbstractDbs(self, dbsDict):
-        dbsDict = dict()
-        selectedDbNameList = self.getSelectedDbList()
         exceptionDict = dict()
         for dbName in dbsDict.keys():
             try:
