@@ -116,16 +116,20 @@ class PostGISLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
-        layerList = self.preLoadStep(inputList)
+        layerList, isDictList = self.preLoadStep(inputList)
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
         #4. Filter Layers:
         filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements, geomFilterList)
-        #2. Load Domains
-        #do this only if EDGV Version = FTer
+        if isDictList:
+            filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList]
+        else:
+            filteredDictList = []
         edgvVersion = self.abstractDb.getDatabaseVersion()
         dbGroup = self.getDatabaseGroup(loadedGroups)
+        #2. Load Domains
+        #do this only if EDGV Version = FTer
         if edgvVersion == 'FTer_2a_Ed':
             domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)

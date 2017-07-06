@@ -140,6 +140,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         if self.styleComboBox.currentIndex() != 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
+        onlyParents = self.onlyParentsCheckBox.isChecked()
         #3- Build factory dict
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()

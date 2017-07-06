@@ -54,13 +54,13 @@ class EDGVLayerLoader(QObject):
     
     def preLoadStep(self, inputList):
         if len(inputList) == 0:
-            return []
+            return [], False
         else:
             if isinstance(inputList[0], dict):
-                lyrList = [i['table_name'] for i in inputList]
-                return lyrList
+                lyrList = [i['tableName'] for i in inputList]
+                return lyrList, True
             else:
-                return inputList
+                return inputList, False
 
     def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
         return None
