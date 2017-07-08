@@ -125,7 +125,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         if isDictList:
             filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList]
         else:
-            filteredDictList = []
+            filteredDictList = filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
         dbGroup = self.getDatabaseGroup(loadedGroups)
         #2. Load Domains
@@ -140,7 +140,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
-        lyrDict = self.getLyrDict(filteredLayerList, isEdgv=isEdgv)
+        lyrDict = self.getLyrDict(filteredDictList, isEdgv=isEdgv)
         
         #4. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
@@ -160,7 +160,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion)
                         if vlayer:
                             loadedLayers.append(vlayer)
-                            loadedDict[lyr]=vlayer
+                            if isinstance(lyr, dict):
+                                key = lyr['lyrName']
+                            else:
+                                key = lyr
+                            loadedDict[key]=vlayer
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+str(e.args[0])
                         self.logError()
@@ -168,7 +172,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         localProgress.step()
         return loadedDict
 
-    def loadLayer(self, lyrName, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False):
+    def loadLayer(self, inputParam, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False):
         """
         Loads a layer
         :param lyrName: Layer nmae
@@ -179,33 +183,29 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :param domLayerDict: domain dictionary
         :return:
         """
-        #TODO: think about if geomColumn should be also an optional parameter
+        if isinstance(inputParam,dict):
+            lyrName = inputParam['lyrName']
+            schema = inputParam['tableSchema']
+            geomColumn = inputParam['geom']
+            tableName = inputParam['tableName']
+            srid =  self.geomDict['tablePerspective'][tableName]['srid']
+        else:
+            lyrName = inputParam
+            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
+            schema = self.geomDict['tablePerspective'][lyrName]['schema']
+            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
+            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName, loadedLayers)
             if lyr:
                 return lyr
-        schema = self.geomDict['tablePerspective'][lyrName]['schema']
-        geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
-        srid =  self.geomDict['tablePerspective'][lyrName]['srid']
+        fullName = '''"{0}"."{1}"'''.format(schema, tableName)
+        pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
         if useInheritance:
             sql = ''
         else:
-            if geomColumn == 'centroid':
-                if edgvVersion != 'Non_EDGV':
-                    auxLyrName = '_'.join(lyrName.split('_')[0:-1]) + '_a'
-                else:
-                    if lyrName[-3:-1] == '_c':
-                        auxLyrName = lyrName[0:-3]+'_a'
-                    else:
-                        auxLyrName = lyrName
-                fullName = '''"{0}"."{1}"'''.format(schema, auxLyrName)
-                pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-                sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)
-            else:   
-                fullName = '''"{0}"."{1}"'''.format(schema, lyrName)
-                pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-                sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
-        self.setDataSource(schema, self.geomDict['tablePerspective'][lyrName]['tableName'], geomColumn, sql, pkColumn=pkColumn)
+            sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
+        self.setDataSource(schema, tableName, geomColumn, sql, pkColumn=pkColumn)
 
         vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)

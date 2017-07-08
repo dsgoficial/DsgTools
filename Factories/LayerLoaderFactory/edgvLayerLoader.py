@@ -104,31 +104,41 @@ class EDGVLayerLoader(QObject):
         else:
             return self.iface.legendInterface().addGroup(dbName, True, -1)
 
-    def getLyrDict(self, lyrList, isEdgv = True):
+    def getLyrDict(self, inputList, isEdgv = True):
         """
         Builds lyrDict in order to build loading tree
         lyrList: list of layers to be loaded
         isEdgv: optional parameter to indicate when db is not edgv. If db is not edgv, layers will be grouped by schema.
         """
         lyrDict = dict()
-        for type in self.geomTypeDict.keys():
-            # some tables are only registered as GEOMETRY and should not be considered
-            if type == 'GEOMETRY':
-                continue
-            if self.correspondenceDict[type] not in lyrDict.keys():
-                lyrDict[self.correspondenceDict[type]] = dict()
-            for lyr in self.geomTypeDict[type]:
-                if lyr in lyrList:
-                    if isEdgv:
-                        cat = lyr.split('_')[0]
-                    else:
-                        cat = self.abstractDb.getTableSchemaFromDb(lyr)
-                    if cat not in lyrDict[self.correspondenceDict[type]].keys():
-                        lyrDict[self.correspondenceDict[type]][cat] = []
-                    lyrDict[self.correspondenceDict[type]][cat].append(lyr)
-        for type in lyrDict.keys():
-            if lyrDict[type] == dict():
-                lyrDict.pop(type)
+        if isinstance(inputList[0],dict):
+            for elem in inputList:
+                if elem['geomType'] == 'GEOMETRY':
+                    continue
+                if self.correspondenceDict[elem['geomType']] not in lyrDict.keys():
+                    lyrDict[self.correspondenceDict[elem['geomType']]] = dict()
+                if elem['cat'] not in lyrDict[self.correspondenceDict[elem['geomType']]].keys():
+                    lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']] = []
+                lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
+        else:
+            for type in self.geomTypeDict.keys():
+                # some tables are only registered as GEOMETRY and should not be considered
+                if type == 'GEOMETRY':
+                    continue
+                if self.correspondenceDict[type] not in lyrDict.keys():
+                    lyrDict[self.correspondenceDict[type]] = dict()
+                for lyr in self.geomTypeDict[type]:
+                    if lyr in inputList:
+                        if isEdgv:
+                            cat = lyr.split('_')[0]
+                        else:
+                            cat = self.abstractDb.getTableSchemaFromDb(lyr)
+                        if cat not in lyrDict[self.correspondenceDict[type]].keys():
+                            lyrDict[self.correspondenceDict[type]][cat] = []
+                        lyrDict[self.correspondenceDict[type]][cat].append(lyr)
+            for type in lyrDict.keys():
+                if lyrDict[type] == dict():
+                    lyrDict.pop(type)
         return lyrDict
 
     def prepareGroups(self, groupList, parent, lyrDict):
@@ -179,7 +189,10 @@ class EDGVLayerLoader(QObject):
 
     def setDataSource(self, schema, layer, geomColumn, sql, pkColumn='id'):
         self.uri.setDataSource(schema, layer, geomColumn, sql, pkColumn)
-        self.uri.disableSelectAtId(True)
+        if sql == '':
+            self.uri.disableSelectAtId(False)
+        else:
+            self.uri.disableSelectAtId(True)
 
     def setDomainsAndRestrictionsWithQml(self, vlayer):
         qmldir = ''

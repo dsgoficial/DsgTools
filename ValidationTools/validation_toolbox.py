@@ -69,6 +69,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
         self.ruleEnforcer = None
+        self.attributeRulesEditorPushButton.hide()
 
     def createMenuEditFlagStatus(self, position):
         """
