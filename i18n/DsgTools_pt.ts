@@ -2540,7 +2540,9 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <source>Select Frame Layer (If this is 
 not checked and frame not selected,
 the frame will not be created</source>
-        <translation>Selecionar camada de moldura \n(se este item não estiver marcado e uma camada \npara moldura não for selecionada, a moldura não será criada </translation>
+        <translation type="unfinished">Selecionar camada de moldura 
+(se este item não estiver marcado e uma camada 
+para moldura não for selecionada, a moldura não será criada </translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="138"/>

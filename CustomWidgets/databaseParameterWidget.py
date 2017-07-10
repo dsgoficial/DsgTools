@@ -54,6 +54,7 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         self.prefixVisible = True
         self.sufixVisible = True
         self.dbNameVisible = True
+        self.frameGroupBox.hide()
     
     def setPrefixVisible(self, visible):
         """
@@ -111,24 +112,20 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
     def changeInterfaceState(self, edgvTemplateToggled, hideInterface = True):
         if edgvTemplateToggled:
             self.comboBoxPostgis.setEnabled(False)
-            self.selectFrameCheckBox.setEnabled(False)
+            self.frameGroupBox.hide()
             self.frameComboBox.setEnabled(False)
             self.versionComboBox.setEnabled(True)
         else:
+            self.comboBoxPostgis.show()
+            self.frameGroupBox.show()
             self.comboBoxPostgis.setEnabled(True)
-            self.selectFrameCheckBox.setEnabled(True)
-            self.frameComboBox.setEnabled(self.selectFrameCheckBox.isChecked())
             self.versionComboBox.setEnabled(False)
         if hideInterface:
-            self.comboBoxPostgis.hide()
             self.dbTemplateRadioButton.hide()
-            self.selectFrameCheckBox.hide()
-            self.frameComboBox.hide()
+            self.frameGroupBox.hide()
         else:
-            self.comboBoxPostgis.show()
             self.dbTemplateRadioButton.show()
-            self.selectFrameCheckBox.show()
-            self.frameComboBox.show()
+            self.frameGroupBox.show()
     
     def getTemplateName(self):
         if self.edgvTemplateRadioButton.isChecked():
