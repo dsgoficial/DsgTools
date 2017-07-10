@@ -2257,23 +2257,25 @@ class PostgisDb(AbstractDb):
                 geomDict[aux['f2']] = []
             geomDict[aux['f2']].append(aux['f1'])
         return geomDict
-
+    
     def getGeomColumnTupleList(self, showViews = False, hideCentroids = True):
         """
         list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
         centroids are hidden by default
         """
         self.checkAndOpenDb()
+        centroidTableList = []
         try:
             edgvVersion = self.getDatabaseVersion()
-            propertyDict = self.getAllSettingsFromAdminDb('EarthCoverage')
-            propertyName = propertyDict[edgvVersion][0]
-            dbName = self.db.databaseName()
-            settingDict = json.loads(self.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
-            earthCoverageDict = settingDict['earthCoverageDict']
-            centroidTableList = [i.split('.')[-1] for i in earthCoverageDict.keys()]
+            if self.checkIfExistsConfigTable('EarthCoverage'):
+                propertyDict = self.getAllSettingsFromAdminDb('EarthCoverage')
+                propertyName = propertyDict[edgvVersion][0]
+                dbName = self.db.databaseName()
+                settingDict = json.loads(self.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+                earthCoverageDict = settingDict['earthCoverageDict']
+                centroidTableList = [i.split('.')[-1] for i in earthCoverageDict.keys()]
         except:
-            centroidTableList = []
+            pass
         
         sql = self.gen.getGeomColumnTupleList(showViews = showViews)
         query = QSqlQuery(sql, self.db)
@@ -2978,6 +2980,8 @@ class PostgisDb(AbstractDb):
         Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
         """
         self.checkAndOpenDb()
+        if not self.checkIfExistsConfigTable(settingType):
+            return dict()
         sql = self.gen.getAllSettingsFromAdminDb(settingType)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():

@@ -68,12 +68,13 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         self.earthCoverageTreeWidget.invisibleRootItem().takeChildren()
 
     def getEarthCoverageDict(self):
-        edgvVersion = self.abstractDb.getDatabaseVersion()
-        propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
-        propertyName = propertyDict[edgvVersion][0]
-        dbName = self.abstractDb.db.databaseName()
-        self.settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
-        self.earthCoverageDict = self.settingDict['earthCoverageDict']
+        if self.abstractDb.checkIfExistsConfigTable('EarthCoverage'):
+            edgvVersion = self.abstractDb.getDatabaseVersion()
+            propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
+            propertyName = propertyDict[edgvVersion][0]
+            dbName = self.abstractDb.db.databaseName()
+            self.settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+            self.earthCoverageDict = self.settingDict['earthCoverageDict']
 
     def loadEarthCoverage(self):
         """
