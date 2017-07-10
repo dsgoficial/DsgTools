@@ -2258,7 +2258,7 @@ class PostgisDb(AbstractDb):
             geomDict[aux['f2']].append(aux['f1'])
         return geomDict
     
-    def getGeomColumnTupleList(self, showViews = False, hideCentroids = True):
+    def getGeomColumnTupleList(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False):
         """
         list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
         centroids are hidden by default
@@ -2281,14 +2281,48 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
-        geomList = []
+        localList = []
         while query.next():
             if query.value(2) == 'centroid' and query.value(3) == 'POINT' and query.value(1) in centroidTableList:
                 continue
             else:
-                geomList.append((query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)))
+                localList.append((query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)))
+        if not withElements and primitiveFilter == []:
+            return localList
+        if withElements:
+            listWithElements = self.getLayersWithElementsV2([{'tableSchema':i[0],'tableName':i[1]} for i in localList])
+            geomList = [i for i in localList if i[1] in listWithElements]
+        else:
+            geomList = localList
+        if primitiveFilter <> []:
+            geomTypeFilter = []
+            if 'p' in primitiveFilter: 
+                geomTypeFilter.append('POINT')
+                geomTypeFilter.append('MULTIPOINT')
+            if 'l' in primitiveFilter: 
+                geomTypeFilter.append('LINESTRING')
+                geomTypeFilter.append('MULTILINESTRING')
+            if 'a' in primitiveFilter:
+                geomTypeFilter.append('POLYGON')
+                geomTypeFilter.append('MULTIPOLYGON')
+            geomList = [i for i in geomList if i[3] in geomTypeFilter]
         return geomList
     
+    def getGeomColumnDictV2(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False):
+        geomList = self.getGeomColumnTupleList(showViews = showViews, hideCentroids = hideCentroids, primitiveFilter = primitiveFilter, withElements = withElements)
+        edgvVersion = self.getDatabaseVersion()
+        lyrDict = dict()
+        for tableSchema, tableName, geom, geomType, tableType in geomList:
+            if edgvVersion == 'Non_EDGV':
+                lyrName = tableName
+                cat = tableSchema
+            else:
+                lyrName = '_'.join(tableName.split('_')[1::])
+                cat = tableName.split('_')[0]
+            key = ','.join([cat, lyrName, geom, geomType, tableType])
+            lyrDict[key] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
+        return lyrDict
+
     def getLayersFilterByInheritance(self, layerList):
         filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
         filtered = []

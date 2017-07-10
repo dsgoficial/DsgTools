@@ -23,7 +23,7 @@ import sys
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor, QMenu
-from DsgTools.CustomWidgets.customSelector import CustomSelector
+from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 
 class ProcessParametersDialog(QtGui.QDialog):
@@ -38,19 +38,19 @@ class ProcessParametersDialog(QtGui.QDialog):
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",
                CustomSnaperParameterSelector: "getParameters",
-               CustomSelector: "getToList",
+               CustomTableSelector: "getToList",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
                CustomSnaperParameterSelector: "setInitialState",
-               CustomSelector: "setInitialState",
+               CustomTableSelector: "setInitialState",
                QtGui.QCheckBox: "setChecked"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
                   CustomSnaperParameterSelector: lambda x: True,
-                  CustomSelector: lambda x: True,
+                  CustomTableSelector: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None):
@@ -85,9 +85,11 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
             
-            if self.WIDGETS[type(v)] == CustomSelector:
+            if self.WIDGETS[type(v)] == CustomTableSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
                 widget.setTitle(self.tr('Select classes'))
+                headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
+                widget.setHeaders(headerList)
             if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
                 widget.setTitle(self.tr('Select layers to be snapped'))
