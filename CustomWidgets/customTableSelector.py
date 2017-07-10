@@ -76,8 +76,6 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         """
         Clears everything to return to the initial state
         """
-        self.fromList.clear()
-        self.toList.clear()
         self.filterLineEdit.clear()
     
     def setHeaders(self, headerList, customNumber = None):
