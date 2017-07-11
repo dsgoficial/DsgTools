@@ -214,7 +214,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             if useQml:
                 vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
             else:
-                vlayer = self.setDomainsAndRestrictions(vlayer, lyrName, domainDict, multiColumnsDict, domLayerDict)
+                vlayer = self.setDomainsAndRestrictions(vlayer, tableName, domainDict, multiColumnsDict, domLayerDict)
             if stylePath:
                 fullPath = self.getStyle(stylePath, lyrName)
                 if fullPath:
