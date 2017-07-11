@@ -301,12 +301,15 @@ class ValidationProcess(QObject):
         Loads all layers to QGIS' TOC prior the validation process
         """
         #creating vector layer
-        schema, layer_name = self.abstractDb.getTableSchema(cl)
         if self.abstractDb.getDatabaseVersion() == 'Non_EDGV':
             isEdgv = False
         else:
             isEdgv = True
-        lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
+        if isinstance(cl, dict):
+            lyr = self.layerLoader.load([cl], uniqueLoad=True, isEdgv=isEdgv)[cl['lyrName']]
+        else:
+            schema, layer_name = self.abstractDb.getTableSchema(cl)
+            lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
         return lyr
     
     def prepareExecution(self, cl, geometryColumn='geom'):

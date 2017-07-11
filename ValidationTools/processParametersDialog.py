@@ -31,14 +31,14 @@ class ProcessParametersDialog(QtGui.QDialog):
                unicode: QtGui.QLineEdit,
                int: QtGui.QSpinBox,
                float: QtGui.QDoubleSpinBox,
-               list: CustomSelector,
+               list: CustomTableSelector,
                tuple: CustomSnaperParameterSelector,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",
                CustomSnaperParameterSelector: "getParameters",
-               CustomTableSelector: "getToList",
+               CustomTableSelector: "getSelectedNodes",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
@@ -73,7 +73,8 @@ class ProcessParametersDialog(QtGui.QDialog):
         formLayout = QtGui.QFormLayout()
         for k, v in options.iteritems():
             if isinstance(v, (list)):
-                v = [str(x) for x in v]
+                if isinstance(v[0], dict) == False:
+                    v = [str(x) for x in v]
 
             label = QtGui.QLabel(beautifyText(k))
             widget = self.WIDGETS[type(v)]()
@@ -86,10 +87,10 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setMinimum(-1000000)
             
             if self.WIDGETS[type(v)] == CustomTableSelector:
-                getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
                 widget.setTitle(self.tr('Select classes'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.setHeaders(headerList)
+                getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
             if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
                 widget.setTitle(self.tr('Select layers to be snapped'))
