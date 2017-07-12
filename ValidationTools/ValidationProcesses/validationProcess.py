@@ -325,15 +325,14 @@ class ValidationProcess(QObject):
         #getting feature map including the edit buffer
         featureMap = self.mapInputLayer(lyr)
         #getting table name with schema
-        tableName = self.getTableNameFromLayer(lyr)
+        tableName = '''{0}.{1}'''.format(cl['tableSchema'], cl['tableName'])
         #setting temp table name
         processTableName = tableName+'_temp'
         # specific EPSG search
-        ts, tn = cl.split('.')
-        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geometryColumn}
+        parameters = {'tableSchema':cl['tableSchema'], 'tableName':cl['tableName'], 'geometryColumn':cl['geom']}
         srid = self.abstractDb.findEPSG(parameters=parameters)
         #creating temp table
-        self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap, geometryColumn, keyColumn, srid)
+        self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap, cl['geom'], keyColumn, srid)
         return processTableName, lyr, keyColumn
     
     def postProcessSteps(self, processTableName, lyr):

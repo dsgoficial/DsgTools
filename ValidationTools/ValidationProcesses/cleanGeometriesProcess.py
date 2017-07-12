@@ -102,7 +102,7 @@ class CleanGeometriesProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((classAndGeom['lyrName'], tupple[0], self.tr('Cleaning error.'), tupple[1], geometryColumn))
+                        recordList.append((classAndGeom['lyrName'], tupple[0], self.tr('Cleaning error.'), tupple[1], classAndGeom['geom']))
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + classAndGeom['lyrName'] + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
