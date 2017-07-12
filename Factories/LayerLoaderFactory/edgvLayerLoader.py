@@ -67,7 +67,7 @@ class EDGVLayerLoader(QObject):
     
     def getStyle(self, stylePath, className):
         if 'db:' in stylePath['style']:
-            return self.abstractDb.getStyle(stylePath.split(':')[-1], className)
+            return self.abstractDb.getStyle(stylePath['style'].split(':')[-1], className)
         else:
             return self.getStyleFromFile(stylePath['style'], className)
     

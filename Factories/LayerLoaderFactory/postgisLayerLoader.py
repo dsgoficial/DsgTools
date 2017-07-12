@@ -216,7 +216,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             else:
                 vlayer = self.setDomainsAndRestrictions(vlayer, tableName, domainDict, multiColumnsDict, domLayerDict)
             if stylePath:
-                fullPath = self.getStyle(stylePath, lyrName)
+                fullPath = self.getStyle(stylePath, tableName)
                 if fullPath:
                     vlayer.applyNamedStyle(fullPath)
             iface.legendInterface().moveLayer(vlayer, idSubgrupo)   

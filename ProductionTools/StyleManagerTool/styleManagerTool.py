@@ -93,7 +93,8 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
             for lyr in lyrList:
                 try:
-                    fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
+                    uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                    fullPath = self.getStyle(abstractDb, selectedStyle, uri.table())
                     if fullPath:
                         lyr.applyNamedStyle(fullPath)
                 except:
