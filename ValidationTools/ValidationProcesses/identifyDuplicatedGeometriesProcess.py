@@ -34,11 +34,13 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True)
             # adjusting process parameters
-            self.parameters = {'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Classes': interfaceDictList}
 
     def execute(self):
         """
@@ -54,12 +56,12 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                classAndGeom = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
                 localProgress.step()

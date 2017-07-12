@@ -1128,7 +1128,11 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         duplicatedDict = dict()
         for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
+            if isinstance(cl, dict):
+                tableSchema = cl['tableSchema']
+                tableName = cl['tableName']
+            else:
+                tableSchema, tableName = self.getTableSchema(cl)
             if tableSchema not in ('validation'):
                 sql = self.gen.getDuplicatedGeom(tableSchema, tableName, geometryColumn, keyColumn)
                 query = QSqlQuery(sql, self.db)
