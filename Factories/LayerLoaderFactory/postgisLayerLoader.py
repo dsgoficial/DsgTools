@@ -207,7 +207,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
         self.setDataSource(schema, tableName, geomColumn, sql, pkColumn=pkColumn)
 
-        vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
+        vlayer = iface.addVectorLayer(self.uri.uri(), tableName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         if vlayer:
             vlayer.setCrs(crs)
