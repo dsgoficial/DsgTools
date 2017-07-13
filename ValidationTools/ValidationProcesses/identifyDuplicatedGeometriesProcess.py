@@ -65,12 +65,11 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 if processTableName not in classesWithGeom:
                     classesWithGeom.append(processTableName)
                 localProgress.step()
-                    
-            # running the process
-            localProgress = ProgressWidget(0, 1, self.tr('Running process'), parent=self.iface.mapCanvas())
-            localProgress.step()
-            duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom, geometryColumn, keyColumn)
-            localProgress.step()
+                # running the process
+                localProgress = ProgressWidget(0, 1, self.tr('Running process for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
+                localProgress.step()
+                duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom, classAndGeom['geom'], keyColumn)
+                localProgress.step()
             
             # dropping temp table
             for processTableName in classesWithGeom:
