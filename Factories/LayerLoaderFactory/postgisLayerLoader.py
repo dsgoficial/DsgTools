@@ -196,7 +196,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
             srid =  self.geomDict['tablePerspective'][lyrName]['srid']
         if uniqueLoad:
-            lyr = self.checkLoaded(lyrName, loadedLayers)
+            lyr = self.checkLoaded(tableName, loadedLayers)
             if lyr:
                 return lyr
         fullName = '''"{0}"."{1}"'''.format(schema, tableName)
