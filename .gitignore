@@ -48,3 +48,5 @@ Temporary Items
 translation.pro.user
 /.idea/
 .vscode/settings.json
+.vscode/tags
+tags
