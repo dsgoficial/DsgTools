@@ -1133,7 +1133,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
         while query.next():
-            tupleList.append( (query.value(0),query.value(1)) )
+            tupleList.append( (query.value(0),query.value(2)) )
         return tupleList
 
     def getSmallAreasRecords(self, cl, tol, geometryColumn, keyColumn):
