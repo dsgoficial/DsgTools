@@ -34,11 +34,13 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
     
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True)
             # adjusting process parameters
-            self.parameters = {'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Classes': interfaceDictList}
         
     def execute(self):
         """
@@ -52,18 +54,18 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                classAndGeom = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
                 localProgress.step()
 
                 # running the process
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                self.abstractDb.removeEmptyGeometries(processTableName, geometryColumn)
+                self.abstractDb.removeEmptyGeometries(processTableName, classAndGeom['geom'])
                 localProgress.step()
                 
                 # finalization
