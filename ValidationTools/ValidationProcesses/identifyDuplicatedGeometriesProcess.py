@@ -56,38 +56,29 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
+            dupGeomRecordList = []
             for key in classesWithElem:
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
                 processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
-                if processTableName not in classesWithGeom:
-                    classesWithGeom.append(processTableName)
                 localProgress.step()
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                duplicated = self.abstractDb.getDuplicatedGeomRecords(classesWithGeom, classAndGeom['geom'], keyColumn)
+                duplicated = self.abstractDb.getDuplicatedGeomRecords(processTableName, classAndGeom['geom'], keyColumn)
                 localProgress.step()
-            
-            # dropping temp table
-            for processTableName in classesWithGeom:
                 self.abstractDb.dropTempTable(processTableName)
-                
+                # storing flags
+                if len(duplicated) > 0:
+                    if classAndGeom['tableSchema'] not in ('validation'):
+                        for result in duplicated:
+                            id, geom = result
+                            dupGeomRecordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, self.tr('Duplicated Geometry'), geom, classAndGeom['geom']))
             # storing flags
-            if len(duplicated.keys()) > 0:
-                dupGeomRecordList = []
-                for cl in duplicated.keys():
-                    tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                    # the flag should store the original table name
-                    tableName = tableName.replace('_temp', '')
-                    if tableSchema not in ('validation'):
-                        for id in duplicated[cl].keys():
-                            dupGeomRecordList.append((tableSchema+'.'+tableName, id, self.tr('Duplicated Geometry'), duplicated[cl][id], geometryColumn))
+            if len(dupGeomRecordList) > 0:
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
-                for tuple in dupGeomRecordList:
-                    self.addClassesToBeDisplayedList(tuple[0])
                 msg =  str(numberOfDupGeom) + self.tr(' features are duplicated. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -99,4 +90,6 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
+            localProgress.step()
+            # dropping temp table
             return 0

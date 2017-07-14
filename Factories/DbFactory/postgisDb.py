@@ -1118,48 +1118,41 @@ class PostgisDb(AbstractDb):
         
         return uri
     
-    def getDuplicatedGeomRecords(self, classesWithGeom, geometryColumn, keyColumn):
+    def getDuplicatedGeomRecords(self, cl, geometryColumn, keyColumn):
         """
         Gets duplicated records
-        classesWithGeom: list of classes with geomtries
+        cl: class to be checked
         geometryColumn: geometryColumn
         keyColumn: pk column
         """
         self.checkAndOpenDb()
-        duplicatedDict = dict()
-        for cl in classesWithGeom:
-            if isinstance(cl, dict):
-                tableSchema = cl['tableSchema']
-                tableName = cl['tableName']
-            else:
-                tableSchema, tableName = self.getTableSchema(cl)
-            if tableSchema not in ('validation'):
-                sql = self.gen.getDuplicatedGeom(tableSchema, tableName, geometryColumn, keyColumn)
-                query = QSqlQuery(sql, self.db)
-                if not query.isActive():
-                    raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
-                while query.next():
-                    duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
-        return duplicatedDict
+        tupleList = []
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getDuplicatedGeom(tableSchema, tableName, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+        while query.next():
+            tupleList.append( (query.value(0),query.value(1)) )
+        return tupleList
 
-    def getSmallAreasRecords(self,classesWithGeom, tol, geometryColumn, keyColumn):
+    def getSmallAreasRecords(self, cl, tol, geometryColumn, keyColumn):
         """
         Gets duplicated records
-        classesWithGeom: list of classes with geometries
+        cl: class to be checked
         geometryColumn: geometryColumn
         keyColumn: pk column
         """
         self.checkAndOpenDb()
-        smallAreasDict = dict()
-        for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getSmallAreas(tableSchema, tableName, tol, geometryColumn, keyColumn)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
-            while query.next():
-                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
-        return smallAreasDict
+        smallAreasTupleList = []
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getSmallAreas(tableSchema, tableName, tol, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
+        while query.next():
+            smallAreasTupleList.append( (query.value(0),query.value(1)) )
+        return smallAreasTupleList
 
     def getSmallLinesRecords(self,classesWithGeom, tol, geometryColumn, keyColumn):
         """
