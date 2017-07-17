@@ -34,11 +34,13 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True)
             # adjusting process parameters
-            self.parameters = {'Tolerance':1.0, 'Snap':1.0, 'MinArea':0.001 ,'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Tolerance':1.0, 'Snap':1.0, 'MinArea':0.001, 'Classes': interfaceDictList}
         
     def runProcessinAlg(self, layer):
         """
@@ -82,17 +84,21 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
                 return 1
             error = False
             classlist = []
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                lyr = self.loadLayerBeforeValidationProcess(cl)
+                classAndGeom = self.classesWithElemDict[key]
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 classlist.append(lyr)
 
             coverage = self.createUnifiedLayer(classlist)
             output = self.runProcessinAlg(coverage)
             self.splitUnifiedLayer(output, classlist)
-            QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
-            QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.split(':')[0] for i in classesWithElem]) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            try:
+                QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
+            except:
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.name() for i in classlist]) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
             self.setStatus(self.tr('Simplification process complete.'), 1) #Finished
             return 1
         except Exception as e:
