@@ -98,7 +98,7 @@ class TopologicalCleanProcess(ValidationProcess):
             try:
                 QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
             except:
-                pass
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
             # storing flags
             if len(result) > 0:
