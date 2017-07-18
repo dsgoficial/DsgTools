@@ -2305,11 +2305,14 @@ class PostgisDb(AbstractDb):
             geomList = [i for i in geomList if i[3] in geomTypeFilter]
         return geomList
     
-    def getGeomColumnDictV2(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False):
+    def getGeomColumnDictV2(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False, excludeValidation = False):
         geomList = self.getGeomColumnTupleList(showViews = showViews, hideCentroids = hideCentroids, primitiveFilter = primitiveFilter, withElements = withElements)
         edgvVersion = self.getDatabaseVersion()
         lyrDict = dict()
         for tableSchema, tableName, geom, geomType, tableType in geomList:
+            if excludeValidation:
+                if tableSchema == 'validation':
+                    continue
             if edgvVersion == 'Non_EDGV':
                 lyrName = tableName
                 cat = tableSchema
