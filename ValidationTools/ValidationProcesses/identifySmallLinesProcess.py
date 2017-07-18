@@ -35,11 +35,13 @@ class IdentifySmallLinesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True)
             # adjusting process parameters
-            self.parameters = {self.tr('Length'): 5.0, 'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList}
 
     def execute(self):
         """
@@ -57,21 +59,20 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 return 1
             classesWithGeom = []
             recordList = []
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                classAndGeom = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                lyr = self.loadLayerBeforeValidationProcess(cl)
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 localProgress.step()
 
                 allIds = lyr.allFeatureIds()
-                tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in lyr.getFeatures():
                     if feat.geometry().length() < tol:
                         geometry = binascii.hexlify(feat.geometry().asWkb())
-                        recordList.append((tableSchema+'.'+tableName, feat.id(), self.tr('Small Line.'), geometry, geometryColumn))
+                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], feat.id(), self.tr('Small Line.'), geometry, classAndGeom['geom']))
                     localProgress.step()
 
             if len(recordList) > 0:
