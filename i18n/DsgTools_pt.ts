@@ -145,107 +145,107 @@ p, li { white-space: pre-wrap; }
         <translation>Problema na contagem dos elementos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="222"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="226"/>
         <source>Validation Problems Summary</source>
         <translation>Resumo de Problemas de Validação</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="226"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="230"/>
         <source>Classes with null lines:</source>
         <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="565"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="569"/>
         <source>Class</source>
         <translation>Classe</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="365"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="369"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="232"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="236"/>
         <source>Classes with null primary keys:</source>
         <translation>Classes com chaves primárias nulas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="238"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="242"/>
         <source>Features with attributes not in domain:</source>
         <translation>Feições com atributos fora do domínio:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="270"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="274"/>
         <source>Class: </source>
         <translation>Classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="251"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="255"/>
         <source>Features with null attributes in a not null field:</source>
         <translation>Feições com atributos nulos em campo não nulo:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="263"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="267"/>
         <source>Classes with classes that have elements but do not have output equivalent:</source>
         <translation>Classes com classes que tem elementos mas não tem equivalente de saída:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="268"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="272"/>
         <source>Classes with attributes that have no output attribute equivalent:</source>
         <translation>Classes com atributos que não possuem atributo de saída equivalente:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="283"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="287"/>
         <source>Conversion type: </source>
         <translation>Tipo de Conversão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="284"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="288"/>
         <source>Input database: </source>
         <translation>Banco de dados de entrada: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="285"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="289"/>
         <source>Output database: </source>
         <translation>Banco de dados de saída: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="286"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="290"/>
         <source>Read Summary</source>
         <translation>Resumo de Leitura</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="364"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="368"/>
         <source>Write Summary</source>
         <translation>Resumo de Escrita</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="400"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="404"/>
         <source>Error on layer </source>
         <translation>Erro na camada </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="400"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="404"/>
         <source>. Conversion not performed.</source>
         <translation>. Conversão não realizada.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="564"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="568"/>
         <source>Features not converted</source>
         <translation>Feições não convertidas</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="565"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="569"/>
         <source>Feature id</source>
         <translation>Id da Feição</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="134"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="138"/>
         <source>Problem finding EPSG: </source>
         <translation>Problema para encontrar EPSG: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="177"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="181"/>
         <source>Problem getting aggregation attributes: </source>
         <translation>Problema ao obter atributos de agregação: </translation>
     </message>
@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erro abrindo banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="651"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="655"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
     </message>
@@ -598,50 +598,50 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="50"/>
         <source>Show classes</source>
-        <translation>Mostrar classes</translation>
+        <translation type="obsolete">Mostrar classes</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="66"/>
         <source>Show Categories</source>
-        <translation>Mostrar categorias</translation>
+        <translation type="obsolete">Mostrar categorias</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="93"/>
         <source>Only load layers of primitive (optional)</source>
-        <translation>Somente carregar camada da primitiva (opcional)</translation>
+        <translation type="obsolete">Somente carregar camada da primitiva (opcional)</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="111"/>
         <source>Point</source>
-        <translation>Ponto</translation>
+        <translation type="obsolete">Ponto</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="127"/>
         <source>Line</source>
-        <translation>Linha</translation>
+        <translation type="obsolete">Linha</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="143"/>
         <source>Polygon</source>
-        <translation>Polígono</translation>
+        <translation type="obsolete">Polígono</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="159"/>
         <source>Select All</source>
-        <translation>Selecionar Todos</translation>
+        <translation type="obsolete">Selecionar Todos</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="178"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="64"/>
         <source>Options</source>
         <translation>Opções</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="202"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="139"/>
         <source>Only layers with Elements</source>
         <translation>Apenas Camadas com Elementos</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="244"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="152"/>
         <source>Set Style</source>
         <translation>Ajustar estilo</translation>
     </message>
@@ -943,17 +943,17 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
 </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="209"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="120"/>
         <source>Unique Load (do not load if layer is already loaded)</source>
         <translation>Carregamento Único (não carregar se a camada já estiver carregada)</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="228"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="104"/>
         <source>DSGTools uses from only as a query filter. If this behaviour is not desired, check this item.</source>
         <translation>DSGTools usa por default a clausula FROM ONLY como filtro da camada. Caso esse comportamento não seja desejado, marque esse item para desabilitá-lo.</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="231"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="107"/>
         <source>Do not use FROM ONLY clause when using inheritance</source>
         <translation>Não usar a clausula FROM ONLY</translation>
     </message>
@@ -971,6 +971,11 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <location filename="../ServerTools/batchDbManager.py" line="68"/>
         <source>Load Other Database Models</source>
         <translation>Carregar bancos com outras modelagens</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="159"/>
+        <source>Show Views</source>
+        <translation>Mostrar Views</translation>
     </message>
 </context>
 <context>
@@ -1273,17 +1278,17 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Limpar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="77"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="79"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="77"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="79"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="79"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="81"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -1308,45 +1313,77 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Não há erros de limpeza em {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="112"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="111"/>
         <source>There are cleaning errors. Check log.</source>
         <translation>Não há erros de limpeza. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="114"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="113"/>
         <source>There are no cleaning errors.</source>
         <translation>Não há erros de limpeza.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="83"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="85"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="84"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="86"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="63"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="65"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
         <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="107"/>
         <source> feature(s) from </source>
         <translation>feição(ões) da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="107"/>
         <source> with cleaning errors. Check flags.</source>
         <translation>com erros de limpeza. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="110"/>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="109"/>
         <source>There are no cleaning errors on </source>
         <translation>Não há erros de limpeza em </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo do
+Layer</translation>
     </message>
 </context>
 <context>
@@ -2489,7 +2526,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="117"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="261"/>
         <source>&lt;prefix&gt;_&lt;database name&gt;_&lt;sufix&gt;</source>
         <translation>&lt;prefixo&gt;_&lt;nome do banco de dados&gt;_&lt;sufixo&gt;</translation>
     </message>
@@ -2499,7 +2536,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Prefixo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="165"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="309"/>
         <source>Database Name</source>
         <translation>Nome do banco de dados</translation>
     </message>
@@ -2509,19 +2546,19 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Sufixo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="99"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.py" line="100"/>
         <source>Enter a database name!
 </source>
         <translation>Entre um nome de banco de dados!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="101"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.py" line="102"/>
         <source>Select a coordinate reference system!
 </source>
         <translation>Selecione um sistema de referência de coordenadas!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="106"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.py" line="107"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -2540,25 +2577,40 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <source>Select Frame Layer (If this is 
 not checked and frame not selected,
 the frame will not be created</source>
-        <translation type="unfinished">Selecionar camada de moldura 
+        <translation type="obsolete">Selecionar camada de moldura 
 (se este item não estiver marcado e uma camada 
 para moldura não for selecionada, a moldura não será criada </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="138"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="282"/>
         <source>Prefix (optional)</source>
         <translation>Prefixo (opcional)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="192"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="336"/>
         <source>Sufix (optional)</source>
         <translation>Sufixo (opcional)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="103"/>
+        <location filename="../CustomWidgets/databaseParameterWidget.py" line="104"/>
         <source>Select a template database!
 </source>
         <translation>Selecione um banco como modelo!</translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="126"/>
+        <source>Select Frame Layer</source>
+        <translation>Selecione a camada de moldura</translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="173"/>
+        <source>Select index attribute</source>
+        <translation>Selecione o atributo index de nomenclatura</translation>
+    </message>
+    <message>
+        <location filename="../CustomWidgets/databaseParameterWidget.ui" line="220"/>
+        <source>Select INOM attribute</source>
+        <translation>Selecione o atributo INOM</translation>
     </message>
 </context>
 <context>
@@ -2647,17 +2699,17 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
         <translation>Desagregar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="49"/>
         <source>Process.</source>
         <translation>Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -2672,29 +2724,61 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
         <translation type="obsolete">Camada {0} falhou ao carregar!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="87"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="89"/>
         <source>All geometries are now single parted.</source>
         <translation>Todas as geometrias são agora individuais.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="55"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionada! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="56"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>No classes selected!. Nothing to be done.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="59"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="62"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="65"/>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="67"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo do
+Layer</translation>
     </message>
 </context>
 <context>
@@ -3635,55 +3719,87 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>DissolvePolygonsWithCommonAttributesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="33"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="34"/>
         <source>Dissolve polygons with common attributes</source>
         <translation>Dissolver polígonos com atributos comuns</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="50"/>
         <source>Deaggregate Geometries</source>
         <translation>Desagregar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="60"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="65"/>
         <source>Problem executing qgis:dissolve. Check your installed libs.
 </source>
         <translation>Problema ao executar qgis:dissolve. Verifique suas bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="71"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="112"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="71"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="112"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="73"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="114"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="77"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="118"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="119"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="89"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="130"/>
         <source>There are dissolve errors. Check log.</source>
         <translation>Ocorreram erros ao executar o dissolve. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="91"/>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="132"/>
         <source>Dissolve finished.</source>
         <translation>Dissolve executado com sucesso.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo do
+Layer</translation>
     </message>
 </context>
 <context>
@@ -4294,22 +4410,22 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Área</translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="86"/>
+        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="96"/>
         <source>area_otf</source>
         <translation>area_otf</translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="88"/>
+        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="98"/>
         <source>lenght_otf</source>
         <translation>comprimento_otf</translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="169"/>
+        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="189"/>
         <source>Error for lyr </source>
         <translation>Erro para camada </translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="182"/>
+        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="205"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -4450,7 +4566,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageWidget.py" line="97"/>
+        <location filename="../CustomWidgets/earthCoverageWidget.py" line="98"/>
         <source>Earth Coverage not loaded! Check log for details.</source>
         <translation>Cobertura Terrestre não carregada! Verifique o log para detalhes.</translation>
     </message>
@@ -4890,7 +5006,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="475"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="476"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -4921,7 +5037,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="498"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="499"/>
         <source>Select Stored Config (optional)</source>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
@@ -4931,12 +5047,12 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Editar configuração atual</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="314"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="315"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DsgTools</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="475"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="476"/>
         <source>{} features reclassified with success!</source>
         <translation>{} feições reclassificadas com sucesso!</translation>
     </message>
@@ -5629,17 +5745,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar geometrias duplicadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -5649,39 +5765,76 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">{} feições estão duplicadas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="94"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="86"/>
         <source>There are no duplicated geometries.</source>
         <translation>Não há geometrias duplicadas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="55"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="56"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="86"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="78"/>
         <source>Duplicated Geometry</source>
         <translation>Geometria Duplicada</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="68"/>
         <source>Running process</source>
-        <translation>Executando processo</translation>
+        <translation type="obsolete">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="60"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="82"/>
         <source> features are duplicated. Check flags.</source>
-        <translation>feições estão duplicadas. Verifique as flags.</translation>
+        <translation> feições estão duplicadas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="68"/>
+        <source>Running process for </source>
+        <translation>Executando o processo para </translation>
     </message>
 </context>
 <context>
@@ -5692,17 +5845,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar geometrias inválidas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -5717,29 +5870,66 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Todas as feições são válidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="55"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="56"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="68"/>
         <source>Running process</source>
-        <translation>Executando processo</translation>
+        <translation type="obsolete">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="60"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="62"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="83"/>
         <source> features are invalid. Check flags.</source>
-        <translation>feições são inválidas. Verifique as flags.</translation>
+        <translation> feições são inválidas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="68"/>
+        <source>Running process for </source>
+        <translation>Executando o processo para </translation>
     </message>
 </context>
 <context>
@@ -5750,17 +5940,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar geometrias não simples</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -5770,22 +5960,22 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">{} feições são não simples. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="93"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="89"/>
         <source>All features are simple.</source>
         <translation>Todas as feições são simples.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="55"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="56"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="85"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="80"/>
         <source>Not simple geometry.</source>
         <translation>Geometria não simples.</translation>
     </message>
@@ -5795,19 +5985,51 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="60"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="68"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="69"/>
         <source>Running process </source>
         <translation>Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="89"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="85"/>
         <source> features are not simple. Check flags.</source>
-        <translation>feições são não simples. Verifique as flags.</translation>
+        <translation> feições são não simples. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -5818,17 +6040,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar ângulos fora de limites</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -5848,54 +6070,86 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Não há ângulos fora de limites em {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="88"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="90"/>
         <source>There are features with angles out of bounds. Check log.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="92"/>
         <source>There are no features with angles out of bounds.</source>
         <translation>Não há feições com ângulos fora de limites.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="55"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="56"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="81"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="83"/>
         <source>Angle out of bound.</source>
         <translation>Ângulo fora do limite.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="61"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="68"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="70"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="86"/>
         <source> features from</source>
-        <translation>feições da camada </translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
-        <source> have out of bounds angle(s). Check flags.</source>
-        <translation>tem ângulos fora do limite. Verifique as flags.</translation>
+        <translation> feições da camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="86"/>
+        <source> have out of bounds angle(s). Check flags.</source>
+        <translation> tem ângulos fora do limite. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="88"/>
         <source>There are no out of bounds angles on </source>
         <translation>Não há ângulos fora de limites na camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -5906,17 +6160,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar áreas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="50"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="50"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="50"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="52"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -5926,39 +6180,71 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">{0} feições tem áreas pequenas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="82"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="83"/>
         <source>There are no small areas.</source>
         <translation>Não há áreas pequenas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="55"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="57"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="56"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="58"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="73"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="74"/>
         <source>Small Area.</source>
         <translation>Área pequena.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="62"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="64"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="69"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="70"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="79"/>
         <source> features have small areas. Check flags.</source>
-        <translation>feições tem áreas pequenas. Verifique as flags.</translation>
+        <translation> feições tem áreas pequenas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -5969,22 +6255,22 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar linhas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="52"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="54"/>
         <source>Length</source>
         <translation>Comprimento</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="50"/>
         <source>Starting </source>
         <translation>Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="50"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="50"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="52"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -5994,17 +6280,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">{0} feições tem comprimentos pequenos. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="83"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="84"/>
         <source>There are no small lines.</source>
         <translation>Não há linhas pequenas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="55"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="57"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="56"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="58"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
@@ -6014,24 +6300,56 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Comprimento pequeno.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="74"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="75"/>
         <source>Small Line.</source>
         <translation>Linha pequena.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="63"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="65"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="70"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="71"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="79"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="80"/>
         <source> features have small lines. Check flags.</source>
-        <translation>feições tem pequeenas linhas. Verifique as flags.</translation>
+        <translation> feições tem pequeenas linhas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -6042,22 +6360,22 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Identificar vértices próximos a arestas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="56"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="58"/>
         <source>Tolerance</source>
         <translation>Tolerância</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -6067,7 +6385,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Banco de dados vazio.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="81"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="83"/>
         <source>Vertex near edge.</source>
         <translation>Vértice próximo a aresta.</translation>
     </message>
@@ -6082,49 +6400,81 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation type="obsolete">Não há vértices próximo à arestas em {}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="88"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="90"/>
         <source>There are vertexes near edges. Check log.</source>
         <translation>Há vértices próximo à arestas. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="92"/>
         <source>There are no vertexes near edges.</source>
         <translation>Não há vértices próximo à arestas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="55"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="54"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="56"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="61"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="63"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="68"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="70"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="86"/>
         <source> features from</source>
-        <translation>feições da camada </translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="84"/>
-        <source> have vertex(es) near edge(s). Check flags.</source>
-        <translation>têm vértices próximos à arestas. Verifique as flags.</translation>
+        <translation> feições da camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="86"/>
+        <source> have vertex(es) near edge(s). Check flags.</source>
+        <translation> têm vértices próximos à arestas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="88"/>
         <source>There are no vertexes near edges on </source>
         <translation>Não há vértices próximos a arestas na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -6659,36 +7009,36 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="187"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="151"/>
         <source>Loading layers from selected databases... </source>
         <translation>Carregando camadas dos bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="215"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="180"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erros:</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="217"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="182"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="219"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="184"/>
         <source>Error for database </source>
         <translation>Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="230"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="195"/>
         <source>Select Style</source>
         <translation>Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="234"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="199"/>
         <source>No available styles</source>
         <translation>Sem estilos disponíveis</translation>
     </message>
@@ -6706,6 +7056,38 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="168"/>
         <source>Area</source>
         <translation type="obsolete">Área</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="122"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="122"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="122"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="122"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="122"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -7524,17 +7906,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
 <context>
     <name>PostGISLayerLoader</name>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/postgisLayerLoader.py" line="129"/>
+        <location filename="../Factories/LayerLoaderFactory/postgisLayerLoader.py" line="134"/>
         <source>Domains</source>
         <translation>Domínios</translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/postgisLayerLoader.py" line="160"/>
+        <location filename="../Factories/LayerLoaderFactory/postgisLayerLoader.py" line="169"/>
         <source>Error for layer </source>
         <translation>Erro para a camada </translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/postgisLayerLoader.py" line="150"/>
+        <location filename="../Factories/LayerLoaderFactory/postgisLayerLoader.py" line="155"/>
         <source>Loading layers... </source>
         <translation>Carregando Camadas... </translation>
     </message>
@@ -7542,7 +7924,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
 <context>
     <name>PostGISSqlGenerator</name>
     <message>
-        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1123"/>
+        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1130"/>
         <source>Setting type not defined!</source>
         <translation>Tipo de ajuste não definido!</translation>
     </message>
@@ -7563,52 +7945,52 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1957"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1956"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="502"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="504"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="598"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="600"/>
         <source>Problem assigning profile: </source>
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="616"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="618"/>
         <source>Problem removing profile: </source>
         <translation>Problema removendo perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="629"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="631"/>
         <source>Problem altering user&apos;s password: </source>
         <translation>Problema alterando senha do usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="643"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="645"/>
         <source>Problem creating user: </source>
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2502"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2569"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="668"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="670"/>
         <source>Problem granting profile: </source>
         <translation>Problema ao atribuir perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="681"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="683"/>
         <source>Problem revoking profile: </source>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="838"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="840"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
     </message>
@@ -7618,7 +8000,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema acessando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="862"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="864"/>
         <source>Problem creating views: </source>
         <translation>Problema criando visões: </translation>
     </message>
@@ -7643,47 +8025,47 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1963"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1962"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="421"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="423"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema obtendo a coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="469"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="471"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2492"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2559"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="534"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="536"/>
         <source>Problem getting user roles: </source>
         <translation>Problema ao obter permissões de usuários: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="558"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="560"/>
         <source>Problem getting roles: </source>
         <translation>Problema ao obter permissões: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="713"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="715"/>
         <source>Problem getting role privileges: </source>
         <translation>Problema ao obter privilégios da permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="765"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="767"/>
         <source>Problem getting EDGV databases: </source>
         <translation>Problema ao obter bancos EDGV: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="785"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="787"/>
         <source>Problem opening EDGV databases: </source>
         <translation>Problema ao abrir bancos EDGV: </translation>
     </message>
@@ -7693,57 +8075,57 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema ao acessar bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="807"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="809"/>
         <source>Problem getting databases: </source>
         <translation>Problema ao obter bancos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="825"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="827"/>
         <source>Problem checking user: </source>
         <translation>Problema ao checar usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="891"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="893"/>
         <source>Problem getting invalid geometries: </source>
         <translation>Problema obtendo geometrias inválidas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="926"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="928"/>
         <source>Problem inserting flags: </source>
         <translation>Problema inserindo flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="946"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="948"/>
         <source>Problem deleting flags: </source>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="972"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="974"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1000"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1002"/>
         <source>Problem acquiring status: </source>
         <translation>Problema adquirindo status: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1015"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1017"/>
         <source>Problem setting status: </source>
         <translation>Problema ajustando o status: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1025"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1027"/>
         <source>Problem getting running process: </source>
         <translation>Problema obtendo processo atual: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1054"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1056"/>
         <source>Problem testing spatial rule: </source>
         <translation>Problema testando regra espacial: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1073"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1075"/>
         <source>Problem getting dimension: </source>
         <translation>Problema obtendo dimensão: </translation>
     </message>
@@ -7758,222 +8140,222 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1155"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1154"/>
         <source>Problem getting small areas: </source>
         <translation>Problema obtendo áreas pequenas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1174"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1173"/>
         <source>Problem getting small lines: </source>
         <translation>Problema obtendo linhas pequenas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1199"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1198"/>
         <source>Problem preparing auxiliary structure: </source>
         <translation>Problema preparando estrutura auxiliar: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1208"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1207"/>
         <source>Problem getting vertex near edges: </source>
         <translation>Problema obtendo vértice próximo à arestas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1234"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1233"/>
         <source>Problem deleting features from </source>
         <translation>Problema deletando feições de </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1253"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1251"/>
         <source>Problem getting not simple geometries: </source>
         <translation>Problema obtendo geometrias não simples: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1272"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1271"/>
         <source>Problem getting not out of bounds angles: </source>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1289"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1288"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1320"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1319"/>
         <source>Problem forcing validity of features from </source>
         <translation>Problema forçando validade de feições de  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1335"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1334"/>
         <source>Problem getting table extent: </source>
         <translation>Problema obtendo extensão da tabela: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1368"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1367"/>
         <source>Problem getting orphan tables: </source>
         <translation>Problema obtendo tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1375"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1374"/>
         <source>Problem counting orphan table: </source>
         <translation>Problema contando tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1398"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1397"/>
         <source>Problem updating geometries: </source>
         <translation>Problema atualizando geometrias: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1404"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1403"/>
         <source>Problem deleting geometries: </source>
         <translation>Problema deletando geometrias: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1416"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1415"/>
         <source>Problem checking structure: </source>
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1448"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1447"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1468"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1467"/>
         <source>Problem getting earth coverage tables: </source>
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1566"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1565"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1499"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1498"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1542"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1541"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1584"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1583"/>
         <source>Problem getting class name: </source>
         <translation>Problema obtendo nome da classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1613"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1612"/>
         <source>Problem snapping to grid: </source>
         <translation>Problema ao realizar snap para o grid: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1634"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1633"/>
         <source>Problem snapping to frame: </source>
         <translation>Problema ao realizar snap para a moldura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1651"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1650"/>
         <source>Problem densifying frame: </source>
         <translation>Problema densificando moldura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1669"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1668"/>
         <source>Problem creating recursive snap function: </source>
         <translation>Problema criando função de snap recursivo: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1675"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1674"/>
         <source>Problem snapping class: </source>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2519"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2586"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="693"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="695"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2537"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2604"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="774"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="776"/>
         <source>Reading selected databases... </source>
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1711"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1710"/>
         <source>Problem creating temp table: </source>
         <translation>Problema criando tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1748"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1747"/>
         <source>Problem populating temp table: </source>
         <translation>Problema populando tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1753"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1752"/>
         <source>Problem creating spatial index on temp table: </source>
         <translation>Problema criando índice espacial na tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1766"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1765"/>
         <source>Problem dropping temp table: </source>
         <translation>Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1798"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1797"/>
         <source>Problem creating style table: </source>
         <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1787"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1786"/>
         <source>Problem getting style table: </source>
         <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1917"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1916"/>
         <source>Problem getting styles from db: </source>
         <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1869"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1868"/>
         <source>Problem importing style</source>
         <translation>Problema importanto estilo</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1879"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1878"/>
         <source>Style </source>
         <translation>Estilo </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1879"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1878"/>
         <source> does not match the version of database </source>
         <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1896"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1895"/>
         <source>Problem importing style </source>
         <translation>Problema importando estilos </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1942"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1941"/>
         <source>Problem running sql </source>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2204"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2206"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2005"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2004"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
@@ -7983,281 +8365,286 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2228"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2230"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2251"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2253"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2277"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2344"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2294"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2361"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2306"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2373"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2326"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2393"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2347"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2414"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2360"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2427"/>
         <source>Problem setting srid: </source>
         <translation>Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2373"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2440"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2557"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2624"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2419"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2486"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2460"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2527"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2460"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2527"/>
         <source> Db will be dropped.</source>
         <translation>Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2478"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2545"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1087"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1089"/>
         <source>Problem exploding candidates: </source>
         <translation>Problema explodindo candidatos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1593"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1592"/>
         <source>Problem getting db oid: </source>
         <translation>Problema obtendo oid do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1903"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1902"/>
         <source>Problem getting table schema from db: </source>
         <translation>Problema obtendo esquema de tabela do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2157"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2159"/>
         <source>Error parsing check constraint!
 </source>
         <translation>Erro ao ler check constraint!
 </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2428"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2495"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2567"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2634"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2581"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2648"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2920"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2987"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2600"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2667"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2611"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2678"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2621"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2688"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2633"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2700"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2648"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2715"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2659"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2726"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2678"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2745"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2688"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2755"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2702"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2769"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2716"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2783"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2780"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2847"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2818"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2885"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2879"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2946"/>
         <source>Problem constraint dict from db: </source>
         <translation>Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2909"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2976"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2924"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2991"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2924"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2991"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2943"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3010"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2955"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3024"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2970"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3039"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2983"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3052"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2992"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3061"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3018"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3087"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3034"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3103"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3043"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3112"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3058"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3127"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3071"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3140"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3079"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3148"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3088"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3157"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3108"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3177"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3149"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3218"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3158"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3227"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2217"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2219"/>
         <source>Problem getting tables dict from db: </source>
         <translation>Problema obtendo tabelas do bd: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2342"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2409"/>
         <source>Version Required!</source>
         <translation>É obrigatório informar a versão! </translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2284"/>
+        <source>Problem getting geom tuple list: </source>
+        <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
 </context>
 <context>
@@ -8311,9 +8698,41 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Selecione as Classes</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="93"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="96"/>
         <source>Select layers to be snapped</source>
         <translation>Selecione as camadas a serem atraídas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
+        <source>Geometry
+Type</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -8605,17 +9024,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="75"/>
         <source> duplicated features from </source>
-        <translation>feições duplicadas da camada </translation>
+        <translation> feições duplicadas da camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="75"/>
         <source> were removed.</source>
-        <translation>foram removidas.</translation>
+        <translation> foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="76"/>
         <source> duplicated features were removed.</source>
-        <translation>feições duplicadas foram removidas.</translation>
+        <translation> feições duplicadas foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -8626,17 +9045,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Remover geometrias vazias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -8646,29 +9065,61 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Banco de dados vazio</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="71"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="73"/>
         <source>Process executed successfully!</source>
         <translation>Processo executado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="52"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="54"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="55"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="58"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="60"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="64"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="66"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -8754,17 +9205,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="78"/>
         <source> features from </source>
-        <translation>feições da camada </translation>
+        <translation> feições da camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="78"/>
         <source> were removed.</source>
-        <translation>foram removidas.</translation>
+        <translation> foram removidas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="79"/>
         <source> features were removed.</source>
-        <translation>feições foram removidas.</translation>
+        <translation> feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -8827,17 +9278,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="78"/>
         <source> features from </source>
-        <translation>feições da camada </translation>
+        <translation> feições da camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="78"/>
         <source> were changed.</source>
-        <translation>foram modificadas.</translation>
+        <translation> foram modificadas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="79"/>
         <source> features were removed.</source>
-        <translation>feições foram removidas.</translation>
+        <translation> feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -9193,7 +9644,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="192"/>
         <source> created successfully!</source>
-        <translation>criado com sucesso!</translation>
+        <translation> criado com sucesso!</translation>
     </message>
     <message>
         <location filename="../UserTools/serverProfilesManager.py" line="253"/>
@@ -9448,17 +9899,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Colar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="80"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="80"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="80"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="82"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -9483,45 +9934,77 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Não há erros de snap em {}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="113"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="112"/>
         <source>There are snapping errors. Check log.</source>
         <translation>Há erros de snap. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="115"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="114"/>
         <source>There are no snapping errors.</source>
         <translation>Não há erros de snap.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="84"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="86"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="85"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="87"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="62"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="64"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
         <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="109"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="108"/>
         <source> feature(s) of layer </source>
-        <translation>feição(ões) da camada </translation>
+        <translation> feição(ões) da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="109"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="108"/>
         <source> with snapping errors. Check flags.</source>
-        <translation>com problemas de atração. Verifique as flags.</translation>
+        <translation> com problemas de atração. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="111"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="110"/>
         <source>There are no snapping errors on </source>
         <translation>Não há problemas de atração na camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -9579,13 +10062,13 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="87"/>
         <source> snapped to reference </source>
-        <translation>atraídas para a referência </translation>
+        <translation> atraídas para a referência </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="87"/>
         <source> succesfully.
 </source>
-        <translation>com sucesso.</translation>
+        <translation> com sucesso.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="75"/>
@@ -9671,20 +10154,20 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="33"/>
         <source>Snap to Grid</source>
-        <translation>Colar na grade</translation>
+        <translation type="obsolete">Colar na grade</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="49"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="47"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="49"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="49"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="51"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -9704,12 +10187,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Todas as feições foram coladas com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="52"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="54"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="53"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="55"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
@@ -9719,29 +10202,66 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Todas as feições de {} coladas no grid com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="60"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="62"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="71"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="72"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="83"/>
         <source>All features from </source>
         <translation>Todas as feições de </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="80"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="81"/>
         <source> snapped to grid successfully.</source>
-        <translation>atraídas à grade com sucesso.</translation>
+        <translation> atraídas à grade com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="83"/>
         <source> snapped successfully.</source>
-        <translation>atraídas com sucesso.</translation>
+        <translation> atraídas com sucesso.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="33"/>
+        <source>Snap to Grid (adjust coordinates precision)</source>
+        <translation>Colar na grade (ajustar precisão de coordenadas)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
     </message>
 </context>
 <context>
@@ -9934,6 +10454,11 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source>Problem getting full table name: </source>
         <translation>Problema obtendo nome completo da tabela: </translation>
     </message>
+    <message>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="534"/>
+        <source>Problem getting geom tuple list: </source>
+        <translation>Problema ao obter a lista de tuplas geometricas: </translation>
+    </message>
 </context>
 <context>
     <name>SpatialiteLayer</name>
@@ -9994,22 +10519,22 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Carregando o estilo {0}</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="105"/>
+        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="106"/>
         <source>Error setting style </source>
         <translation>Erro ao ajustar o estilo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="171"/>
+        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="172"/>
         <source>Select Style</source>
         <translation>Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="137"/>
+        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="138"/>
         <source>No available styles</source>
         <translation>Sem estilos disponíveis</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="156"/>
+        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="157"/>
         <source>Feature only implemented for PostGIS and Spatialite</source>
         <translation>Funcionalidade implementada apenas para PostGIS e Spatialite</translation>
     </message>
@@ -10053,65 +10578,102 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Limpeza Topológica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="63"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="65"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
         <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="76"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="78"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="76"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="78"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="80"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="82"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="84"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="83"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="85"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="104"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="109"/>
         <source>Cleaning error.</source>
         <translation>Erro de limpeza.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="107"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="112"/>
         <source> feature(s) from </source>
-        <translation>feição(ões) da camada </translation>
+        <translation> feição(ões) da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="107"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="112"/>
         <source> with cleaning errors. Check flags.</source>
-        <translation>com erros de limpeza. Verifique as flags.</translation>
+        <translation> com erros de limpeza. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="109"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="115"/>
         <source>There are no cleaning errors on </source>
         <translation>Não há erros de limpeza em </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="112"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="118"/>
         <source>There are cleaning errors. Check log.</source>
         <translation>Não há erros de limpeza. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="114"/>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="120"/>
         <source>There are no cleaning errors.</source>
         <translation>Não há erros de limpeza.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="101"/>
+        <source>Error while trying to remove coverage layer.</source>
+        <translation>Erro ao tentar remover camada de cobertura. </translation>
     </message>
 </context>
 <context>
@@ -10258,6 +10820,21 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source>A problem occurred inserting flags! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="371"/>
+        <source>Operation not defined with provided geometry type!</source>
+        <translation>Operação não definida com o tipo geométrico fornecido! </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="383"/>
+        <source>Error! Different geometry primitives!</source>
+        <translation>Erro! Primitivas geométricas diferentes!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="400"/>
+        <source>Building unified layers with  </source>
+        <translation>Construindo camada unificada com </translation>
+    </message>
 </context>
 <context>
     <name>ValidationToolbox</name>
@@ -10357,7 +10934,7 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Iniciar/Parar Reforçador de Regras Espaciais</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="80"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="81"/>
         <source>Zoom to flag</source>
         <translation>Zoom para a flag</translation>
     </message>
@@ -10372,32 +10949,32 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Marcar não visitado</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="289"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="290"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="232"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="233"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="239"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="240"/>
         <source>Process error. Check log for details.</source>
         <translation>Erro do processo. Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="243"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="244"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="243"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="244"/>
         <source>Process successfully executed!</source>
         <translation>Processo executado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="289"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="290"/>
         <source>Database not loaded or a problem occurred.
 </source>
         <translation>Banco de Dados não carregado ou um problema ocorreu.</translation>
@@ -10423,17 +11000,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Mostrar editor de regras de atributos</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="187"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="188"/>
         <source>Error loading db: </source>
         <translation>Erro carregando db: </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="241"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="242"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="241"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="242"/>
         <source>Process canceled by user!</source>
         <translation>Processo cancelado pelo usuário!</translation>
     </message>

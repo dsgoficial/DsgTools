@@ -232,6 +232,7 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
 					ProductionTools/StyleManagerTool/__init__.py \
 					ProductionTools/StyleManagerTool/styleManagerTool.py \
+					ProductionTools/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
 
 
  FORMS         =	ui_about.ui \
