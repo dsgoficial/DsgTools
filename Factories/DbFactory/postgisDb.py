@@ -1233,7 +1233,7 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return len(idList)
 
-    def getNotSimpleRecords(self, classesWithGeom, geometryColumn, keyColumn):
+    def getNotSimpleRecords(self, cl, geometryColumn, keyColumn):
         """
         Gets not simple geometries records
         classesWithGeom: class list
@@ -1241,16 +1241,16 @@ class PostgisDb(AbstractDb):
         keyColumn: pk column
         """
         self.checkAndOpenDb()
-        notSimpleDict = dict()
-        for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getNotSimple(tableSchema, tableName, geometryColumn, keyColumn)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
-            while query.next():
-                notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
-        return notSimpleDict
+        tupleList = []
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getNotSimple(tableSchema, tableName, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
+        while query.next():
+            tupleList.append( (query.value(0),query.value(1)) )
+            # notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
+        return tupleList
 
     def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn):
         """

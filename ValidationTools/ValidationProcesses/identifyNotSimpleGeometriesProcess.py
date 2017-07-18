@@ -56,7 +56,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
-            notSimpleRecordList = []
+            recordFlagList = []
             for key in classesWithElem:
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
@@ -66,27 +66,22 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 localProgress.step()
                     
                 # running the process
-                localProgress = ProgressWidget(0, 1, self.tr('Running process ') + cl, parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                result = self.abstractDb.getNotSimpleRecords(classesWithGeom, geometryColumn, keyColumn)
+                result = self.abstractDb.getNotSimpleRecords(processTableName, classAndGeom['geom'], keyColumn)
                 localProgress.step()
-
-            # dropping temp table
-            for processTableName in classesWithGeom:
+                # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)
+                #storing flags
+                if len(result) > 0:
+                    if classAndGeom['tableSchema'] not in ('validation'):
+                        for r in result:
+                            id, geom = r
+                            recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, self.tr('Not simple geometry.'), geom, classAndGeom['geom']))
 
             # storing flags
-            if len(result.keys()) > 0:
-                recordList = []
-                for cl in result.keys():
-                    tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                    # the flag should store the original table name
-                    tableName = tableName.replace('_temp', '')
-                    for id in result[cl].keys():
-                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Not simple geometry.'), result[cl][id], geometryColumn))
-                numberOfProblems = self.addFlag(recordList)
-                for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])
+            if len(recordFlagList) > 0:
+                numberOfProblems = self.addFlag(recordFlagList)
                 msg = str(numberOfProblems) + self.tr(' features are not simple. Check flags.')        
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
