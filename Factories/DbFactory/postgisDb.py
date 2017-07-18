@@ -1252,7 +1252,7 @@ class PostgisDb(AbstractDb):
             # notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
         return tupleList
 
-    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn):
+    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, geomType, keyColumn):
         """
         Gets records with anchor points (points between segments) that are out of bounds (i.e outside a limit tolerance)
         tableSchema: table schema
@@ -1263,7 +1263,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         result = []
-        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol, geometryColumn, keyColumn)
+        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol, geometryColumn, geomType, keyColumn)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())

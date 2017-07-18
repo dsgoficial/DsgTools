@@ -558,8 +558,8 @@ class PostGISSqlGenerator(SqlGenerator):
         where ST_IsSimple("{2}") = 'f') as foo where st_equals(st_startpoint(foo."{2}"),st_endpoint(foo."{2}"))""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
 
-    def getOutofBoundsAngles(self, tableSchema, tableName, angle, geometryColumn, keyColumn):
-        if tableName.split('_')[-2] == 'l':
+    def getOutofBoundsAngles(self, tableSchema, tableName, angle, geometryColumn, geomType, keyColumn):
+        if 'LINESTRING' in geomType:
             sql = """
             WITH result AS (SELECT points."{4}", points.anchor, (degrees
                                         (
@@ -576,7 +576,7 @@ class PostGISSqlGenerator(SqlGenerator):
                                FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
             select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
-        elif  tableName.split('_')[-2] == 'a':
+        elif  'POLYGON' in geomType:
             sql = """
             WITH result AS (SELECT points."{4}", points.anchor, (degrees
                                         (
