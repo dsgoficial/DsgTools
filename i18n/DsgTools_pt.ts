@@ -1368,21 +1368,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo do
+        <translation>Tipo do 
 Layer</translation>
     </message>
 </context>
@@ -2763,21 +2763,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo do
+        <translation>Tipo do 
 Layer</translation>
     </message>
 </context>
@@ -3784,21 +3784,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation>Tipo do
+        <translation>Tipo do 
 Layer</translation>
     </message>
 </context>
@@ -5814,21 +5814,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
     <message>
@@ -5909,21 +5909,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
     <message>
@@ -6014,21 +6014,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -6134,21 +6134,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -6229,21 +6229,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -6334,21 +6334,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -6459,21 +6459,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyVertexNearEdgeProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -8717,21 +8717,21 @@ Camada</translation>
         <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
         <source>Geometry
 Type</source>
-        <translation>Coluna
-Geométrica</translation>
+        <translation>Tipo 
+Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/processParametersDialog.py" line="91"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -9104,21 +9104,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -9989,21 +9989,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -10246,21 +10246,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -10653,21 +10653,21 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
     <message>
