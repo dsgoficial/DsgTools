@@ -129,6 +129,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         """
         #1- filter classes if categories is checked and build list.
         selectedKeys = self.layersCustomSelector.getSelectedNodes()
+        if len(selectedKeys) == 0:
+            QMessageBox.information(self, self.tr('Error!'), self.tr('Select at least one layer to be loaded!'))
+            return
 
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
@@ -152,7 +155,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                selectedClasses = [self.lyrDict[i][dbName] for i in selectedKeys]
+                selectedClasses = []
+                for i in selectedKeys:
+                    if i in self.lyrDict.keys():
+                        if dbName in self.lyrDict[i].keys():
+                            selectedClasses.append(self.lyrDict[i][dbName])
                 factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, parent=self)
                 progress.step()
             except Exception as e:

@@ -111,15 +111,17 @@ class EDGVLayerLoader(QObject):
         isEdgv: optional parameter to indicate when db is not edgv. If db is not edgv, layers will be grouped by schema.
         """
         lyrDict = dict()
-        if isinstance(inputList[0],dict):
-            for elem in inputList:
-                if elem['geomType'] == 'GEOMETRY':
-                    continue
-                if self.correspondenceDict[elem['geomType']] not in lyrDict.keys():
-                    lyrDict[self.correspondenceDict[elem['geomType']]] = dict()
-                if elem['cat'] not in lyrDict[self.correspondenceDict[elem['geomType']]].keys():
-                    lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']] = []
-                lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
+        if isinstance(inputList, list):
+            if len(inputList) > 0:
+                if isinstance(inputList[0],dict):
+                    for elem in inputList:
+                        if elem['geomType'] == 'GEOMETRY':
+                            continue
+                        if self.correspondenceDict[elem['geomType']] not in lyrDict.keys():
+                            lyrDict[self.correspondenceDict[elem['geomType']]] = dict()
+                        if elem['cat'] not in lyrDict[self.correspondenceDict[elem['geomType']]].keys():
+                            lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']] = []
+                        lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
         else:
             for type in self.geomTypeDict.keys():
                 # some tables are only registered as GEOMETRY and should not be considered
