@@ -35,11 +35,13 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Classes': classesWithElem, 'MaxDissolveArea': -1.0}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Classes': interfaceDictList, 'MaxDissolveArea': -1.0}
 
     def postProcess(self):
         """
@@ -118,10 +120,10 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
                 return 1
             error = False
             classlist = []
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                lyr = self.loadLayerBeforeValidationProcess(cl)
+                classAndGeom = self.classesWithElemDict[key]
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 output = self.runProcessinAlg(lyr)
 
             if error:

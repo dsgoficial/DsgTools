@@ -34,11 +34,13 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
 
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Classes': interfaceDictList}
 
     def execute(self):
         """
@@ -54,38 +56,32 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
-            for classAndGeom in classesWithElem:
+            recordFlagList = []
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                classAndGeom = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
-                if processTableName not in classesWithGeom:
-                    classesWithGeom.append(processTableName)
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
                 localProgress.step()
                     
-            # running the process
-            localProgress = ProgressWidget(0, 1, self.tr('Running process ') + cl, parent=self.iface.mapCanvas())
-            localProgress.step()
-            result = self.abstractDb.getNotSimpleRecords(classesWithGeom, geometryColumn, keyColumn)
-            localProgress.step()
-
-            # dropping temp table
-            for processTableName in classesWithGeom:
+                # running the process
+                localProgress = ProgressWidget(0, 1, self.tr('Running process ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
+                localProgress.step()
+                result = self.abstractDb.getNotSimpleRecords(processTableName, classAndGeom['geom'], keyColumn)
+                localProgress.step()
+                # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)
+                #storing flags
+                if len(result) > 0:
+                    if classAndGeom['tableSchema'] not in ('validation'):
+                        for r in result:
+                            id, geom = r
+                            recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, self.tr('Not simple geometry.'), geom, classAndGeom['geom']))
 
             # storing flags
-            if len(result.keys()) > 0:
-                recordList = []
-                for cl in result.keys():
-                    tableSchema, tableName = self.abstractDb.getTableSchema(cl)
-                    # the flag should store the original table name
-                    tableName = tableName.replace('_temp', '')
-                    for id in result[cl].keys():
-                        recordList.append((tableSchema+'.'+tableName, id, self.tr('Not simple geometry.'), result[cl][id], geometryColumn))
-                numberOfProblems = self.addFlag(recordList)
-                for tuple in recordList:
-                    self.addClassesToBeDisplayedList(tuple[0])
+            if len(recordFlagList) > 0:
+                numberOfProblems = self.addFlag(recordFlagList)
                 msg = str(numberOfProblems) + self.tr(' features are not simple. Check flags.')        
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -30,15 +30,17 @@ class SnapToGridProcess(ValidationProcess):
         Constructor
         """
         super(self.__class__,self).__init__(postgisDb, iface, instantiating)
-        self.processAlias = self.tr('Snap to Grid')
+        self.processAlias = self.tr('Snap to Grid (adjust coordinates precision)')
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Snap': 0.001, 'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Snap': 0.001, 'Classes': interfaceDictList}
 
     def execute(self):
         """
@@ -54,32 +56,31 @@ class SnapToGridProcess(ValidationProcess):
                 return 1
             #getting parameters
             tol = self.parameters['Snap']
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                classAndGeom = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
                 localProgress.step()
                 
-                tableSchema, tableName = cl.split('.')
                 # specific EPSG search
-                parameters = {'tableSchema': tableSchema, 'tableName': tableName, 'geometryColumn': geometryColumn}
-                srid = self.abstractDb.findEPSG(parameters=parameters)                
+                parameters = {'tableSchema': classAndGeom['tableSchema'], 'tableName': classAndGeom['tableName'], 'geometryColumn': classAndGeom['geom']}
+                srid = self.abstractDb.findEPSG(parameters=parameters)                        
 
                 #running the process in the temp table
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + cl, parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                self.abstractDb.snapToGrid([processTableName], tol, srid, geometryColumn)
+                self.abstractDb.snapToGrid([processTableName], tol, srid, classAndGeom['geom'])
                 localProgress.step()
 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 
                 #setting status
-                QgsMessageLog.logMessage(self.tr('All features from ') + cl + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             #returning success
-            self.setStatus(self.tr('All features from ') + cl + self.tr(' snapped successfully.'), 1) #Finished
+            self.setStatus(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped successfully.'), 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

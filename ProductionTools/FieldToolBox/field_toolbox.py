@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QPushButton
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig
+from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer
 from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
@@ -308,8 +308,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         featureId: added feature
         """
         layer = self.sender()
-        layer.beginEditCommand(self.tr('DsgTools reclassification'))
-        self.addedFeatures.append(featureId)
+        if isinstance(layer, QgsVectorLayer):
+            layer.beginEditCommand(self.tr('DsgTools reclassification'))
+            self.addedFeatures.append(featureId)
 
     def updateAttributesAfterAdding(self):
         """

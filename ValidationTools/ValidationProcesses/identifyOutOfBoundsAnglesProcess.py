@@ -34,11 +34,13 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Angle': 10.0, 'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Angle': 10.0, 'Classes': interfaceDictList}
 
     def execute(self):
         """
@@ -55,19 +57,19 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 return 1
             tol = self.parameters['Angle']
             error = False
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ')+cl, parent=self.iface.mapCanvas())
+                classAndGeom = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
                 tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
                 localProgress.step()
                 
                 # running the process
-                localProgress = ProgressWidget(0, 1, self.tr('Running process on ')+cl, parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Running process on ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                result = self.abstractDb.getOutOfBoundsAnglesRecords(tableSchema, tableName, tol, geometryColumn, keyColumn)
+                result = self.abstractDb.getOutOfBoundsAnglesRecords(classAndGeom['tableSchema'], classAndGeom['tableName'], tol, classAndGeom['geom'], classAndGeom['geomType'], keyColumn)
                 localProgress.step()
 
                 # dropping temp table
@@ -78,12 +80,12 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((cl, tupple[0], self.tr('Angle out of bound.'), tupple[1], geometryColumn))
+                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], tupple[0], self.tr('Angle out of bound.'), tupple[1], classAndGeom['geom']))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + cl + self.tr(' have out of bounds angle(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] + self.tr(' have out of bounds angle(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
-                    QgsMessageLog.logMessage(self.tr('There are no out of bounds angles on ') + cl + '.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('There are no out of bounds angles on ') + classAndGeom['tableName'] + '.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
                 self.setStatus(self.tr('There are features with angles out of bounds. Check log.'), 4) #Finished with errors
             else:

@@ -520,4 +520,20 @@ class SpatialiteDb(AbstractDb):
             raise Exception(self.tr("Problem getting full table name: ")+query.lastError().text())
         while query.next():
             return query.value(0).split('_')[0]
+    
+    def getGeomColumnTupleList(self, showViews = False):
+        """
+        list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
+        centroids are hidden by default
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomColumnTupleList()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
+        geomList = []
+        while query.next():
+            geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
+        return geomList
+    
         

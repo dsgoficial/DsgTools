@@ -301,12 +301,15 @@ class ValidationProcess(QObject):
         Loads all layers to QGIS' TOC prior the validation process
         """
         #creating vector layer
-        schema, layer_name = self.abstractDb.getTableSchema(cl)
         if self.abstractDb.getDatabaseVersion() == 'Non_EDGV':
             isEdgv = False
         else:
             isEdgv = True
-        lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
+        if isinstance(cl, dict):
+            lyr = self.layerLoader.load([cl], uniqueLoad=True, isEdgv=isEdgv)[cl['lyrName']]
+        else:
+            schema, layer_name = self.abstractDb.getTableSchema(cl)
+            lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
         return lyr
     
     def prepareExecution(self, cl, geometryColumn='geom'):
@@ -322,15 +325,22 @@ class ValidationProcess(QObject):
         #getting feature map including the edit buffer
         featureMap = self.mapInputLayer(lyr)
         #getting table name with schema
-        tableName = self.getTableNameFromLayer(lyr)
+        if isinstance(cl, dict):
+            tableSchema = cl['tableSchema']
+            tableName = cl['tableName']
+            geometryColumn = cl['geom']
+            fullTableName = '''{0}.{1}'''.format(cl['tableSchema'], cl['tableName'])
+        else:
+            fullTableName = cl
+            tableSchema, tableName = cl.split('.')
+
         #setting temp table name
-        processTableName = tableName+'_temp'
+        processTableName = fullTableName+'_temp'
         # specific EPSG search
-        ts, tn = cl.split('.')
-        parameters = {'tableSchema':ts, 'tableName':tn, 'geometryColumn':geometryColumn}
+        parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':geometryColumn}
         srid = self.abstractDb.findEPSG(parameters=parameters)
         #creating temp table
-        self.abstractDb.createAndPopulateTempTableFromMap(tableName, featureMap, geometryColumn, keyColumn, srid)
+        self.abstractDb.createAndPopulateTempTableFromMap(fullTableName, featureMap, geometryColumn, keyColumn, srid)
         return processTableName, lyr, keyColumn
     
     def postProcessSteps(self, processTableName, lyr):

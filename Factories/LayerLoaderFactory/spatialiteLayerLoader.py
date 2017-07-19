@@ -73,7 +73,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                     return ll
         return loaded
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
+    def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
         """
         1. Get loaded layers
         2. Filter layers;
@@ -82,12 +82,17 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
+        layerList, isDictList = self.preLoadStep(inputList)
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
-        #4. Filter Layers:
+        #2. Filter Layers:
         filteredLayerList = self.filterLayerList(layerList, False, onlyWithElements, geomFilterList)
-        #2. Load Domains
+        if isDictList:
+            filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList]
+        else:
+            filteredDictList = filteredLayerList
+        #3. Load Domains
         #do this only if EDGV Version = FTer
         edgvVersion = self.abstractDb.getDatabaseVersion()
         dbGroup = self.getDatabaseGroup(loadedGroups)
@@ -96,11 +101,11 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         else:
             domLayerDict = dict()
-        #3. Get Aux dicts
+        #4. Get Aux dicts
 
-        lyrDict = self.getLyrDict(filteredLayerList, isEdgv = isEdgv)
+        lyrDict = self.getLyrDict(filteredDictList, isEdgv = isEdgv)
         
-        #4. Build Groups
+        #5. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
         #5. load layers
         if parent:
@@ -116,7 +121,13 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 for lyr in lyrDict[prim][cat]:
                     try:
                         vlayer = self.loadLayer(lyr, loadedLayers, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
-                        loadedDict[lyr]=vlayer
+                        if vlayer:
+                            loadedLayers.append(vlayer)
+                            if isinstance(lyr, dict):
+                                key = lyr['lyrName']
+                            else:
+                                key = lyr
+                            loadedDict[key]=vlayer
                     except Exception as e:
                         self.logErrorDict[lyr] = self.tr('Error for layer ')+lyr+': '+':'.join(e.args)
                         self.logError()
@@ -124,7 +135,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                         localProgress.step()
         return loadedDict
 
-    def loadLayer(self, lyrName, loadedLayers, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
+    def loadLayer(self, inputParam, loadedLayers, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
         """
         Loads a layer
         :param lyrName: Layer nmae
@@ -135,16 +146,25 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         :param domLayerDict: domain dictionary
         :return:
         """
+        if isinstance(inputParam,dict):
+            lyrName = inputParam['lyrName']
+            schema = inputParam['tableSchema']
+            geomColumn = inputParam['geom']
+            tableName = inputParam['tableName']
+            srid =  self.geomDict['tablePerspective'][tableName]['srid']
+        else:
+            lyrName = inputParam
+            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
+            schema = self.geomDict['tablePerspective'][lyrName]['schema']
+            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
+            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
         if uniqueLoad:
             lyr = self.checkLoaded(lyrName, loadedLayers)
             if lyr:
                 return lyr
-        tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
-        geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
-        srid =  self.geomDict['tablePerspective'][lyrName]['srid']
-        self.setDataSource('', tableName, geomColumn, '')
+        self.setDataSource('', '_'.join([schema,tableName]), geomColumn, '')
 
-        vlayer = iface.addVectorLayer(self.uri.uri(), lyrName, self.provider)
+        vlayer = iface.addVectorLayer(self.uri.uri(), tableName, self.provider)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         vlayer.setCrs(crs)
         vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)

@@ -195,4 +195,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getFullTablesName(self, name):
         sql = "SELECT f_table_name as name FROM geometry_columns WHERE f_table_name LIKE '%{0}%' ORDER BY name".format(name)
         return sql
-    
+
+    def getGeomColumnTupleList(self, showViews = False):
+        sql = """select f_table_name, f_geometry_column, type from geometry_columns"""
+        return sql

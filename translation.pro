@@ -235,6 +235,7 @@
 					ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
 
 
+
  FORMS         =	ui_about.ui \
 					ValidationTools/validation_config.ui \
 					ValidationTools/validation_history.ui \

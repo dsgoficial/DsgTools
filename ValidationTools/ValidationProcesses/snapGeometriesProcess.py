@@ -34,11 +34,13 @@ class SnapGeometriesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a', 'l'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': classesWithElem}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList}
         
     def runProcessinAlg(self, layer):
         """
@@ -85,14 +87,12 @@ class SnapGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
-            for classAndGeom in classesWithElem:
+            for key in classesWithElem:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                lyr = self.loadLayerBeforeValidationProcess(cl)
-                
-                tableSchema, tableName = cl.split('.')
+                classAndGeom = self.classesWithElemDict[key]
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 # specific EPSG search
-                parameters = {'tableSchema': tableSchema, 'tableName': tableName, 'geometryColumn': geometryColumn}
+                parameters = {'tableSchema': classAndGeom['tableSchema'], 'tableName': classAndGeom['tableName'], 'geometryColumn': classAndGeom['geom']}
                 srid = self.abstractDb.findEPSG(parameters=parameters)                        
 
                 # running the process in the temp table
@@ -103,12 +103,11 @@ class SnapGeometriesProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((cl, tupple[0], self.tr('Snapping error.'), tupple[1], geometryColumn))
-                        self.addClassesToBeDisplayedList(cl) 
+                        recordList.append((classAndGeom['tableSchema'] +'.'+classAndGeom['tableName'], tupple[0], self.tr('Snapping error.'), tupple[1], classAndGeom['geom'])) 
                     numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) of layer ') + cl + self.tr(' with snapping errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) of layer ') + classAndGeom['tableName'] + self.tr(' with snapping errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
-                    QgsMessageLog.logMessage(self.tr('There are no snapping errors on ') + cl +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('There are no snapping errors on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
                 self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
             else:

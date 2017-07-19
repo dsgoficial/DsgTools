@@ -1126,44 +1126,41 @@ class PostgisDb(AbstractDb):
         
         return uri
     
-    def getDuplicatedGeomRecords(self, classesWithGeom, geometryColumn, keyColumn):
+    def getDuplicatedGeomRecords(self, cl, geometryColumn, keyColumn):
         """
         Gets duplicated records
-        classesWithGeom: list of classes with geomtries
+        cl: class to be checked
         geometryColumn: geometryColumn
         keyColumn: pk column
         """
         self.checkAndOpenDb()
-        duplicatedDict = dict()
-        for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
-            if tableSchema not in ('validation'):
-                sql = self.gen.getDuplicatedGeom(tableSchema, tableName, geometryColumn, keyColumn)
-                query = QSqlQuery(sql, self.db)
-                if not query.isActive():
-                    raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
-                while query.next():
-                    duplicatedDict = self.utils.buildNestedDict(duplicatedDict, [cl,query.value(0)], query.value(2))
-        return duplicatedDict
+        tupleList = []
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getDuplicatedGeom(tableSchema, tableName, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
+        while query.next():
+            tupleList.append( (query.value(0),query.value(2)) )
+        return tupleList
 
-    def getSmallAreasRecords(self,classesWithGeom, tol, geometryColumn, keyColumn):
+    def getSmallAreasRecords(self, cl, tol, geometryColumn, keyColumn):
         """
         Gets duplicated records
-        classesWithGeom: list of classes with geometries
+        cl: class to be checked
         geometryColumn: geometryColumn
         keyColumn: pk column
         """
         self.checkAndOpenDb()
-        smallAreasDict = dict()
-        for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getSmallAreas(tableSchema, tableName, tol, geometryColumn, keyColumn)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
-            while query.next():
-                smallAreasDict = self.utils.buildNestedDict(smallAreasDict, [cl,query.value(0)], query.value(1))
-        return smallAreasDict
+        smallAreasTupleList = []
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getSmallAreas(tableSchema, tableName, tol, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
+        while query.next():
+            smallAreasTupleList.append( (query.value(0),query.value(1)) )
+        return smallAreasTupleList
 
     def getSmallLinesRecords(self,classesWithGeom, tol, geometryColumn, keyColumn):
         """
@@ -1244,7 +1241,7 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return len(idList)
 
-    def getNotSimpleRecords(self, classesWithGeom, geometryColumn, keyColumn):
+    def getNotSimpleRecords(self, cl, geometryColumn, keyColumn):
         """
         Gets not simple geometries records
         classesWithGeom: class list
@@ -1252,18 +1249,18 @@ class PostgisDb(AbstractDb):
         keyColumn: pk column
         """
         self.checkAndOpenDb()
-        notSimpleDict = dict()
-        for cl in classesWithGeom:
-            tableSchema, tableName = self.getTableSchema(cl)
-            sql = self.gen.getNotSimple(tableSchema, tableName, geometryColumn, keyColumn)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
-            while query.next():
-                notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
-        return notSimpleDict
+        tupleList = []
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getNotSimple(tableSchema, tableName, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
+        while query.next():
+            tupleList.append( (query.value(0),query.value(1)) )
+            # notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
+        return tupleList
 
-    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn):
+    def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, geomType, keyColumn):
         """
         Gets records with anchor points (points between segments) that are out of bounds (i.e outside a limit tolerance)
         tableSchema: table schema
@@ -1274,7 +1271,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         result = []
-        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol, geometryColumn, keyColumn)
+        sql = self.gen.getOutofBoundsAngles(tableSchema, tableName, tol, geometryColumn, geomType, keyColumn)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
@@ -2266,6 +2263,74 @@ class PostgisDb(AbstractDb):
             geomDict[aux['f2']].append(aux['f1'])
         return geomDict
     
+    def getGeomColumnTupleList(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False):
+        """
+        list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
+        centroids are hidden by default
+        """
+        self.checkAndOpenDb()
+        centroidTableList = []
+        try:
+            edgvVersion = self.getDatabaseVersion()
+            if self.checkIfExistsConfigTable('EarthCoverage'):
+                propertyDict = self.getAllSettingsFromAdminDb('EarthCoverage')
+                propertyName = propertyDict[edgvVersion][0]
+                dbName = self.db.databaseName()
+                settingDict = json.loads(self.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+                earthCoverageDict = settingDict['earthCoverageDict']
+                centroidTableList = [i.split('.')[-1] for i in earthCoverageDict.keys()]
+        except:
+            pass
+        
+        sql = self.gen.getGeomColumnTupleList(showViews = showViews)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
+        localList = []
+        while query.next():
+            if query.value(2) == 'centroid' and query.value(3) == 'POINT' and query.value(1) in centroidTableList:
+                continue
+            else:
+                localList.append((query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)))
+        if not withElements and primitiveFilter == []:
+            return localList
+        if withElements:
+            listWithElements = self.getLayersWithElementsV2([{'tableSchema':i[0],'tableName':i[1]} for i in localList])
+            geomList = [i for i in localList if i[1] in listWithElements]
+        else:
+            geomList = localList
+        if primitiveFilter <> []:
+            geomTypeFilter = []
+            if 'p' in primitiveFilter: 
+                geomTypeFilter.append('POINT')
+                geomTypeFilter.append('MULTIPOINT')
+            if 'l' in primitiveFilter: 
+                geomTypeFilter.append('LINESTRING')
+                geomTypeFilter.append('MULTILINESTRING')
+            if 'a' in primitiveFilter:
+                geomTypeFilter.append('POLYGON')
+                geomTypeFilter.append('MULTIPOLYGON')
+            geomList = [i for i in geomList if i[3] in geomTypeFilter]
+        return geomList
+    
+    def getGeomColumnDictV2(self, showViews = False, hideCentroids = True, primitiveFilter = [], withElements = False, excludeValidation = False):
+        geomList = self.getGeomColumnTupleList(showViews = showViews, hideCentroids = hideCentroids, primitiveFilter = primitiveFilter, withElements = withElements)
+        edgvVersion = self.getDatabaseVersion()
+        lyrDict = dict()
+        for tableSchema, tableName, geom, geomType, tableType in geomList:
+            if excludeValidation:
+                if tableSchema == 'validation':
+                    continue
+            if edgvVersion == 'Non_EDGV':
+                lyrName = tableName
+                cat = tableSchema
+            else:
+                lyrName = '_'.join(tableName.split('_')[1::])
+                cat = tableName.split('_')[0]
+            key = ','.join([cat, lyrName, geom, geomType, tableType])
+            lyrDict[key] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
+        return lyrDict
+
     def getLayersFilterByInheritance(self, layerList):
         filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
         filtered = []
@@ -2957,6 +3022,8 @@ class PostgisDb(AbstractDb):
         Gets role from public.permission_profile and returns a dict with format {edgvVersion:[-list of roles-]}
         """
         self.checkAndOpenDb()
+        if not self.checkIfExistsConfigTable(settingType):
+            return dict()
         sql = self.gen.getAllSettingsFromAdminDb(settingType)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():

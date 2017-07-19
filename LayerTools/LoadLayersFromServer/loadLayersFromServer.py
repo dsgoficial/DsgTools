@@ -59,8 +59,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.dbDictChanged.connect(self.updateLayersFromDbs)
         self.customServerConnectionWidget.resetAll.connect(self.resetInterface)
         self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
+        self.headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
+        self.layersCustomSelector.setHeaders(self.headerList)
         self.lyrDict = dict()
-        self.changePrimitiveCheckboxState(False)
     
     def resetInterface(self):
         """
@@ -71,7 +72,6 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         #TODO: refresh optional parameters
         self.checkBoxOnlyWithElements.setCheckState(0)
         self.onlyParentsCheckBox.setCheckState(0)
-        self.changePrimitiveCheckboxState(False)
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
@@ -80,7 +80,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         """
         self.close()
     
-    def updateLayersFromDbs(self, type, dbList):
+    def updateLayersFromDbs(self, type, dbList, showViews = False):
         """
         
         """
@@ -91,15 +91,18 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             for dbName in dbList:
                 try:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-                    geomDict = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnDict()
-                    for geom in geomDict.keys():
-                        for lyrName in geomDict[geom]:
-                            if lyrName not in self.lyrDict.keys():
-                                self.lyrDict[lyrName] = dict()
-                                self.lyrDict[lyrName]['dbList'] = []
-                            self.lyrDict[lyrName]['cat'] = lyrName.split('_')[0]
-                            if dbName not in self.lyrDict[lyrName]['dbList']:
-                                self.lyrDict[lyrName]['dbList'].append(dbName)
+                    geomList = self.customServerConnectionWidget.selectedDbsDict[dbName].getGeomColumnTupleList(showViews = showViews)
+                    for tableSchema, tableName, geom, geomType, tableType in geomList:
+                        if self.customServerConnectionWidget.edgvType == 'Non_EDGV':
+                            lyrName = tableName
+                            cat = tableSchema
+                        else:
+                            lyrName = '_'.join(tableName.split('_')[1::])
+                            cat = tableName.split('_')[0]
+                        key = ','.join([cat, lyrName, geom, geomType, tableType])
+                        if key not in self.lyrDict.keys():
+                            self.lyrDict[key] = dict()
+                        self.lyrDict[key][dbName] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
                 except Exception as e:
                     errorDict[dbName] = ':'.join(e.args)
                     QApplication.restoreOverrideCursor()
@@ -107,39 +110,17 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 QApplication.restoreOverrideCursor()
                 
         elif type == 'removed':
-            for lyr in self.lyrDict.keys():
-                popList = []
-                for i in range(len(self.lyrDict[lyr]['dbList'])):
-                    if len(self.lyrDict[lyr]['dbList']) > 0:
-                        if self.lyrDict[lyr]['dbList'][i] in dbList:
-                            popList.append(i)
-                popList.sort(reverse=True)
-                for i in popList:
-                    self.lyrDict[lyr]['dbList'].pop(i)
-                if len(self.lyrDict[lyr]['dbList']) == 0:
-                    self.lyrDict.pop(lyr)
-        self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
-    
-    @pyqtSlot(bool)
-    def on_showCategoriesRadioButton_toggled(self, enabled):
-        """
-        Shows database categories that can be chosen
-        """
-        self.changePrimitiveCheckboxState(enabled)
-        if self.lyrDict != dict():
-            cats = []
-            for lyr in self.lyrDict.keys():
-                 if self.lyrDict[lyr]['cat'] not in cats:
-                     cats.append(self.lyrDict[lyr]['cat'])
-            self.layersCustomSelector.setInitialState(cats,unique = True)
-    
-    @pyqtSlot(bool)
-    def on_showClassesRadioButton_toggled(self):
-        """
-        Shows database classes that can be chosen
-        """
-        if self.lyrDict != dict():
-            self.layersCustomSelector.setInitialState(self.lyrDict.keys(),unique = True)
+            for key in self.lyrDict.keys():
+                for db in self.lyrDict[key].keys():
+                    if db in dbList:
+                        self.lyrDict[key].pop(db)
+                if self.lyrDict[key] == dict():
+                    self.lyrDict.pop(key)
+        interfaceDictList = []
+        for key in self.lyrDict.keys():
+            cat, lyrName, geom, geomType, tableType = key.split(',')
+            interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+        self.layersCustomSelector.setInitialState(interfaceDictList,unique = True)
             
     @pyqtSlot()
     def on_buttonBox_accepted(self):
@@ -147,25 +128,11 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         Loads the selected classes/categories
         """
         #1- filter classes if categories is checked and build list.
-        selected = self.layersCustomSelector.toLs
-        selectedClasses = []
-        if self.showCategoriesRadioButton.isChecked():
-            for lyr in self.lyrDict.keys():
-                if self.lyrDict[lyr]['cat'] in selected and lyr not in selectedClasses:
-                    selectedClasses.append(lyr)
-        else:
-            selectedClasses = self.layersCustomSelector.toLs
-        #1.1- filtering primitives
-        if self.checkBoxPoint.isChecked() and self.checkBoxLine.isChecked() and self.checkBoxPolygon.isChecked():
-            primitives = []
-        else:
-            primitives = []
-            if self.checkBoxPoint.isChecked():
-                primitives.append('Point')
-            if self.checkBoxLine.isChecked():
-                primitives.append('Line')
-            if self.checkBoxPolygon.isChecked():
-                primitives.append('Area')
+        selectedKeys = self.layersCustomSelector.getSelectedNodes()
+        if len(selectedKeys) == 0:
+            QMessageBox.information(self, self.tr('Error!'), self.tr('Select at least one layer to be loaded!'))
+            return
+
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
@@ -175,8 +142,8 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             isEdgv = True
         if self.styleComboBox.currentIndex() != 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
-        onlyParents = self.onlyParentsCheckBox.isChecked()
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
+        onlyParents = self.onlyParentsCheckBox.isChecked()
         #3- Build factory dict
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
@@ -188,7 +155,12 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         for dbName in factoryDict.keys():
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
-                factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, geomFilterList=primitives, isEdgv=isEdgv, parent=self)
+                selectedClasses = []
+                for i in selectedKeys:
+                    if i in self.lyrDict.keys():
+                        if dbName in self.lyrDict[i].keys():
+                            selectedClasses.append(self.lyrDict[i][dbName])
+                factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, parent=self)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)
@@ -231,21 +203,3 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 self.styleComboBox.addItem(styleList[i])
         else:
             self.styleComboBox.addItem(self.tr('No available styles'))
-    
-    def changePrimitiveCheckboxState(self, enabled):
-        """
-        Changes the primitives that will be loaded.
-        """
-        self.checkBoxPoint.setEnabled(enabled)
-        self.checkBoxLine.setEnabled(enabled)
-        self.checkBoxPolygon.setEnabled(enabled)
-        self.checkBoxAll.setEnabled(enabled)
-    
-    @pyqtSlot(bool)
-    def on_checkBoxAll_toggled(self, toggled):
-        """
-        Checks all primitives to be loaded
-        """
-        self.checkBoxPoint.setChecked(toggled)
-        self.checkBoxLine.setChecked(toggled)
-        self.checkBoxPolygon.setChecked(toggled)
