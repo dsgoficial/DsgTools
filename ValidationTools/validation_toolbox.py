@@ -110,11 +110,11 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
         if dimension == 0:
-            layer = 'aux_flags_validacao_p'
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
         elif dimension == 1:
-            layer = 'aux_flags_validacao_l'
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
         elif dimension == 2:
-            layer = 'aux_flags_validacao_a'
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
             
         flagLyr = self.loadFlagLyr(layer)
         flagLyr.setLayerTransparency(50)
@@ -131,7 +131,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         layer: layer name
         """
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
-        return self.layerLoader.load([layer], uniqueLoad = True)[layer]
+        return self.layerLoader.load([layer], uniqueLoad = True)[layer['lyrName']]
     
     def checkFlagsLoaded(self, layer):
         """
