@@ -120,7 +120,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         #1. Get Loaded Layers
         loadedLayers = self.iface.legendInterface().layers()
         loadedGroups = self.iface.legendInterface().groups()
-        #4. Filter Layers:
+        #2. Filter Layers:
         filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements, geomFilterList)
         if isDictList:
             filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList]
@@ -128,23 +128,23 @@ class PostGISLayerLoader(EDGVLayerLoader):
             filteredDictList = filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
         dbGroup = self.getDatabaseGroup(loadedGroups)
-        #2. Load Domains
+        #3. Load Domains
         #do this only if EDGV Version = FTer
         if edgvVersion == 'FTer_2a_Ed':
             domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         else:
             domLayerDict = dict()
-        #3. Get Aux dicts
+        #4. Get Aux dicts
         domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
         constraintDict = self.abstractDb.getCheckConstraintDict()
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
         lyrDict = self.getLyrDict(filteredDictList, isEdgv=isEdgv)
         
-        #4. Build Groups
+        #5. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
-        #5. load layers
+        #6. load layers
         loadedDict = dict()
         if parent:
             primNumber = 0
