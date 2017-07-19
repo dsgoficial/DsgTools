@@ -28,6 +28,7 @@
 					ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \
 					ValidationTools/ValidationProcesses/snapGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py \
+					ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
 					ValidationTools/validation_toolbox.py \
 					ValidationTools/validation_config.py \
 					ValidationTools/setupEarthCoverage.py \
@@ -232,7 +233,6 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
 					ProductionTools/StyleManagerTool/__init__.py \
 					ProductionTools/StyleManagerTool/styleManagerTool.py \
-					ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
 
 
 

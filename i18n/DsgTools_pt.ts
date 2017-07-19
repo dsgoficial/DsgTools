@@ -255,7 +255,7 @@ p, li { white-space: pre-wrap; }
         <translation>Erro abrindo banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="655"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="657"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
     </message>
@@ -781,48 +781,48 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Bancos de Dados do Servidor</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="107"/>
+        <location filename="../ServerTools/batchDbManager.py" line="108"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="105"/>
+        <location filename="../ServerTools/batchDbManager.py" line="106"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="105"/>
+        <location filename="../ServerTools/batchDbManager.py" line="106"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
         <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="140"/>
+        <location filename="../ServerTools/batchDbManager.py" line="139"/>
         <source>
 Successful databases: </source>
         <translation>
 Bancos de dados com sucesso: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="143"/>
+        <location filename="../ServerTools/batchDbManager.py" line="142"/>
         <source>Operation Complete!</source>
         <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="150"/>
+        <location filename="../ServerTools/batchDbManager.py" line="149"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erro:</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="152"/>
+        <location filename="../ServerTools/batchDbManager.py" line="151"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="154"/>
+        <location filename="../ServerTools/batchDbManager.py" line="153"/>
         <source>Error for database </source>
         <translation>Erro para o banco de dados </translation>
     </message>
@@ -832,22 +832,22 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="161"/>
+        <location filename="../ServerTools/batchDbManager.py" line="160"/>
         <source>Please select one or more databases to drop!</source>
         <translation>Por favor, selecione um ou mais bancos para apagar!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="162"/>
+        <location filename="../ServerTools/batchDbManager.py" line="161"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="162"/>
+        <location filename="../ServerTools/batchDbManager.py" line="161"/>
         <source>Do you really want to drop databases: </source>
         <translation>Você realmente quer apagar os bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="168"/>
+        <location filename="../ServerTools/batchDbManager.py" line="167"/>
         <source>Drop operation complete. 
 </source>
         <translation>Operação de deleção completa. </translation>
@@ -973,7 +973,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Carregar bancos com outras modelagens</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="159"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="162"/>
         <source>Show Views</source>
         <translation>Mostrar Views</translation>
     </message>
@@ -1582,27 +1582,27 @@ Layer</translation>
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="222"/>
+        <location filename="../CustomWidgets/connectionWidget.py" line="224"/>
         <source>Coordinate Reference System not set or invalid!</source>
         <translation>Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="278"/>
+        <location filename="../CustomWidgets/connectionWidget.py" line="280"/>
         <source>Select Database</source>
         <translation>Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="208"/>
+        <location filename="../CustomWidgets/connectionWidget.py" line="210"/>
         <source>This is not a valid DsgTools database!</source>
         <translation>Este não é um banco DsgTools válido!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="264"/>
+        <location filename="../CustomWidgets/connectionWidget.py" line="266"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="286"/>
+        <location filename="../CustomWidgets/connectionWidget.py" line="288"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -1617,42 +1617,42 @@ Layer</translation>
         <translation>Conexão do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="51"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="54"/>
         <source>PostGIS</source>
         <translation>PostGIS</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="63"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="66"/>
         <source>Connections</source>
         <translation>Conexões</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="88"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="91"/>
         <source>Select database</source>
         <translation>Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="323"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="326"/>
         <source>Coordinate System</source>
         <translation>Sistema de Coordenadas</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="378"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="381"/>
         <source>EDGV Version</source>
         <translation>Versão da EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="239"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="242"/>
         <source>Spatialite</source>
         <translation>Spatialite</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="267"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="270"/>
         <source>File                    </source>
         <translation>Arquivo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.ui" line="300"/>
+        <location filename="../CustomWidgets/connectionWidget.ui" line="303"/>
         <source>Search</source>
         <translation>Pesquisar</translation>
     </message>
@@ -2616,7 +2616,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
 <context>
     <name>DbCreator</name>
     <message>
-        <location filename="../Factories/DbCreatorFactory/dbCreator.py" line="108"/>
+        <location filename="../Factories/DbCreatorFactory/dbCreator.py" line="102"/>
         <source>Creating databases... </source>
         <translation>Criando banco de dados... </translation>
     </message>
@@ -4420,12 +4420,12 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>comprimento_otf</translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="189"/>
+        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="191"/>
         <source>Error for lyr </source>
         <translation>Erro para camada </translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="205"/>
+        <location filename="../Factories/LayerLoaderFactory/edgvLayerLoader.py" line="207"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
@@ -5042,7 +5042,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="86"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="110"/>
         <source>Edit Current Config</source>
         <translation>Editar configuração atual</translation>
     </message>
@@ -5062,27 +5062,27 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">DSGTools: Ferramenta de (Re)classificação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="93"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="123"/>
         <source>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</source>
         <translation>Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="96"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="126"/>
         <source>Reclassify Feature Mode</source>
         <translation>Modo de Reclassificação de Feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="103"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="139"/>
         <source>After digitizing, the feature is set with the attributes configured in the selected button</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="106"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="142"/>
         <source>New Feature Mode</source>
         <translation>Modo de Aquisição de Feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="14"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="20"/>
         <source>DSGTools: Feature (Re)classification Tool</source>
         <translation>DSGTools: Ferramenta de (Re)classificação</translation>
     </message>
@@ -6480,12 +6480,12 @@ Camada</translation>
 <context>
     <name>InspectFeatures</name>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="222"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="219"/>
         <source>ERROR:</source>
         <translation>ERRO:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="222"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="219"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
         <translation>&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
     </message>
@@ -6505,7 +6505,7 @@ Camada</translation>
         <translation>O id selecionado não existe na camada {0}. Retornando ao id anterior.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="265"/>
+        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="274"/>
         <source>Select a vector layer to enable tool</source>
         <translation>Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
@@ -7009,36 +7009,36 @@ Camada</translation>
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="151"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="154"/>
         <source>Loading layers from selected databases... </source>
         <translation>Carregando camadas dos bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="180"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="187"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erros:</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="182"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="189"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="184"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="191"/>
         <source>Error for database </source>
         <translation>Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="195"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="202"/>
         <source>Select Style</source>
         <translation>Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="199"/>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="206"/>
         <source>No available styles</source>
         <translation>Sem estilos disponíveis</translation>
     </message>
@@ -7088,6 +7088,16 @@ Geométrico</translation>
 Type</source>
         <translation>Tipo da
 Camada</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="133"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="133"/>
+        <source>Select at least one layer to be loaded!</source>
+        <translation>Selecione pelo menos uma camada para ser carregada!</translation>
     </message>
 </context>
 <context>
@@ -7316,12 +7326,12 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="346"/>
+        <location filename="../UserTools/user_profiles.py" line="274"/>
         <source>Warning!</source>
         <translation>Alerta!</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="279"/>
+        <location filename="../UserTools/user_profiles.py" line="274"/>
         <source>User updated successfully!</source>
         <translation>Usuário atualizado com sucesso!</translation>
     </message>
@@ -7356,17 +7366,17 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Mostrar propriedades</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="295"/>
+        <location filename="../UserTools/user_profiles.py" line="274"/>
         <source>No profiles installed! Install at least one and try again.</source>
         <translation>Não há permissões de usuário instaladas! Instale pelo menos uma e tente de novo.</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="312"/>
+        <location filename="../UserTools/user_profiles.py" line="274"/>
         <source>No profiles assigned! Assign at least one and try again.</source>
         <translation>Não há permissões de usuário atribuídas! Atribua pelo menos uma e tente de novo.</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="346"/>
+        <location filename="../UserTools/user_profiles.py" line="274"/>
         <source>Select a profile first!</source>
         <translation>Selecione uma permissão de usuário primeiro!</translation>
     </message>
@@ -7945,7 +7955,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1956"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1964"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
@@ -7975,7 +7985,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2569"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2580"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
@@ -7990,7 +8000,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="840"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="848"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
     </message>
@@ -8000,7 +8010,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema acessando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="864"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="872"/>
         <source>Problem creating views: </source>
         <translation>Problema criando visões: </translation>
     </message>
@@ -8025,7 +8035,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1962"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1970"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
@@ -8040,7 +8050,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2559"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2570"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
@@ -8067,7 +8077,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../Factories/DbFactory/postgisDb.py" line="787"/>
         <source>Problem opening EDGV databases: </source>
-        <translation>Problema ao abrir bancos EDGV: </translation>
+        <translation type="obsolete">Problema ao abrir bancos EDGV: </translation>
     </message>
     <message>
         <location filename="Factories/DbFactory/postgisDb.py" line="601"/>
@@ -8075,57 +8085,57 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema ao acessar bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="809"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="816"/>
         <source>Problem getting databases: </source>
         <translation>Problema ao obter bancos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="827"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="834"/>
         <source>Problem checking user: </source>
         <translation>Problema ao checar usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="893"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="901"/>
         <source>Problem getting invalid geometries: </source>
         <translation>Problema obtendo geometrias inválidas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="928"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="936"/>
         <source>Problem inserting flags: </source>
         <translation>Problema inserindo flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="948"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="956"/>
         <source>Problem deleting flags: </source>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="974"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="982"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1002"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1010"/>
         <source>Problem acquiring status: </source>
         <translation>Problema adquirindo status: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1017"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1025"/>
         <source>Problem setting status: </source>
         <translation>Problema ajustando o status: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1027"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1035"/>
         <source>Problem getting running process: </source>
         <translation>Problema obtendo processo atual: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1056"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1064"/>
         <source>Problem testing spatial rule: </source>
         <translation>Problema testando regra espacial: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1075"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1083"/>
         <source>Problem getting dimension: </source>
         <translation>Problema obtendo dimensão: </translation>
     </message>
@@ -8135,142 +8145,142 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema explodindo geometrias: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1136"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1144"/>
         <source>Problem getting duplicated geometries: </source>
         <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1154"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1162"/>
         <source>Problem getting small areas: </source>
         <translation>Problema obtendo áreas pequenas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1173"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1181"/>
         <source>Problem getting small lines: </source>
         <translation>Problema obtendo linhas pequenas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1198"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1206"/>
         <source>Problem preparing auxiliary structure: </source>
         <translation>Problema preparando estrutura auxiliar: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1207"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1215"/>
         <source>Problem getting vertex near edges: </source>
         <translation>Problema obtendo vértice próximo à arestas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1233"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1241"/>
         <source>Problem deleting features from </source>
         <translation>Problema deletando feições de </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1251"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1259"/>
         <source>Problem getting not simple geometries: </source>
         <translation>Problema obtendo geometrias não simples: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1271"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1279"/>
         <source>Problem getting not out of bounds angles: </source>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1288"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1296"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1319"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1327"/>
         <source>Problem forcing validity of features from </source>
         <translation>Problema forçando validade de feições de  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1334"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1342"/>
         <source>Problem getting table extent: </source>
         <translation>Problema obtendo extensão da tabela: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1367"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1375"/>
         <source>Problem getting orphan tables: </source>
         <translation>Problema obtendo tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1374"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1382"/>
         <source>Problem counting orphan table: </source>
         <translation>Problema contando tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1397"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1405"/>
         <source>Problem updating geometries: </source>
         <translation>Problema atualizando geometrias: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1403"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1411"/>
         <source>Problem deleting geometries: </source>
         <translation>Problema deletando geometrias: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1415"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1423"/>
         <source>Problem checking structure: </source>
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1447"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1455"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1467"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1475"/>
         <source>Problem getting earth coverage tables: </source>
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1565"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1573"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1498"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1506"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1541"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1549"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1583"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1591"/>
         <source>Problem getting class name: </source>
         <translation>Problema obtendo nome da classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1612"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1620"/>
         <source>Problem snapping to grid: </source>
         <translation>Problema ao realizar snap para o grid: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1633"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1641"/>
         <source>Problem snapping to frame: </source>
         <translation>Problema ao realizar snap para a moldura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1650"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1658"/>
         <source>Problem densifying frame: </source>
         <translation>Problema densificando moldura: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1668"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1676"/>
         <source>Problem creating recursive snap function: </source>
         <translation>Problema criando função de snap recursivo: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1674"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1682"/>
         <source>Problem snapping class: </source>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2586"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2597"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
@@ -8280,7 +8290,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2604"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2615"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
@@ -8290,72 +8300,72 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1710"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1718"/>
         <source>Problem creating temp table: </source>
         <translation>Problema criando tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1747"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1755"/>
         <source>Problem populating temp table: </source>
         <translation>Problema populando tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1752"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1760"/>
         <source>Problem creating spatial index on temp table: </source>
         <translation>Problema criando índice espacial na tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1765"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1773"/>
         <source>Problem dropping temp table: </source>
         <translation>Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1797"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1805"/>
         <source>Problem creating style table: </source>
         <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1786"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1794"/>
         <source>Problem getting style table: </source>
         <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1916"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1924"/>
         <source>Problem getting styles from db: </source>
         <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1868"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1876"/>
         <source>Problem importing style</source>
         <translation>Problema importanto estilo</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1878"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1886"/>
         <source>Style </source>
         <translation>Estilo </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1878"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1886"/>
         <source> does not match the version of database </source>
         <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1895"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1903"/>
         <source>Problem importing style </source>
         <translation>Problema importando estilos </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1941"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1949"/>
         <source>Problem running sql </source>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2206"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2214"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2004"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2012"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
@@ -8365,87 +8375,87 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2230"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2238"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2253"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2261"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2344"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2355"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2361"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2372"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2373"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2384"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2393"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2404"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2414"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2425"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2427"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2438"/>
         <source>Problem setting srid: </source>
         <translation>Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2440"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2451"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2624"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2635"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2486"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2497"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2527"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2538"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2527"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2538"/>
         <source> Db will be dropped.</source>
         <translation>Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2545"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2556"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1089"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1097"/>
         <source>Problem exploding candidates: </source>
         <translation>Problema explodindo candidatos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1592"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1600"/>
         <source>Problem getting db oid: </source>
         <translation>Problema obtendo oid do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="1902"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="1910"/>
         <source>Problem getting table schema from db: </source>
         <translation>Problema obtendo esquema de tabela do db: </translation>
     </message>
@@ -8453,198 +8463,214 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <location filename="../Factories/DbFactory/postgisDb.py" line="2159"/>
         <source>Error parsing check constraint!
 </source>
-        <translation>Erro ao ler check constraint!
+        <translation type="obsolete">Erro ao ler check constraint!
 </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2495"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2506"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2634"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2645"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2648"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2659"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2987"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2998"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2667"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2678"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2678"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2689"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2688"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2699"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2700"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2711"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2715"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2726"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2726"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2737"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2745"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2756"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2755"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2766"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2769"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2780"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2783"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2794"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2847"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2858"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2885"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2896"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2946"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2957"/>
         <source>Problem constraint dict from db: </source>
         <translation>Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2976"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2987"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2991"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3002"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2991"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3002"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3010"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3021"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3024"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3035"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3039"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3050"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3052"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3063"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3061"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3072"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3087"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3098"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3103"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3114"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3112"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3123"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3127"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3138"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3140"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3151"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3148"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3159"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3157"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3168"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3177"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3188"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3218"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3229"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3227"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3238"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2219"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2227"/>
         <source>Problem getting tables dict from db: </source>
         <translation>Problema obtendo tabelas do bd: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2409"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2420"/>
         <source>Version Required!</source>
         <translation>É obrigatório informar a versão! </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2284"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2292"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="787"/>
+        <source>Problem opening databases: </source>
+        <translation>Problema ao abrir os seguintes bancos:</translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2167"/>
+        <source>Error parsing check constraint!
+:</source>
+        <translation>Erro ao decodificar o check constraint! :</translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3251"/>
+        <source>Problem dropping database conections: </source>
+        <translation>Problema ao derrubar as conexões ao banco de dados:</translation>
     </message>
 </context>
 <context>
@@ -10476,17 +10502,17 @@ Camada</translation>
 <context>
     <name>SpatialiteLayerLoader</name>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="95"/>
+        <location filename="../Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="100"/>
         <source>Domains</source>
         <translation>Dom;inios</translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="121"/>
+        <location filename="../Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="132"/>
         <source>Error for layer </source>
         <translation>Erro para camada </translation>
     </message>
     <message>
-        <location filename="../Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="112"/>
+        <location filename="../Factories/LayerLoaderFactory/spatialiteLayerLoader.py" line="117"/>
         <source>Loading layers... </source>
         <translation>Carregando Camadas... </translation>
     </message>
@@ -10674,6 +10700,92 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="101"/>
         <source>Error while trying to remove coverage layer.</source>
         <translation>Erro ao tentar remover camada de cobertura. </translation>
+    </message>
+</context>
+<context>
+    <name>TopologicalDouglasSimplificationProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="34"/>
+        <source>Topological Douglas Peucker Simplification</source>
+        <translation>Simplificação Topológica de Douglas Peucker</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="74"/>
+        <source>Problem executing grass7:v.generalize.simplify. Check your installed libs.
+</source>
+        <translation>Problema ao executar grass7:v.generalize.simplify. Verifique suas bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="84"/>
+        <source>Starting </source>
+        <translation>Iniciando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="84"/>
+        <source> Process.</source>
+        <translation> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="86"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="90"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="91"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="107"/>
+        <source>Error while trying to remove coverage layer.</source>
+        <translation>Erro ao tentar remover camada de cobertura. </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="108"/>
+        <source>Simplification done on the following layers: </source>
+        <translation>Simplificação realizada nas seguintes camdas: </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="110"/>
+        <source>Simplification process complete.</source>
+        <translation>Processo de simplificação completo.</translation>
     </message>
 </context>
 <context>
