@@ -233,8 +233,8 @@ class DsgTools:
         self.dsgTools.setObjectName(u'DsgTools')
         self.dsgTools.setTitle(self.tr('DSG Tools'))
         self.fieldToolbox = None
-
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
+        self.inspectFeatures.parent = self.dsgTools
 
         #Sub menus
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
@@ -658,6 +658,8 @@ class DsgTools:
         self.iface.registerMainWindowAction(action, '')
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
+        self.inspectFeatures.enableShortcuts()
+        # self.iface.registerMainWindowAction(self.inspectFeatures.action, '')
         self.toolbar.addWidget(self.styleManagerTool)
 
     

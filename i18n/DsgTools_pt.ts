@@ -2605,7 +2605,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="173"/>
         <source>Select index attribute</source>
-        <translation>Selecione o atributo index de nomenclatura</translation>
+        <translation>Selecione o atributo MI</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="220"/>

@@ -21,7 +21,7 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from PyQt4.QtGui import QMessageBox, QSpinBox
+from PyQt4.QtGui import QMessageBox, QSpinBox, QAction
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
@@ -41,6 +41,7 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         super(InspectFeatures, self).__init__(parent)
         self.setupUi(self)
+        self.parent = parent
         self.splitter.hide()
         self.iface = iface
         self.iface.currentLayerChanged.connect(self.enableScale)
@@ -56,6 +57,16 @@ class InspectFeatures(QWidget,Ui_Form):
         self.allLayers={}
         self.idxChanged.connect(self.setNewId)
         self.setToolTip('')
+
+        #self.enableShortcuts()
+    
+    def enableShortcuts(self):
+        #enable main tool shortcut config
+        self.action = QAction(self.tr('DSGTools: Inspect Features'), self.parent, triggered=self.toggleBar)
+        self.iface.registerMainWindowAction(self.action, 'F12')
+    
+    def lol(self):
+        print 'lol'
     
     def getIterateLayer(self):
         if self.activeLayerCheckBox:
@@ -264,11 +275,13 @@ class InspectFeatures(QWidget,Ui_Form):
         if self.getIterateLayer().geometryType() == QGis.Point:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
-    @pyqtSlot(bool)
-    def on_inspectPushButton_toggled(self, toggled):
+    @pyqtSlot(bool, name = 'on_inspectPushButton_toggled')
+    def toggleBar(self, toggled=None):
         """
         Shows/Hides the tool bar
         """
+        if toggled == None:
+            toggled = self.inspectPushButton.isChecked()
         if toggled:
             self.splitter.show()
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
