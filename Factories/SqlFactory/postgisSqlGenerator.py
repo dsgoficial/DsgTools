@@ -1010,8 +1010,20 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         return sql
     
-    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid):
-        sql = """INSERT INTO public.aux_moldura_a (mi,inom,escala,geom) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi,inom,scale,frame,geoSrid,srid)
+    def insertFrame(self,scale,mi,inom,frame,srid,geoSrid, paramDict = dict()):
+        if paramDict <> dict():
+            tableSchema = paramDict['tableSchema']
+            tableName = paramDict['tableName']
+            miAttr = paramDict['miAttr']
+            inomAttr = paramDict['inomAttr']
+            geometryColumn = paramDict['geom']
+        else:
+            tableSchema = 'public'
+            tableName = 'aux_moldura_a'
+            miAttr = 'mi'
+            inomAttr = 'inom'
+            geometryColumn = 'geom'
+        sql = """INSERT INTO "{6}"."{7}" ({8},{9},{10}) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi, inom, scale, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         return sql
     
     def createFromTemplate(self,dbName, templateName):

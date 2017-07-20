@@ -122,7 +122,7 @@ class DbCreator(QObject):
             for key in outputDbDict.keys():
                 try:           
                     scale = self.scaleMIDict[len(mi.split('-'))]
-                    outputDbDict[key].createFrame('mi',scale,key)
+                    outputDbDict[key].createFrame('mi',scale,key, paramDict = paramDict)
                 except Exception as e:
                     if dbName not in errorDict.keys():
                         errorDict[dbName] = ':'.join(e.args)

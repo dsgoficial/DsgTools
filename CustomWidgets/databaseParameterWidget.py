@@ -138,8 +138,15 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
                 errorMsg += self.tr('Enter a database name!\n')
         if self.mQgsProjectionSelectionWidget.crs().authid() == '':        
             errorMsg += self.tr('Select a coordinate reference system!\n')
-        if not self.edgvTemplateRadioButton.isChecked() and not self.comboBoxPostgis.currentDb():
-            errorMsg += self.tr('Select a template database!\n')
+        if not self.edgvTemplateRadioButton.isChecked() 
+            if not self.comboBoxPostgis.currentDb():
+                errorMsg += self.tr('Select a template database!\n')
+            if self.frameComboBox.currentIndex() == 0:
+                errorMsg += self.tr('Select a frame layer!\n')
+            if self.indexComboBox.currentIndex() == 0:
+                errorMsg += self.tr('Select an index attribute!\n')
+            if self.inomComboBox.currentIndex() == 0:
+                errorMsg += self.tr('Select an INOM attribute!\n')
         
         if errorMsg != '':
             QMessageBox.critical(self, self.tr('Critical!'), errorMsg)

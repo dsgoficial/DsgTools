@@ -643,11 +643,11 @@ class AbstractDb(QObject):
         frame = self.utmGrid.getQgsPolygonFrame(inom)
         return frame
     
-    def insertFrame(self, scale, mi, inom, frame):
+    def insertFrame(self, scale, mi, inom, frame, paramDict = dict()):
         self.checkAndOpenDb()
         srid = self.findEPSG()
         geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
-        sql = self.gen.insertFrame(scale, mi, inom, frame, srid, geoSrid)
+        sql = self.gen.insertFrame(scale, mi, inom, frame, srid, geoSrid, paramDict = paramDict)
         self.db.transaction()
         query = QSqlQuery(self.db)
         if not query.exec_(sql):

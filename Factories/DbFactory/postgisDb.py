@@ -2551,9 +2551,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem altering search path: ")+query.lastError().text())
         self.db.commit()
 
-    def createFrame(self, type, scale, param):
+    def createFrame(self, type, scale, param, paramDict = dict()):
         mi, inom, frame = self.prepareCreateFrame(type, scale, param)
-        self.insertFrame(scale, mi, inom, binascii.hexlify(frame.asWkb()))
+        self.insertFrame(scale, mi, inom, binascii.hexlify(frame.asWkb()), paramDict = paramDict)
         return frame
     
     def getUsersFromServer(self):
