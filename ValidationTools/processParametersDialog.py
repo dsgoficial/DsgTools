@@ -117,7 +117,7 @@ class ProcessParametersDialog(QtGui.QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
-        layout = QtGui.QVBoxLayout()
+        layout = QtGui.QGridLayout()
         layout.addWidget(scrollArea)
         layout.addWidget(buttons)
         self.setLayout(layout)
