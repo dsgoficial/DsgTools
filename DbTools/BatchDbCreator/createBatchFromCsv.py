@@ -63,6 +63,7 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['miList'] = self.getMiListFromCSV() 
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
         parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
+        parameterDict['templateInfo'] = self.databaseParameterWidget.getTemplateParameters()
         return parameterDict
     
     def getMiListFromCSV(self):
@@ -85,7 +86,7 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
     def createDatabases(self, parameterDict):
         dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        (dbList, errorDict)=dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True)
+        (dbList, errorDict)=dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True, paramDict = parameterDict['templateInfo'])
         QApplication.restoreOverrideCursor()
         if len(errorDict.keys())> 0:
             raise Exception(errorDict)

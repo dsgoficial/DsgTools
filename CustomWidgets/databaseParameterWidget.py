@@ -138,7 +138,7 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
                 errorMsg += self.tr('Enter a database name!\n')
         if self.mQgsProjectionSelectionWidget.crs().authid() == '':        
             errorMsg += self.tr('Select a coordinate reference system!\n')
-        if not self.edgvTemplateRadioButton.isChecked() 
+        if not self.edgvTemplateRadioButton.isChecked():
             if not self.comboBoxPostgis.currentDb():
                 errorMsg += self.tr('Select a template database!\n')
             if self.frameComboBox.currentIndex() == 0:
@@ -180,5 +180,19 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
             return None
         else:
             return self.comboBoxPostgis.currentDb()
+    
+    def getTemplateParameters(self):
+        if self.edgvTemplateRadioButton.isChecked():
+            return dict()
+        else:
+            paramDict = dict()
+            selected = self.tableDict[self.frameComboBox.currentText()]
+            paramDict['tableSchema'] = selected['tableSchema']
+            paramDict['tableName'] = selected['tableName']
+            paramDict['geom'] = selected['geom']
+            paramDict['miAttr'] = self.indexComboBox.currentText()
+            paramDict['inomAttr'] = self.inomComboBox.currentText()
+            return paramDict
+
     
 
