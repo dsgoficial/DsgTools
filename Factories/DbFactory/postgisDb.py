@@ -46,7 +46,7 @@ class PostgisDb(AbstractDb):
         """
         Gets (host, port, user, password)
         """
-        return (self.db.host, self.db.port, self.db.userName, self.db.password)
+        return (self.db.hostName(), self.db.port(), self.db.userName(), self.db.password())
 
     def getDatabaseName(self):
         """

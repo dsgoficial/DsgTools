@@ -22,13 +22,15 @@
 """
 import os
 
+from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+
 from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFileDialog, QMessageBox
+from PyQt4.QtGui import QFileDialog, QMessageBox, QRadioButton
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -36,16 +38,36 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
     filesSelected = pyqtSignal()
+    changeSize = pyqtSignal()
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.serverAbstractDb = None
+        self.selectedAbstractDb = None
         self.setInitialState()
+    
+    @pyqtSlot(AbstractDb, name = 'on_comboBoxPostgis_dbChanged') #check this out luiz! hahahahaha
+    def populateSelectedAbstractDb(self, abstractDb):
+        self.selectedAbstractDb = abstractDb
+        self.populateFrameComboBox()
+    
+    def populateFrameComboBox(self):
+        if self.selectedAbstractDb:
+            areaDict = self.selectedAbstractDb.getGeomColumnDictV2(primitiveFilter=['a'], excludeValidation = True)
+            self.frameComboBox.clear()
+            self.tableDict = dict()
+            sortedKeys = areaDict.keys()
+            sortedKeys.sort()
+            for key in sortedKeys:
+                tableKey = '{0}.{1}:{2}'.format(areaDict[key]['tableSchema'], areaDict[key]['tableName'], areaDict[key]['geom'])
+                self.tableDict[tableKey] = areaDict[key]
+                self.frameComboBox.addItem(tableKey)
+
+    def setServerDb(self, abstractDb):
+        self.serverAbstractDb = abstractDb
+        self.dbTemplateRadioButton.setEnabled(True)
+        self.comboBoxPostgis.setServerDb(self.serverAbstractDb)
     
     def setInitialState(self):
         """
@@ -55,6 +77,8 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         self.sufixVisible = True
         self.dbNameVisible = True
         self.frameGroupBox.hide()
+        if not self.serverAbstractDb:
+            self.dbTemplateRadioButton.setEnabled(False)
     
     def setPrefixVisible(self, visible):
         """
@@ -112,23 +136,27 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
     def changeInterfaceState(self, edgvTemplateToggled, hideInterface = True):
         if edgvTemplateToggled:
             self.comboBoxPostgis.setEnabled(False)
-            self.frameGroupBox.hide()
             self.frameComboBox.setEnabled(False)
             self.versionComboBox.setEnabled(True)
+            self.frameGroupBox.hide()
         else:
             self.comboBoxPostgis.show()
             self.frameGroupBox.show()
             self.comboBoxPostgis.setEnabled(True)
             self.versionComboBox.setEnabled(False)
-        if hideInterface:
-            self.dbTemplateRadioButton.hide()
-            self.frameGroupBox.hide()
-        else:
-            self.dbTemplateRadioButton.show()
-            self.frameGroupBox.show()
+        if not isinstance(self.sender(), QRadioButton):
+            if hideInterface:
+                self.frameGroupBox.hide()
+                self.comboBoxPostgis.hide()
+                self.dbTemplateRadioButton.hide()
+            else:
+                self.comboBoxPostgis.show()
+                self.dbTemplateRadioButton.show()
     
     def getTemplateName(self):
         if self.edgvTemplateRadioButton.isChecked():
             return None
         else:
             return self.comboBoxPostgis.currentDb()
+    
+

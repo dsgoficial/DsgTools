@@ -41,6 +41,7 @@ class ConnectionComboBox(DsgCustomComboBox):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.serverAbstractDb = None
+        self.displayDict = {'2.1.3':'EDGV 2.1.3', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model')}
         self.lineEdit().setPlaceholderText(self.tr('Select a database'))
         self.currentIndexChanged.connect(self.loadDatabase)
         self.instantiateAbstractDb = False
@@ -81,7 +82,11 @@ class ConnectionComboBox(DsgCustomComboBox):
             return
         elif isinstance(items[0], tuple) and len(items[0]) == 2:
             for item in items:
-                newText = item[0] + ' ({0})'.format(item[1])
+                if item[1] not in self.displayDict.keys():
+                    version = item[1]
+                else:
+                    version = self.displayDict[item[1]]
+                newText = item[0] + ' ({0})'.format(version)
                 itemList.append(newText)
         if itemList == []:
             itemList = items
@@ -97,13 +102,12 @@ class ConnectionComboBox(DsgCustomComboBox):
         """
         Loads the selected database
         """
-        self.closeDatabase()
         try:
             if self.serverAbstractDb and self.currentIndex() > 0:
                 if not self.instantiateAbstractDb:
                     self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()
-                    dbName = self.comboBoxPostgis.currentText().split(' (')[0]
+                    dbName = self.currentText().split(' (')[0]
                     self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                     self.abstractDb.checkAndOpenDb()
                     self.dbChanged.emit(self.abstractDb)
