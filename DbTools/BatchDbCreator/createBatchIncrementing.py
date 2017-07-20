@@ -76,9 +76,9 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         return True
     
     def createDatabases(self, parameterDict):
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parameterDict['version'], parentWidget = self)
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'])
+        (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict)
         QApplication.restoreOverrideCursor()
         if len(errorDict.keys()) > 0:
             raise Exception(errorDict)
