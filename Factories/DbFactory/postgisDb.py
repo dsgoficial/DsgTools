@@ -3244,3 +3244,20 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
                 raise Exception(self.tr('Problem dropping database conections: ') + query.lastError().text())
+    
+    def getAttributesFromTable(self, tableSchema, tableName, typeFilter = [], returnType = 'list'):
+        """
+        Gets attributes from "tableSchema"."tableName" according to typeFilter
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getAttributesFromTable(tableSchema, tableName, typeFilter = typeFilter)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting attributes from table {0}.{1}: {2}").format(tableSchema, tableName, query.lastError().text()))
+        returnStruct = []
+        while query.next():
+            if returnType == 'list':
+                returnStruct.append(query.value(0))
+            else:
+                returnStruct.append({'attrName':query.value(0), 'attrType':query.value(1)})
+        return returnStruct

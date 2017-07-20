@@ -1437,3 +1437,12 @@ class PostGISSqlGenerator(SqlGenerator):
                 WHERE pg_stat_activity.datname = '{0}'
                 AND pid <> pg_backend_pid();""".format(dbName)
         return sql
+
+    def getAttributesFromTable(self, tableSchema, tableName, typeFilter = []):
+        if typeFilter <> []:
+            whereClause = """ and data_type in ('{0}') """.format("','".join(typeFilter))
+        else:
+            whereClause = """"""
+        sql = """select column_name, data_type from information_schema.columns where 
+            table_schema = '{0}' and table_name = '{1}' {2} order by column_name """.format(tableSchema, tableName, whereClause)
+        return sql

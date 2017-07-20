@@ -56,6 +56,7 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         if self.selectedAbstractDb:
             areaDict = self.selectedAbstractDb.getGeomColumnDictV2(primitiveFilter=['a'], excludeValidation = True)
             self.frameComboBox.clear()
+            self.frameComboBox.addItem(self.tr('Select a table from database'))
             self.tableDict = dict()
             sortedKeys = areaDict.keys()
             sortedKeys.sort()
@@ -63,6 +64,20 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
                 tableKey = '{0}.{1}:{2}'.format(areaDict[key]['tableSchema'], areaDict[key]['tableName'], areaDict[key]['geom'])
                 self.tableDict[tableKey] = areaDict[key]
                 self.frameComboBox.addItem(tableKey)
+    
+    @pyqtSlot(int, name = 'on_frameComboBox_currentIndexChanged')
+    def populateCombos(self, idx):
+        if self.selectedAbstractDb:
+            if idx > 0:
+                self.indexComboBox.clear()
+                self.inomComboBox.clear()
+                self.indexComboBox.addItem(self.tr('Select an attribute from selected table'))
+                self.inomComboBox.addItem(self.tr('Select an attribute from selected table'))
+                selected = self.tableDict[self.frameComboBox.currentText()]
+                attributeList = self.selectedAbstractDb.getAttributesFromTable(selected['tableSchema'], selected['tableName'], typeFilter = ['character', 'character varying', 'text'])
+                for attr in attributeList:
+                    self.indexComboBox.addItem(attr)
+                    self.inomComboBox.addItem(attr)
 
     def setServerDb(self, abstractDb):
         self.serverAbstractDb = abstractDb
