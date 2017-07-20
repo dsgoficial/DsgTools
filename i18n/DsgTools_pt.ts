@@ -1382,8 +1382,8 @@ Geométrico</translation>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo do 
-Layer</translation>
+        <translation>Tipo da 
+Camada</translation>
     </message>
 </context>
 <context>
@@ -2777,8 +2777,8 @@ Geométrico</translation>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation>Tipo do 
-Layer</translation>
+        <translation>Tipo da 
+Camada</translation>
     </message>
 </context>
 <context>
@@ -3798,8 +3798,8 @@ Geométrico</translation>
         <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation>Tipo do 
-Layer</translation>
+        <translation>Tipo da 
+Camada</translation>
     </message>
 </context>
 <context>
@@ -7086,7 +7086,7 @@ Geométrico</translation>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="122"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da
+        <translation>Tipo da 
 Camada</translation>
     </message>
     <message>
