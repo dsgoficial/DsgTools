@@ -67,7 +67,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords(classesWithGeom, geometryColumn, keyColumn)
+                invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords(classesWithGeom, classAndGeom['geom'], keyColumn)
                 localProgress.step()
 
             # dropping temp table

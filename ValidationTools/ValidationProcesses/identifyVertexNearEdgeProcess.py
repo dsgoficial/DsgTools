@@ -80,7 +80,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], tupple[0], self.tr('Vertex near edge.'), tupple[1], geometryColumn))
+                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], tupple[0], self.tr('Vertex near edge.'), tupple[1], classAndGeom['geom']))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] +self.tr(' have vertex(es) near edge(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
