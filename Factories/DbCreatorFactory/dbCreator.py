@@ -105,7 +105,7 @@ class DbCreator(QObject):
             dbName = self.buildDatabaseName(mi, prefix, sufix)
             try:
                 if not templateDb: 
-                    newDb = self.createDb(dbName, srid)
+                    newDb = self.createDb(dbName, srid, paramDict)
                     templateDb = dbName
                 else:
                     paramDict['templateDb'] = templateDb
