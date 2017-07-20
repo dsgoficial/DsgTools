@@ -73,7 +73,7 @@ class ProcessParametersDialog(QtGui.QDialog):
         formLayout = QtGui.QFormLayout()
         for k, v in options.iteritems():
             if isinstance(v, (list)):
-                if isinstance(v[0], dict) == False:
+                if len(v)> 0 and isinstance(v[0], dict) == False:
                     v = [str(x) for x in v]
 
             label = QtGui.QLabel(beautifyText(k))
