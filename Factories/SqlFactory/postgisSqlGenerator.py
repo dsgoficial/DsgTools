@@ -1017,13 +1017,18 @@ class PostGISSqlGenerator(SqlGenerator):
             miAttr = paramDict['miAttr']
             inomAttr = paramDict['inomAttr']
             geometryColumn = paramDict['geom']
+            geomType = paramDict['geomType']
         else:
             tableSchema = 'public'
             tableName = 'aux_moldura_a'
             miAttr = 'mi'
             inomAttr = 'inom'
             geometryColumn = 'geom'
-        sql = """INSERT INTO "{6}"."{7}" ({8},{9},{10}) VALUES ('{0}','{1}','{2}',ST_Transform(ST_SetSRID(ST_Multi('{3}'),{4}), {5}))""".format(mi, inom, scale, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
+            geomType = 'MULTIPOLYGON'
+        if geomType = 'MULTIPOLYGON':
+            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_SetSRID(ST_Multi('{2}'),{3}), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
+        else:
+            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_SetSRID('{2}',{3}), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         return sql
     
     def createFromTemplate(self,dbName, templateName):

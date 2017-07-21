@@ -197,6 +197,7 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
             paramDict['geom'] = selected['geom']
             paramDict['miAttr'] = self.indexComboBox.currentText()
             paramDict['inomAttr'] = self.inomComboBox.currentText()
+            paramDict['geomType'] = selected['geomType']
             return paramDict
 
     
