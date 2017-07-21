@@ -302,7 +302,10 @@ class UtmGrid:
         key = index.split('-')[0]
         otherParts = index.split('-')[1:]
         if (dict.has_key(key)):
-            return dict[key]+'-'+'-'.join(otherParts)
+            if len(otherParts)==0:
+                return dict[key]
+            else:
+                return dict[key]+'-'+'-'.join(otherParts)
         else:
             return ''
     
