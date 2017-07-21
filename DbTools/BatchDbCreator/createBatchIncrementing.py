@@ -73,6 +73,7 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
             return False
         parameterDict = self.getParameters()
         self.createDatabases(parameterDict)
+        QMessageBox.warning(self, self.tr('Info!'), self.tr('Databases created successfully.'))
         return True
     
     def createDatabases(self, parameterDict):

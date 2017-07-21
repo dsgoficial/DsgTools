@@ -68,7 +68,8 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
     
     def getMiListFromCSV(self):
         f = open(self.customFileSelector.fileNameList,'r')
-        miList = [i.replace('\n','') for i in f.readlines()]
+        miList = [i.replace('\n','').strip() for i in f.readlines()]
+        miList = [i for i in miList if i <> '']
         return miList
 
     def validatePage(self):
@@ -81,6 +82,7 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
             return False
         parameterDict = self.getParameters()
         self.createDatabases(parameterDict)
+        QMessageBox.warning(self, self.tr('Info!'), self.tr('Databases created successfully.'))
         return True
     
     def createDatabases(self, parameterDict):
