@@ -2436,7 +2436,7 @@ class PostgisDb(AbstractDb):
         while query.next():
             return query.value(0)
     
-    def updateDbSRID(self, srid, useTransaction = True, closeAfterUse = True, parentWidget = None):
+    def updateDbSRID(self, srid, useTransaction = True, closeAfterUse = True, parentWidget = None, threading = False):
         self.checkAndOpenDb()
         tableDictList = self.getParentGeomTables(getDictList = True, showViews = False, hideCentroids = False)
         viewList = ['''"{0}"."{1}"'''.format(i['tableSchema'],i['tableName']) for i in self.getGeomColumnDictV2(showViews = True, hideCentroids = False).values() if i['tableType'] == 'VIEW']
@@ -2445,7 +2445,7 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.transaction()
         if parentWidget:
-            progress = ProgressWidget(1,2*len(viewList)+len(tableDictList),self.tr('Updating SRIDs from {0}... ').format(self.db.databaseName()), parent = parentWidget)
+            progress = ProgressWidget(1, 2*len(viewList)+len(tableDictList), self.tr('Updating SRIDs from {0}... ').format(self.db.databaseName()), parent = parentWidget)
             progress.initBar()
         for view in viewList:
             viewSql = self.gen.dropView(view)
@@ -2453,7 +2453,10 @@ class PostgisDb(AbstractDb):
             if not query.exec_(viewSql):
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem dropping views: ') + query.lastError().text())
+                if threading:
+                    return (viewSql, query)
+                else:
+                    raise Exception(self.tr('Problem dropping views: ') + query.lastError().text())
             if parentWidget:
                 progress.step()
 
@@ -2463,7 +2466,10 @@ class PostgisDb(AbstractDb):
             if not query.exec_(sridSql):
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
+                if threading:
+                    return (sridSql, query)
+                else:
+                    raise Exception(self.tr('Problem dropping views: ') + query.lastError().text())
             if parentWidget:
                 progress.step()
         for viewName in viewList:
@@ -2472,7 +2478,10 @@ class PostgisDb(AbstractDb):
             if not query.exec_(createViewSql):
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem creating views: ') + query.lastError().text())
+                if threading:
+                    return (createViewSql, query)
+                else:
+                    raise Exception(self.tr('Problem dropping views: ') + query.lastError().text())
             if parentWidget:
                 progress.step()
         if useTransaction:

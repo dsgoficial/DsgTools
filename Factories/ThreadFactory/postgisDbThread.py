@@ -195,12 +195,16 @@ class PostgisDbThread(GenericThread):
         #creates from template
         if not self.stopped[0]:
             templateName = self.abstractDb.getTemplateName(self.version)
-            self.abstractDb.createDbFromTemplate(self.dbName,templateName, parentWidget = self.parent)
+            self.abstractDb.createDbFromTemplate(self.dbName, templateName, parentWidget = self.parent)
             self.signals.stepProcessed.emit(self.getId())
             #5. alter spatial structure
             createdDb = self.dbFactory.createDbFactory('QPSQL')
             createdDb.connectDatabaseWithParameters(self.abstractDb.db.hostName(), self.abstractDb.db.port(), self.dbName, self.abstractDb.db.userName(), self.abstractDb.db.password())
-            createdDb.updateDbSRID(self.epsg, parentWidget = self.parent)
+            errorTuple = createdDb.updateDbSRID(self.epsg, parentWidget = self.parent, threading = True)
+            # if an error occur during the thread we should pass the message to the main thread
+            if errorTuple:
+                QgsMessageLog.logMessage(self.messenger.getProblemMessage(errorTuple[0], errorTuple[1]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return (0, self.messenger.getProblemFeedbackMessage())                
             self.signals.stepProcessed.emit(self.getId())
         else:
             QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
