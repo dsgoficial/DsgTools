@@ -106,11 +106,11 @@ class DbCreator(QObject):
             dbName = self.buildDatabaseName(mi, prefix, sufix)
             try:
                 if not templateDb: 
-                    newDb = self.createDb(dbName, srid, paramDict, parent = self.parentWidget)
+                    newDb = self.createDb(dbName, srid, paramDict, parentWidget = self.parentWidget)
                     templateDb = dbName
                 else:
                     paramDict['templateDb'] = templateDb
-                    newDb = self.createDb(dbName, srid, paramDict, parent = self.parentWidget)
+                    newDb = self.createDb(dbName, srid, paramDict, parentWidget = self.parentWidget)
                 outputDbDict[mi] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
