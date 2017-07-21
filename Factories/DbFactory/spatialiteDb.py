@@ -483,7 +483,7 @@ class SpatialiteDb(AbstractDb):
             geomDict[geomColumn].append(lyrName)
         return geomDict
 
-    def createFrame(self, type, scale, param):
+    def createFrame(self, type, scale, param, paramDict = dict()):
         mi, inom, frame = self.prepareCreateFrame(type, scale, param)
         self.insertFrame(scale, mi, inom, frame.asWkb())
         return frame
