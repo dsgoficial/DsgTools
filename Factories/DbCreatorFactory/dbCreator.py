@@ -99,17 +99,18 @@ class DbCreator(QObject):
         errorDict = dict()
         templateDb = None
         if self.parentWidget:
-            progress = ProgressWidget(1,2*len(miList),self.tr('Creating databases... '),parent = self.parentWidget)
+            progress = ProgressWidget(1,2*len(miList)+1,self.tr('Creating databases... '),parent = self.parentWidget)
             progress.initBar()
+            progress.step()
         for mi in miList:
             dbName = self.buildDatabaseName(mi, prefix, sufix)
             try:
                 if not templateDb: 
-                    newDb = self.createDb(dbName, srid, paramDict)
+                    newDb = self.createDb(dbName, srid, paramDict, parent = self.parentWidget)
                     templateDb = dbName
                 else:
                     paramDict['templateDb'] = templateDb
-                    newDb = self.createDb(dbName, srid, paramDict)
+                    newDb = self.createDb(dbName, srid, paramDict, parent = self.parentWidget)
                 outputDbDict[mi] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():
