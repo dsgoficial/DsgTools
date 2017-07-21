@@ -123,7 +123,7 @@ class ProcessManager(QObject):
         #initiating processing
         QThreadPool.globalInstance().start(process)
 
-    def createPostgisDatabaseProcess(self, dbName, abstractDb, version,epsg):
+    def createPostgisDatabaseProcess(self, dbName, abstractDb, version, epsg):
         """
         Create the postgis databsae process
         """

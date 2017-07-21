@@ -70,7 +70,7 @@ class PostgisDbMessages(QObject):
         self.thread.stopped[0] = True
 
 class PostgisDbThread(GenericThread):
-    def __init__(self):
+    def __init__(self, parent = None):
         """
         Constructor.
         """
@@ -81,6 +81,7 @@ class PostgisDbThread(GenericThread):
         self.gen = self.factory.createSqlGenerator(False)
         self.messenger = PostgisDbMessages(self)
         self.dbFactory = DbFactory()
+        self.parent = parent
 
     def setParameters(self, abstractDb, dbName, version, epsg, stopped):
         """
@@ -193,12 +194,13 @@ class PostgisDbThread(GenericThread):
             self.abstractDb.setDbAsTemplate(self.version)
         #creates from template
         if not self.stopped[0]:
-            self.abstractDb.createDbFromTemplate(self.dbName,self.version)
+            templateName = self.abstractDb.getTemplateName(self.version)
+            self.abstractDb.createDbFromTemplate(self.dbName,templateName, parentWidget = self.parent)
             self.signals.stepProcessed.emit(self.getId())
             #5. alter spatial structure
             createdDb = self.dbFactory.createDbFactory('QPSQL')
             createdDb.connectDatabaseWithParameters(self.abstractDb.db.hostName(), self.abstractDb.db.port(), self.dbName, self.abstractDb.db.userName(), self.abstractDb.db.password())
-            createdDb.updateDbSRID(self.epsg)
+            createdDb.updateDbSRID(self.epsg, parentWidget = self.parent)
             self.signals.stepProcessed.emit(self.getId())
         else:
             QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
