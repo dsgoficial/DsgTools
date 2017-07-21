@@ -45,7 +45,7 @@ class DbCreator(QObject):
         #Abstract method.
         return None
     
-    def createDb(self, dbName, srid, paramDict  = dict()):
+    def createDb(self, dbName, srid, paramDict  = dict(), parentWidget = None):
         #Abstract method.
         pass
 
@@ -75,11 +75,11 @@ class DbCreator(QObject):
         for dbName in dbNameList:
             try:
                 if not templateDb: 
-                    newDb = self.createDb(dbName, srid, paramDict = paramDict)
+                    newDb = self.createDb(dbName, srid, paramDict = paramDict, parent = self.parentWidget)
                     templateDb = dbName
                 else:
                     paramDict['templateDb'] = templateDb
-                    newDb = self.createDb(dbName, srid, paramDict)
+                    newDb = self.createDb(dbName, srid, paramDict, parent = self.parentWidget)
                 outputDbDict[dbName] = newDb
             except Exception as e:
                 if dbName not in errorDict.keys():

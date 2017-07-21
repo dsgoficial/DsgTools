@@ -45,22 +45,30 @@ class SpatialiteDbCreator(DbCreator):
             edgvPath = os.path.join(currentPath,'..','..','DbTools','SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
         return edgvPath
     
-    def createDb(self, dbName, srid, paramDict = dict()):
+    def createDb(self, dbName, srid, paramDict = dict(), parentWidget = None):
         destination = os.path.join(self.outputDir,dbName+'.sqlite')
         if 'version' not in paramDict.keys():
             raise Exception('Undefined database version')
         edgvPath = self.getTemplateLocation(paramDict['version'])
         f = open(edgvPath,'rb')
         g = open(destination,'wb')
-        x = f.readline()
-        while x:
-            g.write(x)
-            x = f.readline()
+        x = f.readlines()
+        if parentWidget:
+            progress = ProgressWidget(1,len(x)+2,self.tr('Creating Spatialite {0}... ').format(dbName), parent = parentWidget)
+            progress.initBar()
+        for i in x:
+            g.write(i)
+            if parentWidget:
+                progress.step()
         g.close()
         f.close()
         #TODO: put defineSrid into AbstractDb
         self.defineSrid(destination, srid)
+        if parentWidget:
+            progress.step()
         newDb = self.instantiateNewDb(destination)
+        if parentWidget:
+            progress.step()
         return newDb
     
     def defineSrid(self, destination, srid):
