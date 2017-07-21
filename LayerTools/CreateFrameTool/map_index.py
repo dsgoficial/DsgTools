@@ -158,7 +158,7 @@ class UtmGrid:
         """Get lower left Latitude for 1:1.000.000 scale
         """
         l=inomen[1].upper()
-        y = 0.0;
+        y = 0.0
         operator=self.getHemisphereMultiplier(inomen)
         verticalPosition=string.uppercase.index(l)
         y=(y+4*verticalPosition)*operator
@@ -302,7 +302,7 @@ class UtmGrid:
         key = index.split('-')[0]
         otherParts = index.split('-')[1:]
         if (dict.has_key(key)):
-            return dict[key]+'-'.join(otherParts)
+            return dict[key]+'-'+'-'.join(otherParts)
         else:
             return ''
     
