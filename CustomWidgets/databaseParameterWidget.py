@@ -185,11 +185,12 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         if self.edgvTemplateRadioButton.isChecked():
             paramDict = dict()
             paramDict['templateName'] = self.serverAbstractDb.getTemplateName(self.versionComboBox.currentText())
+            paramDict['version'] = self.versionComboBox.currentText()
             paramDict['isTemplateEdgv'] = True            
         else:
             paramDict = dict()
             selected = self.tableDict[self.frameComboBox.currentText()]
-            paramDict['templateName'] = self.frameComboBox.currentText()
+            paramDict['templateName'] = self.comboBoxPostgis.currentText().split(' (')[0]
             paramDict['isTemplateEdgv'] = False
             paramDict['tableSchema'] = selected['tableSchema']
             paramDict['tableName'] = selected['tableName']

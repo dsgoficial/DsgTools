@@ -64,18 +64,10 @@ class PostgisDbCreator(DbCreator):
         else:
             #1. test if edgv template is created
             #2. if edgv template is not created, create it
-            version = None
-            if 'nonDefaultTemplate' in paramDict.keys():
-                if paramDict['nonDefaultTemplate']:
-                    templateName = paramDict['nonDefaultTemplate']
-            else:
-                templateName = 'edgv'
-                if 'version' in paramDict.keys():
-                        version = paramDict['version']
-                self.checkAndCreateTemplate(version)
-
+            if paramDict['isTemplateEdgv']:
+                self.checkAndCreateTemplate(paramDict['version'])
             #3. create db from template
-            self.abstractDb.createDbFromTemplate(dbName, version = version, templateName = templateName)
+            self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateName'])
             newDb = self.instantiateNewDb(dbName)
             newDb.updateDbSRID(srid)
             return newDb

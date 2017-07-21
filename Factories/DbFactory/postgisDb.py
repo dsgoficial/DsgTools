@@ -2408,14 +2408,11 @@ class PostgisDb(AbstractDb):
                 geomStructDict[tableName][d['f1']] = yesNoDict[d['f2']]
         return geomStructDict
     
-    def createDbFromTemplate(self, dbName, version = None, templateName = 'edgv'):
+    def createDbFromTemplate(self, dbName, templateName):
         #check if created, if created prompt if drop is needed
         self.checkAndOpenDb()
-        if templateName == 'edgv':
-            if not version:
-                raise Exception(self.tr('Version Required!'))    
-            templateName = self.getTemplateName(version)
-        sql = self.gen.createFromTemplate(dbName,templateName)
+        self.dropAllConections(templateName)
+        sql = self.gen.createFromTemplate(dbName, templateName)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
