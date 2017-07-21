@@ -1030,26 +1030,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """CREATE DATABASE "{0}" with template = "{1}";""".format(dbName,templateName)
         return sql
     
-    def updateDbSRID(self, srid):
-        sql = """select UpdateGeometrySRID(f_table_catalog::varchar, f_table_schema::varchar, f_table_name::varchar, f_geometry_column::varchar,{0}) from geometry_columns where f_table_name in 
-
-            (select pgcl2.n as tb from pg_class as pgcl
-                left join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
-                left join pg_namespace as pgnsp on pgcl.relnamespace = pgnsp.oid
-                left join pg_inherits as pginh on pginh.inhparent = pgcl.oid
-                join (select pgcl.oid, pgmsp.nspname as sc, pgcl.relname as n from pg_class as pgcl
-                            join (select * from pg_attribute where attname = 'geom') as pgatt on pgatt.attrelid = pgcl.oid
-                            left join pg_namespace pgmsp on pgcl.relnamespace = pgmsp.oid) 
-                as pgcl2 on pgcl2.oid = pginh.inhrelid
-                where pgnsp.nspname in ('ge','pe', 'cb', 'public') and pgatt.attname IS NULL and pgcl.relkind = 'r'
-            union 
-            select distinct p.relname as tb from pg_class as p
-                left join pg_inherits as inh  on inh.inhrelid = p.oid 
-                left join geometry_columns as gc on gc.f_table_name = p.relname
-                where (inh.inhrelid IS NULL) and 
-                gc.f_table_schema in ('cb', 'pe', 'ge', 'public')
-            
-            order by tb)""".format(srid)
+    def updateDbSRID(self, tableDict, srid):
+        sql = """select UpdateGeometrySRID('{0}', '{1}', '{2}',{3})""".format(tableDict['tableSchema'], tableDict['tableName'], tableDict['geom'],srid)
         return sql
     
     def setDbAsTemplate(self, dbName, setTemplate = True):
@@ -1457,4 +1439,22 @@ class PostGISSqlGenerator(SqlGenerator):
             whereClause = """"""
         sql = """select column_name, data_type from information_schema.columns where 
             table_schema = '{0}' and table_name = '{1}' {2} order by column_name """.format(tableSchema, tableName, whereClause)
+        return sql
+
+    def getViewDefinition(self, viewName):
+        sql = """select pg_get_viewdef('{0}')""".format(viewName)
+        return sql
+
+    def dropView(self, viewName):
+        if '"' in viewName:
+            sql = """DROP VIEW {0} """.format(viewName)
+        elif '.' in viewName:
+            schema, name = viewName.split('.')
+            sql = """DROP VIEW "{0}"."{1}" """.format(schema, name)
+        else:
+            sql = """DROP VIEW "{0}" """.format(viewName)
+        return sql
+
+    def createViewStatement(self, viewName, viewDef):
+        sql = """ CREATE OR REPLACE VIEW {0} AS {1}""".format(viewName, viewDef)
         return sql

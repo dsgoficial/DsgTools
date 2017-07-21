@@ -2272,13 +2272,14 @@ class PostgisDb(AbstractDb):
         centroidTableList = []
         try:
             edgvVersion = self.getDatabaseVersion()
-            if self.checkIfExistsConfigTable('EarthCoverage'):
-                propertyDict = self.getAllSettingsFromAdminDb('EarthCoverage')
-                propertyName = propertyDict[edgvVersion][0]
-                dbName = self.db.databaseName()
-                settingDict = json.loads(self.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
-                earthCoverageDict = settingDict['earthCoverageDict']
-                centroidTableList = [i.split('.')[-1] for i in earthCoverageDict.keys()]
+            if hideCentroids:
+                if self.checkIfExistsConfigTable('EarthCoverage'):
+                    propertyDict = self.getAllSettingsFromAdminDb('EarthCoverage')
+                    propertyName = propertyDict[edgvVersion][0]
+                    dbName = self.db.databaseName()
+                    settingDict = json.loads(self.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+                    earthCoverageDict = settingDict['earthCoverageDict']
+                    centroidTableList = [i.split('.')[-1] for i in earthCoverageDict.keys()]
         except:
             pass
         
@@ -2408,27 +2409,72 @@ class PostgisDb(AbstractDb):
                 geomStructDict[tableName][d['f1']] = yesNoDict[d['f2']]
         return geomStructDict
     
-    def createDbFromTemplate(self, dbName, templateName):
+    def createDbFromTemplate(self, dbName, templateName, parentWidget = None):
         #check if created, if created prompt if drop is needed
         self.checkAndOpenDb()
+        if parentWidget:
+            progress = ProgressWidget(1,2,self.tr('Creating database {0} from template {1}... ').format(dbName, templateName), parent = parentWidget)
+            progress.initBar()
         self.dropAllConections(templateName)
+        if parentWidget:
+            progress.step()
         sql = self.gen.createFromTemplate(dbName, templateName)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
         #this close is to allow creation from template
         self.db.close()
+        if parentWidget:
+            progress.step()
     
-    def updateDbSRID(self, srid, useTransaction = True, closeAfterUse = True):
+    def getViewDefinition(self, viewName):
         self.checkAndOpenDb()
+        sql = self.gen.getViewDefinition(viewName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting view definition: ")+query.lastError().text())
+        while query.next():
+            return query.value(0)
+    
+    def updateDbSRID(self, srid, useTransaction = True, closeAfterUse = True, parentWidget = None):
+        self.checkAndOpenDb()
+        tableDictList = self.getParentGeomTables(getDictList = True, showViews = False, hideCentroids = False)
+        viewList = ['''"{0}"."{1}"'''.format(i['tableSchema'],i['tableName']) for i in self.getGeomColumnDictV2(showViews = True, hideCentroids = False).values() if i['tableType'] == 'VIEW']
+        viewDefinitionDict = {i:self.getViewDefinition(i) for i in viewList}
+
         if useTransaction:
             self.db.transaction()
-        sridSql = self.gen.updateDbSRID(srid)
-        query = QSqlQuery(self.db)
-        if not query.exec_(sridSql):
-            if useTransaction:
-                self.db.rollback()
-            raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
+        if parentWidget:
+            progress = ProgressWidget(1,2*len(viewList)+len(tableDictList),self.tr('Updating SRIDs from {0}... ').format(self.db.databaseName()), parent = parentWidget)
+            progress.initBar()
+        for view in viewList:
+            viewSql = self.gen.dropView(view)
+            query = QSqlQuery(self.db)
+            if not query.exec_(viewSql):
+                if useTransaction:
+                    self.db.rollback()
+                raise Exception(self.tr('Problem dropping views: ') + query.lastError().text())
+            if parentWidget:
+                progress.step()
+
+        for tableDict in tableDictList:
+            sridSql = self.gen.updateDbSRID(tableDict, srid)
+            query = QSqlQuery(self.db)
+            if not query.exec_(sridSql):
+                if useTransaction:
+                    self.db.rollback()
+                raise Exception(self.tr('Problem setting srid: ') + query.lastError().text())
+            if parentWidget:
+                progress.step()
+        for viewName in viewList:
+            createViewSql = self.gen.createViewStatement(viewName, viewDefinitionDict[viewName])
+            query = QSqlQuery(self.db)
+            if not query.exec_(createViewSql):
+                if useTransaction:
+                    self.db.rollback()
+                raise Exception(self.tr('Problem creating views: ') + query.lastError().text())
+            if parentWidget:
+                progress.step()
         if useTransaction:
             self.db.commit()
         #this close is to allow creation from template
@@ -2789,13 +2835,13 @@ class PostgisDb(AbstractDb):
             tableList.append(query.value(1))
         return tableList
     
-    def getParentGeomTables(self, getTupple = False, getFullName = False, primitiveFilter = []):
+    def getParentGeomTables(self, getTupple = False, getFullName = False, primitiveFilter = [], showViews = False, hideCentroids = True, getDictList = False):
         """
         Lists all tables with geometries from schema that are parents.
         """
         self.checkAndOpenDb()
-        layerList = self.listGeomClassesFromDatabase()
-        geomTables = [i.split('.')[-1] for i in layerList]
+        layerDictList = self.getGeomColumnDictV2(showViews = showViews, hideCentroids = hideCentroids)
+        geomTables = [i['tableName'] for i in layerDictList.values()]
         inhDict = self.getInheritanceDict()
         parentGeomTables = []
         for parent in inhDict.keys():
@@ -2819,10 +2865,13 @@ class PostgisDb(AbstractDb):
                 parentGeomTables.append(geomTable)
         #filters in case of filter
         if primitiveFilter != []:
-            filterList = [i.split('.')[-1] for i in self.listGeomClassesFromDatabase(primitiveFilter = primitiveFilter)]
+            filterList = [i['tableName'] for i in self.getGeomColumnDictV2(showViews = showViews, hideCentroids = hideCentroids, primitiveFilter = primitiveFilter).values()]
             aux = [i for i in parentGeomTables if i in filterList]
             parentGeomTables = aux
         parentGeomTables.sort()
+        if getDictList:
+            filteredDictList = [i for i in layerDictList.values() if i['tableName'] in parentGeomTables]
+            return filteredDictList
         #output types
         if getFullName:
             parentFullList = []

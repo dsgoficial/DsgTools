@@ -51,7 +51,7 @@ class PostgisDbCreator(DbCreator):
                 templateDb = self.instantiateNewDb(templateName)
                 templateDb.setStructureFromSql(version, 4674)
     
-    def createDb(self, dbName, srid, paramDict = dict()):
+    def createDb(self, dbName, srid, paramDict = dict(), parentWidget = None):
         '''
         dbName: new database name
         srid: coordinate system of database
@@ -59,7 +59,7 @@ class PostgisDbCreator(DbCreator):
         '''
         #0. if 'templateDb' in paramDict.keys: use createFromTemplate then end createDb
         if 'templateDb' in paramDict.keys():
-            self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateDb'])
+            self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateDb'], parentWidget = parentWidget)
             return self.instantiateNewDb(dbName)
         else:
             #1. test if edgv template is created
@@ -67,7 +67,7 @@ class PostgisDbCreator(DbCreator):
             if paramDict['isTemplateEdgv']:
                 self.checkAndCreateTemplate(paramDict['version'])
             #3. create db from template
-            self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateName'])
+            self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateName'], parentWidget = parentWidget)
             newDb = self.instantiateNewDb(dbName)
-            newDb.updateDbSRID(srid)
+            newDb.updateDbSRID(srid, parentWidget = parentWidget)
             return newDb
