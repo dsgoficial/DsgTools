@@ -2844,7 +2844,7 @@ class PostgisDb(AbstractDb):
             tableList.append(query.value(1))
         return tableList
     
-    def getParentGeomTables(self, getTupple = False, getFullName = False, primitiveFilter = [], showViews = False, hideCentroids = True, getDictList = False):
+    def getParentGeomTables(self, getTuple = False, getFullName = False, primitiveFilter = [], showViews = False, hideCentroids = True, getDictList = False):
         """
         Lists all tables with geometries from schema that are parents.
         """
@@ -2852,50 +2852,37 @@ class PostgisDb(AbstractDb):
         layerDictList = self.getGeomColumnDictV2(showViews = showViews, hideCentroids = hideCentroids)
         geomTables = [i['tableName'] for i in layerDictList.values()]
         inhDict = self.getInheritanceDict()
+
+        # final parent list
         parentGeomTables = []
+        childList = []
+        parentList = []
+        for parent in inhDict.keys():
+            # parents list
+            if parent not in parentList:
+                parentList.append(parent)
+            # children list
+            for child in inhDict[parent]:
+                if child not in childList:
+                    childList.append(child)
 
-        # if the table is a geometry table and has no parent it should be stored
+        # we must check tables orphan tables (no parent and no child)
+        # if a table like this is a geometry table it should be stored
         for geomTable in geomTables:
-            isOrphan = True
-            for parent in inhDict.keys():
-                if geomTable in inhDict[parent]:
-                    isOrphan = False
-                    break
-            if isOrphan:
+            if geomTable not in childList and geomTable not in parentList and geomTable not in parentGeomTables:
                 parentGeomTables.append(geomTable)
-
-        # if the table is listed as parent but appears as a child it should not be stored                
-        for key in inhDict.keys():
-            if key not in geomTables:
-                continue
-            isOrphan = True
-            for parent in inhDict.keys():
-                if key != parent and key in inhDict[parent]:
-                    isOrphan = False
-                    break
-            if isOrphan:
-                parentGeomTables.append(key)
-        
-#         parentGeomTables = []
-#         for parent in inhDict.keys():
-#             if parent not in geomTables:
-#                 for child in inhDict[parent]:
-#                     if child not in parentGeomTables:
-#                         parentGeomTables.append(child)
-#             else:
-#                 if parent not in parentGeomTables:
-#                     parentGeomTables.append(parent)
-#         #we must check tables that have no parent
-#         childBlackList = []
-#         for parent in inhDict.keys():
-#             if parent not in childBlackList:
-#                 childBlackList.append(parent)
-#             for child in inhDict[parent]:
-#                 if child not in childBlackList:
-#                     childBlackList.append(child)
-#         for geomTable in geomTables:
-#             if geomTable not in childBlackList and geomTable not in parentGeomTables:
-#                 parentGeomTables.append(geomTable)
+                
+        # analyzing only the inheritance information
+        for parent in inhDict.keys():
+            if parent in geomTables:
+                # if a parent is a geometry table but is also a child it should not be stored
+                if parent not in childList and parent not in parentGeomTables:
+                    parentGeomTables.append(parent)
+            else:
+                # if the parent is not a geometry table all its children should be stored
+                for child in inhDict[parent]:
+                    if child not in parentGeomTables:
+                        parentGeomTables.append(child)                
 
         #filters in case of filter
         if primitiveFilter != []:
@@ -2914,15 +2901,15 @@ class PostgisDb(AbstractDb):
                 if schema not in ['views', 'validation'] and schema:
                     parentFullList.append( schema+'.'+parent )
             return parentFullList
-        if not getTupple:
+        if not getTuple:
             return [i for i in parentGeomTables if self.getTableSchemaFromDb(i) not in ['views', 'validation'] ]
         else:
-            parentTuppleList = []
+            parentTupleList = []
             for parent in parentGeomTables:
                 schema = self.getTableSchemaFromDb(parent)
                 if schema not in ['views', 'validation']:
-                    parentTuppleList.append( (schema, parent) )
-            return parentTuppleList
+                    parentTupleList.append( (schema, parent) )
+            return parentTupleList
     
     def getInheritanceDict(self):
         self.checkAndOpenDb()
