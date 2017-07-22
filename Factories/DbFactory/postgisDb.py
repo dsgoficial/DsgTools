@@ -2853,25 +2853,50 @@ class PostgisDb(AbstractDb):
         geomTables = [i['tableName'] for i in layerDictList.values()]
         inhDict = self.getInheritanceDict()
         parentGeomTables = []
-        for parent in inhDict.keys():
-            if parent not in geomTables:
-                for child in inhDict[parent]:
-                    if child not in parentGeomTables:
-                        parentGeomTables.append(child)
-            else:
-                if parent not in parentGeomTables:
-                    parentGeomTables.append(parent)
-        #we must check tables that have no parent
-        childBlackList = []
-        for parent in inhDict.keys():
-            if parent not in childBlackList:
-                childBlackList.append(parent)
-            for child in inhDict[parent]:
-                if child not in childBlackList:
-                    childBlackList.append(child)
+
+        # if the table is a geometry table and has no parent it should be stored
         for geomTable in geomTables:
-            if geomTable not in childBlackList and geomTable not in parentGeomTables:
+            isOrphan = True
+            for parent in inhDict.keys():
+                if geomTable in inhDict[parent]:
+                    isOrphan = False
+                    break
+            if isOrphan:
                 parentGeomTables.append(geomTable)
+
+        # if the table is listed as parent but appears as a child it should not be stored                
+        for key in inhDict.keys():
+            if key not in geomTables:
+                continue
+            isOrphan = True
+            for parent in inhDict.keys():
+                if key != parent and key in inhDict[parent]:
+                    isOrphan = False
+                    break
+            if isOrphan:
+                parentGeomTables.append(key)
+        
+#         parentGeomTables = []
+#         for parent in inhDict.keys():
+#             if parent not in geomTables:
+#                 for child in inhDict[parent]:
+#                     if child not in parentGeomTables:
+#                         parentGeomTables.append(child)
+#             else:
+#                 if parent not in parentGeomTables:
+#                     parentGeomTables.append(parent)
+#         #we must check tables that have no parent
+#         childBlackList = []
+#         for parent in inhDict.keys():
+#             if parent not in childBlackList:
+#                 childBlackList.append(parent)
+#             for child in inhDict[parent]:
+#                 if child not in childBlackList:
+#                     childBlackList.append(child)
+#         for geomTable in geomTables:
+#             if geomTable not in childBlackList and geomTable not in parentGeomTables:
+#                 parentGeomTables.append(geomTable)
+
         #filters in case of filter
         if primitiveFilter != []:
             filterList = [i['tableName'] for i in self.getGeomColumnDictV2(showViews = showViews, hideCentroids = hideCentroids, primitiveFilter = primitiveFilter).values()]
