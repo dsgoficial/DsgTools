@@ -46,11 +46,13 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         self.serverAbstractDb = None
         self.selectedAbstractDb = None
         self.setInitialState()
+        self.useFrame = True
     
     @pyqtSlot(AbstractDb, name = 'on_comboBoxPostgis_dbChanged') #check this out luiz! hahahahaha
     def populateSelectedAbstractDb(self, abstractDb):
         self.selectedAbstractDb = abstractDb
-        self.populateFrameComboBox()
+        if self.useFrame:
+            self.populateFrameComboBox()
     
     def populateFrameComboBox(self):
         if self.selectedAbstractDb:
@@ -141,12 +143,13 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
         if not self.edgvTemplateRadioButton.isChecked():
             if not self.comboBoxPostgis.currentDb():
                 errorMsg += self.tr('Select a template database!\n')
-            if self.frameComboBox.currentIndex() == 0:
-                errorMsg += self.tr('Select a frame layer!\n')
-            if self.indexComboBox.currentIndex() == 0:
-                errorMsg += self.tr('Select an index attribute!\n')
-            if self.inomComboBox.currentIndex() == 0:
-                errorMsg += self.tr('Select an INOM attribute!\n')
+            if self.useFrame:
+                if self.frameComboBox.currentIndex() == 0:
+                    errorMsg += self.tr('Select a frame layer!\n')
+                if self.indexComboBox.currentIndex() == 0:
+                    errorMsg += self.tr('Select an index attribute!\n')
+                if self.inomComboBox.currentIndex() == 0:
+                    errorMsg += self.tr('Select an INOM attribute!\n')
         
         if errorMsg != '':
             QMessageBox.critical(self, self.tr('Critical!'), errorMsg)
@@ -163,7 +166,8 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
             self.frameGroupBox.hide()
         else:
             self.comboBoxPostgis.show()
-            self.frameGroupBox.show()
+            if self.useFrame:
+                self.frameGroupBox.show()
             self.comboBoxPostgis.setEnabled(True)
             self.versionComboBox.setEnabled(False)
         if not isinstance(self.sender(), QRadioButton):
@@ -191,15 +195,16 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
             return paramDict           
         else:
             paramDict = dict()
-            selected = self.tableDict[self.frameComboBox.currentText()]
             paramDict['templateName'] = self.comboBoxPostgis.currentText().split(' (')[0]
             paramDict['isTemplateEdgv'] = False
-            paramDict['tableSchema'] = selected['tableSchema']
-            paramDict['tableName'] = selected['tableName']
-            paramDict['geom'] = selected['geom']
-            paramDict['miAttr'] = self.indexComboBox.currentText()
-            paramDict['inomAttr'] = self.inomComboBox.currentText()
-            paramDict['geomType'] = selected['geomType']
+            if self.useFrame:
+                selected = self.tableDict[self.frameComboBox.currentText()]
+                paramDict['tableSchema'] = selected['tableSchema']
+                paramDict['tableName'] = selected['tableName']
+                paramDict['geom'] = selected['geom']
+                paramDict['miAttr'] = self.indexComboBox.currentText()
+                paramDict['inomAttr'] = self.inomComboBox.currentText()
+                paramDict['geomType'] = selected['geomType']
             return paramDict
 
     

@@ -39,12 +39,12 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__()
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.databaseParameterWidget.setDbNameVisible(False)
+        self.tabDbSelectorWidget.serverWidget.serverAbstractDbLoaded.connect(self.databaseParameterWidget.setServerDb)
+        self.databaseParameterWidget.comboBoxPostgis.parent = self
+        self.databaseParameterWidget.useFrame = False
+        self.databaseParameterWidget.setDbNameVisible(True)
     
     def getParameters(self):
         #Get outputDir, outputList, refSys
@@ -53,6 +53,7 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['sufix'] = None
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
+        parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
         if self.databaseParameterWidget.prefixLineEdit.text() <> '':
             parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
         if self.databaseParameterWidget.sufixLineEdit.text() <> '':
@@ -61,6 +62,7 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
         parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
         parameterDict['numberOfDatabases'] = self.spinBox.value()
+        parameterDict['templateInfo'] = self.databaseParameterWidget.getTemplateParameters()
         return parameterDict
 
     def validatePage(self):
@@ -79,7 +81,7 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
     def createDatabases(self, parameterDict):
         dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict)
+        (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict['templateInfo'])
         QApplication.restoreOverrideCursor()
         if len(errorDict.keys()) > 0:
             raise Exception(errorDict)
