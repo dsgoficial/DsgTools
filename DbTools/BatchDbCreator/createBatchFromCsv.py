@@ -23,6 +23,8 @@
 import os
 import json
 
+from qgis.core import QgsMessageLog
+
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, Qt
 from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
@@ -81,17 +83,38 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         if not validated:
             return False
         parameterDict = self.getParameters()
-        self.createDatabases(parameterDict)
-        QMessageBox.warning(self, self.tr('Info!'), self.tr('Databases created successfully.'))
+        dbDict, errorDict = self.createDatabases(parameterDict)
+        creationMsg = ''
+        if len(dbDict.keys()) > 0:
+            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(dbDict.keys()))
+        errorFrameMsg = ''
+        errorMsg = ''
+        if len(errorDict.keys()) > 0:
+            frameList = []
+            errorList = []
+            for key in errorDict.keys():
+                if self.tr('Invalid inomen parameter!') in errorDict[key]:
+                    frameList.append(key)
+                else:
+                    errorList.append(key)
+                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if len(frameList) > 0:
+                errorFrameMsg += self.tr('Frame was not created on the following databases: {0}').format(', '.join(frameList))
+            if len(errorList) > 0:
+                errorMsg += self.tr('Some errors occurred while trying to create database(s) {0}').format(', '.join(errorList))
+        logMsg = ''
+        if errorFrameMsg != '' or errorMsg != '':
+            logMsg += self.tr('Check log for more details.')
+        msg = [i for i in (creationMsg, errorFrameMsg, errorMsg, logMsg) if i != '']
+        QMessageBox.warning(self, self.tr('Info!'), self.tr('Process finished.')+'\n'+'\n'.join(msg))
         return True
     
     def createDatabases(self, parameterDict):
         dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        (dbList, errorDict)=dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True, paramDict = parameterDict['templateInfo'])
+        (dbDict, errorDict)=dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True, paramDict = parameterDict['templateInfo'])
         QApplication.restoreOverrideCursor()
-        if len(errorDict.keys())> 0:
-            raise Exception(errorDict)
+        return dbDict, errorDict
     
     def changeTemplateInterface(self):
         if self.tabDbSelectorWidget.tabWidget.currentIndex() == 1:

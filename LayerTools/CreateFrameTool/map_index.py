@@ -23,10 +23,12 @@
 """
 from qgis.core import QgsPoint, QgsGeometry, QgsFeature
 import string, os
+from PyQt4.QtCore import QObject
 
-class UtmGrid:
+class UtmGrid(QObject):
     def __init__(self):
         """Constructor."""
+        super(UtmGrid,self).__init__()
         self.scales=[1000,500,250,100,50,25,10,5,2,1]
         nomen1000=['Nao Recorta']
         nomen500=[['V','X'],['Y','Z']]
@@ -157,39 +159,48 @@ class UtmGrid:
     def getLLCornerLatitude1kk(self,inomen):
         """Get lower left Latitude for 1:1.000.000 scale
         """
-        l=inomen[1].upper()
-        y = 0.0
-        operator=self.getHemisphereMultiplier(inomen)
-        verticalPosition=string.uppercase.index(l)
-        y=(y+4*verticalPosition)*operator
-        if (operator<0): y-=4
+        try:
+            l=inomen[1].upper()
+            y = 0.0
+            operator=self.getHemisphereMultiplier(inomen)
+            verticalPosition=string.uppercase.index(l)
+            y=(y+4*verticalPosition)*operator
+            if (operator<0): y-=4
+        except:
+            raise Exception(self.tr('Invalid inomen parameter!'))
         return y
 
     def getLLCornerLongitude1kk(self,inomen):
         """Get lower left Longitude for 1:1.000.000 scale
         """
-        fuso=int(inomen[3:5])
-        x=0  
-        if((fuso > 0) and (fuso <= 60)):
-            x = (((fuso - 30)*6.0)-6.0)
-        return x
+        try:
+            fuso=int(inomen[3:5])
+            x=0  
+            if((fuso > 0) and (fuso <= 60)):
+                x = (((fuso - 30)*6.0)-6.0)
+            return x
+        except:
+            raise Exception(self.tr('Invalid inomen parameter!'))
     
     def getLLCorner(self,inomen):
         """Get lower left coordinates for scale determined by the given map index
         """
-        x=self.getLLCornerLongitude1kk(inomen)
-        y=self.getLLCornerLatitude1kk(inomen)
-        inomenParts=inomen.upper().split('-')
-        #Escala de 500.00
-        for partId in range(2,len(inomenParts)):
-            scaleId=partId-1
-            dx=self.getSpacingX(self.scales[scaleId])
-            dy=self.getSpacingY(self.scales[scaleId])
-            scaleText=inomenParts[partId]
-            i,j=self.findScaleText(scaleText, partId-1)
-            x+=i*dx
-            y+=j*dy
-        return (x,y)
+        try:
+            x=self.getLLCornerLongitude1kk(inomen)
+            y=self.getLLCornerLatitude1kk(inomen)
+            inomenParts=inomen.upper().split('-')
+            #Escala de 500.00
+            for partId in range(2,len(inomenParts)):
+                scaleId=partId-1
+                dx=self.getSpacingX(self.scales[scaleId])
+                dy=self.getSpacingY(self.scales[scaleId])
+                scaleText=inomenParts[partId]
+                i,j=self.findScaleText(scaleText, partId-1)
+                x+=i*dx
+                y+=j*dy
+            return (x,y)
+        except:
+            raise Exception(self.tr('Invalid inomen parameter!'))
     
     def computeNumberOfSteps(self,startScaleId,stopScaleId):
         """Compute the number of steps to build a progress
