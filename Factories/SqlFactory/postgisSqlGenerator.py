@@ -1011,20 +1011,32 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def insertFrame(self,scale,mi,inom,frame,srid,geoSrid, paramDict = dict()):
-        if paramDict <> dict():
-            tableSchema = paramDict['tableSchema']
-            tableName = paramDict['tableName']
-            miAttr = paramDict['miAttr']
-            inomAttr = paramDict['inomAttr']
-            geometryColumn = paramDict['geom']
-            geomType = paramDict['geomType']
-        else:
+        paramKeys = paramDict.keys()
+        if 'tableSchema' not in paramKeys:
             tableSchema = 'public'
+        else:
+            tableSchema = paramDict['tableSchema']
+        if 'tableName' not in paramKeys:
             tableName = 'aux_moldura_a'
+        else:
+            tableName = paramDict['tableName']
+        if 'miAttr' not in paramKeys:
             miAttr = 'mi'
+        else:
+            miAttr = paramDict['miAttr']
+        if 'inomAttr' not in paramKeys:
             inomAttr = 'inom'
+        else:
+            inomAttr = paramDict['inomAttr']
+        if 'geom' not in paramKeys:
             geometryColumn = 'geom'
+        else:
+            geometryColumn = paramDict['geom']
+        if 'geomType' not in paramKeys:
             geomType = 'MULTIPOLYGON'
+        else:
+            geomType = paramDict['geomType']
+
         if geomType == 'MULTIPOLYGON':
             sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_SetSRID(ST_Multi('{2}'),{3}), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         else:
