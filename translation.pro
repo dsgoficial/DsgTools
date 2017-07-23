@@ -233,6 +233,9 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
 					ProductionTools/StyleManagerTool/__init__.py \
 					ProductionTools/StyleManagerTool/styleManagerTool.py \
+					CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py
+					CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py
+					
 
 
 
