@@ -74,14 +74,29 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         if not validated:
             return False
         parameterDict = self.getParameters()
-        self.createDatabases(parameterDict)
-        QMessageBox.warning(self, self.tr('Info!'), self.tr('Databases created successfully.'))
+        dbDict, errorDict = self.createDatabases(parameterDict)
+        creationMsg = ''
+        if len(dbDict.keys()) > 0:
+            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(dbDict.keys()))
+        errorMsg = ''
+        if len(errorDict.keys()) > 0:
+            frameList = []
+            errorList = []
+            for key in errorDict.keys():
+                errorList.append(key)
+                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if len(errorList) > 0:
+                errorMsg += self.tr('Some errors occurred while trying to create database(s) {0}').format(', '.join(errorList))
+        logMsg = ''
+        if errorMsg != '':
+            logMsg += self.tr('Check log for more details.')
+        msg = [i for i in (creationMsg, errorMsg, logMsg) if i != '']
+        QMessageBox.warning(self, self.tr('Info!'), self.tr('Process finished.')+'\n'+'\n'.join(msg))
         return True
     
     def createDatabases(self, parameterDict):
         dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        (dbList, errorDict)=dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict['templateInfo'])
+        dbDict, errorDict = dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict['templateInfo'])
         QApplication.restoreOverrideCursor()
-        if len(errorDict.keys()) > 0:
-            raise Exception(errorDict)
+        return dbDict, errorDict

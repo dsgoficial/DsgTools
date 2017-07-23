@@ -25,6 +25,7 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from PyQt4.QtGui import QMessageBox
 
 
 
@@ -58,15 +59,15 @@ class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
         """
         Validates the selector widget
         """
-        if not self.getFactoryCreationParam():
-            return False
         if self.tabWidget.currentIndex() == 0:
             if self.serverWidget.serversCombo.currentIndex() == 0:
+                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a server!'))
                 return False
             else:
                 return True
         elif self.tabWidget.currentIndex() == 1:
             if self.outputDirSelector.fileNameList == []:
+                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a folder!'))
                 return False
             else:
                 return True
