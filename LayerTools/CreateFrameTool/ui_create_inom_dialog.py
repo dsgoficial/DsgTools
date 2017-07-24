@@ -94,7 +94,12 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         Loads the frame layer case it is not loaded yet.
         """
         loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)
-        layerMeta = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'moldura_a', 'tableName':'aux_moldura_a', 'tableSchema':'public', 'tableType': 'BASE TABLE'}
+        if loader.provider == 'postgres':
+            layerMeta = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'moldura_a', 'tableName':'aux_moldura_a', 'tableSchema':'public', 'tableType': 'BASE TABLE'}
+        elif loader.provider == 'spatialite':
+            layerMeta = {'cat': 'aux', 'geom': 'GEOMETRY', 'geomType':'MULTIPOLYGON', 'lyrName': 'moldura_a', 'tableName':'aux_moldura_a', 'tableSchema':'public', 'tableType': 'BASE TABLE'}
+        else:
+            layerMeta = None
         layerDict = loader.load([layerMeta], uniqueLoad = True)
         if layerMeta['lyrName'] in layerDict.keys():
             layer = layerDict[layerMeta['lyrName']]
