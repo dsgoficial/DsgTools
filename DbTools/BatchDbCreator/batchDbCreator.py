@@ -53,13 +53,12 @@ class BatchDbCreator(QtGui.QWizard, FORM_CLASS):
     
     def nextId(self):
         if self.currentId() == 0:
-                if self.csvRadioButton.isChecked():
-                    return self.sequenceDict['CreateBatchFromCsv']
-                elif self.patternRadioButton.isChecked():
-                    return self.sequenceDict['CreateBatchIncrementing']
-                else:
-                    return self.currentId()
-
+            if self.csvRadioButton.isChecked():
+                return self.sequenceDict['CreateBatchFromCsv']
+            elif self.patternRadioButton.isChecked():
+                return self.sequenceDict['CreateBatchIncrementing']
+            else:
+                return self.currentId()
         elif self.currentId() == self.sequenceDict['CreateBatchFromCsv']:
             return -1
         elif self.currentId() == self.sequenceDict['CreateBatchIncrementing']:
