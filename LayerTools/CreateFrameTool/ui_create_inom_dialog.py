@@ -68,7 +68,11 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         layer = self.loadFrameLayer()
         inom = self.inomLineEdit.text()
         scale = self.scaleCombo.currentText()
-        frame = self.widget.abstractDb.createFrame('inom', scale, inom)
+        try:
+            frame = self.widget.abstractDb.createFrame('inom', scale, inom)
+        except Exception as e:
+            QMessageBox.warning(self, self.tr("Critical!"), ':'.join(e.args))
+            return
         reprojected = self.reprojectFrame(frame)
         self.zoomToLayer(layer, reprojected)
         self.done(1)
@@ -89,8 +93,13 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         """
         Loads the frame layer case it is not loaded yet.
         """
-        loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)        
-        layer = loader.load(['aux_moldura_a'], uniqueLoad=True)['aux_moldura_a']
+        loader = LayerLoaderFactory().makeLoader(self.iface,self.widget.abstractDb)
+        layerMeta = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'moldura_a', 'tableName':'aux_moldura_a', 'tableSchema':'public', 'tableType': 'BASE TABLE'}
+        layerDict = loader.load([layerMeta], uniqueLoad = True)
+        if layerMeta['lyrName'] in layerDict.keys():
+            layer = layerDict[layerMeta['lyrName']]
+        else:
+            layer = None
         return layer
 
     def getFrameLayer(self,ifaceLayers):
@@ -98,7 +107,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         Gets the frame layer according to the database.
         """
         for lyr in ifaceLayers:
-            if 'aux_moldura_a' in lyr.name():
+            if 'moldura_a' in lyr.name():
                 dbname = self.getDBNameFromLayer(lyr)
                 if dbname == self.widget.abstractDb.getDatabaseName():
                     return lyr
