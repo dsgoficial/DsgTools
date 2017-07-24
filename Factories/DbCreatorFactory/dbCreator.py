@@ -119,10 +119,12 @@ class DbCreator(QObject):
                     errorDict[dbName] += '\n' + ':'.join(e.args)
             if self.parentWidget:
                 progress.step()
-            if createFrame:
+        if createFrame:
+            for dbName in outputDbDict.keys():
                 try:           
                     scale = self.scaleMIDict[len(mi.split('-'))]
-                    newDb.createFrame('mi', scale, mi, paramDict = paramDict)
+                    mi = [i for i in miList if i in dbName][0]
+                    outputDbDict[dbName].createFrame('mi', scale, mi, paramDict = paramDict)
                 except Exception as e:
                     if dbName not in errorDict.keys():
                         errorDict[dbName] = ':'.join(e.args)
