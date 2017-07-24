@@ -174,7 +174,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
         vlayer = self.setMulti(vlayer,domLayerDict)
         if stylePath:
-            fullPath = self.getStyle(stylePath, lyrName)
+            fullPath = self.getStyle(stylePath, tableName)
             if fullPath:
                 vlayer.applyNamedStyle(fullPath)
         iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
