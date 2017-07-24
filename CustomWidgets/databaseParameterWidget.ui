@@ -357,7 +357,7 @@
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsprojectionselectionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>DsgCustomComboBox</class>
