@@ -125,7 +125,10 @@ class Utils:
         if '.qml' in qml:
             doc = parse(qml)
         else:
-            doc = parseString(qml)
+            try:
+                doc = parseString(qml)
+            except:
+                doc = parseString(qml.encode('utf-8'))
         forbiddenList = doc.getElementsByTagName('edittypes')
         if len(forbiddenList) > 0:
             forbiddenNode = forbiddenList[0]
