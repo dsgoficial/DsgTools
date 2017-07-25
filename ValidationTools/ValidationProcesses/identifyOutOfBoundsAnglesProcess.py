@@ -69,7 +69,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                result = self.abstractDb.getOutOfBoundsAnglesRecords(classAndGeom['tableSchema'], classAndGeom['tableName'], tol, classAndGeom['geom'], classAndGeom['geomType'], keyColumn)
+                result = self.abstractDb.getOutOfBoundsAnglesRecords(tableSchema, tableName, tol, classAndGeom['geom'], classAndGeom['geomType'], keyColumn)
                 localProgress.step()
 
                 # dropping temp table
