@@ -122,25 +122,25 @@ class EDGVLayerLoader(QObject):
                         if elem['cat'] not in lyrDict[self.correspondenceDict[elem['geomType']]].keys():
                             lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']] = []
                         lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
-        else:
-            for type in self.geomTypeDict.keys():
-                # some tables are only registered as GEOMETRY and should not be considered
-                if type == 'GEOMETRY':
-                    continue
-                if self.correspondenceDict[type] not in lyrDict.keys():
-                    lyrDict[self.correspondenceDict[type]] = dict()
-                for lyr in self.geomTypeDict[type]:
-                    if lyr in inputList:
-                        if isEdgv:
-                            cat = lyr.split('_')[0]
-                        else:
-                            cat = self.abstractDb.getTableSchemaFromDb(lyr)
-                        if cat not in lyrDict[self.correspondenceDict[type]].keys():
-                            lyrDict[self.correspondenceDict[type]][cat] = []
-                        lyrDict[self.correspondenceDict[type]][cat].append(lyr)
-            for type in lyrDict.keys():
-                if lyrDict[type] == dict():
-                    lyrDict.pop(type)
+                else:
+                    for type in self.geomTypeDict.keys():
+                        # some tables are only registered as GEOMETRY and should not be considered
+                        if type == 'GEOMETRY':
+                            continue
+                        if self.correspondenceDict[type] not in lyrDict.keys():
+                            lyrDict[self.correspondenceDict[type]] = dict()
+                        for lyr in self.geomTypeDict[type]:
+                            if lyr in inputList:
+                                if isEdgv:
+                                    cat = lyr.split('_')[0]
+                                else:
+                                    cat = self.abstractDb.getTableSchemaFromDb(lyr)
+                                if cat not in lyrDict[self.correspondenceDict[type]].keys():
+                                    lyrDict[self.correspondenceDict[type]][cat] = []
+                                lyrDict[self.correspondenceDict[type]][cat].append(lyr)
+                    for type in lyrDict.keys():
+                        if lyrDict[type] == dict():
+                            lyrDict.pop(type)
         return lyrDict
 
     def prepareGroups(self, groupList, parent, lyrDict):
