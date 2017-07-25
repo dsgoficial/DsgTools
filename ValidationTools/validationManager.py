@@ -105,33 +105,33 @@ class ValidationManager(QObject):
             
         #if there is a running process we should stop
         if runningProc != None:
-            QgsMessageLog.logMessage('Unable to run process %s. Process %s is already running.\n' % (processName, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            return 0
-        else:
-            currProc = self.instantiateProcessByName(processName, False)
-            #checking for existing pre process
-            preProcessName = currProc.preProcess()
-            if preProcessName:
-                self.executeProcess(preProcessName)
-            # setting parameters
-            if currProc.parameters:
-                dlg = ProcessParametersDialog(None, currProc.parameters, None, 'Process parameters setter')
-                if dlg.exec_() == 0:
-                    return -1
-                # get parameters
-                params = dlg.values
-                # adjusting the parameters in the process
-                currProc.setParameters(params)
-            #check status
-            QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            ret = currProc.execute() #run bitch run!
-            #status = currProc.getStatus() #must set status
-            QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            #checking for existing post process
-            postProcessName = currProc.postProcess()
-            if postProcessName:
-                self.executeProcess(postProcessName)
-            return ret
+            if not QMessageBox.question(self, self.tr('Question'), self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Ok:
+                QgsMessageLog.logMessage(self.tr('Unable to run process %s. Process %s is already running.\n').format(process, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 0
+        currProc = self.instantiateProcessByName(processName, False)
+        #checking for existing pre process
+        preProcessName = currProc.preProcess()
+        if preProcessName:
+            self.executeProcess(preProcessName)
+        # setting parameters
+        if currProc.parameters:
+            dlg = ProcessParametersDialog(None, currProc.parameters, None, self.tr('Process parameters setter for process {0}'.format(process)))
+            if dlg.exec_() == 0:
+                return -1
+            # get parameters
+            params = dlg.values
+            # adjusting the parameters in the process
+            currProc.setParameters(params)
+        #check status
+        QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        ret = currProc.execute() #run bitch run!
+        #status = currProc.getStatus() #must set status
+        QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        #checking for existing post process
+        postProcessName = currProc.postProcess()
+        if postProcessName:
+            self.executeProcess(postProcessName)
+        return ret
     
 if __name__ == '__main__':
     from DsgTools.Factories.DbFactory.dbFactory import DbFactory

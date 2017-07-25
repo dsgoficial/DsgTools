@@ -196,13 +196,18 @@ class ValidationProcess(QObject):
         name = '.'.join([dsUri.schema(), dsUri.table()])
         return name
 
-    def mapInputLayer(self, inputLyr):
+    def mapInputLayer(self, inputLyr, selectedFeatures = False):
         """
         Gets the layer features considering the edit buffer in the case
         the layer is already in edition mode
         """
         #return dict
         featureMap = dict()
+        #getting only selected features
+        if selectedFeatures:
+            for feat in inputLyr.selectedFeatures():
+                featureMap[feat.id()] = feat
+            return featureMap
         #getting edit buffer
         editBuffer = inputLyr.editBuffer()
         #black list for removed features
@@ -312,7 +317,7 @@ class ValidationProcess(QObject):
             lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
         return lyr
     
-    def prepareExecution(self, cl, geometryColumn='geom'):
+    def prepareExecution(self, cl, geometryColumn='geom', selectedFeatures = False):
         """
         Prepare the process to be executed
         cl: table name
@@ -323,7 +328,7 @@ class ValidationProcess(QObject):
         uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #getting feature map including the edit buffer
-        featureMap = self.mapInputLayer(lyr)
+        featureMap = self.mapInputLayer(lyr, selectedFeatures = selectedFeatures)
         #getting table name with schema
         if isinstance(cl, dict):
             tableSchema = cl['tableSchema']
