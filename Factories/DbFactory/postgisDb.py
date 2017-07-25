@@ -885,25 +885,22 @@ class PostgisDb(AbstractDb):
             file = os.path.join(currentPath,'..','..','DbTools','PostGISTool', 'sqls', 'FTer_2a_Ed', 'views_edgvFter_2a_Ed.sql')
         return file
     
-    def getInvalidGeomRecords(self, geomList, geometryColumn, keyColumn):
+    def getInvalidGeomRecords(self, cl, geometryColumn, keyColumn):
         """
         Gets invalid geometry data from database
         """
         self.checkAndOpenDb()
         invalidRecordsList = []
-        for lyr in geomList:
-            tableSchema, tableName = self.getTableSchema(lyr)
-            sql = self.gen.getInvalidGeom(tableSchema, tableName, geometryColumn, keyColumn)
-            query = QSqlQuery(sql, self.db)
-            if not query.isActive():
-                raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
-            while query.next():
-                featId = query.value(0)
-                reason = query.value(1)
-                geom = query.value(2)
-                # the flag should store the original table name
-                tableName = tableName.replace('_temp', '')
-                invalidRecordsList.append( (tableSchema+'.'+tableName, featId, reason, geom, geometryColumn) )
+        tableSchema, tableName = self.getTableSchema(cl)
+        sql = self.gen.getInvalidGeom(tableSchema, tableName, geometryColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
+        while query.next():
+            featId = query.value(0)
+            reason = query.value(1)
+            geom = query.value(2)
+            invalidRecordsList.append( (featId, reason, geom) )
         return invalidRecordsList
     
     def insertFlags(self, flagTupleList, processName, useTransaction = True):
@@ -1256,8 +1253,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
         while query.next():
-            tupleList.append( (query.value(0),query.value(1)) )
-            # notSimpleDict = self.utils.buildNestedDict(notSimpleDict, [cl,query.value(0)], query.value(1))
+            tupleList.append( (query.value(0), query.value(1)) )
         return tupleList
 
     def getOutOfBoundsAnglesRecords(self, tableSchema, tableName, tol, geometryColumn, geomType, keyColumn):

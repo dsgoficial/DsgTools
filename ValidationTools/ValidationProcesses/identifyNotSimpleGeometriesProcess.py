@@ -76,8 +76,8 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 if len(result) > 0:
                     if classAndGeom['tableSchema'] not in ('validation'):
                         for r in result:
-                            id, geom = r
-                            recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, self.tr('Not simple geometry.'), geom, classAndGeom['geom']))
+                            featId, geom = r
+                            recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featId, self.tr('Not simple geometry.'), geom, classAndGeom['geom']))
 
             # storing flags
             if len(recordFlagList) > 0:

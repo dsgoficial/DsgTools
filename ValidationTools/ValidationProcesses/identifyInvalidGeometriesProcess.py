@@ -56,6 +56,7 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
+            recordFlagList = []
             for key in classesWithElem:
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
@@ -67,20 +68,21 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                invalidGeomRecordList = self.abstractDb.getInvalidGeomRecords(classesWithGeom, classAndGeom['geom'], keyColumn)
+                result = self.abstractDb.getInvalidGeomRecords(processTableName, classAndGeom['geom'], keyColumn)
                 localProgress.step()
-
-            # dropping temp table
-            for processTableName in classesWithGeom:
+                # dropping temp table
                 self.abstractDb.dropTempTable(processTableName)
+                #storing flags
+                if len(result) > 0:
+                    if classAndGeom['tableSchema'] not in ('validation'):
+                        for r in result:
+                            featId, reason, geom = r
+                            recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featId, reason, geom, classAndGeom['geom']))
 
             # storing flags
-            if len(invalidGeomRecordList) > 0:
-                # the invalid geometries list already have the table names adjusted (i.e. not considering the "_temp" in the end)
-                numberOfInvGeom = self.addFlag(invalidGeomRecordList)
-                for tuple in invalidGeomRecordList:
-                    self.addClassesToBeDisplayedList(tuple[0])  
-                msg = str(numberOfInvGeom) + self.tr(' features are invalid. Check flags.').format()
+            if len(recordFlagList) > 0:
+                numberOfProblems = self.addFlag(recordFlagList) 
+                msg = str(numberOfProblems) + self.tr(' features are invalid. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
