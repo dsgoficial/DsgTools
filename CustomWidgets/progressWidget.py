@@ -27,7 +27,7 @@ from PyQt4.QtGui import QProgressBar, QSizePolicy
 import time
 
 class ProgressWidget(QgsMessageBar):
-    def __init__(self, min, max, message, parent=None):
+    def __init__(self, min, max, message, parent=None, timeout = 1.5):
         """
         Constructs a progress widget
         """
@@ -43,7 +43,7 @@ class ProgressWidget(QgsMessageBar):
         self.progressBar = QProgressBar()
         self.progressBar.setMinimum(min)
         self.progressBar.setMaximum(max)
-        self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=QgsMessageBar.INFO)
+        self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=QgsMessageBar.INFO, duration=timeout)
         self.pushWidget(self.msgBarItem)
     
     def initBar(self):

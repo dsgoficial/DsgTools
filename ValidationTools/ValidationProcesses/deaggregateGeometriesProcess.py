@@ -86,6 +86,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         lyr.updateFeature(feat)
                         lyr.addFeatures(addList,True)
                     localProgress.step()
+                localProgress.step()
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
