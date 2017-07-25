@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.0" language="pt_BR">
 <context>
     <name>@default</name>
     <message>
@@ -1340,12 +1341,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="107"/>
         <source> feature(s) from </source>
-        <translation>feição(ões) da camada </translation>
+        <translation> feição(ões) da camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="107"/>
         <source> with cleaning errors. Check flags.</source>
-        <translation>com erros de limpeza. Verifique as flags.</translation>
+        <translation> com erros de limpeza. Verifique as flags.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="109"/>
@@ -11207,7 +11208,7 @@ Camada</translation>
         <source>Processo</source>
         <translation type="obsolete">Processo</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
         <source>Situação</source>
         <translation type="obsolete">Situação</translation>

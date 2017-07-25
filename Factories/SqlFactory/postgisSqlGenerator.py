@@ -407,7 +407,7 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName = 'aux_flags_validacao_l'
         elif dimension == 2:
             tableName = 'aux_flags_validacao_a'
-        sql = """INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values 
+        sql = u"""INSERT INTO validation.{0} (process_name, layer, feat_id, reason, geom, dimension, geometry_column) values 
         ('{1}','{2}',{3},'{4}',ST_Transform(ST_SetSRID(ST_Multi('{5}'),{6}),{7}), {8}, '{9}');""".format(tableName, processName, layer, str(feat_id), reason, geom, srid, flagSRID, dimension, geometryColumn)
         return sql
     
