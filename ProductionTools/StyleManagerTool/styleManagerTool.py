@@ -94,7 +94,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             for lyr in lyrList:
                 try:
                     uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
-                    fullPath = self.getStyle(abstractDb, selectedStyle, uri.table())
+                    fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
                     if fullPath:
                         lyr.applyNamedStyle(fullPath)
                 except:
