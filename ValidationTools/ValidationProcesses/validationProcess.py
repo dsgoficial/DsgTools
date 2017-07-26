@@ -207,34 +207,10 @@ class ValidationProcess(QObject):
         if selectedFeatures:
             for feat in inputLyr.selectedFeatures():
                 featureMap[feat.id()] = feat
-            return featureMap
-        #getting edit buffer
-        editBuffer = inputLyr.editBuffer()
-        #black list for removed features
-        blackList = []
-        if editBuffer:
-            blackList = editBuffer.deletedFeatureIds()
-            #1 - changed
-            changedMap = editBuffer.changedGeometries()
-            request = QgsFeatureRequest().setFilterFids(changedMap.keys())
-            for newFeat in inputLyr.getFeatures(request):
-                featId = newFeat.id()
-                newFeat.setGeometry(changedMap[featId])
-                featureMap[featId] = newFeat
-            #2 - old
-            for feat in inputLyr.getFeatures():
-                featid = feat.id()
-                if featid not in featureMap.keys() and featid not in blackList:
-                    featureMap[featid] = feat
-            #3 -added
-            for feat in editBuffer.addedFeatures().values():
-                featureMap[feat.id()] = feat
+        #getting all features
         else:
-            #2 - just the old
             for feat in inputLyr.getFeatures():
-                featid = feat.id()
-                if featid not in featureMap.keys() and featid not in blackList:
-                    featureMap[featid] = feat
+                featureMap[feat.id()] = feat
         return featureMap
     
     def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None):
