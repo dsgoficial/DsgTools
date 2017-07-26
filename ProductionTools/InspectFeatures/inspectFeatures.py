@@ -47,7 +47,7 @@ class InspectFeatures(QWidget, FORM_CLASS):
         self.iface.currentLayerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.mFieldExpressionWidget.setLayer)
-        if not self.iface.activeLayer() and self.activeLayerCheckBox.isChecked():
+        if not self.iface.activeLayer():
             self.enableTool(False)
         self.iface.currentLayerChanged.connect(self.enableTool)
         self.mMapLayerComboBox.layerChanged.connect(self.enableTool)
@@ -70,20 +70,7 @@ class InspectFeatures(QWidget, FORM_CLASS):
         print 'lol'
     
     def getIterateLayer(self):
-        if self.activeLayerCheckBox:
-            if self.activeLayerCheckBox.isChecked():
-                return self.iface.activeLayer()
-            else:
-                return self.mMapLayerComboBox.currentLayer()
-        else:
-            return None
-    
-    @pyqtSlot(int)
-    def on_activeLayerCheckBox_stateChanged(self, state):   
-        if state == Qt.Checked:
-            self.mMapLayerComboBox.setEnabled(False)
-        else:
-            self.mMapLayerComboBox.setEnabled(True)
+	return self.mMapLayerComboBox.currentLayer()
 
     def enableTool(self, enabled = True):
         from qgis.core import QgsVectorLayer
@@ -100,7 +87,6 @@ class InspectFeatures(QWidget, FORM_CLASS):
         """
         The scale combo should only be enabled for point layers
         """
-        self.mFieldExpressionWidget.setRow(0)
         currentLayer = self.getIterateLayer()
         if QgsMapLayer is not None and currentLayer:
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
@@ -181,7 +167,7 @@ class InspectFeatures(QWidget, FORM_CLASS):
             self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Invalid attribute filter!'), level=QgsMessageBar.WARNING, duration=2)
             return []
         else:
-            request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.expression())
+            request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.asExpression())
             featIdList = [i.id() for i in currentLayer.getFeatures(request)]
         #sort is faster than sorted (but sort is just available for lists)
         featIdList.sort()
