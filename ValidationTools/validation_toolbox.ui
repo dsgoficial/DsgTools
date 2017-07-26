@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
+    <width>337</width>
     <height>618</height>
    </rect>
   </property>
@@ -32,31 +32,17 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QLineEdit" name="databaseLineEdit"/>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="openDbPushButton">
-          <property name="text">
-           <string>Open</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="2">
+        <item row="3" column="0" colspan="2">
          <widget class="QPushButton" name="historyButton">
           <property name="text">
            <string>Open History</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="2" colspan="2">
-         <widget class="QPushButton" name="runButton">
-          <property name="text">
-           <string>Run Process</string>
-          </property>
-         </widget>
+        <item row="0" column="1" colspan="2">
+         <widget class="QLineEdit" name="databaseLineEdit"/>
         </item>
-        <item row="1" column="0" colspan="4">
+        <item row="2" column="0" colspan="4">
          <widget class="QTreeWidget" name="processTreeWidget">
           <property name="minimumSize">
            <size>
@@ -85,6 +71,27 @@
             <string>Status</string>
            </property>
           </column>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="2">
+         <widget class="QPushButton" name="runButton">
+          <property name="text">
+           <string>Run Process</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QPushButton" name="openDbPushButton">
+          <property name="text">
+           <string>Open</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="4">
+         <widget class="QLineEdit" name="filterLineEdit">
+          <property name="placeholderText">
+           <string>Filter by process name</string>
+          </property>
          </widget>
         </item>
        </layout>

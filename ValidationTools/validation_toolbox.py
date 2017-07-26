@@ -70,6 +70,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
         self.ruleEnforcer = None
         self.attributeRulesEditorPushButton.hide()
+        self.itemList = []
 
     def createMenuEditFlagStatus(self, position):
         """
@@ -187,6 +188,14 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.processTreeWidget.clear()
     
+
+    def on_filterLineEdit_textChanged(self, text):
+        for i in self.itemList:
+            if text.lower() in i.text(1).lower():
+                i.setHidden(False)
+            else:
+                i.setHidden(True)
+
     def populateProcessList(self):
         """
         Populates the process list. It also checks the status of each available process
@@ -194,6 +203,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.processTreeWidget.clear()
         self.edgvLayer = None
         self.flagLyr = None
+        self.itemList = []
         rootItem = self.processTreeWidget.invisibleRootItem()
         procList = sorted(self.validationManager.processDict)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -214,7 +224,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                 item.setText(2, 'Not yet ran')
             else:
                 item.setText(2, status)
-        
+            self.itemList.append(item)
         for i in range(3):
             self.processTreeWidget.resizeColumnToContents(i)
         QApplication.restoreOverrideCursor()
@@ -224,7 +234,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Runs the current selected process
         """
-        processName = self.processTreeWidget.selectedItems()[0].text(1)
+        selectedItems = self.processTreeWidget.selectedItems()
+        if len(selectedItems) == 0:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a process to run!'))
+        processName = selectedItems[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
             procReturn = self.validationManager.executeProcess(processName)
