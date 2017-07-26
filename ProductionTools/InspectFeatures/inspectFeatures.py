@@ -216,6 +216,7 @@ class InspectFeatures(QWidget,Ui_Form):
             self.idxChanged.emit(id)
 
             self.makeZoom(zoom, currentLayer, id)
+            self.selectLayer(id, currentLayer)
         else:
             self.errorMessage()
             
