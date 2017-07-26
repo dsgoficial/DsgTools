@@ -24,7 +24,9 @@ import os
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.processParametersDialog import ProcessParametersDialog
 
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtCore import Qt
+from PyQt4 import QtGui
+from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QMenu
 from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
@@ -104,10 +106,12 @@ class ValidationManager(QObject):
             return 0
             
         #if there is a running process we should stop
+        QApplication.restoreOverrideCursor()
         if runningProc != None:
-            if not QMessageBox.question(self, self.tr('Question'), self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Ok:
+            if not QtGui.QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
                 QgsMessageLog.logMessage(self.tr('Unable to run process %s. Process %s is already running.\n').format(process, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 0
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         currProc = self.instantiateProcessByName(processName, False)
         #checking for existing pre process
         preProcessName = currProc.preProcess()
