@@ -242,7 +242,8 @@ class InspectFeatures(QWidget,Ui_Form):
         epsg = self.iface.mapCanvas().mapSettings().destinationCrs().authid()
         crsDest = QgsCoordinateReferenceSystem(epsg)
         #getting srid from something like 'EPSG:31983'
-        layer = self.iface.mapCanvas().currentLayer()
+        if not layer:
+            layer = self.iface.mapCanvas().currentLayer()
         srid = layer.crs().authid()
         crsSrc = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
