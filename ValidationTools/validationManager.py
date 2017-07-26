@@ -119,7 +119,7 @@ class ValidationManager(QObject):
             self.executeProcess(preProcessName)
         # setting parameters
         if currProc.parameters:
-            dlg = ProcessParametersDialog(None, currProc.parameters, None, self.tr('Process parameters setter for process {0}'.format(process)))
+            dlg = ProcessParametersDialog(None, currProc.parameters, None, self.tr('Process parameters setter for process {0}').format(process))
             if dlg.exec_() == 0:
                 return -1
             # get parameters
