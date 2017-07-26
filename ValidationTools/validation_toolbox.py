@@ -227,6 +227,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.itemList.append(item)
         for i in range(3):
             self.processTreeWidget.resizeColumnToContents(i)
+        self.filterLineEdit.clear()
         QApplication.restoreOverrideCursor()
 
     @pyqtSlot(bool)
@@ -237,6 +238,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         selectedItems = self.processTreeWidget.selectedItems()
         if len(selectedItems) == 0:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a process to run!'))
+            return
         processName = selectedItems[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
