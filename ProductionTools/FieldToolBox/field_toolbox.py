@@ -166,6 +166,13 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         w.setLayout(formLayout)
         scrollArea.setWidget(w)
         return scrollArea
+
+    def on_filterLineEdit_textChanged(self, text):
+        for i in self.buttons:
+            if text.lower() in i.text().lower():
+                i.show()
+            else:
+                i.hide()
     
     def createButton(self, button):
         """
