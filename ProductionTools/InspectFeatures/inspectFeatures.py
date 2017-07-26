@@ -26,14 +26,14 @@ from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsMapLayer, QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest
 from qgis.gui import QgsMessageBar
 
-from DsgTools.ProductionTools.InspectFeatures.inspectFeatures_ui import Ui_Form
-# FORM_CLASS, _ = uic.loadUiType(os.path.join(
-#     os.path.dirname(__file__), 'inspectFeatures.ui'))
+# from DsgTools.ProductionTools.InspectFeatures.inspectFeatures_ui import Ui_Form
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'inspectFeatures.ui'))
 
-class InspectFeatures(QWidget,Ui_Form):
+class InspectFeatures(QWidget, FORM_CLASS):
     idxChanged = pyqtSignal(int)
     def __init__(self, iface, parent = None):
         """
@@ -46,6 +46,7 @@ class InspectFeatures(QWidget,Ui_Form):
         self.iface = iface
         self.iface.currentLayerChanged.connect(self.enableScale)
         self.mMapLayerComboBox.layerChanged.connect(self.enableScale)
+        self.mMapLayerComboBox.layerChanged.connect(self.mFieldExpressionWidget.setLayer)
         if not self.iface.activeLayer() and self.activeLayerCheckBox.isChecked():
             self.enableTool(False)
         self.iface.currentLayerChanged.connect(self.enableTool)
@@ -93,12 +94,13 @@ class InspectFeatures(QWidget,Ui_Form):
         self.backInspectButton.setEnabled(enabled)
         self.nextInspectButton.setEnabled(enabled)
         self.idSpinBox.setEnabled(enabled)
-        self.onlySelectedRadioButton.setEnabled(enabled)
+        # self.onlySelectedRadioButton.setEnabled(enabled)
         
     def enableScale(self):
         """
         The scale combo should only be enabled for point layers
         """
+        self.mFieldExpressionWidget.setRow(0)
         currentLayer = self.getIterateLayer()
         if QgsMapLayer is not None and currentLayer:
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
@@ -148,12 +150,15 @@ class InspectFeatures(QWidget,Ui_Form):
         else:
             currentLayer = self.getIterateLayer()
             lyrName = currentLayer.name()
-
+            if lyrName not in self.allLayers.keys():
+                self.allLayers[lyrName] = 0
+                return
             oldIndex = self.allLayers[lyrName]
             if oldIndex == 0:
                 return
             featIdList = self.getFeatIdList(currentLayer)
-            oldId = featIdList[oldIndex]
+            if oldIndex not in featIdList:
+                oldId = 0
             zoom = self.mScaleWidget.scale()
             if oldId == newId:
                 self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
@@ -162,6 +167,7 @@ class InspectFeatures(QWidget,Ui_Form):
                 index = featIdList.index(newId)
                 self.allLayers[lyrName] = index
                 self.makeZoom(zoom, currentLayer, newId)
+                self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
             except:
                 self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
                 self.idSpinBox.setValue(oldId)
@@ -169,10 +175,14 @@ class InspectFeatures(QWidget,Ui_Form):
 
     def getFeatIdList(self, currentLayer):
         #getting all features ids
-        if self.onlySelectedRadioButton.isChecked():
-            featIdList = currentLayer.selectedFeaturesIds()
-        else:
+        if self.mFieldExpressionWidget.currentText() == '':
             featIdList = currentLayer.allFeatureIds()
+        elif not self.mFieldExpressionWidget.isValidExpression():
+            self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Invalid attribute filter!'), level=QgsMessageBar.WARNING, duration=2)
+            return []
+        else:
+            request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.expression())
+            featIdList = [i.id() for i in currentLayer.getFeatures(request)]
         #sort is faster than sorted (but sort is just available for lists)
         featIdList.sort()
         return featIdList
@@ -191,14 +201,13 @@ class InspectFeatures(QWidget,Ui_Form):
         
         if currentLayer and len(featIdList) > 0:
             #checking if this is the first time for this layer (currentLayer)
+            first = False
             if lyrName not in self.allLayers.keys():
                 self.allLayers[lyrName] = 0
+                first = True
 
             #getting the current index
             index = self.allLayers[lyrName]
-
-            #getting the current feature id
-            id = featIdList[index]
 
             #getting max and min ids
             #this was made because the list is already sorted, there's no need to calculate max and min
@@ -209,8 +218,9 @@ class InspectFeatures(QWidget,Ui_Form):
             self.idSpinBox.setMinimum(featIdList[minIndex])
 
             #getting the new index
-            index = method(index, maxIndex, minIndex)
-
+            if not first:
+                index = method(index, maxIndex, minIndex)
+            self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
             self.allLayers[lyrName] = index
 
             #getting the new feature id
@@ -311,11 +321,11 @@ class InspectFeatures(QWidget,Ui_Form):
 
     def makeZoom(self, zoom, currentLayer, id):
         #selecting and zooming to the feature
-        if not self.onlySelectedRadioButton.isChecked():
-            self.selectLayer(id, currentLayer)
-            self.zoomFeature(zoom)
-        else:
-            self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})        
+        # if not self.onlySelectedRadioButton.isChecked():
+        #     self.selectLayer(id, currentLayer)
+        #     self.zoomFeature(zoom)
+        # else:
+        self.zoomFeature(zoom, idDict = {'id':id, 'lyr':currentLayer})        
 
     @pyqtSlot(bool)
     def on_onlySelectedRadioButton_toggled(self, toggled):
