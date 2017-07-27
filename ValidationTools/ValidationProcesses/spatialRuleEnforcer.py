@@ -77,9 +77,12 @@ class SpatialRuleEnforcer(ValidationProcess):
         """
         Gets the layer name as present in the rules
         """
-        uri = sender.dataProvider().dataSourceUri()
-        dsUri = QgsDataSourceURI(uri)
-        name = '.'.join([dsUri.schema(), dsUri.table()])
+        try:
+            uri = sender.dataProvider().dataSourceUri()
+            dsUri = QgsDataSourceURI(uri)
+            name = '.'.join([dsUri.schema(), dsUri.table()])
+        except:
+            name = ''
         return name
     
     def getLayer(self, layername):
