@@ -1061,7 +1061,7 @@ class PostgisDb(AbstractDb):
         flagClass = class_a.replace('_temp', '')
         while query.next():
             feat_id = query.value(0)
-            reason = 'Feature id %s from %s violates rule %s %s' % (feat_id, class_a, rule, class_b)
+            reason = self.tr('Feature id {} from {} violates rule {} {}').format(feat_id, class_a, rule.decode('utf-8'), class_b)
             geom = query.value(1)
             ret.append((flagClass, feat_id, reason, geom, geometryColumn))
         return ret

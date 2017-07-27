@@ -204,9 +204,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
-        geometryColumn = 'geom'
-        reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(" violates cardinality ")
-        reason += min_card + '..' + max_card + self.tr(' of rule: ') + rule + ' ' + layer2
+        geometryColumn = 'geom' #change this later
+        reason = self.tr('Feature id {0} from {1} violates cardinality {2}..{3} of rule: {4} {5}').format(featureId, layer1, min_card, max_card, rule.decode('utf-8'), layer2)
         self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
                 
     def makeBreaksPredicateFlag(self, layer1, featureId, rule, layer2, hexa):
@@ -219,8 +218,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
-        geometryColumn = 'geom' #WHY?????????? DEATH TO HARDCODED VALUES!!!!!!!!!
-        reason = self.tr('Feature id ') + str(featureId) + self.tr(' from ') + layer1 + self.tr(' violates rule: ') + rule + ' ' + layer2
+        geometryColumn = 'geom' #change this later
+        reason = self.tr('Feature id {0} from {1} violates rule: {2} {3}').format(featureId, layer1, rule.decode('utf-8'), layer2)
         self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
 
     @pyqtSlot(int, QgsGeometry)      
