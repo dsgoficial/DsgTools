@@ -140,7 +140,7 @@ class SpatialRuleEnforcer(ValidationProcess):
             #iterating over candidates
             for feature in candidatesIter:
                 #for the same layer we need to avoid to test a feature against it self
-                if layer1 == layer2 and featureId == feature['id']:
+                if layer1 == layer2 and featureId == feature.id():
                     continue
                 #for each one of them we must execute the method
                 if method(feature.geometry()) == necessity:

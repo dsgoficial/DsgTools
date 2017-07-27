@@ -1,3 +1,2 @@
-cb.veg_macega_chavascal_a,1_não deve (ser),6_sobrepor,cb.veg_vegetacao_a,1..*
-cb.veg_cerrado_cerradao_a,1_não deve (ser),6_sobrepor,cb.veg_vegetacao_a,1..*
-cb.veg_cerrado_cerradao_a,1_não deve (ser),6_sobrepor,cb.veg_floresta_a,1..*
+cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_floresta_a,1..*
+cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_campo_a,1..*
