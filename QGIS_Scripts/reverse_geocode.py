@@ -2,6 +2,7 @@
 ##coordinates_csv=file
 ##addresses_txt=output file
 
+# oi
 
 import urllib2, csv
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
