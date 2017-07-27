@@ -102,9 +102,6 @@ class SpatialRuleEnforcer(ValidationProcess):
         max_card = rule[5] #maximum cardinality
         rule = rule[6] #rule string
 
-        #removing old flags for this featureId
-        self.removeFeatureFlags(layer1, featureId)
-
         vectorlayer2 = self.getLayer(layer2.split('.')[-1]) #correspondent QgsVectorLayer
         
         method = getattr(geometry, predicate) #getting the correspondent QgsGeometry method to be used in the rule
@@ -237,6 +234,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         layername = self.getFullLayerName(layer)
         #rules involving the layer
         rules = self.getRules(layername)
+        #removing old flags for this featureId
+        self.removeFeatureFlags(layername, featureId)
         # for each rule we must test what is happening
         for rule in rules:
             self.testRule(rule, featureId, geometry) #actual test
@@ -252,6 +251,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         layername = self.getFullLayerName(layer)
         #rules involving the layer
         rules = self.getRules(layername)
+        #removing old flags for this featureId
+        self.removeFeatureFlags(layername, featureId)
         # for each rule we must test what is happening
         features = layer.editBuffer().addedFeatures()
         for key in features.keys():
