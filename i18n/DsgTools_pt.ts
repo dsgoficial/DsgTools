@@ -10602,7 +10602,7 @@ Camada</translation>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="117"/>
         <source> features are invalid. Check flags.</source>
-        <translation>feições são inválidas. Verifique as flags.</translation>
+        <translation> feições são inválidas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
