@@ -104,16 +104,16 @@ class BDGExTools(QObject):
             resp = urllib2.urlopen(getCapa)
             response = resp.read()
         except urllib2.URLError, e:
-            QMessageBox.critical(None, self.tr("URL Error!"), e.args + '\nReason: '+e.reason)
+            QMessageBox.critical(None, self.tr("URL Error!"), '{0}\nReason: {1}'.format(e.args, e.reason))
             return None
         except urllib2.HTTPError, e:
-            QMessageBox.critical(None, self.tr("HTTP Error!"), e.code + '\nReason: '+e.msg)
+            QMessageBox.critical(None, self.tr("HTTP Error!"), e.code + '\nReason: {0}'.format(e.msg))
             return None
 
         try:
             myDom=parseString(response)
         except:
-            QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response:')+'\n'+response)
+            QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response: \n{0}').format(response))
             return None
 
         qgsIndexDict = dict()
