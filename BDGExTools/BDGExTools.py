@@ -95,7 +95,7 @@ class BDGExTools(QObject):
         """
         Makes the requisition to the tile cache service
         """
-        url = "http://www.geoportal.eb.mil.br/tiles?request=GetCapabilities"
+        url = "http://www.geoportal.eb.mil.br/mapcache?request=GetCapabilities"
         # set proxy
         self.setUrllibProxy(url)
 
@@ -107,7 +107,7 @@ class BDGExTools(QObject):
             QMessageBox.critical(None, self.tr("URL Error!"), '{0}\nReason: {1}'.format(e.args, e.reason))
             return None
         except urllib2.HTTPError, e:
-            QMessageBox.critical(None, self.tr("HTTP Error!"), e.code + '\nReason: {0}'.format(e.msg))
+            QMessageBox.critical(None, self.tr("HTTP Error!"), '{0}\nReason: {1}'.format(e.code, e.msg))
             return None
 
         try:
@@ -119,9 +119,9 @@ class BDGExTools(QObject):
         qgsIndexDict = dict()
         count = 0
 
-        for tileMap in myDom.getElementsByTagName("TileMap"):
-            qgsIndexDict[tileMap.getAttribute("title")]=count
+        for tileMap in myDom.getElementsByTagName("Layer"):
+            qgsIndexDict[tileMap.getElementsByTagName("Name")[0].firstChild.nodeValue]=count
             count += 1
 
-        tileMatrixSet = self.wmtsDict[layerName]+'-wmsc-'+str(qgsIndexDict[self.wmtsDict[layerName]])
-        return 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/gif&layers='+self.wmtsDict[layerName]+'&styles=&tileMatrixSet='+tileMatrixSet+'&url=http://www.geoportal.eb.mil.br/tiles'
+        tileMatrixSet = '{0}-wmsc-{1}'.format(self.wmtsDict[layerName],qgsIndexDict[self.wmtsDict[layerName]])
+        return 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers={0}&styles=&url=http://www.geoportal.eb.mil.br/mapcache'.format(self.wmtsDict[layerName])
