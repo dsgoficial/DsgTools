@@ -1428,6 +1428,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getPrimaryKeyColumn(self, tableName):
+        if '.' in tableName:
+            tableSchema, tableName = tableName.replace("'","").replace('"','').split('.')
+            tableName = '''"{0}"."{1}"'''.format(tableSchema, tableName)
         sql = '''
         SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type
         FROM   pg_index i
