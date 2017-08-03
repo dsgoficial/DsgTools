@@ -70,6 +70,11 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
+                #removes null geometries
+                for feat in lyr.getFeatures():
+                    if not feat.geometry():
+                        lyr.deleteFeature(feat.id())
+                localProgress.step()
             msg = self.tr('Process executed successfully!')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)

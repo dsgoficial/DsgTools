@@ -71,17 +71,23 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 keyColumn = uri.keyColumn()
                 for feat in lyr.getFeatures():
                     geom = feat.geometry()
+                    if not geom:
+                        #insert deletion
+                        lyr.deleteFeature(feat.id())
+                        localProgress.step()
+                        continue
                     if geom.geometry().partCount() > 1:
                         parts = geom.asGeometryCollection()
                         for part in parts:
                             part.convertToMultiType()
                         addList = []
                         for i in range(1,len(parts)):
-                            newFeat = QgsFeature(feat)
-                            newFeat.setGeometry(parts[i])
-                            idx = newFeat.fieldNameIndex(keyColumn)
-                            newFeat.setAttribute(idx,provider.defaultValue(idx))
-                            addList.append(newFeat)
+                            if parts[i]:
+                                newFeat = QgsFeature(feat)
+                                newFeat.setGeometry(parts[i])
+                                idx = newFeat.fieldNameIndex(keyColumn)
+                                newFeat.setAttribute(idx,provider.defaultValue(idx))
+                                addList.append(newFeat)
                         feat.setGeometry(parts[0])
                         lyr.updateFeature(feat)
                         lyr.addFeatures(addList,True)
