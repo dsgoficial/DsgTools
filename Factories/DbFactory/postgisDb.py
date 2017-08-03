@@ -1722,6 +1722,8 @@ class PostgisDb(AbstractDb):
             values = [feat.attribute(fieldname) for fieldname in attributes]
             # setting the feature id
             values[keyIdx] = feat.id()
+            if not feat.geometry():
+                continue
             geometry = binascii.hexlify(feat.geometry().asWkb())
             # adding the geometry column to attributes
             if not auxAttributes:
