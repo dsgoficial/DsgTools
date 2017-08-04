@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.14
 description=Brazilian Army Cartographic Production Tools
-version=3.0.3
+version=3.0.4
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -70,6 +70,7 @@ changelog=
 	3.0.1 - Fixing errors raised by users
 	3.0.2 - Fixing others errors and improving some features (many thanks to our users)
 	3.0.3 - Fixing encoding problems in some systems (utf-8 encoding problems)
+	3.0.4 - Updating our BDGEx access to use the new urls. Fixing some problems with databases using schemas in uppercase 
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
