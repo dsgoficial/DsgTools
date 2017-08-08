@@ -26,7 +26,7 @@ from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis, QgsDataSourceURI, QgsMessageLog
+from qgis.core import QgsMapLayer, QGis, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
 
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -118,10 +118,11 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     def getDatabaseList(self):
         dbList = []
         for lyr in self.iface.legendInterface().layers():
-            candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
-            dbName = candidateUri.database()
-            if dbName not in dbList and lyr.providerType() in ['postgres', 'spatialite']:
-                dbList.append(dbName)
+            if isinstance(lyr, QgsVectorLayer):
+                candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                dbName = candidateUri.database()
+                if dbName not in dbList and lyr.providerType() in ['postgres', 'spatialite']:
+                    dbList.append(dbName)
         return dbList
     
     def loadStylesCombo(self, abstractDb):
