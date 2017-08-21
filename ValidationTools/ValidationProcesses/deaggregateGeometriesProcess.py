@@ -40,7 +40,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Classes': interfaceDictList}
+            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
 
     def execute(self):
         """
@@ -69,7 +69,11 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 provider = lyr.dataProvider()
                 uri = QgsDataSourceURI(provider.dataSourceUri())
                 keyColumn = uri.keyColumn()
-                for feat in lyr.getFeatures():
+                if self.parameters['Only Selected']:
+                    featureList = lyr.selectedFeatures()
+                else:
+                    featureList = lyr.getFeatures()
+                for feat in featureList:
                     geom = feat.geometry()
                     if not geom:
                         #insert deletion
