@@ -41,7 +41,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Area': 125.0, 'Classes': interfaceDictList}
+            self.parameters = {'Area': 125.0, 'Classes': interfaceDictList, 'Only Selected':False}
 
     def execute(self):
         """
@@ -68,7 +68,11 @@ class IdentifySmallAreasProcess(ValidationProcess):
 
                 allIds = lyr.allFeatureIds()
                 localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                for feat in lyr.getFeatures():
+                if self.parameters['Only Selected']:
+                    featureList = lyr.selectedFeatures()
+                else:
+                    featureList = lyr.getFeatures()
+                for feat in featureList:
                     if feat.geometry().area() < tol:
                         geometry = binascii.hexlify(feat.geometry().asWkb())
                         recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], feat.id(), self.tr('Small Area.'), geometry, classAndGeom['geom']))
