@@ -1,4 +1,6 @@
 # DsgTools
+
+[![Join the chat at https://gitter.im/DsgTools/Lobby](https://badges.gitter.im/DsgTools/Lobby.svg)](https://gitter.im/DsgTools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 DSG Master Plugin (English Version)
 
 DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV Defesa F Ter 2ª Edição). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
