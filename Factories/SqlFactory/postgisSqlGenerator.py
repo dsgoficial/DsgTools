@@ -463,13 +463,13 @@ class PostGISSqlGenerator(SqlGenerator):
                     (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom 
                         FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
                     WHERE foo.count < {8}
-                    """ % (predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card)
+                    """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card)
                 else:
                     sql = """SELECT DISTINCT foo.id, foo.geom FROM
                     (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom 
                         FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
                     WHERE foo.count < {8} OR foo.count > {9}
-                    """ % (predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card, max_card)
+                    """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card, max_card)
             elif necessity == '\'t\'':# must not (be)
                 if class_a!=class_b:
                     sameClassRestriction=''
