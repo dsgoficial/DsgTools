@@ -110,9 +110,10 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     def getLayers(self, dbName):
         lyrList = []
         for lyr in self.iface.legendInterface().layers():
-            candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
-            if candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']:
-                lyrList.append(lyr)
+            if isinstance(lyr, QgsVectorLayer):
+                candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                if candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']:
+                    lyrList.append(lyr)
         return lyrList
     
     def getDatabaseList(self):
