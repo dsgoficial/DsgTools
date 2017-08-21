@@ -40,7 +40,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Classes': interfaceDictList}
+            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
 
     def execute(self):
         """
@@ -62,7 +62,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom, selectedFeatures = self.parameters['Only Selected'])
                 localProgress.step()
                     
                 # running the process
