@@ -43,14 +43,18 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-#Python files
+# Python files
+# =========================
 *.pyc
-translation.pro.user
-/.idea/
-.vscode/settings.json
-.vscode/tags
 tags
-.vscode/tags
-ProductionTools/.directory
-ProductionTools/InspectFeatures/.directory
-.vscode/tags
+.dsg_tools.py.swp
+
+# LINUX
+# =========================
+.directory
+
+# IDE
+# =========================
+.project
+.pydevproject
+.vscode/
