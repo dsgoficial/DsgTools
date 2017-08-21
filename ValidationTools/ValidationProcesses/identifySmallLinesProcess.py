@@ -41,7 +41,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList}
+            self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList, 'Only Selected':False}
 
     def execute(self):
         """
@@ -69,7 +69,11 @@ class IdentifySmallLinesProcess(ValidationProcess):
 
                 allIds = lyr.allFeatureIds()
                 localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                for feat in lyr.getFeatures():
+                if self.parameters['Only Selected']:
+                    featureList = lyr.selectedFeatures()
+                else:
+                    featureList = lyr.getFeatures()
+                for feat in featureList:
                     if feat.geometry().length() < tol:
                         geometry = binascii.hexlify(feat.geometry().asWkb())
                         recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], feat.id(), self.tr('Small Line.'), geometry, classAndGeom['geom']))
