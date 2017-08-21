@@ -24,7 +24,7 @@ import os
 
 from PyQt4 import QtGui
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsDataSourceURI
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
@@ -97,13 +97,17 @@ class SpatialRuleProcess(ValidationProcess):
                 localProgress.step()
                 class_a, lyrA, aKeyColumn = self.prepareExecution(rule[0])
                 class_b, lyrB, bKeyColumn = self.prepareExecution(rule[3])
+                # getting keyColumn because we want to be generic
+                uri_a = QgsDataSourceURI(lyrA.dataProvider().dataSourceUri())
+                uri_b = QgsDataSourceURI(lyrB.dataProvider().dataSourceUri())
+                aGeomColumn = uri_a.geometryColumn()
+                bGeomColumn = uri_b.geometryColumn()
                 localProgress.step()
-                geometryColumn = 'geom' #WHY???????? Death to hardcoded values!!!!!!!!
 
                 #running the process in the temp table
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + class_a, parent=self.iface.mapCanvas())
                 localProgress.step()
-                invalidGeomRecordList = self.abstractDb.testSpatialRule(class_a, rule[1], rule[2], class_b, rule[4], rule[5], rule[6], geometryColumn)
+                invalidGeomRecordList = self.abstractDb.testSpatialRule(class_a, rule[1], rule[2], class_b, rule[4], rule[5], rule[6], aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn)
                 localProgress.step()
                                 
                 # dropping temp table
