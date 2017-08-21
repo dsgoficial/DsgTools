@@ -207,7 +207,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
-        geometryColumn = 'geom' #change this later
+        vectorlayer1 = self.getLayer(layer1.split('.')[-1]) #correspondent QgsVectorLayer
+        geometryColumn = self.getGeometryColumnFromLayer(vectorlayer1)
         reason = self.tr('Feature id {0} from {1} violates cardinality {2}..{3} of rule: {4} {5}').format(featureId, layer1, min_card, max_card, rule.decode('utf-8'), layer2)
         self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
                 
@@ -221,7 +222,8 @@ class SpatialRuleEnforcer(ValidationProcess):
         hexa: WKB geometry to be passed to the flag
         """
         #making the reason
-        geometryColumn = 'geom' #change this later
+        vectorlayer1 = self.getLayer(layer1.split('.')[-1]) #correspondent QgsVectorLayer
+        geometryColumn = self.getGeometryColumnFromLayer(vectorlayer1)
         reason = self.tr('Feature id {0} from {1} violates rule: {2} {3}').format(featureId, layer1, rule.decode('utf-8'), layer2)
         self.addFlag([(layer1, str(featureId), reason, hexa, geometryColumn)])
 

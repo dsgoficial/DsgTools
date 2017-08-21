@@ -431,59 +431,55 @@ class PostGISSqlGenerator(SqlGenerator):
         """ % (processName, processName, processName)
         return sql
     
-    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card):
-        #TODO: Add geometry column
+    def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn):
         #TODO: Add SRIDS
         class_a = '"'+'"."'.join(class_a.replace('"','').split('.'))+'"'
         class_b = '"'+'"."'.join(class_b.replace('"','').split('.'))+'"'
-        if predicate_function == 'ST_Disjoint':
-            if class_a!=class_b:
-                sameClassRestriction=''
-            else:
-                sameClassRestriction=' WHERE a.id <> b.id '
+
+        # checking if the rule checks the layer with itself
+        if class_a!=class_b:
+            sameClassRestriction=''
+        else:
+            sameClassRestriction=' WHERE a.{0} <> b.{1} '.format(aKeyColumn, bKeyColumn)
                     
+        if predicate_function == 'ST_Disjoint':
             if necessity == '\'f\'':
                 sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) = 'f' THEN 1 ELSE 0 END) count, a.geom geom 
-                    FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
+                (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) = 'f' THEN 1 ELSE 0 END) count, a.{6} geom 
+                    FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
                 WHERE foo.count > 0
-                """% (predicate_function, class_a, class_b, sameClassRestriction)
+                """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn)
                 
             elif necessity == '\'t\'':
                 sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) = 'f' THEN 1 ELSE 0 END) count, a.geom geom 
-                    FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
+                (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) = 'f' THEN 1 ELSE 0 END) count, a.{6} geom 
+                    FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
                 WHERE foo.count = 0
-                """% (predicate_function, class_a, class_b, sameClassRestriction)
+                """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn)
         else:
             if necessity == '\'f\'':# must (be)
-                if class_a!=class_b:
-                    sameClassRestriction=''
-                else:
-                    sameClassRestriction=' WHERE a.id <> b.id '
-                
                 if max_card == '*':
                     sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                    (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
-                        FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
-                    WHERE foo.count < %s
-                    """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card)
+                    (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom 
+                        FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
+                    WHERE foo.count < {8}
+                    """ % (predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card)
                 else:
                     sql = """SELECT DISTINCT foo.id, foo.geom FROM
-                    (SELECT a.id id, SUM(CASE WHEN %s(a.geom,b.geom) THEN 1 ELSE 0 END) count, a.geom geom 
-                        FROM %s as a,%s as b %s GROUP BY a.id, a.geom) as foo
-                    WHERE foo.count < %s OR foo.count > %s
-                    """ % (predicate_function, class_a, class_b, sameClassRestriction, min_card, max_card)
+                    (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom 
+                        FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
+                    WHERE foo.count < {8} OR foo.count > {9}
+                    """ % (predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card, max_card)
             elif necessity == '\'t\'':# must not (be)
                 if class_a!=class_b:
                     sameClassRestriction=''
                 else:
-                    sameClassRestriction=' AND a.id <> b.id '
-                
-                sql = """SELECT DISTINCT a.id id, (ST_Dump(ST_Intersection(a.geom, b.geom))).geom as geom
-                FROM %s as a, %s as b 
-                    WHERE %s(a.geom,b.geom) = %s %s
-                """ % (class_a, class_b, predicate_function, necessity, sameClassRestriction)
+                    sameClassRestriction=' AND a.{0} <> b.{1} '.format(aKeyColumn, bKeyColumn)
+                    
+                sql = """SELECT DISTINCT a.{5} id, (ST_Dump(ST_Intersection(a.{7}, b.{8}))).geom as geom
+                FROM {0} as a, {1} as b 
+                    WHERE {2}(a.{7},b.{8}) = {3} {4}
+                """.format(class_a, class_b, predicate_function, necessity, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn)
         return sql
     
     def getDimension(self, geom):
