@@ -98,10 +98,8 @@ class SpatialRuleProcess(ValidationProcess):
                 class_a, lyrA, aKeyColumn = self.prepareExecution(rule[0])
                 class_b, lyrB, bKeyColumn = self.prepareExecution(rule[3])
                 # getting keyColumn because we want to be generic
-                uri_a = QgsDataSourceURI(lyrA.dataProvider().dataSourceUri())
-                uri_b = QgsDataSourceURI(lyrB.dataProvider().dataSourceUri())
-                aGeomColumn = uri_a.geometryColumn()
-                bGeomColumn = uri_b.geometryColumn()
+                aGeomColumn = self.getGeometryColumnFromLayer(lyrA)
+                bGeomColumn = self.getGeometryColumnFromLayer(lyrB)
                 localProgress.step()
 
                 #running the process in the temp table

@@ -413,5 +413,11 @@ class ValidationProcess(QObject):
             classname = layer.name()
             tupplelist = [(feature['featid'], feature) for feature in outputLayer.getFeatures()]
             self.updateOriginalLayer(layer, None, featureTupleList=tupplelist)
+
+    def getGeometryColumnFromLayer(self, layer):
+        uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+        geomColumn = uri.geometryColumn()
+        return geomColumn
+        
                     
                     
