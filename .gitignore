@@ -58,3 +58,7 @@ tags
 .project
 .pydevproject
 .vscode/
+
+#DSGTools styles
+# =========================
+Styles/
