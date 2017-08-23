@@ -41,7 +41,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Classes': interfaceDictList, 'MaxDissolveArea': -1.0}
+            self.parameters = {'Classes': interfaceDictList, 'MaxDissolveArea': -1.0, 'AttributeBlackList (comma separated)':''}
 
     def postProcess(self):
         """
@@ -57,7 +57,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #field.type() != 6 stands for virtual columns such as area_otf
-        auxLayer = self.createUnifiedLayer([layer], attributeTupple = True)
+        auxLayer = self.createUnifiedLayer([layer], attributeTupple = True, attributeBlackList = self.parameters['AttributeBlackList (comma separated)'])
         if self.parameters['MaxDissolveArea'] > 0:
             auxLayer = self.addDissolveField(auxLayer, self.parameters['MaxDissolveArea'])
         ret = processing.runalg(alg, auxLayer, False, 'tupple', None)
@@ -66,7 +66,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
         QgsMapLayerRegistry.instance().removeMapLayer(auxLayer.id())
-        self.splitUnifiedLayer(outputLayer, [layer])
+        self.splitUnifiedLayer(outputLayer, [layer], attributeBlackList = self.parameters['AttributeBlackList (comma separated)'])
         return outputLayer
     
     def addDissolveField(self, layer, tol):
