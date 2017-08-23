@@ -21,7 +21,7 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from PyQt4.QtGui import QMessageBox, QSpinBox, QAction
+from PyQt4.QtGui import QMessageBox, QSpinBox, QAction, QIcon
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
 from PyQt4 import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
@@ -58,8 +58,20 @@ class InspectFeatures(QWidget,Ui_Form):
         self.allLayers={}
         self.idxChanged.connect(self.setNewId)
         self.setToolTip('')
+        icon_path = ':/plugins/DsgTools/icons/inspectFeatures.png'
+        text = self.tr('DSGTools: Inspect Features')
+        self.action = self.add_action(icon_path, text, self.toggleBar, parent = self.parent)
+        self.iface.registerMainWindowAction(self.action, 'F12')
 
         #self.enableShortcuts()
+    
+    def add_action(self, icon_path, text, callback, parent=None):
+        icon = QIcon(icon_path)
+        action = QAction(icon, text, parent)
+        action.triggered.connect(callback)
+        if parent:
+            parent.addAction(action)
+        return action
     
     def enableShortcuts(self):
         #enable main tool shortcut config
@@ -278,9 +290,7 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Shows/Hides the tool bar
         """
-        if toggled == None:
-            toggled = self.inspectPushButton.isChecked()
-        if toggled:
+        if not self.inspectPushButton.isDown():
             self.splitter.show()
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
