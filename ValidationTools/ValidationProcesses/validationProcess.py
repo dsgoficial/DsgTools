@@ -351,7 +351,7 @@ class ValidationProcess(QObject):
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
 
-    def createUnifiedLayer(self, layerList, attributeTupple = False):
+    def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = ''):
         """
         Creates a unified layer from a list of layers
         """
@@ -371,7 +371,7 @@ class ValidationProcess(QObject):
         if not attributeTupple:
             fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String)]
         else:
-            fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String), QgsField('tupple', QVariant.String)]
+            fields = [QgsField('featid', QVariant.Int), QgsField('classname', QVariant.String), QgsField('tupple', QVariant.String), QgsField('blacklist', QVariant.String)]
         provider.addAttributes(fields)
         coverage.updateFields()
 
@@ -380,6 +380,10 @@ class ValidationProcess(QObject):
             totalCount += layer.pendingFeatureCount()
         self.localProgress = ProgressWidget(1, totalCount - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
         featlist = []
+        if attributeBlackList != '':
+            bList = attributeBlackList.replace(' ','').split(',')
+        else:
+            bList = []
         for layer in layerList:
             # recording class name
             classname = layer.name()
@@ -394,7 +398,8 @@ class ValidationProcess(QObject):
                     attributeList = []
                     attributes = [field.name() for field in feature.fields() if (field.type() != 6 and field.name() != keyColumn)]
                     for attribute in attributes:
-                        attributeList.append(u'{0}'.format(feature[attribute])) #done due to encode problems
+                        if attribute not in bList:
+                            attributeList.append(u'{0}'.format(feature[attribute])) #done due to encode problems
                     tup = ','.join(attributeList)
                     newfeat['tupple'] = tup
                 featlist.append(newfeat)
