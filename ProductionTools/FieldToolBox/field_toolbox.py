@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QPushButton
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer
+from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes
 from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
@@ -439,7 +439,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #button that sent the signal
         self.buttonName = self.sender().text()
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
-
+        geomType = reclassificationLayer.geometryType()
+        hasMValues =  QgsWKBTypes.hasM(int(reclassificationLayer.wkbType()))    #generic check (not every database is implemented as ours)
+        hasZValues =  QgsWKBTypes.hasZ(int(reclassificationLayer.wkbType()))    #
+        isMulti = QgsWKBTypes.isMultiType(int(reclassificationLayer.wkbType())) #
         mapLayers = self.iface.mapCanvas().layers()
         crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
         for mapLayer in mapLayers:
@@ -452,22 +455,36 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             #creating a coordinate transformer (mapLayerCrs to crsSrc)
             coordinateTransformer = QgsCoordinateTransform(mapLayerCrs, crsSrc)
             for feature in mapLayer.selectedFeatures():
+                geomList = []
                 geom = feature.geometry()
-                geom.convertToMultiType()
+                if geom.type() != geomType:
+                    mapLayer.deselect(feature.id()) #done so that feat will not be deleted if not reclassified
+                    continue
                 if 'geometry' in dir(geom):
-                    geom.geometry().dropMValue()
-                    geom.geometry().dropZValue()
-                #creating a new feature according to the reclassification layer
-                newFeature = QgsFeature(reclassificationLayer.pendingFields())
-                #transforming the geometry to the correct crs
-                geom.transform(coordinateTransformer)
-                #setting the geometry
-                newFeature.setGeometry(geom)
-                #setting the attributes using the reclassification dictionary
-                newFeature = self.setFeatureAttributes(newFeature)
-                #adding the newly created feature to the addition list
-                featList.append(newFeature)
-                somethingMade = True
+                    if not hasMValues:
+                        geom.geometry().dropMValue()
+                    if not hasZValues:
+                        geom.geometry().dropZValue()
+                if isMulti and not geom.isMultipart():
+                    geomList.append(geom.convertToMultiType())
+                if not isMulti and geom.isMultipart():
+                    #deaggregate here
+                    parts = geom.asGeometryCollection()
+                    for part in parts:
+                        part.convertToSingleType()
+                        geomList.append(part)
+                for newGeom in geomList:
+                    #creating a new feature according to the reclassification layer
+                    newFeature = QgsFeature(reclassificationLayer.pendingFields())
+                    #transforming the geometry to the correct crs
+                    geom.transform(coordinateTransformer)
+                    #setting the geometry
+                    newFeature.setGeometry(newGeom)
+                    #setting the attributes using the reclassification dictionary
+                    newFeature = self.setFeatureAttributes(newFeature)
+                    #adding the newly created feature to the addition list
+                    featList.append(newFeature)
+                    somethingMade = True
             #actual feature insertion
             reclassificationLayer.addFeatures(featList, False)
             reclassifiedFeatures += len(featList)
