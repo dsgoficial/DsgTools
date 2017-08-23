@@ -60,10 +60,16 @@ class InspectFeatures(QWidget,Ui_Form):
         self.setToolTip('')
         icon_path = ':/plugins/DsgTools/icons/inspectFeatures.png'
         text = self.tr('DSGTools: Inspect Features')
-        self.action = self.add_action(icon_path, text, self.toggleBar, parent = self.parent)
-        self.iface.registerMainWindowAction(self.action, 'F12')
-
-        #self.enableShortcuts()
+        self.activateToolAction = self.add_action(icon_path, text, self.inspectPushButton.toggle, parent = self.parent)
+        self.iface.registerMainWindowAction(self.activateToolAction, '')
+        icon_path = ':/plugins/DsgTools/icons/backInspect.png'
+        text = self.tr('DSGTools: Back Inspect')
+        self.backButtonAction = self.add_action(icon_path, text, self.backInspectButton.click, parent = self.parent)
+        self.iface.registerMainWindowAction(self.backButtonAction, '')
+        icon_path = ':/plugins/DsgTools/icons/nextInspect.png'
+        text = self.tr('DSGTools: Next Inspect')
+        self.nextButtonAction = self.add_action(icon_path, text, self.nextInspectButton.click, parent = self.parent)
+        self.iface.registerMainWindowAction(self.nextButtonAction, '')
     
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
@@ -73,16 +79,11 @@ class InspectFeatures(QWidget,Ui_Form):
             parent.addAction(action)
         return action
     
-    def enableShortcuts(self):
-        #enable main tool shortcut config
-        self.action = QAction(self.tr('DSGTools: Inspect Features'), self.parent, triggered=self.toggleBar)
-        self.iface.registerMainWindowAction(self.action, 'F12')
-    
     def lol(self):
         print 'lol'
     
     def getIterateLayer(self):
-	return self.mMapLayerComboBox.currentLayer()
+	    return self.mMapLayerComboBox.currentLayer()
 
     def enableTool(self, enabled = True):
         from qgis.core import QgsVectorLayer
@@ -93,7 +94,7 @@ class InspectFeatures(QWidget,Ui_Form):
         self.backInspectButton.setEnabled(enabled)
         self.nextInspectButton.setEnabled(enabled)
         self.idSpinBox.setEnabled(enabled)
-        # self.onlySelectedRadioButton.setEnabled(enabled)
+
         
     def enableScale(self):
         """
@@ -290,11 +291,18 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Shows/Hides the tool bar
         """
-        if not self.inspectPushButton.isDown():
+        if toggled == None:
+            toggled = self.inspectPushButton.isChecked()
+        if toggled:
             self.splitter.show()
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
             self.splitter.hide()
+        # if not isinstance(self.sender(),QAction):
+        #     return
+
+        #     self.inspectPushButton.setChecked(not self.inspectPushButton.isChecked())
+            
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
