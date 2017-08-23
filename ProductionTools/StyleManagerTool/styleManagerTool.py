@@ -141,6 +141,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     
     def getParametersFromLyr(self, dbName):
         for lyr in self.iface.legendInterface().layers():
+          if isinstance(lyr, QgsVectorLayer):
             candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
             if candidateUri.database() == dbName:
                 currLyr = lyr
