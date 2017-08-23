@@ -2,7 +2,7 @@
 
 [![Join the chat at https://gitter.im/DsgTools/Lobby](https://badges.gitter.im/DsgTools/Lobby.svg)](https://gitter.im/DsgTools/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-
+------------------------------------
 #DSG Master Plugin (English Version)
 
 DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV Defesa F Ter 2ª Edição). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
@@ -52,6 +52,7 @@ sudo apt-get install python-qt4-sql
 sudo apt-get install libqt4-sql-psql
 sudo apt-get install libqt4-sql-sqlite
 
+------------------------------------
 #DSG Master Plugin (Versão em Português)
 
 O DSGTools é um plugin para o QGIS (http://qgis.org/pt_BR/site/) que permite aos usuários a criação e utilização de produtos cartográficos de acordo com as especificações da ET-EDGV 2.1.3 e da ET-EDGV Defesa F Ter 2ª Edição. O DSGTools visa atender não apenas o Exército Brasileiro, mas também produtores e usuários de geoinformação da sociedade.
