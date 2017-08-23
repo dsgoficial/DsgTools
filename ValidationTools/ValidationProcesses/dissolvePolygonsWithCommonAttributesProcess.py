@@ -66,7 +66,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
         QgsMapLayerRegistry.instance().removeMapLayer(auxLayer.id())
-        self.splitUnifiedLayer(outputLayer, [layer], attributeBlackList = self.parameters['AttributeBlackList (comma separated)'])
+        self.splitUnifiedLayer(outputLayer, [layer])
         return outputLayer
     
     def addDissolveField(self, layer, tol):
