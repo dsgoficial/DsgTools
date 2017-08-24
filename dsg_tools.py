@@ -120,7 +120,6 @@ class DsgTools:
         self.processManager = ProcessManager(iface)
 
         self.BDGExTools = BDGExTools()
-        self.minimumAreaTool = MinimumAreaTool(iface)
         
         self.styleManagerTool = StyleManagerTool(iface)
         self.copyPasteTool = CopyPasteTool(iface)
@@ -234,7 +233,7 @@ class DsgTools:
         self.dsgTools.setTitle(self.tr('DSG Tools'))
         self.fieldToolbox = None
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
-        self.inspectFeatures = InspectFeatures(self.iface, parent = self.dsgTools)
+
 
         #Sub menus
         server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
@@ -656,6 +655,8 @@ class DsgTools:
         self.acquisition.setCircleAction(action)
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
+        self.inspectFeatures = InspectFeatures(self.iface, parent = productiontools)
+        self.minimumAreaTool = MinimumAreaTool(self.iface, parent = productiontools)
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
         # self.inspectFeatures.enableShortcuts()

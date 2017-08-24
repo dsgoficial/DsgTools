@@ -26,7 +26,7 @@ import os
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QMessageBox, QIcon, QAction
 from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
 from PyQt4.Qt import QWidget, QObject
 
@@ -47,6 +47,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         super(MinimumAreaTool, self).__init__(parent)
         self.setupUi(self)
+        self.parent = parent
         self.splitter.hide()
         self.iface = iface
         self.mScaleWidget.setScaleString('1:100000')
@@ -54,6 +55,22 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.shape = None
         self.size = None
         self.populateSizesComboBox()
+        icon_path = ':/plugins/DsgTools/icons/minAreaTool.png'
+        text = self.tr('DSGTools: Minimum Area Tool')
+        self.showAction = self.add_action(icon_path, text, self.showPushButton.toggle, parent = self.parent)
+        self.iface.registerMainWindowAction(self.showAction, '')
+        icon_path = ':/plugins/DsgTools/icons/areaTool.png'
+        text = self.tr('DSGTools: Draw Shape')
+        self.shapeAction = self.add_action(icon_path, text, self.drawShape.click, parent = self.parent)
+        self.iface.registerMainWindowAction(self.shapeAction, '')
+    
+    def add_action(self, icon_path, text, callback, parent=None):
+        icon = QIcon(icon_path)
+        action = QAction(icon, text, parent)
+        action.triggered.connect(callback)
+        if parent:
+            parent.addAction(action)
+        return action
     
     def initGui(self):
         """
@@ -156,11 +173,13 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         else:
             return False
 
-    @pyqtSlot(bool)
-    def on_showPushButton_toggled(self, toggled):
+    @pyqtSlot(bool, name = 'on_showPushButton_toggled')
+    def toggleBar(self, toggled=None):
         """
         Slot to show/hide the tool bar
         """
+        if toggled is None:
+            toggled = self.showPushButton.isChecked()
         if toggled:
             self.splitter.show()
         else:

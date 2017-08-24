@@ -291,18 +291,13 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Shows/Hides the tool bar
         """
-        if toggled == None:
+        if toggled is None:
             toggled = self.inspectPushButton.isChecked()
         if toggled:
             self.splitter.show()
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
-            self.splitter.hide()
-        # if not isinstance(self.sender(),QAction):
-        #     return
-
-        #     self.inspectPushButton.setChecked(not self.inspectPushButton.isChecked())
-            
+            self.splitter.hide()         
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
