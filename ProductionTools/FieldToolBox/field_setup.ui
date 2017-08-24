@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>882</width>
+    <width>961</width>
     <height>533</height>
    </rect>
   </property>
@@ -154,12 +154,25 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="filterEdit"/>
+               <widget class="QLineEdit" name="filterEdit">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
             <item>
              <widget class="QListWidget" name="classListWidget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="maximumSize">
                <size>
                 <width>16777215</width>
@@ -214,7 +227,20 @@
                 <string>Value</string>
                </property>
               </column>
+              <column>
+               <property name="text">
+                <string>Visisible</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>Black Listed</string>
+               </property>
+              </column>
              </widget>
+            </item>
+            <item>
+             <widget class="ButtonPropWidget" name="buttonPropWidget" native="true"/>
             </item>
            </layout>
           </item>
@@ -243,6 +269,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ButtonPropWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.buttonPropWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
