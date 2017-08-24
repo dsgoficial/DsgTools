@@ -221,11 +221,7 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QComboBox" name="comboBox">
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <widget class="DsgCustomComboBox" name="tableComboBox" native="true"/>
         </item>
        </layout>
       </widget>
@@ -235,6 +231,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>DsgCustomComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>ButtonPropWidget</class>
    <extends>QWidget</extends>
