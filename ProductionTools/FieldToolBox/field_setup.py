@@ -47,24 +47,19 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         Constructor
         """
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.abstractDb = abstractDb
 
         self.setupUi(self)
-        self.populateClassList()
-        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
-        self.edgvVersion = self.abstractDb.getDatabaseVersion()
-        if self.abstractDb.db.driverName() == 'QPSQL':
-            self.geomTypeDict = self.abstractDb.getGeomTypeDict()
-            self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
-            self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
-            self.geomStructDict = self.abstractDb.getGeomStructDict()
-        self.returnDict = returnDict
+        # self.populateClassList()
+        # self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
+        # self.edgvVersion = self.abstractDb.getDatabaseVersion()
+        # if self.abstractDb.db.driverName() == 'QPSQL':
+        #     self.geomTypeDict = self.abstractDb.getGeomTypeDict()
+        #     self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
+        #     self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
+        #     self.geomStructDict = self.abstractDb.getGeomStructDict()
+        # self.returnDict = returnDict
         
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
     

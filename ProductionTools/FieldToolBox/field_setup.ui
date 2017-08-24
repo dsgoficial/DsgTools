@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>961</width>
-    <height>533</height>
+    <width>741</width>
+    <height>631</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,27 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="1">
     <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
+       <item>
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Load from file</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="loadedFileEdit"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="loadButton">
+         <property name="text">
+          <string>Load</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
@@ -60,27 +81,6 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout_5">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>Load from file</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="loadedFileEdit"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="loadButton">
-       <property name="text">
-        <string>Load</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
    <item row="2" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
@@ -108,7 +108,7 @@
         </size>
        </property>
        <property name="columnCount">
-        <number>2</number>
+        <number>4</number>
        </property>
        <attribute name="headerVisible">
         <bool>true</bool>
@@ -121,6 +121,16 @@
        <column>
         <property name="text">
          <string>Value</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Visible</string>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>Ignored</string>
         </property>
        </column>
       </widget>
@@ -140,113 +150,61 @@
         <string>New Element</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item row="3" column="0">
+         <widget class="ButtonPropWidget" name="buttonPropWidget" native="true"/>
+        </item>
+        <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QLabel" name="label_4">
-                <property name="text">
-                 <string>Filter</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="filterEdit">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QListWidget" name="classListWidget">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>16777215</width>
-                <height>16777215</height>
-               </size>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Button Name</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
+           <widget class="QLineEdit" name="buttonNameLineEdit">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>60</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>Button Name</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="buttonNameLineEdit"/>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QTableWidget" name="attributeTableWidget">
-              <column>
-               <property name="text">
-                <string>Attribute</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Value</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Visisible</string>
-               </property>
-              </column>
-              <column>
-               <property name="text">
-                <string>Black Listed</string>
-               </property>
-              </column>
-             </widget>
-            </item>
-            <item>
-             <widget class="ButtonPropWidget" name="buttonPropWidget" native="true"/>
-            </item>
-           </layout>
+           </widget>
           </item>
          </layout>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="0">
+         <widget class="QTableWidget" name="attributeTableWidget">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <column>
+           <property name="text">
+            <string>Attribute</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Value</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Visisible</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Ignored</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item row="4" column="0">
          <widget class="QPushButton" name="addUpdatePushButton">
           <property name="maximumSize">
            <size>
@@ -259,6 +217,13 @@
           </property>
           <property name="text">
            <string>Add / Update</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QComboBox" name="comboBox">
+          <property name="editable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
