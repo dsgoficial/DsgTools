@@ -61,4 +61,8 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         """
         parameterDict = dict()
         if self.colorCheckBox.checkState() == Qt.Checked:
-            parameterDict['buttonColor'] = self.colorCheckBox.
+            pass
+        if self.tooltipCheckBox.checkState() == Qt.Checked:
+            pass
+        if self.customCategoryCheckBox.checkState() == Qt.Checked:
+            pass
