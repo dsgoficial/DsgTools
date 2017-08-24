@@ -39,3 +39,17 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         """Constructor."""
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
+    
+    @pyqtSlot(bool, name = 'on_colorCheckBox_stateChanged')
+    @pyqtSlot(bool, name = 'on_tooltipCheckBox_stateChanged')
+    @pyqtSlot(bool, name = 'on_customCategoryCheckBox_stateChanged')
+    def setEnabled(self, state):
+        """
+        Enables or disables 
+        """
+        if self.sender.name() == 'colorCheckBox':
+            self.mColorButton.setEnabled(state)
+        if self.sender.name() == 'tooltipCheckBox':
+            self.toolTipLineEdit.setEnabled(state)
+        if self.sender.name() == 'customCategoryCheckBox':
+            self.customCategoryComboBox.setEnabled(state)
