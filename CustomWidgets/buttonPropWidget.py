@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
 from PyQt4.QtGui import QFileDialog, QMessageBox, QRadioButton
 
@@ -40,16 +40,25 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
     
-    @pyqtSlot(bool, name = 'on_colorCheckBox_stateChanged')
-    @pyqtSlot(bool, name = 'on_tooltipCheckBox_stateChanged')
-    @pyqtSlot(bool, name = 'on_customCategoryCheckBox_stateChanged')
+    @pyqtSlot(bool, name = 'on_colorCheckBox_toggled')
+    @pyqtSlot(bool, name = 'on_tooltipCheckBox_toggled')
+    @pyqtSlot(bool, name = 'on_customCategoryCheckBox_toggled')
     def setEnabled(self, state):
         """
         Enables or disables 
         """
-        if self.sender.name() == 'colorCheckBox':
+        if self.sender().objectName() == 'colorCheckBox':
             self.mColorButton.setEnabled(state)
-        if self.sender.name() == 'tooltipCheckBox':
+        if self.sender().objectName() == 'tooltipCheckBox':
             self.toolTipLineEdit.setEnabled(state)
-        if self.sender.name() == 'customCategoryCheckBox':
+        if self.sender().objectName() == 'customCategoryCheckBox':
             self.customCategoryComboBox.setEnabled(state)
+    
+    def getParameterDict(self):
+        """
+        Returns a dict in the format:
+        {'buttonColor':--color of the button--, 'buttonToolTip'--button toolTip--, 'buttonGroupTag':--group tag of the button--}
+        """
+        parameterDict = dict()
+        if self.colorCheckBox.checkState() == Qt.Checked:
+            parameterDict['buttonColor'] = self.colorCheckBox.
