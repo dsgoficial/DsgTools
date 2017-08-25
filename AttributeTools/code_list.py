@@ -144,20 +144,22 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         self.tableWidget.clear()
         self.tableWidget.setColumnCount(2)
         self.tableWidget.setHorizontalHeaderLabels([self.tr('Value'), self.tr('Code')])
-        
-        field = self.comboBox.currentText()
-        valueDict, keys = self.getCodeListDict(field)
-        
-        if 'FilterExpression' in keys:
-            valueDict = self.makeValueRelationDict(valueDict)
-            keys = valueDict.keys()
+        try:
+            field = self.comboBox.currentText()
+            valueDict, keys = self.getCodeListDict(field)
+            
+            if 'FilterExpression' in keys:
+                valueDict = self.makeValueRelationDict(valueDict)
+                keys = valueDict.keys()
 
-        self.tableWidget.setRowCount(len(keys))
-        
-        for row, value in enumerate(keys):
-            code = valueDict[value]
-            valueItem = QTableWidgetItem(value)
-            codeItem = QTableWidgetItem(code)
-            self.tableWidget.setItem(row, 0, valueItem)
-            self.tableWidget.setItem(row, 1, codeItem)
-        self.tableWidget.sortItems(1)
+            self.tableWidget.setRowCount(len(keys))
+            
+            for row, value in enumerate(keys):
+                code = valueDict[value]
+                valueItem = QTableWidgetItem(value)
+                codeItem = QTableWidgetItem(code)
+                self.tableWidget.setItem(row, 0, valueItem)
+                self.tableWidget.setItem(row, 1, codeItem)
+            self.tableWidget.sortItems(1)
+        except:
+            pass
