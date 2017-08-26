@@ -397,6 +397,7 @@ class ValidationProcess(QObject):
                 if attributeTupple:
                     attributeList = []
                     attributes = [field.name() for field in feature.fields() if (field.type() != 6 and field.name() != keyColumn)]
+                    attributes.sort()
                     for attribute in attributes:
                         if attribute not in bList:
                             attributeList.append(u'{0}'.format(feature[attribute])) #done due to encode problems
