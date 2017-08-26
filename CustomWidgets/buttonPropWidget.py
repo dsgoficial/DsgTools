@@ -28,7 +28,7 @@ from qgis.core import QgsMessageLog
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFileDialog, QMessageBox, QRadioButton
+from PyQt4.QtGui import QFileDialog, QMessageBox, QRadioButton, QColor
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -61,8 +61,27 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         """
         parameterDict = dict()
         if self.colorCheckBox.checkState() == Qt.Checked:
-            pass
+            parameterDict['buttonColor'] = ','.join(map(str,self.mColorButton.color().getRgb())) #must map to string
         if self.tooltipCheckBox.checkState() == Qt.Checked:
-            pass
+            parameterDict['buttonToolTip'] = self.toolTipLineEdit.text()
         if self.customCategoryCheckBox.checkState() == Qt.Checked:
+            parameterDict['buttonGroupTag'] = self.customCategoryComboBox.currentText()
+    
+    def setInterface(self, parameterDict):
+        """
+        Sets the interface with a dict in the format:
+        {'buttonColor':--color of the button--, 'buttonToolTip'--button toolTip--, 'buttonGroupTag':--group tag of the button--}
+        """
+        if 'buttonColor' in parameterDict.keys():
+            self.colorCheckBox.setCheckState(Qt.Checked)
+            R,G,B,A = map(int,parameterDict['buttonColor'].split(',')) #QColor only accepts int values
+            self.mColorButton.setColor(QColor(R,G,B,A))
+        else:
+            self.colorCheckBox.setCheckState(Qt.Unchecked)
+        if 'buttonToolTip' in parameterDict.keys():
+            self.tooltipCheckBox.setCheckState(Qt.Checked)
+            self.toolTipLineEdit.setText(parameterDict['buttonToolTip'])
+        else:
+            self.tooltipCheckBox.setCheckState(Qt.Unchecked)
+        if 'buttonGroupTag' in parameterDict.keys():
             pass
