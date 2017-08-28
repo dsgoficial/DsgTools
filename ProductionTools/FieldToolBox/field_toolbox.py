@@ -492,10 +492,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             reclassificationLayer.addFeatures(featList, False)
             reclassifiedFeatures += len(featList)
         
-            # if len(mapLayer.selectedFeatures()) > 0:
-            #     mapLayer.startEditing()
-            #     mapLayer.deleteSelectedFeatures()
-        
         for item in deleteList:
             item['originalLyr'].startEditing()
             item['originalLyr'].deleteFeature(item['featid'])
