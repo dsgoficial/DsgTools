@@ -445,6 +445,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         isMulti = QgsWKBTypes.isMultiType(int(reclassificationLayer.wkbType())) #
         mapLayers = self.iface.mapCanvas().layers()
         crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
+        deleteList = []
         for mapLayer in mapLayers:
             if mapLayer.type() != QgsMapLayer.VectorLayer:
                 continue
@@ -458,7 +459,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 geomList = []
                 geom = feature.geometry()
                 if geom.type() != geomType:
-                    mapLayer.deselect(feature.id()) #done so that feat will not be deleted if not reclassified
                     continue
                 if 'geometry' in dir(geom):
                     if not hasMValues:
@@ -467,12 +467,14 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                         geom.geometry().dropZValue()
                 if isMulti and not geom.isMultipart():
                     geomList.append(geom.convertToMultiType())
-                if not isMulti and geom.isMultipart():
+                elif not isMulti and geom.isMultipart():
                     #deaggregate here
                     parts = geom.asGeometryCollection()
                     for part in parts:
                         part.convertToSingleType()
                         geomList.append(part)
+                else:
+                    geomList.append(geom)
                 for newGeom in geomList:
                     #creating a new feature according to the reclassification layer
                     newFeature = QgsFeature(reclassificationLayer.pendingFields())
@@ -485,13 +487,18 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     #adding the newly created feature to the addition list
                     featList.append(newFeature)
                     somethingMade = True
+                    deleteList.append({'originalLyr':mapLayer,'featid':feature.id()})
             #actual feature insertion
             reclassificationLayer.addFeatures(featList, False)
             reclassifiedFeatures += len(featList)
         
-            if len(mapLayer.selectedFeatures()) > 0:
-                mapLayer.startEditing()
-                mapLayer.deleteSelectedFeatures()
+            # if len(mapLayer.selectedFeatures()) > 0:
+            #     mapLayer.startEditing()
+            #     mapLayer.deleteSelectedFeatures()
+        
+        for item in deleteList:
+            item['originalLyr'].startEditing()
+            item['originalLyr'].deleteFeature(item['featid'])
         
         if somethingMade:
             self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=QgsMessageBar.INFO, duration=3)
