@@ -50,7 +50,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.abstractDb = abstractDb
 
         self.setupUi(self)
-        # self.populateClassList()
+        self.populateClassList()
         # self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         # self.edgvVersion = self.abstractDb.getDatabaseVersion()
@@ -72,7 +72,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         """
         Populates the class list with all geometric classes from database
         """
-        self.classListWidget.clear()
+        self.tableComboBox.clear()
         self.geomClasses = []
         try:
             self.geomClasses = self.abstractDb.listGeomClassesFromDatabase()
@@ -80,7 +80,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         self.geomClasses.sort()
-        self.classListWidget.addItems(self.geomClasses)
+        self.tableComboBox.addItems(self.geomClasses)
+        self.tableComboBox.setCurrentIndex(-1)
         
     def on_filterEdit_textChanged(self, text):
         """
