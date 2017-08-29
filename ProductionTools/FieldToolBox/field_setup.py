@@ -50,6 +50,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.abstractDb = abstractDb
 
         self.setupUi(self)
+        self.tableComboBox.setCurrentIndex(-1)  
         self.populateClassList()
         # self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
@@ -326,7 +327,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             item.setText(0, category)
         if not leafChildInTree:
             item = QTreeWidgetItem(item)
-            item.setText(0, self.classListWidget.item(classRow).text())
+            item.setText(0, classRow)
         if not buttonInTree:        
             # item that will be used to create the button
             buttonItem = QTreeWidgetItem(item)
