@@ -66,6 +66,7 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             parameterDict['buttonToolTip'] = self.toolTipLineEdit.text()
         if self.customCategoryCheckBox.checkState() == Qt.Checked:
             parameterDict['buttonGroupTag'] = self.customCategoryComboBox.currentText()
+        return parameterDict
     
     def setInterface(self, parameterDict):
         """

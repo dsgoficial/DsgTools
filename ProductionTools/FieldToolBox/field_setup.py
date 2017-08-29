@@ -61,7 +61,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #     self.geomStructDict = self.abstractDb.getGeomStructDict()
         # self.returnDict = returnDict
         
-        self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
+        self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
     
     def __del__(self):
         if self.abstractDb:
@@ -382,6 +382,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 attributeItem = QTreeWidgetItem(buttonItem)
                 attributeItem.setText(0, attribute)
             attributeItem.setText(1, value)
+        #test
+        paramDict = self.buttonPropWidget.getParameterDict()
             
     def recreateAttributeTable(self, buttonItem):
         """
