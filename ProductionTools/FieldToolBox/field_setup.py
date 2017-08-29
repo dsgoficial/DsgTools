@@ -53,13 +53,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.populateClassList()
         # self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         # self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
-        # self.edgvVersion = self.abstractDb.getDatabaseVersion()
-        # if self.abstractDb.db.driverName() == 'QPSQL':
-        #     self.geomTypeDict = self.abstractDb.getGeomTypeDict()
-        #     self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
-        #     self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
-        #     self.geomStructDict = self.abstractDb.getGeomStructDict()
-        # self.returnDict = returnDict
+        self.edgvVersion = self.abstractDb.getDatabaseVersion()
+        if self.abstractDb.db.driverName() == 'QPSQL':
+            self.geomTypeDict = self.abstractDb.getGeomTypeDict()
+            self.geomDict = self.abstractDb.getGeomDict(self.geomTypeDict)
+            self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
+            self.geomStructDict = self.abstractDb.getGeomStructDict()
+        self.returnDict = returnDict
         
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
     
@@ -81,16 +81,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         self.geomClasses.sort()
         self.tableComboBox.addItems(self.geomClasses)
-        self.tableComboBox.setCurrentIndex(-1)
-        
-    def on_filterEdit_textChanged(self, text):
-        """
-        Sets a filter to only show desired classes
-        """
-        classes = [edgvClass for edgvClass in self.geomClasses if text in edgvClass]
-        self.classListWidget.clear()
-        self.classListWidget.addItems(classes)
-        self.classListWidget.sortItems()        
+        self.tableComboBox.setCurrentIndex(-1)  
     
     def clearAttributeTableWidget(self):
         """
@@ -120,7 +111,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         return ret    
     
     @pyqtSlot(int)
-    def on_classListWidget_currentRowChanged(self,row):
+    def on_tableComboBox_currentIndexChanged(self,row):
         """
         Creates the attribute table according to database.
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
@@ -191,10 +182,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #clear the attribute table
         self.clearAttributeTableWidget()
         
-        if not self.classListWidget.item(row):
+        if row == -1:
             return
         
-        fullTableName = self.classListWidget.item(row).text()
+        fullTableName = self.tableComboBox.currentText()
         #getting schema name and table name
         schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
         #getting the QML path
@@ -226,10 +217,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #clear the attribute table
         self.clearAttributeTableWidget()
         
-        if not self.classListWidget.item(row):
+        if row == -1:
             return
         
-        fullTableName = self.classListWidget.item(row).text()
+        fullTableName = self.tableComboBox.currentText()
         #getting schema name and table name
         qmlDict = self.buildQmlDict(fullTableName)
         count = 0
@@ -298,9 +289,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         rootItem = self.treeWidget.invisibleRootItem()
 
         # class row in the classListWidget
-        classRow = self.classListWidget.currentRow()
+        classRow = self.tableComboBox.currentText()
 
-        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+        schemaName, tableName = self.abstractDb.getTableSchema(classRow)
         if self.abstractDb.db.driverName() == 'QSQLITE':
             category = schemaName + '_' + tableName.split('_')[0]
         else:
