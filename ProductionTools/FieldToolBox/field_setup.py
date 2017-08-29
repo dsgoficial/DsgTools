@@ -312,7 +312,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 item = leaf
                 for j in range(leaf.childCount()):
                     leafChild = leaf.child(j)
-                    if leafChild.text(0) == self.classListWidget.item(classRow).text():
+                    if leafChild.text(0) == self.tableComboBox.currentText():
                         leafChildInTree = True
                         item = leafChild
                         for k in range(leafChild.childCount()):
@@ -528,7 +528,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         """
         Adjusts the button visualization according to the selected item in the tree widget
         """
-        self.filterEdit.setText('')
         depth = self.depth(previous)
         if depth == 1:
             self.buttonNameLineEdit.setText('')
