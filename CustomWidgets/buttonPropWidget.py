@@ -77,11 +77,13 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             R,G,B,A = map(int,parameterDict['buttonColor'].split(',')) #QColor only accepts int values
             self.mColorButton.setColor(QColor(R,G,B,A))
         else:
-            self.colorCheckBox.setCheckState(Qt.Unchecked)
+            self.colorCheckBox.setCheckState(Qt.Unchecked) #if 'buttonColor' isn't on dict keys, set colorCheckBox as unchecked
         if 'buttonToolTip' in parameterDict.keys():
             self.tooltipCheckBox.setCheckState(Qt.Checked)
             self.toolTipLineEdit.setText(parameterDict['buttonToolTip'])
         else:
-            self.tooltipCheckBox.setCheckState(Qt.Unchecked)
+            self.tooltipCheckBox.setCheckState(Qt.Unchecked) #if 'buttonToolTip' isn't on dict keys, set colorCheckBox as unchecked
         if 'buttonGroupTag' in parameterDict.keys():
             pass
+        else:
+            self.customCategoryCheckBox.setCheckState(Qt.Unchecked) #if 'buttonGroupTag' isn't on dict keys, set colorCheckBox as unchecked
