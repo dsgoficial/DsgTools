@@ -36,6 +36,7 @@ from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsMessageL
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.QmlTools.qmlParser import QmlParser
+from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 import acquisition_tools
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -48,12 +49,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         """
         super(self.__class__, self).__init__(parent)
         self.abstractDb = abstractDb
-
-        self.setupUi(self)
-        self.tableComboBox.setCurrentIndex(-1)  
-        self.populateClassList()
-        # self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.edgvVersion = self.abstractDb.getDatabaseVersion()
         if self.abstractDb.db.driverName() == 'QPSQL':
             self.geomTypeDict = self.abstractDb.getGeomTypeDict()
@@ -61,7 +56,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
             self.geomStructDict = self.abstractDb.getGeomStructDict()
         self.returnDict = returnDict
-        
+        self.setupUi(self)
+        self.tableComboBox.setCurrentIndex(-1)  
+        self.populateClassList()
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
     
     def __del__(self):
@@ -257,7 +256,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if attr in qmlDict.keys():
             #case the type is dict the cell widget must be a combobox
             if isinstance(qmlDict[attr],dict):
-                comboItem = QComboBox()
+                comboItem = DsgCustomComboBox()
                 comboItem.addItems(sorted(qmlDict[attr].keys()))
                 self.attributeTableWidget.setCellWidget(count, 1, comboItem)
             #case the type is tuple the cell widget must be a listwidget
