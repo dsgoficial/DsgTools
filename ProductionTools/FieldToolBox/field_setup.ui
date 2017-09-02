@@ -194,7 +194,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Enabled</string>
+            <string>Editable</string>
            </property>
           </column>
           <column>
