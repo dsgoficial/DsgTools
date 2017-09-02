@@ -62,6 +62,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
+        self.optionalDict = {self.tr('Yes'):1, self.tr('No'):0}
     
     def __del__(self):
         if self.abstractDb:
@@ -274,6 +275,20 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         else:
             textItem = QLineEdit()
             self.attributeTableWidget.setCellWidget(count, 1, textItem)
+        #insert here aditional parameters
+        self.createAditionalParameters(count)
+    
+    def createAditionalParameters(self, count):
+        """
+        Creates aditional parameters upon creation of an attribute item
+        """
+        #editable item
+        comboItem = QComboBox()
+        comboItem.addItems([self.tr('Yes'), self.tr('No')])
+        self.attributeTableWidget.setCellWidget(count, 2, comboItem)
+        comboItem = QComboBox()
+        comboItem.addItems([self.tr('No'), self.tr('Yes')])
+        self.attributeTableWidget.setCellWidget(count, 3, comboItem)
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
