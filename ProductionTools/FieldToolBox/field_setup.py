@@ -448,9 +448,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 for j in [2,3]:
                     #populate the other properties of the attribute
                     widgetItem = self.attributeTableWidget.cellWidget(i, j)
-                    text = self.optionalDict[attrItem.text(j)]
-                    widgetItem.setText(text)
-
+                    text = [key for key in self.optionalDict.keys() if  self.optionalDict[key] == attrItem.text(j)][0]
+                    for idx in range(widgetItem.count()):
+                        if widgetItem.itemText(idx) == text:
+                            widgetItem.setCurrentIndex(idx)
             
     def getUiParameterJsonDict(self):
         """
