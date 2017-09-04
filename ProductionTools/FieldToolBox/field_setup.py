@@ -392,8 +392,6 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             for j in [2,3]:
                 itemText = self.attributeTableWidget.cellWidget(i, j).currentText()
                 attributeItem.setText(j, self.optionalDict[itemText])
-        #test
-        paramDict = self.buttonPropWidget.getParameterDict()
             
     def recreateAttributeTable(self, buttonItem):
         """
@@ -517,10 +515,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 reclassificationDict[categoryItem.text(0)][classItem.text(0)] = dict()
                 for k in range(classItem.childCount()):
                     buttonItem = classItem.child(k)
+                    #buttonItem.text(0) is the buttonName
                     reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)] = dict()
                     for l in range(buttonItem.childCount()):
                         attributeItem = buttonItem.child(l)
-                        reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = attributeItem.text(1)
+                        dictItem = {"value":attributeItem.text(1), "isEditable":attributeItem.text(2), "isIgnored":attributeItem.text(3)}
+                        reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = dictItem
+                    reclassificationDict[categoryItem.text(0)][classItem.text(0)]["buttonProp"] = self.buttonPropWidget.getParameterDict()
         return reclassificationDict
     
     def readJsonFile(self, filename):
