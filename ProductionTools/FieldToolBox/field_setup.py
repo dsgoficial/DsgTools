@@ -63,6 +63,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
         self.optionalDict = {self.tr('Yes'):'1', self.tr('No'):'0'}
+        self.buttonPropDict = dict()
     
     def __del__(self):
         if self.abstractDb:
@@ -353,7 +354,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         else:
             fullTableName = schemaName+'.'+tableName
         qmlDict = self.buildQmlDict(fullTableName)
-        
+        #add optional parameters to self.buttonPropDict
+        if fullTableName not in self.buttonPropDict.keys():
+            self.buttonPropDict[fullTableName] = dict()
+        #parameter dict from buttonPropWidget has the following format:
+        #{'buttonColor':--color of the button--, 'buttonToolTip'--button toolTip--, 'buttonGroupTag':--group tag of the button--}
+        self.buttonPropDict[fullTableName][self.buttonNameLineEdit.text()] = self.buttonPropWidget.getParameterDict()
+
         # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
         for i in range(self.attributeTableWidget.rowCount()):
             attribute = self.attributeTableWidget.item(i, 0).text()
@@ -521,7 +528,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                         attributeItem = buttonItem.child(l)
                         dictItem = {"value":attributeItem.text(1), "isEditable":attributeItem.text(2), "isIgnored":attributeItem.text(3)}
                         reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = dictItem
-                    reclassificationDict[categoryItem.text(0)][classItem.text(0)]["buttonProp"] = self.buttonPropWidget.getParameterDict()
+                    reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)]["buttonProp"] = self.buttonPropDict[classItem.text(0)][buttonItem.text(0)]
         return reclassificationDict
     
     def readJsonFile(self, filename):
@@ -602,6 +609,16 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.classListWidget.setCurrentItem(classItems[0])
             self.buttonNameLineEdit.setText(previous.parent().text(0))
             self.recreateAttributeTable(previous.parent())
+    
+    def populateOptionalParametersWidget(self, buttonName):
+        """
+        Takes values from self.buttonPropDict and populates butonPropWidget
+        """
+        schemaName, tableName = self.abstractDb.getTableSchema(self.tableComboBox.currentText())
+        fullTableName = '.'.join([schemaName, tableName])
+        if fullTableName in self.buttonPropDict.keys():
+            if buttonName in self.buttonPropDict[fullTableName].keys():
+                self.buttonPropWidget.setInterface(self.buttonPropDict[fullTableName][buttonName])
 
     def depth(self, item):
         """
