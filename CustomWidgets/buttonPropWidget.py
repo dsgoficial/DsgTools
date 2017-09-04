@@ -85,12 +85,13 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         else:
             self.tooltipCheckBox.setCheckState(Qt.Unchecked) #if 'buttonToolTip' isn't on dict keys, set colorCheckBox as unchecked
         if 'buttonGroupTag' in parameterDict.keys():
+            self.customCategoryCheckBox.setCheckState(Qt.Checked)
             itemList = [self.customCategoryComboBox.itemText(i) for i in range(self.customCategoryComboBox.count())]
             if parameterDict['buttonGroupTag'] not in itemList:
                 self.customCategoryComboBox.addItem(parameterDict['buttonGroupTag'])
-                idx = self.customCategoryComboBox.findData(parameterDict['buttonGroupTag'], Qt.MatchExactly)
-                if idx != -1:
-                    self.customCategoryComboBox.setCurrentIndex(idx)
+            idx = self.customCategoryComboBox.findData(parameterDict['buttonGroupTag'], Qt.MatchExactly)
+            if idx != -1:
+                self.customCategoryComboBox.setCurrentIndex(idx)
                 
         else:
             self.customCategoryCheckBox.setCheckState(Qt.Unchecked) #if 'buttonGroupTag' isn't on dict keys, set colorCheckBox as unchecked
