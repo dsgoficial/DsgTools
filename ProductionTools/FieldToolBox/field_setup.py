@@ -445,6 +445,12 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                                 widgetItem.item(i).setCheckState(Qt.Checked)
                 else:
                     value = widgetItem.setText(value)
+                for j in [2,3]:
+                    #populate the other properties of the attribute
+                    widgetItem = self.attributeTableWidget.cellWidget(i, j)
+                    text = self.optionalDict[attrItem.text(j)]
+                    widgetItem.setText(text)
+
             
     def getUiParameterJsonDict(self):
         """
