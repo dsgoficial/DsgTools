@@ -469,6 +469,37 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     def makeReclassificationDict(self):
         """
         Makes the reclassification dictionary used to perform the actual reclassification
+        Dictionary has the following format:
+        {
+            "category": {
+                "schema.table_name":{
+                    "buttonName":{
+                        "attrName": {"value":value, "isEditable":isEditable, "isIgnored":isIgnored}
+                        "buttonProp": {"buttonColor":buttonColor, "buttonToolTip":buttonToolTip, "buttonGroupTag":buttonGroupTag}
+                    }
+                },
+            "uiParameterJsonDict": {
+                "checkBox": bool, 
+                "slider": size
+                }, 
+            "version": version
+            }
+        }
+        old dict has the following format:
+        {
+            "category": {
+                "schema.table_name":{
+                    "buttonName":{
+                        "attrName": value
+                    }
+                },
+            "uiParameterJsonDict": {
+                    "checkBox": bool, 
+                    "slider": size
+                }, 
+            "version": version
+            }
+        }
         """
         reclassificationDict = dict()
         
