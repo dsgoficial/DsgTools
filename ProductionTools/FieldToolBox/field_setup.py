@@ -604,6 +604,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText(previous.text(0))
             self.recreateAttributeTable(previous)
+            self.populateOptionalParametersWidget(previous.text(0))
         elif depth == 4:
             classItems = self.classListWidget.findItems(previous.parent().parent().text(0), Qt.MatchExactly)
             self.classListWidget.setCurrentItem(classItems[0])
