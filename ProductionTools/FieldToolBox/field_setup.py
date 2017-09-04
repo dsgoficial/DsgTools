@@ -62,7 +62,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
-        self.optionalDict = {self.tr('Yes'):1, self.tr('No'):0}
+        self.optionalDict = {self.tr('Yes'):'1', self.tr('No'):'0'}
     
     def __del__(self):
         if self.abstractDb:
@@ -389,6 +389,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 attributeItem = QTreeWidgetItem(buttonItem)
                 attributeItem.setText(0, attribute)
             attributeItem.setText(1, value)
+            for j in [2,3]:
+                itemText = self.attributeTableWidget.cellWidget(i, j).currentText()
+                attributeItem.setText(j, self.optionalDict[itemText])
         #test
         paramDict = self.buttonPropWidget.getParameterDict()
             
@@ -397,9 +400,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         Making the attribute table with the actual values present in the tree widget
         """
         # class row in the classListWidget
-        classRow = self.classListWidget.currentRow()
+        classRow = self.tableComboBox.currentIndex()
 
-        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+        schemaName, tableName = self.abstractDb.getTableSchema(self.tableComboBox.currentText())
 
         # qml dict for this class (tableName)
         if self.abstractDb.db.driverName() == 'QSQLITE':
@@ -546,12 +549,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if depth == 1:
             self.buttonNameLineEdit.setText('')
         elif depth == 2:
-            classItems = self.classListWidget.findItems(previous.text(0), Qt.MatchExactly)
-            self.classListWidget.setCurrentItem(classItems[0])
+            idx = self.tableComboBox.findData(previous.text(0), Qt.MatchExactly)
+            self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText('')
         elif depth == 3:
-            classItems = self.classListWidget.findItems(previous.parent().text(0), Qt.MatchExactly)
-            self.classListWidget.setCurrentItem(classItems[0])
+            idx = self.tableComboBox.findData(previous.text(0), Qt.MatchExactly)
+            if idx != -1:
+                self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText(previous.text(0))
             self.recreateAttributeTable(previous)
         elif depth == 4:
