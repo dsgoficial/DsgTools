@@ -321,13 +321,13 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             #entering in editing mode
             if not reclassificationLayer.isEditable():
                 reclassificationLayer.startEditing()
-            lyrAttributes = [i for i in reclassificationLayer.pendingFields()]
+            lyrAttributes = [i.name() for i in reclassificationLayer.pendingFields()]
             for attr in self.reclassificationDict[category][edgvClass][button].keys():
                 if attr == 'buttonProp':
                     continue
                 candidateDict = self.reclassificationDict[category][edgvClass][button][attr]
                 if isinstance(candidateDict, dict):
-                    if candidateDict['isEditable'] == 0 and attr in lyrAttributes:
+                    if candidateDict['isEditable'] == '0' and attr in lyrAttributes:
                         attrIdx = lyrAttributes.index(attr)
                         reclassificationLayer.setFieldEditable(attrIdx, False)
 
