@@ -364,9 +364,17 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         #setting the attributes using the reclassification dictionary
         for attribute in self.reclassificationDict[self.category][self.edgvClass][self.buttonName].keys():
+            if attribute == 'buttonProp':
+                continue
             idx = newFeature.fieldNameIndex(attribute)
             #value to be changed
-            value = self.reclassificationDict[self.category][self.edgvClass][self.buttonName][attribute]
+            reclass = self.reclassificationDict[self.category][self.edgvClass][self.buttonName][attribute]
+            if isinstance(reclass, dict):
+                value = reclass['value']
+                if reclass['isIgnored'] == 1: #ignore clause
+                    continue
+            else:
+                value = reclass
             if value == '':
                 continue
             #actual attribute change
