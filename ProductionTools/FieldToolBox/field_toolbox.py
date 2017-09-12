@@ -182,20 +182,25 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         pushButton = QtGui.QPushButton(button)
         keys = propertyDict.keys()
+        styleSheet = ''
         if 'buttonColor' in keys:
-            pushButton.setStyleSheet("background-color:rgba({0},{1},{2},{3})".format(propertyDict['buttonColor'].split(',')))
+            r, g, b, a = propertyDict['buttonColor'].split(',')
+            styleSheet += "background-color:rgba({0},{1},{2},{3});".format(r, g, b, a)
+        if 'buttonToolTip' in keys:
+            pushButton.setToolTip(propertyDict['buttonToolTip'])
 
         pushButton.clicked.connect(self.reclassify)
         pushButton.toggled.connect(self.acquire)
         if self.size == 0:
             pushButton.setMinimumSize(100, 25)
-            pushButton.setStyleSheet('font-size:12px')
+            styleSheet += 'font-size:12px;'
         elif self.size == 1:            
             pushButton.setMinimumSize(100, 40)
-            pushButton.setStyleSheet('font-size:20px')
+            styleSheet += 'font-size:20px;'
         elif self.size == 2:            
             pushButton.setMinimumSize(100, 80)
-            pushButton.setStyleSheet('font-size:30px')
+            styleSheet += 'font-size:30px;'
+        pushButton.setStyleSheet(styleSheet)
         self.buttons.append(pushButton)
         return pushButton        
         
