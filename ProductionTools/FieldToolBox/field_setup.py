@@ -584,8 +584,20 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                     buttonItem.setText(0, button)
                     for attribute in reclassificationDict[category][edgvClass][button].keys():
                         attributeItem = QTreeWidgetItem(buttonItem)
-                        attributeItem.setText(0, attribute)
-                        attributeItem.setText(1, reclassificationDict[category][edgvClass][button][attribute])
+                        attrDict = reclassificationDict[category][edgvClass][button][attribute]
+                        if attribute == 'buttonProp':
+                            if edgvClass not in self.buttonPropDict.keys():
+                                self.buttonPropDict[edgvClass] = dict()
+                            if button not in self.buttonPropDict[edgvClass].keys():
+                                self.buttonPropDict[edgvClass][button] = attrDict
+                        else:
+                            attributeItem.setText(0, attribute)
+                            if isinstance(attrDict, dict):
+                                attributeItem.setText(1, attrDict['value'])
+                                attributeItem.setText(2, attrDict['isEditable'])
+                                attributeItem.setText(3, attrDict['isIgnored'])
+                            else:
+                                attributeItem.setText(1, attrDict)
                     
     def on_treeWidget_currentItemChanged(self, previous, current):
         """
