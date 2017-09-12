@@ -386,8 +386,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             
             #sweep tree for attribute
             attrFound = False
-            for i in range(buttonItem.childCount()):
-                attrItem = buttonItem.child(i)
+            for k in range(buttonItem.childCount()):
+                attrItem = buttonItem.child(k)
                 if attribute == attrItem.text(0):
                     attrFound = True
                     attributeItem = attrItem
@@ -455,10 +455,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 for j in [2,3]:
                     #populate the other properties of the attribute
                     widgetItem = self.attributeTableWidget.cellWidget(i, j)
-                    text = [key for key in self.optionalDict.keys() if  self.optionalDict[key] == attrItem.text(j)][0]
-                    for idx in range(widgetItem.count()):
-                        if widgetItem.itemText(idx) == text:
-                            widgetItem.setCurrentIndex(idx)
+                    if widgetItem:
+                        text = [key for key in self.optionalDict.keys() if  self.optionalDict[key] == attrItem.text(j)][0]
+                        for idx in range(widgetItem.count()):
+                            if widgetItem.itemText(idx) == text:
+                                widgetItem.setCurrentIndex(idx)
             
     def getUiParameterJsonDict(self):
         """
