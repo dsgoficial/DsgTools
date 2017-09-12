@@ -315,12 +315,21 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             
         #getting the QgsVectorLayer to perform the reclassification
         reclassificationLayer = self.loadLayer(reclassificationClass)
-            
+        
         if reclassificationLayer:
             self.iface.setActiveLayer(reclassificationLayer)
             #entering in editing mode
             if not reclassificationLayer.isEditable():
                 reclassificationLayer.startEditing()
+            lyrAttributes = [i for i in reclassificationLayer.pendingFields()]
+            for attr in self.reclassificationDict[category][edgvClass][button].keys():
+                if attr == 'buttonProp':
+                    continue
+                candidateDict = self.reclassificationDict[category][edgvClass][button][attr]
+                if isinstance(candidateDict, dict):
+                    if candidateDict['isEditable'] == 0 and attr in lyrAttributes:
+                        attrIdx = lyrAttributes.index(attr)
+                        reclassificationLayer.setFieldEditable(attrIdx, False)
 
         return (reclassificationLayer, category, edgvClass)
     

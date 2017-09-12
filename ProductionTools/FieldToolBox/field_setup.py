@@ -397,8 +397,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 attributeItem.setText(0, attribute)
             attributeItem.setText(1, value)
             for j in [2,3]:
-                itemText = self.attributeTableWidget.cellWidget(i, j).currentText()
-                attributeItem.setText(j, self.optionalDict[itemText])
+                itemCell = self.attributeTableWidget.cellWidget(i, j)
+                if itemCell:
+                    itemText = itemCell.currentText()
+                    attributeItem.setText(j, self.optionalDict[itemText])
             
     def recreateAttributeTable(self, buttonItem):
         """
@@ -610,14 +612,14 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText('')
         elif depth == 3:
-            idx = self.tableComboBox.findData(previous.text(0), Qt.MatchExactly)
+            idx = self.tableComboBox.findData(previous.parent().text(0), Qt.MatchExactly)
             if idx != -1:
                 self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText(previous.text(0))
             self.recreateAttributeTable(previous)
             self.populateOptionalParametersWidget(previous.text(0))
         elif depth == 4:
-            idx = self.tableComboBox.findData(previous.text(0), Qt.MatchExactly)
+            idx = self.tableComboBox.findData(previous.parent().parent().text(0), Qt.MatchExactly)
             if idx != -1:
                 self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText(previous.parent().text(0))
