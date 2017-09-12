@@ -502,7 +502,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     if not hasZValues:
                         geom.geometry().dropZValue()
                 if isMulti and not geom.isMultipart():
-                    geomList.append(geom.convertToMultiType())
+                    geom.convertToMultiType()
+                    geomList.append(geom)
                 if not isMulti and geom.isMultipart():
                     #deaggregate here
                     parts = geom.asGeometryCollection()
