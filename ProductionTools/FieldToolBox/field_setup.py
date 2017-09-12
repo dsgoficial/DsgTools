@@ -588,8 +588,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                         if attribute == 'buttonProp':
                             if edgvClass not in self.buttonPropDict.keys():
                                 self.buttonPropDict[edgvClass] = dict()
-                            if button not in self.buttonPropDict[edgvClass].keys():
-                                self.buttonPropDict[edgvClass][button] = attrDict
+                            self.buttonPropDict[edgvClass][button] = attrDict
                         else:
                             attributeItem.setText(0, attribute)
                             if isinstance(attrDict, dict):
