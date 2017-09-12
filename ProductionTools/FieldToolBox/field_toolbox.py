@@ -174,12 +174,17 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             else:
                 i.hide()
     
-    def createButton(self, button):
+    def createButton(self, button, propertyDict = dict()):
         """
         Creates the buttons according to the user size definition
         button: Button name
+        propertyDict: optional dict parameters that may contain other properties to button, such as color, tooltip and custom category
         """
         pushButton = QtGui.QPushButton(button)
+        keys = propertyDict.keys()
+        if 'buttonColor' in keys:
+            pushButton.setStyleSheet("background-color:rgba({0},{1},{2},{3})".format(propertyDict['buttonColor'].split(',')))
+
         pushButton.clicked.connect(self.reclassify)
         pushButton.toggled.connect(self.acquire)
         if self.size == 0:
@@ -215,15 +220,21 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         formLayout = QtGui.QFormLayout()
         self.createWidgetWithoutTabs(formLayout)
         sortedButtonNames = []
+        propertyDict = dict()
         for category in reclassificationDict.keys():
             if category in ['version', 'uiParameterJsonDict']:
                 continue
             for edgvClass in reclassificationDict[category].keys():
                 for button in reclassificationDict[category][edgvClass].keys():
+                    item = reclassificationDict[category][edgvClass][button]
+                    propertyDict[button] = dict()
+                    if isinstance(item, dict):
+                        if 'buttonProp' in item.keys():
+                            propertyDict[button] = item['buttonProp']
                     sortedButtonNames.append(button)
         sortedButtonNames.sort()
         for button in sortedButtonNames:       
-            pushButton = self.createButton(button)
+            pushButton = self.createButton(button, propertyDict = propertyDict[button])
             formLayout.addRow(pushButton)
 
     def createButtonsWithTabs(self, reclassificationDict):
