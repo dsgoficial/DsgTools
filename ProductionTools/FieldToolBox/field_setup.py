@@ -528,6 +528,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                     reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)] = dict()
                     for l in range(buttonItem.childCount()):
                         attributeItem = buttonItem.child(l)
+                        if attributeItem.text(0) == '':
+                            continue
                         dictItem = {"value":attributeItem.text(1), "isEditable":attributeItem.text(2), "isIgnored":attributeItem.text(3)}
                         reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = dictItem
                     reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)]["buttonProp"] = self.buttonPropDict[classItem.text(0)][buttonItem.text(0)]
