@@ -365,7 +365,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     self.setFeatureAttributes(feature, editBuffer)
             layer.endEditCommand()
 
-    def setFeatureAttributes(self, newFeature, editBuffer=None):
+    def setFeatureAttributes(self, newFeature, editBuffer=None, oldFeat = None):
         """
         Changes attribute values according to the reclassification dict using the edit buffer
         newFeature: newly added
@@ -381,7 +381,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             if isinstance(reclass, dict):
                 value = reclass['value']
                 if reclass['isIgnored'] == 1: #ignore clause
-                    continue
+                    if oldFeat:
+                        value = oldFeat[attribute]
             else:
                 value = reclass
             if value == '':
@@ -472,9 +473,6 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         #button that sent the signal
         self.buttonName = self.sender().text()
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
-        #
-        #insert not editable attributes here
-        #
         geomType = reclassificationLayer.geometryType()
         hasMValues =  QgsWKBTypes.hasM(int(reclassificationLayer.wkbType()))    #generic check (not every database is implemented as ours)
         hasZValues =  QgsWKBTypes.hasZ(int(reclassificationLayer.wkbType()))    #
@@ -518,7 +516,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     #setting the geometry
                     newFeature.setGeometry(newGeom)
                     #setting the attributes using the reclassification dictionary
-                    newFeature = self.setFeatureAttributes(newFeature)
+                    newFeature = self.setFeatureAttributes(newFeature, oldFeat = feature)
                     #adding the newly created feature to the addition list
                     featList.append(newFeature)
                     somethingMade = True
