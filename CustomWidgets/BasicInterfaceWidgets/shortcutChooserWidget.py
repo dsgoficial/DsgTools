@@ -35,24 +35,29 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
     
     @pyqtSlot(bool)
+    def on_assignShortcutPushButton_cliked(self):
+        self.setFocus()
+    
+    @pyqtSlot(bool)
     def on_clearPushButton_clicked(self):
         self.assignShortcutPushButton.setChecked(False)
 
     def keyPressEvent(self, event):
         self.firstrelease = True
         astr = "pressed: " + str(event.key())
-        self.keylist.append(astr)
+        # self.keylist.append(astr)
 
     def keyReleaseEvent(self, event):
-        if self.firstrelease == True: 
-            self.processmultikeys(self.keylist)
+        print "hallo!"
+    #     if self.firstrelease == True: 
+    #         self.processmultikeys(self.keylist)
 
-        self.firstrelease = False
+    #     self.firstrelease = False
 
-        del self.keylist[-1]
+    #     del self.keylist[-1]
 
-    def processmultikeys(self,keyspressed):
-        print keyspressed
+    # def processmultikeys(self,keyspressed):
+    #     print keyspressed
     
-    def getShortcut(self):
-        return ''
+    # def getShortcut(self):
+    #     return ''
