@@ -32,3 +32,10 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         super(ShortcutChooserWidget, self).__init__(parent)
         self.setupUi(self)
+    
+    def setEnabled(self, state):
+        """
+        Sets components enabled or disabled.
+        """
+        self.assignShortcutPushButton.setEnabled(state)
+        self.clearPushButton.setEnabled(state)
