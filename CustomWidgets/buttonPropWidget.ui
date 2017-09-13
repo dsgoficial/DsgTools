@@ -71,17 +71,25 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLineEdit" name="customCategoryLineEdit"/>
+       <widget class="QLineEdit" name="customCategoryLineEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QCheckBox" name="checkBox">
+       <widget class="QCheckBox" name="shortcutCheckBox">
         <property name="text">
          <string>Assign Shortcut</string>
         </property>
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="ShortcutChooserWidget" name="shortcutWidget" native="true"/>
+       <widget class="ShortcutChooserWidget" name="shortcutWidget" native="true">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

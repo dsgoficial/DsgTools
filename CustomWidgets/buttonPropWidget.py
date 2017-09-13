@@ -43,6 +43,7 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool, name = 'on_colorCheckBox_toggled')
     @pyqtSlot(bool, name = 'on_tooltipCheckBox_toggled')
     @pyqtSlot(bool, name = 'on_customCategoryCheckBox_toggled')
+    @pyqtSlot(bool, name = 'on_shortcutCheckBox_toggled')
     def setEnabled(self, state):
         """
         Enables or disables 
@@ -52,7 +53,7 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         if self.sender().objectName() == 'tooltipCheckBox':
             self.toolTipLineEdit.setEnabled(state)
         if self.sender().objectName() == 'customCategoryCheckBox':
-            self.customCategoryComboBox.setEnabled(state)
+            self.customCategoryLineEdit.setEnabled(state)
         if self.sender().objectName() == 'shortcutWidget':
             self.shortcutWidget.setEnabled(state)
     
@@ -72,7 +73,7 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         if self.tooltipCheckBox.checkState() == Qt.Checked:
             parameterDict['buttonToolTip'] = self.toolTipLineEdit.text()
         if self.customCategoryCheckBox.checkState() == Qt.Checked:
-            parameterDict['buttonGroupTag'] = self.customCategoryComboBox.currentText()
+            parameterDict['buttonGroupTag'] = self.customCategoryLineEdit.text()
         return parameterDict
     
     def setInterface(self, parameterDict):
@@ -93,12 +94,6 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             self.tooltipCheckBox.setCheckState(Qt.Unchecked) #if 'buttonToolTip' isn't on dict keys, set colorCheckBox as unchecked
         if 'buttonGroupTag' in parameterDict.keys():
             self.customCategoryCheckBox.setCheckState(Qt.Checked)
-            itemList = [self.customCategoryComboBox.itemText(i) for i in range(self.customCategoryComboBox.count())]
-            if parameterDict['buttonGroupTag'] not in itemList:
-                self.customCategoryComboBox.addItem(parameterDict['buttonGroupTag'])
-            idx = self.customCategoryComboBox.findData(parameterDict['buttonGroupTag'], Qt.MatchExactly)
-            if idx != -1:
-                self.customCategoryComboBox.setCurrentIndex(idx)
-                
+            self.customCategoryLineEdit.setText(parameterDict['buttonToolTip'])
         else:
             self.customCategoryCheckBox.setCheckState(Qt.Unchecked) #if 'buttonGroupTag' isn't on dict keys, set colorCheckBox as unchecked
