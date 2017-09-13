@@ -58,7 +58,7 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
             super(ShortcutChooserWidget, self).keyPressEvent(event)
             return
         key = event.key()
-        modifier = event.modifier()
+        modifier = event.modifiers()
         if modifier in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
             if modifier not in self.modifiers:
                 self.modifiers.append(modifier)
