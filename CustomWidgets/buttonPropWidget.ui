@@ -6,17 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>273</width>
-    <height>146</height>
+    <width>409</width>
+    <height>240</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
     <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
      <property name="title">
@@ -25,7 +22,7 @@
      <property name="saveCollapsedState">
       <bool>false</bool>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QCheckBox" name="colorCheckBox">
         <property name="text">
@@ -74,20 +71,17 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QComboBox" name="customCategoryComboBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="editable">
-         <bool>true</bool>
+       <widget class="QLineEdit" name="customCategoryLineEdit"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="checkBox">
+        <property name="text">
+         <string>Assign Shortcut</string>
         </property>
        </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="ShortcutChooserWidget" name="shortcutWidget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -105,6 +99,12 @@
    <class>QgsColorButtonV2</class>
    <extends>QToolButton</extends>
    <header>qgis.gui</header>
+  </customwidget>
+  <customwidget>
+   <class>ShortcutChooserWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.shortcutChooserWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
