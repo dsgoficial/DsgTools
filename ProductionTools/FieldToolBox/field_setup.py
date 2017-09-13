@@ -292,7 +292,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #ignored item
         comboItem = QComboBox()
         comboItem.addItems([self.tr('No'), self.tr('Yes')])
-        comboItem.setEnabled(not enableIgnoreOption)
+        comboItem.setEnabled(enableIgnoreOption)
         self.attributeTableWidget.setCellWidget(count, 3, comboItem)
     
     @pyqtSlot(bool)
