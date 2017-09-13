@@ -51,6 +51,7 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_clearPushButton_clicked(self):
         self.assignShortcutPushButton.setChecked(False)
+        self.assignShortcutPushButton.setText(self.tr('Assign Shortcut'))
 
     def keyPressEvent(self, event):
         if not self.assignShortcutPushButton.isChecked():

@@ -46,7 +46,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Assign Shortcut: </string>
+      <string>Assign Shortcut</string>
      </property>
      <property name="checkable">
       <bool>true</bool>
