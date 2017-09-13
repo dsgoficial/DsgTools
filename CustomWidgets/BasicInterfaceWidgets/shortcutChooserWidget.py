@@ -90,5 +90,5 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         pass
 
     def updateShortcutText(self):
-        keySequence = QKeySequence(sum(self.modifiers)+self.key)
+        keySequence = QKeySequence(sum(map(int,self.modifiers))+self.key)
         self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(keySequence.toString()))
