@@ -256,6 +256,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         """
         if attr in qmlDict.keys():
+            enableIgnoreOption = False
             #case the type is dict the cell widget must be a combobox
             if isinstance(qmlDict[attr],dict):
                 comboItem = DsgCustomComboBox()
@@ -276,10 +277,11 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         else:
             textItem = QLineEdit()
             self.attributeTableWidget.setCellWidget(count, 1, textItem)
+            enableIgnoreOption = True
         #insert here aditional parameters
-        self.createAditionalParameters(count)
+        self.createAditionalParameters(count, enableIgnoreOption)
     
-    def createAditionalParameters(self, count):
+    def createAditionalParameters(self, count, enableIgnoreOption):
         """
         Creates aditional parameters upon creation of an attribute item
         """
@@ -287,8 +289,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         comboItem = QComboBox()
         comboItem.addItems([self.tr('Yes'), self.tr('No')])
         self.attributeTableWidget.setCellWidget(count, 2, comboItem)
+        #ignored item
         comboItem = QComboBox()
         comboItem.addItems([self.tr('No'), self.tr('Yes')])
+        comboItem.setEnabled(not enableIgnoreOption)
         self.attributeTableWidget.setCellWidget(count, 3, comboItem)
     
     @pyqtSlot(bool)
