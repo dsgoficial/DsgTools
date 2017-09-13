@@ -403,8 +403,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             for j in [2,3]:
                 itemCell = self.attributeTableWidget.cellWidget(i, j)
                 if itemCell:
-                    itemText = itemCell.currentText()
-                    attributeItem.setText(j, self.optionalDict[itemText])
+                    if itemCell.isEnabled():
+                        itemText = itemCell.currentText()
+                        attributeItem.setText(j, self.optionalDict[itemText])
             
     def recreateAttributeTable(self, buttonItem):
         """
