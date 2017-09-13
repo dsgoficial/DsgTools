@@ -29,13 +29,20 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'shortcutChooserWidget.ui'))
 
 class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
+    keyPressed = pyqtSignal()
     def __init__(self, parent=None):
         super(ShortcutChooserWidget, self).__init__(parent)
         self.setupUi(self)
     
-    def setEnabled(self, state):
-        """
-        Sets components enabled or disabled.
-        """
-        self.assignShortcutPushButton.setEnabled(state)
-        self.clearPushButton.setEnabled(state)
+    @pyqtSlot(bool)
+    def on_clearPushButton_clicked(self):
+        self.assignShortcutPushButton.setChecked(False)
+
+    def keyReleaseEvent(self, event):
+        super(ShortcutChooserWidget, self).keyReleaseEvent(event)
+        if self.assignShortcutPushButton.isChecked():
+            print 'pegou', event
+            self.keyReleased.emit()
+    
+    def getShortcut(self):
+        return ''

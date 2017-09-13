@@ -54,7 +54,7 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             self.toolTipLineEdit.setEnabled(state)
         if self.sender().objectName() == 'customCategoryCheckBox':
             self.customCategoryLineEdit.setEnabled(state)
-        if self.sender().objectName() == 'shortcutWidget':
+        if self.sender().objectName() == 'shortcutCheckBox':
             self.shortcutWidget.setEnabled(state)
     
     def getParameterDict(self):
@@ -62,7 +62,7 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         Returns a dict in the format:
         {
             'buttonColor':--color of the button--, 
-            'buttonToolTip'--button toolTip--, 
+            'buttonToolTip':--button toolTip--, 
             'buttonGroupTag':--group tag of the button--,
             'buttonShortcut':--shortcut--
         }
@@ -74,6 +74,8 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             parameterDict['buttonToolTip'] = self.toolTipLineEdit.text()
         if self.customCategoryCheckBox.checkState() == Qt.Checked:
             parameterDict['buttonGroupTag'] = self.customCategoryLineEdit.text()
+        if self.shortcutCheckBox.checkState() == Qt.Checked:
+            parameterDict['buttonShortcut'] = self.shortcutWidget.getShortcut()
         return parameterDict
     
     def setInterface(self, parameterDict):
