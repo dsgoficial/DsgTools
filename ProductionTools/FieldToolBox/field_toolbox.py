@@ -380,7 +380,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             reclass = self.reclassificationDict[self.category][self.edgvClass][self.buttonName][attribute]
             if isinstance(reclass, dict):
                 value = reclass['value']
-                if reclass['isIgnored'] == 1: #ignore clause
+                if reclass['isIgnored'] == '1': #ignore clause
                     if oldFeat:
                         value = oldFeat[attribute]
             else:
