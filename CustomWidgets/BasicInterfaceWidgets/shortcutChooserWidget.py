@@ -58,9 +58,10 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
             super(ShortcutChooserWidget, self).keyPressEvent(event)
             return
         key = event.key()
-        if key in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
-            if key not in self.modifiers:
-                self.modifiers.append(key)
+        modifier = event.modifier()
+        if modifier in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
+            if modifier not in self.modifiers:
+                self.modifiers.append(modifier)
                 self.updateShortcutText()
         elif key == Qt.Key_Escape:
             self.assignShortcutPushButton.setChecked(False)
@@ -74,9 +75,10 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
             super(ShortcutChooserWidget, self).keyReleaseEvent(event)
             return
         key = event.key()
-        if key in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
-            if key not in self.modifiers:
-                self.modifiers.append(key)
+        modifiers = event.modifiers()
+        if modifiers in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
+            if modifiers not in self.modifiers:
+                self.modifiers.append(modifiers)
                 self.updateShortcutText()
         elif key == Qt.Key_Escape:
             return
