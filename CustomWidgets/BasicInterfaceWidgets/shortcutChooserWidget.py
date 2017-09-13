@@ -38,8 +38,8 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     def on_clearPushButton_clicked(self):
         self.assignShortcutPushButton.setChecked(False)
 
-    def keyReleaseEvent(self, event):
-        super(ShortcutChooserWidget, self).keyReleaseEvent(event)
+    def keyPressEvent(self, event):
+        super(self.assignShortcutPushButton, self).keyReleaseEvent(event)
         if self.assignShortcutPushButton.isChecked():
             print 'pegou', event
             self.keyReleased.emit()

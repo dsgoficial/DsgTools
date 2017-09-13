@@ -48,6 +48,12 @@
      <property name="text">
       <string>Assign Shortcut: </string>
      </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item row="0" column="1">
