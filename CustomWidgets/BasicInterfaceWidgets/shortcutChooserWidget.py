@@ -39,10 +39,20 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         self.assignShortcutPushButton.setChecked(False)
 
     def keyPressEvent(self, event):
-        super(self.assignShortcutPushButton, self).keyReleaseEvent(event)
-        if self.assignShortcutPushButton.isChecked():
-            print 'pegou', event
-            self.keyReleased.emit()
+        self.firstrelease = True
+        astr = "pressed: " + str(event.key())
+        self.keylist.append(astr)
+
+    def keyReleaseEvent(self, event):
+        if self.firstrelease == True: 
+            self.processmultikeys(self.keylist)
+
+        self.firstrelease = False
+
+        del self.keylist[-1]
+
+    def processmultikeys(self,keyspressed):
+        print keyspressed
     
     def getShortcut(self):
         return ''
