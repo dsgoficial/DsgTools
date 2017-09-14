@@ -105,4 +105,5 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
 
     def updateShortcutText(self):
         keySequence = QKeySequence(self.modifiers+self.key)
+        #this uses QKeySequence.NativeText to show in the interface. To store data, no filter should be provided
         self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(keySequence.toString(format = QKeySequence.NativeText)))
