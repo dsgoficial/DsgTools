@@ -33,7 +33,7 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     keyPressed = pyqtSignal()
     def __init__(self, parent=None):
         super(ShortcutChooserWidget, self).__init__(parent)
-        self.modifiers = []
+        self.modifiers = 0
         self.key = 0
         self.setupUi(self)
     
@@ -43,7 +43,7 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_assignShortcutPushButton_toggled(self, toggled):
-        self.modifiers = []
+        self.modifiers = 0
         self.key = 0
         if toggled:
             self.assignShortcutPushButton.setText(self.tr('Enter Value'))
@@ -57,12 +57,19 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         if not self.assignShortcutPushButton.isChecked():
             super(ShortcutChooserWidget, self).keyPressEvent(event)
             return
-        key = event.key()
-        modifier = event.modifiers()
-        if modifier in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
-            if modifier not in self.modifiers:
-                self.modifiers.append(modifier)
-                self.updateShortcutText()
+        key = int(event.key())
+        if key == Qt.Key_Meta:
+            self.modifiers |= Qt.META
+            self.updateShortcutText()
+        elif key == Qt.Key_Alt:
+            self.modifiers |= Qt.ALT
+            self.updateShortcutText()
+        elif key == Qt.Key_Control:
+            self.modifiers |= Qt.CTRL
+            self.updateShortcutText()
+        elif key == Qt.Key_Shift:
+            self.modifiers |= Qt.SHIFT
+            self.updateShortcutText()
         elif key == Qt.Key_Escape:
             self.assignShortcutPushButton.setChecked(False)
             return
@@ -75,20 +82,27 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
             super(ShortcutChooserWidget, self).keyReleaseEvent(event)
             return
         key = event.key()
-        modifiers = event.modifiers()
-        if modifiers in [Qt.ControlModifier, Qt.ShiftModifier, Qt.AltModifier, Qt.Key_Meta]:
-            if modifiers not in self.modifiers:
-                self.modifiers.append(modifiers)
-                self.updateShortcutText()
+        if key == Qt.Key_Meta:
+            self.modifiers &= Qt.META
+            self.updateShortcutText()
+        elif key == Qt.Key_Alt:
+            self.modifiers &= Qt.ALT
+            self.updateShortcutText()
+        elif key == Qt.Key_Control:
+            self.modifiers &= Qt.CTRL
+            self.updateShortcutText()
+        elif key == Qt.Key_Shift:
+            self.modifiers &= Qt.SHIFT
+            self.updateShortcutText()
         elif key == Qt.Key_Escape:
             return
         else:
-            self.setShortcut(QKeySequence(sum(self.modifiers)+self.key)) #each modifier is an int and the sum of modifiers is represented by a QKeySequence
+            # self.setShortcut(QKeySequence(sum(self.modifiers)+self.key)) #each modifier is an int and the sum of modifiers is represented by a QKeySequence
             self.assignShortcutPushButton.setChecked(False)
     
     def setShortcut(self, shortcut):
         pass
 
     def updateShortcutText(self):
-        keySequence = QKeySequence(sum(map(int,self.modifiers))+self.key)
-        self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(keySequence.toString()))
+        keySequence = QKeySequence(self.modifiers+self.key)
+        self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(keySequence.toString(format = QKeySequence.NativeText)))
