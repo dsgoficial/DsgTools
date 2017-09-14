@@ -32,6 +32,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     keyPressed = pyqtSignal()
     def __init__(self, parent=None):
+        """
+        Initializates ShortcutChooserWidget
+        """
         super(ShortcutChooserWidget, self).__init__(parent)
         self.modifiers = 0
         self.key = 0
@@ -39,21 +42,39 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_assignShortcutPushButton_clicked(self):
+        """
+        After button is clicked, focus is needed to use keyPressEvent and keyReleaseEvent
+        """
         self.setFocus()
     
     @pyqtSlot(bool)
     def on_assignShortcutPushButton_toggled(self, toggled):
-        self.modifiers = 0
-        self.key = 0
+        """
+        Button toggled reset self.modifiers and self.keys and also prepairs button text
+        """
+        self.resetVariables()
         if toggled:
             self.assignShortcutPushButton.setText(self.tr('Enter Value'))
     
     @pyqtSlot(bool)
     def on_clearPushButton_clicked(self):
+        """
+        Clears push button and also resets self.modifiers and self.keys
+        """
         self.assignShortcutPushButton.setChecked(False)
         self.assignShortcutPushButton.setText(self.tr('Assign Shortcut'))
+        self.resetVariables()
+    
+    def resetVariables(self):
+        """
+        Resets self.modifiers and self.key to 0
+        """
+        self.modifiers = 0
+        self.key = 0
 
     def keyPressEvent(self, event):
+        """
+        """
         if not self.assignShortcutPushButton.isChecked():
             super(ShortcutChooserWidget, self).keyPressEvent(event)
             return
