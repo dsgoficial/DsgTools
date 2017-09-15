@@ -52,9 +52,16 @@ class CheckEarthCoverageProcess(ValidationProcess):
 
             # getting frame and reference parameters
             refWithElem = self.parameters['Reference and Layers'][0]
-            lines = self.parameters['Reference and Layers'][1]
+            classesWithElem = self.parameters['Reference and Layers'][1]
             frame, frameGeometryColumn = refWithElem.split(':')
-            
+            classlist = []
+            for key in classesWithElem:
+                # preparation
+                classAndGeom = self.classesWithElemDict[key]
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
+                classlist.append(lyr)
+
+            coverage = self.createUnifiedLayer(classlist)
             if len(lines) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
