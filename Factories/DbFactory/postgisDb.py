@@ -3327,3 +3327,29 @@ class PostgisDb(AbstractDb):
             else:
                 returnStruct.append({'attrName':query.value(0), 'attrType':query.value(1)})
         return returnStruct
+
+    def checkAndCreatePostGISAddonsFunctions(self, useTransaction = True):
+        """
+        Checks if PostGIS Add-ons functions are installed in the PostgreSQL choosed server.
+        If not, it creates the functions based on our git submodule (ext_dep folder)
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.checkPostGISAddonsInstallation()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
+        created = True
+        while query.next():
+            if query.value(0) == 0:
+                created = False
+        if not created:
+            sql = self.gen.createPostGISAddonsFunctions()
+            query = QSqlQuery(self.db)
+            if useTransaction:
+                self.db.transaction()
+            if not query.exec_(sql):
+                if useTransaction:
+                    self.db.rollback()
+                raise Exception(self.tr('Problem creating PostGIS Add-ons functions: ') + query.lastError().text())
+            if useTransaction:
+                self.db.commit()        

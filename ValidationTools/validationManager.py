@@ -42,6 +42,7 @@ class ValidationManager(QObject):
         try:
             #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
+            self.postgisDb.checkAndCreatePostGISAddonsFunctions()
             #setting available processes
             self.setAvailableProcesses()
         except Exception as e:
