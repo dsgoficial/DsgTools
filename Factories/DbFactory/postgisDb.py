@@ -1934,9 +1934,7 @@ class PostgisDb(AbstractDb):
     def runSqlFromFile(self, sqlFilePath, useTransaction = True):
         self.checkAndOpenDb()
         file = codecs.open(sqlFilePath, encoding='utf-8', mode='r')
-        #file = open(sqlFilePath,'r')
         sql = file.read()
-        #sql = sql.replace('\xef\xbb\xbf','')
         query = QSqlQuery(self.db)
         if useTransaction:
             self.db.transaction()
@@ -3343,13 +3341,6 @@ class PostgisDb(AbstractDb):
             if query.value(0) == 0:
                 created = False
         if not created:
-            sql = self.gen.createPostGISAddonsFunctions()
-            query = QSqlQuery(self.db)
-            if useTransaction:
-                self.db.transaction()
-            if not query.exec_(sql):
-                if useTransaction:
-                    self.db.rollback()
-                raise Exception(self.tr('Problem creating PostGIS Add-ons functions: ') + query.lastError().text())
-            if useTransaction:
-                self.db.commit()        
+            current_dir = os.path.dirname(__file__)
+            sql_file_path = os.path.join(current_dir, '..', '..', 'ext_dep', 'postgisaddon', 'postgis_addons.sql')
+            self.runSqlFromFile(sql_file_path, useTransaction)
