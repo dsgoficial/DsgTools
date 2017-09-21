@@ -424,6 +424,3 @@ class ValidationProcess(QObject):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         geomColumn = uri.geometryColumn()
         return geomColumn
-        
-                    
-                    

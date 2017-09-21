@@ -1475,4 +1475,16 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def checkPostGISAddonsInstallation(self):
         sql = """SELECT COUNT(*) FROM pg_proc WHERE proname = 'st_geotablesummary' """
+        return sql    
+        
+    def createCoverageTempTable(self, srid):
+        sql = """
+        CREATE TABLE validation.coverage (
+            id serial NOT NULL,
+            featid bigint NOT NULL,
+            classname varchar(200) NOT NULL,
+            geom geometry(MULTIPOLYGON, {}) NOT NULL,
+            CONSTRAINT coverage_pk PRIMARY KEY (id)
+        )
+        """.format(srid)
         return sql

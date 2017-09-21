@@ -3344,3 +3344,52 @@ class PostgisDb(AbstractDb):
             current_dir = os.path.dirname(__file__)
             sql_file_path = os.path.join(current_dir, '..', '..', 'ext_dep', 'postgisaddon', 'postgis_addons.sql')
             self.runSqlFromFile(sql_file_path, useTransaction)
+
+    def createAndPopulateCoverageTempTable(self, coverageLayer, useTransaction = True):
+        self.checkAndOpenDb()
+        if useTransaction:
+            self.db.transaction()
+        query = QSqlQuery(self.db)
+        #getting srid from something like 'EPSG:31983'
+        srid = coverageLayer.crs().authid().split(':')[-1]
+        sql = self.gen.createCoverageTempTable(srid)
+        if not query.exec_(sql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem creating coverage temp table: ') + query.lastError().text())
+        attributes = ['featid', 'classname']
+        auxAttributes = None
+        for feat in coverageLayer.getFeatures:
+            # getting only the needed attribute values
+            values = [feat.attribute(fieldname) for fieldname in attributes]
+            if not feat.geometry():
+                continue
+            geometry = binascii.hexlify(feat.geometry().asWkb())
+            # adding the geometry value to values
+            values.append(geometry)
+            # preparing 
+            prepareValues = []
+            for attr in auxAttributes:
+                if attr == geomColumnName:
+                    prepareValues.append("""ST_SetSRID(ST_Multi(:{0}),{1})""".format(attr,str(srid)))
+                else:
+                    prepareValues.append(':'+attr)
+            #getting sql
+            insertSql = self.gen.populateTempTable('validation.coverage', auxAttributes, prepareValues, geometry, srid, geomColumnName)
+            query.prepare(insertSql)
+            # binding my values to avoid injections
+            for i in range(len(auxAttributes)):
+                query.bindValue(prepareValues[i], values[i])
+            # actual query execution
+            if not query.exec_():
+                if useTransaction:
+                    self.db.rollback()
+                raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
+        indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
+        if not query.exec_(indexSql):
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+        if useTransaction:
+            self.db.commit()        
+            
