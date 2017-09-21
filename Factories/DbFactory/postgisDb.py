@@ -1931,9 +1931,9 @@ class PostgisDb(AbstractDb):
                 styleDict = self.utils.buildNestedDict(styleDict, [dbName, styleName, tableName], timestamp)
         return styleDict
     
-    def runSqlFromFile(self, sqlFilePath, useTransaction = True):
+    def runSqlFromFile(self, sqlFilePath, useTransaction = True, encoding = 'utf-8'):
         self.checkAndOpenDb()
-        file = codecs.open(sqlFilePath, encoding='utf-8', mode='r')
+        file = codecs.open(sqlFilePath, encoding=encoding, mode='r')
         sql = file.read()
         query = QSqlQuery(self.db)
         if useTransaction:
