@@ -23,9 +23,6 @@
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 from DsgTools.dsgEnums import DsgEnums
 
-import PyQt4
-import os
-
 class PostGISSqlGenerator(SqlGenerator):
     def getComplexLinks(self, complex):
         sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = \'"+complex+'\''
@@ -1478,11 +1475,4 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def checkPostGISAddonsInstallation(self):
         sql = """SELECT COUNT(*) FROM pg_proc WHERE proname = 'st_geotablesummary' """
-        return sql
-
-    def createPostGISAddonsFunctions(self):
-        current_dir = os.path.dirname(__file__)
-        sql_file_path = os.path.join(current_dir, '..', '..', 'ext_dep', 'postgisaddon', 'postgis_addons.sql')
-        file = open(sql_file_path, 'rb')
-        sql = file.read()
         return sql
