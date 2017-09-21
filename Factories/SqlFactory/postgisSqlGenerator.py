@@ -828,7 +828,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
         return sql
     
-    def populateTempTable(self, tableName, attributes, prepareValues, geometry, srid, geomColumnName):
+    def populateTempTable(self, tableName, attributes, prepareValues):
         tableName = '"'+'"."'.join(tableName.split('.'))
         columnTupleString = '"'+'","'.join(map(str,attributes))+'"'
         valueTuppleString = ','.join(map(str,prepareValues))

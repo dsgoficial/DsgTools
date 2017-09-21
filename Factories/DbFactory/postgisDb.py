@@ -1740,7 +1740,7 @@ class PostgisDb(AbstractDb):
                 else:
                     prepareValues.append(':'+attr)
             #getting sql
-            insertSql = self.gen.populateTempTable(tableName, auxAttributes, prepareValues, geometry, srid, geomColumnName)
+            insertSql = self.gen.populateTempTable(tableName, auxAttributes, prepareValues)
             query.prepare(insertSql)
             # binding my values to avoid injections
             for i in range(len(auxAttributes)):
@@ -3352,44 +3352,46 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         #getting srid from something like 'EPSG:31983'
         srid = coverageLayer.crs().authid().split(':')[-1]
+        #complete table name
+        tableName = 'validation.coverage'
         sql = self.gen.createCoverageTempTable(srid)
         if not query.exec_(sql):
             if useTransaction:
                 self.db.rollback()
             raise Exception(self.tr('Problem creating coverage temp table: ') + query.lastError().text())
-        attributes = ['featid', 'classname']
-        auxAttributes = None
         for feat in coverageLayer.getFeatures:
             # getting only the needed attribute values
-            values = [feat.attribute(fieldname) for fieldname in attributes]
+            featid = feat['featid']
+            classname = feat['classname']
             if not feat.geometry():
                 continue
             geometry = binascii.hexlify(feat.geometry().asWkb())
-            # adding the geometry value to values
-            values.append(geometry)
+            # values list and attributes list
+            values = [featid, classname, geometry]
+            attributes = ['featid', 'classname', 'geom']
             # preparing 
             prepareValues = []
-            for attr in auxAttributes:
-                if attr == geomColumnName:
+            for attr in attributes:
+                if attr == 'geom':
                     prepareValues.append("""ST_SetSRID(ST_Multi(:{0}),{1})""".format(attr,str(srid)))
                 else:
                     prepareValues.append(':'+attr)
             #getting sql
-            insertSql = self.gen.populateTempTable('validation.coverage', auxAttributes, prepareValues, geometry, srid, geomColumnName)
+            insertSql = self.gen.populateTempTable(tableName, auxAttributes, prepareValues)
             query.prepare(insertSql)
             # binding my values to avoid injections
-            for i in range(len(auxAttributes)):
+            for i in range(len(attributes)):
                 query.bindValue(prepareValues[i], values[i])
             # actual query execution
             if not query.exec_():
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
+                raise Exception(self.tr('Problem populating coverage temp table: ') + query.lastError().text())
         indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
         if not query.exec_(indexSql):
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+            raise Exception(self.tr('Problem creating spatial index on coverage temp table: ') + query.lastError().text())
         if useTransaction:
             self.db.commit()        
             
