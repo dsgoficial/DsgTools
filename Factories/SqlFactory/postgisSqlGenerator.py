@@ -1479,6 +1479,7 @@ class PostGISSqlGenerator(SqlGenerator):
         
     def createCoverageTempTable(self, srid):
         sql = """
+        DROP TABLE IF EXISTS validation.coverage;
         CREATE TABLE validation.coverage (
             id serial NOT NULL,
             featid bigint NOT NULL,
@@ -1487,4 +1488,21 @@ class PostGISSqlGenerator(SqlGenerator):
             CONSTRAINT coverage_pk PRIMARY KEY (id)
         )
         """.format(srid)
+        return sql
+
+    def checkCoverageForGaps(self, frameTable, geomColumn):
+        frameSchema, frameTable = frameTable.split('.')
+        sql = """
+        select (ST_Dump(ST_SymDifference(a.{0}, b.geom))).geom as geom from "{1}"."{2}" as a, 
+        (select ST_Union(geom) as geom from validation.coverage) as b
+        """.format(geomColumn, frameSchema, frameTable)
+        return sql
+
+    def checkCoverageForOverlaps(self):
+        sql = """
+        select (ST_Dump(foo.geom)).geom as geom from (
+        select (ST_GeoTableSummary('validation', 'coverage', 'geom', 'id', 10, 'S3')).geom
+        ) as foo 
+        where ST_IsEmpty(foo.geom) = 'f'
+        """
         return sql

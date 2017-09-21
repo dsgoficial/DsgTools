@@ -3393,5 +3393,4 @@ class PostgisDb(AbstractDb):
                 self.db.rollback()
             raise Exception(self.tr('Problem creating spatial index on coverage temp table: ') + query.lastError().text())
         if useTransaction:
-            self.db.commit()        
-            
+            self.db.commit()            
