@@ -358,6 +358,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def on_customizeFromSQLFilePushButton_clicked(self):
         dbsDict = self.instantiateAbstractDbs()
         sqlFilePath = self.getSQLFile()
+        if sqlFilePath == '':
+            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchCustomizeFromSQLFile(dbsDict, sqlFilePath)
         QApplication.restoreOverrideCursor()
