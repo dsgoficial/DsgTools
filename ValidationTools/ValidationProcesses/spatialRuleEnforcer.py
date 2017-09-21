@@ -243,6 +243,9 @@ class SpatialRuleEnforcer(ValidationProcess):
         # for each rule we must test what is happening
         for rule in rules:
             self.testRule(rule, featureId, geometry) #actual test
+        self.iface.mapCanvas().refresh()
+        for lyr in self.iface.mapCanvas().layers():
+            lyr.triggerRepaint()
 
     @pyqtSlot(int)      
     def enforceSpatialRulesForAddition(self, featureId):
@@ -265,6 +268,9 @@ class SpatialRuleEnforcer(ValidationProcess):
                 continue
             for rule in rules:
                 self.testRule(rule, featureId, features[featureId].geometry()) #actual test
+        self.iface.mapCanvas().refresh()
+        for lyr in self.iface.mapCanvas().layers():
+            lyr.triggerRepaint()        
                 
     def getRules(self, layerName):
         """
