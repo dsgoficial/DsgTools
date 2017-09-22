@@ -3380,7 +3380,7 @@ class PostgisDb(AbstractDb):
                 else:
                     prepareValues.append(':'+attr)
             #getting sql
-            insertSql = self.gen.populateTempTable(tableName, auxAttributes, prepareValues)
+            insertSql = self.gen.populateTempTable(tableName, attributes, prepareValues)
             query.prepare(insertSql)
             # binding my values to avoid injections
             for i in range(len(attributes)):
@@ -3390,7 +3390,7 @@ class PostgisDb(AbstractDb):
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(self.tr('Problem populating coverage temp table: ') + query.lastError().text())
-        indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
+        indexSql = self.gen.createSpatialIndex(tableName, 'geom')
         if not query.exec_(indexSql):
             if useTransaction:
                 self.db.rollback()
