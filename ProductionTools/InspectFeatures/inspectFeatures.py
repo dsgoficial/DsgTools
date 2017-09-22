@@ -94,7 +94,6 @@ class InspectFeatures(QWidget,Ui_Form):
         self.backInspectButton.setEnabled(enabled)
         self.nextInspectButton.setEnabled(enabled)
         self.idSpinBox.setEnabled(enabled)
-
         
     def enableScale(self):
         """

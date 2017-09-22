@@ -3362,7 +3362,7 @@ class PostgisDb(AbstractDb):
             if useTransaction:
                 self.db.rollback()
             raise Exception(self.tr('Problem creating coverage temp table: ') + query.lastError().text())
-        for feat in coverageLayer.getFeatures:
+        for feat in coverageLayer.getFeatures():
             # getting only the needed attribute values
             featid = feat['featid']
             classname = feat['classname']
