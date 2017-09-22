@@ -3346,6 +3346,9 @@ class PostgisDb(AbstractDb):
             self.runSqlFromFile(sql_file_path, useTransaction)
 
     def createAndPopulateCoverageTempTable(self, coverageLayer, useTransaction = True):
+        """
+        Creates and populates a postgis table with features that compose the coverage layer
+        """
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
@@ -3393,4 +3396,30 @@ class PostgisDb(AbstractDb):
                 self.db.rollback()
             raise Exception(self.tr('Problem creating spatial index on coverage temp table: ') + query.lastError().text())
         if useTransaction:
-            self.db.commit()            
+            self.db.commit()   
+
+    def getGapsAndOverlapsRecords(self, frameTable, geomColumn, useTransaction = True):
+        """
+        Identify gaps and overlaps in the coverage layer
+        """
+        self.checkAndOpenDb()
+        # checking for gaps
+        invalidCoverageRecordsList = []
+        sql = self.gen.checkCoverageForGaps(frameTable, geomColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting gaps: ")+query.lastError().text())
+        while query.next():
+            reason = self.tr('Gap between the frame layer and coverage layer')
+            geom = query.value(0)
+            invalidCoverageRecordsList.append( (0, reason, geom) )
+        # checking for overlaps
+        sql = self.gen.checkCoverageForOverlaps()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting overlaps: ")+query.lastError().text())
+        while query.next():
+            reason = self.tr('Overlap between the features of the coverage layer')
+            geom = query.value(0)
+            invalidCoverageRecordsList.append( (0, reason, geom) )
+        return invalidCoverageRecordsList
