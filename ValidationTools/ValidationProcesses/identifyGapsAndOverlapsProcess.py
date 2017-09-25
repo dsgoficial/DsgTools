@@ -48,6 +48,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
+            self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             refWithElem = self.parameters['Reference and Layers'][0]
             classesWithElem = self.parameters['Reference and Layers'][1]
             if len(classesWithElem) == 0:
