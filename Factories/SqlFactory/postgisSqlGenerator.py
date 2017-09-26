@@ -413,20 +413,31 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
         return sql
     
-    def deleteFlags(self, processName):
+    def deleteFlags(self, processName = None, className = None):
+        if not processName and not className:
+            whereClause = ''
+        else:
+            clauseList = []
+            if processName:
+                processClause = """process_name = '{0}'""".format(processName)
+                clauseList.append(processClause)
+            if className:
+                classClause = """className = '{0}'""".format(className)
+                clauseList.append(classClause)
+            whereClause = """where {0}""".format(' AND '.join(clauseList))
         sql = """
         DELETE FROM validation.aux_flags_validacao_p 
         WHERE id in 
-        (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')#
+        (SELECT id FROM validation.aux_flags_validacao_p {0})#
         
         DELETE FROM validation.aux_flags_validacao_l 
         WHERE id in 
-        (SELECT id FROM validation.aux_flags_validacao_l where process_name = '%s')#
+        (SELECT id FROM validation.aux_flags_validacao_l {0})#
 
         DELETE FROM validation.aux_flags_validacao_a 
         WHERE id in 
-        (SELECT id FROM validation.aux_flags_validacao_a where process_name = '%s')
-        """ % (processName, processName, processName)
+        (SELECT id FROM validation.aux_flags_validacao_a {0})
+        """.format(whereClause)
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn):

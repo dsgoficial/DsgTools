@@ -302,3 +302,22 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
+
+    @pyqtSlot(bool)
+    def on_clearAllPushButton_clicked(self):
+        """
+        Deletes all flags from validation.aux_flags
+        1- Get abstractDb
+        2- Delete flag
+        """
+        try:
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear all flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.configWindow.widget.abstractDb.deleteProcessFlags()
+            QApplication.restoreOverrideCursor()
+            #refresh
+            self.refreshFlags()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))

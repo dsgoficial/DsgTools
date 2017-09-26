@@ -935,13 +935,13 @@ class PostgisDb(AbstractDb):
         else:
             return 0
     
-    def deleteProcessFlags(self, processName):
+    def deleteProcessFlags(self, processName = None, className = None):
         """
         Deletes flags from database
         processName: process name that will have all flags removed
         """
         self.checkAndOpenDb()
-        sql = self.gen.deleteFlags(processName)
+        sql = self.gen.deleteFlags(processName = processName, className = className)
         sqlList = sql.split('#')
         query = QSqlQuery(self.db)
         self.db.transaction()
