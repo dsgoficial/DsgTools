@@ -1504,7 +1504,8 @@ class PostGISSqlGenerator(SqlGenerator):
     def checkCoverageForGaps(self, frameTable, geomColumn):
         frameSchema, frameTable = frameTable.split('.')
         sql = """
-        select (ST_Dump(ST_SymDifference(a.{0}, b.geom))).geom as geom from "{1}"."{2}" as a, 
+        select (ST_Dump(ST_SymDifference(a.geom, b.geom))).geom from
+        (select ST_Union({0}) as geom from "{1}"."{2}") as a,
         (select ST_Union(geom) as geom from validation.coverage_temp) as b
         """.format(geomColumn, frameSchema, frameTable)
         return sql
