@@ -8,7 +8,7 @@
 
 [general]
 name=DSG Tools
-qgisMinimumVersion=2.14
+qgisMinimumVersion=2.18
 description=Brazilian Army Cartographic Production Tools
 version=3.0.4
 author=Brazilian Army - Geographic Service Bureau
