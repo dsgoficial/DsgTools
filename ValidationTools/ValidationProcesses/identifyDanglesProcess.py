@@ -110,6 +110,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 for point in endVerticesDict.keys():
                     # this means we only have one occurrence of point, therefore it is a dangle
                     if len(endVerticesDict[point]) > 1:
+                        localProgress.step()
                         continue
                     geometry = binascii.hexlify(QgsGeometry.fromPoint(point).asWkb())
                     featid = endVerticesDict[point][0]
