@@ -89,22 +89,21 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithElem = self.parameters['Classes']
-            if len(classesWithElem) == 0:
+            overlayer, lyrList = self.parameters['Overlayer and Layers']
+            overLyrName, overLyrGeometryColumn = overlayer.split(':')
+            overLyr = self.loadLayerBeforeValidationProcess(overLyrName)
+            if len(lyrList) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
-            for key in classesWithElem:
+            for lyrAndGeom in lyrList:
                 # preparation
-                classAndGeom = self.classesWithElemDict[key]
-                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
-                # specific EPSG search
-                parameters = {'tableSchema': classAndGeom['tableSchema'], 'tableName': classAndGeom['tableName'], 'geometryColumn': classAndGeom['geom']}
-                srid = self.abstractDb.findEPSG(parameters=parameters)                        
+                cl, geometryColumn = lyrAndGeom.split(':')
+                lyr = self.loadLayerBeforeValidationProcess(cl)                   
 
                 # running the process in the temp table
-                result = self.runProcessinAlg(lyr)
+                result = self.runProcessinAlg(lyr, overLyr)
                 
                 # storing flags
                 if len(result) > 0:
