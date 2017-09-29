@@ -110,9 +110,9 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                     error = True
                     recordList = []
                     for tupple in result:
-                        recordList.append(('{0}.{1}'.format(classAndGeom['tableSchema'], classAndGeom['tableName']), tupple[0], self.tr('Cleaning error.'), tupple[1], classAndGeom['geom']))
+                        recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1], geometryColumn))
                     numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + classAndGeom['lyrName'] + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + cl + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no cleaning errors on ') + classAndGeom['lyrName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if error:
