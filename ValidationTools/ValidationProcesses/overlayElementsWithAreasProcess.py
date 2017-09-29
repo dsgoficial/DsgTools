@@ -35,12 +35,14 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
+            overlayAreasDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, primitiveFilter = ['a'], getGeometryColumn=True)
+            overlayAreas = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in overlayAreasDictList]
+            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, primitiveFilter = ['l','a'], getGeometryColumn=True)
             # creating a list of tuples (layer names, geometry columns)
             classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
             # adjusting process parameters
             self.opTypeDict = OrderedDict([(self.tr('Overlay and Keep Elements'),-1), (self.tr('Remove outside elements'),0), (self.tr('Remove inside elements'),1)])
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': ([], classesWithElem), 'Overlay Type':deque(self.opTypeDict.keys())}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': (overlayAreas, classesWithElem), 'Overlay Type':deque(self.opTypeDict.keys())}
         
     def runProcessinAlg(self, layerA, layerB):
         """
@@ -49,8 +51,11 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         alg = 'grass7:v.overlay'
 
         #getting table extent (bounding box)
-        extent = layer.extent()
-        (xmin, xmax, ymin, ymax) = extent.xMinimum(), extent.xMaximum(), extent.yMinimum(), extent.yMaximum()
+        extentA = layerA.extent()
+        (xAmin, xAmax, yAmin, yAmax) = extentA.xMinimum(), extentA.xMaximum(), extentA.yMinimum(), extentA.yMaximum()
+        extentB = layerB.extent()
+        (xmin, xmax, ymin, ymax) = min(extentB.xMinimum(),xAmin), max(extentB.xMaximum(), xAmax), min(extentB.yMinimum(), yAmin), max(extentB.yMaximum(), yAmax)
+        
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
         snap = self.parameters['Snap']
