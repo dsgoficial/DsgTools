@@ -60,14 +60,22 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         
         snap = self.parameters['Snap']
         minArea = self.parameters['MinArea']
+        overlayType = self.opTypeDict[self.parameters['Overlay Type']]
+        inputType = layerA.type()
         
-        ret = processing.runalg(alg, layer, tools, threshold, extent, snap, minArea, None, None)
+        ret = processing.runalg(alg, layerA, layerB, inputType, overlayType, extent, snap, minArea, inputType, None)
         if not ret:
-            raise Exception(self.tr('Problem executing grass7:v.clean.advanced. Check your installed libs.\n'))
+            raise Exception(self.tr('Problem executing grass7:v.overlay. Check your installed libs.\n'))
         
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(layer, outputLayer)
+        outputLayer.startEditing()
+        for field in outputLayer.pendingFields():
+            if 'a_' == field.name()[0:2]:
+                idx = outputLayer.fieldNameIndex(field.name())
+                outputLayer.renameAttribute(idx, field.name()[2::])
+        outputLayer.stopEditting()
+        self.updateOriginalLayer(layerA, outputLayer, overlayOutput=True)
 
         #getting error flags
         errorLayer = processing.getObject(ret['error'])

@@ -213,7 +213,7 @@ class ValidationProcess(QObject):
                 featureMap[feat.id()] = feat
         return featureMap
     
-    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None):
+    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None, overlayOutput=False):
         """
         Updates the original layer using the grass output layer
         pgInputLyr: postgis input layer
@@ -260,7 +260,7 @@ class ValidationProcess(QObject):
                     newFeat.setAttribute(idx, provider.defaultValue(idx))
                     addList.append(newFeat)
             #in the case we don't find features in the output we should mark them to be removed
-            if len(outFeats) == 0:
+            if len(outFeats) == 0 and not overlayOutput:
                 idsToRemove.append(id)
         #pushing the changes into the edit buffer
         pgInputLayer.addFeatures(addList, True)
