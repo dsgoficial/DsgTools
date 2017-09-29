@@ -20,6 +20,7 @@
  ***************************************************************************/
 """
 import sys
+from collections import deque
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor, QMenu
@@ -33,24 +34,28 @@ class ProcessParametersDialog(QtGui.QDialog):
                float: QtGui.QDoubleSpinBox,
                list: CustomTableSelector,
                tuple: CustomSnaperParameterSelector,
+               deque:QtGui.QComboBox,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",
                CustomSnaperParameterSelector: "getParameters",
                CustomTableSelector: "getSelectedNodes",
+               QtGui.QComboBox:"currentText",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
                CustomSnaperParameterSelector: "setInitialState",
                CustomTableSelector: "setInitialState",
+               QtGui.QComboBox:"addItems",
                QtGui.QCheckBox: "setChecked"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
                   CustomSnaperParameterSelector: lambda x: True,
                   CustomTableSelector: lambda x: True,
+                  QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None):
