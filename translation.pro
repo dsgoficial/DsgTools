@@ -29,6 +29,8 @@
 					ValidationTools/ValidationProcesses/snapGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
+					ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py \
+					ValidationTools/ValidationProcesses/identifyDanglesProcess.py \
 					ValidationTools/validation_toolbox.py \
 					ValidationTools/validation_config.py \
 					ValidationTools/setupEarthCoverage.py \
