@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 import sys
-from collections import deque
+from collections import deque, OrderedDict
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor, QMenu
