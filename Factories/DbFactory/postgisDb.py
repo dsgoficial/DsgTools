@@ -3423,3 +3423,21 @@ class PostgisDb(AbstractDb):
             geom = query.value(0)
             invalidCoverageRecordsList.append( (0, reason, geom) )
         return invalidCoverageRecordsList
+
+    def getOverlapsRecords(self, table, geomColumn, keyColumn, useTransaction = True):
+        """
+        Identify gaps and overlaps in the coverage layer
+        """
+        self.checkAndOpenDb()
+        # checking for gaps
+        invalidRecordsList = []
+        # checking for overlaps
+        sql = self.gen.checkCoverageForOverlaps(table, geomColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting overlaps: ")+query.lastError().text())
+        while query.next():
+            reason = self.tr('Overlap between the features of the layer')
+            geom = query.value(0)
+            invalidRecordsList.append( (0, reason, geom) )
+        return invalidRecordsList

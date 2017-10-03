@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2017-10-03
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2016 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+        email                : luizclaudio.andrade@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,28 +20,28 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
-class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
+class IdentifyOverlapsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
         super(self.__class__,self).__init__(postgisDb, iface, instantiating)
-        self.processAlias = self.tr('Identify Duplicated Geometries')
+        self.processAlias = self.tr('Identify Overlaps')
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
             # adjusting process parameters
             interfaceDictList = []
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
-
+            self.parameters = {'Classes': interfaceDictList}
+        
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
@@ -55,40 +55,38 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
-            dupGeomRecordList = []
+            overlapsRecordList = []
             for key in classesWithElem:
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom, selectedFeatures = self.parameters['Only Selected'])
+                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom)
                 localProgress.step()
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                duplicated = self.abstractDb.getDuplicatedGeomRecords(processTableName, classAndGeom['geom'], keyColumn)
+                overlaps = self.abstractDb.getOverlapsRecords(processTableName, classAndGeom['geom'], keyColumn)
                 localProgress.step()
                 self.abstractDb.dropTempTable(processTableName)
                 # storing flags
-                if len(duplicated) > 0:
+                if len(overlaps) > 0:
                     if classAndGeom['tableSchema'] not in ('validation'):
-                        for result in duplicated:
-                            id, geom = result
-                            dupGeomRecordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, self.tr('Duplicated Geometry'), geom, classAndGeom['geom']))
+                        for result in overlaps:
+                            id, reason, geom = result
+                            overlapsRecordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, reason, geom, classAndGeom['geom']))
             # storing flags
-            if len(dupGeomRecordList) > 0:
-                numberOfDupGeom = self.addFlag(dupGeomRecordList)
-                msg =  str(numberOfDupGeom) + self.tr(' features are duplicated. Check flags.')
+            if len(overlapsRecordList) > 0:
+                numberOfOverlappingGeom = self.addFlag(overlapsRecordList)
+                msg =  str(numberOfOverlappingGeom) + self.tr(' features are overlapping. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
-                msg = self.tr('There are no duplicated geometries.')
+                msg = self.tr('There are no overlapping geometries.')
                 self.setStatus(msg, 1) #Finished
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            localProgress.step()
-            # dropping temp table
             return 0

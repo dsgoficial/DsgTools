@@ -1510,11 +1510,12 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(geomColumn, frameSchema, frameTable)
         return sql
 
-    def checkCoverageForOverlaps(self):
+    def checkCoverageForOverlaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
+        tableSchema, tableName = table.split('.')
         sql = """
         select (ST_Dump(foo.geom)).geom as geom from (
-        select (ST_GeoTableSummary('validation', 'coverage_temp', 'geom', 'id', 10, 'S3')).geom
+        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S3')).geom
         ) as foo 
         where ST_IsEmpty(foo.geom) = 'f'
-        """
+        """.format(tableSchema, tableName, geomColumn, keyColumn)
         return sql
