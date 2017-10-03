@@ -197,13 +197,21 @@ class SpatialiteDb(AbstractDb):
                                         invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)             
                             else:
                                 if inputAttrList[i] in notNullDict[outputClass]:
-                                    if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
-                                        invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
+                                    try:
+                                        if value.isNull():
+                                            invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
+                                    except:
+                                        if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
+                                            invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
                         if outputClass in domainDict.keys():
                             if (inputAttrList[i] not in ['geom','GEOMETRY','id','OGC_FID'] and schema <> 'complexos') or (schema == 'complexos' and inputAttrList[i] <> 'id'):
                                 if inputAttrList[i] not in outputdbStructure[outputClass].keys():
                                     invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
-                            
+                        #validates fk field
+                        if 'id_' == inputAttrList[0:3]:
+                            if not self.validateUUID(value):
+                                if inputAttrList[i] not in outputdbStructure[outputClass].keys():
+                                    invalidated = self.utils.buildNestedDict(invalidated, ['nullComplexFk',inputClass], [inputAttrList[i]])
             else:
                 invalidated['classNotFoundInOutput'].append(inputAttrList)
         return invalidated

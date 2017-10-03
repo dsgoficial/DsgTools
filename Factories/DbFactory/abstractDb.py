@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import os, binascii
-from uuid import uuid4
+from uuid import uuid4, UUID
 
 from osgeo import ogr, osr
 
@@ -76,6 +76,13 @@ class AbstractDb(QObject):
         Gets the driver name
         '''
         return self.db.driverName()
+
+    def validateUUID(self, uuid):
+        try:
+            uuid = UUID(uuid)
+            return True
+        except:
+            return False
 
     def countElements(self, layers):
         '''
@@ -262,6 +269,18 @@ class AbstractDb(QObject):
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
                             valueList += ')\n'
                             self.signals.updateLog.emit(attrCommaList+valueList)
+
+                if key == 'nullComplexFk' and len(invalidatedDataDict[key])>0:
+                    self.signals.updateLog.emit('\n\n'+self.tr('Features with invalid uuid foreign key:')+'\n\n')
+                    for cl in invalidatedDataDict[key].keys():
+                        self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
+                        for id in invalidatedDataDict[key][cl].keys():
+                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                            valueList = '('+str(id)
+                            for attr in invalidatedDataDict[key][cl][id].keys():
+                                valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
+                            valueList += ')\n'
+                            self.signals.updateLog.emit(attrCommaList+valueList)
                             
                 if key == 'classNotFoundInOutput' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Classes with classes that have elements but do not have output equivalent:')+'\n\n')
@@ -424,6 +443,7 @@ class AbstractDb(QObject):
         invalidated['nullAttribute'] = dict()
         invalidated['classNotFoundInOutput'] = []
         invalidated['attributeNotFoundInOutput'] = dict()
+        invalidated['nullComplexFk'] = dict()
         return invalidated
     
     def prepareForConversion(self,outputAbstractDb):
@@ -450,6 +470,7 @@ class AbstractDb(QObject):
         5. classNotFoundInOutput: pular classe na conversão e mostrar no warning
         6. attributeNotFoundInOutput: pular atributo e mostrar no warning para todas as feicoes
         7. nullGeometry: excluir a feicao do mapeamento
+        8. nullComplexFk: fazer atributo id_% ficar nulo caso não seja uuid
         '''
         inputLayer.ResetReading()
         fieldCount = inputLayer.GetLayerDefn().GetFieldCount()
@@ -497,6 +518,10 @@ class AbstractDb(QObject):
                                                 newFeat.SetField(layerPanMap[j],'-9999')
                                             if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetTypeName() == 'Integer':
                                                 newFeat.SetField(layerPanMap[j],-9999)
+                                if inputLayerName in invalidated['nullComplexFk'].keys():
+                                    if inputId in invalidated['nullComplexFk'][inputLayerName].keys():
+                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['nullComplexFk'][inputLayerName][inputId].keys():
+                                            newFeat.UnsetField(layerPanMap[j])
                         if newFeat.geometry().GetGeometryCount() > 1:
                             #Deaggregator
                             for geom in newFeat.geometry():
