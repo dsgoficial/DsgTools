@@ -38,6 +38,7 @@ class Circle(GeometricaAcquisition):
         for itheta in range(nPoints+1):
             theta = itheta*(2.0*math.pi/nPoints)
             self.rubberBand.addPoint(QgsPoint(x+r*math.cos(theta), y+r*math.sin(theta)))
+        self.rubberBand.closePoints()            
 
     def endGeometry(self):
         self.geometry = self.rubberBand.asGeometry()
