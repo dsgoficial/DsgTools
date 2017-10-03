@@ -123,7 +123,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.iface.mapCanvas().refresh()
         flagLyr.select(idx)
         bbox = flagLyr.boundingBoxOfSelected()
-        self.iface.mapCanvas().setExtent(bbox)
+        mapbox = self.iface.mapCanvas().mapSettings().layerToMapCoordinates(flagLyr, bbox)
+        self.iface.mapCanvas().setExtent(mapbox)
         self.iface.mapCanvas().refresh()
     
     def loadFlagLyr(self, layer):
