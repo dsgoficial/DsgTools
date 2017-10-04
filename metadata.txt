@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.14
 description=Brazilian Army Cartographic Production Tools
-version=3.0.7
+version=3.0.8
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -74,6 +74,7 @@ changelog=
 	3.0.5 - Bug fix when using OpenLayers Plugin layers. Minor improvements.
 	3.0.6 - Bug fix on (Re)classification tool
 	3.0.7 - Bug fix on Circle Tool, Zoom to Flag and Database Conversion
+	3.0.8 - Bug fix on image processing on windows and bug fix on generic selection tool
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
