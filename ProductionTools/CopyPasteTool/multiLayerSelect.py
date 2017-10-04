@@ -100,7 +100,6 @@ class MultiLayerSelection(QgsMapTool):
     def setAction(self, action):
         self.toolAction = action
         self.toolAction.setCheckable(True)
-
     
     def canvasReleaseEvent(self, e):
         """
@@ -228,11 +227,4 @@ class MultiLayerSelection(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
-    
         
-
-
-
-
-
-
