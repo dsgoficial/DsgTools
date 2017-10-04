@@ -180,15 +180,13 @@ class MultiLayerSelection(QgsMapTool):
         bbRect: if supplied, other rectangle is used
         hasControlModifyer: used to add to selection or not.
         """
-        if not bbRect:   
-            rect = self.getCursorRect(e)
+        rect = self.getCursorRect(e)
         primitiveDict = self.getPrimitiveDict(e, hasControlModifyer = hasControlModifyer)
         primitives = primitiveDict.keys()
         primitives.sort() #this sort enables search to be done in the order of Point (value 0), Line (value 1) and Polygon (value 2)
         for primitive in primitives:
             for lyr in primitiveDict[primitive]:
-                if not bbRect:
-                    bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
+                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
                 for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
                     selectedIds = lyr.selectedFeaturesIds() #list of selected ids
                     if feat.geometry().intersects(bbRect): #tests if feature intersects tool bounding box, otherwise skip it
