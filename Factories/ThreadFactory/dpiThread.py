@@ -239,11 +239,11 @@ class DpiThread(GenericThread):
             self.signals.stepProcessed.emit(self.getId())
 
         #Deleting the objects
-        del imgWGS
-        del imgOut
-        del imgIn
+        imgWGS = None
+        imgOut = None
+        imgIn = None
 
         #Unlinking the temp file
-        os.unlink(outFileTmp)
+        osgeo.gdal.Unlink(outFileTmp)
 
         return 1
