@@ -227,11 +227,4 @@ class MultiLayerSelection(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
-    
         
-
-
-
-
-
-
