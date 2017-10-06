@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import os
+from collections import OrderedDict
 
 # Qt imports
 from PyQt4 import QtGui, uic
@@ -35,8 +36,8 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
         super(CustomReferenceAndLayersParameterSelector, self).__init__(parent)
-        self.referenceLayer = None
-        self.selectedLayers = []
+        self.referenceLayerItem = None
+        self.selectedLayersItems = []
         self.setupUi(self)
     
     def setTitle(self, title):
@@ -58,15 +59,30 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             if self.unifiedList:
                 self.customSelectorWidget.removeItem(self.referenceLayer)
     
-    def setInitialState(self, referenceList, originalList, unique=False):
+    def setInitialState(self, referenceDict, referenceDictList, originalDict, originalDictList, unique=False):
         """
         Sets the initial state
+        referenceDict: {'cat,lyrName,geom,geomType,tableType':{'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}}
+        referenceDictList: interface ready dict like 
+        {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
         """
-        self.originalList = originalList
+        self.referenceDict = referenceDict
+        self.referenceDictList = referenceDictList
+        self.originalDict = originalDict
+        self.originalDictList = originalDictList
+        self.referenceTextDict = OrderedDict()
+
         self.customSelectorWidget.addItems(originalList)
-        self.referenceComboBox.addItem(self.tr('Select a layer'))
-        originalList.sort()
-        if len(referenceList) == 0:
+        self.referenceTextDict[self.tr('Select a layer')] = None
+        referenceList = []
+        sortedKeys = self.referenceDictList.keys()
+        sortedKeys.sort()
+        for key in sortedKeys:
+            cat, lyrName, geom, geomType, tableType = key.split(',')
+            textItem = """"{0}.{1} ({2}, {3})""".format(cat, lyrName, geom, geomType, tableType)
+            self.referenceTextDict[textItem] = 
+
+        if len(referenceDictList) == 0:
             self.unifiedList = True
             self.referenceComboBox.addItems(originalList)
         else:
