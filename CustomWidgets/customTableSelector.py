@@ -276,3 +276,33 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                     selected.append(item)
         return selected
 
+    def addItemsToWidget(self, itemList, unique = False):
+        """
+        Adds items to tree that is already built.
+        """
+        self.addItemsToTree(self.fromTreeWidget, itemList, self.fromLs, unique = unique)
+    
+    def removeItemsFromWidget(self, removeList):
+        """
+        Searches both lists and removes items that are in removeList
+        """
+        self.removeItemsFromTree(removeList, self.fromTreeWidget, self.fromLs)
+        self.removeItemsFromTree(removeList, self.toTreeWidget, self.toLs)
+    
+    def removeItemsFromTree(self, removeList, treeWidget, controlList):
+        """
+        Searches treeWidget and removes items that are in removeList and updates controlList
+        """        
+        treeRoot = treeWidget.invisibleRootItem()
+        for i in range(treeRoot.childCount())[::-1]:
+            catChild = treeRoot.child(i)
+            for j in range(catChild.childCount())[::-1]:
+                nodeChild = catChild.child(j)
+                if nodeChild in removeList:
+                    #if it enters here, must remove it from control list
+                    itemList = self.getItemList(nodeChild)
+                    controlList.pop(controlList.index(itemList))
+                    catChild.takeChild(j)
+        for i in range(treeRoot.childCount())[::-1]:
+            if treeRoot.child(i).childCount() == 0:
+                treeRoot.takeChild(i)
