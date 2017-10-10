@@ -47,40 +47,52 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
     def on_referenceComboBox_currentIndexChanged(self, idx):
         if idx == 0:
             if self.referenceLayer and self.unifiedList:
-                self.customSelectorWidget.addItems([self.referenceLayer], unique=False)
+                self.customSelectorWidget.addItems([self.referenceLayer])
                 self.referenceLayer = None
             self.customSelectorWidget.setEnabled(False)
         else:
             if self.referenceLayer and self.unifiedList:
                 addItem = [self.referenceLayer]
-                self.customSelectorWidget.addItems(addItem, unique=False)
+                self.customSelectorWidget.addItems(addItem)
             self.customSelectorWidget.setEnabled(True)
             self.referenceLayer = self.referenceComboBox.currentText()
             if self.unifiedList:
                 self.customSelectorWidget.removeItem(self.referenceLayer)
     
-    def setInitialState(self, referenceDict, referenceDictList, originalDict, originalDictList, unique=False):
+    def setInitialState(self, referenceDict, referenceDictList, originalDict, originalDictList, unique=True):
         """
         Sets the initial state
         referenceDict: {'cat,lyrName,geom,geomType,tableType':{'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}}
         referenceDictList: interface ready dict like 
-        {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
+        {
+            self.tr('Category'):cat, 
+            self.tr('Layer Name'):lyrName, 
+            self.tr('Geometry\nColumn'):geom, 
+            self.tr('Geometry\nType'):geomType, 
+            self.tr('Layer\nType'):tableType
+        }
         """
         self.referenceDict = referenceDict
         self.referenceDictList = referenceDictList
         self.originalDict = originalDict
         self.originalDictList = originalDictList
-        self.referenceTextDict = OrderedDict()
 
-        self.customSelectorWidget.addItems(originalList)
+        #makes referenceTextDict
+        self.referenceTextDict = OrderedDict()
         self.referenceTextDict[self.tr('Select a layer')] = None
-        referenceList = []
-        sortedKeys = self.referenceDictList.keys()
-        sortedKeys.sort()
+        sortedRefKeys = self.referenceDictList.keys()
+        sortedRefKeys.sort()
+        for key in sortedRefKeys:
+            cat, lyrName, geom, geomType, tableType = key.split(',')
+            textItem = """"{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
+            self.referenceTextDict[textItem] = self.referenceDictList[key]
+        #makes originalTextDict
+        self.lyrsTextDict = OrderedDict()
         for key in sortedKeys:
             cat, lyrName, geom, geomType, tableType = key.split(',')
             textItem = """"{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
-            self.referenceTextDict[textItem] = 
+            self.referenceTextDict[textItem] = self.referenceDictList[key]
+        self.customSelectorWidget.addItems(self.referenceTextDict.keys())
 
         if len(referenceDictList) == 0:
             self.unifiedList = True
