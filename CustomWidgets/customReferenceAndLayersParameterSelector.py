@@ -79,7 +79,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         sortedKeys.sort()
         for key in sortedKeys:
             cat, lyrName, geom, geomType, tableType = key.split(',')
-            textItem = """"{0}.{1} ({2}, {3})""".format(cat, lyrName, geom, geomType, tableType)
+            textItem = """"{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
             self.referenceTextDict[textItem] = 
 
         if len(referenceDictList) == 0:
