@@ -45,6 +45,9 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
     
     def resizeTrees(self):
+        """
+        Expands headers
+        """
         self.fromTreeWidget.expandAll()
         self.fromTreeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         self.fromTreeWidget.header().setStretchLastSection(False)
@@ -53,6 +56,9 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.toTreeWidget.header().setStretchLastSection(False)
     
     def sortItems(self, treeWidget):
+        """
+        Sorts items from input treeWidget
+        """
         rootNode = treeWidget.invisibleRootItem()
         rootNode.sortChildren(0, Qt.AscendingOrder)
         for i in range(rootNode.childCount()):
@@ -65,6 +71,9 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.groupBox.setTitle(title)
     
     def setFilterColumn(self, customNumber = None):
+        """
+        Chooses which column is going to be used in the filter
+        """
         if isinstance(customNumber, int):
             self.filterColumnKey = self.headerList[customNumber]
         elif self.headerList:
@@ -79,6 +88,9 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.filterLineEdit.clear()
     
     def setHeaders(self, headerList, customNumber = None):
+        """
+        Sets fromTreeWidget and toTreeWidget headers
+        """
         self.headerList = headerList
         self.fromTreeWidget.setHeaderLabels(headerList)
         self.toTreeWidget.setHeaderLabels(headerList)
@@ -136,12 +148,18 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.sortItems(treeWidget)
     
     def getItemList(self, item):
+        """
+        Gets item as a list
+        """
         itemList = []
         for i in range(item.columnCount()):
             itemList.append(item.text(i))
         return itemList
 
     def getLists(self, sender):
+        """
+        Returns a list composed by (originTreeWidget, --list that controls previous originTreeWidget--, destinationTreeWidget, --list that controls previous destinationTreeWidget--)
+        """
         text = sender.text()
         if text == '>':
             return self.fromTreeWidget, self.fromLs, self.toTreeWidget, self.toLs, False
@@ -202,6 +220,9 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
                 self.getSelectedItems(childItem, itemList)
     
     def moveChild(self, parentNode, idx, destinationNode, isSelected):
+        """
+        If node is selected, removes node from parentNode and adds it to destinationNode
+        """
         if isSelected:
             child = parentNode.takeChild(idx)
             destinationNode.addChild(child)
@@ -263,6 +284,9 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
             rootNode.child(i).sortChildren(1, Qt.AscendingOrder)
     
     def getSelectedNodes(self, concatenated = True):
+        """
+        Returns a list of selected nodes converted into a string separated by ','
+        """
         selected = []
         rootNode = self.toTreeWidget.invisibleRootItem()
         for i in range(rootNode.childCount()):
