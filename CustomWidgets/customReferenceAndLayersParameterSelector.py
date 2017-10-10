@@ -59,7 +59,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             if self.unifiedList:
                 self.customSelectorWidget.removeItem(self.referenceLayer)
     
-    def setInitialState(self, referenceDict, referenceDictList, originalDict, originalDictList, unique=True):
+    def setInitialState(self, referenceDictList, layersDictList, unique=True, excludent = True):
         """
         Sets the initial state
         referenceDict: {'cat,lyrName,geom,geomType,tableType':{'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}}
@@ -72,10 +72,9 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             self.tr('Layer\nType'):tableType
         }
         """
-        self.referenceDict = referenceDict
+        self.excludent = excludent
         self.referenceDictList = referenceDictList
-        self.originalDict = originalDict
-        self.originalDictList = originalDictList
+        self.layersDictList = layersDictList
 
         #makes referenceTextDict
         self.referenceTextDict = OrderedDict()
@@ -86,20 +85,21 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             cat, lyrName, geom, geomType, tableType = key.split(',')
             textItem = """"{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
             self.referenceTextDict[textItem] = self.referenceDictList[key]
-        #makes originalTextDict
-        self.lyrsTextDict = OrderedDict()
-        for key in sortedKeys:
+        #makes referenceTextDict
+        self.layersTextDict = OrderedDict()
+        self.layersTextDict[self.tr('Select a layer')] = None
+        sortedLyrsKeys = self.layersDictList.keys()
+        sortedLyrsKeys.sort()
+        for key in sortedLyrsKeys:
             cat, lyrName, geom, geomType, tableType = key.split(',')
             textItem = """"{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
-            self.referenceTextDict[textItem] = self.referenceDictList[key]
-        self.customSelectorWidget.addItems(self.referenceTextDict.keys())
-
-        if len(referenceDictList) == 0:
+            self.layersTextDict[textItem] = self.layersDictList[key]
+        if len(self.referenceTextDict.keys()) == 1:
             self.unifiedList = True
-            self.referenceComboBox.addItems(originalList)
+            self.referenceComboBox.addItems(self.layersDictList.keys())
         else:
             self.unifiedList = False
-            self.referenceComboBox.addItems(referenceList)
+            self.referenceComboBox.addItems(self.referenceTextDict.keys())
     
     def getParameters(self):
         """
