@@ -44,7 +44,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':[], 'layersDictList':interfaceDict})}
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':{}, 'layersDictList':interfaceDict})}
 
     def execute(self):
         """

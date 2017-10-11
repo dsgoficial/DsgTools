@@ -41,7 +41,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
     
     def setTitle(self, title):
-        self.customSelectorWidget.setTitle(title)
+        self.customTableSelectorWidget.setTitle(title)
     
     @pyqtSlot(int)
     def on_referenceComboBox_currentIndexChanged(self, idx):
