@@ -37,11 +37,14 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':[], 'layersDictList':classesWithElem})}
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            # adjusting process parameters
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':[], 'layersDictList':interfaceDictList})}
 
     def execute(self):
         """
