@@ -106,7 +106,9 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setTitle(self.tr('Select layers to be snapped'))
             if self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-                widget.setTitle(self.tr('Select layers to be snapped'))
+                widget.setTitle(self.tr('Select layers'))
+                headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
+                widget.setHeaders(headerList)
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
