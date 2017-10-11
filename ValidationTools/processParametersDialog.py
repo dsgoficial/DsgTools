@@ -26,6 +26,7 @@ from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QApplication, QCursor, QMenu
 from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
+from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
@@ -35,6 +36,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                list: CustomTableSelector,
                tuple: CustomSnaperParameterSelector,
                deque:QtGui.QComboBox,
+               OrderedDict:CustomReferenceAndLayersParameterSelector,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
@@ -42,11 +44,13 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomSnaperParameterSelector: "getParameters",
                CustomTableSelector: "getSelectedNodes",
                QtGui.QComboBox:"currentText",
+               CustomReferenceAndLayersParameterSelector:"getParameters",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
                CustomSnaperParameterSelector: "setInitialState",
+               CustomReferenceAndLayersParameterSelector: "setInitialState",
                CustomTableSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
                QtGui.QCheckBox: "setChecked"}
@@ -54,6 +58,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
                   CustomSnaperParameterSelector: lambda x: True,
+                  CustomReferenceAndLayersParameterSelector: lambda x: True,
                   CustomTableSelector: lambda x: True,
                   QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
@@ -97,6 +102,9 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
             if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
+                getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
+                widget.setTitle(self.tr('Select layers to be snapped'))
+            if self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
                 widget.setTitle(self.tr('Select layers to be snapped'))
             else:
