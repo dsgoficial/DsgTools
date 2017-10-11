@@ -73,7 +73,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         """
         self.referenceDictList = inputOrderedDict['referenceDictList']
         self.layersDictList = inputOrderedDict['layersDictList']
-
+ 
         #makes referenceTextDict
         self.referenceTextDict = OrderedDict()
         self.referenceTextDict[self.tr('Select a layer')] = None
