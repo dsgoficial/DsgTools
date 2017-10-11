@@ -322,3 +322,31 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+
+    @pyqtSlot(bool)
+    def on_clearSelectedPushButton_clicked(self):
+        """
+        Deletes selected flags on the panel from validation.aux_flags
+        1- Get abstractDb
+        2- Delete flag
+        """   
+        print 1     
+        try:
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            
+            # INSERIR PROCESSO DE LIMPAR FLAGS *SELECIONADAS*
+            className = self.filterTypeComboBox.currentText().data()
+
+            print className
+
+            QApplication.restoreOverrideCursor()
+            #refresh
+            self.refreshFlags()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+
+
+        pass

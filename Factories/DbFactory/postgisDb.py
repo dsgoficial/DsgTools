@@ -939,6 +939,7 @@ class PostgisDb(AbstractDb):
         """
         Deletes flags from database
         processName: process name that will have all flags removed
+        className: class name that will have all flags removed
         """
         self.checkAndOpenDb()
         sql = self.gen.deleteFlags(processName = processName, className = className)
