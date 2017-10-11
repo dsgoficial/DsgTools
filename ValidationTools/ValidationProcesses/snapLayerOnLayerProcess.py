@@ -25,6 +25,8 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
+from collections import deque
+
 class SnapLayerOnLayerProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
@@ -39,7 +41,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             # creating a list of tuples (layer names, geometry columns)
             classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': ([], classesWithElem)}
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': deque([], classesWithElem)}
 
     def execute(self):
         """

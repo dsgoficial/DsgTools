@@ -36,7 +36,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
         super(CustomReferenceAndLayersParameterSelector, self).__init__(parent)
-        self.referenceLayerItem = None
+        self.referenceLayerKey = None
         self.selectedLayersItems = []
         self.setupUi(self)
     
@@ -46,20 +46,21 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int)
     def on_referenceComboBox_currentIndexChanged(self, idx):
         if idx == 0:
-            if self.referenceLayer and self.unifiedList:
-                self.customSelectorWidget.addItems([self.referenceLayer])
-                self.referenceLayer = None
+            if self.referenceLayerKey and self.unifiedList:
+                self.customSelectorWidget.addItems([self.referenceLayerKey])
+                self.referenceLayerKey = None
             self.customSelectorWidget.setEnabled(False)
         else:
-            if self.referenceLayer and self.unifiedList:
-                addItem = [self.referenceLayer]
+            if self.referenceLayerKey and self.unifiedList:
+                #TODO
+                addItem = [self.referenceLayerKey]
                 self.customSelectorWidget.addItems(addItem)
             self.customSelectorWidget.setEnabled(True)
             self.referenceLayer = self.referenceComboBox.currentText()
             if self.unifiedList:
                 self.customSelectorWidget.removeItem(self.referenceLayer)
     
-    def setInitialState(self, referenceDictList, layersDictList, unique=True, excludent = True):
+    def setInitialState(self, referenceDictList, layersDictList, unique=True):
         """
         Sets the initial state
         referenceDict: {'cat,lyrName,geom,geomType,tableType':{'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}}
@@ -72,7 +73,6 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             self.tr('Layer\nType'):tableType
         }
         """
-        self.excludent = excludent
         self.referenceDictList = referenceDictList
         self.layersDictList = layersDictList
 
