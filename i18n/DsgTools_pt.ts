@@ -11749,7 +11749,7 @@ Camada</translation>
     <message>
         <location filename="ServerTools/viewServers.py" line="76"/>
         <source>Saved</source>
-        <translation>Salvo</translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
         <location filename="ServerTools/viewServers.py" line="112"/>
