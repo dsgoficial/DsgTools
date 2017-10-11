@@ -94,7 +94,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             self.layersTextDict[textItem] = self.layersDictList[key]
         if len(self.referenceTextDict.keys()) == 1:
             self.unifiedList = True
-            self.referenceComboBox.addItems(self.layersDictList.keys()) #uses all layers to populate ref combo
+            self.referenceComboBox.addItems(self.layersTextDict.keys()) #uses all layers to populate ref combo
         else:
             self.unifiedList = False
             self.referenceComboBox.addItems(self.referenceTextDict.keys()) #uses only some layers to populate ref combo
