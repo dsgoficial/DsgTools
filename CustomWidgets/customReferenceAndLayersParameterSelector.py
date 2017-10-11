@@ -58,7 +58,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             if self.unifiedList:
                 self.customTableSelectorWidget.removeItemsFromWidget([self.referenceComboBox[self.referenceLayerKey]])
     
-    def setInitialState(self, referenceDictList, layersDictList, unique=True):
+    def setInitialState(self, inputOrderedDict, unique=True):
         """
         Sets the initial state
         referenceDict: {'cat,lyrName,geom,geomType,tableType':{'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}}
@@ -71,8 +71,8 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             self.tr('Layer\nType'):tableType
         }
         """
-        self.referenceDictList = referenceDictList
-        self.layersDictList = layersDictList
+        self.referenceDictList = inputOrderedDict['referenceDictList']
+        self.layersDictList = inputOrderedDict['layersDictList']
 
         #makes referenceTextDict
         self.referenceTextDict = OrderedDict()
