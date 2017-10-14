@@ -235,8 +235,9 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
 					ProductionTools/StyleManagerTool/__init__.py \
 					ProductionTools/StyleManagerTool/styleManagerTool.py \
-					CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py
-					CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py
+					CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py \
+					CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py \
+					CustomWidgets/customReferenceAndLayersParameterSelector.py
 					
 
 
@@ -325,6 +326,7 @@
 					DbTools/BatchDbCreator/createBatchIncrementing.ui \
 					DbTools/BatchDbCreator/batchDbCreator.ui \
 					ProductionTools/StyleManagerTool/styleManagerTool.ui \
+					CustomWidgets/customReferenceAndLayersParameterSelector.ui \
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 
