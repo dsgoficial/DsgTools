@@ -47,16 +47,16 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
     def on_referenceComboBox_currentIndexChanged(self, idx):
         if idx == 0:
             if self.referenceLayerKey and self.unifiedList:
-                self.customTableSelectorWidget.addItemsToWidget([self.referenceComboBox[self.referenceLayerKey]], unique = True)
+                self.customTableSelectorWidget.addItemsToWidget([self.layersTextDict[self.referenceLayerKey]], unique = True)
                 self.referenceLayerKey = None
             self.customTableSelectorWidget.setEnabled(False)
         else:
             if self.referenceLayerKey and self.unifiedList:
-                self.customTableSelectorWidget.addItemsToWidget([self.referenceComboBox[self.referenceLayerKey]], unique = True)
+                self.customTableSelectorWidget.addItemsToWidget([self.layersTextDict[self.referenceLayerKey]], unique = True)
             self.customTableSelectorWidget.setEnabled(True)
             self.referenceLayerKey = self.referenceComboBox.currentText()
             if self.unifiedList:
-                self.customTableSelectorWidget.removeItemsFromWidget([self.referenceComboBox[self.referenceLayerKey]])
+                self.customTableSelectorWidget.removeItemsFromWidget([self.layersTextDict[self.referenceLayerKey]])
     
     def setInitialState(self, inputOrderedDict, unique=True):
         """
