@@ -90,7 +90,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         sortedLyrsKeys.sort()
         for key in sortedLyrsKeys:
             cat, lyrName, geom, geomType, tableType = key.split(',')
-            textItem = """"{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
+            textItem = """{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
             self.layersTextDict[textItem] = self.layersDictList[key]
         if len(self.referenceTextDict.keys()) == 1:
             self.unifiedList = True
