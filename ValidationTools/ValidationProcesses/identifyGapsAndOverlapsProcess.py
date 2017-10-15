@@ -89,7 +89,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
             # running the process
             localProgress = ProgressWidget(0, 1, self.tr('Running process for coverage_temp'), parent=self.iface.mapCanvas())
             localProgress.step()
-            result = self.abstractDb.getGapsAndOverlapsRecords(refcl, refGeometryColumn)
+            result = self.abstractDb.getGapsAndOverlapsRecords(refcl, refDict['geom'])
             localProgress.step()
 
             #storing flags
