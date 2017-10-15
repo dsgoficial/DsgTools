@@ -76,7 +76,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             for key in classesWithElemKeys:
                 # preparation
                 clDict = self.classesWithElemDict[key]
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + clDict['lyrName'], parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(clDict)
                 localProgress.step()
