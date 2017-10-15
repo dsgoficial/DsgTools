@@ -10626,7 +10626,7 @@ Camada</translation>
 <context>
     <name>SnapLinesToFrameProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="33"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="35"/>
         <source>Snap Lines to Frame</source>
         <translation>Colar linhas na moldura</translation>
     </message>
@@ -10671,7 +10671,7 @@ Camada</translation>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="97"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="99"/>
         <source>All features snapped to frame succesfully.</source>
         <translation>Todas as feições coladas na moldura com sucesso.</translation>
     </message>
@@ -10681,14 +10681,46 @@ Camada</translation>
         <translation>Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="81"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="83"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="88"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="90"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
     </message>
 </context>
 <context>
