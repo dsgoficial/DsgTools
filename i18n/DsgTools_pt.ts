@@ -6156,64 +6156,96 @@ Camada</translation>
 <context>
     <name>IdentifyGapsAndOverlapsProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="34"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="35"/>
         <source>Identify Gaps and Overlaps</source>
         <translation>Identificar Gaps e Overlaps</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="52"/>
         <source>Starting </source>
         <translation>Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="48"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="52"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="50"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="54"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="55"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="58"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="56"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="59"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="61"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="64"/>
         <source>One reference must be selected! Stopping.</source>
         <translation>Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="73"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="77"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="86"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="90"/>
         <source>Running process for coverage_temp</source>
         <translation>Rodando processo para coverage_temp</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="102"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="106"/>
         <source>Error while trying to remove coverage layer.</source>
         <translation>Erro ao tentar remover camada de cobertura. </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="107"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="111"/>
         <source>There are {} gaps or overlaps in the coverage layer. Check flags.</source>
         <translation>Há {} gaps or overlaps na camada de cobertura. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="111"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="115"/>
         <source>The coverage has no gaps or overlaps.</source>
         <translation>A cobertura não possui gaps or overlaps.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
     </message>
 </context>
 <context>
@@ -10661,32 +10693,32 @@ Camada</translation>
         <translation type="obsolete">Colar na grade</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="67"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="64"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="68"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="65"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="99"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="100"/>
         <source>All features snapped to frame succesfully.</source>
         <translation>Todas as feições coladas na moldura com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="73"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="70"/>
         <source>One reference must be selected! Stopping.</source>
         <translation>Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="83"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="84"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="91"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
