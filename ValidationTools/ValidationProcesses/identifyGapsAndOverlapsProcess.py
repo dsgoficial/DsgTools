@@ -25,21 +25,25 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
+from collections import OrderedDict
 class IdentifyGapsAndOverlapsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(IdentifyGapsAndOverlapsProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Gaps and Overlaps')
-        
+
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Reference and Layers': ([], classesWithElem)}
+            interfaceDict = dict()
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
+            # adjusting process parameters
+            self.parameters = {'Reference and Layers': OrderedDict({'referenceDictList':{}, 'layersDictList':interfaceDict})}
 
     def execute(self):
         """
@@ -49,28 +53,28 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            refWithElem = self.parameters['Reference and Layers'][0]
-            classesWithElem = self.parameters['Reference and Layers'][1]
-            if len(classesWithElem) == 0:
+            refKey, classesKeys = self.parameters['Reference and Layers']
+            if len(classesKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
-            if not refWithElem:
+            if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             # preparing reference layer
-            refcl, refGeometryColumn = refWithElem.split(':')
-            reflyr = self.loadLayerBeforeValidationProcess(refcl)
+            refDict = self.classesWithElemDict[refKey]
+            refcl = """{0}.{1}""".format(refDict['tableSchema'], refDict['tableName'])
+            reflyr = self.loadLayerBeforeValidationProcess(refDict)
 
             # gathering all coverage layers
             classlist = []
-            for classAndGeom in classesWithElem:
+            for key in classesKeys:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
+                cl = self.classesWithElemDict[key]
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 classlist.append(lyr)

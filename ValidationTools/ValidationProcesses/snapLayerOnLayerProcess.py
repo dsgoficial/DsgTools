@@ -76,19 +76,19 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             for key in classesWithElemKeys:
                 # preparation
                 clDict = self.classesWithElemDict[key]
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + clDict['lyrName'], parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + clDict['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
                 lyr = self.loadLayerBeforeValidationProcess(clDict)
                 localProgress.step()
 
                 # snapping lyr to reference
                 features = [feature for feature in lyr.getFeatures()]
-                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['lyrName'], parent=self.iface.mapCanvas())
+                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['tableName'], parent=self.iface.mapCanvas())
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)
 
-                localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['lyrName']+ self.tr(' succesfully.\n')
+                localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['tableName']+ self.tr(' succesfully.\n')
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 msg += localMsg
             self.setStatus(msg, 1) #Finished
