@@ -6564,6 +6564,91 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyOverlapsProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="33"/>
+        <source>Identify Overlaps</source>
+        <translation>Identificar Sobreposições</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="49"/>
+        <source>Starting </source>
+        <translation>Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="49"/>
+        <source> Process.</source>
+        <translation> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="51"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="55"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="56"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="62"/>
+        <source>Preparing execution for </source>
+        <translation>Preparando a execução para a camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="67"/>
+        <source>Running process for </source>
+        <translation>Executando o processo para </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="81"/>
+        <source> features are overlapping. Check flags.</source>
+        <translation>feições se sobrepondo. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="85"/>
+        <source>There are no overlapping geometries.</source>
+        <translation>Não há feições se sobrepondo.</translation>
+    </message>
+</context>
+<context>
     <name>IdentifySmallAreasProcess</name>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="34"/>
