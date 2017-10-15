@@ -68,7 +68,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
-            if not refKeys:
+            if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
