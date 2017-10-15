@@ -60,9 +60,6 @@ class SnapLinesToFrameProcess(ValidationProcess):
 
             # getting frame and reference parameters
             refKey, linesKeys = self.parameters['Reference and Layers']
-            frameDict = self.frameCandidateDict[refKey]
-            frame = """{0}.{1}""".format(frameDict['tableSchema'], frameDict['tableName'])
-            frameGeometryColumn = frameDict['geom']
             if len(linesKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -72,6 +69,10 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
+
+            frameDict = self.frameCandidateDict[refKey]
+            frame = """{0}.{1}""".format(frameDict['tableSchema'], frameDict['tableName'])
+            frameGeometryColumn = frameDict['geom']
                 
             tol = self.parameters['Snap']
 
