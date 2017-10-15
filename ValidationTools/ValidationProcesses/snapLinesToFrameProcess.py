@@ -24,31 +24,31 @@ from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
+from collections import OrderedDict
+
 class SnapLinesToFrameProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(SnapLinesToFrameProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Snap Lines to Frame')
         
         if not self.instantiating:
             # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['l'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
-            # getting tables with elements
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(primitiveFilter=['a'], withElements=True, getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            frameWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': (frameWithElem, classesWithElem)}
+            interfaceDict = dict()
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
+            self.frameCandidateDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
+            frameDict = dict()
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                frameDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
 
-#     def postProcess(self):
-#         """
-#         Gets the process that should be execute before this one
-#         """
-#         return self.tr('Snap to Grid')
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':frameDict, 'layersDictList':interfaceDict})}
         
     def execute(self):
         """
@@ -59,29 +59,31 @@ class SnapLinesToFrameProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
 
             # getting frame and reference parameters
-            refWithElem = self.parameters['Reference and Layers'][0]
-            lines = self.parameters['Reference and Layers'][1]
-            frame, frameGeometryColumn = refWithElem.split(':')
-            
-            if len(lines) == 0:
+            refKey, linesKeys = self.parameters['Reference and Layers']
+            frameDict = self.frameCandidateDict[refKey]
+            frame = """{0}.{1}""".format(frameDict['tableSchema'], frameDict['tableName'])
+            frameGeometryColumn = frameDict['geom']
+            if len(linesKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
-            if not refWithElem:
+            if not refKeys:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
                 
             tol = self.parameters['Snap']
 
-            for classAndGeom in lines:
+            for key in linesKeys:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
+                lineDict = self.classesWithElemDict[key]
+                cl = """{0}.{1}""".format(lineDict['tableSchema'], lineDict['tableName'])
+                geometryColumn = lineDict['geom']
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(cl, geometryColumn)
-                frameTableName, frameLyr, frameKeyColumn = self.prepareExecution(frame, frameGeometryColumn)
+                processTableName, lyr, keyColumn = self.prepareExecution(lineDict)
+                frameTableName, frameLyr, frameKeyColumn = self.prepareExecution(frameDict)
                 localProgress.step()
 
                 #running the process in the temp table
