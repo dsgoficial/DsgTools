@@ -147,14 +147,20 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.resizeTrees()
         self.sortItems(treeWidget)
     
-    def getItemList(self, item):
+    def getItemList(self, item, returnAsDict = False):
         """
         Gets item as a list
         """
-        itemList = []
+        if returnAsDict:
+            returnItem = dict()
+        else:
+            returnItem = []
         for i in range(item.columnCount()):
-            itemList.append(item.text(i))
-        return itemList
+            if returnAsDict:
+                returnItem[self.headerList[i]] = item.text(i)
+            else:
+                returnItem.append(item.text(i))
+        return returnItem
 
     def getLists(self, sender):
         """
@@ -313,20 +319,27 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.removeItemsFromTree(removeList, self.fromTreeWidget, self.fromLs)
         self.removeItemsFromTree(removeList, self.toTreeWidget, self.toLs)
     
-    def removeItemsFromTree(self, removeList, treeWidget, controlList):
+    def removeItemsFromTree(self, dictItemList, treeWidget, controlList):
         """
         Searches treeWidget and removes items that are in removeList and updates controlList
         """        
         treeRoot = treeWidget.invisibleRootItem()
+        catList = [i[self.headerList[0]] for i in dictItemList]
+        returnList = []
         for i in range(treeRoot.childCount())[::-1]:
             catChild = treeRoot.child(i)
-            for j in range(catChild.childCount())[::-1]:
-                nodeChild = catChild.child(j)
-                if nodeChild in removeList:
-                    #if it enters here, must remove it from control list
-                    itemList = self.getItemList(nodeChild)
-                    controlList.pop(controlList.index(itemList))
-                    catChild.takeChild(j)
+            if catChild.text(0) in catList:
+                for j in range(catChild.childCount())[::-1]:
+                    nodeChild = catChild.child(j)
+                    nodeChildDict = self.getItemList(nodeChild, returnAsDict = True)
+                    nodeChildDict[self.headerList[0]] = catChild.text(0)
+                    if nodeChildDict in dictItemList:
+                        catChild.takeChild(j)
+                        itemList = self.getItemList(nodeChild)
+                        controlList.pop(controlList.index(itemList))
         for i in range(treeRoot.childCount())[::-1]:
             if treeRoot.child(i).childCount() == 0:
                 treeRoot.takeChild(i)
+        treeRoot.sortChildren(0, Qt.AscendingOrder)
+        for i in range(treeRoot.childCount()):
+            treeRoot.child(i).sortChildren(1, Qt.AscendingOrder)
