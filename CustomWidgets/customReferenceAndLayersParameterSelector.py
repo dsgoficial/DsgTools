@@ -105,6 +105,13 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         Gets parameters
         """
         if self.unifiedList:
-            return self.layersTextDict[self.referenceLayerKey], self.customTableSelectorWidget.getSelectedNodes()
+            refItem = self.layersTextDict[self.referenceLayerKey]
+            originalRefDict = self.layersDictList
         else:
-            return self.referenceTextDict[self.referenceLayerKey], self.customTableSelectorWidget.getSelectedNodes()
+            refItem = self.referenceTextDict[self.referenceLayerKey]
+            originalRefDict = self.referenceDictList
+        try:
+            referenceKey = [k for (k,v) in originalRefDict.iteritems() if v == refItem][0]
+        except:
+            referenceKey = None
+        return referenceKey, self.customTableSelectorWidget.getSelectedNodes()
