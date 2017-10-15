@@ -32,7 +32,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(SnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Snap Layer on Layer')
         
         if not self.instantiating:
@@ -53,42 +53,42 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            refWithElem = self.parameters['Reference and Layers'][0]
-            classesWithElem = self.parameters['Reference and Layers'][1]
-            if len(classesWithElem) == 0:
+            refKey = self.parameters['Reference and Layers'][0]
+            classesWithElemKeys = self.parameters['Reference and Layers'][1]
+            if len(classesWithElemKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
-            if not refWithElem:
+            if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             # preparing reference layer
-            refcl, refGeometryColumn = refWithElem.split(':')
+            refcl = self.classesWithElemDict[refKey]
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             snapper = DsgGeometrySnapper(reflyr)
             snapper.featureSnapped.connect(self.updateProgress)
 
             tol = self.parameters['Snap']
             msg = ''
-            for classAndGeom in classesWithElem:
+            for key in classesWithElemKeys:
                 # preparation
-                cl, geometryColumn = classAndGeom.split(':')
+                clDict = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
-                lyr = self.loadLayerBeforeValidationProcess(cl)
+                lyr = self.loadLayerBeforeValidationProcess(clDict)
                 localProgress.step()
 
                 # snapping lyr to reference
                 features = [feature for feature in lyr.getFeatures()]
-                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + cl, parent=self.iface.mapCanvas())
+                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['lyrName'], parent=self.iface.mapCanvas())
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)
 
-                localMsg = self.tr('All features from ') +cl+ self.tr(' snapped to reference ') +refcl+ self.tr(' succesfully.\n')
+                localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['lyrName']+ self.tr(' succesfully.\n')
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 msg += localMsg
             self.setStatus(msg, 1) #Finished

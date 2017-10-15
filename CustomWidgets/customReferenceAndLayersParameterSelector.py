@@ -99,7 +99,6 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             self.unifiedList = False
             self.referenceComboBox.addItems(self.referenceTextDict.keys()) #uses only some layers to populate ref combo
         self.customTableSelectorWidget.setInitialState(self.layersDictList.values())
-            
     
     def getParameters(self):
         """
