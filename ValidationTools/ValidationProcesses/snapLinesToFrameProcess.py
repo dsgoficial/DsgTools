@@ -44,7 +44,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.frameCandidateDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
             frameDict = dict()
-            for key in self.classesWithElemDict:
+            for key in self.frameCandidateDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 frameDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
 
