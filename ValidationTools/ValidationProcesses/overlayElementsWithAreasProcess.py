@@ -35,14 +35,21 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            overlayAreasDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, primitiveFilter = ['a'], getGeometryColumn=True)
-            overlayAreas = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in overlayAreasDictList]
-            classesWithElemDictList = self.abstractDb.listGeomClassesFromDatabase(withElements=True, primitiveFilter = ['l','a'], getGeometryColumn=True)
-            # creating a list of tuples (layer names, geometry columns)
-            classesWithElem = ['{0}:{1}'.format(i['layerName'], i['geometryColumn']) for i in classesWithElemDictList]
+            self.overlayElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
+            # adjusting overlayer process parameters
+            overlayInterfaceDict = dict()
+            for key in self.overlayElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                overlayInterfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}            
+            #getting overlayees
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
+            interfaceDict = dict()
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.opTypeDict = OrderedDict([(self.tr('Overlay and Keep Elements'),-1), (self.tr('Remove outside elements'),0), (self.tr('Remove inside elements'),1)])
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': (overlayAreas, classesWithElem), 'Overlay Type':deque(self.opTypeDict.keys())}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': OrderedDict({'referenceDictList':overlayInterfaceDict, 'layersDictList':interfaceDict}), 'Overlay Type':deque(self.opTypeDict.keys())}
         
     def runProcessinAlg(self, layerA, layerB):
         """
