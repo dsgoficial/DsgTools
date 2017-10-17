@@ -266,7 +266,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel.select()
-    
+        self.refreshOnChangeProcessOrClass()
+
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
         """
@@ -278,7 +279,15 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
-            
+
+
+    @pyqtSlot(int, name = 'on_filterTypeComboBox_currentIndexChanged')
+    def refreshOnChangeProcessOrClass(self):
+        filterType = self.filterTypeComboBox.currentText()
+        self.customFilterComboBox.clear()
+        listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
+        self.customFilterComboBox.addItems(listProcessesOrClasses)    
+
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
         """
@@ -335,10 +344,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                 return
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
-            # INSERIR PROCESSO DE LIMPAR FLAGS *FILTRADAS*
             filterType = self.filterTypeComboBox.currentText()
-            listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
-            self.customFilterComboBox.addItems(listProcessesOrClasses)
+            
             processName, layerName = None, None
             # check what is filtered
             if filterType.lower() == "nome do processo":
@@ -352,8 +359,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
                 return
             QApplication.restoreOverrideCursor()
-            # refresh
-            self.customFilterComboBox.clear()
+            # refresh View Table with lasting flags
             self.refreshFlags()
         except Exception as e:
             QApplication.restoreOverrideCursor()
