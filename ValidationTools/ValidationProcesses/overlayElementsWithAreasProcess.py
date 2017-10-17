@@ -132,5 +132,6 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         self.updateOriginalLayer(layerA, outputLayer)
 
         #getting error flags
-        errorLayer = processing.getObject(ret['error'])
-        return self.getProcessingErrors(errorLayer)
+        if 'error' in ret.keys():
+            errorLayer = processing.getObject(ret['error'])
+            return self.getProcessingErrors(errorLayer)
