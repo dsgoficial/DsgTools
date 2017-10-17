@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<TS version="2.0" language="pt_BR">
 <context>
     <name>@default</name>
     <message>
@@ -8155,6 +8155,123 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     </message>
 </context>
 <context>
+    <name>OverlayElementsWithAreasProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="34"/>
+        <source>Overlay Elements with Areas</source>
+        <translation>Cortar elementos utilizando áreas como referência</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="51"/>
+        <source>Overlay and Keep Elements</source>
+        <translation>Cortar e manter elementos fora da área de corte</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="51"/>
+        <source>Remove outside elements</source>
+        <translation>Remover elementos fora da área de corte</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="51"/>
+        <source>Remove inside elements</source>
+        <translation>Cortar e remover elementos dentro da área de corte</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="75"/>
+        <source>Problem executing grass7:v.overlay. Check your installed libs.
+</source>
+        <translation>Problema ao executar grass7:v.overlay. Verifique as bibliotecas instaladas.
+</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="95"/>
+        <source>Starting </source>
+        <translation>Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="95"/>
+        <source> Process.</source>
+        <translation> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="97"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="103"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="104"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="120"/>
+        <source>Cleaning error.</source>
+        <translation type="unfinished">Erro de limpeza.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="122"/>
+        <source> feature(s) from </source>
+        <translation type="unfinished"> feição(ões) da camada </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="122"/>
+        <source> with cleaning errors. Check flags.</source>
+        <translation type="unfinished"> com erros de limpeza. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="124"/>
+        <source>There are no cleaning errors on </source>
+        <translation type="unfinished">Não há erros de limpeza em </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="126"/>
+        <source>There are cleaning errors. Check log.</source>
+        <translation type="unfinished">Não há erros de limpeza. Verifique o log.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="128"/>
+        <source>There are no cleaning errors.</source>
+        <translation type="unfinished">Não há erros de limpeza.</translation>
+    </message>
+</context>
+<context>
     <name>PermissionManager</name>
     <message>
         <location filename="../ServerManagementTools/permissionManager.py" line="140"/>
@@ -9359,7 +9476,7 @@ Camada</translation>
     <message>
         <location filename="../ValidationTools/processParametersDialog.py" line="108"/>
         <source>Select layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione as camadas</translation>
     </message>
 </context>
 <context>
