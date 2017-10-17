@@ -130,7 +130,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                 idx = outputLayer.fieldNameIndex(field.name())
                 outputLayer.renameAttribute(idx, field.name()[2::])
         outputLayer.stopEditting()
-        self.updateOriginalLayer(layerA, outputLayer, overlayOutput=True)
+        self.updateOriginalLayer(layerA, outputLayer)
 
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
