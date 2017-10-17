@@ -118,7 +118,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         overlayType = self.opTypeDict[self.parameters['Overlay Type']]
         inputType = layerA.geometryType()
         
-        ret = processing.runalg(alg, layerA, inputType, layerB, overlayType, False, extent, snap, minArea, inputType, None)
+        ret = processing.runalg(alg, layerA, inputType, layerB, overlayType, False, extent, snap, minArea, inputType+1, None)
         if not ret:
             raise Exception(self.tr('Problem executing grass7:v.overlay. Check your installed libs.\n'))
         
