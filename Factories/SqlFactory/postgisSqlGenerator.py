@@ -413,8 +413,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
         return sql
     
-    def deleteFlags(self, processName = None, className = None):
-        if not processName and not className:
+    def deleteFlags(self, processName=None, className=None, flagId=None):
+        if not processName and not className and not flagId:
             whereClause = ''
         else:
             clauseList = []
@@ -424,6 +424,9 @@ class PostGISSqlGenerator(SqlGenerator):
             if className:
                 classClause = """layer = '{0}'""".format(className)
                 clauseList.append(classClause)
+            if flagId:
+                flagClause = """id = {0} """.format(flagId)
+                clauseList.append(flagClause)
             whereClause = """where {0}""".format(' AND '.join(clauseList))
         sql = """
         DELETE FROM validation.aux_flags_validacao_p 

@@ -67,12 +67,12 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
+        self.tableView.customContextMenuRequested.connect(self.createContextMenu)
         self.ruleEnforcer = None
         self.attributeRulesEditorPushButton.hide()
         self.itemList = []
 
-    def createMenuEditFlagStatus(self, position):
+    def createContextMenu(self, position):
         """
         Creates the flag menu
         """
@@ -80,10 +80,19 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         item = self.tableView.indexAt(position)
         if item:
             menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
+            menu.addAction(self.tr('Remove flag'), self.removeCurrentFlag)
 #             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
 #             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
     
+    def removeCurrentFlag(self):
+        """
+        Creates the remove flag menu
+        """
+        flagId = self.tableView.selectionModel().selection().indexes()[0].data()
+        self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
+        self.refreshFlags()
+
     @pyqtSlot()
     def on_theSelectionModel_selectionChanged(self):
         """
@@ -348,9 +357,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             
             processName, layerName = None, None
             # check what is filtered
-            if filterType.lower() == "nome do processo":
+            if filterType == self.tr("Process Name"):
                 processName = self.customFilterComboBox.currentText()
-            elif filterType.lower() == "nome da classe":
+            elif filterType == self.tr("Class Name"):
                 layerName = self.customFilterComboBox.currentText()
             if (processName or layerName):
                 self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
