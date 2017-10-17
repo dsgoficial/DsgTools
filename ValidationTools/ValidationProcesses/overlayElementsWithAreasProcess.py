@@ -129,7 +129,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             if 'a_' == field.name()[0:2]:
                 idx = outputLayer.fieldNameIndex(field.name())
                 outputLayer.renameAttribute(idx, field.name()[2::])
-        outputLayer.stopEditting()
+        outputLayer.stopEditing()
         self.updateOriginalLayer(layerA, outputLayer)
 
         #getting error flags
