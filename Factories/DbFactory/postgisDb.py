@@ -3442,3 +3442,36 @@ class PostgisDb(AbstractDb):
             geom = query.value(0)
             invalidRecordsList.append( (0, reason, geom) )
         return invalidRecordsList
+    
+    
+    def getFilteredFlags(self, filterType=None):
+        """
+        Returns a list based on chosen Filter (class or process)
+        of existing flags.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getFilteredFlags(filterType)
+        # list of all filtered flags
+        filteredFlags = []
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        while query.next():
+            filteredFlags.append(query.value(0))
+        return filteredFlags
+
+    def fillComboBoxProcessOrClasses(self, filterType=None):
+        """
+        Returns a list of possible classes or processes
+        based on existing flags.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getProcessOrClassFlags(filterType)
+        # list of all filtered flags
+        classesOrProcesses = []
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        while query.next():
+            classesOrProcesses.append(str(query.value(0)))
+        return classesOrProcesses

@@ -422,7 +422,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 processClause = """process_name = '{0}'""".format(processName)
                 clauseList.append(processClause)
             if className:
-                classClause = """className = '{0}'""".format(className)
+                classClause = """layer = '{0}'""".format(className)
                 clauseList.append(classClause)
             whereClause = """where {0}""".format(' AND '.join(clauseList))
         sql = """
@@ -1518,4 +1518,44 @@ class PostGISSqlGenerator(SqlGenerator):
         ) as foo 
         where ST_IsEmpty(foo.geom) = 'f'
         """.format(tableSchema, tableName, geomColumn, keyColumn)
+        return sql
+
+    # fuction to return query string to get class or process
+    def getFilteredFlags(self, processName=None, className=None):
+        sql = ""
+        if processName:
+            sql = """
+        SELECT * 
+            FROM validation.aux_flags_validacao_a {0};
+            WHERE process_name = '{0}'
+            """.format(processName)
+        elif className:
+            # as a dropdown, it has only 2 options: either it's filtered
+            # by class or process
+            sql = """
+        SELECT * 
+            FROM validation.aux_flags_validacao_a {0};
+            WHERE layer = '{0}'""".format(className)
+        
+        return sql
+
+    def getProcessOrClassFlags(self, filterType=None):
+        """
+        Returns all process or classes that raised flags
+        """
+        # to allow changing cases as desired
+        filterType = filterType.lower()
+        sql = ""
+        if filterType == "nome do processo":
+            sql = """
+        SELECT DISTINCT process_name 
+            FROM validation.aux_flags_validacao;
+            """
+        elif filterType == "nome da classe":
+            # as a dropdown, it has only 2 options: either it's filtered
+            # by class or process
+            sql = """
+        SELECT DISTINCT layer
+            FROM validation.aux_flags_validacao;
+            """
         return sql

@@ -329,24 +329,32 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Deletes selected flags on the panel from validation.aux_flags
         1- Get abstractDb
         2- Delete flag
-        """   
-        print 1     
+        """
         try:
             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 return
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            
-            # INSERIR PROCESSO DE LIMPAR FLAGS *SELECIONADAS*
-            className = self.filterTypeComboBox.currentText().data()
 
-            print className
-
+            # INSERIR PROCESSO DE LIMPAR FLAGS *FILTRADAS*
+            filterType = self.filterTypeComboBox.currentText()
+            listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
+            self.customFilterComboBox.addItems(listProcessesOrClasses)
+            processName, layerName = None, None
+            # check what is filtered
+            if filterType.lower() == "nome do processo":
+                processName = self.customFilterComboBox.currentText()
+            elif filterType.lower() == "nome da classe":
+                layerName = self.customFilterComboBox.currentText()
+            if (processName or layerName):
+                self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
+            else:
+                QApplication.restoreOverrideCursor()
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
+                return
             QApplication.restoreOverrideCursor()
-            #refresh
+            # refresh
+            self.customFilterComboBox.clear()
             self.refreshFlags()
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
-
-
-        pass
