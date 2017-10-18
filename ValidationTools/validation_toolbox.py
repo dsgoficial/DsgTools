@@ -89,7 +89,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Creates the remove flag menu
         """
-        flagId = self.tableView.selectionModel().selection().indexes()[0].data()
+        flagId = self.tableView.selectionModel().selection().indexes().data()
         self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
         self.refreshFlags()
 
@@ -345,8 +345,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def on_clearSelectedPushButton_clicked(self):
         """
         Deletes selected flags on the panel from validation.aux_flags
-        1- Get abstractDb
-        2- Delete flag
         """
         try:
             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:

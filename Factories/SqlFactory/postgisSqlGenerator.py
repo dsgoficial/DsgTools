@@ -425,8 +425,14 @@ class PostGISSqlGenerator(SqlGenerator):
                 classClause = """layer = '{0}'""".format(className)
                 clauseList.append(classClause)
             if flagId:
-                flagClause = """id = {0} """.format(flagId)
-                clauseList.append(flagClause)
+                try:
+                    flagClause
+                    for row in flagId:
+                        flagClauseRow = """id = {0} """.format(row)
+                        clauseList.append(flagClauseRow)
+                except TypeError:
+                    flagClause = """id = {0} """.format(flagId)
+                    clauseList.append(flagClause)
             whereClause = """where {0}""".format(' AND '.join(clauseList))
         sql = """
         DELETE FROM validation.aux_flags_validacao_p 

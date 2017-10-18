@@ -1,1 +1,1 @@
-print "".lower()
+print len([1])
