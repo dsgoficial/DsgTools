@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import binascii
+from datetime import datetime
 # Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QVariant
@@ -48,6 +49,9 @@ class ValidationProcess(QObject):
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
         self.processAlias = self.tr('Validation Process')
         self.instantiating = instantiating
+        self.totalTime = 0
+        self.startTime = 0
+        self.endTime = 0
         
     def setParameters(self, params):
         """
@@ -503,3 +507,23 @@ class ValidationProcess(QObject):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         geomColumn = uri.geometryColumn()
         return geomColumn
+
+    def startTimeCount(self):
+        self.startTime = datetime.now()
+        self.endTime = 0
+    
+    def endTimeCount(self, cummulative = True):
+        self.endTime = datetime.now()
+        elapsedTime = (self.endTime - self.startTime)
+        if cummulative:
+            self.totalTime += elapsedTime
+        return elapsedTime
+
+    def logLayerTime(self, lyr):
+        if self.startTime != 0 and self.endTime != 0:
+            time = self.endTimeCount()
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)))
+
+    def logTotalTime(self):
+        if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, self.totalTime))
