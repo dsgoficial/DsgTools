@@ -516,12 +516,15 @@ class ValidationProcess(QObject):
         self.endTime = datetime.now()
         elapsedTime = (self.endTime - self.startTime)
         if cummulative:
-            self.totalTime += elapsedTime
+            if self.totalTime == 0:
+                self.totalTime = elapsedTime
+            else:
+                self.totalTime += elapsedTime
         return elapsedTime
 
     def logLayerTime(self, lyr):
+        time = self.endTimeCount()
         if self.startTime != 0 and self.endTime != 0:
-            time = self.endTimeCount()
             QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)))
 
     def logTotalTime(self):
