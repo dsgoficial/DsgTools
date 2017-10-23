@@ -48,6 +48,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -116,6 +117,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                     featid = endVerticesDict[point][0]
                     recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featid, self.tr('Dangle.'), geometry, classAndGeom['geom']))
                     localProgress.step()
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
 
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
