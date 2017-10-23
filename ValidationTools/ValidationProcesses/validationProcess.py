@@ -299,8 +299,8 @@ class ValidationProcess(QObject):
         inputDictKeys = inputDict.keys()
         if qgisOutputVector:
             for feat in qgisOutputVector.dataProvider().getFeatures():
-                if feat.id() in inputDictKeys:
-                    inputDict[feat.id()]['featList'].append(feat)
+                if feat[keyColumn] in inputDictKeys:
+                    inputDict[feat[keyColumn]]['featList'].append(feat)
         elif featureTupleList:
             for gfid, gf in featureTupleList:
                 if gfid in inputDictKeys and gf['classname'] == pgInputLayer.name():
