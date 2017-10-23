@@ -47,6 +47,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -86,6 +87,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] + self.tr(' have out of bounds angle(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no out of bounds angles on ') + classAndGeom['tableName'] + '.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             if error:
                 self.setStatus(self.tr('There are features with angles out of bounds. Check log.'), 4) #Finished with errors
             else:
