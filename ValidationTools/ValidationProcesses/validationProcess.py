@@ -291,7 +291,6 @@ class ValidationProcess(QObject):
         isMulti = QgsWKBTypes.isMultiType(int(pgInputLayer.wkbType())) #
         #making the changes and inserts
         #this request only takes ids to build inputDict
-        #after doing that, 
         request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry).setSubsetOfAttributes([keyColumn], pgInputLayer.fields() )
         for feature in request:
             inputDict[feature.id()] = []
