@@ -51,6 +51,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             refKey = self.parameters['Reference and Layers'][0]
@@ -87,6 +88,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
                 self.updateOriginalLayerV2(lyr, None, featureList=snappedFeatures)
+                self.logLayerTime(clDict['lyrName'])
 
                 localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['tableName']+ self.tr(' succesfully.\n')
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
