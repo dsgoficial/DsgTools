@@ -315,20 +315,28 @@ class ValidationProcess(QObject):
                 if i == 0:
                     #let's update this feature
                     newGeom = outFeats[i].geometry()
-                    if isMulti:
-                        newGeom.convertToMultiType()
-                    feature.setGeometry(newGeom)
-                    pgInputLayer.updateFeature(feature)
+                    if newGeom:
+                        if isMulti:
+                            newGeom.convertToMultiType()
+                        feature.setGeometry(newGeom)
+                        pgInputLayer.updateFeature(feature)
+                    else:
+                        if id not in idsToRemove:
+                            idsToRemove.append(id)
                 else:
                     #for the rest, let's add them
                     newFeat = QgsFeature(feature)
                     newGeom = outFeats[i].geometry()
-                    if isMulti:
-                        newGeom.convertToMultiType()
-                    newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex(keyColumn)
-                    newFeat.setAttribute(idx, provider.defaultValue(idx))
-                    addList.append(newFeat)
+                    if newGeom:
+                        if isMulti and newGeom:
+                            newGeom.convertToMultiType()
+                        newFeat.setGeometry(newGeom)
+                        idx = newFeat.fieldNameIndex(keyColumn)
+                        newFeat.setAttribute(idx, provider.defaultValue(idx))
+                        addList.append(newFeat)
+                    else:
+                        if id not in idsToRemove:
+                            idsToRemove.append(id)
             #in the case we don't find features in the output we should mark them to be removed
             if len(outFeats) == 0 and deleteFeatures:
                 idsToRemove.append(id)
