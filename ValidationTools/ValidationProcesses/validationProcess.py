@@ -27,7 +27,7 @@ from PyQt4.QtCore import QVariant
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField
+from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -217,7 +217,8 @@ class ValidationProcess(QObject):
         """
         Updates the original layer using the grass output layer
         pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
+        qgisOutputVector: qgis output layer
+        Speed up tips: http://nyalldawson.net/2016/10/speeding-up-your-pyqgis-scripts/
         """
         provider = pgInputLayer.dataProvider()
         # getting keyColumn because we want to be generic
@@ -261,6 +262,76 @@ class ValidationProcess(QObject):
                     addList.append(newFeat)
             #in the case we don't find features in the output we should mark them to be removed
             if len(outFeats) == 0:
+                idsToRemove.append(id)
+        #pushing the changes into the edit buffer
+        pgInputLayer.addFeatures(addList, True)
+        #removing features from the layer.
+        pgInputLayer.deleteFeatures(idsToRemove)
+
+    def updateOriginalLayerV2(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None, deleteFeatures = True):
+        """
+        Updates the original layer using the grass output layer
+        pgInputLyr: postgis input layer
+        qgisOutputVector: qgis output layer
+        Speed up tips: http://nyalldawson.net/2016/10/speeding-up-your-pyqgis-scripts/
+        1- Make pgIdList, by querying it with flag QgsFeatureRequest.NoGeometry
+        2- Build output dict
+        3- Perform operation
+        """
+        provider = pgInputLayer.dataProvider()
+        # getting keyColumn because we want to be generic
+        uri = QgsDataSourceURI(pgInputLayer.dataProvider().dataSourceUri())
+        keyColumn = uri.keyColumn()
+        # starting edition mode
+        pgInputLayer.startEditing()
+        addList = []
+        idsToRemove = []
+        inputDict = dict()
+        #this is done to work generically with output layers that are implemented different from ours
+        isMulti = QgsWKBTypes.isMultiType(int(pgInputLayer.wkbType())) #
+        #making the changes and inserts
+        #this request only takes ids to build inputDict
+        #after doing that, 
+        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry).setSubsetOfAttributes([keyColumn], pgInputLayer.fields() )
+        for feature in request:
+            inputDict[feature.id()] = []
+        inputDictKeys = inputDict.keys()
+        if qgisOutputVector:
+            for feat in qgisOutputVector.dataProvider().getFeatures():
+                if feat.id() in inputDictKeys:
+                    inputDict[feat.id()].append(feat)
+        elif featureTupleList:
+            for gfid, gf in featureTupleList:
+                if gfid in inputDictKeys and gf['classname'] == pgInputLayer.name():
+                    inputDict[gfid].append(gf)
+        else:
+            for feat in featureList:
+                if feat.id() in inputDictKeys:
+                    inputDict[feat.id()].append(feat)
+        #finally, do what must be done
+        for id in inputDictKeys:
+            #starting to make changes
+            for i in range(len(inputDict[id])):
+                outFeats = inputDict[id]
+                if i == 0:
+                    #let's update this feature
+                    newGeom = outFeats[i].geometry()
+                    if isMulti:
+                        newGeom.convertToMultiType()
+                    feature.setGeometry(newGeom)
+                    pgInputLayer.updateFeature(feature)
+                else:
+                    #for the rest, let's add them
+                    newFeat = QgsFeature(feature)
+                    newGeom = outFeats[i].geometry()
+                    if isMulti:
+                        newGeom.convertToMultiType()
+                    newFeat.setGeometry(newGeom)
+                    idx = newFeat.fieldNameIndex(keyColumn)
+                    newFeat.setAttribute(idx, provider.defaultValue(idx))
+                    addList.append(newFeat)
+            #in the case we don't find features in the output we should mark them to be removed
+            if len(outFeats) == 0 and deleteFeatures:
                 idsToRemove.append(id)
         #pushing the changes into the edit buffer
         pgInputLayer.addFeatures(addList, True)
