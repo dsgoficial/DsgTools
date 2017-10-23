@@ -56,6 +56,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -89,6 +90,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from {0}.{1}').format(cl['tableSchema'], cl['tableName']) + self.tr(' with overlay errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('All features from {0}.{1} overlayed to elements from {2}.{3}.').format(cl['tableSchema'], cl['tableName'], overlayer['tableSchema'], overlayer['tableName']), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(cl['tableSchema'] + '.' + cl['tableName'])
             if error:
                 self.setStatus(self.tr('There are overlay errors. Check log.'), 4) #Finished with errors
             else:
