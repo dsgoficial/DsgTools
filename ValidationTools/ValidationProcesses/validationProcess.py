@@ -525,8 +525,8 @@ class ValidationProcess(QObject):
     def logLayerTime(self, lyr):
         time = self.endTimeCount()
         if self.startTime != 0 and self.endTime != 0:
-            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)))
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
     def logTotalTime(self):
         if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
-            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)))
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
