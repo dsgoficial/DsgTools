@@ -47,6 +47,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -78,7 +79,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                         for r in result:
                             featId, geom = r
                             recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featId, self.tr('Not simple geometry.'), geom, classAndGeom['geom']))
-
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             # storing flags
             if len(recordFlagList) > 0:
                 numberOfProblems = self.addFlag(recordFlagList)
