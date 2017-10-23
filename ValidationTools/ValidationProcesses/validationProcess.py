@@ -526,4 +526,4 @@ class ValidationProcess(QObject):
 
     def logTotalTime(self):
         if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
-            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime))
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)))
