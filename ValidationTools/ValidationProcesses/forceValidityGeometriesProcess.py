@@ -53,6 +53,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
 
@@ -77,6 +78,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
                 problems = self.abstractDb.forceValidity(processTableName, self.flagsDict[cl], keyColumn)
                 localProgress.step()
                 numberOfProblems += problems
+                self.logLayerTime(cl) #check this time later (I guess time will be counted twice due to postProcess)
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(self.tr('{0} features from {1} were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
