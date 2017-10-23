@@ -46,6 +46,7 @@ class RemoveSmallAreasProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
 
@@ -76,6 +77,7 @@ class RemoveSmallAreasProcess(ValidationProcess):
                 numberOfProblems += problems
                 
                 QgsMessageLog.logMessage(str(problems) + self.tr(' features from ') + cl + self.tr(' were removed.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(cl)
             self.setStatus(str(numberOfProblems) + self.tr(' features were removed.'), 1) #Finished with flags
             return 1
         except Exception as e:
