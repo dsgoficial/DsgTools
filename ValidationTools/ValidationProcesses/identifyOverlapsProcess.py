@@ -47,6 +47,7 @@ class IdentifyOverlapsProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -75,6 +76,7 @@ class IdentifyOverlapsProcess(ValidationProcess):
                         for result in overlaps:
                             id, reason, geom = result
                             overlapsRecordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], id, reason, geom, classAndGeom['geom']))
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             # storing flags
             if len(overlapsRecordList) > 0:
                 numberOfOverlappingGeom = self.addFlag(overlapsRecordList)
