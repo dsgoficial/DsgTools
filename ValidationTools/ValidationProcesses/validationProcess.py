@@ -291,41 +291,42 @@ class ValidationProcess(QObject):
         isMulti = QgsWKBTypes.isMultiType(int(pgInputLayer.wkbType())) #
         #making the changes and inserts
         #this request only takes ids to build inputDict
-        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry).setSubsetOfAttributes([keyColumn], pgInputLayer.fields() )
+        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
         for feature in pgInputLayer.getFeatures(request):
-            inputDict[feature.id()] = []
+            inputDict[feature.id()] = dict()
+            inputDict[feature.id()]['featList'] = []
+            inputDict[feature.id()]['featWithoutGeom'] = feature
         inputDictKeys = inputDict.keys()
         if qgisOutputVector:
             for feat in qgisOutputVector.dataProvider().getFeatures():
                 if feat.id() in inputDictKeys:
-                    inputDict[feat.id()].append(feat)
+                    inputDict[feat.id()]['featList'].append(feat)
         elif featureTupleList:
             for gfid, gf in featureTupleList:
                 if gfid in inputDictKeys and gf['classname'] == pgInputLayer.name():
-                    inputDict[gfid].append(gf)
+                    inputDict[gfid]['featList'].append(gf)
         else:
             for feat in featureList:
                 if feat.id() in inputDictKeys:
-                    inputDict[feat.id()].append(feat)
+                    inputDict[feat.id()]['featList'].append(feat)
         #finally, do what must be done
         for id in inputDictKeys:
+            outFeats = inputDict[id]['featList']
             #starting to make changes
-            for i in range(len(inputDict[id])):
-                outFeats = inputDict[id]
+            for i in range(len(outFeats)):
                 if i == 0:
                     #let's update this feature
                     newGeom = outFeats[i].geometry()
                     if newGeom:
                         if isMulti:
                             newGeom.convertToMultiType()
-                        feature.setGeometry(newGeom)
-                        pgInputLayer.updateFeature(feature)
+                        pgInputLayer.changeGeometry(id, newGeom) #It is faster according to the api
                     else:
                         if id not in idsToRemove:
                             idsToRemove.append(id)
                 else:
                     #for the rest, let's add them
-                    newFeat = QgsFeature(feature)
+                    newFeat = QgsFeature(inputDict[id]['featWithoutGeom'])
                     newGeom = outFeats[i].geometry()
                     if newGeom:
                         if isMulti and newGeom:
