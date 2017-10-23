@@ -47,6 +47,7 @@ class SnapToGridProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithElem = self.parameters['Classes']
@@ -79,6 +80,7 @@ class SnapToGridProcess(ValidationProcess):
                 
                 #setting status
                 QgsMessageLog.logMessage(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             #returning success
             self.setStatus(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped successfully.'), 1) #Finished
             return 1
