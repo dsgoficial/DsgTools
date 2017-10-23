@@ -46,6 +46,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
 
@@ -73,6 +74,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(str(problems) + self.tr(' duplicated features from ') + cl + self.tr(' were removed.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(cl)
             self.setStatus(str(numberOfProblems) + self.tr(' duplicated features were removed.'), 1)
             return 1
         except Exception as e:
