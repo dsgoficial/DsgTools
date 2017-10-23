@@ -86,7 +86,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['tableName'], parent=self.iface.mapCanvas())
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
-                self.updateOriginalLayer(lyr, None, featureList=snappedFeatures)
+                self.updateOriginalLayerV2(lyr, None, featureList=snappedFeatures)
 
                 localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['tableName']+ self.tr(' succesfully.\n')
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
