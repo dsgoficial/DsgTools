@@ -97,7 +97,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         lyr.updateFeature(feat)
                         lyr.addFeatures(addList,True)
                     localProgress.step()
-                    self.logLayerTime(classAndGeom['lyrName'])
+                self.logLayerTime(classAndGeom['lyrName'])
                 localProgress.step()
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
