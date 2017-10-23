@@ -292,7 +292,7 @@ class ValidationProcess(QObject):
         #making the changes and inserts
         #this request only takes ids to build inputDict
         request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry).setSubsetOfAttributes([keyColumn], pgInputLayer.fields() )
-        for feature in request:
+        for feature in pgInputLayer.getFeatures(request):
             inputDict[feature.id()] = []
         inputDictKeys = inputDict.keys()
         if qgisOutputVector:
