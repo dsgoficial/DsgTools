@@ -414,7 +414,7 @@ class ValidationProcess(QObject):
         #getting the output as a QgsVectorLayer
         outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
         #updating the original layer (lyr)
-        self.updateOriginalLayer(lyr, outputLayer)
+        self.updateOriginalLayerV2(lyr, outputLayer)
         #dropping the temp table as we don't need it anymore
         self.abstractDb.dropTempTable(processTableName)
     
@@ -501,7 +501,7 @@ class ValidationProcess(QObject):
         for layer in layerList:
             classname = layer.name()
             tupplelist = [(feature['featid'], feature) for feature in outputLayer.getFeatures()]
-            self.updateOriginalLayer(layer, None, featureTupleList=tupplelist)
+            self.updateOriginalLayerV2(layer, None, featureTupleList=tupplelist)
 
     def getGeometryColumnFromLayer(self, layer):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())

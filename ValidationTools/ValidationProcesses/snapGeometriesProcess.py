@@ -65,7 +65,7 @@ class SnapGeometriesProcess(ValidationProcess):
             
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(layer, outputLayer)
+        self.updateOriginalLayerV2(layer, outputLayer)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
