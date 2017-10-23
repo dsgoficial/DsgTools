@@ -47,6 +47,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
@@ -96,6 +97,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         lyr.updateFeature(feat)
                         lyr.addFeatures(addList,True)
                     localProgress.step()
+                    self.logLayerTime(classAndGeom['lyrName'])
                 localProgress.step()
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
