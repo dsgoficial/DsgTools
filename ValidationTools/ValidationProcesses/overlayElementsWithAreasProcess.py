@@ -141,7 +141,8 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         return []
     
     def runOverlay(self, alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = False):
-        ret = processing.runalg(alg, layerA, inputType, layerB, overlayType, False, extent, snap, minArea, inputType+1, None) #this +1 just worked, programming dog mode on
+        ret = processing.runalg(alg, layerA, inputType % 2, layerB, overlayType, False, extent, snap, minArea, inputType+1, None) #this +1 just worked, programming dog mode on,
+                                                                                                                                  # The %2 is to adjust to interface parameter
         if not ret:
             raise Exception(self.tr('Problem executing grass7:v.overlay. Check your installed libs.\n'))
         
