@@ -48,7 +48,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
-            self.opTypeDict = OrderedDict([(self.tr('Overlay and Keep Elements'),-1), (self.tr('Remove outside elements'),0), (self.tr('Remove inside elements'),1)])
+            self.opTypeDict = OrderedDict([(self.tr('Overlay and Keep Elements'),-1), (self.tr('Remove outside elements'),0), (self.tr('Remove inside elements'),2)])
             self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': OrderedDict({'referenceDictList':overlayInterfaceDict, 'layersDictList':interfaceDict}), 'Overlay Type':deque(self.opTypeDict.keys())}
 
     def execute(self):
@@ -122,26 +122,22 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         minArea = self.parameters['MinArea']
         overlayType = self.opTypeDict[self.parameters['Overlay Type']]
         inputType = layerA.geometryType()
-        if overlayType == -1:
-            deleteClause = False
-        else:
-            deleteClause = True
 
-        if inputType == 1 and overlayType == -1:
-            #this is done because OR is not implemented for lines. So we must do XOR and AND
+        if overlayType == -1:
+            #We must do NOT and AND to keep both inside and outside
             outputFeatureList = []
-            for i in range(2):
+            for i in [-1,0]:
                 output = self.runOverlay(alg, layerA, inputType, layerB, i, extent, snap, minArea, outputFeatureList = True)
                 if isinstance(output, dict):
                     return output['error']
                 else:
                     outputFeatureList += output
-            self.updateOriginalLayerV2(layerA, None, featureList = outputFeatureList, deleteFeatures = False)
+            self.updateOriginalLayerV2(layerA, None, featureList = outputFeatureList)
         else:
             output = self.runOverlay(alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = True)
             if isinstance(output, dict):
                 return output['error']
-            self.updateOriginalLayerV2(layerA, output, deleteFeatures = deleteClause)
+            self.updateOriginalLayerV2(layerA, output)
     
     def runOverlay(self, alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = False):
         ret = processing.runalg(alg, layerA, inputType, layerB, overlayType, False, extent, snap, minArea, inputType+1, None) #this +1 just worked, programming dog mode on
