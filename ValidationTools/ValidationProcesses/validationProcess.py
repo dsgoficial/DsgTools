@@ -287,6 +287,7 @@ class ValidationProcess(QObject):
         uri = QgsDataSourceURI(pgInputLayer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         # starting edition mode
+        pgInputLayer.startEditing()
         pgInputLayer.beginEditCommand('Updating layer')
         addList = []
         idsToRemove = []
