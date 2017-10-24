@@ -104,6 +104,9 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
     def runProcessinAlg(self, layerA, layerB):
         """
         Runs the actual grass process
+        'Overlay and Keep Elements': value -1, which stands for OR operations in GRASS
+        'Remove outside elements': value 0, which stands for AND operation in GRASS
+        'Remove inside elements': value 1, which stands for XOR operation in GRASS
         """
         alg = 'grass7:v.overlay'
 
@@ -112,14 +115,35 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         (xAmin, xAmax, yAmin, yAmax) = extentA.xMinimum(), extentA.xMaximum(), extentA.yMinimum(), extentA.yMaximum()
         extentB = layerB.extent()
         (xmin, xmax, ymin, ymax) = min(extentB.xMinimum(),xAmin), max(extentB.xMaximum(), xAmax), min(extentB.yMinimum(), yAmin), max(extentB.yMaximum(), yAmax)
-        
+
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
         
         snap = self.parameters['Snap']
         minArea = self.parameters['MinArea']
         overlayType = self.opTypeDict[self.parameters['Overlay Type']]
         inputType = layerA.geometryType()
-        
+        if overlayType == -1:
+            deleteClause = False
+        else:
+            deleteClause = True
+
+        if inputType == 1 and overlayType == -1:
+            #this is done because OR is not implemented for lines. So we must do XOR and AND
+            outputFeatureList = []
+            for i in range(2):
+                output = self.runOverlay(alg, layerA, inputType, layerB, i, extent, snap, minArea, outputFeatureList = True)
+                if isinstance(output, dict):
+                    return output['error']
+                else:
+                    outputFeatureList += output
+            self.updateOriginalLayerV2(layerA, None, featureList = outputFeatureList, deleteFeatures = False)
+        else:
+            output = self.runOverlay(alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = True)
+            if isinstance(output, dict):
+                return output['error']
+            self.updateOriginalLayerV2(layerA, output, deleteFeatures = deleteClause)
+    
+    def runOverlay(self, alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = False):
         ret = processing.runalg(alg, layerA, inputType, layerB, overlayType, False, extent, snap, minArea, inputType+1, None) #this +1 just worked, programming dog mode on
         if not ret:
             raise Exception(self.tr('Problem executing grass7:v.overlay. Check your installed libs.\n'))
@@ -131,11 +155,13 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             if 'a_' == field.name()[0:2]:
                 idx = outputLayer.fieldNameIndex(field.name())
                 outputLayer.renameAttribute(idx, field.name()[2::])
-        self.updateOriginalLayer(layerA, outputLayer)
-
+        outputLayer.commitChanges()
         #getting error flags
         if 'error' in ret.keys():
             errorLayer = processing.getObject(ret['error'])
-            return self.getProcessingErrors(errorLayer)
+            return {'error':self.getProcessingErrors(errorLayer)}
+        #if there is no error flag, iterate over outputLayer
+        if outputFeatureList:
+            return [feature for feature in outputLayer.getFeatures()]
         else:
-            return []
+            return outputLayer

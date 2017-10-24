@@ -312,8 +312,8 @@ class ValidationProcess(QObject):
                     inputDict[gfid]['featList'].append(gf)
         else:
             for feat in featureList:
-                if feat.id() in inputDictKeys:
-                    inputDict[feat.id()]['featList'].append(feat)
+                if feat[keyColumn] in inputDictKeys:
+                    inputDict[feat[keyColumn]]['featList'].append(feat)
         #finally, do what must be done
         for id in inputDictKeys:
             outFeats = inputDict[id]['featList']
