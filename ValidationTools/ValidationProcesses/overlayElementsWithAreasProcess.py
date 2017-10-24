@@ -138,6 +138,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             if isinstance(output, dict):
                 return output['error']
             self.updateOriginalLayerV2(layerA, output)
+        return []
     
     def runOverlay(self, alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = False):
         ret = processing.runalg(alg, layerA, inputType, layerB, overlayType, False, extent, snap, minArea, inputType+1, None) #this +1 just worked, programming dog mode on
