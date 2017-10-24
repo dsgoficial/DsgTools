@@ -126,7 +126,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         if overlayType == -1:
             #We must do NOT and AND to keep both inside and outside
             outputFeatureList = []
-            for i in [-1,0]:
+            for i in [0,2]:
                 output = self.runOverlay(alg, layerA, inputType, layerB, i, extent, snap, minArea, outputFeatureList = True)
                 if isinstance(output, dict):
                     return output['error']
