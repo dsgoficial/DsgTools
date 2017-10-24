@@ -132,7 +132,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                     return output['error']
                 else:
                     outputFeatureList += output
-            self.updateOriginalLayerV2(layerA, None, featureList = outputFeatureList)
+            self.updateOriginalLayerV2(layerA, None, featureList = outputFeatureList, deleteFeatures = False)
         else:
             output = self.runOverlay(alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = False)
             if isinstance(output, dict):
