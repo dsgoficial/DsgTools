@@ -292,6 +292,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem obtaining database version! Please, check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return False
+
+        if 'version' not in self.reclassificationDict.keys():
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('File not formated propperly.'))
+            return False
             
         if self.reclassificationDict['version'] != version:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database version does not match the field toolbox version.'))
