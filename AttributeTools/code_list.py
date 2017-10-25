@@ -151,6 +151,8 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if 'FilterExpression' in keys:
             valueDict = self.makeValueRelationDict(valueDict)
             keys = valueDict.keys()
+        elif 'Relation' in keys:
+            return
 
         self.tableWidget.setRowCount(len(keys))
         
