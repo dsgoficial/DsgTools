@@ -299,12 +299,15 @@ class PostGISLayerLoader(EDGVLayerLoader):
                             #Do value relation
                             lyr.setEditorWidgetV2(i,'ValueRelation')
                             #make filter
-                            filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
-                            allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
-                            #make editDict
-                            dom = domLayerDict[lyrName][attrName]
-                            editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
-                            lyr.setEditorWidgetV2Config(i,editDict)
+                            if 'constraintList' in domainDict[lyrName]['columns'][attrName].keys():
+                                filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
+                                allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
+                                #make editDict
+                                if lyrName in domLayerDict.keys():
+                                    if attrName in domLayerDict[lyrName].keys():
+                                        dom = domLayerDict[lyrName][attrName]
+                                        editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
+                                        lyr.setEditorWidgetV2Config(i,editDict)
                         else:
                             #Value Map
                             lyr.setEditorWidgetV2(i,'ValueMap')
