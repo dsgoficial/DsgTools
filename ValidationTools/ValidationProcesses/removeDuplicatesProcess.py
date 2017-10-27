@@ -41,6 +41,9 @@ class RemoveDuplicatesProcess(ValidationProcess):
         """
         return self.tr('Identify Duplicated Geometries')
 
+    def postProcess(self):
+        return self.preProcess()
+
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
