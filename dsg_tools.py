@@ -246,8 +246,8 @@ class DsgTools:
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
         rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
-        dsgtoolsop = self.addMenu(self.dsgTools, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), ':/plugins/DsgTools/icons/militarySimbology.png')
-        self.createMilitaryMenu(dsgtoolsop, ':/plugins/DsgTools/icons/militarySimbology.png')
+        dsgtoolsop = self.addMenu(self.dsgTools, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), ':/plugins/DsgTools/icons/eb.png')
+        self.createMilitaryMenu(dsgtoolsop, ':/plugins/DsgTools/icons/eb.png')
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
