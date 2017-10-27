@@ -41,6 +41,12 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
             self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
+    
+    def preProcess(self):
+        """
+        Gets the process that should be execute before this one
+        """
+        return self.tr('Remove Empty Geometries')
 
     def execute(self):
         """
