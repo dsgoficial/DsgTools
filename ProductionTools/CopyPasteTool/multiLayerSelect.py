@@ -191,7 +191,7 @@ class MultiLayerSelection(QgsMapTool):
                     featGeom = feat.geometry()
                     if not featGeom:
                         continue
-                    if feat.geometry().intersects(bbRect): #tests if feature intersects tool bounding box, otherwise skip it
+                    if featGeom.intersects(bbRect): #tests if feature intersects tool bounding box, otherwise skip it
                         lyr.startEditing() #starts layer editting
                         if e.button() == QtCore.Qt.RightButton:
                             #set target, start edit and stop
