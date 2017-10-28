@@ -41,6 +41,12 @@ class RemoveSmallAreasProcess(ValidationProcess):
         """
         return self.tr('Identify Small Areas')
 
+    def postProcess(self):
+        """
+        Gets the process that should be execute before this one
+        """
+        return self.tr('Identify Small Areas')
+
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
