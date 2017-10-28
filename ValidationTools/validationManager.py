@@ -158,6 +158,8 @@ class ValidationManager(QObject):
                 return -1
             self.lastParameters = params
             self.lastProcess = process
+        else:
+            params = self.lastParameters
         #execute each process
         for process in processChain:
             QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
