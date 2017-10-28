@@ -232,6 +232,31 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         QApplication.restoreOverrideCursor()
 
     @pyqtSlot(bool)
+    def on_reRunButton_clicked(self):
+        """
+        Re-runs last process with the same attributes.
+        """
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        try:
+            procReturn = self.validationManager.runLastProcess()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            procReturn = 0
+            QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
+        self.populateProcessList()
+        if procReturn == 0:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
+        elif procReturn == -1:
+            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
+        elif procReturn == -2:
+            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('No previous process run this session.'))
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
+            #executou! show!
+
+    @pyqtSlot(bool)
     def on_runButton_clicked(self):
         """
         Runs the current selected process
