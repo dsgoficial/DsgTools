@@ -131,6 +131,18 @@ class ValidationManager(QObject):
         processChain = self.getProcessChain(process)
         #get parameters from dialog
         params = self.getParametersWithUi(processChain)
+        if params == -1:
+            return -1
+        #execute each process
+        for process in processChain:
+            QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            ret = process.execute() #run bitch run!
+            #status = currProc.getStatus() #must set status
+            QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            process.logTotalTime()
+            if ret == 0:
+                return 0
+        return 1
     
     def getParametersWithUi(self, processChain):
         """
