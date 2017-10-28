@@ -451,6 +451,7 @@ class ValidationProcess(QObject):
         coverage = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid), "coverage", "memory")
         provider = coverage.dataProvider()
         coverage.startEditing()
+        coverage.beginEditCommand('Creating coverage layer') #speedup
 
         #defining fields
         if not attributeTupple:
@@ -493,6 +494,7 @@ class ValidationProcess(QObject):
         
         #inserting new features into layer
         coverage.addFeatures(featlist, True)
+        coverage.endEditCommand()
         coverage.commitChanges()
         return coverage
 
