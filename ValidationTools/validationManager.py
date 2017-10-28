@@ -99,16 +99,19 @@ class ValidationManager(QObject):
         """
         localList = []
         currProc = self.instantiateProcessByName(self.processDict[processAlias], False)
+        parameterDict = currProc.parameters
         preProcessAlias = currProc.preProcess()
         if preProcessAlias:
-            preProcess = self.instantiateProcessByName(self.processDict[preProcessAlias])
+            preProcess = self.instantiateProcessByName(self.processDict[preProcessAlias], False)
             localList.append(preProcess)
+            parameterDict = dict(preProcess.parameters, **parameterDict) #this is done this way not to overide process original classes
         localList.append(currProc)
         postProcessAlias = currProc.postProcess()
         if postProcessAlias:
-            postProcess = self.instantiateProcessByName(self.processDict[postProcessAlias])
+            postProcess = self.instantiateProcessByName(self.processDict[postProcessAlias], False)
             localList.append(postProcess)
-        return localList
+            parameterDict = dict(postProcess.parameters, **parameterDict) #this is done this way not to overide process original classes
+        return localList, parameterDict
     
     def executeProcessV2(self, process):
         """
@@ -128,14 +131,15 @@ class ValidationManager(QObject):
                 return 0
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         #get process chain
-        processChain = self.getProcessChain(process)
+        processChain, parameterDict = self.getProcessChain(process)
         #get parameters from dialog
-        params = self.getParametersWithUi(processChain)
+        params = self.getParametersWithUi(processChain, parameterDict)
         if params == -1:
             return -1
         #execute each process
         for process in processChain:
             QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            process.setParameters(params)
             ret = process.execute() #run bitch run!
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -144,16 +148,11 @@ class ValidationManager(QObject):
                 return 0
         return 1
     
-    def getParametersWithUi(self, processChain):
+    def getParametersWithUi(self, processChain, parameterDict):
         """
         Builds interface
         """
-        parameterDict = dict()
-        parameterNameList = []
-        for process in processChain:
-            parameterDict = dict(process.parameters, **process)
-            parameterNameList.append(process.processAlias)
-        processText = ', '.join(parameterNameList)
+        processText = ', '.join([process.processAlias for process in processChain])
         dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText))
         if dlg.exec_() == 0:
             return -1
