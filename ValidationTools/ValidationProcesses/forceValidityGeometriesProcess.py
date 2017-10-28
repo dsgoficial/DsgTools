@@ -46,7 +46,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         """
         Gets the process that should be execute after this one
         """
-        return self.tr('Deaggregate Geometries')
+        return [self.tr('Deaggregate Geometries'), self.tr('Identify Invalid Geometries')] #more than one post process (this is treated in validationManager)
 
     def execute(self):
         """
