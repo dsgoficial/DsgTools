@@ -109,7 +109,10 @@ class ValidationManager(QObject):
         Returns currentList and parameterDict
         """
         localList = []
-        parameterDict = inputParameterDict
+        if not inputParameterDict:
+            parameterDict = dict()
+        else:
+            parameterDict = inputParameterDict
         if inputItem:
             if not isinstance(inputItem, list):
                 processAliasList = [inputItem]
