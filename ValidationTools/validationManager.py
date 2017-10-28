@@ -91,6 +91,24 @@ class ValidationManager(QObject):
                 #instantiating the class
                 currProc = klass(self.postgisDb, self.iface, instantiating)
                 return currProc
+               
+    def getProcessChain(self, processAlias):
+        """
+        Method to determine all processes that must be run
+        This is a simple implementation, a recursive approach must be done if we want complex process graphs
+        """
+        localList = []
+        currProc = self.instantiateProcessByName(self.processDict[processAlias], False)
+        preProcessAlias = currProc.preProcess()
+        if preProcessAlias:
+            preProcess = self.instantiateProcessByName(self.processDict[preProcessAlias])
+            localList.append(preProcess)
+        localList.append(currProc)
+        postProcessAlias = currProc.postProcess()
+        if postProcessAlias:
+            postProcess = self.instantiateProcessByName(self.processDict[postProcessAlias])
+            localList.append(postProcess)
+        return localList
 
     def executeProcess(self, process):
         """
