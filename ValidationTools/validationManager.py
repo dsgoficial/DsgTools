@@ -39,6 +39,8 @@ class ValidationManager(QObject):
         self.postgisDb = postgisDb
         self.iface = iface
         self.processDict = dict()
+        self.lastProcess = None
+        self.lastParameters = None
         try:
             #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
@@ -123,6 +125,12 @@ class ValidationManager(QObject):
                 localList.append(process)
                 parameterDict = dict(process.parameters, **parameterDict) #this is done this way not to overide process original classes
         return localList, parameterDict
+
+    def runLastProcess(self):
+        if self.lastProcess and self.lastParameters:
+            return self.executeProcessV2(self.lastProcess)
+        else:
+            return -2
     
     def executeProcessV2(self, process):
         """
@@ -144,9 +152,12 @@ class ValidationManager(QObject):
         #get process chain
         processChain, parameterDict = self.getProcessChain(process)
         #get parameters from dialog
-        params = self.getParametersWithUi(processChain, parameterDict)
-        if params == -1:
-            return -1
+        if not self.lastParameters:
+            params = self.getParametersWithUi(processChain, parameterDict)
+            if params == -1:
+                return -1
+            self.lastParameters = params
+            self.lastProcess = process
         #execute each process
         for process in processChain:
             QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
