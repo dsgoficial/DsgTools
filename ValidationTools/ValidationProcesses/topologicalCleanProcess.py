@@ -96,19 +96,18 @@ class TopologicalCleanProcess(ValidationProcess):
             coverage = self.createUnifiedLayer(classlist)
             result, output = self.runProcessinAlg(coverage)
             self.splitUnifiedLayer(output, classlist)
-            try:
-                QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
-            except:
-                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            # try:
+            #     QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
+            # except:
+            #     QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
-            # storing flags
+            # storing flag
             if len(result) > 0:
                 cl = 'unified layer'
                 error = True
                 recordList = []
                 for tupple in result:
-                    recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1], 'geom'))
-                    self.addClassesToBeDisplayedList(cl)
+                    recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1], ''))
                 numberOfProblems = self.addFlag(recordList)
                 QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + cl + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:

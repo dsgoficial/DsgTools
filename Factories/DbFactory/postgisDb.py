@@ -919,11 +919,15 @@ class PostgisDb(AbstractDb):
                     dimension = self.getDimension(record[3]) # getting geometry dimension
                 except Exception as e:
                     raise e
-                tableSchema, tableName = record[0].split('.')
                 # specific EPSG search
-                parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':record[4]}
-                srid = self.findEPSG(parameters=parameters)
                 flagSRID = self.findEPSG(parameters={'tableSchema':'validation', 'tableName':'aux_flags_validacao_p', 'geometryColumn':'geom'})
+                try:
+                    tableSchema, tableName = record[0].split('.')
+                    parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':record[4]}
+                    srid = self.findEPSG(parameters=parameters)
+                except:
+                    srid = flagSRID
+                #actual flag insertion
                 sql = self.gen.insertFlagIntoDb(record[0], record[1], record[2], record[3], srid, processName, dimension, record[4], flagSRID)
                 if not query.exec_(sql):
                     if useTransaction:
