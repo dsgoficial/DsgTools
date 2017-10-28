@@ -97,22 +97,28 @@ class ValidationManager(QObject):
         Method to determine all processes that must be run
         This is a simple implementation, a recursive approach must be done if we want complex process graphs
         """
-        localList = []
         currProc = self.instantiateProcessByName(self.processDict[processAlias], False)
-        parameterDict = currProc.parameters
-        if not parameterDict:
-            parameterDict = dict()
-        preProcessAlias = currProc.preProcess()
-        if preProcessAlias:
-            preProcess = self.instantiateProcessByName(self.processDict[preProcessAlias], False)
-            localList.append(preProcess)
-            parameterDict = dict(preProcess.parameters, **parameterDict) #this is done this way not to overide process original classes
-        localList.append(currProc)
+        preProcessList, parameterDict = self.generateProcessObjects(currProc.preProcess(), currProc.parameters)
+        postProcessList, parameterDict = self.generateProcessObjects(currProc.postProcess(), parameterDict)
         postProcessAlias = currProc.postProcess()
-        if postProcessAlias:
-            postProcess = self.instantiateProcessByName(self.processDict[postProcessAlias], False)
-            localList.append(postProcess)
-            parameterDict = dict(postProcess.parameters, **parameterDict) #this is done this way not to overide process original classes
+        localList = preProcessList + [currProc] + postProcessList
+        return localList, parameterDict
+
+    def generateProcessObjects(self, inputItem, inputParameterDict):
+        """
+        Returns currentList and parameterDict
+        """
+        localList = []
+        parameterDict = dict()
+        if inputItem:
+            if not isinstance(inputItem, list):
+                processAliasList = [inputItem]
+            else:
+                processAliasList = inputItem
+            for processAlias in processAliasList:
+                process = self.instantiateProcessByName(self.processDict[processAlias], False)
+                localList.append(process)
+                parameterDict = dict(process.parameters, **inputParameterDict) #this is done this way not to overide process original classes
         return localList, parameterDict
     
     def executeProcessV2(self, process):
