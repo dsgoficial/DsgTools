@@ -121,7 +121,7 @@ class ValidationManager(QObject):
             for processAlias in processAliasList:
                 process = self.instantiateProcessByName(self.processDict[processAlias], False)
                 localList.append(process)
-                parameterDict = dict(process.parameters, **inputParameterDict) #this is done this way not to overide process original classes
+                parameterDict = dict(process.parameters, **parameterDict) #this is done this way not to overide process original classes
         return localList, parameterDict
     
     def executeProcessV2(self, process):
