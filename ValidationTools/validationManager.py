@@ -100,6 +100,8 @@ class ValidationManager(QObject):
         localList = []
         currProc = self.instantiateProcessByName(self.processDict[processAlias], False)
         parameterDict = currProc.parameters
+        if not parameterDict:
+            parameterDict = dict()
         preProcessAlias = currProc.preProcess()
         if preProcessAlias:
             preProcess = self.instantiateProcessByName(self.processDict[preProcessAlias], False)
