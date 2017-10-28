@@ -109,6 +109,45 @@ class ValidationManager(QObject):
             postProcess = self.instantiateProcessByName(self.processDict[postProcessAlias])
             localList.append(postProcess)
         return localList
+    
+    def executeProcessV2(self, process):
+        """
+        Executes a process according to its chain
+        """
+        #checking for running processes
+        try:
+            runningProc = self.postgisDb.getRunningProc()
+        except Exception as e:
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return 0
+        #if there is a running process we should stop
+        QApplication.restoreOverrideCursor()
+        if runningProc != None:
+            if not QtGui.QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                return 0
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        #get process chain
+        processChain = self.getProcessChain(process)
+        #get parameters from dialog
+        params = self.getParametersWithUi(processChain)
+    
+    def getParametersWithUi(self, processChain):
+        """
+        Builds interface
+        """
+        parameterDict = dict()
+        parameterNameList = []
+        for process in processChain:
+            parameterDict = dict(process.parameters, **process)
+            parameterNameList.append(process.processAlias)
+        processText = ', '.join(parameterNameList)
+        dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText))
+        if dlg.exec_() == 0:
+            return -1
+        # get parameters
+        params = dlg.values
+        return params
 
     def executeProcess(self, process):
         """
