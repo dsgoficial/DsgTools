@@ -245,6 +245,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Re-runs last process with the same attributes.
         """
+        if not self.validationManager:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to run process!'))
+            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
             procReturn = self.validationManager.runLastProcess()
