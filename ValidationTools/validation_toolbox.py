@@ -67,12 +67,12 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
+        self.tableView.customContextMenuRequested.connect(self.createContextMenu)
         self.ruleEnforcer = None
         self.attributeRulesEditorPushButton.hide()
         self.itemList = []
 
-    def createMenuEditFlagStatus(self, position):
+    def createContextMenu(self, position):
         """
         Creates the flag menu
         """
@@ -80,10 +80,19 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         item = self.tableView.indexAt(position)
         if item:
             menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
+            menu.addAction(self.tr('Remove flag'), self.removeCurrentFlag)
 #             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
 #             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
     
+    def removeCurrentFlag(self):
+        """
+        Creates the remove flag menu
+        """
+        flagId = self.tableView.selectionModel().selection().indexes().data()
+        self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
+        self.refreshFlags()
+
     @pyqtSlot()
     def on_theSelectionModel_selectionChanged(self):
         """
@@ -291,7 +300,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel.select()
-    
+        self.refreshOnChangeProcessOrClass()
+
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
         """
@@ -303,7 +313,15 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
-            
+
+
+    @pyqtSlot(int, name = 'on_filterTypeComboBox_currentIndexChanged')
+    def refreshOnChangeProcessOrClass(self):
+        filterType = self.filterTypeComboBox.currentText()
+        self.customFilterComboBox.clear()
+        listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
+        self.customFilterComboBox.addItems(listProcessesOrClasses)    
+
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
         """
@@ -343,6 +361,37 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.configWindow.widget.abstractDb.deleteProcessFlags()
             QApplication.restoreOverrideCursor()
             #refresh
+            self.refreshFlags()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+
+    @pyqtSlot(bool)
+    def on_clearSelectedPushButton_clicked(self):
+        """
+        Deletes selected flags on the panel from validation.aux_flags
+        """
+        try:
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
+            filterType = self.filterTypeComboBox.currentText()
+            
+            processName, layerName = None, None
+            # check what is filtered
+            if filterType == self.tr("Process Name"):
+                processName = self.customFilterComboBox.currentText()
+            elif filterType == self.tr("Class Name"):
+                layerName = self.customFilterComboBox.currentText()
+            if (processName or layerName):
+                self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
+            else:
+                QApplication.restoreOverrideCursor()
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
+                return
+            QApplication.restoreOverrideCursor()
+            # refresh View Table with lasting flags
             self.refreshFlags()
         except Exception as e:
             QApplication.restoreOverrideCursor()

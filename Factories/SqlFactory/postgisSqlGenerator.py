@@ -413,8 +413,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
         return sql
     
-    def deleteFlags(self, processName = None, className = None):
-        if not processName and not className:
+    def deleteFlags(self, processName=None, className=None, flagId=None):
+        if not processName and not className and not flagId:
             whereClause = ''
         else:
             clauseList = []
@@ -422,8 +422,17 @@ class PostGISSqlGenerator(SqlGenerator):
                 processClause = """process_name = '{0}'""".format(processName)
                 clauseList.append(processClause)
             if className:
-                classClause = """className = '{0}'""".format(className)
+                classClause = """layer = '{0}'""".format(className)
                 clauseList.append(classClause)
+            if flagId:
+                try:
+                    flagClause
+                    for row in flagId:
+                        flagClauseRow = """id = {0} """.format(row)
+                        clauseList.append(flagClauseRow)
+                except TypeError:
+                    flagClause = """id = {0} """.format(flagId)
+                    clauseList.append(flagClause)
             whereClause = """where {0}""".format(' AND '.join(clauseList))
         sql = """
         DELETE FROM validation.aux_flags_validacao_p 
@@ -1518,4 +1527,25 @@ class PostGISSqlGenerator(SqlGenerator):
         ) as foo 
         where ST_IsEmpty(foo.geom) = 'f'
         """.format(tableSchema, tableName, geomColumn, keyColumn)
+        return sql
+
+    def getProcessOrClassFlags(self, filterType=None):
+        """
+        Returns all process or classes that raised flags
+        """
+        # to allow changing cases as desired
+        filterType = filterType.lower()
+        sql = ""
+        if filterType == "nome do processo":
+            sql = """
+        SELECT DISTINCT process_name 
+            FROM validation.aux_flags_validacao;
+            """
+        elif filterType == "nome da classe":
+            # as a dropdown, it has only 2 options: either it's filtered
+            # by class or process
+            sql = """
+        SELECT DISTINCT layer
+            FROM validation.aux_flags_validacao;
+            """
         return sql
