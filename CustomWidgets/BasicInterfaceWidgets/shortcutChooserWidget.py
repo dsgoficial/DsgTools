@@ -123,6 +123,9 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     
     def setShortcut(self, shortcut):
         pass
+    
+    def getShortcut(self):
+        return self.modifiers+self.key
 
     def updateShortcutText(self):
         keySequence = QKeySequence(self.modifiers+self.key)
