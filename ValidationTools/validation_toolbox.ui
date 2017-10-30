@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QTabWidget" name="validationTabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab">
        <attribute name="title">
@@ -129,7 +129,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="DsgCustomComboBox" name="widget" native="true"/>
+         <widget class="DsgCustomComboBox" name="customFilterComboBox" native="true"/>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QTableView" name="tableView">

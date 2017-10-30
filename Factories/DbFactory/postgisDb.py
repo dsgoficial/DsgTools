@@ -939,13 +939,14 @@ class PostgisDb(AbstractDb):
         else:
             return 0
     
-    def deleteProcessFlags(self, processName = None, className = None):
+    def deleteProcessFlags(self, processName=None, className=None, flagId=None):
         """
         Deletes flags from database
         processName: process name that will have all flags removed
+        className: class name that will have all flags removed
         """
         self.checkAndOpenDb()
-        sql = self.gen.deleteFlags(processName = processName, className = className)
+        sql = self.gen.deleteFlags(processName = processName, className = className, flagId = flagId)
         sqlList = sql.split('#')
         query = QSqlQuery(self.db)
         self.db.transaction()
@@ -3445,3 +3446,19 @@ class PostgisDb(AbstractDb):
             geom = query.value(0)
             invalidRecordsList.append( (0, reason, geom) )
         return invalidRecordsList
+    
+    def fillComboBoxProcessOrClasses(self, filterType=None):
+        """
+        Returns a list of possible classes or processes
+        based on existing flags.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getProcessOrClassFlags(filterType)
+        # list of all filtered flags
+        classesOrProcesses = []
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        while query.next():
+            classesOrProcesses.append(str(query.value(0)))
+        return classesOrProcesses
