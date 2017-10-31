@@ -322,8 +322,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def refreshOnChangeProcessOrClass(self):
         filterType = self.filterTypeComboBox.currentText()
         self.customFilterComboBox.clear()
-        listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
-        self.customFilterComboBox.addItems(listProcessesOrClasses)    
+        if self.configWindow.widget.abstractDb:
+            listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
+            self.customFilterComboBox.addItems(listProcessesOrClasses)    
 
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
