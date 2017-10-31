@@ -55,8 +55,8 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
             self.resetVariables()
             self.assignShortcutPushButton.setText(self.tr('Enter Value'))
     
-    @pyqtSlot(bool)
-    def on_clearPushButton_clicked(self):
+    @pyqtSlot(bool, name = 'on_clearPushButton_clicked')
+    def clearAll(self):
         """
         Clears push button and also resets self.modifiers and self.keys
         """
