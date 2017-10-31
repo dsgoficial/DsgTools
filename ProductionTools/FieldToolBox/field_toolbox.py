@@ -25,7 +25,7 @@ import os
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QPushButton
+from PyQt4.QtGui import QPushButton, QKeySequence, QShortcut
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes
@@ -180,6 +180,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         button: Button name
         propertyDict: optional dict parameters that may contain other properties to button, such as color, tooltip and custom category
         """
+
         pushButton = QtGui.QPushButton(button)
         keys = propertyDict.keys()
         styleSheet = ''
@@ -188,6 +189,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             styleSheet += "background-color:rgba({0},{1},{2},{3});".format(r, g, b, a)
         if 'buttonToolTip' in keys:
             pushButton.setToolTip(propertyDict['buttonToolTip'])
+        if 'buttonShortcut' in keys:
+            keySequence = QKeySequence(propertyDict['buttonShortcut'])
+            pushButton.setText('{0} [{1}]'.format(button, keySequence.toString(format = QKeySequence.NativeText)))
+            pushButton.setShortcut(keySequence)
 
         pushButton.clicked.connect(self.reclassify)
         pushButton.toggled.connect(self.acquire)
