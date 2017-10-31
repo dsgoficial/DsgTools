@@ -93,12 +93,14 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             self.tooltipCheckBox.setCheckState(Qt.Checked)
             self.toolTipLineEdit.setText(parameterDict['buttonToolTip'])
         else:
-            self.tooltipCheckBox.setCheckState(Qt.Unchecked) #if 'buttonToolTip' isn't on dict keys, set colorCheckBox as unchecked
+            self.tooltipCheckBox.setCheckState(Qt.Unchecked) #if 'buttonToolTip' isn't on dict keys, set tooltipCheckBox as unchecked
         if 'buttonGroupTag' in parameterDict.keys():
             self.customCategoryCheckBox.setCheckState(Qt.Checked)
             self.customCategoryLineEdit.setText(parameterDict['buttonGroupTag'])
+        else:
+            self.customCategoryCheckBox.setCheckState(Qt.Unchecked) #if 'buttonGroupTag' isn't on dict keys, set customCategoryCheckBox as unchecked
         if 'buttonShortcut' in parameterDict.keys():
             self.shortcutCheckBox.setCheckState(Qt.Checked)
             self.shortcutWidget.setShortcut(parameterDict['buttonShortcut'])
         else:
-            self.customCategoryCheckBox.setCheckState(Qt.Unchecked) #if 'buttonGroupTag' isn't on dict keys, set colorCheckBox as unchecked
+            self.shortcutCheckBox.setCheckState(Qt.Unchecked) #if 'buttonShortcut' isn't on dict keys, set colorCheckBox as unchecked
