@@ -257,7 +257,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         tabWidget.setTabPosition(QtGui.QTabWidget.West)
         gridLayout.addWidget(tabWidget)
         self.scrollArea.setWidget(tabWidget)
-        
+        propertyDict = dict()
         for category in reclassificationDict.keys():
             if category in ['version', 'uiParameterJsonDict']:
                 continue
@@ -267,10 +267,15 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             tabWidget.addTab(scrollArea, category)
             for edgvClass in reclassificationDict[category].keys():
                 for button in reclassificationDict[category][edgvClass].keys():
+                    item = reclassificationDict[category][edgvClass][button]
+                    propertyDict[button] = dict()
+                    if isinstance(item, dict):
+                        if 'buttonProp' in item.keys():
+                            propertyDict[button] = item['buttonProp']
                     sortedButtonNames.append(button)
             sortedButtonNames.sort()
             for button in sortedButtonNames:       
-                pushButton = self.createButton(button)
+                pushButton = self.createButton(button, propertyDict = propertyDict[button])
                 formLayout.addRow(pushButton)
                     
     def loadLayer(self, layer):
