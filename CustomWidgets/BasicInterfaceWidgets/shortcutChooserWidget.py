@@ -36,8 +36,7 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         Initializates ShortcutChooserWidget
         """
         super(ShortcutChooserWidget, self).__init__(parent)
-        self.modifiers = 0
-        self.key = 0
+        self.resetVariables()
         self.setupUi(self)
     
     @pyqtSlot(bool)
@@ -67,10 +66,11 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
     
     def resetVariables(self):
         """
-        Resets self.modifiers and self.key to 0
+        Resets self.modifiers, self.key and self.keySequence to 0
         """
         self.modifiers = 0
         self.key = 0
+        self.keySequence = 0
 
     def keyPressEvent(self, event):
         """
@@ -128,6 +128,6 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         return self.modifiers+self.key
 
     def updateShortcutText(self):
-        keySequence = QKeySequence(self.modifiers+self.key)
+        self.keySequence = QKeySequence(self.modifiers+self.key)
         #this uses QKeySequence.NativeText to show in the interface. To store data, no filter should be provided
-        self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(keySequence.toString(format = QKeySequence.NativeText)))
+        self.assignShortcutPushButton.setText(self.tr('Input: {0}').format(self.keySequence.toString(format = QKeySequence.NativeText)))
