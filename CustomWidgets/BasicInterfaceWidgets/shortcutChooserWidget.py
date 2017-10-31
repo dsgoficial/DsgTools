@@ -127,8 +127,11 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         self.assignShortcutPushButton.setChecked(False)
         self.assignShortcutPushButton.setText(self.keySequence.toString(format = QKeySequence.NativeText))
     
-    def getShortcut(self):
-        return int(self.keySequence)
+    def getShortcut(self, asQKeySequence = False):
+        if asQKeySequence:
+            return self.keySequence
+        else:
+            return int(self.keySequence)
 
     def updateShortcutText(self):
         self.keySequence = QKeySequence(self.modifiers+self.key)

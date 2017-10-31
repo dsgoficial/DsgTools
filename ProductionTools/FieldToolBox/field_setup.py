@@ -25,12 +25,13 @@ import os, json
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
-from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit
+from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit, QKeySequence, QShortcut
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsMessageLog
+from qgis.gui import QgsShortcutsManager
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
@@ -64,6 +65,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
         self.optionalDict = {self.tr('Yes'):'1', self.tr('No'):'0'}
         self.buttonPropDict = dict()
+        self.qgisShortcutList = [i.key() for i in QgsShortcutsManager().instance().listAll() if isinstance(i, QShortcut)]
     
     def __del__(self):
         if self.abstractDb:
@@ -295,6 +297,20 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         comboItem.setEnabled(enableIgnoreOption)
         self.attributeTableWidget.setCellWidget(count, 3, comboItem)
     
+    def validateShortcut(self):
+        currentShortcut = self.buttonPropWidget.shortcutWidget.getShortcut(asQKeySequence = True)
+        if currentShortcut == 0:
+            return True
+        sList = []
+        for tableName in self.buttonPropDict.keys():
+            for buttonName in self.buttonPropDict[tableName].keys():
+                if 'buttonShortcut' in self.buttonPropDict[tableName][buttonName].keys():
+                    sList.append(QKeySequence(self.buttonPropDict[tableName][buttonName]['buttonShortcut']))
+        if currentShortcut in self.qgisShortcutList or currentShortcut in sList:
+            return False
+        else:
+            return True
+    
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
         """
@@ -303,6 +319,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #checking if the button name is defined
         if self.buttonNameLineEdit.text() == '':
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
+            return
+
+        if not self.buttonPropWidget.validateShortcut(self.getShortcutList()):
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Shortcut already set to another tool!'))
             return
         
         # invisible root item
