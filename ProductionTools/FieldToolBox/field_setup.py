@@ -24,7 +24,7 @@ import os, json
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem, QAction
 from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit, QKeySequence, QShortcut
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
@@ -65,7 +65,22 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
         self.optionalDict = {self.tr('Yes'):'1', self.tr('No'):'0'}
         self.buttonPropDict = dict()
-        self.qgisShortcutList = [i.key() for i in QgsShortcutsManager().instance().listAll() if isinstance(i, QShortcut)]
+        self.qgisShortcutList = self.getQGISShortcutList()
+    
+    def getQGISShortcutList(self):
+        """
+        Returns all shortcuts from qgis
+        """
+        shortcutList = []
+        for shortcutItem in QgsShortcutsManager().instance().listAll():
+            if isinstance(shortcutItem, QAction):
+                for i in shortcutItem.shortcuts():
+                    if i not in shortcutList:
+                        shortcutList.append(i)
+            if isinstance(shortcutItem, QShortcut):
+                if shortcutItem not in shortcutList:
+                    shortcutList.append(shortcutItem)
+        return shortcutList
     
     def __del__(self):
         if self.abstractDb:
