@@ -575,7 +575,9 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                             continue
                         dictItem = {"value":attributeItem.text(1), "isEditable":attributeItem.text(2), "isIgnored":attributeItem.text(3)}
                         reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = dictItem
-                    reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)]["buttonProp"] = self.buttonPropDict[classItem.text(0)][buttonItem.text(0)]
+                    if classItem.text(0) in self.buttonPropDict.keys():
+                        if buttonItem.text(0) in self.buttonPropDict[classItem.text(0)]:
+                            reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)]["buttonProp"] = self.buttonPropDict[classItem.text(0)][buttonItem.text(0)]
         return reclassificationDict
     
     def readJsonFile(self, filename):
