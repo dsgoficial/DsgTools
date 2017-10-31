@@ -312,14 +312,14 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         comboItem.setEnabled(enableIgnoreOption)
         self.attributeTableWidget.setCellWidget(count, 3, comboItem)
     
-    def validateShortcut(self):
+    def validateShortcut(self, currentButtonName):
         currentShortcut = self.buttonPropWidget.shortcutWidget.getShortcut(asQKeySequence = True)
         if currentShortcut == 0:
             return True
         sList = []
         for tableName in self.buttonPropDict.keys():
             for buttonName in self.buttonPropDict[tableName].keys():
-                if 'buttonShortcut' in self.buttonPropDict[tableName][buttonName].keys():
+                if 'buttonShortcut' in self.buttonPropDict[tableName][buttonName].keys() and buttonName != currentButtonName:
                     sList.append(QKeySequence(self.buttonPropDict[tableName][buttonName]['buttonShortcut']))
         if currentShortcut in self.qgisShortcutList or currentShortcut in sList:
             return False
@@ -336,7 +336,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
             return
 
-        if not self.validateShortcut():
+        if not self.validateShortcut(self.buttonNameLineEdit.text()):
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Shortcut already set to another tool!'))
             return
         
@@ -611,6 +611,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         index = self.edgvVersion
         
         self.treeWidget.clear()
+        self.qgisShortcutList = self.getQGISShortcutList() #resets lists
         
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
