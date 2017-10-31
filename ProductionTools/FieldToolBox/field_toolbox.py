@@ -481,7 +481,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         reclassifiedFeatures = 0
         
         #button that sent the signal
-        self.buttonName = self.sender.text().split(' [')[0]
+        self.buttonName = self.sender().text().split(' [')[0]
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
         geomType = reclassificationLayer.geometryType()
         hasMValues =  QgsWKBTypes.hasM(int(reclassificationLayer.wkbType()))    #generic check (not every database is implemented as ours)
