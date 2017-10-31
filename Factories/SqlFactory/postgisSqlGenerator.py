@@ -1536,12 +1536,12 @@ class PostGISSqlGenerator(SqlGenerator):
         # to allow changing cases as desired
         filterType = filterType.lower()
         sql = ""
-        if filterType == "nome do processo":
+        if filterType == self.tr('Process Name'):
             sql = """
         SELECT DISTINCT process_name 
             FROM validation.aux_flags_validacao;
             """
-        elif filterType == "nome da classe":
+        elif filterType == self.tr('Class Name'):
             # as a dropdown, it has only 2 options: either it's filtered
             # by class or process
             sql = """
