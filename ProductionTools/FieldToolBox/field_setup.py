@@ -321,7 +321,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
             return
 
-        if not self.buttonPropWidget.validateShortcut(self.getShortcutList()):
+        if not self.validateShortcut():
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Shortcut already set to another tool!'))
             return
         
