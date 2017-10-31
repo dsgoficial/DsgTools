@@ -307,11 +307,12 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             return False
         return True
     
-    def getLayerFromButton(self, button):
+    def getLayerFromButton(self, buttonText):
         """
         Gets the correct layer to be used in the tool
         """
         #edgvClass found in the dictionary (this is made using the sqlite seed)
+        button = buttonText.split(' [')[0]
         (category, edgvClass) = self.findReclassificationClass(button)
         
         driverName = self.widget.abstractDb.getType()
