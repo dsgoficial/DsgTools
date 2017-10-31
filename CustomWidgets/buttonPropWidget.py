@@ -81,7 +81,12 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
     def setInterface(self, parameterDict):
         """
         Sets the interface with a dict in the format:
-        {'buttonColor':--color of the button--, 'buttonToolTip'--button toolTip--, 'buttonGroupTag':--group tag of the button--}
+        {
+            'buttonColor':--color of the button--, 
+            'buttonToolTip'--button toolTip--, 
+            'buttonGroupTag':--group tag of the button--,
+            'buttonShortcut':--shortcut for the button--
+        }
         """
         if 'buttonColor' in parameterDict.keys():
             self.colorCheckBox.setCheckState(Qt.Checked)
