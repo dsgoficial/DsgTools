@@ -518,6 +518,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                     for part in parts:
                         part.convertToSingleType()
                         geomList.append(part)
+                else:
+                    geomList.append(geom)
                 for newGeom in geomList:
                     #creating a new feature according to the reclassification layer
                     newFeature = QgsFeature(reclassificationLayer.pendingFields())
