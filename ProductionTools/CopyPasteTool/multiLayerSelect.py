@@ -218,10 +218,13 @@ class MultiLayerSelection(QgsMapTool):
         """
         Deactivate tool.
         """
-        if self.toolAction:
-            self.toolAction.setChecked(False)
-        if self is not None:
-            QgsMapTool.deactivate(self)
+        try:
+            if self.toolAction:
+                self.toolAction.setChecked(False)
+            if self is not None:
+                QgsMapTool.deactivate(self)
+        except:
+            pass
 
     def activate(self):
         """
