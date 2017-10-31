@@ -51,8 +51,8 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         """
         Button toggled reset self.modifiers and self.keys and also prepairs button text
         """
-        self.resetVariables()
         if toggled:
+            self.resetVariables()
             self.assignShortcutPushButton.setText(self.tr('Enter Value'))
     
     @pyqtSlot(bool)
@@ -120,12 +120,16 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         else:
             # self.setShortcut(QKeySequence(sum(self.modifiers)+self.key)) #each modifier is an int and the sum of modifiers is represented by a QKeySequence
             self.assignShortcutPushButton.setChecked(False)
+            self.updateShortcutText()
+            self.setShortcut(self.keySequence)
     
     def setShortcut(self, shortcut):
-        pass
+        self.keySequence = QKeySequence(shortcut)
+        self.assignShortcutPushButton.setChecked(False)
+        self.assignShortcutPushButton.setText(self.keySequence.toString(format = QKeySequence.NativeText))
     
     def getShortcut(self):
-        return self.modifiers+self.key
+        return self.keySequence
 
     def updateShortcutText(self):
         self.keySequence = QKeySequence(self.modifiers+self.key)
