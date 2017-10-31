@@ -118,7 +118,6 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
         elif key == Qt.Key_Escape:
             return
         else:
-            # self.setShortcut(QKeySequence(sum(self.modifiers)+self.key)) #each modifier is an int and the sum of modifiers is represented by a QKeySequence
             self.assignShortcutPushButton.setChecked(False)
             self.updateShortcutText()
             self.setShortcut(self.keySequence)
