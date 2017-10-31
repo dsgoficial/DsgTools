@@ -444,11 +444,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
                 return
 
             #button that sent the signal
-            self.buttonName = sender.text()
+            self.buttonName = sender.text().split(' [')[0]
     
             #checking if another button is checked
             for button in self.buttons:
-                if button.text() != self.buttonName and button.isChecked():
+                if button.text().split(' [')[0] != self.buttonName and button.isChecked():
                     button.setChecked(False)
                     
             #disconnecting the previous layer

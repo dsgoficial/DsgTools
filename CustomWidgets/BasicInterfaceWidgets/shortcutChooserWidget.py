@@ -122,6 +122,11 @@ class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
             self.updateShortcutText()
             self.setShortcut(self.keySequence)
     
+    def setEnabled(self, enabled):
+        if not enabled:
+            self.clearAll()
+        super(ShortcutChooserWidget, self).setEnabled(enabled)
+
     def setShortcut(self, shortcut):
         self.keySequence = QKeySequence(shortcut)
         self.assignShortcutPushButton.setChecked(False)
