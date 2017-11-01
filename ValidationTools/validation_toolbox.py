@@ -46,6 +46,7 @@ from DsgTools.ValidationTools.validation_history import ValidationHistory
 from DsgTools.ValidationTools.rules_editor import RulesEditor
 from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
 from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
+from DsgTools.dsgEnums import DsgEnums
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface):
@@ -71,6 +72,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.ruleEnforcer = None
         self.attributeRulesEditorPushButton.hide()
         self.itemList = []
+        self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
 
     def createContextMenu(self, position):
         """
@@ -389,7 +391,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             elif filterType == self.tr("Class Name"):
                 layerName = self.customFilterComboBox.currentText()
             if (processName or layerName):
-                self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
+                self.configWindow.widget.abstractDb.deleteProcessFlags(self.filterDict[processName],layerName)
             else:
                 QApplication.restoreOverrideCursor()
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
