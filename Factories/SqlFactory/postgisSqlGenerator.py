@@ -1549,3 +1549,13 @@ class PostGISSqlGenerator(SqlGenerator):
             FROM validation.aux_flags_validacao;
             """
         return sql
+
+    def checkCoverageForGaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
+        tableSchema, tableName = table.split('.')
+        sql = """
+        select (ST_Dump(foo.geom)).geom as geom from (
+        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S4')).geom
+        ) as foo 
+        where ST_IsEmpty(foo.geom) = 'f'
+        """.format(tableSchema, tableName, geomColumn, keyColumn)
+        return sql
