@@ -3462,3 +3462,21 @@ class PostgisDb(AbstractDb):
         while query.next():
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
+
+    def getGapsRecords(self, table, geomColumn, keyColumn, useTransaction = True):
+        """
+        Identify gaps and overlaps in the coverage layer
+        """
+        self.checkAndOpenDb()
+        # checking for gaps
+        invalidRecordsList = []
+        # checking for overlaps
+        sql = self.gen.checkCoverageForGaps(table, geomColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting gaps: ")+query.lastError().text())
+        while query.next():
+            reason = self.tr('Gap between the features of the layer')
+            geom = query.value(0)
+            invalidRecordsList.append( (0, reason, geom) )
+        return invalidRecordsList
