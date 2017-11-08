@@ -81,7 +81,13 @@ class MergeLinesProcess(ValidationProcess):
                 # iterating over features to store start and end points
                 featuresDict = {}
                 for feat in featureList:
-                    attributes = ''.join([feat[attributeName] for attributeName in attributeNames])
+                    attributes = []
+                    for attributeName in attributeNames:
+                        if not feat[attributeName]:
+                            attributes.append('')
+                        else:
+                            attributes.append(feat[attributeName])
+                    attributes = ''.join(attributes)
                     if attributes not in featuresDict.keys():
                         featuresDict[attributes] = []
                     featuresDict[attributes].append(feat)
@@ -116,6 +122,7 @@ class MergeLinesProcess(ValidationProcess):
                 lyr.deleteFeatures(idsToRemove)
                 lyr.endEditCommand()
                 localProgress.step()
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
 
             self.setStatus(self.tr('All lines were merged.'), 1) #Finished with flags
             return 1
