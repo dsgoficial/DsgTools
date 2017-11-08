@@ -78,18 +78,21 @@ class MergeLinesProcess(ValidationProcess):
                 else:
                     featureList = lyr.getFeatures()
 
-                # iterating over features to store start and end points
+                # iterating over features to store them in groups having same attributes
                 featuresDict = {}
                 for feat in featureList:
                     attributes = []
                     for attributeName in attributeNames:
+                        # creating a key using the selected attributes
                         if not feat[attributeName]:
                             attributes.append('')
                         else:
                             attributes.append(feat[attributeName])
+                    # making a string out of the key
                     attributes = ''.join(attributes)
                     if attributes not in featuresDict.keys():
                         featuresDict[attributes] = []
+                    # storing the features
                     featuresDict[attributes].append(feat)
 
                     localProgress.step()
@@ -99,25 +102,38 @@ class MergeLinesProcess(ValidationProcess):
                 lyr.startEditing()
                 lyr.beginEditCommand('Merging lines')
                 idsToRemove = []
+                # iterating over the dictionary
                 for key in featuresDict.keys():
+                    # getting all features of a group
                     features = featuresDict[key]
+                    # list of already used features
                     alreadyUsed = []
                     for feature in features:
+                        # if the feature is already in the remove list there is no point in checking it
                         if feature.id() in idsToRemove:
                             continue
                         geom = feature.geometry()
                         for other in features:
+                            # the same idea applies here
                             if other.id() == feature.id():
                                 continue
                             if other.id() in alreadyUsed:
                                 continue
+                            # checking the spatial predicate touches
                             if geom.touches(other.geometry()):
+                                # this generates a multi geometry
                                 geom = geom.combine(other.geometry())
+                                # this make a single line string if the multi geometries are neighbors
                                 geom = geom.mergeLines()
+                                # making a "single" multi geometry (useful for databases that use multi types)
                                 geom.convertToMultiType()
+                                # marking the other feature as to be removed
                                 idsToRemove.append(other.id())
+                            # marking other as already checked
                             alreadyUsed.append(other.id())
+                        # updating feature
                         lyr.changeGeometry(feature.id(), geom)
+                        # marking feature as already checked
                         alreadyUsed.append(feature.id())
                 lyr.deleteFeatures(idsToRemove)
                 lyr.endEditCommand()
