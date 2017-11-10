@@ -3459,9 +3459,38 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        classesOrProcesses.append("")
         while query.next():
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
+
+    def getFilteredFlagsView(self, filterType=None,filteredElement=None):
+        """
+        Returns a list of flagged features accordingly to what
+        was chosen to filter and which element was chosen as such
+        (e.g. a process named 'identifyDuplicatedGeometries') 
+        """        
+        self.checkAndOpenDb()
+        sql = self.gen.getFilteredFlagsQuery(filterType, filteredElement)
+        outFiltered = []
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        while query.next():
+            outFiltered.append(str(query.value(0)))
+        return outFiltered
+
+    def createFilteredFlagsViewTable(self, filterType=None,filteredElement=None):
+        """
+        Cretas a View Table if it doesn't exist and populates it
+        with data considering the users selection of filtering
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.createFilteredFlagsViewTableQuery(filterType, filteredElement)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        return
 
     def getGapsRecords(self, table, geomColumn, keyColumn, useTransaction = True):
         """
