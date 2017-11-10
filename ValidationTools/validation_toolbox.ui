@@ -162,7 +162,7 @@
         <item row="2" column="0">
          <widget class="QPushButton" name="clearSelectedPushButton">
           <property name="text">
-           <string>Clear Selected Flags</string>
+           <string>Clear Filtered Flags</string>
           </property>
          </widget>
         </item>
