@@ -108,7 +108,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         print 'visited'
 
-    def setFlagUnvisited(self):
+    def setFlagUnvisited(self): 
         """
         To do
         """
@@ -319,9 +319,24 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
 
-
+    @pyqtSlot(int, name = 'on_customFilterComboBox_currentIndexChanged')
+    def refreshFlagListOnClassProcessSelection(self):        
+        """
+        Refreshs the list of Classes or Processes accordingly to the
+        type of filter chosen
+        """
+        filterType = self.filterTypeComboBox.currentText()
+        filteredElement = self.customFilterComboBox.currentText()
+        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(filterType=filterType, filteredElement=filteredElement)
+        self.projectModel.setTable('validation.filtered_flags')
+        self.projectModel.select()
+        
     @pyqtSlot(int, name = 'on_filterTypeComboBox_currentIndexChanged')
     def refreshOnChangeProcessOrClass(self):
+        """
+        Refreshs the list of processes or classes available 
+        for filtering the view
+        """
         filterType = self.filterTypeComboBox.currentText()
         self.customFilterComboBox.clear()
         if self.configWindow.widget.abstractDb:
@@ -383,15 +398,14 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
             filterType = self.filterTypeComboBox.currentText()
-            
             processName, layerName = None, None
             # check what is filtered
-            if filterType == self.tr("Process Name"):
+            if self.filterDict[filterType] == DsgEnums.ProcessName:
                 processName = self.customFilterComboBox.currentText()
-            elif filterType == self.tr("Class Name"):
+            elif self.filterDict[filterType] == DsgEnums.ClassName:
                 layerName = self.customFilterComboBox.currentText()
             if (processName or layerName):
-                self.configWindow.widget.abstractDb.deleteProcessFlags(self.filterDict[processName],layerName)
+                self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
             else:
                 QApplication.restoreOverrideCursor()
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))

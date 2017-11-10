@@ -24,6 +24,7 @@ from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 from DsgTools.dsgEnums import DsgEnums
 
 class PostGISSqlGenerator(SqlGenerator):
+    
     def getComplexLinks(self, complex):
         sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = \'"+complex+'\''
         return sql
@@ -1552,6 +1553,52 @@ class PostGISSqlGenerator(SqlGenerator):
             """
         return sql
 
+    def getFilteredFlagsQuery(self, filterType=None, filteredElement=None):
+        """
+        Returns process or classes that raised flags filtered by
+        chosen element in comboBox
+        """
+        sql = ""
+        # problemas com o Enum.
+        if 'process' in filterType.lower():
+            filterTypeEnum = 0
+        elif filterType:
+            filterTypeEnum = 1
+        sql = """
+        SELECT * FROM validation.aux_flags_validacao;
+            """
+        whereClause = ""
+        if filterTypeEnum == DsgEnums.ProcessName: 
+            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+        elif filterType == DsgEnums.ClassName:
+            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+        if filteredElement and filteredElement <> '':
+            sql = sql + whereClause
+        return sql
+
+    def createFilteredFlagsViewTableQuery(self, filterType=None, filteredElement=None):
+        """
+        Returns the query for creating and populating
+        a view table based on users settings
+        """
+        sql = """
+        CREATE OR REPLACE VIEW validation.filtered_flags AS 
+        SELECT * FROM validation.aux_flags_validacao
+        """
+        whereClause = ""
+        # problemas com o Enum.
+        if 'process' in filterType.lower():
+            filterTypeEnum = 0
+        elif filterType:
+            filterTypeEnum = 1            
+        if filterTypeEnum == DsgEnums.ProcessName: 
+            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+        elif filterTypeEnum == DsgEnums.ClassName:
+            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+        if filteredElement and filteredElement <> '':
+            sql = sql + whereClause
+        return sql
+    
     def checkCoverageForGaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
         tableSchema, tableName = table.split('.')
         sql = """
