@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>361</width>
-    <height>564</height>
+    <width>397</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -89,26 +89,26 @@
            <property name="orientation">
             <enum>Qt::Vertical</enum>
            </property>
-           <widget class="QPushButton" name="runButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Run Process</string>
-            </property>
-           </widget>
            <widget class="QPushButton" name="reRunButton">
             <property name="text">
              <string>Re-Run Last Process</string>
             </property>
            </widget>
+           <widget class="QPushButton" name="historyButton">
+            <property name="text">
+             <string>Open History</string>
+            </property>
+           </widget>
           </widget>
-          <widget class="QPushButton" name="historyButton">
+          <widget class="QPushButton" name="runButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="text">
-            <string>Open History</string>
+            <string>Run Process</string>
            </property>
           </widget>
          </widget>
