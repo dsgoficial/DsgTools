@@ -25,7 +25,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QColor
+from PyQt4.QtGui import QColor, QMenu
 
 class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
@@ -41,7 +41,7 @@ class MultiLayerSelection(QgsMapTool):
         follows priority of item 1;
         5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangle are added to selection
         """
-        self.iface=iface        
+        self.iface = iface        
         self.canvas = canvas
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
@@ -234,3 +234,14 @@ class MultiLayerSelection(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
         
+    def createContextMenu(self, featureList=None):
+        """
+        Creates the context menu for overlapping layer
+        """
+        menu = QMenu()
+        if featureList:
+            for feature in featureList:
+                s = '{0}.{1}'.format(feature[0], feature[1])
+                menu.addAction(s, self.funcaoDeSelecaodeFeicao)
+            if len(feature > 1):
+                menu.addAction(self.tr('Select All'), self.funcaoDeSelecaoDeTodas)
