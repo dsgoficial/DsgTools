@@ -27,6 +27,8 @@ from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureReque
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu
 
+import numpy as np
+
 class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
     def __init__(self, canvas, iface):
@@ -233,7 +235,18 @@ class MultiLayerSelection(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
-        
+
+    def checkGeometryHierarquy(self, featureList=None):
+        """
+        Filtrate a list of features to only features of the
+        strongest type of geometry (P > L > Pol).        
+        """
+        if featureList:
+            filteredFeatureList = []
+            strongest_geometry = np.
+            for feature in featureList:
+                
+
     def createContextMenu(self, featureList=None):
         """
         Creates the context menu for overlapping layer
