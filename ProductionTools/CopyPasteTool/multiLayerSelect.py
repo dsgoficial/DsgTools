@@ -28,6 +28,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu
 
 import numpy as np
+from PyQt4.QtCore import Qt
 
 class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
@@ -53,6 +54,8 @@ class MultiLayerSelection(QgsMapTool):
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = ['moldura']
+        self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
+        self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
     
     def reset(self):
         """
@@ -121,7 +124,7 @@ class MultiLayerSelection(QgsMapTool):
                     layer.select(bbRect, True)
             self.rubberBand.hide()
 
-    def canvasPressEvent(self, e):
+    def canvasPressEvent(self, e, filteredDict=False):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
         """
@@ -133,8 +136,9 @@ class MultiLayerSelection(QgsMapTool):
             self.showRect(self.startPoint, self.endPoint)
         else:
             self.isEmittingPoint = False
-            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
-            self.selectFeatures(e, hasControlModifyer = selected)
+            # selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+            self.createContextMenu(e)
+            # self.selectFeatures(e, hasControlModifyer = selected, filteredDict=filteredDict)
     
     def getCursorRect(self, e):
         """
@@ -153,11 +157,17 @@ class MultiLayerSelection(QgsMapTool):
                 return True
         return False
     
-    def getPrimitiveDict(self, e, hasControlModifyer = False):
+    def getPrimitiveDict(self, e, hasControlModifyer=False, filteredDict=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are QGis.Point (value 0), QGis.Line (value 1) or QGis.Polygon (value 2),
         and values as layers from self.iface.legendInterface().layers(). When self.iface.legendInterface().layers() is called, a list of
         layers ordered according to lyr order in TOC is returned.
+
+        Method altered:
+        Added boolean parameter filteredDict to indicate whether a filtered 
+        dictionary with ONLY the strongest type of geometry accordingly to 
+        the hierarquy P (=0) > L (=1) > Pol (=2).
+        Adapation meant for the createContextMenu method implemented.
         """
         #these layers are ordered by view order
         primitiveDict = dict()
@@ -172,9 +182,21 @@ class MultiLayerSelection(QgsMapTool):
             if (not hasControlModifyer and e.button() == QtCore.Qt.LeftButton) or (hasControlModifyer and e.button() == QtCore.Qt.RightButton):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
-        return primitiveDict
+        # finding strongest geometry
+        if len(np.array(np.array(primitiveDict.keys()), 'int')) == 3:
+            # if all 3 are present, then the strongests are point geometries
+            strongest_geometry = 0
+        else:
+            strongest_geometry = np.array(np.array(primitiveDict.keys())[:,2], 'int').min()
+        if filteredDict:
+            # returning a dict containing only filtered layers
+            primitiveDictFiltered = dict([])
+            primitiveDictFiltered[strongest_geometry] = primitiveDict[strongest_geometry]
+            return primitiveDictFiltered
+        else:
+            return primitiveDict
 
-    def selectFeatures(self, e, bbRect = None, hasControlModifyer = False):
+    def selectFeatures(self, e, bbRect=None, hasControlModifyer=False, filteredDict=False):
         """
         Method to select features acoording to mouse event e.
         Optional parameters:
@@ -182,7 +204,7 @@ class MultiLayerSelection(QgsMapTool):
         hasControlModifyer: used to add to selection or not.
         """
         rect = self.getCursorRect(e)
-        primitiveDict = self.getPrimitiveDict(e, hasControlModifyer = hasControlModifyer)
+        primitiveDict = self.getPrimitiveDict(e, hasControlModifyer = hasControlModifyer, filteredDict=filteredDict)
         primitives = primitiveDict.keys()
         primitives.sort() #this sort enables search to be done in the order of Point (value 0), Line (value 1) and Polygon (value 2)
         for primitive in primitives:
@@ -238,23 +260,46 @@ class MultiLayerSelection(QgsMapTool):
 
     def checkGeometryHierarquy(self, featureList=None):
         """
+        TALVEZ NÃO USE
+
         Filtrate a list of features to only features of the
-        strongest type of geometry (P > L > Pol).        
+        strongest type of geometry (P (=0) > L (=1) > Pol (=2)).
+        Returns the filtered list of ONLY the strongest features
+        present
+        arg featureList = [[feat_class_STR, feat_id_INT, feat_geom_type_INT]]     
         """
+        filteredFeatureList = None
         if featureList:
             filteredFeatureList = []
-            strongest_geometry = np.
+            # choosing the strongest geometry type present in the list of features given 
+            strongest_geometry = np.array(np.array(featureList)[:,2], 'int').min()
             for feature in featureList:
-                
+                if feature[2] == strongest_geometry:
+                    filteredFeatureList.append(feature)
+        return filteredFeatureList
 
-    def createContextMenu(self, featureList=None):
+    def setSelectionFeature(self, layer, feature):
         """
-        Creates the context menu for overlapping layer
+        Selects a given feature on canvas.
+        """
+        layer.setSelectedFeatures([feature.id()])
+        return 
+
+    def createContextMenu(self, e):
+        """
+        Creates the context menu for overlapping layers
         """
         menu = QMenu()
-        if featureList:
-            for feature in featureList:
-                s = '{0}.{1}'.format(feature[0], feature[1])
-                menu.addAction(s, self.funcaoDeSelecaodeFeicao)
-            if len(feature > 1):
-                menu.addAction(self.tr('Select All'), self.funcaoDeSelecaoDeTodas)
+        selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        # setting a list of features to iterate over
+        layerList = self.getPrimitiveDict(e, hasControlModifyer = selected, filteredDict=True)
+        layers = layerList[layerList.keys()[0]]
+        if layers:       
+            for layer in layers:
+                for feature in layer.getFeatures():
+                    if feature.geometry().intersects(self.getCursorRect(e)):
+                        s = '{0}(feat_id = {1})'.format(layer.name(), feature.id())
+                        menu.addAction(s, self.setSelectionFeature)
+            menu.addAction(self.tr('Select All'), self.selectFeatures)                
+        else:                
+            self.selectFeatures(e, hasControlModifyer = selected)
