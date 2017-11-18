@@ -1,8 +1,28 @@
+import numpy as np
+
 teste = [
-    ['a', 'b', 1],
-    ['d', 'e', 2],
+    ['a', 'b', 0],
+    ['d', 'e', 0],
     ['g', 'h', 0]
 ]
 
-import numpy as np
-print np.array(teste)[:,2]
+
+if len(np.unique(np.array(np.array(teste)[:,2], 'int'))) == 3:
+    min_ = 0
+else:
+    min_ = np.array(np.array(teste)[:,2], 'int').min()
+
+
+# print min_
+
+
+dict_ = dict({
+             0 : ['askd', 'asdhu'],
+             1 : 'asd',
+             1 : 'ASH',
+})
+
+dict__ = dict([])
+dict__[0] = dict_[0]
+
+print dict__[0]
