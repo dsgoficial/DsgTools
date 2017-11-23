@@ -1715,7 +1715,7 @@ class PostgisDb(AbstractDb):
             if not query.exec_(s):
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem creating temp table: ') + query.lastError().text())
+                raise Exception(self.tr('Problem creating temp table {}: '.format(tableName)) + query.lastError().text())
         attributes = None
         auxAttributes = None
         for feat in featureMap.values():
@@ -1754,12 +1754,12 @@ class PostgisDb(AbstractDb):
             if not query.exec_():
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
+                raise Exception(self.tr('Problem creating temp table {}: '.format(tableName)) + query.lastError().text())
         indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
         if not query.exec_(indexSql):
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+            raise Exception(self.tr('Problem creating spatial index on temp table {}: '.format(tableName)) + query.lastError().text())
         if useTransaction:
             self.db.commit()        
         
@@ -1772,7 +1772,7 @@ class PostgisDb(AbstractDb):
         if not query.exec_(sql):
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
+            raise Exception(self.tr('Problem dropping temp table {}: '.format(tableName)) + query.lastError().text())
         if useTransaction:
             self.db.commit()
     
