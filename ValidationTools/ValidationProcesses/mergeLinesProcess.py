@@ -87,7 +87,7 @@ class MergeLinesProcess(ValidationProcess):
                         if not feat[attributeName]:
                             attributes.append('')
                         else:
-                            attributes.append(feat[attributeName])
+                            attributes.append('{}'.format(feat[attributeName]))
                     # making a string out of the key
                     attributes = ''.join(attributes)
                     if attributes not in featuresDict.keys():
@@ -106,8 +106,6 @@ class MergeLinesProcess(ValidationProcess):
                 for key in featuresDict.keys():
                     # getting all features of a group
                     features = featuresDict[key]
-                    # list of already used features
-                    alreadyUsed = []
                     for feature in features:
                         # if the feature is already in the remove list there is no point in checking it
                         if feature.id() in idsToRemove:
@@ -117,7 +115,7 @@ class MergeLinesProcess(ValidationProcess):
                             # the same idea applies here
                             if other.id() == feature.id():
                                 continue
-                            if other.id() in alreadyUsed:
+                            if other.id() in idsToRemove:
                                 continue
                             # checking the spatial predicate touches
                             if geom.touches(other.geometry()):
@@ -129,12 +127,10 @@ class MergeLinesProcess(ValidationProcess):
                                 geom.convertToMultiType()
                                 # marking the other feature as to be removed
                                 idsToRemove.append(other.id())
-                            # marking other as already checked
-                            alreadyUsed.append(other.id())
-                        # updating feature
-                        lyr.changeGeometry(feature.id(), geom)
-                        # marking feature as already checked
-                        alreadyUsed.append(feature.id())
+                                # updating feature
+                                feature.setGeometry(geom)
+                                # updating layer
+                                lyr.updateFeature(feature)
                 lyr.deleteFeatures(idsToRemove)
                 lyr.endEditCommand()
                 localProgress.step()
