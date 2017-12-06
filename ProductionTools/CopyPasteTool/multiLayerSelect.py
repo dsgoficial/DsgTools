@@ -294,12 +294,30 @@ class MultiLayerSelection(QgsMapTool):
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer = selected, filteredDict=True)
         layers = layerList[layerList.keys()[0]]
-        if layers:       
+        if layers:
+            rect = self.getCursorRect(e)
+            t = []
             for layer in layers:
-                for feature in layer.getFeatures():
-                    if feature.geometry().intersects(self.getCursorRect(e)):
-                        s = '{0}(feat_id = {1})'.format(layer.name(), feature.id())
-                        menu.addAction(s, self.setSelectionFeature)
-            menu.addAction(self.tr('Select All'), self.selectFeatures)                
-        else:                
-            self.selectFeatures(e, hasControlModifyer = selected)
+                # iterate over features inside the mouse bounding box 
+                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
+                for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
+                    if feature.geometry().intersects(rect):
+                        """
+                        # define the menu action name
+                        s = '{0} (feat_id = {1})'.format(layer.name(), feature.id())
+                        # create a menu action for each feature inside the mouse bounding box
+                        menu.addAction(s, lambda: self.setSelectionFeature(layer, feature))
+            # create an action that selects all features inside the bounding area (still filtered)
+            menu.addAction(self.tr('Select All'), self.selectFeatures)
+            menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+            """
+                        t.append([layer, feature])
+            if len(t) > 1:
+                for i in range(0, len(t)):
+                    [layer, feature] = t[i]
+                    s = '{0} (feat_id = {1})'.format(layer.name(), feature.id())
+                    menu.addAction(s, lambda: self.setSelectionFeature(layer, feature))
+                menu.addAction(self.tr('Select All'), self.selectFeatures)
+                menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))              
+            elif t:                
+                self.selectFeatures(e, t[0], t[1], hasControlModifyer = selected)
