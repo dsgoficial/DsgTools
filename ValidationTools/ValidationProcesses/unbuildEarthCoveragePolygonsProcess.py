@@ -37,12 +37,6 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Unbuild Earth Coverage Polygons')
         
-    def preProcess(self):
-        """
-        Gets the process that should be execute before this one
-        """
-        return self.tr('Snap Lines to Frame')
-        
     def cleanCentroidsAreas(self, coverageClassList):
         """
         Cleans all the previously created areas
@@ -54,61 +48,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
                 if feat['centroid']:
                     featDict[feat['id']] = QgsGeometry()
             auxCentroidLyr.dataProvider().changeGeometryValues(featDict)
-    
-    def processFlags(self, areaLyr):
-        """
-        Gets flags candidates and filters those who are within other flags
-        areaLayers: list of layers with possible flags
-        """
-        
-        feats = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid = -1000 or destid = -2000')))]
-        idx = QgsSpatialIndex()
-        updateDict = dict()
-        destIdx = areaLyr.fieldNameIndex('destid')
-        for feat1 in feats:
-            for feat2 in feats:
-                if feat2['destid'] <> -1000:
-                    continue 
-                if feat1.id() <> feat2.id() and not feat1.geometry().equals(feat2.geometry()):
-                    combine = feat1.geometry().combine(feat2.geometry())
-                    if feat2.geometry().equals(combine):
-                        updateDict[feat2.id()] = {destIdx:None}
-        areaLyr.dataProvider().changeAttributeValues(updateDict)
-        pass
-        
-    def defineQueryLayer(self, delimiterList):
-        """
-        Defines a query layer composed by all features from earthCoverage lines and also by frame
-        """
-        epsg = self.abstractDb.findEPSG()
-        
-        # temp layer
-        lineLyr = QgsVectorLayer("multilinestring?crs=EPSG:%d" % epsg,"tempLine",'memory')
-        for delimiter in delimiterList:
-            # loading/getting each line layer
-            lyr = self.loadLayerBeforeValidationProcess(delimiter)
-            featureList = []
-            for feat in lyr.getFeatures():
-                featureList.append(feat)
-            lineLyr.dataProvider().addFeatures(featureList)
 
-        # loading/getting the frame layer
-        frame = self.loadLayerBeforeValidationProcess(self.frameLayer)
-        for feat in frame.getFeatures():
-            newFeat = QgsFeature(lineLyr.pendingFields())
-            newGeom = QgsGeometry.fromPolyline(feat.geometry().asMultiPolygon()[0][0])
-            newFeat.setGeometry(newGeom)
-            lineLyr.dataProvider().addFeatures([newFeat])
-        return lineLyr
-
-    def makeIndex(self, centroidLyr):
-        """
-        creates a spatial index for the centroid layer
-        """
-        centroidIdx = QgsSpatialIndex()
-        for feat in centroidLyr.getFeatures():
-            centroidIdx.insertFeature(feat)
-        return centroidIdx
 
     def getCandidates(self, idx, bbox):
         return idx.intersects(bbox)
@@ -170,24 +110,6 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
                         areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
                     else:
                         areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
-    
-    def reclassifyAreasWithCentroids(self, coverageClassList, areaLyr, centroidLyr, relateDict):
-        """
-        Reclassifies areas with centroids
-        """
-        lyrDict = dict()
-        for cl in coverageClassList:
-            lyr = QgsVectorLayer(self.abstractDb.getURI(cl, False).uri(), cl, "postgres")
-            classFeats = [i for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("cl = '%s'" % cl)))]
-            reclassFeats = []
-            for i in classFeats:
-                if i['destid'] > 0:
-                    reclassFeats.append(i)
-            reclassDict = dict()
-            deleteList = []
-            for feat in reclassFeats:
-                reclassDict[feat['destid']]=feat.geometry()
-            lyr.dataProvider().changeGeometryValues(reclassDict)
 
     def createAuxStruct(self, epsg):
         """
@@ -209,26 +131,12 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
             return (areaLyr, centroidLyr)
         except Exception as e:
             raise e 
-    
-    def populateCentroidLyr(self, coverageClassList, centroidLyr):
+
+    def makeCentroid(self, lyr, centroidLyr):
         """
-        stores all the centroids defined in the earth covarage
-        in a memory point layer with the following attributes:
-        featid - centroid feature id
-        cl - centroid original class name
+        Gets each polygon from lyr, calculates its centroid (inner point, not gravitational centroid) and stores it into the centroidLyr
         """
-        for cl in coverageClassList:
-            auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'centroid').uri(), cl, "postgres")
-            newFeatList = []
-            for feat in auxCentroidLyr.getFeatures():
-                newFeat = QgsFeature(centroidLyr.pendingFields())
-                newFeat['featid'] = feat.id()
-                newFeat['cl'] = cl
-                newFeat['child'] = self.abstractDb.getWhoAmI(cl,feat.id()) 
-                if feat.geometry():
-                    newFeat.setGeometry(feat.geometry())
-                    newFeatList.append(newFeat)
-            centroidLyr.dataProvider().addFeatures(newFeatList)
+        pass
 
     def execute(self):
         """
