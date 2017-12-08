@@ -23,7 +23,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  ***************************************************************************/
 """
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest
+from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu
 
@@ -315,9 +315,10 @@ class MultiLayerSelection(QgsMapTool):
             if len(t) > 1:
                 for i in range(0, len(t)):
                     [layer, feature] = t[i]
-                    s = '{0} (feat_id = {1})'.format(layer.name(), feature.id())
+                    uri = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
+                    s = '{0}.{1} (feat_id = {2})'.format(uri, layer.name(), feature.id())
                     menu.addAction(s, lambda: self.setSelectionFeature(layer, feature))
                 menu.addAction(self.tr('Select All'), self.selectFeatures)
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))              
             elif t:                
-                self.selectFeatures(e, t[0], t[1], hasControlModifyer = selected)
+                self.selectFeatures(e, hasControlModifyer = selected)
