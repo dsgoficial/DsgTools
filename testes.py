@@ -27,4 +27,8 @@ dict__[0] = dict_[0]
 
 g = lambda x : x**2
 
-print g(3)
+x = [12, 3, 4]
+
+y = [0, 123, 1]
+
+print x + y
