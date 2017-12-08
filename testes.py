@@ -25,4 +25,6 @@ dict_ = dict({
 dict__ = dict([])
 dict__[0] = dict_[0]
 
-print dict__[0]
+g = lambda x : x**2
+
+print g(3)
