@@ -13,7 +13,7 @@ else:
     min_ = np.array(np.array(teste)[:,2], 'int').min()
 
 
-# print min_
+# print min
 
 
 dict_ = dict({
