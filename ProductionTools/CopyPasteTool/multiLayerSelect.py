@@ -285,7 +285,7 @@ class MultiLayerSelection(QgsMapTool):
         layerList = self.getPrimitiveDict(e, hasControlModifyer = selected)
         layers = []
         for key in layerList.keys():
-            layers = layers + layerList[key]
+            layers += layerList[key]
         if layers:
             rect = self.getCursorRect(e)
             t = []
@@ -312,8 +312,9 @@ class MultiLayerSelection(QgsMapTool):
                     # hence the need of db_name
                     db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
-                    menu.addAction(s, lambda: self.setSelectionFeature(layer, feature))
-                menu.addAction(self.tr('Select All'), lambda: self.setSelectionListFeature(t))
+                    action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
+                    action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
+                menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 self.selectFeatures(e, hasControlModifyer = selected)
