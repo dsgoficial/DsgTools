@@ -294,15 +294,6 @@ class MultiLayerSelection(QgsMapTool):
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     if feature.geometry().intersects(rect):
-                        """
-                        # define the menu action name
-                        s = '{0} (feat_id = {1})'.format(layer.name(), feature.id())
-                        # create a menu action for each feature inside the mouse bounding box
-                        menu.addAction(s, lambda: self.setSelectionFeature(layer, feature))
-            # create an action that selects all features inside the bounding area (still filtered)
-            menu.addAction(self.tr('Select All'), self.selectFeatures)
-            menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
-            """
                         t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
             if len(t) > 1:
@@ -313,6 +304,8 @@ class MultiLayerSelection(QgsMapTool):
                     db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
+                    # line added to make sure the action is associated with
+                    # current loop value.
                     action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
                 menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
