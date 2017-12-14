@@ -2424,6 +2424,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
+        self.checkAndCreateStyleTable()
         #this close is to allow creation from template
         self.db.close()
         if parentWidget:
