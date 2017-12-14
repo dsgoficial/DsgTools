@@ -279,14 +279,19 @@ class MultiLayerSelection(QgsMapTool):
         """
         Creates the context menu for overlapping layers
         """  
-        selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        try:
+            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        except:
+            from PyQt4 import QtGui
+            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer = selected)
         layers = []
         for key in layerList.keys():
             layers += layerList[key]
         if layers:
-            menu = QMenu()
+            menu = QtGui.QMenu()
             rect = self.getCursorRect(e)
             t = []
             for layer in layers:
@@ -322,6 +327,8 @@ class MultiLayerSelection(QgsMapTool):
                             action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
                         elif e.button() == QtCore.Qt.RightButton:
                             action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
+                # "Select All" always selects all features
+                # Sugestion: Open all atribute tables? 
                 menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
