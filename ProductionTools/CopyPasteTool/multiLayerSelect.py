@@ -278,8 +278,7 @@ class MultiLayerSelection(QgsMapTool):
     def createContextMenu(self, e):
         """
         Creates the context menu for overlapping layers
-        """
-        menu = QMenu()
+        """  
         selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer = selected)
@@ -287,6 +286,7 @@ class MultiLayerSelection(QgsMapTool):
         for key in layerList.keys():
             layers += layerList[key]
         if layers:
+            menu = QMenu()
             rect = self.getCursorRect(e)
             t = []
             for layer in layers:
