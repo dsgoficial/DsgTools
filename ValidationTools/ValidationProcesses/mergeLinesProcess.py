@@ -71,13 +71,14 @@ class MergeLinesProcess(ValidationProcess):
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 localProgress.step()
 
-                allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 if self.parameters['Only Selected']:
                     featureList = lyr.selectedFeatures()
+                    size = len(featureList)
                 else:
                     featureList = lyr.getFeatures()
+                    size = len(lyr.allFeatureIds())
 
+                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 # iterating over features to store them in groups having same attributes
                 featuresDict = {}
                 for feat in featureList:
@@ -97,8 +98,7 @@ class MergeLinesProcess(ValidationProcess):
 
                     localProgress.step()
 
-                localProgress = ProgressWidget(0, 1, self.tr('Merging lines for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                localProgress.step()
+                localProgress = ProgressWidget(1, len(featuresDict.keys()), self.tr('Merging lines for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 lyr.startEditing()
                 lyr.beginEditCommand('Merging lines')
                 idsToRemove = []
@@ -131,6 +131,8 @@ class MergeLinesProcess(ValidationProcess):
                                 feature.setGeometry(geom)
                                 # updating layer
                                 lyr.updateFeature(feature)
+                    localProgress.step()
+                    
                 lyr.deleteFeatures(idsToRemove)
                 lyr.endEditCommand()
                 localProgress.step()
