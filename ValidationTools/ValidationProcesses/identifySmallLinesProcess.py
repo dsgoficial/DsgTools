@@ -68,12 +68,14 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 localProgress.step()
 
-                allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 if self.parameters['Only Selected']:
                     featureList = lyr.selectedFeatures()
+                    size = len(featureList)
                 else:
                     featureList = lyr.getFeatures()
+                    size = len(lyr.allFeatureIds())
+
+                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     if feat.geometry().length() < tol:
                         geometry = binascii.hexlify(feat.geometry().asWkb())
