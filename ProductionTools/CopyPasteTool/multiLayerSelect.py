@@ -297,16 +297,31 @@ class MultiLayerSelection(QgsMapTool):
                         t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
             if len(t) > 1:
+                pop = 0 # number of features 
                 for i in range(0, len(t)):
-                    [layer, feature, geom] = t[i]
+                    [layer, feature, geom] = t[i-pop] # geom to avoid dimension issues
                     # layers from different dabases may have the same name
                     # hence the need of db_name
                     db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
-                    # line added to make sure the action is associated with
-                    # current loop value.
-                    action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
+                    # handling CTRL key and left/right click actions
+                    if selected:
+                        if e.button() == QtCore.Qt.LeftButton: 
+                            # line added to make sure the action is associated with
+                            # current loop value.
+                            action.triggered[()].connect(lambda t=[e, selected] : self.selectFeatures(t[0], hasControlModifyer=t[1]))
+                        elif e.button() == QtCore.Qt.RightButton:
+                            # remove feature from candidates of selection and set layer for selection
+                            action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
+                            t.pop(i-pop)
+                            pop += 1
+                            continue
+                    else:
+                        if e.button() == QtCore.Qt.LeftButton:
+                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
+                        elif e.button() == QtCore.Qt.RightButton:
+                            action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
                 menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
