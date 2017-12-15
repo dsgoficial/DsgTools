@@ -54,8 +54,8 @@ class MultiLayerSelection(QgsMapTool):
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = ['moldura']
-        self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
-        self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
+        #self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
+        #self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
     
     def reset(self):
         """
@@ -279,12 +279,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Creates the context menu for overlapping layers
         """  
-        try:
-            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
-        except:
-            from PyQt4 import QtGui
-            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
-        
+        selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer = selected)
         layers = []
@@ -331,5 +326,13 @@ class MultiLayerSelection(QgsMapTool):
                 # Sugestion: Open all atribute tables? 
                 menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
-            elif t:
-                self.selectFeatures(e, hasControlModifyer = selected)
+            elif t:                
+                t = t[0]
+                selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+                if e.button() == QtCore.Qt.LeftButton:
+                    self.selectFeatures(e, hasControlModifyer = selected)
+                elif selected:
+                    self.iface.setActiveLayer(t[0])
+                else:
+                    self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                
