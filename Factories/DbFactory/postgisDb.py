@@ -27,7 +27,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
 from osgeo import ogr
 from uuid import uuid4
-import codecs, os, json, binascii
+import codecs, os, json, binascii, re
 import psycopg2
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
@@ -1891,8 +1891,12 @@ class PostgisDb(AbstractDb):
         availableStyles = os.walk(stylePath).next()[2]
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
+            #filtering and checking file names for special characters
             if style[0] == '.':
                 continue
+            if not re.match("^[a-zA-Z0-9_.]*$", style):
+                raise Exception(self.tr('Problem importing style ')+style)
+
             tableName = style.split('.')[0]
             localStyle = os.path.join(stylePath,style)
             tableSchema = self.getTableSchemaFromDb(tableName)
