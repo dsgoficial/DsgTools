@@ -1891,6 +1891,8 @@ class PostgisDb(AbstractDb):
         availableStyles = os.walk(stylePath).next()[2]
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
+            if style[0] == '.':
+                continue
             tableName = style.split('.')[0]
             localStyle = os.path.join(stylePath,style)
             tableSchema = self.getTableSchemaFromDb(tableName)
