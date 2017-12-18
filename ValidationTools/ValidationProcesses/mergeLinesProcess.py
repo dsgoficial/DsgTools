@@ -43,6 +43,12 @@ class MergeLinesProcess(ValidationProcess):
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
             self.parameters = {'Classes': interfaceDictList, 'Only Selected':False, 'Attributes (comma separated)':''}
 
+    def postProcess(self):
+        """
+        Gets the process that should be execute after this one
+        """
+        return self.tr('Clean Geometries') #more than one post process (this is treated in validationManager)
+
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
