@@ -64,16 +64,19 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 localProgress.step()
                 localProgress.step()
 
-                allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['lyrName'], parent=self.iface.mapCanvas())
                 lyr.startEditing()
                 provider = lyr.dataProvider()
                 uri = QgsDataSourceURI(provider.dataSourceUri())
                 keyColumn = uri.keyColumn()
+
                 if self.parameters['Only Selected']:
                     featureList = lyr.selectedFeatures()
+                    size = len(featureList)
                 else:
                     featureList = lyr.getFeatures()
+                    size = len(lyr.allFeatureIds())
+
+                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['lyrName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     geom = feat.geometry()
                     if not geom:
@@ -98,7 +101,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         lyr.addFeatures(addList,True)
                     localProgress.step()
                 self.logLayerTime(classAndGeom['lyrName'])
-                localProgress.step()
+
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)

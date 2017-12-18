@@ -23,9 +23,12 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  ***************************************************************************/
 """
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest
+from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QColor
+from PyQt4.QtGui import QColor, QMenu
+
+import numpy as np
+from PyQt4.QtCore import Qt
 
 class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
@@ -41,7 +44,7 @@ class MultiLayerSelection(QgsMapTool):
         follows priority of item 1;
         5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangle are added to selection
         """
-        self.iface=iface        
+        self.iface = iface        
         self.canvas = canvas
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
@@ -51,6 +54,8 @@ class MultiLayerSelection(QgsMapTool):
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = ['moldura']
+        #self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
+        #self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
     
     def reset(self):
         """
@@ -131,8 +136,9 @@ class MultiLayerSelection(QgsMapTool):
             self.showRect(self.startPoint, self.endPoint)
         else:
             self.isEmittingPoint = False
-            selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
-            self.selectFeatures(e, hasControlModifyer = selected)
+            # selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+            self.createContextMenu(e)
+            # self.selectFeatures(e, hasControlModifyer = selected)
     
     def getCursorRect(self, e):
         """
@@ -151,7 +157,7 @@ class MultiLayerSelection(QgsMapTool):
                 return True
         return False
     
-    def getPrimitiveDict(self, e, hasControlModifyer = False):
+    def getPrimitiveDict(self, e, hasControlModifyer=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are QGis.Point (value 0), QGis.Line (value 1) or QGis.Polygon (value 2),
         and values as layers from self.iface.legendInterface().layers(). When self.iface.legendInterface().layers() is called, a list of
@@ -170,9 +176,10 @@ class MultiLayerSelection(QgsMapTool):
             if (not hasControlModifyer and e.button() == QtCore.Qt.LeftButton) or (hasControlModifyer and e.button() == QtCore.Qt.RightButton):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
-        return primitiveDict
+        else:
+            return primitiveDict
 
-    def selectFeatures(self, e, bbRect = None, hasControlModifyer = False):
+    def selectFeatures(self, e, bbRect=None, hasControlModifyer=False):
         """
         Method to select features acoording to mouse event e.
         Optional parameters:
@@ -233,4 +240,112 @@ class MultiLayerSelection(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
+
+    def setSelectionFeature(self, layer, feature):
+        """
+        Selects a given feature on canvas.
+        """
+        layer.setSelectedFeatures([feature.id()])
+        return 
+
+    def setSelectionListFeature(self, listLayerFeature):
+        """
+        Selects all features in a given list on canvas.
         
+        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        """
+        for item in listLayerFeature:
+            self.setSelectionFeature(item[0], item[1])
+        return
+
+    def openMultipleFeatureForm(self, listLayerFeature):
+        """
+        Opens all features Attribute Tables of a given list.
+        
+        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        """
+        for item in listLayerFeature:
+            self.iface.openFeatureForm(item[0], item[1], showModal=False)
+
+    def filterStrongestGeometry(self, listLayerFeature):
+        """
+        Filter a given list of features for its strongest geometry
+
+        arg listLayerFeature: a list os items as of [layer, feature, geometry_type]
+        returns a list [layer, feature]
+        """
+        if listLayerFeature:
+            strongest_geometry = np.array(np.array(listLayerFeature)[:,2], 'int').min()
+        else:
+            return []
+        l = []
+        for i in listLayerFeature:
+            if i[2] == strongest_geometry:
+                l.append(i)
+        return l
+
+    def createContextMenu(self, e):
+        """
+        Creates the context menu for overlapping layers
+        """  
+        selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        # setting a list of features to iterate over
+        layerList = self.getPrimitiveDict(e, hasControlModifyer = selected)
+        layers = []
+        for key in layerList.keys():
+            layers += layerList[key]
+        if layers:
+            menu = QtGui.QMenu()
+            rect = self.getCursorRect(e)
+            t = []
+            for layer in layers:
+                # iterate over features inside the mouse bounding box 
+                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
+                for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
+                    if feature.geometry().intersects(rect):
+                        t.append([layer, feature, layer.geometryType()])
+            t = self.filterStrongestGeometry(t)
+            if len(t) > 1:
+                pop = 0 # number of features 
+                for i in range(0, len(t)):
+                    [layer, feature, geom] = t[i-pop] # geom to avoid dimension issues
+                    # layers from different dabases may have the same name
+                    # hence the need of db_name
+                    self.iface.setActiveLayer(layer) # a layer must be active in order to get db_name
+                    db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
+                    s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
+                    action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
+                    # handling CTRL key and left/right click actions
+                    if selected:
+                        if e.button() == QtCore.Qt.LeftButton: 
+                            # line added to make sure the action is associated with
+                            # current loop value.
+                            action.triggered[()].connect(lambda t=[e, selected] : self.selectFeatures(t[0], hasControlModifyer=t[1]))
+                        elif e.button() == QtCore.Qt.RightButton:
+                            # remove feature from candidates of selection and set layer for selection
+                            action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
+                            t.pop(i-pop)
+                            pop += 1
+                            continue
+                    else:
+                        if e.button() == QtCore.Qt.LeftButton:
+                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
+                        elif e.button() == QtCore.Qt.RightButton:
+                            action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
+                # "Select All" always selects all features
+                # Sugestion: Open all atribute tables? 
+                if e.button() == QtCore.Qt.LeftButton:
+                    menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
+                else:
+                    menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))    
+                menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+            elif t:                
+                t = t[0]
+                selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+                if e.button() == QtCore.Qt.LeftButton:
+                    self.selectFeatures(e, hasControlModifyer = selected)
+                elif selected:
+                    self.iface.setActiveLayer(t[0])
+                else:
+                    self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                
