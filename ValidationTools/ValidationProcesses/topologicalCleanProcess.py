@@ -49,7 +49,7 @@ class TopologicalCleanProcess(ValidationProcess):
         alg = 'grass7:v.clean.advanced'
 
         #setting tools
-        tools = 'break,rmsa,rmdangle'
+        tools = 'rmsa,break,rmdupl,rmdangle'
         threshold = -1
 
         #getting table extent (bounding box)
