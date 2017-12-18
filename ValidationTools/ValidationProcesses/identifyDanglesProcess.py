@@ -66,12 +66,14 @@ class IdentifyDanglesProcess(ValidationProcess):
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 localProgress.step()
 
-                allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 if self.parameters['Only Selected']:
                     featureList = lyr.selectedFeatures()
+                    size = len(featureList)
                 else:
                     featureList = lyr.getFeatures()
+                    size = len(lyr.allFeatureIds())
+
+                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 # start and end points dict
                 endVerticesDict = {}
                 # iterating over features to store start and end points
@@ -107,7 +109,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                     localProgress.step()
 
                 # actual search for dangles
-                localProgress = ProgressWidget(1, len(endVerticesDict.keys()) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(1, len(endVerticesDict.keys()), self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for point in endVerticesDict.keys():
                     # this means we only have one occurrence of point, therefore it is a dangle
                     if len(endVerticesDict[point]) > 1:
