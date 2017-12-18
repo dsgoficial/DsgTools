@@ -258,6 +258,15 @@ class MultiLayerSelection(QgsMapTool):
             self.setSelectionFeature(item[0], item[1])
         return
 
+    def openMultipleFeatureForm(self, listLayerFeature):
+        """
+        Opens all features Attribute Tables of a given list.
+        
+        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        """
+        for item in listLayerFeature:
+            self.iface.openFeatureForm(item[0], item[1], showModal=False)
+
     def filterStrongestGeometry(self, listLayerFeature):
         """
         Filter a given list of features for its strongest geometry
@@ -302,7 +311,7 @@ class MultiLayerSelection(QgsMapTool):
                     [layer, feature, geom] = t[i-pop] # geom to avoid dimension issues
                     # layers from different dabases may have the same name
                     # hence the need of db_name
-                    self.setActiveLayer(layer) # a layer must be active in order to get db_name
+                    self.iface.setActiveLayer(layer) # a layer must be active in order to get db_name
                     db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
@@ -325,7 +334,10 @@ class MultiLayerSelection(QgsMapTool):
                             action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
                 # "Select All" always selects all features
                 # Sugestion: Open all atribute tables? 
-                menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
+                if e.button() == QtCore.Qt.LeftButton:
+                    menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
+                else:
+                    menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))    
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:                
                 t = t[0]
