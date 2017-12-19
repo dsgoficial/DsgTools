@@ -36,107 +36,35 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Unbuild Earth Coverage Polygons')
-        
-    def cleanCentroidsAreas(self, coverageClassList):
+    
+    def loadAuxStructure(self):
         """
-        Cleans all the previously created areas
+        Loads Auxiliar structure and returns a dictionary, auxStructDict, which is formated as follows: {lyrName:lyr}
         """
-        for cl in coverageClassList:
-            auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'geom').uri(), cl, "postgres")
-            featDict = dict()
-            for feat in auxCentroidLyr.getFeatures():
-                if feat['centroid']:
-                    featDict[feat['id']] = QgsGeometry()
-            auxCentroidLyr.dataProvider().changeGeometryValues(featDict)
-
-
-    def getCandidates(self, idx, bbox):
-        return idx.intersects(bbox)
-
-    def prepareReclassification(self, cl, areaLyr, centroidLyr, relateDict):
-        """
-        area without centroid: destid = -1
-        area with conflicted centroid: destid = 0
-        """
-        destIdx = areaLyr.fieldNameIndex('destid')
-        for id in relateDict[cl].keys():
-            numberOfCentroids = len(relateDict[cl][id])
-            if numberOfCentroids == 1:
-                if relateDict[cl][id][0]['cl'] == cl:
-                    # perfect case - must be reclassified
-                    areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
-            elif numberOfCentroids == 0:
-                # area without centroid - this must become a flag
-                areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1000}})
-            else:
-                #first sweep: identify centroids with conflicted classes
-                conflictedCentroids = [feat for feat in relateDict[cl][id] if feat['cl'] <> cl]
-                conflictedChildCentroids = [feat['child'] for feat in relateDict[cl][id]]
-                conflictedDict = dict()
-                for conf in conflictedChildCentroids:
-                    conflictedDict[conf] = 1
-                if len(conflictedCentroids) > 0:
-                    areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
-                elif len(conflictedDict.keys())>1:
-                    areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
-                else:
-                    sameClassCentroids = relateDict[cl][id]
-                    #get original centroid layer
-                    auxLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn='centroid').uri(), relateDict[cl][id][0][0], "postgres")
-                    #get all field names
-                    fieldNames = [field.name() for field in auxLyr.pendingFields()]
-                    #we must not consider these fields
-                    notAllowedFields = [name for name in fieldNames if (name in ['id', 'geom', 'centroid'] or 'id_' in name)]
-                    #check by index is easier, therefore, this step
-                    notAllowedIndexes = []
-                    for notAllowedField in notAllowedFields:
-                        notAllowedIndexes.append(auxLyr.fieldNameIndex(notAllowedField))
-                        
-                    #comparing centroid attributes
-                    duplicated = True # aux variable
-                    firstCentroid = [feat for feat in auxLyr.dataProvider().getFeatures(QgsFeatureRequest(relateDict[cl][id][0][1]))][0]
-                    firstAttributes = firstCentroid.attributes()
-                    for i in range(1, len(sameClassCentroids)):
-                        centroid = [feat for feat in auxLyr.dataProvider().getFeatures(QgsFeatureRequest(sameClassCentroids[i][1]))][0]
-                        attributes = centroid.attributes()
-                        for j in range(len(attributes)):
-                            if j not in notAllowedIndexes:
-                                #in this case the attribute j is not equal, we must flag this out
-                                if centroid[j] != firstCentroid[j]:
-                                    duplicated = False
-                                    break
-                        break
-                    if duplicated:
-                        areaLyr.dataProvider().changeAttributeValues({id : {destIdx:relateDict[cl][id][0]['featid']}})
-                    else:
-                        areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
-
-    def createAuxStruct(self, epsg):
-        """
-        creates the memory area layer to store the polygonize return
-        creates the memory point to store all the centroids 
-        """
-        try:
-            areaLyr = QgsVectorLayer("MultiPolygon?crs=EPSG:%d" % epsg,"tempArea",'memory')
-            idField = QgsField('cl',QVariant.String)
-            destinationId = QgsField('destid',QVariant.Int)
-            areaLyr.dataProvider().addAttributes([idField, destinationId])
-            areaLyr.updateFields()
-            centroidLyr = QgsVectorLayer("MultiPoint?crs=EPSG:%d" % epsg,'centroids','memory')
-            classField = QgsField('cl',QVariant.String)
-            idField = QgsField('featid',QVariant.Int)
-            childField = QgsField('child',QVariant.String)
-            centroidLyr.dataProvider().addAttributes([classField,idField, childField])
-            centroidLyr.updateFields()
-            return (areaLyr, centroidLyr)
-        except Exception as e:
-            raise e 
-
-    def makeCentroid(self, lyr, centroidLyr):
+        pass
+    
+    def makeCentroids(self, lyr, centroidLyr):
         """
         Gets each polygon from lyr, calculates its centroid (inner point, not gravitational centroid) and stores it into the centroidLyr
         """
         pass
+    
+    def makeBoundaries(self, lyr):
+        """
+        Calculates boundary of each polygon, breaks them with clean from grass (clean with break and rmdupl)
+        """
+        pass
+    
+    def filterBoundaries(self, boundaryLyr, earthCoverageDict, auxStructDict):
+        """
+        Compairs each feature from boundaryLyr with earth coverage layers. If the feature is already in a coverage layer, it is discarted.
+        Returns the remaining boundary feature.
+        """
+        pass
+    
+    def reclassifyAuxFeatures(self, featureList, auxLyr):
+        pass
+
 
     def execute(self):
         """
@@ -162,16 +90,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
                 QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
                 return
             
-            self.cleanCentroidsAreas(coverageClassList)
-            #making temp layers
-            epsg = self.abstractDb.findEPSG()
-            areaLyr, centroidLyr = self.createAuxStruct(epsg)
             
-            #building centroid index
-            self.populateCentroidLyr(coverageClassList, centroidLyr)
-            centroidIdx = self.makeIndex(centroidLyr)
-            
-            relateDict = dict()
             for cl in coverageClassList:
                 localProgress = ProgressWidget(0, 1, self.tr('Processing earth coverage on ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
