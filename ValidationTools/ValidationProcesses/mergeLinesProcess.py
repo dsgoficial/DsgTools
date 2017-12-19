@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsGeometry
+from qgis.core import QgsMessageLog, QgsGeometry, QgsDataSourceURI
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 import binascii
@@ -41,7 +41,7 @@ class MergeLinesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False, 'Attributes (comma separated)':''}
+            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False, 'AttributeBlackList (comma separated)':''}
 
     def postProcess(self):
         """
@@ -59,7 +59,7 @@ class MergeLinesProcess(ValidationProcess):
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.parameters['Classes']
-            attributeNames = self.parameters['Attributes (comma separated)']
+            attributeNames = self.parameters['AttributeBlackList (comma separated)']
             if ',' in attributeNames:
                 attributeNames = attributeNames.split(',')
             else:
@@ -84,17 +84,28 @@ class MergeLinesProcess(ValidationProcess):
                     featureList = lyr.getFeatures()
                     size = len(lyr.allFeatureIds())
 
+                # getting the key column
+                uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                keyColumn = uri.keyColumn()
+
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 # iterating over features to store them in groups having same attributes
                 featuresDict = {}
+                columns = None
                 for feat in featureList:
+                    # getting the column names only once
+                    if not columns:
+                        columns = [field.name() for field in feat.fields() if (field.type() != 6 and field.name() != keyColumn)]
                     attributes = []
-                    for attributeName in attributeNames:
+                    for column in columns:
+                        # iterating only over allowed attribute names
+                        if column in attributeNames:
+                            continue
                         # creating a key using the selected attributes
-                        if not feat[attributeName]:
+                        if not feat[column]:
                             attributes.append('')
                         else:
-                            attributes.append('{}'.format(feat[attributeName]))
+                            attributes.append('{}'.format(feat[column]))
                     # making a string out of the key
                     attributes = ''.join(attributes)
                     if attributes not in featuresDict.keys():
