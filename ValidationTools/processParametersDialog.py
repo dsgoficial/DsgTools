@@ -89,7 +89,7 @@ class ProcessParametersDialog(QtGui.QDialog):
             label = QtGui.QLabel(beautifyText(k))
             widget = self.WIDGETS[type(v)]()
             if self.WIDGETS[type(v)] == QtGui.QDoubleSpinBox:
-                widget.setDecimals(5)
+                widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
             if self.WIDGETS[type(v)] == QtGui.QSpinBox:
