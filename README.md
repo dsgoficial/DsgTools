@@ -34,7 +34,7 @@ sudo apt-get install python-qt4-sql
 sudo apt-get install libqt4-sql-psql
 sudo apt-get install libqt4-sql-sqlite
 
-For further information, go to https://github.com/lcoandrade/DsgTools/wiki or http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
+For further information, go to https://github.com/dsgoficial/DsgTools/wiki or http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
 
 ------------------------------------
 # Complemento DSGTools (Versão em Português)
@@ -69,4 +69,4 @@ Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.0:
 - Ferramenta de (re)classificação de feições;
 - Ferramentas de validação geométrica;
 
-Para maiores informações, acesse https://github.com/lcoandrade/DsgTools/wiki ou http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
+Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
