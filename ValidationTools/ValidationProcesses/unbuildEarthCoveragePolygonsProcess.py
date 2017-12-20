@@ -42,8 +42,11 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
             self.parameters = {'EarthCoverageDict':self.earthCoverageDict}
     
     def getParametersFromDb(self):
+        self.abstractDb.
         edgvVersion = self.abstractDb.getDatabaseVersion()
         propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
+        if propertyDict == {}:
+            raise self.tr('Earth Coverage property not defined. Unable to run process.')
         propertyName = propertyDict[edgvVersion][0]
         settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
         return settingDict['earthCoverageDict'], settingDict['frameLayer']
