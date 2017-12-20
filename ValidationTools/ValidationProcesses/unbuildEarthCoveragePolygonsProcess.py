@@ -36,6 +36,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Unbuild Earth Coverage Polygons')
+        self.instantiating = instantiating
         if not self.instantiating:
             self.earthCoverageDict, self.frameLayer = self.getParametersFromDb()
             self.parameters = {'EarthCoverageDict':self.earthCoverageDict}
@@ -45,7 +46,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
         propertyName = propertyDict[edgvVersion][0]
         settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
-        return earthCoverageDict = settingDict['earthCoverageDict'], settingDict['frameLayer']
+        return settingDict['earthCoverageDict'], settingDict['frameLayer']
 
     def loadAuxStructure(self):
         """
