@@ -23,18 +23,18 @@ Builds a temp rubberband with a given size and shape.
 """
 from qgis.gui import QgsRubberBand, QgsMapTool
 from qgis.core import QgsPoint, QGis
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtGui import QColor
-from PyQt4.QtCore import pyqtSignal, QObject
+from PyQt4 import QtGui, QtCore, Qt
+from PyQt4.QtGui import QColor, QCursor, QWidget
+from PyQt4.QtCore import pyqtSignal, QObject, Qt as Qt2, QPoint
 from math import sqrt, cos, sin, pi, atan2
 
 class ShapeTool(QgsMapTool):
     #signal emitted when the mouse is clicked. This indicates that the tool finished its job
     toolFinished = pyqtSignal()
     def __init__(self, canvas, geometryType, param, type, color = QColor( 254, 178, 76, 63 )):
-        '''
+        """
         Constructor
-        '''
+        """
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
         self.active = False
@@ -47,19 +47,21 @@ class ShapeTool(QgsMapTool):
         self.reset()
         self.rotAngle = 0
         self.currentCentroid = None
+        self.lastPos = None
+        self.rotate = False
     
     def setColor(self, mFillColor):
-        '''
+        """
         Adjusting the color to create the rubber band
-        '''
+        """
     
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
     
     def reset(self):
-        '''
+        """
         Resetting the rubber band
-        '''
+        """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         try:
@@ -72,36 +74,45 @@ class ShapeTool(QgsMapTool):
         Calculates the angle for the rotation.
         """
         item_position = self.toMapCoordinates(e.pos())
-        rotAngle = atan2(item_position.y() - centroid.y(), item_position.x() - centroid.x()) / pi * 180 - 90
-        return rotAngle
+        rotAngle = atan2(item_position.y() - centroid.y(), item_position.x() - centroid.x()) / pi * 180
+        return (90 - rotAngle)
 
     def canvasPressEvent(self, e):
-        '''
+        """
         When the canvas is pressed the tool finishes its job
-        '''
+        """
         self.canvas.unsetMapTool(self)
         self.toolFinished.emit()
 
     def canvasMoveEvent(self, e):
-        '''
+        """
         Deals with mouse move event to update the rubber band position in the canvas
-        '''
-        if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):              
+        """
+        
+        if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
+            if self.rotate:
+                QtGui.QApplication.restoreOverrideCursor()
+                QtGui.QCursor.setPos(self.lastPos)
+                self.rotate = False
             self.endPoint = self.toMapCoordinates( e.pos() )
             if self.geometryType == self.tr(u"Circle"):
                 self.showCircle(self.endPoint)
             elif self.geometryType == self.tr(u"Square"):
                 self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)
+            self.lastPos = self.canvas.mapToGlobal(e.pos())
+            #print e.pos(), self.canvas.mapToGlobal(e.pos())
         elif e.button() != None and \
             (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)\
             and self.geometryType == self.tr(u"Square"):
-            self.rotAngle = self.rotateRect(self.currentCentroid, e)            
-            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)
+            QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
+            self.rotAngle = self.rotateRect(self.currentCentroid, e)
+            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle) 
+            self.rotate = True           
     
     def showCircle(self, startPoint):
-        '''
+        """
         Draws a circle in the canvas
-        '''
+        """
         nPoints = 50
         x = startPoint.x()
         y = startPoint.y()
@@ -121,9 +132,9 @@ class ShapeTool(QgsMapTool):
             self.rubberBand.show()
 
     def showRect(self, startPoint, param, rotAngle=0):   
-        '''
+        """
         Draws a rectangle in the canvas
-        '''  
+        """  
         self.rubberBand.reset(QGis.Polygon)
         x = startPoint.x()
         y = startPoint.y()
@@ -138,26 +149,27 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.setRotation(rotAngle)
         self.rubberBand.show()
         self.currentCentroid = self.rubberBand.asGeometry().centroid().asPoint()
+        return self.rubberBand.asGeometry().centroid().asPoint()
         
     def deactivate(self):
-        '''
+        """
         Deactivates the tool and hides the rubber band
-        '''
+        """
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
         
     def activate(self):
-        '''
+        """
         Activates the tool
-        '''
+        """
         QgsMapTool.activate(self)
     
     def reproject(self, geom, canvasCrs):
-        '''
+        """
         Reprojects geom from the canvas crs to the reference crs
         geom: geometry to be reprojected
         canvasCrs: canvas crs (from crs)
-        '''
+        """
         destCrs = self.reference.crs()
         if canvasCrs.authid() != destCrs.authid():
             coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
