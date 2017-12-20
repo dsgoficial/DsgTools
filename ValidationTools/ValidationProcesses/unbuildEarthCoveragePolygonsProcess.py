@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2017-12-07
         git sha              : $Format:%H$
         copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -36,7 +36,17 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Unbuild Earth Coverage Polygons')
+        if not self.instantiating:
+            self.earthCoverageDict, self.frameLayer = self.getParametersFromDb()
+            self.parameters = {'EarthCoverageDict':self.earthCoverageDict}
     
+    def getParametersFromDb(self):
+        edgvVersion = self.abstractDb.getDatabaseVersion()
+        propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
+        propertyName = propertyDict[edgvVersion][0]
+        settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+        return earthCoverageDict = settingDict['earthCoverageDict'], settingDict['frameLayer']
+
     def loadAuxStructure(self):
         """
         Loads Auxiliar structure and returns a dictionary, auxStructDict, which is formated as follows: {lyrName:lyr}
@@ -76,34 +86,34 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             #TODO: check if frame is created
             
-            #getting earth coverage configuration
-            edgvVersion = self.abstractDb.getDatabaseVersion()
-            propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
-            propertyName = propertyDict[edgvVersion][0]
-            settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
-            earthCoverageDict = settingDict['earthCoverageDict']
-            self.frameLayer = settingDict['frameLayer']
+            # #getting earth coverage configuration
+            # edgvVersion = self.abstractDb.getDatabaseVersion()
+            # propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
+            # propertyName = propertyDict[edgvVersion][0]
+            # settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
+            # earthCoverageDict = settingDict['earthCoverageDict']
+            # self.frameLayer = settingDict['frameLayer']
             
-            coverageClassList = earthCoverageDict.keys()
-            if coverageClassList.__len__() == 0:
-                self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
-                return
+            # coverageClassList = earthCoverageDict.keys()
+            # if coverageClassList.__len__() == 0:
+            #     self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
+            #     QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+            #     return
             
             
-            for cl in coverageClassList:
-                localProgress = ProgressWidget(0, 1, self.tr('Processing earth coverage on ') + cl, parent=self.iface.mapCanvas())
-                localProgress.step()
-                #must gather all lines (including frame) to close areas
-                lineLyr = self.defineQueryLayer(earthCoverageDict[cl])
-                #close areas from lines
-                self.runPolygonize(cl, areaLyr, lineLyr)
-                self.relateAreasWithCentroids(cl, areaLyr, centroidLyr, relateDict, centroidIdx)
-                # reclassifying areas
-                self.prepareReclassification(cl, areaLyr, centroidLyr, relateDict)
-                self.reclassifyAreasWithCentroids(coverageClassList, areaLyr, centroidLyr, relateDict)
-                localProgress.step()
-            self.raiseFlags(areaLyr)     
+            # for cl in coverageClassList:
+            #     localProgress = ProgressWidget(0, 1, self.tr('Processing earth coverage on ') + cl, parent=self.iface.mapCanvas())
+            #     localProgress.step()
+            #     #must gather all lines (including frame) to close areas
+            #     lineLyr = self.defineQueryLayer(earthCoverageDict[cl])
+            #     #close areas from lines
+            #     self.runPolygonize(cl, areaLyr, lineLyr)
+            #     self.relateAreasWithCentroids(cl, areaLyr, centroidLyr, relateDict, centroidIdx)
+            #     # reclassifying areas
+            #     self.prepareReclassification(cl, areaLyr, centroidLyr, relateDict)
+            #     self.reclassifyAreasWithCentroids(coverageClassList, areaLyr, centroidLyr, relateDict)
+            #     localProgress.step()
+            # self.raiseFlags(areaLyr)     
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

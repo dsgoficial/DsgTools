@@ -21,10 +21,40 @@
  ***************************************************************************/
 """
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget 
+from PyQt4.QtGui import QWidget, QFormLayout, QLabel
 
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 
 class AuxLayerSelector(QWidget):
     def __init__(self, parent=None):
         super(AuxLayerSelector, self).__init__(parent)
+        self.layout = QFormLayout()
+    
+    def setInitialState(self, initDict):
+        """
+        Sets widget interface with initDict entries. Keys are labels and values are list of items for each combobox corresponding to each key.
+        """
+        for key, value in initDict.items():
+            label = QLabel(key)
+            widget = DsgCustomComboBox()
+            widget.addItems(value)
+            self.layout.addRow(label, widget)
+        self.setLayout(self.layout)
+    
+    def resetLayout(self):
+        """
+        Resets current widget layout.
+        """
+        self.layout = QFormLayout()
+        self.setLayout(self.layout)
+    
+    def getParameters(self):
+        """
+        Gets current values fom each widget as a dictionary.
+        """
+        returnDict = dict()
+        for i in range(self.layout.rowCount()):
+            key = self.layout.itemAt(i, QFormLayout.LabelRole).text()
+            value = self.layout.itemAt(i, QFormLayout.FieldRole).currentText()
+            returnDict[key] = value
+        return returnDict
