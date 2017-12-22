@@ -47,7 +47,6 @@ class ShapeTool(QgsMapTool):
         self.reset()
         self.rotAngle = 0
         self.currentCentroid = None
-        self.lastPos = None
         self.rotate = False
     
     def setColor(self, mFillColor):
@@ -90,23 +89,30 @@ class ShapeTool(QgsMapTool):
         """
         
         if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
+            QtGui.QApplication.restoreOverrideCursor()
             if self.rotate:
                 QtGui.QApplication.restoreOverrideCursor()
-                QtGui.QCursor.setPos(self.lastPos)
+                mousePos = self.toCanvasCoordinates(self.currentCentroid)
+                self.endPoint = self.toMapCoordinates(mousePos)
+                mousePos = self.canvas.mapToGlobal(mousePos)
+                QtGui.QCursor.setPos(mousePos)
                 self.rotate = False
-            self.endPoint = self.toMapCoordinates( e.pos() )
+                print self.toCanvasCoordinates(self.currentCentroid), e.pos(), mousePos
+            else:
+                QtGui.QApplication.restoreOverrideCursor()
+                self.endPoint = self.toMapCoordinates( e.pos() )
             if self.geometryType == self.tr(u"Circle"):
                 self.showCircle(self.endPoint)
             elif self.geometryType == self.tr(u"Square"):
                 self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)
-            self.lastPos = self.canvas.mapToGlobal(e.pos())
-            #print e.pos(), self.canvas.mapToGlobal(e.pos())
         elif e.button() != None and \
             (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)\
             and self.geometryType == self.tr(u"Square"):
             QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
             self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle) 
+            # to inform the program that there was a rotation applied and 
+            # direct flow to redrawing 
             self.rotate = True           
     
     def showCircle(self, startPoint):
