@@ -74,7 +74,7 @@ class ShapeTool(QgsMapTool):
         """
         item_position = self.toMapCoordinates(e.pos())
         rotAngle = atan2(item_position.y() - centroid.y(), item_position.x() - centroid.x()) / pi * 180
-        return (90 - rotAngle)
+        return (90 - rotAngle) 
 
     def canvasPressEvent(self, e):
         """
@@ -89,18 +89,8 @@ class ShapeTool(QgsMapTool):
         """
         
         if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
-            QtGui.QApplication.restoreOverrideCursor()
-            if self.rotate:
-                QtGui.QApplication.restoreOverrideCursor()
-                mousePos = self.toCanvasCoordinates(self.currentCentroid)
-                self.endPoint = self.toMapCoordinates(mousePos)
-                mousePos = self.canvas.mapToGlobal(mousePos)
-                QtGui.QCursor.setPos(mousePos)
-                self.rotate = False
-                print self.toCanvasCoordinates(self.currentCentroid), e.pos(), mousePos
-            else:
-                QtGui.QApplication.restoreOverrideCursor()
-                self.endPoint = self.toMapCoordinates( e.pos() )
+            # QtGui.QApplication.restoreOverrideCursor()
+            self.endPoint = self.toMapCoordinates( e.pos() )
             if self.geometryType == self.tr(u"Circle"):
                 self.showCircle(self.endPoint)
             elif self.geometryType == self.tr(u"Square"):
@@ -108,12 +98,10 @@ class ShapeTool(QgsMapTool):
         elif e.button() != None and \
             (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)\
             and self.geometryType == self.tr(u"Square"):
-            QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
+            # QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
-            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle) 
-            # to inform the program that there was a rotation applied and 
-            # direct flow to redrawing 
-            self.rotate = True           
+            # updates the rectangle shown and the self.centroid position
+            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)  
     
     def showCircle(self, startPoint):
         """
@@ -137,25 +125,27 @@ class ShapeTool(QgsMapTool):
                 self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
 
-    def showRect(self, startPoint, param, rotAngle=0):   
+    def showRect(self, startPoint, param, rotAngle=0):
         """
         Draws a rectangle in the canvas
         """  
         self.rubberBand.reset(QGis.Polygon)
-        x = startPoint.x()
-        y = startPoint.y()
-        point1 = QgsPoint(x - param, y - param)
-        point2 = QgsPoint(x - param, y + param)
-        point3 = QgsPoint(x + param, y + param)
-        point4 = QgsPoint(x + param, y - param)
+        x = startPoint.x() #center point x
+        y = startPoint.y() #center point y
+        # rotation angle is always applied in reference to center point
+        # to avoid unnecessary calculations
+        c = cos(rotAngle)
+        s = sin(rotAngle)
+        point1 = QgsPoint((x - param)*c + (y - param)*s, (y - param)*c - (x - param)*s)
+        point2 = QgsPoint((x - param)*c + (y + param)*s, (y + param)*c - (x - param)*s)
+        point3 = QgsPoint((x + param)*c + (y + param)*s, (y + param)*c - (x + param)*s)
+        point4 = QgsPoint((x + param)*c + (y - param)*s, (y - param)*c - (x + param)*s)
         self.rubberBand.addPoint(point1, False)
         self.rubberBand.addPoint(point2, False)
         self.rubberBand.addPoint(point3, False)
         self.rubberBand.addPoint(point4, True)
-        self.rubberBand.setRotation(rotAngle)
         self.rubberBand.show()
-        self.currentCentroid = self.rubberBand.asGeometry().centroid().asPoint()
-        return self.rubberBand.asGeometry().centroid().asPoint()
+        self.currentCentroid = startPoint
         
     def deactivate(self):
         """
