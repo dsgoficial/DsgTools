@@ -72,9 +72,11 @@ class ShapeTool(QgsMapTool):
         """
         Calculates the angle for the rotation.
         """
-        item_position = self.toMapCoordinates(e.pos())
-        rotAngle = atan2(item_position.y() - centroid.y(), item_position.x() - centroid.x()) / pi * 180
-        return (90 - rotAngle) 
+        item_position = self.canvas.mapToGlobal(e.pos())
+        c = self.toCanvasCoordinates(centroid)
+        c = self.canvas.mapToGlobal(c)
+        rotAngle = pi - atan2(item_position.y() - c.y(), item_position.x() - c.x())
+        return rotAngle
 
     def canvasPressEvent(self, e):
         """
@@ -86,22 +88,26 @@ class ShapeTool(QgsMapTool):
     def canvasMoveEvent(self, e):
         """
         Deals with mouse move event to update the rubber band position in the canvas
-        """
-        
+        """        
         if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
-            # QtGui.QApplication.restoreOverrideCursor()
+            if self.rotate:
+                # change rotate status
+                self.rotate = False
+            QtGui.QApplication.restoreOverrideCursor()
             self.endPoint = self.toMapCoordinates( e.pos() )
-            if self.geometryType == self.tr(u"Circle"):
-                self.showCircle(self.endPoint)
-            elif self.geometryType == self.tr(u"Square"):
-                self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)
         elif e.button() != None and \
             (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)\
             and self.geometryType == self.tr(u"Square"):
-            # QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
+            # calculate angle between mouse and last rubberband before holding control centroid
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
-            # updates the rectangle shown and the self.centroid position
-            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)  
+            if not self.rotate:
+                # only override mouse if it is not overriden already
+                QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
+                self.rotate = True
+        if self.geometryType == self.tr(u"Circle"):
+                self.showCircle(self.endPoint)
+        elif self.geometryType == self.tr(u"Square"):
+            self.showRect(self.endPoint, sqrt(self.param)/2, self.rotAngle)
     
     def showCircle(self, startPoint):
         """
@@ -136,14 +142,20 @@ class ShapeTool(QgsMapTool):
         # to avoid unnecessary calculations
         c = cos(rotAngle)
         s = sin(rotAngle)
-        point1 = QgsPoint((x - param)*c + (y - param)*s, (y - param)*c - (x - param)*s)
-        point2 = QgsPoint((x - param)*c + (y + param)*s, (y + param)*c - (x - param)*s)
-        point3 = QgsPoint((x + param)*c + (y + param)*s, (y + param)*c - (x + param)*s)
-        point4 = QgsPoint((x + param)*c + (y - param)*s, (y - param)*c - (x + param)*s)
-        self.rubberBand.addPoint(point1, False)
-        self.rubberBand.addPoint(point2, False)
-        self.rubberBand.addPoint(point3, False)
-        self.rubberBand.addPoint(point4, True)
+        # translating coordinate system to rubberband centroid
+        point1 = QgsPoint((- param), (- param))
+        point2 = QgsPoint((- param), ( param))
+        point3 = QgsPoint((param), ( param))
+        point4 = QgsPoint((param), (- param))
+        # rotating and moving to original coord.  sys.
+        point1_ = QgsPoint(point1.x()*c - point1.y()*s + x, point1.y()*c + point1.x()*s + y)
+        point2_ = QgsPoint(point2.x()*c - point2.y()*s + x, point2.y()*c + point2.x()*s + y)
+        point3_ = QgsPoint(point3.x()*c - point3.y()*s + x, point3.y()*c + point3.x()*s + y)
+        point4_ = QgsPoint(point4.x()*c - point4.y()*s + x, point4.y()*c + point4.x()*s + y)
+        self.rubberBand.addPoint(point1_, False)
+        self.rubberBand.addPoint(point2_, False)
+        self.rubberBand.addPoint(point3_, False)
+        self.rubberBand.addPoint(point4_, True)
         self.rubberBand.show()
         self.currentCentroid = startPoint
         
