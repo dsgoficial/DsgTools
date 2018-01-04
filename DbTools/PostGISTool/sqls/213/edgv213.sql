@@ -17344,20 +17344,13 @@ from pg_constraint c
         left join pg_namespace npsagreg on t.relnamespace = npsagreg.oid
         where contype = 'f' and (nsp.nspname = 'complexos')
         order by complex asc) as foo#
-ALTER TABLE cb.loc_localidade_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_vila_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_cidade_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_capital_p ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.edu_complexo_lazer ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglomerado_rural_p ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.sau_org_saude ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.sau_org_saude_pub ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.sau_org_servico_social ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.sau_org_saude_militar ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.sau_org_servico_social_pub ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.adm_instituicao_publica ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglomerado_rural_isolado_p ALTER COLUMN id set default uuid_generate_v4()#
-ALTER TABLE cb.loc_aglom_rural_de_ext_urbana_p ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.hid_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.hid_trecho_curso_dagua ALTER COLUMN id set default uuid_generate_v4()#
 ALTER TABLE complexos.tra_via_rodoviaria ALTER COLUMN id set default uuid_generate_v4()#
