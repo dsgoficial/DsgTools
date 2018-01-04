@@ -90,15 +90,15 @@ class ShapeTool(QgsMapTool):
     def canvasMoveEvent(self, e):
         """
         Deals with mouse move event to update the rubber band position in the canvas
-        """        
-        if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
+        """
+        ctrlIsHeld = QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+        if e.button() != None and not ctrlIsHeld:
             if self.rotate:
                 # change rotate status
                 self.rotate = False
             QtGui.QApplication.restoreOverrideCursor()
             self.endPoint = self.toMapCoordinates( e.pos() )
-        elif e.button() != None and \
-            (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)\
+        elif e.button() != None and ctrlIsHeld \
             and self.geometryType == self.tr(u"Square"):
             # calculate angle between mouse and last rubberband centroid before holding control
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
