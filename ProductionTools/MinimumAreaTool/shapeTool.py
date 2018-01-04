@@ -82,6 +82,7 @@ class ShapeTool(QgsMapTool):
         """
         When the canvas is pressed the tool finishes its job
         """
+        QtGui.QApplication.restoreOverrideCursor()
         self.canvas.unsetMapTool(self)
         self.toolFinished.emit()
 
