@@ -156,9 +156,9 @@ class InspectFeatures(QWidget,Ui_Form):
                 return
             featIdList = self.getFeatIdList(currentLayer)
             if oldIndex not in featIdList:
-                oldId = 0
+                oldIndex = 0
             zoom = self.mScaleWidget.scale()
-            if oldId == newId:
+            if oldIndex == newId:
                 self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
                 return
             try:

@@ -70,4 +70,5 @@ class PostgisDbCreator(DbCreator):
             self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateName'], parentWidget = parentWidget)
             newDb = self.instantiateNewDb(dbName)
             newDb.updateDbSRID(srid, parentWidget = parentWidget)
+            newDb.checkAndCreateStyleTable()
             return newDb
