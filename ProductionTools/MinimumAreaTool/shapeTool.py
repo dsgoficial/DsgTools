@@ -166,6 +166,7 @@ class ShapeTool(QgsMapTool):
         """
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
+        QtGui.QApplication.restoreOverrideCursor()
         
     def activate(self):
         """
