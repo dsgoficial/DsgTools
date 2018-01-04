@@ -79,9 +79,6 @@ class InspectFeatures(QWidget,Ui_Form):
             parent.addAction(action)
         return action
     
-    def lol(self):
-        print 'lol'
-    
     def getIterateLayer(self):
 	    return self.mMapLayerComboBox.currentLayer()
 
@@ -168,8 +165,8 @@ class InspectFeatures(QWidget,Ui_Form):
                 self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
             except:
                 self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
-                self.idSpinBox.setValue(oldId)
-                self.makeZoom(zoom, currentLayer, oldId)
+                self.idSpinBox.setValue(oldIndex)
+                self.makeZoom(zoom, currentLayer, oldIndex)
 
     def getFeatIdList(self, currentLayer):
         #getting all features ids
@@ -180,6 +177,7 @@ class InspectFeatures(QWidget,Ui_Form):
             return []
         else:
             request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.asExpression())
+            request.setFlags(QgsFeatureRequest.NoGeometry)
             featIdList = [i.id() for i in currentLayer.getFeatures(request)]
         #sort is faster than sorted (but sort is just available for lists)
         featIdList.sort()
