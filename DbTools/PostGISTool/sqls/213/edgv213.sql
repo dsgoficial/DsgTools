@@ -1984,7 +1984,7 @@ CREATE TABLE cb.lim_area_especial_a(
 ) INHERITS(cb.lim_area_especial)
 #
 CREATE TABLE cb.loc_localidade_p(
-	id uuid NOT NULL,
+	id serial NOT NULL,
 	nome varchar(80),
 	nomeabrev varchar(50),
 	geometriaaproximada smallint NOT NULL,
