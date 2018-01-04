@@ -60,7 +60,11 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         Gets each polygon from lyr, calculates its centroid (inner point, not gravitational centroid) and stores it into the centroidLyr
         """
-        pass
+        #run PointOnSurface
+        ret = processing.runalg("qgis:pointonsurface", lyr, None) 
+        #load output lyr
+        outputLayer = processing.getObject(ret['OUTPUT_LAYER'])
+        self.updateOriginalLayerV2(centroidLyr, outputLayer)
     
     def makeBoundaries(self, lyr):
         """
