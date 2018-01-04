@@ -82,6 +82,7 @@ class ShapeTool(QgsMapTool):
         """
         When the canvas is pressed the tool finishes its job
         """
+        # enforce mouse restoring if clicked right after rotation 
         QtGui.QApplication.restoreOverrideCursor()
         self.canvas.unsetMapTool(self)
         self.toolFinished.emit()
@@ -89,17 +90,17 @@ class ShapeTool(QgsMapTool):
     def canvasMoveEvent(self, e):
         """
         Deals with mouse move event to update the rubber band position in the canvas
-        """        
-        if e.button() != None and not (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier):
+        """
+        ctrlIsHeld = QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+        if e.button() != None and not ctrlIsHeld:
             if self.rotate:
                 # change rotate status
                 self.rotate = False
             QtGui.QApplication.restoreOverrideCursor()
             self.endPoint = self.toMapCoordinates( e.pos() )
-        elif e.button() != None and \
-            (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)\
+        elif e.button() != None and ctrlIsHeld \
             and self.geometryType == self.tr(u"Square"):
-            # calculate angle between mouse and last rubberband before holding control centroid
+            # calculate angle between mouse and last rubberband centroid before holding control
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
             if not self.rotate:
                 # only override mouse if it is not overriden already
@@ -137,8 +138,8 @@ class ShapeTool(QgsMapTool):
         Draws a rectangle in the canvas
         """  
         self.rubberBand.reset(QGis.Polygon)
-        x = startPoint.x() #center point x
-        y = startPoint.y() #center point y
+        x = startPoint.x() # center point x
+        y = startPoint.y() # center point y
         # rotation angle is always applied in reference to center point
         # to avoid unnecessary calculations
         c = cos(rotAngle)
@@ -148,7 +149,7 @@ class ShapeTool(QgsMapTool):
         point2 = QgsPoint((- param), ( param))
         point3 = QgsPoint((param), ( param))
         point4 = QgsPoint((param), (- param))
-        # rotating and moving to original coord.  sys.
+        # rotating and moving to original coord. sys.
         point1_ = QgsPoint(point1.x()*c - point1.y()*s + x, point1.y()*c + point1.x()*s + y)
         point2_ = QgsPoint(point2.x()*c - point2.y()*s + x, point2.y()*c + point2.x()*s + y)
         point3_ = QgsPoint(point3.x()*c - point3.y()*s + x, point3.y()*c + point3.x()*s + y)
@@ -166,6 +167,7 @@ class ShapeTool(QgsMapTool):
         """
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
+        # restore mouse in case tool is disabled right after rotation
         QtGui.QApplication.restoreOverrideCursor()
         
     def activate(self):
