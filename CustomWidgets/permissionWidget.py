@@ -278,16 +278,18 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
-        if not self.profilesListWidget.currentItem():
+        if not self.permissionTreeWidget.currentItem() or (self.permissionTreeWidget.currentItem().text(0) != '' or self.permissionTreeWidget.currentItem().text(2) != ''):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a profile to export!'))
             return
+
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
             return
-        profileName = self.profilesListWidget.currentItem().text()
-        edgvVersion = self.versionSelectionComboBox.currentText()
+        profileName = self.permissionTreeWidget.currentItem().text(1)
+        dbName = self.permissionTreeWidget.currentItem().parent().text(0)
+        edgvVersion = self.dbDict[dbName].getDatabaseVersion()
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.permissionManager.exportSetting(profileName, edgvVersion, folder)

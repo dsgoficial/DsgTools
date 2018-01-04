@@ -52,10 +52,12 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.canvas.setCursor(self.cur)
 
     def deactivate(self):
+        self.initVariable()
         if self.toolAction:
             self.toolAction.setChecked(False)
         if self is not None:
             QgsMapTool.deactivate(self)
+
    
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Escape:

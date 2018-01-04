@@ -27,7 +27,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
 from osgeo import ogr
 from uuid import uuid4
-import codecs, os, json, binascii
+import codecs, os, json, binascii, re
 import psycopg2
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
@@ -1715,7 +1715,7 @@ class PostgisDb(AbstractDb):
             if not query.exec_(s):
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem creating temp table: ') + query.lastError().text())
+                raise Exception(self.tr('Problem creating temp table {}: '.format(tableName)) + query.lastError().text())
         attributes = None
         auxAttributes = None
         for feat in featureMap.values():
@@ -1754,12 +1754,12 @@ class PostgisDb(AbstractDb):
             if not query.exec_():
                 if useTransaction:
                     self.db.rollback()
-                raise Exception(self.tr('Problem populating temp table: ') + query.lastError().text())
+                raise Exception(self.tr('Problem creating temp table {}: '.format(tableName)) + query.lastError().text())
         indexSql = self.gen.createSpatialIndex(tableName, geomColumnName)
         if not query.exec_(indexSql):
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr('Problem creating spatial index on temp table: ') + query.lastError().text())
+            raise Exception(self.tr('Problem creating spatial index on temp table {}: '.format(tableName)) + query.lastError().text())
         if useTransaction:
             self.db.commit()        
         
@@ -1772,7 +1772,7 @@ class PostgisDb(AbstractDb):
         if not query.exec_(sql):
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr('Problem dropping temp table: ') + query.lastError().text())
+            raise Exception(self.tr('Problem dropping temp table {}: '.format(tableName)) + query.lastError().text())
         if useTransaction:
             self.db.commit()
     
@@ -1891,6 +1891,12 @@ class PostgisDb(AbstractDb):
         availableStyles = os.walk(stylePath).next()[2]
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
+            #filtering and checking file names for special characters
+            if style[0] == '.':
+                continue
+            if not re.match("^[a-zA-Z0-9_.]*$", style):
+                raise Exception(self.tr('Problem importing style ')+style)
+
             tableName = style.split('.')[0]
             localStyle = os.path.join(stylePath,style)
             tableSchema = self.getTableSchemaFromDb(tableName)
@@ -2424,6 +2430,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem creating from template: ') + query.lastError().text())
+        self.checkAndCreateStyleTable()
         #this close is to allow creation from template
         self.db.close()
         if parentWidget:
@@ -3459,6 +3466,53 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        classesOrProcesses.append("")
         while query.next():
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
+
+    def getFilteredFlagsView(self, filterType=None,filteredElement=None):
+        """
+        Returns a list of flagged features accordingly to what
+        was chosen to filter and which element was chosen as such
+        (e.g. a process named 'identifyDuplicatedGeometries') 
+        """        
+        self.checkAndOpenDb()
+        sql = self.gen.getFilteredFlagsQuery(filterType, filteredElement)
+        outFiltered = []
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        while query.next():
+            outFiltered.append(str(query.value(0)))
+        return outFiltered
+
+    def createFilteredFlagsViewTable(self, filterType=None,filteredElement=None):
+        """
+        Cretas a View Table if it doesn't exist and populates it
+        with data considering the users selection of filtering
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.createFilteredFlagsViewTableQuery(filterType, filteredElement)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        return
+
+    def getGapsRecords(self, table, geomColumn, keyColumn, useTransaction = True):
+        """
+        Identify gaps and overlaps in the coverage layer
+        """
+        self.checkAndOpenDb()
+        # checking for gaps
+        invalidRecordsList = []
+        # checking for overlaps
+        sql = self.gen.checkCoverageForGaps(table, geomColumn, keyColumn)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting gaps: ")+query.lastError().text())
+        while query.next():
+            reason = self.tr('Gap between the features of the layer')
+            geom = query.value(0)
+            invalidRecordsList.append( (0, reason, geom) )
+        return invalidRecordsList

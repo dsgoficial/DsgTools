@@ -27,6 +27,7 @@ from PyQt4.QtGui import QApplication, QCursor, QMenu
 from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
+from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
@@ -37,6 +38,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                tuple: CustomSnaperParameterSelector,
                deque:QtGui.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
+               dict:AuxLayerSelector,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
@@ -45,6 +47,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomTableSelector: "getSelectedNodes",
                QtGui.QComboBox:"currentText",
                CustomReferenceAndLayersParameterSelector:"getParameters",
+               AuxLayerSelector:"getParameters",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
@@ -52,6 +55,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomSnaperParameterSelector: "setInitialState",
                CustomReferenceAndLayersParameterSelector: "setInitialState",
                CustomTableSelector: "setInitialState",
+               AuxLayerSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
                QtGui.QCheckBox: "setChecked"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
@@ -60,6 +64,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                   CustomSnaperParameterSelector: lambda x: True,
                   CustomReferenceAndLayersParameterSelector: lambda x: True,
                   CustomTableSelector: lambda x: True,
+                  AuxLayerSelector: lambda x: True,
                   QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
@@ -89,7 +94,7 @@ class ProcessParametersDialog(QtGui.QDialog):
             label = QtGui.QLabel(beautifyText(k))
             widget = self.WIDGETS[type(v)]()
             if self.WIDGETS[type(v)] == QtGui.QDoubleSpinBox:
-                widget.setDecimals(5)
+                widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
             if self.WIDGETS[type(v)] == QtGui.QSpinBox:

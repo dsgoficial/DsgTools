@@ -208,6 +208,8 @@ class GenericDbManager(QObject):
         2. Export it to outputPath.
         """
         jsonDict = self.getSetting(profileName, edgvVersion)
+        if not os.path.exists(outputPath):
+            os.makedirs(outputPath)
         outputFile = os.path.join(outputPath, profileName+self.extensionDict[self.getManagerType()])
         with open(outputFile, 'w') as outfile:
             json.dump(jsonDict, outfile, sort_keys=True, indent=4)

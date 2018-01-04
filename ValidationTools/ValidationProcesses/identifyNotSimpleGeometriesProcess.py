@@ -29,7 +29,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating=False)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Not Simple Geometries')
 
         if not self.instantiating:
