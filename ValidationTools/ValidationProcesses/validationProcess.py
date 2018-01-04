@@ -538,7 +538,7 @@ class ValidationProcess(QObject):
     def logProcess(self):
         """
         Returns information to user:
-        -usernName (get information from abstractDb.db.userName())
+        -userName (get information from abstractDb.db.userName())
         -parameters (get parameters from parameter dict) ***
         -layersRun (the layers that were used)
         -flagNumber (number of flags)
