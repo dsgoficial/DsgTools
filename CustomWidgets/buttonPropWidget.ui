@@ -23,14 +23,28 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
+      <item row="4" column="1">
+       <widget class="ShortcutChooserWidget" name="shortcutWidget" native="true">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
        <widget class="QCheckBox" name="colorCheckBox">
         <property name="text">
          <string>Assign Color</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="toolTipLineEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
        <widget class="QgsColorButtonV2" name="mColorButton">
         <property name="enabled">
          <bool>false</bool>
@@ -49,45 +63,38 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QCheckBox" name="tooltipCheckBox">
         <property name="text">
          <string>Assign Tooltip</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="toolTipLineEdit">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="customCategoryCheckBox">
-        <property name="text">
-         <string>Custom category</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
+      <item row="3" column="1">
        <widget class="QLineEdit" name="customCategoryLineEdit">
         <property name="enabled">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="4" column="0">
        <widget class="QCheckBox" name="shortcutCheckBox">
         <property name="text">
          <string>Assign Shortcut</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="ShortcutChooserWidget" name="shortcutWidget" native="true">
-        <property name="enabled">
-         <bool>false</bool>
+      <item row="3" column="0">
+       <widget class="QCheckBox" name="customCategoryCheckBox">
+        <property name="text">
+         <string>Custom category</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0" colspan="2">
+       <widget class="QCheckBox" name="openFormCheckBox">
+        <property name="text">
+         <string>Open feature form when digitizing</string>
         </property>
        </widget>
       </item>
@@ -100,13 +107,13 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsColorButtonV2</class>
    <extends>QToolButton</extends>
-   <header>qgis.gui</header>
+   <header>qgscolorbuttonv2.h</header>
   </customwidget>
   <customwidget>
    <class>ShortcutChooserWidget</class>
