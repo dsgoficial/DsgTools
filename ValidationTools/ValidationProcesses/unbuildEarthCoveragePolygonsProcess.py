@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.ValidationTools.ValidationProcesses.cleanGeometriesProcess import CleanGeometriesProcess
 from PyQt4.QtCore import QVariant
 import processing, binascii
 import json
@@ -39,7 +40,9 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         self.instantiating = instantiating
         if not self.instantiating:
             self.earthCoverageDict, self.frameLayer = self.getParametersFromDb()
-            self.parameters = {'EarthCoverageDict':self.earthCoverageDict}
+            self.parameters = {'EarthCoverageDict':self.earthCoverageDict, 'Snap': 1.0, 'MinArea': 0.001}
+            self.cleanProcess = CleanGeometriesProcess(self.abstractDb, self.iface, instantiating = True) #instantiate = True to skip processes definitions
+            self.cleanProcess.parameters = self.parameters
     
     def getParametersFromDb(self):
         edgvVersion = self.abstractDb.getDatabaseVersion()
@@ -70,7 +73,14 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         Calculates boundary of each polygon, breaks them with clean from grass (clean with break and rmdupl)
         """
-        pass
+        ret = processing.runalg("qgis:boundary", lyr, None)
+        outputLayer = processing.getObject(ret['OUTPUT_LAYER'])
+        #instantiate a clean process to use its runProcessingAlg 
+        errorOutput = self.cleanProcess.runProcessinAlg(outputLayer)
+        #treat possible errors here
+        #
+        outputLayer.commitChanges()
+        return outputLayer
     
     def filterBoundaries(self, boundaryLyr, earthCoverageDict, auxStructDict):
         """
