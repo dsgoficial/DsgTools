@@ -462,7 +462,10 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
 
             #suppressing the form dialog
-            reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
+            if 'openForm' in self.reclassificationDict[self.category][self.edgvClass][self.buttonName]['buttonProp'].keys():
+                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
+            else:
+                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
             #connecting addedFeature signal
             reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
             reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
