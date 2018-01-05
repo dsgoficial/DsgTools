@@ -2571,7 +2571,7 @@ CREATE TABLE public.db_metadata(
 	dbimplversion varchar(50) NOT NULL DEFAULT 1,
 	CONSTRAINT edgvversioncheck CHECK (edgvversion = '2.1.3')
 )#
-INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('2.1.3','1')#
+INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('2.1.3','2')#
 CREATE TABLE complexos.hid_curso_dagua(
 	id uuid NOT NULL,
 	nome varchar(80),
