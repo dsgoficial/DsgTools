@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
 from qgis.gui import QgsMapMouseEvent
 import math
 from PyQt4 import QtCore, QtGui
@@ -19,6 +19,16 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.snapCursorRubberBand = None
         self.initVariable()
         self.setAction(action)
+
+    def getSuppressOptions(self):
+        qgisSettigns = QSettings()
+        qgisSettigns.beginGroup('Qgis/digitizing')
+        setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
+        qgisSettigns.endGroup()
+        if setting.lower() == u'false':
+            return False
+        else:
+            return True
 
     def setAction(self, action):
         self.toolAction = action
@@ -144,17 +154,22 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             for i in range(fields.count()):
                 feature.setAttribute(i, provider.defaultValue(i))                
             form = QgsAttributeDialog(layer, feature, False)
-            form.setIsAddDialog(True)
-            if not form.dialog().exec_():
-                ok = False
+            form.setMode(QgsAttributeForm.AddFeatureMode)
+            formSuppress = layer.editFormConfig().suppress()
+            if formSuppress == QgsEditFormConfig.SuppressDefault:
+                if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
+                    layer.addFeature(feature, True)
+                else:
+                    if not form.dialog().exec_():
+                        feature.setAttributes(form.feature().attributes())
+            elif formSuppress == QgsEditFormConfig.SuppressOff:
+                if not form.dialog().exec_():
+                    feature.setAttributes(form.feature().attributes())
             else:
-                ok = True
-            if ok:
-                feature.setAttributes(form.feature().attributes())
-                layer.endEditCommand()
-                self.initVariable()    
-            else:
-                self.initVariable()   
+                layer.addFeature(feature, True)
+            layer.endEditCommand()
+            self.canvas.refresh()
+            self.initVariable()   
 
     def createSnapCursor(self, point):
         self.snapCursorRubberBand = self.getSnapRubberBand()
