@@ -302,8 +302,10 @@ class MultiLayerSelection(QgsMapTool):
                 # iterate over features inside the mouse bounding box 
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
-                    if feature.geometry().intersects(rect):
-                        t.append([layer, feature, layer.geometryType()])
+                    geom = feature.geometry()
+                    if geom:
+                        if geom.intersects(rect):
+                            t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
             if len(t) > 1:
                 pop = 0 # number of features 
