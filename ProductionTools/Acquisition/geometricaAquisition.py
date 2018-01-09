@@ -25,6 +25,8 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         qgisSettigns.beginGroup('Qgis/digitizing')
         setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
         qgisSettigns.endGroup()
+        if not setting:
+            return False
         if setting.lower() == u'false':
             return False
         else:
