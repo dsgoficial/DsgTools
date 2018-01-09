@@ -76,6 +76,8 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             parameterDict['buttonGroupTag'] = self.customCategoryLineEdit.text()
         if self.shortcutCheckBox.checkState() == Qt.Checked:
             parameterDict['buttonShortcut'] = self.shortcutWidget.getShortcut()
+        if self.openFormCheckBox.checkState() == Qt.Checked:
+            parameterDict['openForm'] = True
         return parameterDict
     
     def setInterface(self, parameterDict):
@@ -85,7 +87,8 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             'buttonColor':--color of the button--, 
             'buttonToolTip'--button toolTip--, 
             'buttonGroupTag':--group tag of the button--,
-            'buttonShortcut':--shortcut for the button--
+            'buttonShortcut':--shortcut for the button--,
+            'openForm':--open feature form when digitizing--
         }
         """
         if 'buttonColor' in parameterDict.keys():
@@ -110,5 +113,9 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             self.shortcutCheckBox.setCheckState(Qt.Checked)
             self.shortcutWidget.setShortcut(parameterDict['buttonShortcut'])
         else:
-            self.shortcutCheckBox.setCheckState(Qt.Unchecked) #if 'buttonShortcut' isn't on dict keys, set colorCheckBox as unchecked
+            self.shortcutCheckBox.setCheckState(Qt.Unchecked) #if 'buttonShortcut' isn't on dict keys, set shortcutCheckBox as unchecked
             self.shortcutWidget.clearAll()
+        if 'openForm' in parameterDict.keys():
+            self.openFormCheckBox.setCheckState(Qt.Checked)
+        else:
+            self.openFormCheckBox.setCheckState(Qt.Unchecked) #if 'openForm' isn't on dict keys, set openFormCheckBox as unchecked

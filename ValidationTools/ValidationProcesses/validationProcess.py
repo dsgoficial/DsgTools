@@ -534,3 +534,14 @@ class ValidationProcess(QObject):
     def logTotalTime(self):
         if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
             QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    
+    def logProcess(self):
+        """
+        Returns information to user:
+        -userName (get information from abstractDb.db.userName())
+        -parameters (get parameters from parameter dict) ***
+        -layersRun (the layers that were used)
+        -flagNumber (number of flags)
+        -elapsedTime
+        """
+        pass
