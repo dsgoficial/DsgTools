@@ -586,7 +586,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               ST_PointN("{3}", generate_series(3, ST_NPoints("{3}"))) as pt2,
                               linestrings."{4}" as "{4}"
                             FROM
-                              (SELECT "{4}" as "{4}", (ST_Dump("{3}"))."{3}" as "{3}"
+                              (SELECT "{4}" as "{4}", (ST_Dump("{3}")).geom as "{3}"
                                FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
             select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
@@ -603,7 +603,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               ST_PointN("{3}", generate_series(2, ST_NPoints("{3}")) %  (ST_NPoints("{3}")-1)+1) as pt2,
                               linestrings."{4}" as "{4}"
                             FROM
-                              (SELECT "{4}" as "{4}", ST_Boundary((ST_Dump(ST_ForceRHR("{3}")))."{3}") as "{3}"
+                              (SELECT "{4}" as "{4}", ST_Boundary((ST_Dump(ST_ForceRHR("{3}"))).geom) as "{3}"
                                FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
             select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
