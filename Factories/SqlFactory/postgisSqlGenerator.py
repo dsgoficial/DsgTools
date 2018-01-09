@@ -568,7 +568,7 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getNotSimple(self, tableSchema, tableName, geometryColumn, keyColumn):
         sql = """select foo."{3}" as "{3}", ST_MULTI(st_startpoint(foo."{2}")) as "{2}" from (
-        select "{3}" as "{3}", (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid("{2}"),ST_SRID("{2}")))))."{2}" as "{2}" from "{0}"."{1}"  
+        select "{3}" as "{3}", (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid("{2}"),ST_SRID("{2}"))))).geom as "{2}" from "{0}"."{1}"  
         where ST_IsSimple("{2}") = 'f') as foo where st_equals(st_startpoint(foo."{2}"),st_endpoint(foo."{2}"))""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
 
