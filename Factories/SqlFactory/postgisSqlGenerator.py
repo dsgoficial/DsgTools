@@ -542,12 +542,12 @@ class PostGISSqlGenerator(SqlGenerator):
               ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
               linestrings."{3}" as "{3}"
             FROM
-              (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}")))."{2}"
+              (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}"))).geom
                FROM only "{0}"."{1}" 
                ) AS linestrings
             ) AS segments)#
         drop table if exists pontos#
-        create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}"))."{2}" as "{2}" from only "{0}"."{1}"#
+        create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
         create index pontos_gist on pontos using gist ("{2}")#
         create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
