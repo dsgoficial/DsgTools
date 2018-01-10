@@ -130,8 +130,12 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         return QgsPoint(x, y)
     
     def getRubberBand(self):
-        rubberBand = QgsRubberBand(self.canvas, True)
-        rubberBand.setFillColor(QColor(255, 0, 0, 40))
+        geomType = self.iface.activeLayer().geometryType()
+        if geomType == QGis.Polygon:
+            rubberBand = QgsRubberBand(self.canvas, True)
+            rubberBand.setFillColor(QColor(255, 0, 0, 40))
+        elif geomType == QGis.Line:
+            rubberBand = QgsRubberBand(self.canvas, False)
         rubberBand.setBorderColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
@@ -191,13 +195,22 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        lyrType = self.iface.activeLayer().geometryType()
         # Transforming the points
-        poly = geom.asPolygon()
-        newPolyline = []
-        for j in xrange(len(poly)):
-            line = poly[j]
-            for i in xrange(len(line)):
-                point = line[i]
-                newPolyline.append(coordinateTransformer.transform(point))
-        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])                
-        return qgsPolygon    
+        if lyrType == QGis.Line:
+            geomList = geom.asPolyline()
+        elif lyrType == QGis.Polygon:
+            geomList = geom.asPolygon()
+        newGeom = []
+        for j in xrange(len(geomList)):
+            if lyrType == QGis.Line:
+                newGeom.append(coordinateTransformer.transform(geomList[j]))
+            elif lyrType == QGis.Polygon:
+                line = geomList[j]
+                for i in xrange(len(line)):
+                    point = line[i]
+                    newGeom.append(coordinateTransformer.transform(point))
+        if lyrType == QGis.Line:
+            return QgsGeometry.fromPolyline(newGeom + [newGeom[0]])
+        elif lyrType == QGis.Polygon:
+            return QgsGeometry.fromPolygon([newGeom])                   
