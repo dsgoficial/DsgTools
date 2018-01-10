@@ -22,13 +22,19 @@ class Polygon(GeometricaAcquisition):
         if len(self.geometry) > 2:
             inter = self.lineIntersection(self.geometry[1],self.geometry[0],self.geometry[-2],self.geometry[-1])
             if inter:
-                geom = QgsGeometry.fromPolygon([self.geometry+[inter]])
+                if self.iface.activeLayer().geometryType() == QGis.Polygon:
+                    geom = QgsGeometry.fromPolygon([self.geometry+[inter]])
+                elif self.iface.activeLayer().geometryType() == QGis.Line:
+                    geom = QgsGeometry.fromPolyline(self.geometry+[inter])
                 self.rubberBand.setToGeometry(geom,None)
                 self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
-            geom = QgsGeometry.fromPolygon([self.geometry])
+            if self.iface.activeLayer().geometryType() == QGis.Polygon:
+                geom = QgsGeometry.fromPolygon([self.geometry])
+            elif self.iface.activeLayer().geometryType() == QGis.Line:
+                geom = QgsGeometry.fromPolyline(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, None)
             self.createGeometry(geom)
   
