@@ -25,6 +25,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 import binascii
 
+from collections import OrderedDict
 class IdentifyDanglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
@@ -35,13 +36,20 @@ class IdentifyDanglesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
             interfaceDictList = []
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
+            # getting tables with elements
+            self.linesWithElement = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
+            # adjusting process parameters
+            interfaceLineDictList = []
+            for key in self.linesWithElement:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceLineDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
+            self.parameters = {'Classes': interfaceDictList, 'Only Selected':False, 'Search Radius':1.0, 'Reference and Layers': OrderedDict({'referenceDictList':interfaceLineDictList, 'layersDictList':interfaceDict})}
 
     def execute(self):
         """
