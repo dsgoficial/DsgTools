@@ -7,8 +7,10 @@
                               -------------------
         begin                : 2017-09-29
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2017 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+                               (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : luizclaudio.andrade@eb.mil.br
+                               borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,6 +24,7 @@
 """
 from qgis.core import QgsMessageLog, QgsGeometry
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.ValidationTools.ValidationProcesses.unbuildEarthCoveragePolygonsProcess import UnbuildEarthCoveragePolygonsProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 import binascii
 
@@ -50,7 +53,9 @@ class IdentifyDanglesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceLineDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.parameters = {'Only Selected':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict})}
-
+            self.unbuildProc = UnbuildEarthCoveragePolygonsProcess(postgisDb, iface, instantiating = True)
+            self.unbuildProc.parameters = {'Snap': -1, 'MinArea': 0.001}
+    
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
@@ -60,74 +65,29 @@ class IdentifyDanglesProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            classesWithElem = self.parameters['Classes']
+            refKey = self.parameters['Layer and Filter Layers'][0]
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             recordList = []
-            for key in classesWithElem:
-                # preparation
-                classAndGeom = self.classesWithElemDict[key]
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                localProgress.step()
-                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
-                localProgress.step()
+            # preparation
+            refcl = self.classesWithElemDict[refKey]
+            localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {0}.{1]').format(classAndGeom['tableSchema'], classAndGeom['tableName']), parent=self.iface.mapCanvas())
+            localProgress.step()
+            reflyr = self.loadLayerBeforeValidationProcess(refcl)
+            localProgress.step()
 
-                if self.parameters['Only Selected']:
-                    featureList = lyr.selectedFeatures()
-                    size = len(featureList)
-                else:
-                    featureList = lyr.getFeatures()
-                    size = len(lyr.allFeatureIds())
+            #build seach dict
+            endVerticesDict = self.buildInitialAndEndPointDict(reflyr, classAndGeom['tableSchema'], classAndGeom['tableName']))
+            #search for dangles candidates
+            pointList = self.searchDanglesOnPointDict(endVerticesDict, classAndGeom['tableSchema'], classAndGeom['tableName'])
+            #build filter layer
+            filterLayer = self.buildFilterLayer(refcl)
+                
 
-                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                # start and end points dict
-                endVerticesDict = {}
-                # iterating over features to store start and end points
-                for feat in featureList:
-                    geom = feat.geometry()
-                    if geom.isMultipart():
-                        multiLine = geom.asMultiPolyline()
-                        for j in xrange(len(multiLine)):
-                            line = multiLine[j]
-                            startPoint = line[0]
-                            endPoint = line[len(line) - 1]
-                            # storing start point in the dict
-                            if startPoint not in endVerticesDict.keys():
-                                endVerticesDict[startPoint] = []
-                            endVerticesDict[startPoint].append(feat.id())
-                            # storing end point in the dict
-                            if endPoint not in endVerticesDict.keys():
-                                endVerticesDict[endPoint] = []
-                            endVerticesDict[endPoint].append(feat.id())
-                    else:
-                        line = geom.asPolyline()
-                        startPoint = line[0]
-                        endPoint = line[len(line) - 1]
-                        # storing start point in the dict
-                        if startPoint not in endVerticesDict.keys():
-                            endVerticesDict[startPoint] = []
-                        endVerticesDict[startPoint].append(feat.id())
-                        # storing end point in the dict
-                        if endPoint not in endVerticesDict.keys():
-                            endVerticesDict[endPoint] = []
-                        endVerticesDict[endPoint].append(feat.id())
 
-                    localProgress.step()
-
-                # actual search for dangles
-                localProgress = ProgressWidget(1, len(endVerticesDict.keys()), self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                for point in endVerticesDict.keys():
-                    # this means we only have one occurrence of point, therefore it is a dangle
-                    if len(endVerticesDict[point]) > 1:
-                        localProgress.step()
-                        continue
-                    geometry = binascii.hexlify(QgsGeometry.fromPoint(point).asWkb())
-                    featid = endVerticesDict[point][0]
-                    recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featid, self.tr('Dangle.'), geometry, classAndGeom['geom']))
-                    localProgress.step()
-                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
+            self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
 
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
@@ -142,4 +102,122 @@ class IdentifyDanglesProcess(ValidationProcess):
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
-            return 0
+            return 0            
+    
+    def buildInitialAndEndPointDict(self, lyr, tableSchema, tableName):
+        """
+        Calculates initial point and end point from each line from lyr.
+        """
+        if self.parameters['Only Selected']:
+            featureList = lyr.selectedFeatures()
+            size = len(featureList)
+        else:
+            featureList = lyr.getFeatures()
+            size = len(lyr.allFeatureIds())
+        localProgress = ProgressWidget(1, size, self.tr('Building search structure for {0}.{1}').format(tableSchema,tableName), parent=self.iface.mapCanvas())
+        # start and end points dict
+        endVerticesDict = {}
+        # iterating over features to store start and end points
+        for feat in featureList:
+            geom = feat.geometry()
+            if geom.isMultipart():
+                multiLine = geom.asMultiPolyline()
+                for j in xrange(len(multiLine)):
+                    line = multiLine[j]
+                    startPoint = line[0]
+                    endPoint = line[len(line) - 1]
+                    # storing start point in the dict
+                    if startPoint not in endVerticesDict.keys():
+                        endVerticesDict[startPoint] = []
+                    endVerticesDict[startPoint].append(feat.id())
+                    # storing end point in the dict
+                    if endPoint not in endVerticesDict.keys():
+                        endVerticesDict[endPoint] = []
+                    endVerticesDict[endPoint].append(feat.id())
+            else:
+                line = geom.asPolyline()
+                startPoint = line[0]
+                endPoint = line[len(line) - 1]
+                # storing start point in the dict
+                if startPoint not in endVerticesDict.keys():
+                    endVerticesDict[startPoint] = []
+                endVerticesDict[startPoint].append(feat.id())
+                # storing end point in the dict
+                if endPoint not in endVerticesDict.keys():
+                    endVerticesDict[endPoint] = []
+                endVerticesDict[endPoint].append(feat.id())
+            localProgress.step()
+            return endVerticesDict
+    
+    def searchDanglesOnPointDict(self, endVerticesDict, tableSchema, tableName):
+        """
+        Counts the number of points on each endVerticesDict's key and returns a list of QgsPoint built from key candidate.
+        """
+        pointList = []
+        # actual search for dangles
+        localProgress = ProgressWidget(1, len(endVerticesDict.keys()), self.tr('Searching dangles on {0}.{1}').format(tableSchema, tableName), parent=self.iface.mapCanvas())
+        for point in endVerticesDict.keys():
+            # this means we only have one occurrence of point, therefore it is a dangle
+            if len(endVerticesDict[point]) > 1:
+                localProgress.step()
+                continue
+            qgisPoint = QgsGeometry.fromPoint(point)
+            pointList.append(qgisPoint)
+            localProgress.step()
+        return pointList
+
+    def getCoordinateTransformer(self, inputLyr, outputLyr):
+        """
+        Makes coordinate transformer
+        """
+        crsSrc = QgsCoordinateReferenceSystem(inputLyr.crs().authid())
+        mapLayerCrs = outputLyr.crs()
+        coordinateTransformer = QgsCoordinateTransform(mapLayerCrs, crsSrc)
+        return coordinateTransformer
+
+    def buildFilterLayer(self, refLyr):
+        """
+        Buils one layer of filter lines.
+        Build unified layer is not used because we do not care for attributes here, only geometry.
+        """
+        srid = refLyr.crs().authid().split(':')[-1]
+        filterLyr = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(QGis.WKBLineString),srid), "filterLyr", "memory")
+        filterLayersWithElemKeys = self.parameters['Layer and Filter Layers'][1]
+        filterLyr.startEditing()
+        filterLyr.beginEditCommand('Creating filter layer') #speedup
+        for key in filterLayersWithElemKeys:
+            clDict = self.classesWithElemDict[key]
+            #loads lyr
+            inputLyr = self.loadLayerBeforeValidationProcess(clDict)
+            if inputLyr.geometryType == QGis.Polygon:
+                #uses makeBoundaries method from unbuildEarthCoveragePolygonsProcess to get candidate lines layer
+                lyr = self.unbuildProc.makeBoundaries(inputLyr)
+            else:
+                lyr = inputLyr
+            #gets coordinate transformer
+            coordinateTransformer = self.getCoordinateTransformer(filterLyr, lyr)
+            #gets lyr features and stores only geometry into filterLyr
+            featList = []
+            for feat in lyr.getFeatures():
+                newfeat = QgsFeature()
+                geom = feat.geometry()
+                if not geom:
+                    continue
+                geom.transform(coordinateTransformer)
+                newfeat.setGeometry(geom)
+                featlist.append(newfeat)
+            filterLyr.addFeatures(featlist, True)
+        filterLyr.endEditCommand()
+        filterLyr.commitChanges()
+        return filterLyr
+
+    def raiseFlags(self, pointList, tableSchema, tableName, geometryColumn):
+        """
+        Builds record list from pointList to raise flags.
+        """
+        recordList = []
+        for point in pointList:
+            geometry = binascii.hexlify(pointList.asWkb())
+            featid = endVerticesDict[point][0]
+            recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, self.tr('Dangle on {0}.{1}').format(tableSchema, tableName), geometry, geometryColumn))
+        return recordList
