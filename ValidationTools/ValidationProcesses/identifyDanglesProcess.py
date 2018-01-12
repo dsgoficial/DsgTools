@@ -242,6 +242,8 @@ class IdentifyDanglesProcess(ValidationProcess):
             for id in candidateIds:
                 if buffer.intersects(allFeatureDict[id]):
                     candidateCount += 1
+                if candidateCount > 1:
+                    break
             if candidateCount > 1:
                 dangleList.append(point)
         return dangleList
