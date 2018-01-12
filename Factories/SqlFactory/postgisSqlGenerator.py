@@ -616,7 +616,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def forceValidity(self, tableSchema, tableName, idList, srid, keyColumn, geometryColumn):
         sql = """update "{0}"."{1}" set "{5}" = ST_Multi(result."{5}") from (
         select distinct parts."{4}", ST_Union(parts."{5}") as "{5}" from "{0}"."{1}" as source, 
-                                        (select "{4}" as "{4}", ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid("{5}"), {3})))."{5}")) as "{5}" from 
+                                        (select "{4}" as "{4}", ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid("{5}"), {3}))).geom)) as "{5}" from 
                                         "{0}"."{1}"  where "{4}" in ({2})) as parts where ST_GeometryType(parts."{5}") = ST_GeometryType(source."{5}") group by parts."{4}"
         ) as result where  result."{4}" = "{0}"."{1}"."{4}" """.format(tableSchema, tableName, ','.join(idList), srid, keyColumn, geometryColumn)
         return sql
