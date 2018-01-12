@@ -304,7 +304,7 @@ class ValidationProcess(QObject):
         inputDictKeys = inputDict.keys()
         if qgisOutputVector:
             for feat in qgisOutputVector.dataProvider().getFeatures():
-                if feat[keyColumn] in inputDictKeys:
+                if feat[keyColumn] in inputDictKeys: #verificar quando keyColumn = ''
                     inputDict[feat[keyColumn]]['featList'].append(feat)
         elif featureTupleList:
             for gfid, gf in featureTupleList:
