@@ -217,7 +217,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             clDict = self.classesWithElemDict[key]
             #loads lyr
             inputLyr = self.loadLayerBeforeValidationProcess(clDict)
-            if inputLyr.geometryType == QGis.Polygon:
+            if inputLyr.geometryType() == QGis.Polygon:
                 #uses makeBoundaries method from unbuildEarthCoveragePolygonsProcess to get candidate lines layer
                 lyr = self.unbuildProc.makeBoundaries(inputLyr)
             else:

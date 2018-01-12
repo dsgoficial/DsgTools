@@ -41,8 +41,6 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         if not self.instantiating:
             self.earthCoverageDict, self.frameLayer = self.getParametersFromDb()
             self.parameters = {'EarthCoverageDict':self.earthCoverageDict, 'Snap': 1.0, 'MinArea': 0.001}
-            self.cleanProcess = CleanGeometriesProcess(self.abstractDb, self.iface, instantiating = True) #instantiate = True to skip processes definitions
-            self.cleanProcess.parameters = self.parameters
     
     def getParametersFromDb(self):
         edgvVersion = self.abstractDb.getDatabaseVersion()
@@ -75,8 +73,10 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         ret = processing.runalg("qgis:boundary", lyr, None)
         outputLayer = processing.getObject(ret['OUTPUT_LAYER'])
-        #instantiate a clean process to use its runProcessingAlg 
-        errorOutput = self.cleanProcess.runProcessinAlg(outputLayer)
+        #instantiate a clean process to use its runProcessingAlg
+        cleanProcess = CleanGeometriesProcess(self.abstractDb, self.iface, instantiating = True)
+        cleanProcess.parameters = self.parameters
+        errorOutput = cleanProcess.runProcessinAlg(outputLayer)
         #treat possible errors here
         #
         outputLayer.commitChanges()
