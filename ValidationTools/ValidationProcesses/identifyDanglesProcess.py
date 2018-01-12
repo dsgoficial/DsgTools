@@ -193,6 +193,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         featList = []
         for feat in lyr.getFeatures():
             newfeat = QgsFeature()
+            newfeat['featid'] = feat.id()
             geom = feat.geometry()
             if not geom:
                 continue
@@ -209,9 +210,13 @@ class IdentifyDanglesProcess(ValidationProcess):
         """
         srid = refLyr.crs().authid().split(':')[-1]
         filterLyr = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(QGis.WKBLineString),srid), "filterLyr", "memory")
+        provider = coverage.dataProvider()
         filterLayersWithElemKeys = self.parameters['Layer and Filter Layers'][1]
         filterLyr.startEditing()
         filterLyr.beginEditCommand('Creating filter layer') #speedup
+        fields = [QgsField('featid', QVariant.Int)]
+        provider.addAttributes(fields)
+        filterLyr.updateFields()
         self.addFeaturesToFilterLayer(filterLyr, refLyr)
         for key in filterLayersWithElemKeys:
             clDict = self.classesWithElemDict[key]
