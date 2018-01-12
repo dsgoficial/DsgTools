@@ -441,7 +441,7 @@ class ValidationProcess(QObject):
         Creates a unified layer from a list of layers
         """
         #getting srid from something like 'EPSG:31983'
-        srid = layerList[0].crs().authid().split(':')[-1]
+        srid = layerList[0].crs().authid().split(':')[-1] #quem disse que tudo tem que ter mesmo srid? TODO: mudar isso
         # creating the layer
         geomtype = layerList[0].dataProvider().geometryType()
         for lyr in layerList:
