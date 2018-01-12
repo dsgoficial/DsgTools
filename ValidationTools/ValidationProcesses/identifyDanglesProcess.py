@@ -80,7 +80,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             recordList = []
             # preparation
             refcl = self.classesWithElemDict[refKey]
-            localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {0}.{1]').format(refcl['tableSchema'], refcl['tableName']), parent=self.iface.mapCanvas())
+            localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for {0}.{1}').format(refcl['tableSchema'], refcl['tableName']), parent=self.iface.mapCanvas())
             localProgress.step()
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             localProgress.step()
