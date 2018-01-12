@@ -240,7 +240,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             bufferBB = buffer.boundingBox()
             candidateIds = spatialIdx.intersects(bufferBB)
             for id in candidateIds:
-                if buffer.intersects(allFeatureDict[id]):
+                if buffer.intersects(allFeatureDict[id].geometry()):
                     candidateCount += 1
                 if candidateCount > 1:
                     break
