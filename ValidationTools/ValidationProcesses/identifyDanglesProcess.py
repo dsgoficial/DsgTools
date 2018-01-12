@@ -90,7 +90,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             #search for dangles candidates
             pointList = self.searchDanglesOnPointDict(endVerticesDict, refcl['tableSchema'], refcl['tableName'])
             #build filter layer
-            filterLayer = self.buildFilterLayer(refcl)
+            filterLayer = self.buildFilterLayer(reflyr)
             #filter pointList with filterLayer
             filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, self.parameters['Search Radius'])
             #build flag list with filtered points
