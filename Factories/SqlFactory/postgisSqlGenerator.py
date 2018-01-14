@@ -751,11 +751,11 @@ class PostGISSqlGenerator(SqlGenerator):
                 select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
                 from
                 (
-                    select short."{6}", St_SetPoint((ST_Dump(short."{5}"))."{5}", 0, 
+                    select short."{6}", St_SetPoint((ST_Dump(short."{5}")).geom, 0, 
                     ST_EndPoint(from_start)) as newline
                     from
                     (   select a."{6}" as "{6}", a."{5}" as "{5}",
-                        ST_ShortestLine(st_startpoint((ST_Dump(a."{5}"))."{5}"), 
+                        ST_ShortestLine(st_startpoint((ST_Dump(a."{5}")).geom), 
                         ST_Boundary(m."{7}")) as from_start
                         from "{0}"."{1}" a, "{3}"."{4}" m
                     ) as short
@@ -769,13 +769,13 @@ class PostGISSqlGenerator(SqlGenerator):
                 select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
                 from
                 (
-                    select short."{6}", St_SetPoint((ST_Dump(short."{5}"))."{5}", 
+                    select short."{6}", St_SetPoint((ST_Dump(short."{5}")).geom, 
                     short.index - 1, ST_EndPoint(from_start)) as newline
                     from
                     (   select a."{6}" as "{6}", a."{5}" as "{5}",
-                        ST_ShortestLine(st_endpoint((ST_Dump(a."{5}"))."{5}"), 
+                        ST_ShortestLine(st_endpoint((ST_Dump(a."{5}")).geom), 
                         ST_Boundary(m."{7}")) as from_start,
-                        ST_NPoints((ST_Dump(a."{5}"))."{5}") as index
+                        ST_NPoints((ST_Dump(a."{5}")).geom) as index
                         from "{0}"."{1}" a, "{3}"."{4}" m
                     ) as short
                     where ST_Length(from_start) < {2}
