@@ -22,7 +22,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField
+
+from PyQt4.QtCore import QVariant
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.unbuildEarthCoveragePolygonsProcess import UnbuildEarthCoveragePolygonsProcess
@@ -55,7 +57,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 interfaceLineDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.parameters = {'Only Selected':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict})}
             self.unbuildProc = UnbuildEarthCoveragePolygonsProcess(postgisDb, iface, instantiating = True)
-            self.unbuildProc.parameters = {'Snap': -1, 'MinArea': 0.001} #no snap and no small area
+            self.unbuildProc.parameters = {'Snap': -1.0, 'MinArea': 0.001} #no snap and no small area
     
     def execute(self):
         """
@@ -192,7 +194,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         #gets lyr features and stores only geometry into filterLyr
         featList = []
         for feat in lyr.getFeatures():
-            newfeat = QgsFeature()
+            newfeat = QgsFeature(filterLyr.pendingFields())
             newfeat['featid'] = feat.id()
             geom = feat.geometry()
             if not geom:
