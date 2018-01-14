@@ -496,7 +496,8 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         hasZValues =  QgsWKBTypes.hasZ(int(reclassificationLayer.wkbType()))    #
         isMulti = QgsWKBTypes.isMultiType(int(reclassificationLayer.wkbType())) #
         mapLayers = self.iface.mapCanvas().layers()
-        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.authid())
+        #we need to get the authid that thefines the ref system of destination layer
+        crsSrc = QgsCoordinateReferenceSystem(reclassificationLayer.crs().authid())
         for mapLayer in mapLayers:
             if mapLayer.type() != QgsMapLayer.VectorLayer:
                 continue
