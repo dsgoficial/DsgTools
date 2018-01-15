@@ -158,7 +158,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                     endVerticesDict[endPoint] = []
                 endVerticesDict[endPoint].append(feat.id())
             localProgress.step()
-            return endVerticesDict
+        return endVerticesDict
     
     def searchDanglesOnPointDict(self, endVerticesDict, tableSchema, tableName):
         """
@@ -200,6 +200,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             if not geom:
                 continue
             geom.transform(coordinateTransformer)
+            geom.convertToMultiType()
             newfeat.setGeometry(geom)
             featList.append(newfeat)
         filterLyr.addFeatures(featList, True)
@@ -211,7 +212,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         refLyr elements are also added.
         """
         srid = refLyr.crs().authid().split(':')[-1]
-        filterLyr = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(QGis.WKBLineString),srid), "filterLyr", "memory")
+        filterLyr = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(QGis.WKBMultiLineString),srid), "filterLyr", "memory")
         provider = filterLyr.dataProvider()
         filterLayersWithElemKeys = self.parameters['Layer and Filter Layers'][1]
         filterLyr.startEditing()
