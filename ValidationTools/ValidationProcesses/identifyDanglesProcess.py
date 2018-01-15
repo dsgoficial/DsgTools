@@ -220,7 +220,6 @@ class IdentifyDanglesProcess(ValidationProcess):
         fields = [QgsField('featid', QVariant.Int)]
         provider.addAttributes(fields)
         filterLyr.updateFields()
-        self.addFeaturesToFilterLayer(filterLyr, refLyr)
         for key in filterLayersWithElemKeys:
             clDict = self.classesWithElemDict[key]
             #loads lyr
@@ -253,11 +252,10 @@ class IdentifyDanglesProcess(ValidationProcess):
             candidateNumber = len(candidateIds)
             if candidateNumber > 1:
                 for id in candidateIds:
-                    if buffer.intersects(allFeatureDict[id].geometry()):
-                        if qgisPoint.intersects(allFeatureDict[id].geometry()):
-                            candidateCount += 1
-            if candidateNumber > 1 and candidateCount < candidateNumber: #candidateNumber == candidateCount, point is not a dangle, is a network point
-                dangleList.append(point)
+                    if qgisPoint.intersects(allFeatureDict[id].geometry()):
+                        candidateCount += 1
+                if not candidateCount == candidateNumber and candidateCount != 1: # if candidateNumber == candidateCount, point is not a dangle, is a network point
+                    dangleList.append(point)
         return dangleList
     
     def buildSpatialIndexAndIdDict(self, inputLyr):
