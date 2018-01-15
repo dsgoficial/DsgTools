@@ -244,15 +244,19 @@ class IdentifyDanglesProcess(ValidationProcess):
         for point in pointList:
             candidateCount = 0
             qgisPoint = QgsGeometry.fromPoint(point)
+            #search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
+            #gets candidates from spatial index
             candidateIds = spatialIdx.intersects(bufferBB)
-            for id in candidateIds:
-                if buffer.intersects(allFeatureDict[id].geometry()):
-                    candidateCount += 1
-                if candidateCount > 1:
-                    break
-            if candidateCount > 1:
+            #if there is only one feat in candidateIds, that means that it is not a dangle
+            candidateNumber = len(candidateIds)
+            if candidateNumber > 1:
+                for id in candidateIds:
+                    if buffer.intersects(allFeatureDict[id].geometry()):
+                        if qgisPoint.intersects(allFeatureDict[id].geometry()):
+                            candidateCount += 1
+            if candidateCount < candidateNumber: #candidateNumber == candidateCount, point is not a dangle, is a network point
                 dangleList.append(point)
         return dangleList
     
