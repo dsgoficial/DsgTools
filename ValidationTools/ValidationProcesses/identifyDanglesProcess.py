@@ -239,10 +239,10 @@ class IdentifyDanglesProcess(ValidationProcess):
         Builds buffer areas from each point and evaluates the intersecting lines. If there are more than two intersections, it is a dangle.
         """
         spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(filterLayer)
-        dangleList = []
-        for point in pointList:
+        notDangleIndexList = []
+        for i in range(len(pointList)):
             candidateCount = 0
-            qgisPoint = QgsGeometry.fromPoint(point)
+            qgisPoint = QgsGeometry.fromPoint(pointList[i])
             #search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
@@ -250,13 +250,17 @@ class IdentifyDanglesProcess(ValidationProcess):
             candidateIds = spatialIdx.intersects(bufferBB)
             #if there is only one feat in candidateIds, that means that it is not a dangle
             candidateNumber = len(candidateIds)
-            if candidateNumber > 1:
-                for id in candidateIds:
-                    if qgisPoint.intersects(allFeatureDict[id].geometry()):
-                        candidateCount += 1
-                if not candidateCount == candidateNumber and candidateCount != 1: # if candidateNumber == candidateCount, point is not a dangle, is a network point
-                    dangleList.append(point)
-        return dangleList
+            for id in candidateIds:
+                if qgisPoint.intersects(allFeatureDict[id].geometry()):
+                    candidateCount += 1
+                if candidateCount > 1:
+                    notDangleIndexList.append(i)
+                    break
+        filteredDangleList = []
+        for i in range(len(pointList)):
+            if i not in notDangleIndexList:
+                filteredDangleList.append(pointList[i])
+        return filteredDangleList
     
     def buildSpatialIndexAndIdDict(self, inputLyr):
         """
