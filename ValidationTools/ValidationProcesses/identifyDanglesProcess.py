@@ -256,7 +256,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                     if buffer.intersects(allFeatureDict[id].geometry()):
                         if qgisPoint.intersects(allFeatureDict[id].geometry()):
                             candidateCount += 1
-            if candidateCount < candidateNumber: #candidateNumber == candidateCount, point is not a dangle, is a network point
+            if candidateNumber > 1 and candidateCount < candidateNumber: #candidateNumber == candidateCount, point is not a dangle, is a network point
                 dangleList.append(point)
         return dangleList
     
