@@ -238,7 +238,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         filterLyr.commitChanges()
         return filterLyr
 
-    def filterPointListWithFilterLayer(self, pointList, filterLayer, searchRadius):
+    def filterPointListWithFilterLayer(self, pointList, filterLayer, searchRadius, isRefLyr = False, ignoreNotSplit = False):
         """
         Builds buffer areas from each point and evaluates the intersecting lines. If there are more than two intersections, it is a dangle.
         """
@@ -255,9 +255,14 @@ class IdentifyDanglesProcess(ValidationProcess):
             #if there is only one feat in candidateIds, that means that it is not a dangle
             candidateNumber = len(candidateIds)
             for id in candidateIds:
-                if qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
-                    notDangleIndexList.append(i)
-                    break
+                if not isRefLyr:
+                    if qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
+                        notDangleIndexList.append(i)
+                        break
+                else:
+                    pass #continue here
+
+
         filteredDangleList = []
         for i in range(len(pointList)):
             if i not in notDangleIndexList:
