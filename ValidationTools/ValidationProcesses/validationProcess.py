@@ -304,16 +304,24 @@ class ValidationProcess(QObject):
         inputDictKeys = inputDict.keys()
         if qgisOutputVector:
             for feat in qgisOutputVector.dataProvider().getFeatures():
-                if feat[keyColumn] in inputDictKeys: #verificar quando keyColumn = ''
-                    inputDict[feat[keyColumn]]['featList'].append(feat)
+                if keyColumn == '':
+                    featid = feat.id()
+                else:
+                    featid = feat[keyColumn]
+                if featid in inputDictKeys: #verificar quando keyColumn = ''
+                    inputDict[featid]['featList'].append(feat)
         elif featureTupleList:
             for gfid, gf in featureTupleList:
                 if gfid in inputDictKeys and gf['classname'] == pgInputLayer.name():
                     inputDict[gfid]['featList'].append(gf)
         else:
             for feat in featureList:
-                if feat[keyColumn] in inputDictKeys:
-                    inputDict[feat[keyColumn]]['featList'].append(feat)
+                if keyColumn == '':
+                    featid = feat.id()
+                else:
+                    featid = feat[keyColumn]
+                if featid in inputDictKeys:
+                    inputDict[featid]['featList'].append(feat)
         #finally, do what must be done
         for id in inputDictKeys:
             outFeats = inputDict[id]['featList']
@@ -337,8 +345,9 @@ class ValidationProcess(QObject):
                         if isMulti and newGeom:
                             newGeom.convertToMultiType()
                         newFeat.setGeometry(newGeom)
-                        idx = newFeat.fieldNameIndex(keyColumn)
-                        newFeat.setAttribute(idx, provider.defaultValue(idx))
+                        if keyColumn != '':
+                            idx = newFeat.fieldNameIndex(keyColumn)
+                            newFeat.setAttribute(idx, provider.defaultValue(idx))
                         addList.append(newFeat)
                     else:
                         if id not in idsToRemove:
