@@ -29,6 +29,9 @@ from PyQt4.QtCore import QVariant
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.unbuildEarthCoveragePolygonsProcess import UnbuildEarthCoveragePolygonsProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+
+from collections import deque, OrderedDict
+
 import binascii
 
 from collections import OrderedDict
@@ -55,7 +58,8 @@ class IdentifyDanglesProcess(ValidationProcess):
             for key in self.linesWithElement:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceLineDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
-            self.parameters = {'Only Selected':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict})}
+            self.opTypeDict = OrderedDict([(self.tr('Consider dangle on unsegmented lines'),0), (self.tr('Ignore dangle on unsegmented lines'),1)])
+            self.parameters = {'Only Selected':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict}), 'Identification Type':deque(self.opTypeDict.keys())}
             self.unbuildProc = UnbuildEarthCoveragePolygonsProcess(postgisDb, iface, instantiating = True)
             self.unbuildProc.parameters = {'Snap': -1.0, 'MinArea': 0.001} #no snap and no small area
     
@@ -251,9 +255,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             #if there is only one feat in candidateIds, that means that it is not a dangle
             candidateNumber = len(candidateIds)
             for id in candidateIds:
-                if qgisPoint.intersects(allFeatureDict[id].geometry()):
-                    candidateCount += 1
-                if candidateCount > 1:
+                if qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
                     notDangleIndexList.append(i)
                     break
         filteredDangleList = []
@@ -261,6 +263,11 @@ class IdentifyDanglesProcess(ValidationProcess):
             if i not in notDangleIndexList:
                 filteredDangleList.append(pointList[i])
         return filteredDangleList
+
+    def filterPseudoDangles(self, pointList, filterLayer, searchRadius):
+        spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(filterLayer)
+        notDangleIndexList = []
+
     
     def buildSpatialIndexAndIdDict(self, inputLyr):
         """
