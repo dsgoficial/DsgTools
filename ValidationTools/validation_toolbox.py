@@ -138,13 +138,25 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.iface.mapCanvas().setExtent(mapbox)
         self.iface.mapCanvas().refresh()
     
+    def loadAllFlagLayers(self):
+        """
+        Loads all flags
+        """
+        pointLayer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
+        lineLayer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
+        areaLayer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
+        self.loadFlagLyr([pointLayer, lineLayer, areaLayer])
+    
     def loadFlagLyr(self, layer):
         """
         Loads the flag layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
         layer: layer name
         """
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
-        return self.layerLoader.load([layer], uniqueLoad = True)[layer['lyrName']]
+        if isinstance(layer, list):
+            return self.layerLoader.load(layer, uniqueLoad = True)
+        else:
+            return self.layerLoader.load([layer], uniqueLoad = True)[layer['lyrName']]
     
     def checkFlagsLoaded(self, layer):
         """
@@ -297,6 +309,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
+            #load flag layers
+            self.loadAllFlagLayers()
         self.iface.mapCanvas().refresh() #atualizar canvas para mostrar resultado para o usuário
 
     @pyqtSlot(int, name='on_validationTabWidget_currentChanged')
