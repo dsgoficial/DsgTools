@@ -258,15 +258,20 @@ class IdentifyDanglesProcess(ValidationProcess):
             candidateNumber = len(candidateIds)
             for id in candidateIds:
                 if not isRefLyr:
-                    if qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
+                    if buffer.intersects(allFeatureDict[id].geometry()) and \
+                    qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
                         notDangleIndexList.append(i)
                         break
                 else:
                     if candidateNumber == 1:
                         notDangleIndexList.append(i)
-                        #add else statement to treat ignoreNotSplit
-
-
+                        break
+                    elif ignoreNotSplit:
+                        if buffer.intersects(allFeatureDict[id].geometry()) and \
+                        qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
+                            candidateCount += 1
+                if candidateCount == candidateNumber:
+                    notDangleIndexList.append(i)
         filteredDangleList = []
         for i in range(len(pointList)):
             if i not in notDangleIndexList:
