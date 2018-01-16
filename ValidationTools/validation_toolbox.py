@@ -297,6 +297,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
+        self.iface.mapCanvas().refresh() #atualizar canvas para mostrar resultado para o usuário
 
     @pyqtSlot(int, name='on_validationTabWidget_currentChanged')
     def refreshFlags(self):
