@@ -99,6 +99,8 @@ class IdentifyDanglesProcess(ValidationProcess):
             filterLayer = self.buildFilterLayer(reflyr)
             #filter pointList with filterLayer
             filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, self.parameters['Search Radius'])
+            #filter with own layer
+            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, reflyr, self.parameters['Search Radius'], isRefLyr = True)
             #build flag list with filtered points
             recordList = self.buildFlagList(filteredPointList, endVerticesDict, refcl['tableSchema'], refcl['tableName'], refcl['geom'])
 
@@ -260,7 +262,9 @@ class IdentifyDanglesProcess(ValidationProcess):
                         notDangleIndexList.append(i)
                         break
                 else:
-                    pass #continue here
+                    if candidateNumber == 1:
+                        notDangleIndexList.append(i)
+                        #add else statement to treat ignoreNotSplit
 
 
         filteredDangleList = []
