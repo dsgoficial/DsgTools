@@ -398,6 +398,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             #refresh
             self.refreshFlags()
+            self.iface.mapCanvas().refresh()
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
@@ -428,6 +429,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             # refresh View Table with lasting flags
             self.refreshFlags()
+            self.iface.mapCanvas().refresh()
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
