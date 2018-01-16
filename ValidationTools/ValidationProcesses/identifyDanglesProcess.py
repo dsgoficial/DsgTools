@@ -91,6 +91,12 @@ class IdentifyDanglesProcess(ValidationProcess):
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             localProgress.step()
 
+            idType = self.opTypeDict[self.parameters['Identification Type']]
+            if idType == 0: #'Consider dangle on unsegmented lines'
+                ignoreNotSplit = False
+            else:
+                ignoreNotSplit = True
+
             #build seach dict
             endVerticesDict = self.buildInitialAndEndPointDict(reflyr, refcl['tableSchema'], refcl['tableName'])
             #search for dangles candidates
@@ -100,7 +106,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             #filter pointList with filterLayer
             filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, self.parameters['Search Radius'])
             #filter with own layer
-            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, reflyr, self.parameters['Search Radius'], isRefLyr = True)
+            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, reflyr, self.parameters['Search Radius'], isRefLyr = True, ignoreNotSplit = ignoreNotSplit)
             #build flag list with filtered points
             recordList = self.buildFlagList(filteredPointList, endVerticesDict, refcl['tableSchema'], refcl['tableName'], refcl['geom'])
 
