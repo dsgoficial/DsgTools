@@ -274,7 +274,8 @@ class IdentifyDanglesProcess(ValidationProcess):
                         break
                     elif ignoreNotSplit:
                         if buffer.intersects(allFeatureDict[id].geometry()) and \
-                        qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
+                        (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
+                        qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
                             candidateCount += 1
                 if candidateCount == candidateNumber:
                     notDangleIndexList.append(i)
