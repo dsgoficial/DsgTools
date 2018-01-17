@@ -63,9 +63,16 @@ class LineOnLineOverlayProcess(ValidationProcess):
             for lyrKey in lyrListKeys:
                 # preparation
                 cl = self.classesWithElemDict[lyrKey]
-                lyr = self.loadLayerBeforeValidationProcess(cl)                   
-
-                # running the process in the temp table
+                lyr = self.loadLayerBeforeValidationProcess(cl)
+                if self.parameters['Only Selected']:
+                    featureList = [i for i in lyr.selectedFeatures()]
+                else:
+                    featureList = [i for i in lyr.getFeatures()]
+                size = len(featureList)                   
+                endVerticesDict = self.identifyDangles.buildInitialAndEndPointDict(featureList, cl['tableSchema'], cl['tableName'])
+                idList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, cl['tableSchema'], cl['tableName'], returnIdList = True)
+                featureList = [i for i in featureList if i.id() in idList]
+                prolongedList = self.prolongLines(featureList, self.parameters['Snap'])
                 result = []
                 
                 # storing flags
@@ -88,3 +95,11 @@ class LineOnLineOverlayProcess(ValidationProcess):
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             self.finishedWithError()
             return 0
+    
+    def prolongLines(self, featureList, d, onlyFirstOrder = True):
+        pass
+
+    
+    def prolongLine(self, startPoint, endPoint, d):
+        pass
+    
