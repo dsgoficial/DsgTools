@@ -20,8 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QGis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 import binascii
 
@@ -41,7 +42,9 @@ class IdentifySmallLinesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList, 'Only Selected':False}
+            self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList, 'Only Selected':False, 'Only First Order Lines':False}
+            self.identifyDangles = IdentifyDanglesProcess(postgisDb, iface, instantiating = True)
+            self.identifyDangles.parameters = self.parameters
 
     def execute(self):
         """
@@ -69,11 +72,15 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 localProgress.step()
 
                 if self.parameters['Only Selected']:
-                    featureList = lyr.selectedFeatures()
-                    size = len(featureList)
+                    featureList = [i for i in lyr.selectedFeatures()]
                 else:
-                    featureList = lyr.getFeatures()
-                    size = len(lyr.allFeatureIds())
+                    featureList = [i for i in lyr.getFeatures()]
+                size = len(featureList)
+                
+                if self.parameters['Only First Order Lines']:
+                    endVerticesDict = self.identifyDangles.buildInitialAndEndPointDict(featureList, classAndGeom['tableSchema'], classAndGeom['tableName'])
+                    idList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, classAndGeom['tableSchema'], classAndGeom['tableName'], returnIdList = True)
+                    featureList = [i for i in featureList if i.id() in idList]
 
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
