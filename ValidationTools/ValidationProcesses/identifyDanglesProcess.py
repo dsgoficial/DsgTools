@@ -22,7 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField
+from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator
 
 from PyQt4.QtCore import QVariant
 
@@ -131,12 +131,16 @@ class IdentifyDanglesProcess(ValidationProcess):
         """
         Calculates initial point and end point from each line from lyr.
         """
-        if self.parameters['Only Selected']:
-            featureList = lyr.selectedFeatures()
+        if isinstance(lyr, list):
+            featureList = lyr
             size = len(featureList)
         else:
-            featureList = lyr.getFeatures()
-            size = len(lyr.allFeatureIds())
+            if self.parameters['Only Selected']:
+                featureList = lyr.selectedFeatures()
+                size = len(featureList)
+            else:
+                featureList = lyr.getFeatures()
+                size = len(lyr.allFeatureIds())
         localProgress = ProgressWidget(1, size, self.tr('Building search structure for {0}.{1}').format(tableSchema,tableName), parent=self.iface.mapCanvas())
         # start and end points dict
         endVerticesDict = {}
@@ -172,11 +176,12 @@ class IdentifyDanglesProcess(ValidationProcess):
             localProgress.step()
         return endVerticesDict
     
-    def searchDanglesOnPointDict(self, endVerticesDict, tableSchema, tableName):
+    def searchDanglesOnPointDict(self, endVerticesDict, tableSchema, tableName, returnIdList = False):
         """
         Counts the number of points on each endVerticesDict's key and returns a list of QgsPoint built from key candidate.
         """
         pointList = []
+        idList = []
         # actual search for dangles
         localProgress = ProgressWidget(1, len(endVerticesDict.keys()), self.tr('Searching dangles on {0}.{1}').format(tableSchema, tableName), parent=self.iface.mapCanvas())
         for point in endVerticesDict.keys():
@@ -185,8 +190,13 @@ class IdentifyDanglesProcess(ValidationProcess):
                 localProgress.step()
                 continue
             pointList.append(point)
+            if returnIdList:
+                idList.append(endVerticesDict[point][0])
             localProgress.step()
-        return pointList
+        if returnIdList:
+            return idList
+        else:
+            return pointList
 
     def getCoordinateTransformer(self, inputLyr, outputLyr):
         """
