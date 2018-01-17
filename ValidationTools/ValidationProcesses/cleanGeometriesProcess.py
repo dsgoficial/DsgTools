@@ -49,7 +49,7 @@ class CleanGeometriesProcess(ValidationProcess):
         alg = 'grass7:v.clean.advanced'
 
         #setting tools
-        tools = 'rmdupl,break,rmdupl,rmsa,bpol,rmline,break,rmdupl,rmdangle,break,rmdupl'
+        tools = 'rmsa,break,rmdupl,rmdangle'
         threshold = -1
 
         #getting table extent (bounding box)
