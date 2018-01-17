@@ -66,11 +66,11 @@ class CleanGeometriesProcess(ValidationProcess):
         
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayerV2(layer, outputLayer)
+        #self.updateOriginalLayerV2(layer, outputLayer)
 
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
-        return self.getProcessingErrors(errorLayer)
+        return self.getProcessingErrors(errorLayer), outputLayer
 
     def execute(self):
         """
@@ -96,7 +96,13 @@ class CleanGeometriesProcess(ValidationProcess):
                 srid = self.abstractDb.findEPSG(parameters=parameters)                        
 
                 # running the process in the temp table
-                result = self.runProcessinAlg(lyr)
+                coverage = self.createUnifiedLayer([lyr])
+                result, output = self.runProcessinAlg(coverage)
+                self.splitUnifiedLayer(output, [lyr])
+                try:
+                    QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
+                except:
+                    QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 
                 # storing flags
                 if len(result) > 0:
