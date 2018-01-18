@@ -176,7 +176,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             localProgress.step()
         return endVerticesDict
     
-    def searchDanglesOnPointDict(self, endVerticesDict, tableSchema, tableName, returnIdList = False):
+    def searchDanglesOnPointDict(self, endVerticesDict, tableSchema, tableName):
         """
         Counts the number of points on each endVerticesDict's key and returns a list of QgsPoint built from key candidate.
         """
@@ -190,13 +190,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 localProgress.step()
                 continue
             pointList.append(point)
-            if returnIdList:
-                idList.append(endVerticesDict[point][0])
-            localProgress.step()
-        if returnIdList:
-            return idList
-        else:
-            return pointList
+        return pointList
 
     def getCoordinateTransformer(self, inputLyr, outputLyr):
         """

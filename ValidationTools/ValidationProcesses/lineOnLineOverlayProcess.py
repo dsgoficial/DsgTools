@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 from collections import deque, OrderedDict
@@ -65,14 +65,15 @@ class LineOnLineOverlayProcess(ValidationProcess):
                 cl = self.classesWithElemDict[lyrKey]
                 lyr = self.loadLayerBeforeValidationProcess(cl)
                 if self.parameters['Only Selected']:
-                    featureList = [i for i in lyr.selectedFeatures()]
+                    featureDict = {i.id():i for i in lyr.selectedFeatures()}
                 else:
-                    featureList = [i for i in lyr.getFeatures()]
+                    featureDict = {i.id():i for i in lyr.getFeatures()}
+                featureList = featureDict.values()
+                spatialIdx = self.buildSpatialIndex(featureList)
                 size = len(featureList)                   
                 endVerticesDict = self.identifyDangles.buildInitialAndEndPointDict(featureList, cl['tableSchema'], cl['tableName'])
-                idList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, cl['tableSchema'], cl['tableName'], returnIdList = True)
-                featureList = [i for i in featureList if i.id() in idList]
-                prolongedList = self.prolongLines(featureList, self.parameters['Snap'])
+                pointList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, cl['tableSchema'], cl['tableName'])
+                extendedList = self.extendLines(featureDict, spatialIdx, pointList, endVerticesDict, self.parameters['Snap'])
                 result = []
                 
                 # storing flags
@@ -96,10 +97,51 @@ class LineOnLineOverlayProcess(ValidationProcess):
             self.finishedWithError()
             return 0
     
-    def prolongLines(self, featureList, d, onlyFirstOrder = True):
-        pass
-
+    def buildSpatialIndex(self, featureList):
+        """
+        Spatial Indexing for features
+        """
+        spatialIdx = QgsSpatialIndex()
+        for feat in featureList:
+            spatialIdx.insertFeature(feat)
+        return spatialIdx
     
-    def prolongLine(self, startPoint, endPoint, d):
+    def extendLines(self, featureDict, spatialIdx, pointList, endVerticesDict, d):
+        """
+        Extends lines that are close from other lines. 
+        It has the following steps:
+        1. Iterate over pointList to get the window search;
+        2. For each point, get the id of the containing line, it will be the line to be prolonged;
+        3. Get a buffer of radius d and its bounding box;
+        4. Get on spatialIdx the candidates those whose bb intersects buffer bb, except the line to be prolonged;
+        5. Assess if there is at least one line that intersect the buffer, if there is, the line must be prolonged.
+        """
+        #1. Iterate over pointList to get the window search
+        for point in pointList:
+            qgisPoint = QgsGeometry.fromPoint(point)
+            #calculate buffer
+            buffer = qgisPoint.buffer()
+            bufferBB = buffer.boundingBox()
+            #get the id of the candidate to be prolonged
+            prolongId = endVerticesDict[point][0]
+            #get the line to be prolonged from featId
+            extendLineCandidate = featureDict[prolongId]
+            for id in spatialIdx.intersects(bufferBB):
+                if buffer.intersects(featureDict[id].geometry()) and \
+                   (qgisPoint.distance(featureDict[id].geometry()) < 10**-9 or \
+                   qgisPoint.intersects(featureDict[id].geometry())):
+                   #if we have entered this if, we extend the line and break
+                   #extend line
+                   extendedLine = self.extendLine(extendLineCandidate.geom(), qgisPoint, d)
+                   #update feat geom
+                   extendLineCandidate.setGeom(extendedLine)
+                   break
+        return featureDict
+    
+    def extendLine(self, lineGeom, referencePoint, d):
+        """
+        1. Get the segment that must be extended;
+
+        """
         pass
     
