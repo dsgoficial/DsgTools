@@ -45,6 +45,9 @@ class LineOnLineOverlayProcess(ValidationProcess):
             self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList, 'Only Selected':False}
             self.identifyDangles = IdentifyDanglesProcess(postgisDb, iface, instantiating = True)
             self.identifyDangles.parameters = self.parameters
+    
+    def postProcess(self):
+         return [self.tr('Clean Geometries'), self.tr('Remove Small Lines')] #more than one post process (this is treated in validationManager)
 
     def execute(self):
         """
@@ -74,21 +77,8 @@ class LineOnLineOverlayProcess(ValidationProcess):
                 endVerticesDict = self.identifyDangles.buildInitialAndEndPointDict(featureList, cl['tableSchema'], cl['tableName'])
                 pointList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, cl['tableSchema'], cl['tableName'])
                 extendedList = self.extendLines(featureDict, spatialIdx, pointList, endVerticesDict, self.parameters['Snap'])
-                result = []
+                lyr.updateFeatures(extendedList)
                 
-                # storing flags
-                if len(result) > 0:
-                    error = True
-                    recordList = []
-                    for tupple in result:
-                        recordList.append((cl, tupple[0], self.tr('Overlay error.'), tupple[1], cl['geom']))
-                    numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from {0}.{1}').format(cl['tableSchema'], cl['tableName']) + self.tr(' with overlay errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                else:
-                    QgsMessageLog.logMessage(self.tr('All features from {0}.{1} overlayed.').format(cl['tableSchema'], cl['tableName']), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                self.logLayerTime(cl['tableSchema'] + '.' + cl['tableName'])
-            if error:
-                self.setStatus(self.tr('There are overlay errors. Check log.'), 4) #Finished with errors
             else:
                 self.setStatus(self.tr('Line on Line Overlay process complete.'), 1) #Finished
             return 1
@@ -117,10 +107,11 @@ class LineOnLineOverlayProcess(ValidationProcess):
         5. Assess if there is at least one line that intersect the buffer, if there is, the line must be prolonged.
         """
         #1. Iterate over pointList to get the window search
+        updateDict = dict()
         for point in pointList:
             qgisPoint = QgsGeometry.fromPoint(point)
             #calculate buffer
-            buffer = qgisPoint.buffer()
+            buffer = qgisPoint.buffer(d, -1)
             bufferBB = buffer.boundingBox()
             #get the id of the candidate to be prolonged
             prolongId = endVerticesDict[point][0]
@@ -132,11 +123,12 @@ class LineOnLineOverlayProcess(ValidationProcess):
                    qgisPoint.intersects(featureDict[id].geometry())):
                    #if we have entered this if, we extend the line and break
                    #extend line
-                   extendedLine = self.extendLine(extendLineCandidate.geom(), qgisPoint, d)
+                   extendedLine = self.extendLine(extendLineCandidate.geometry(), qgisPoint, d)
                    #update feat geom
                    extendLineCandidate.setGeom(extendedLine)
+                   updateDict[extendLineCandidate.id] = extendLineCandidate
                    break
-        return featureDict
+        return updateDict.values()
     
     def extendLine(self, geom, referencePoint, d):
         """
