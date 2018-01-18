@@ -46,6 +46,9 @@ class LineOnLineOverlayProcess(ValidationProcess):
             self.identifyDangles = IdentifyDanglesProcess(postgisDb, iface, instantiating = True)
             self.identifyDangles.parameters = self.parameters
     
+    def preProcess(self):
+        return self.tr('Remove Small Lines')
+
     def postProcess(self):
          return [self.tr('Clean Geometries'), self.tr('Remove Small Lines')] #more than one post process (this is treated in validationManager)
 
@@ -155,16 +158,30 @@ class LineOnLineOverlayProcess(ValidationProcess):
             multiLine = geom.asMultiPolyline()
             for i in xrange(len(multiLine)):
                 line = multiLine[i]
+                lineSize = len(line)
                 if line[0] == referencePoint.asPoint():
-                    return line[0::2]
+                    if lineSize == 2:
+                        return line
+                    else:
+                        return line[0::2]
                 if line[-1] == referencePoint.asPoint():
-                    return line[-2:]
+                    if lineSize == 2:
+                        return line
+                    else:
+                        return line[-2:]
         else:
             line = geom.asPolyline()
+            lineSize = len(line)
             if line[0] == referencePoint.asPoint():
-                return line[0::2]
+                if lineSize == 2:
+                    return line
+                else:
+                    return line[0::2]
             if line[-1] == referencePoint.asPoint():
-                return line[-2:]
+                if lineSize == 2:
+                    return line
+                else:
+                    return line[-2:]
         return []
     
     def getExtendedPoint(self, startPoint, endPoint, d):
