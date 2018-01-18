@@ -155,15 +155,15 @@ class LineOnLineOverlayProcess(ValidationProcess):
             multiLine = geom.asMultiPolyline()
             for i in xrange(len(multiLine)):
                 line = multiLine[i]
-                if line[0] == referencePoint:
+                if line[0] == referencePoint.asPoint():
                     return line[0::2]
-                if line[-1] == referencePoint:
+                if line[-1] == referencePoint.asPoint():
                     return line[-2:]
         else:
             line = geom.asPolyline()
-            if line[0] == referencePoint:
+            if line[0] == referencePoint.asPoint():
                 return line[0::2]
-            if line[-1] == referencePoint:
+            if line[-1] == referencePoint.asPoint():
                 return line[-2:]
         return []
     
