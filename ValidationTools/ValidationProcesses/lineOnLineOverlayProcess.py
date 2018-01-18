@@ -138,10 +138,50 @@ class LineOnLineOverlayProcess(ValidationProcess):
                    break
         return featureDict
     
-    def extendLine(self, lineGeom, referencePoint, d):
+    def extendLine(self, geom, referencePoint, d):
         """
         1. Get the segment that must be extended;
-
+        2. Determine if the referencePoint (QgsPoint) is an End Point os a Start Point;
+        3. Create a new segment
         """
-        pass
+        isMultipart = geom.isMultipart()
+        segment = self.getSegment(geom, referencePoint)
+        if segment[1] == referencePoint:
+            extendedPoint = self.getExtendedPoint(segment[0], segment[1], d)
+            newLine = QgsGeometry.fromPolyline([segment[1], extendedPoint])
+        else:
+            extendedPoint = self.getExtendedPoint(segment[1], segment[0], d)
+            newLine = QgsGeometry.fromPolyline([segment[0], extendedPoint])
+        if isMultipart:
+            newLine.convertToMultiType()
+        newGeom = geom.combine(newLine)
+        newGeom.mergeLines()
+        return newGeom
+    
+    def getSegment(self, geom, referencePoint):
+        if geom.isMultipart():
+            multiLine = geom.asMultiPolyline()
+            for i in xrange(len(multiLine)):
+                line = multiLine[i]
+                if line[0] == referencePoint:
+                    return line[0::2]
+                if line[-1] == referencePoint:
+                    return line[-2:]
+        else:
+            line = geom.asPolyline()
+            if line[0] == referencePoint:
+                return line[0::2]
+            if line[-1] == referencePoint:
+                return line[-2:]
+        return []
+    
+    def getExtendedPoint(self, startPoint, endPoint, d):
+        """
+        End Point C:
+        C = startPoint + (startPoint - endPoint) * d / (distance from start to end point)
+        """
+        dAB = startPoint.distance(endPoint)
+        Xc = endPoint.x() + (endPoint.x() - startPoint.x()) * d / dAB
+        Yc = endPoint.y() + (endPoint.y() - startPoint.y()) * d / dAB
+        return (Xc, Yc)
     
