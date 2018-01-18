@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QgsPoint
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 from collections import deque, OrderedDict
@@ -125,7 +125,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
                    #extend line
                    extendedLine = self.extendLine(extendLineCandidate.geometry(), qgisPoint, d)
                    #update feat geom
-                   extendLineCandidate.setGeom(extendedLine)
+                   extendLineCandidate.setGeometry(extendedLine)
                    updateDict[extendLineCandidate.id] = extendLineCandidate
                    break
         return updateDict.values()
@@ -175,5 +175,5 @@ class LineOnLineOverlayProcess(ValidationProcess):
         dAB = startPoint.distance(endPoint)
         Xc = endPoint.x() + (endPoint.x() - startPoint.x()) * d / dAB
         Yc = endPoint.y() + (endPoint.y() - startPoint.y()) * d / dAB
-        return (Xc, Yc)
+        return QgsPoint(Xc, Yc)
     
