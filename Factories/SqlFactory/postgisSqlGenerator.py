@@ -1421,7 +1421,10 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def removeRecordFromPropertyTable(self, settingType, configName, edgvVersion):
         tableName = self.getSettingTable(settingType)
-        sql = '''DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';'''.format(tableName, configName, edgvVersion)
+        if not edgvVersion:
+            sql = '''DELETE FROM public.{0} where name = '{1}';'''.format(tableName, configName)
+        else:
+            sql = '''DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';'''.format(tableName, configName, edgvVersion)
         return sql
 
     def updateRecordFromPropertyTable(self, settingType, configName, edgvVersion, jsonDict):

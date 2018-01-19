@@ -269,7 +269,10 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 msg += setting
                 if successList:
                     if len(successList) > 0:
-                        msg += self.tr(' on databases ') + ', '.join(successList)
+                        try:
+                            msg += self.tr(' on databases ') + ', '.join(successList)
+                        except: #none type case, just add .
+                            msg += '.'
         msg += self.logInternalError(exceptionDict)
         QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
     
