@@ -244,6 +244,9 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         self.iface = iface
 
         #database conenction
+        if not abstractDb:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr('Select a database before managing a complex!'))
+            return
         self.db = abstractDb.db
         #table name
         self.table = table

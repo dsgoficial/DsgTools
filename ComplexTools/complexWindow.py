@@ -189,6 +189,9 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         Opens the dialog to manage complex features
         """
         #opens a dialog to manage complexes
+        if not self.abstractDb:
+            QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr('Select a database before managing a complex!'))
+            return
         dlg = ManageComplexDialog(self.iface, self.abstractDb, self.complexCombo.currentText())
         #connects a signal to update the tree widget when done
         QObject.connect(dlg, SIGNAL(("tableUpdated()")), self.loadAssociatedFeatures)
