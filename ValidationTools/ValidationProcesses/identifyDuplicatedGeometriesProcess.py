@@ -41,12 +41,6 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
             self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
-    
-    def preProcess(self):
-        return self.tr('Clean Geometries')
-
-    def postProcess(self):
-        return [self.tr('Merge lines'), self.tr('Clean Geometries')]
 
     def execute(self):
         """
