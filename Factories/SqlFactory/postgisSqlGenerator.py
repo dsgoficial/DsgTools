@@ -561,7 +561,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
                 linestrings."{3}" as "{3}"
                 FROM
-                (SELECT "{3}" as "{3}", ((ST_Boundary("{2}")).geom
+                (SELECT "{3}" as "{3}", (ST_Dump("{2}")).geom
                 FROM only "{0}"."{1}" 
                 ) AS linestrings
                 ) AS segments)#
