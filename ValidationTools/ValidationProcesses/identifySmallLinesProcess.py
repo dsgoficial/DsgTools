@@ -45,9 +45,6 @@ class IdentifySmallLinesProcess(ValidationProcess):
             self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList, 'Only Selected':False, 'Only First Order Lines':False}
             self.identifyDangles = IdentifyDanglesProcess(postgisDb, iface, instantiating = True)
             self.identifyDangles.parameters = self.parameters
-        
-    def preProcess(self):
-        return self.tr(self.tr('Clean Geometries'))
 
     def execute(self):
         """
