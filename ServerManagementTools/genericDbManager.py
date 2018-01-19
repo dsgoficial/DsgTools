@@ -304,21 +304,31 @@ class GenericDbManager(QObject):
         propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property)
         if configName in propertyDict.keys():
             for dbName in propertyDict[configName]:
-                abstractDb = self.instantiateAbstractDb(dbName)
-                edgvVersion = abstractDb.getDatabaseVersion()
-                try:
-                    abstractDb.db.transaction()
-                    self.adminDb.db.transaction()
-                    self.undoMaterializationFromDatabase(abstractDb, configName, settingType, edgvVersion) #step done when property management involves changing database structure
-                    abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
-                    self.adminDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
-                    abstractDb.db.commit()
-                    self.adminDb.db.commit()
-                except Exception as e:
-                    abstractDb.db.rollback()
-                    self.adminDb.db.rollback()
-                    errorDict[dbName] = ':'.join(e.args)
-                successList.append(dbName)
+                if not dbName:
+                    try:
+                        self.adminDb.db.transaction()
+                        self.adminDb.removeRecordFromPropertyTable(settingType, configName, None)
+                        self.adminDb.db.commit()
+                        successList.append(dbName)
+                    except Exception as e:
+                        self.adminDb.db.rollback()
+                        errorDict[dbName] = ':'.join(e.args)
+                else:
+                    abstractDb = self.instantiateAbstractDb(dbName)
+                    edgvVersion = abstractDb.getDatabaseVersion()
+                    try:
+                        abstractDb.db.transaction()
+                        self.adminDb.db.transaction()
+                        self.undoMaterializationFromDatabase(abstractDb, configName, settingType, edgvVersion) #step done when property management involves changing database structure
+                        abstractDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+                        self.adminDb.removeRecordFromPropertyTable(settingType, configName, edgvVersion)
+                        abstractDb.db.commit()
+                        self.adminDb.db.commit()
+                        successList.append(dbName)
+                    except Exception as e:
+                        abstractDb.db.rollback()
+                        self.adminDb.db.rollback()
+                        errorDict[dbName] = ':'.join(e.args)
         return (successList, errorDict)
 
     def uninstallSetting(self, configName, dbNameList = []):
