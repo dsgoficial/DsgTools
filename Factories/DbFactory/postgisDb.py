@@ -1184,7 +1184,7 @@ class PostgisDb(AbstractDb):
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
 
-    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn, useTransaction = True):
+    def getVertexNearEdgesRecords(self, tableSchema, tableName, tol, geometryColumn, keyColumn, geomType, useTransaction = True):
         """
         Gets vertexes near edges. These vertexes are problematic and should be treated
         tableSchema: table schema
@@ -1195,7 +1195,7 @@ class PostgisDb(AbstractDb):
         """
         self.checkAndOpenDb()
         result = []
-        sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName, geometryColumn, keyColumn)
+        sql = self.gen.prepareVertexNearEdgesStruct(tableSchema, tableName, geometryColumn, keyColumn, geomType)
         sqlList = sql.split('#')
         if useTransaction:
             self.db.transaction()
