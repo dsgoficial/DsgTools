@@ -70,7 +70,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                 #running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, classAndGeom['geom'], keyColumn)
+                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, classAndGeom['geom'], keyColumn, classAndGeom['geomType'])
                 localProgress.step()
                 
                 # dropping temp table

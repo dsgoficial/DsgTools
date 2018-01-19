@@ -532,24 +532,43 @@ class PostGISSqlGenerator(SqlGenerator):
         ) as foo2 where len < {2} order by foo2."{4}" """.format(schema, cl, areaTolerance, geometryColumn, keyColumn)
         return sql
     
-    def prepareVertexNearEdgesStruct(self, tableSchema, tableName, geometryColumn, keyColumn):
-        sql = """drop table if exists seg#
-        create temp table seg as (
-        SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
-        FROM
-           (SELECT
-              ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
-              ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
-              linestrings."{3}" as "{3}"
+    def prepareVertexNearEdgesStruct(self, tableSchema, tableName, geometryColumn, keyColumn, geomType):
+        if 'POLYGON' in geomType:
+            sql = """drop table if exists seg#
+            create temp table seg as (
+            SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
             FROM
-              (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}"))).geom
-               FROM only "{0}"."{1}" 
-               ) AS linestrings
-            ) AS segments)#
-        drop table if exists pontos#
-        create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
-        create index pontos_gist on pontos using gist ("{2}")#
-        create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)
+            (SELECT
+                ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
+                ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
+                linestrings."{3}" as "{3}"
+                FROM
+                (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}"))).geom
+                FROM only "{0}"."{1}" 
+                ) AS linestrings
+                ) AS segments)#
+            drop table if exists pontos#
+            create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
+            create index pontos_gist on pontos using gist ("{2}")#
+            create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)
+        else:
+            sql = """drop table if exists seg#
+            create temp table seg as (
+            SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
+            FROM
+            (SELECT
+                ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
+                ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
+                linestrings."{3}" as "{3}"
+                FROM
+                (SELECT "{3}" as "{3}", ((ST_Boundary("{2}")).geom
+                FROM only "{0}"."{1}" 
+                ) AS linestrings
+                ) AS segments)#
+            drop table if exists pontos#
+            create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
+            create index pontos_gist on pontos using gist ("{2}")#
+            create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)            
         return sql
 
     def getVertexNearEdgesStruct(self, epsg, tol, geometryColumn, keyColumn):
