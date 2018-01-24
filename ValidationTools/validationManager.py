@@ -169,6 +169,7 @@ class ValidationManager(QObject):
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             process.logTotalTime()
+            process.logProcess()        
             if ret == 0:
                 return 0
         return 1

@@ -553,4 +553,10 @@ class ValidationProcess(QObject):
         -flagNumber (number of flags)
         -elapsedTime
         """
-        pass
+        if self.parameters:
+            parametersString = "Parameters used on this execution of process {}\n".format(self.processAlias)
+            for key in self.parameters.keys():
+                parametersString += "{0}: {1}\n".format(key, self.parameters[key])
+            parametersString += "\n\n"
+            parametersString = self.tr(parametersString)
+            QgsMessageLog.logMessage(self.tr(parametersString), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
