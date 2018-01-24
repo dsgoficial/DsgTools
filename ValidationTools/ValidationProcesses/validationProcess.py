@@ -52,7 +52,21 @@ class ValidationProcess(QObject):
         self.totalTime = 0
         self.startTime = 0
         self.endTime = 0
-        
+        self.dbUserName = None
+        self.processName = None
+
+    def setProcessName(self, processName):
+        """
+        Identifies the process name as it is.
+        """
+        self.processName = processName
+
+    def setDbUserName(self, userName):
+        """
+        Identifies the database username.
+        """
+        self.dbUserName = userName
+
     def setParameters(self, params):
         """
         Define the process parameteres
@@ -553,10 +567,24 @@ class ValidationProcess(QObject):
         -flagNumber (number of flags)
         -elapsedTime
         """
+        # logging username
+        if self.dbUserName:
+            QgsMessageLog.logMessage(self.tr("\nDatabase user: {0}\n").format(self.dbUserName), "DSG Tools Plugin", \
+                                     QgsMessageLog.CRITICAL)
+        else:
+            QgsMessageLog.logMessage(self.tr("\nUnable to get database username.\n"), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        # logging process parameters
         if self.parameters:
             parametersString = "Parameters used on this execution of process {}\n".format(self.processAlias)
             for key in self.parameters.keys():
-                parametersString += "{0}: {1}\n".format(key, self.parameters[key])
-            parametersString += "\n\n"
-            parametersString = self.tr(parametersString)
+                parametersString += "- {0}: {1}\n".format(key, self.parameters[key])
+            parametersString += "\n"
             QgsMessageLog.logMessage(self.tr(parametersString), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        # logging #Flag
+        msg =  "Number of flags raised by the process: {}".format(\
+                        str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
+        QgsMessageLog.logMessage(self.tr(msg), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        # logging total time elapsed
+        if self.totalTime:
+            QgsMessageLog.logMessage(self.tr('Total elapsed time for process {0}: {1}\n').format(self.processAlias, \
+                                     str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
