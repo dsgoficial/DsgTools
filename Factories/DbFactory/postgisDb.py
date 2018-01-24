@@ -3516,3 +3516,16 @@ class PostgisDb(AbstractDb):
             geom = query.value(0)
             invalidRecordsList.append( (0, reason, geom) )
         return invalidRecordsList
+
+    def getNumberOfFlagsByProcess(self, processName):
+        """
+        Returns the number of flags raised by a process.
+        """
+        sql = self.gen.getFlagsByProcess(processName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+        nrFlags = 0
+        while query.next():
+            nrFlags += 1
+        return nrFlags
