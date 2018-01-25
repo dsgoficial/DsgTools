@@ -47,7 +47,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
             self.identifyDangles.parameters = self.parameters
     
     def preProcess(self):
-        return self.tr('Remove Small Lines')
+        return [self.tr('Snap to Grid (adjust coordinates precision)'), self.tr('Remove Small Lines')]
 
     def postProcess(self):
          return [self.tr('Clean Geometries'), self.tr('Remove Small Lines')] #more than one post process (this is treated in validationManager)
@@ -123,7 +123,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
             for id in spatialIdx.intersects(bufferBB):
                 if buffer.intersects(featureDict[id].geometry()) and \
                    (qgisPoint.distance(featureDict[id].geometry()) < 10**-9 or \
-                   qgisPoint.intersects(featureDict[id].geometry())):
+                   qgisPoint.touches(featureDict[id].geometry())):
                    #if we have entered this if, we extend the line and break
                    #extend line
                    extendedLine = self.extendLine(extendLineCandidate.geometry(), qgisPoint, d)

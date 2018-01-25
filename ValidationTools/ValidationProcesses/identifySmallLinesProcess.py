@@ -79,7 +79,8 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 
                 if self.parameters['Only First Order Lines']:
                     endVerticesDict = self.identifyDangles.buildInitialAndEndPointDict(featureList, classAndGeom['tableSchema'], classAndGeom['tableName'])
-                    idList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, classAndGeom['tableSchema'], classAndGeom['tableName'], returnIdList = True)
+                    pointList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, classAndGeom['tableSchema'], classAndGeom['tableName'])
+                    idList = [endVerticesDict[point][0] for point in pointList]
                     featureList = [i for i in featureList if i.id() in idList]
 
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
