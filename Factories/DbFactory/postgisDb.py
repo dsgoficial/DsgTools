@@ -1013,28 +1013,16 @@ class PostgisDb(AbstractDb):
             ret = query.value(0)
         return ret
 
-    def setValidationProcessStatus(self, processName, log, status, username, parameters, nrFlags, timeElapsed):
+    def setValidationProcessStatus(self, processName, log, status):
         """
         Sets the validation status for a specific process
         processName: process name
         """
         self.checkAndOpenDb()
-        sql = self.gen.setValidationStatusQuery(processName, log, status, username, parameters, nrFlags, timeElapsed)
+        sql = self.gen.setValidationStatusQuery(processName, log, status)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
-
-    def updateValidationTable(self):
-        """
-        Updates The validation.process_history to the new form (username, param, flags and time elapsed added).
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.updateProcessHistoryTable()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text())
-        self.db.commit()
-        return True
     
     def getRunningProc(self):
         """

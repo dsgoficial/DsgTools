@@ -395,18 +395,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT sta.status FROM validation.process_history as hist left join validation.status as sta on sta.id = hist.status where hist.process_name = '%s' ORDER BY hist.finished DESC LIMIT 1 " % processName
         return sql
     
-    def updateProcessHistoryTable():
-        sql = """ALTER TABLE validation.process_history ADD COLUMN IF NOT EXISTS username VARCHAR(40)#
-        ALTER TABLE validation.process_history ADD COLUMN IF NOT EXISTS parameters VARCHAR(1000)#
-        ALTER TABLE validation.process_history ADD COLUMN IF NOT EXISTS nrFlags INTEGER#
-        ALTER TABLE validation.process_history ADD COLUMN IF NOT EXISTS timeElapsed FLOAT(2);
-        """
-        return sql
-
-    def setValidationStatusQuery(self, processName,log, status, username=None, parameters=None, nrFlags=None, timeElapsed=None):
-        sql = "INSERT INTO validation.process_history (process_name, log, status, username, parameters, nrFlags, timeElapsed) \
-        values ('%s','%s',%s,'%s','%s',%s,%s)" % \
-                (processName,log,status,username,parameters,nrFlags,timeElapsed)
+    def setValidationStatusQuery(self, processName,log,status):
+        sql = "INSERT INTO validation.process_history (process_name, log, status) values ('%s','%s',%s)" % (processName,log,status)
         return sql
     
     def insertFlagIntoDb(self, layer, feat_id, reason, geom, srid, processName, dimension, geometryColumn, flagSRID):
