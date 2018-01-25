@@ -180,7 +180,7 @@ class ValidationProcess(QObject):
         msg: Status text message
         """
         try:
-            if status not in [0,2]:
+            if status in [1,4]:
                 self.logProcess()
                 if self.logMsg:
                     msg += "\n\n" + self.logMsg
