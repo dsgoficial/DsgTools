@@ -1013,16 +1013,28 @@ class PostgisDb(AbstractDb):
             ret = query.value(0)
         return ret
 
-    def setValidationProcessStatus(self, processName, log, status):
+    def setValidationProcessStatus(self, processName, log, status, username, parameters, nrFlags, timeElapsed):
         """
         Sets the validation status for a specific process
         processName: process name
         """
         self.checkAndOpenDb()
-        sql = self.gen.setValidationStatusQuery(processName, log, status)
+        sql = self.gen.setValidationStatusQuery(processName, log, status, username, parameters, nrFlags, timeElapsed)
         query = QSqlQuery(self.db)
         if not query.exec_(sql):
             raise Exception(self.tr('Problem setting status: ') + query.lastError().text())
+
+    def updateValidationTable(self):
+        """
+        Updates The validation.process_history to the new form (username, param, flags and time elapsed added).
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.updateProcessHistoryTable()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text())
+        self.db.commit()
+        return True
     
     def getRunningProc(self):
         """
@@ -1032,7 +1044,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text()) 
+            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text())
         while query.next():
             processName = query.value(0)
             status = query.value(1)
@@ -3521,6 +3533,7 @@ class PostgisDb(AbstractDb):
         """
         Returns the number of flags raised by a process.
         """
+        self.checkAndOpenDb()
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():

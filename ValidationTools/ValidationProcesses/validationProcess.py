@@ -22,6 +22,7 @@
 """
 import binascii
 from datetime import datetime
+import json
 # Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QVariant
@@ -171,17 +172,23 @@ class ValidationProcess(QObject):
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
-    def setStatus(self, msg, status):
+    def setStatus(self, msg, status, username=None, parameters=None, nrFlags=None, timeElapsed=None):
         """
         Sets the status message
         status: Status number
         msg: Status text message
         """
         try:
-            self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.abstractDb.setValidationProcessStatus(self.getName(), msg, status, username, parameters, nrFlags, timeElapsed)
+        except:
+            try:
+                # in case the validation history table was created before its structure was
+                # enhanced. If so, it'll try to create the columns that didn't exist before  
+                self.abstractDb.updateValidationHistoryTable()
+                self.abstractDb.setValidationProcessStatus(self.getName(), msg, status, username, parameters, nrFlags, timeElapsed)
+            except Exception as e:
+                QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     def finishedWithError(self):
         """
@@ -558,6 +565,15 @@ class ValidationProcess(QObject):
         if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
             QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
+    def jsonifyParameters(self, params):
+        """
+        Sets a dict type feature to a json structure in order to make it visually better
+        both to expose on log and to save it on validation history table.
+        parameter params: a dict type variable
+        returns: a json structured text
+        """
+        return json.dumps(params, sort_keys=True, indent=4)
+
     def logProcess(self):
         """
         Returns information to user:
@@ -568,23 +584,25 @@ class ValidationProcess(QObject):
         -elapsedTime
         """
         # logging username
+        logMsg = ""
         if self.dbUserName:
-            QgsMessageLog.logMessage(self.tr("\nDatabase user: {0}\n").format(self.dbUserName), "DSG Tools Plugin", \
-                                     QgsMessageLog.CRITICAL)
+            logMsg += "Database user: {0}".format(self.dbUserName)
         else:
-            QgsMessageLog.logMessage(self.tr("\nUnable to get database username.\n"), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            logMsg += "Unable to get database username."
         # logging process parameters
         if self.parameters:
-            parametersString = "Parameters used on this execution of process {}\n".format(self.processAlias)
-            for key in self.parameters.keys():
-                parametersString += "- {0}: {1}\n".format(key, self.parameters[key])
-            parametersString += "\n"
-            QgsMessageLog.logMessage(self.tr(parametersString), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            parametersString = "\nParameters used on this execution of process {}\n".format(self.processAlias)
+            parametersString += self.jsonifyParameters(self.parameters)
+            logMsg += parametersString
+        else:
+            logMsg += "Unable to get database parameters for process {}.".format(self.processAlias)
         # logging #Flag
-        msg =  "Number of flags raised by the process: {}".format(\
+        logMsg += "Number of flags raised by the process: {}".format(\
                         str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
-        QgsMessageLog.logMessage(self.tr(msg), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         # logging total time elapsed
         if self.totalTime:
-            QgsMessageLog.logMessage(self.tr('Total elapsed time for process {0}: {1}\n').format(self.processAlias, \
-                                     str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            logMsg += "Total elapsed time for process {0}: {1}\n".format(self.processAlias, \
+                                     str(self.totalTime))
+        else:
+            logMsg += "Unable to get total elapsed time."
+        QgsMessageLog.logMessage(self.tr(logMsg), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
