@@ -47,7 +47,6 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -59,6 +58,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             tol = self.parameters['Angle']
             error = False
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())

@@ -50,19 +50,17 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
+            self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             refKey, classesKeys = self.parameters['Reference and Layers']
             if len(classesKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             # preparing reference layer
@@ -73,6 +71,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
             # gathering all coverage layers
             classlist = []
             for key in classesKeys:
+                self.startTimeCount()
                 # preparation
                 cl = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl['tableName'], parent=self.iface.mapCanvas())
@@ -111,11 +110,9 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
                 numberOfProblems = self.addFlag(recordFlagList)
                 msg = self.tr('There are {} gaps or overlaps in the coverage layer. Check flags.').format(numberOfProblems)
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 msg = self.tr('The coverage has no gaps or overlaps.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
             # dropping temp table
             self.abstractDb.dropTempTable('validation.coverage_temp')
