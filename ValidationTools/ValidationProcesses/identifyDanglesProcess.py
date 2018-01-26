@@ -116,11 +116,9 @@ class IdentifyDanglesProcess(ValidationProcess):
                 numberOfProblems = self.addFlag(recordList)
                 msg = self.tr('{0} features have dangles. Check flags.').format(numberOfProblems)
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 msg = self.tr('There are no dangles.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

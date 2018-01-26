@@ -22,6 +22,7 @@
 """
 import binascii
 from datetime import datetime
+import json
 # Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QVariant
@@ -52,7 +53,22 @@ class ValidationProcess(QObject):
         self.totalTime = 0
         self.startTime = 0
         self.endTime = 0
-        
+        self.dbUserName = None
+        self.logMsg = None
+        self.processName = None
+
+    def setProcessName(self, processName):
+        """
+        Identifies the process name as it is.
+        """
+        self.processName = processName
+
+    def setDbUserName(self, userName):
+        """
+        Identifies the database username.
+        """
+        self.dbUserName = userName
+
     def setParameters(self, params):
         """
         Define the process parameteres
@@ -164,6 +180,12 @@ class ValidationProcess(QObject):
         msg: Status text message
         """
         try:
+            if status not in [0,3]: # neither running nor instatiating status should be logged
+                self.logProcess()
+                if self.logMsg:
+                    msg += "\n\n" + self.logMsg
+                elif not self.dbUserName:
+                    msg += "Database username: {}".format(self.abstractDb.db.userName())
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
@@ -544,6 +566,15 @@ class ValidationProcess(QObject):
         if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
             QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
+    def jsonifyParameters(self, params):
+        """
+        Sets a dict type feature to a json structure in order to make it visually better
+        both to expose on log and to save it on validation history table.
+        parameter params: a dict type variable
+        returns: a json structured text
+        """
+        return json.dumps(params, sort_keys=True, indent=4)
+
     def logProcess(self):
         """
         Returns information to user:
@@ -553,4 +584,27 @@ class ValidationProcess(QObject):
         -flagNumber (number of flags)
         -elapsedTime
         """
-        pass
+        # logging username
+        logMsg = ""
+        if self.dbUserName:
+            logMsg += "Database username: {0}".format(self.dbUserName)
+        else:
+            logMsg += "Unable to get database username."
+        # logging process parameters
+        if self.parameters:
+            parametersString = "\nParameters used on this execution of process {}\n".format(self.processAlias)
+            parametersString += self.jsonifyParameters(self.parameters)
+            logMsg += parametersString
+        else:
+            logMsg += "Unable to get database parameters for process {}.".format(self.processAlias)
+        # logging #Flag
+        logMsg += "\nNumber of flags raised by the process: {}".format(\
+                        str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
+        # logging total time elapsed
+        if self.totalTime:
+            logMsg += "\nTotal elapsed time for process {0}: {1}\n".format(self.processAlias, \
+                                     str(self.totalTime))
+        else:
+            logMsg += "\nUnable to get total elapsed time."
+        self.logMsg = logMsg
+        QgsMessageLog.logMessage(self.tr(logMsg), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

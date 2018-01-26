@@ -47,7 +47,6 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -59,6 +58,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
             classesWithGeom = []
             recordFlagList = []
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -85,11 +85,9 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                 numberOfProblems = self.addFlag(recordFlagList)
                 msg = str(numberOfProblems) + self.tr(' features are not simple. Check flags.')        
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 msg = self.tr('All features are simple.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

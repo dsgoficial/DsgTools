@@ -64,9 +64,9 @@ class LineOnLineOverlayProcess(ValidationProcess):
             lyrListKeys = self.parameters['Classes']
             if len(lyrListKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             for lyrKey in lyrListKeys:
+                self.startTimeCount()
                 # preparation
                 cl = self.classesWithElemDict[lyrKey]
                 lyr = self.loadLayerBeforeValidationProcess(cl)

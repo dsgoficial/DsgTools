@@ -53,6 +53,7 @@ class PostgisDb(AbstractDb):
         Gets the database name
         """
         return self.db.databaseName()
+
     def getHostName(self):
         return str(self.db.hostName())
 
@@ -1032,7 +1033,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getRunningProc()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text()) 
+            raise Exception(self.tr('Problem getting running process: ') + query.lastError().text())
         while query.next():
             processName = query.value(0)
             status = query.value(1)
@@ -3516,3 +3517,28 @@ class PostgisDb(AbstractDb):
             geom = query.value(0)
             invalidRecordsList.append( (0, reason, geom) )
         return invalidRecordsList
+
+    def getNumberOfFlagsByProcess(self, processName):
+        """
+        Returns the number of flags raised by a process.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getFlagsByProcess(processName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+        nrFlags = 0
+        while query.next():
+            nrFlags += 1
+        return nrFlags
+
+    def createValidationHistoryViewTable(self):
+        """
+        Creates the view table for validation processes history. 
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.createValidationHistoryViewTableQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
+        return
