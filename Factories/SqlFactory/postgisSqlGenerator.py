@@ -1601,8 +1601,8 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def createFilteredFlagsViewTableQuery(self, filterType=None, filteredElement=None):
         """
-        Returns the query for creating and populating
-        a view table based on users settings
+        Returns the query for creating and populating a view table of flags raised in 
+        validation processes based on users settings.
         """
         sql = """
         CREATE OR REPLACE VIEW validation.filtered_flags AS 
@@ -1634,9 +1634,8 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def createValidationHistoryViewTableQuery(self):
         """
-        Returns the query for creating and populating
-        a view table. Shows the history of validation
-        processes, ordered by execution.
+        Returns the query for creating and populating a view table.
+        Shows the history of validation processes, ordered by execution.
         """
         sql = """
         CREATE OR REPLACE VIEW validation.process_history_view AS 

@@ -44,10 +44,7 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.postgisDb = postgisDb
         self.projectModel = QSqlTableModel(None,self.postgisDb.db)
-        self.postgisDb.createValidationHistoryViewTable() # refreshes the view
-        self.projectModel.setTable('validation.process_history_view')
-        self.projectModel.select()
-        self.tableView.setModel(self.projectModel)
+        self.refreshViewTable()
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -55,14 +52,25 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         Closes the dialog
         """
         self.hide()
-    
-    # @pyqtSlot(bool)
+
     def keyPressEvent(self, e):
         """
         Refreshes table if F5 is pressed.
         """
         if e.key() == Qt.Key_F5:
-            self.postgisDb.createValidationHistoryViewTable() # refreshes the view
-            self.projectModel.setTable('validation.process_history_view')
-            self.projectModel.select()
-            self.tableView.setModel(self.projectModel)
+            self.refreshViewTable()
+
+    def refreshViewTable(self):
+        """
+        Refreshes the view table.
+        """
+        self.postgisDb.createValidationHistoryViewTable() # refreshes the view
+        self.projectModel.setTable('validation.process_history_view')
+        self.projectModel.select()
+        self.tableView.setModel(self.projectModel)
+        header = self.tableView.horizontalHeader()
+        header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
+        header.setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
+        header.setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
+        header.setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
+        
