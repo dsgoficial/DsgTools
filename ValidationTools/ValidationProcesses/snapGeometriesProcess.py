@@ -89,6 +89,7 @@ class SnapGeometriesProcess(ValidationProcess):
                 return 1
             error = False
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)

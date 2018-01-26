@@ -56,23 +56,22 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
+            self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             overlayerKey, lyrListKeys = self.parameters['Overlayer and Layers']
             if len(lyrListKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             if not overlayerKey:
                 self.setStatus(self.tr('One overlayer must be selected! Stopping.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             error = False
             overlayer = self.overlayElemDict[overlayerKey]
             overLyr = self.loadLayerBeforeValidationProcess(overlayer)
             for lyrKey in lyrListKeys:
+                self.startTimeCount()
                 # preparation
                 cl = self.classesWithElemDict[lyrKey]
                 lyr = self.loadLayerBeforeValidationProcess(cl)                   
