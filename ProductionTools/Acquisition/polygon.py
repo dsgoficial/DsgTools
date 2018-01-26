@@ -48,7 +48,7 @@ class Polygon(GeometricaAcquisition):
         # pointMap = self.snapToLayer(event) 
         if event.button() == Qt.RightButton:
             if self.free:
-                self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))
+                self.geometry.append(pointMap)
                 self.endGeometryFree()
             else:
                 self.endGeometry()        
