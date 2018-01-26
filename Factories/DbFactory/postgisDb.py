@@ -3540,5 +3540,5 @@ class PostgisDb(AbstractDb):
         sql = self.gen.createValidationHistoryViewTableQuery()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+            raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
         return

@@ -51,7 +51,6 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             refKey = self.parameters['Reference and Layers'][0]
@@ -71,10 +70,10 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             snapper = DsgGeometrySnapper(reflyr)
             snapper.featureSnapped.connect(self.updateProgress)
-
             tol = self.parameters['Snap']
             msg = ''
             for key in classesWithElemKeys:
+                self.startTimeCount()
                 # preparation
                 clDict = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + clDict['tableName'], parent=self.iface.mapCanvas())
@@ -94,7 +93,6 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 msg += localMsg
             self.setStatus(msg, 1) #Finished
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
