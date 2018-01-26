@@ -299,7 +299,8 @@ class InspectFeatures(QWidget,Ui_Form):
             self.enableTool(self.mMapLayerComboBox.currentLayer())
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
-            self.splitter.hide()         
+            self.splitter.hide()   
+            self.enableTool(False)      
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
