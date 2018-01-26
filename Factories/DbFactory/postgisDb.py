@@ -53,6 +53,7 @@ class PostgisDb(AbstractDb):
         Gets the database name
         """
         return self.db.databaseName()
+
     def getHostName(self):
         return str(self.db.hostName())
 
@@ -3530,3 +3531,14 @@ class PostgisDb(AbstractDb):
         while query.next():
             nrFlags += 1
         return nrFlags
+
+    def createValidationHistoryViewTable(self):
+        """
+        Creates the view table for validation processes history. 
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.createValidationHistoryViewTableQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
+        return

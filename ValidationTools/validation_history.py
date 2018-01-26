@@ -44,7 +44,8 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.postgisDb = postgisDb
         self.projectModel = QSqlTableModel(None,self.postgisDb.db)
-        self.projectModel.setTable('validation.process_history')
+        self.postgisDb.createValidationHistoryViewTable() # refreshes the view
+        self.projectModel.setTable('validation.process_history_view')
         self.projectModel.select()
         self.tableView.setModel(self.projectModel)
     
@@ -54,3 +55,14 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         Closes the dialog
         """
         self.hide()
+    
+    # @pyqtSlot(bool)
+    def keyPressEvent(self, e):
+        """
+        Refreshes table if F5 is pressed.
+        """
+        if e.key() == Qt.Key_F5:
+            self.postgisDb.createValidationHistoryViewTable() # refreshes the view
+            self.projectModel.setTable('validation.process_history_view')
+            self.projectModel.select()
+            self.tableView.setModel(self.projectModel)
