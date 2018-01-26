@@ -51,19 +51,16 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             refKey = self.parameters['Reference and Layers'][0]
             classesWithElemKeys = self.parameters['Reference and Layers'][1]
             if len(classesWithElemKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('One reference must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
 
             # preparing reference layer
@@ -71,7 +68,6 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             snapper = DsgGeometrySnapper(reflyr)
             snapper.featureSnapped.connect(self.updateProgress)
-
             tol = self.parameters['Snap']
             msg = ''
             for key in classesWithElemKeys:
@@ -94,7 +90,6 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 msg += localMsg
             self.setStatus(msg, 1) #Finished
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

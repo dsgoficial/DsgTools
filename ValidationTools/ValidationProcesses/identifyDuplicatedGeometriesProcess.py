@@ -47,17 +47,17 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
+            self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             dupGeomRecordList = []
             for key in classesWithElem:
+                self.startTimeCount() # starts time counting for every table
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -81,12 +81,10 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
             if len(dupGeomRecordList) > 0:
                 numberOfDupGeom = self.addFlag(dupGeomRecordList)
                 msg =  str(numberOfDupGeom) + self.tr(' features are duplicated. Check flags.')
-                self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.setStatus(msg, 4) #Finished with flags, QGIS log already in setStatus()
             else:
                 msg = self.tr('There are no duplicated geometries.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

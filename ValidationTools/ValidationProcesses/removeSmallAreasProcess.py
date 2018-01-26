@@ -62,10 +62,10 @@ class RemoveSmallAreasProcess(ValidationProcess):
             flagsClasses = self.flagsDict.keys()
             if len(flagsClasses) == 0:
                 self.setStatus(self.tr('There are no small areas.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('There are no small areas.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
             for cl in flagsClasses:
+                self.startTimeCount()
                 # preparation
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()

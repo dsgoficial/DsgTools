@@ -47,16 +47,15 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
@@ -104,7 +103,6 @@ class DeaggregateGeometriesProcess(ValidationProcess):
 
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
