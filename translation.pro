@@ -35,6 +35,8 @@
 					ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py \
 					ValidationTools/ValidationProcesses/mergeLinesProcess.py \	
 					ValidationTools/ValidationProcesses/identifyGapsProcess.py \				
+					ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygons.py \	
+					ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \	
 					ValidationTools/validation_toolbox.py \
 					ValidationTools/validation_config.py \
 					ValidationTools/setupEarthCoverage.py \
