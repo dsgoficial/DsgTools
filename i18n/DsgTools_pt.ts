@@ -284,6 +284,29 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>Acquisition</name>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="43"/>
+        <source>Warning!</source>
+        <translation type="obsolete">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="38"/>
+        <source>Tool not defined for points</source>
+        <translation>Ferramenta não definida para pontos</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="43"/>
+        <source>Start editing in current layer!</source>
+        <translation>Inicie a edição na camada atual!</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="43"/>
+        <source>Warning</source>
+        <translation>Atenção</translation>
+    </message>
+</context>
+<context>
     <name>AddAttributeWidget</name>
     <message>
         <location filename="../CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="152"/>
@@ -12956,6 +12979,24 @@ Camada</translation>
         <location filename="../CustomWidgets/selectFileWidget.ui" line="52"/>
         <source>Select File</source>
         <translation>Selecionar arquivo</translation>
+    </message>
+</context>
+<context>
+    <name>self.iface</name>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="42"/>
+        <source>Warning!</source>
+        <translation type="obsolete">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="37"/>
+        <source>Tool not defined for points</source>
+        <translation type="obsolete">Ferramenta não definida para pontos</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/Acquisition/acquisition.py" line="42"/>
+        <source>Start editing in current layer!</source>
+        <translation type="obsolete">Inicie a edição na camada atual!</translation>
     </message>
 </context>
 </TS>
