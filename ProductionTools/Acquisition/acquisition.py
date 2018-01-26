@@ -6,7 +6,7 @@ from qgis.core import QGis
 from circle import Circle
 from polygon import Polygon
 
-class Acquisition(QObject):
+class Acquisition:
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
@@ -34,11 +34,11 @@ class Acquisition(QObject):
                 self.tool.setAction(action)
                 self.canvas.setMapTool(self.tool)
             else:
-                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Tool not defined for points'),
+                self.iface.messageBar().pushMessage(self.iface.tr('Warning!'), self.iface.tr('Tool not defined for points'),
                                                                     level=QgsMessageBar.INFO, duration=3)
                 self.tool.deactivate() if self.tool else ""
         else:
-            self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Start editing in current layer!'), level=QgsMessageBar.INFO, duration=3)
+            self.iface.messageBar().pushMessage(self.iface.tr('Warning!'), self.iface.tr('Start editing in current layer!'), level=QgsMessageBar.INFO, duration=3)
             self.tool.deactivate() if self.tool else ""
                                     
             
