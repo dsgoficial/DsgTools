@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>391</width>
-    <height>189</height>
+    <height>214</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -161,6 +161,11 @@
          <item>
           <property name="text">
            <string>2.1.3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>3.0</string>
           </property>
          </item>
          <item>

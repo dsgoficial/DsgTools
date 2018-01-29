@@ -1,25 +1,16 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"#
-CREATE SCHEMA topology#
-ALTER SCHEMA topology OWNER TO postgres#
-CREATE EXTENSION postgis#
+CREATE EXTENSION IF NOT EXISTS postgis#
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions'#
-CREATE EXTENSION postgis_topology#
-COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions'#CREATE SCHEMA complexos#
+CREATE EXTENSION IF NOT EXISTS postgis_topology#
+COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions'#
+CREATE SCHEMA complexos#
 ALTER SCHEMA complexos OWNER TO postgres#
 CREATE SCHEMA dominios#
-ALTER SCHEMA dominios OWNER TO philipeborba#
+ALTER SCHEMA dominios OWNER TO postgres#
 CREATE SCHEMA edgv#
-ALTER SCHEMA edgv OWNER TO philipeborba#
-CREATE SCHEMA topology#
-ALTER SCHEMA topology OWNER TO postgres#
-COMMENT ON SCHEMA topology IS 'PostGIS Topology schema'#
+ALTER SCHEMA edgv OWNER TO postgres#
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog#
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language'#
-CREATE EXTENSION IF NOT EXISTS postgis WITH SCHEMA public#
-COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions'#
-CREATE EXTENSION IF NOT EXISTS postgis_topology WITH SCHEMA topology#
-COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions'#
-CREATE EXTENSION "uuid-ossp"#
 SET search_path = complexos, pg_catalog#
 CREATE TABLE aer_complexo_aeroportuario (
     id uuid NOT NULL,
@@ -36,7 +27,7 @@ CREATE TABLE aer_complexo_aeroportuario (
     classificacao smallint NOT NULL,
     latoficial character varying(80),
     longoficial character varying(80),
-    altitude integer
+    altitude real
 )#
 ALTER TABLE aer_complexo_aeroportuario OWNER TO postgres#
 CREATE TABLE cbge_assentamento_precario (
