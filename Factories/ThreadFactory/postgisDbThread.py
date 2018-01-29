@@ -145,7 +145,7 @@ class PostgisDbThread(GenericThread):
             sql = file.read()
             sql = sql.replace('[epsg]', '4674')
             file.close()
-            commands = sql.split('#')
+            commands = [i for i in sql.split('#') if i != '']
         # Progress bar steps calculated
         self.signals.rangeCalculated.emit(len(commands)+4, self.getId())
         
@@ -187,9 +187,10 @@ class PostgisDbThread(GenericThread):
             elif self.version == '3.0':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';' % self.db.databaseName()
             
-            if not query.exec_(sql):
-                QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                return (0, self.messenger.getProblemFeedbackMessage())
+            if sql:
+                if not query.exec_(sql):
+                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    return (0, self.messenger.getProblemFeedbackMessage())
             #this commit was missing, so alter database statement was not commited.
             self.db.commit()
             self.db.close()
