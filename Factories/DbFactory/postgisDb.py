@@ -2537,9 +2537,11 @@ class PostgisDb(AbstractDb):
     
     def getTemplateName(self, version):
         if version == '2.1.3':
-            return 'template_213'
+            return 'template_edgv_213'
         elif version == 'FTer_2a_Ed':
-            return 'template_fter_2a_ed'
+            return 'template_edgv_fter_2a_ed'
+        elif version == '3.0':
+            return 'template_edgv_3'
     
     def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True, useTransaction = True):
         self.checkAndOpenDb()
@@ -2573,6 +2575,8 @@ class PostgisDb(AbstractDb):
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
         elif version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+        elif version == '3.0':
+            edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
         elif version == 'admin':
             edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
         return edgvPath

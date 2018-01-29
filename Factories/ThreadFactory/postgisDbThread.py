@@ -126,7 +126,7 @@ class PostgisDbThread(GenericThread):
         if self.version == '2.1.3':
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
         elif self.version == '3.0':
-            edgvPath = os.path.join(currentPath, 'sqls', '30', 'edgv30.sql')
+            edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
         elif self.version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
         else:
@@ -184,6 +184,8 @@ class PostgisDbThread(GenericThread):
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
             elif self.version == 'FTer_2a_Ed':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
+            elif self.version == '3.0':
+                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';' % self.db.databaseName()
             
             if not query.exec_(sql):
                 QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
