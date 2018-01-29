@@ -1,7 +1,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"#
-CREATE EXTENSION postgis#
+CREATE EXTENSION IF NOT EXISTS postgis#
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions'#
-CREATE EXTENSION postgis_topology#
+CREATE EXTENSION IF NOT EXISTS postgis_topology#
 COMMENT ON EXTENSION postgis_topology IS 'PostGIS topology spatial types and functions'#
 CREATE SCHEMA complexos#
 ALTER SCHEMA complexos OWNER TO postgres#
@@ -9,9 +9,6 @@ CREATE SCHEMA dominios#
 ALTER SCHEMA dominios OWNER TO postgres#
 CREATE SCHEMA edgv#
 ALTER SCHEMA edgv OWNER TO postgres#
-CREATE SCHEMA topology#
-ALTER SCHEMA topology OWNER TO postgres#
-COMMENT ON SCHEMA topology IS 'PostGIS Topology schema'#
 CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog#
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language'#
 SET search_path = complexos, pg_catalog#
