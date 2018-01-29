@@ -25,7 +25,7 @@ import os
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import *
 from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
-
+from qgis.core import QgsMessageLog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_history.ui'))
@@ -43,8 +43,12 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.postgisDb = postgisDb
-        self.projectModel = QSqlTableModel(None,self.postgisDb.db)
-        self.refreshViewTable()
+        try:
+            self.projectModel = QSqlTableModel(None,self.postgisDb.db)
+            self.refreshViewTable()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
