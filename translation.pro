@@ -35,6 +35,8 @@
 					ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py \
 					ValidationTools/ValidationProcesses/mergeLinesProcess.py \	
 					ValidationTools/ValidationProcesses/identifyGapsProcess.py \				
+					ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygons.py \	
+					ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \	
 					ValidationTools/validation_toolbox.py \
 					ValidationTools/validation_config.py \
 					ValidationTools/setupEarthCoverage.py \
@@ -83,6 +85,11 @@
 					ProductionTools/ContourTool/contour_value.py \
 					ProductionTools/ContourTool/dsg_line_tool.py \
 					ProductionTools/ContourTool/__init__.py \
+					ProductionTools/Acquisition/__init__.py \
+					ProductionTools/Acquisition/acquisition.py \
+					ProductionTools/Acquisition/circle.py \
+					ProductionTools/Acquisition/geometricaAquisition.py \
+					ProductionTools/Acquisition/polygon.py \
 					resources_rc.py \
 					LayerTools/LoadLayersFromServer/loadLayersFromServer.py \
 					LayerTools/LoadLayersFromServer/__init__.py \
