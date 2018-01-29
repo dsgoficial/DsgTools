@@ -184,6 +184,8 @@ class PostgisDbThread(GenericThread):
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
             elif self.version == 'FTer_2a_Ed':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
+            elif self.version == '3.0':
+                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';' % self.db.databaseName()
             
             if not query.exec_(sql):
                 QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
