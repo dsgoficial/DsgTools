@@ -27,7 +27,7 @@ CREATE TABLE aer_complexo_aeroportuario (
     classificacao smallint NOT NULL,
     latoficial character varying(80),
     longoficial character varying(80),
-    altitude integer
+    altitude real
 )#
 ALTER TABLE aer_complexo_aeroportuario OWNER TO postgres#
 CREATE TABLE cbge_assentamento_precario (
