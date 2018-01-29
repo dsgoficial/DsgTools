@@ -86,12 +86,17 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
 #             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
 #             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
+        
     
     def removeCurrentFlag(self):
         """
         Creates the remove flag menu
         """
-        flagId = self.tableView.selectionModel().selection().indexes()[0].data()
+        try:
+            flagId = self.tableView.selectionModel().selection().indexes()[0].data()
+        except:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
+            return
         self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
         self.refreshFlags()
 
@@ -118,8 +123,11 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Zooms the map canvas to the current selected flag
         """
-        idx =  self.tableView.selectionModel().selection().indexes()[0].data()
-        
+        try:
+            idx =  self.tableView.selectionModel().selection().indexes()[0].data()
+        except:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
+            return
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
         if dimension == 0:
             layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
