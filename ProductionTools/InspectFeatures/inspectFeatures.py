@@ -85,9 +85,11 @@ class InspectFeatures(QWidget,Ui_Form):
     def enableTool(self, enabled = True):
         from qgis.core import QgsVectorLayer
         if enabled == None or not isinstance(enabled, QgsVectorLayer):
-            enabled = False
+            allowed = False
         else:
-            enabled = True
+            allowed = True
+        toggled = self.inspectPushButton.isChecked()
+        enabled = allowed and toggled
         self.backInspectButton.setEnabled(enabled)
         self.nextInspectButton.setEnabled(enabled)
         self.idSpinBox.setEnabled(enabled)
@@ -109,8 +111,9 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Inspects the next feature
         """
-        method = getattr(self, 'testIndexFoward')
-        self.iterateFeature(method)
+        if self.nextInspectButton.isEnabled():
+            method = getattr(self, 'testIndexFoward')
+            self.iterateFeature(method)
     
     def testIndexFoward(self, index, maxIndex, minIndex):
         """
@@ -135,8 +138,9 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Inspects the previous feature
         """
-        method = getattr(self, 'testIndexBackwards')
-        self.iterateFeature(method)
+        if self.backInspectButton.isEnabled():
+            method = getattr(self, 'testIndexBackwards')
+            self.iterateFeature(method)
     
     @pyqtSlot(int, name = 'on_idSpinBox_valueChanged')
     def setNewId(self, newId):
@@ -292,9 +296,11 @@ class InspectFeatures(QWidget,Ui_Form):
             toggled = self.inspectPushButton.isChecked()
         if toggled:
             self.splitter.show()
+            self.enableTool(self.mMapLayerComboBox.currentLayer())
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
-            self.splitter.hide()         
+            self.splitter.hide()   
+            self.enableTool(False)      
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()
