@@ -96,7 +96,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         #do this only if EDGV Version = FTer
         edgvVersion = self.abstractDb.getDatabaseVersion()
         dbGroup = self.getDatabaseGroup(loadedGroups)
-        if edgvVersion == 'FTer_2a_Ed':
+        if edgvVersion in ('FTer_2a_Ed', '3.0'):
             domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         else:

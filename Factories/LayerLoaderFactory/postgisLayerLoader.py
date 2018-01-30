@@ -130,7 +130,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         dbGroup = self.getDatabaseGroup(loadedGroups)
         #3. Load Domains
         #do this only if EDGV Version = FTer
-        if edgvVersion == 'FTer_2a_Ed':
+        if edgvVersion in ('FTer_2a_Ed', '3.0'):
             domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         else:
