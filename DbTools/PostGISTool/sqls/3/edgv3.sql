@@ -363,8 +363,8 @@ CREATE TABLE aer_pista_ponto_pouso_a (
     homologacao smallint NOT NULL,
     operacional smallint NOT NULL,
     situacaofisica smallint NOT NULL,
-    largura double precision,
-    extensao double precision,
+    largura real,
+    extensao real,
     altitude real,
     id_complexo_aeroportuario uuid,
     geom public.geometry(MultiPolygon,[epsg])
@@ -380,8 +380,8 @@ CREATE TABLE aer_pista_ponto_pouso_l (
     homologacao smallint NOT NULL,
     operacional smallint NOT NULL,
     situacaofisica smallint NOT NULL,
-    largura double precision,
-    extensao double precision,
+    largura real,
+    extensao real,
     altitude real,
     id_complexo_aeroportuario uuid,
     geom public.geometry(MultiLineString,[epsg])
@@ -397,8 +397,8 @@ CREATE TABLE aer_pista_ponto_pouso_p (
     homologacao smallint NOT NULL,
     operacional smallint NOT NULL,
     situacaofisica smallint NOT NULL,
-    largura double precision,
-    extensao double precision,
+    largura real,
+    extensao real,
     altitude real,
     id_complexo_aeroportuario uuid,
     geom public.geometry(MultiPoint,[epsg])
