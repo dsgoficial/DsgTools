@@ -5779,6 +5779,13 @@ CREATE TABLE aux_ponto_p (
     geom geometry(MultiPoint,[epsg])
 )#
 ALTER TABLE aux_ponto_p OWNER TO postgres#
+CREATE TABLE public.db_metadata(
+	edgvversion varchar(6) NOT NULL DEFAULT '3.0',
+	dbimplversion varchar(50) NOT NULL DEFAULT 1,
+	CONSTRAINT edgvversioncheck CHECK (edgvversion = '3.0')
+)#
+INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('3.0','1')#
+
 SET search_path = complexos, pg_catalog#
 ALTER TABLE ONLY aer_complexo_aeroportuario
     ADD CONSTRAINT aer_complexo_aeroportuario_pk PRIMARY KEY (id)#
