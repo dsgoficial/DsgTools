@@ -54,8 +54,8 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populatePostgisSelector)
         self.customFileSelector.filesSelected.connect(self.populateSpatialiteSelector)
-        self.comboDict = {self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3', self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Other Database Models'):'Non_EDGV'}
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.comboDict = {self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3', self.tr('Load Database Model EDGV Version 3.0'):'3.0', self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Other Database Models'):'Non_EDGV'}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[]}
         self.selectedDbsDict = dict()
         self.stylesDict = dict()
         self.postgisCustomSelector.selectionChanged.connect(self.selectedDatabases)
@@ -161,7 +161,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         """
         Populates the postgis database list according to the databse type
         """
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[]}
         dbList = []
         try:
             if self.serverWidget.abstractDb:
@@ -185,7 +185,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         """
         Populates the spatialite database list according to the databse type
         """
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[]}
         self.spatialiteDict = dict()
         dbList = []
         try:
@@ -215,7 +215,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         """
         self.spatialiteCustomSelector.clearAll()
         self.serverWidget.clearAll()
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[],'3.0':[]}
         self.customFileSelector.resetAll()
         self.edgvType = None
         self.selectedDbsDict = dict()
@@ -247,7 +247,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         """
         self.postgisCustomSelector.clearAll()
         self.serverWidget.clearAll()
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[]}
+        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[],'3.0':[]}
         self.edgvType = None
         self.selectedDbsDict = dict()
         self.resetAll.emit()
