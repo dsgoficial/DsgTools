@@ -228,3 +228,17 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         Getting the "to" items (QListWidget and python list)
         """
         return self.toLs
+
+    def resetSelections(self):
+        """
+        Resets possible selections, in order to refresh object to initial state
+        and avoid losing items.
+        """
+        tam = self.toList.__len__()
+        for i in range(tam+1,1,-1):
+            item = self.toList.takeItem(i-2)
+            self.fromLs.append(item.text())
+            self.toLs.remove(item.text())
+            self.fromLs.sort()
+            self.fromList.addItem(item)
+            self.fromList.sortItems()
