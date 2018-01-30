@@ -61,6 +61,9 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         self.customServerConnectionWidget.styleChanged.connect(self.populateStyleCombo)
         self.headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
         self.layersCustomSelector.setHeaders(self.headerList)
+        self.customServerConnectionWidget.postgisEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
+        self.customServerConnectionWidget.spatialiteEdgvComboFilter.currentIndexChanged.connect(self.layersCustomSelector.setInitialState)
+        self.customServerConnectionWidget.serverConnectionTab.currentChanged.connect(self.layersCustomSelector.setInitialState)
         self.lyrDict = dict()
     
     def resetInterface(self):

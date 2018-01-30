@@ -159,7 +159,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
     
     def populatePostgisSelector(self):
         """
-        Populates the postgis database list according to the databse type
+        Populates the postgis database list according to the database type
         """
         self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[]}
         dbList = []
@@ -227,7 +227,9 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         Updates the postgis databases according to its type
         """
         comboText = self.postgisEdgvComboFilter.currentText()
+        self.postgisCustomSelector.resetSelections()
         self.postgisCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]])
+        self.serverConnectionTab
         self.edgvType = self.comboDict[comboText]
         self.resetAll.emit()
     
