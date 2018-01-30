@@ -5131,15 +5131,6 @@ CREATE TABLE tra_funicular_l (
     geom public.geometry(MultiLineString,[epsg])
 )#
 ALTER TABLE tra_funicular_l OWNER TO postgres#
-CREATE TABLE tra_funicular_p (
-    id serial NOT NULL,
-    nome character varying(80),
-    geometriaaproximada smallint NOT NULL,
-    operacional smallint NOT NULL,
-    situacaofisica smallint NOT NULL,
-    geom public.geometry(MultiPoint,[epsg])
-)#
-ALTER TABLE tra_funicular_p OWNER TO postgres#
 CREATE TABLE tra_passagem_elevada_viaduto_a (
     id serial NOT NULL,
     nome character varying(80),
@@ -6406,8 +6397,6 @@ ALTER TABLE ONLY tra_entroncamento_pto_p
     ADD CONSTRAINT tra_entroncamento_pto_p_pk PRIMARY KEY (id) WITH (fillfactor='100')#
 ALTER TABLE ONLY tra_funicular_l
     ADD CONSTRAINT tra_funicular_l_pk PRIMARY KEY (id)#
-ALTER TABLE ONLY tra_funicular_p
-    ADD CONSTRAINT tra_funicular_p_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY tra_passagem_elevada_viaduto_a
     ADD CONSTRAINT tra_passagem_elevada_viaduto_a_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY tra_passagem_elevada_viaduto_l
@@ -9650,9 +9639,6 @@ ALTER TABLE edgv.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipoembarcacao_f
 ALTER TABLE edgv.tra_travessia_l ADD CONSTRAINT tra_travessia_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipouso_fk FOREIGN KEY (tipouso) REFERENCES dominios.tipo_transporte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.tra_travessia_l ADD CONSTRAINT tra_travessia_l_tipotravessia_fk FOREIGN KEY (tipotravessia) REFERENCES dominios.tipo_travessia(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.tra_funicular_p ADD CONSTRAINT tra_funicular_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.tra_funicular_p ADD CONSTRAINT tra_funicular_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.tra_funicular_p ADD CONSTRAINT tra_funicular_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.tra_funicular_l ADD CONSTRAINT tra_funicular_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.tra_funicular_l ADD CONSTRAINT tra_funicular_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.tra_funicular_l ADD CONSTRAINT tra_funicular_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -11052,7 +11038,6 @@ CREATE INDEX tra_caminho_aereo_l_gist ON edgv.tra_caminho_aereo_l USING gist (ge
 CREATE INDEX tra_caminho_carrocavel_l_gist ON edgv.tra_caminho_carrocavel_l USING gist (geom)#
 CREATE INDEX tra_entroncamento_pto_p_gist ON edgv.tra_entroncamento_pto_p USING gist (geom)#
 CREATE INDEX tra_funicular_l_gist ON edgv.tra_funicular_l USING gist (geom)#
-CREATE INDEX tra_funicular_p_gist ON edgv.tra_funicular_p USING gist (geom)#
 CREATE INDEX tra_obra_de_arte_viaria_a_gist ON edgv.tra_obra_de_arte_viaria_a USING gist (geom)#
 CREATE INDEX tra_obra_de_arte_viaria_l_gist ON edgv.tra_obra_de_arte_viaria_l USING gist (geom)#
 CREATE INDEX tra_obra_de_arte_viaria_p_gist ON edgv.tra_obra_de_arte_viaria_p USING gist (geom)#
@@ -12617,9 +12602,6 @@ ALTER TABLE ONLY edgv.tra_travessia_l ALTER COLUMN tipoembarcacao SET DEFAULT 95
 ALTER TABLE ONLY edgv.tra_travessia_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_travessia_l ALTER COLUMN tipouso SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_travessia_l ALTER COLUMN tipotravessia SET DEFAULT 95#
-ALTER TABLE ONLY edgv.tra_funicular_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
-ALTER TABLE ONLY edgv.tra_funicular_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY edgv.tra_funicular_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_recife_p ALTER COLUMN tiporecife SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_recife_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_recife_p ALTER COLUMN situacaoemagua SET DEFAULT 95#
