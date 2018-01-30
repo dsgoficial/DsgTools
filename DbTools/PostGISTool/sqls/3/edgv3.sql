@@ -5229,26 +5229,6 @@ CREATE TABLE tra_patio_a (
     geom public.geometry(MultiPolygon,[epsg])
 )#
 ALTER TABLE tra_patio_a OWNER TO postgres#
-CREATE TABLE tra_patio_p (
-    id serial NOT NULL,
-    nome character varying(80),
-    geometriaaproximada smallint NOT NULL,
-    modaluso smallint[],
-    administracao smallint[],
-    operacional smallint NOT NULL,
-    situacaofisica smallint,
-    finalidadepatio smallint[] NOT NULL,
-    id_estrut_transporte uuid,
-    id_estrut_apoio uuid,
-    id_estacao_rodoviaria uuid,
-    id_estacao_metroviaria uuid,
-    id_estacao_ferroviaria uuid,
-    id_terminal_rodoviario uuid,
-    id_terminal_ferroviario uuid,
-    id_terminal_hidroviario uuid,
-    geom public.geometry(MultiPoint,[epsg])
-)#
-ALTER TABLE tra_patio_p OWNER TO postgres#
 CREATE TABLE tra_obra_de_arte_viaria_p (
     id serial NOT NULL,
     nome character varying(80),
@@ -6407,8 +6387,6 @@ ALTER TABLE ONLY tra_passagem_nivel_p
     ADD CONSTRAINT tra_passagem_nivel_p_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY tra_patio_a
     ADD CONSTRAINT tra_patio_a_pk PRIMARY KEY (id)#
-ALTER TABLE ONLY tra_patio_p
-    ADD CONSTRAINT tra_patio_p_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY tra_obra_de_arte_viaria_p
     ADD CONSTRAINT tra_obra_de_arte_viaria_p_pk PRIMARY KEY (id)#
     ALTER TABLE ONLY tra_obra_de_arte_viaria_l
@@ -9416,9 +9394,6 @@ ALTER TABLE edgv.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_tipoestger
 ALTER TABLE edgv.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_tipoahe_fk FOREIGN KEY (tipoahe) REFERENCES dominios.tipo_ahe(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.enc_hidreletrica_l ADD CONSTRAINT enc_hidreletrica_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.tra_patio_p ADD CONSTRAINT tra_patio_p_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.tra_patio_p ADD CONSTRAINT tra_patio_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.tra_patio_p ADD CONSTRAINT tra_patio_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.enc_hidreletrica_a ADD CONSTRAINT enc_hidreletrica_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.enc_hidreletrica_a ADD CONSTRAINT enc_hidreletrica_a_tipoestgerad_fk FOREIGN KEY (tipoestgerad) REFERENCES dominios.tipo_est_gerad(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.enc_hidreletrica_a ADD CONSTRAINT enc_hidreletrica_a_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -10323,9 +10298,6 @@ ALTER TABLE edgv.hid_barragem_p ADD CONSTRAINT hid_barragem_p_matconstr_check CH
 ALTER TABLE edgv.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.edf_edif_ext_mineral_a ADD CONSTRAINT edf_edif_ext_mineral_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,45::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,55::SMALLINT,74::SMALLINT,92::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE edgv.tra_patio_p ADD CONSTRAINT tra_patio_p_modaluso_check CHECK (modaluso <@ ARRAY[10::SMALLINT,14::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,9::SMALLINT])#
-ALTER TABLE edgv.tra_patio_p ADD CONSTRAINT tra_patio_p_finalidadepatio_check CHECK (finalidadepatio <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE edgv.tra_patio_p ADD CONSTRAINT tra_patio_p_administracao_check CHECK (administracao <@ ARRAY[2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,95::SMALLINT,97::SMALLINT])#
 ALTER TABLE edgv.ver_jardim_a ADD CONSTRAINT ver_jardim_a_finalidade_check CHECK (finalidade = ANY(ARRAY[4]))#
 ALTER TABLE edgv.ver_jardim_a ADD CONSTRAINT ver_jardim_a_cultivopredominante_check CHECK (cultivopredominante <@ ARRAY[1::SMALLINT,10::SMALLINT,100::SMALLINT,101::SMALLINT,102::SMALLINT,103::SMALLINT,104::SMALLINT,105::SMALLINT,106::SMALLINT,108::SMALLINT,11::SMALLINT,110::SMALLINT,111::SMALLINT,112::SMALLINT,113::SMALLINT,114::SMALLINT,115::SMALLINT,116::SMALLINT,117::SMALLINT,118::SMALLINT,119::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,4::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,7::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,8::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,9::SMALLINT,90::SMALLINT,96::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.hid_ilha_a ADD CONSTRAINT hid_ilha_a_tipoilha_check CHECK (tipoilha <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT])#
@@ -11046,7 +11018,6 @@ CREATE INDEX tra_passagem_elevada_viaduto_l_gist ON edgv.tra_passagem_elevada_vi
 CREATE INDEX tra_passagem_elevada_viaduto_p_gist ON edgv.tra_passagem_elevada_viaduto_p USING gist (geom)#
 CREATE INDEX tra_passagem_nivel_p_gist ON edgv.tra_passagem_nivel_p USING gist (geom)#
 CREATE INDEX tra_patio_a_gist ON edgv.tra_patio_a USING gist (geom)#
-CREATE INDEX tra_patio_p_gist ON edgv.tra_patio_p USING gist (geom)#
 CREATE INDEX tra_ponte_a_gist ON edgv.tra_ponte_a USING gist (geom)#
 CREATE INDEX tra_ponte_l_gist ON edgv.tra_ponte_l USING gist (geom)#
 CREATE INDEX tra_ponte_p_gist ON edgv.tra_ponte_p USING gist (geom)#
@@ -11205,7 +11176,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_condominio','edgv','edf_edif_industrial_a','id_condominio')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_habitacional_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_conjunto_habitacional','edgv','edf_edif_industrial_a','id_conjunto_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_metroviaria','edgv','tra_patio_p','id_estacao_metroviaria')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_comunicacao','edgv','edf_edif_comunic_p','id_complexo_comunicacao')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lml_vila','edgv','lml_area_densamente_edificada_a','id_vila')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lml_aglomerado_rural_isolado','complexos','lml_aldeia_indigena','id_aglomerado_rural_isolado')#
@@ -11216,7 +11186,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo_lazer','edgv','laz_ruina_p','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_gerador_energia_eletrica','edgv','edf_edif_energia_a','id_complexo_gerador_energia_eletrica')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_condominio','edgv','edf_edif_ext_mineral_a','id_condominio')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_rodoviario','edgv','tra_patio_p','id_terminal_rodoviario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','enc_complexo_comunicacao','edgv','enc_torre_comunic_p','id_complexo_comunicacao')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','edgv','ver_arvore_isolada_p','id_area_verde')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rod_estacao_rodoviaria','edgv','cbge_estacionamento_a','id_estacao_rodoviaria')#
@@ -11272,7 +11241,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','edgv','veg_veg_area_contato_a','id_area_verde')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_condominio','edgv','edf_posto_fiscal_p','id_condominio')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_complexo_habitacional','edgv','edf_posto_guarda_municipal_p','id_complexo_habitacional')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','fer_estacao_ferroviaria','edgv','tra_patio_p','id_estacao_ferroviaria')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_conjunto_habitacional','edgv','edf_edif_ext_mineral_p','id_conjunto_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_condominio','edgv','edf_edif_ext_mineral_p','id_condominio')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_transporte','edgv','cbge_estacionamento_a','id_estrut_transporte')#
@@ -11340,7 +11308,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_constr_est_med_fen_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_pub_civil_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_posto_policia_rod_federal_p','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_transporte','edgv','tra_patio_p','id_estrut_transporte')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','ver_area_verde','edgv','veg_veg_natural_a','id_area_verde')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','edgv','cbge_deposito_geral_p','id_estrut_apoio')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_posto_combustivel_p','id_assentamento_precario')#
@@ -11371,7 +11338,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_complexo_habitacional','edgv','edf_posto_policia_rod_federal_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_complexo_habitacional','edgv','edf_edif_pub_civil_a','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_ferroviario','edgv','edf_edif_comerc_serv_p','id_terminal_ferroviario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','edgv','tra_patio_p','id_terminal_hidroviario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_ext_mineral_a','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_complexo_habitacional','edgv','edf_posto_combustivel_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_recreativo','edgv','laz_ruina_a','id_complexo_recreativo')#
@@ -11395,7 +11361,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_conjunto_habitacional','edgv','edf_posto_guarda_municipal_p','id_conjunto_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_complexo_habitacional','edgv','edf_posto_fiscal_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_condominio','edgv','edf_posto_guarda_municipal_p','id_condominio')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_ferroviario','edgv','tra_patio_p','id_terminal_ferroviario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','edgv','edf_edif_comerc_serv_p','id_terminal_hidroviario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rod_estacao_rodoviaria','edgv','edf_posto_combustivel_p','id_estacao_rodoviaria')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','edgv','edf_edif_metro_ferroviaria_p','id_estrut_apoio')#
@@ -11410,7 +11375,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo','edgv','laz_arquibancada_l','id_complexo_desportivo')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','lml_aglomerado_rural_de_extensao_urbana','complexos','lml_aldeia_indigena','id_aglomerado_rural_de_extensao_urbana')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_ferroviario','edgv','edf_posto_combustivel_p','id_terminal_ferroviario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','rod_estacao_rodoviaria','edgv','tra_patio_p','id_estacao_rodoviaria')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_complexo_habitacional','edgv','edf_edif_comunic_p','id_complexo_habitacional')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','emu_terminal_hidroviario','edgv','cbge_deposito_geral_p','id_terminal_hidroviario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_conjunto_habitacional','edgv','edf_posto_combustivel_a','id_conjunto_habitacional')#
@@ -11453,7 +11417,6 @@ INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, a
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_comunic_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_constr_aeroportuaria_p','id_assentamento_precario')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_assentamento_precario','edgv','edf_edif_abast_agua_a','id_assentamento_precario')#
-INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_estrut_apoio','edgv','tra_patio_p','id_estrut_apoio')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','laz_complexo_desportivo_lazer','edgv','laz_arquibancada_l','id_complexo_desportivo_lazer')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','tra_entroncamento','edgv','tra_entroncamento_pto_p','id_entroncamento')#
 INSERT INTO public.complex_schema (complex_schema, complex, aggregated_schema, aggregated_class, column_name) VALUES ('complexos','cbge_conjunto_habitacional','edgv','edf_hab_indigena_a','id_conjunto_habitacional')#
@@ -12374,9 +12337,6 @@ ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN situacaoespacial SET DEFAULT 9
 ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY edgv.tra_patio_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
-ALTER TABLE ONLY edgv.tra_patio_p ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY edgv.tra_patio_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.enc_hidreletrica_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.enc_hidreletrica_a ALTER COLUMN tipoestgerad SET DEFAULT 8#
 ALTER TABLE ONLY edgv.enc_hidreletrica_a ALTER COLUMN situacaofisica SET DEFAULT 95#
