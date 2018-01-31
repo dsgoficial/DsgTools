@@ -71,13 +71,21 @@ changelog=
 	3.0.2 - Fixing others errors and improving some features (many thanks to our users)
 	3.0.3 - Fixing encoding problems in some systems (utf-8 encoding problems)
 	3.0.4 - Updating our BDGEx access to use the new urls. Fixing some problems with databases using schemas in uppercase 
+	3.0.6 - Bug fix on (Re)classification tool
+	3.0.7 - Bug fix on Circle Tool, Zoom to Flag and Database Conversion
+	3.0.8 - Bug fix on image processing on windows and bug fix on generic selection tool
+	3.1 - New Features:
+		EDGV 2.1.3 bug fix: uuid values on primary keys of some geometric tables;
+	      	New database model: EDGV 3.0 (experimental);
+		
+	      
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
 
-homepage=http://hub.qgis.org/projects/dsgtools
-tracker=http://hub.qgis.org/projects/dsgtools
-repository=https://github.com/lcoandrade/DsgTools
+homepage=https://github.com/dsgoficial/DsgTools/wiki
+tracker=https://github.com/dsgoficial/DsgTools/issues
+repository=https://github.com/dsgoficial/DsgTools
 icon=icons/dsg.png
 # experimental flag
 experimental=False
