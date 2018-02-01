@@ -185,7 +185,10 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
                     if field not in listClasses[layer]:
                         listClasses[layer].append(field)
         self.classComboBox.setCurrentIndex(0)
-        self.currLayer = listClasses.keys()[0]
+        try:
+            self.currLayer = listClasses.keys()[0]
+        except:
+            self.currLayer = None
         return listClasses
 
     @pyqtSlot(int)
@@ -193,12 +196,18 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         """
         Slot that updates the code lists when the selected layer changes.
         """
+        try:
+            if not self.classesFieldDict:
+                self.classesFieldDict = self.refreshClassesDictList()
+        except:
+            self.classesFieldDict = self.refreshClassesDictList()
         self.setState()
         self.loadCodeList()   
 
-    @pyqtSlot(int)
+    @pyqtSlot(bool)
     def on_refreshButton_clicked(self):
         """
          Refreshs the list of classes having Value Map set when refresh button is clicked.
         """
+        self.classesFieldDict = self.refreshClassesDictList()
         self.setState()
