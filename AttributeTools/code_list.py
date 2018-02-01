@@ -30,7 +30,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
 from PyQt4.QtGui import QTableWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
-import sip
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
 
@@ -167,7 +167,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
     def refreshClassesDictList(self):        
         """
         Refreshs the list of classes having Value Map set.
-        Returns the dict of classes and their attributes that have the value map set
+        Returns the dict of classes and their attributes that have the value map set (classesFieldDict)
         """
         # checks if the selected class has a value map and fills the field combobox if necessary
         self.classComboBox.clear()
@@ -180,6 +180,8 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
                 if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
                     if layer not in listClasses.keys():
                         listClasses[layer] = []
+                        # in case more tha a db is loaded and they have the same layer
+                        # name for some class. 
                         db_name = layer.dataProvider().dataSourceUri().split("'")[1]
                         self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
                     if field not in listClasses[layer]:
