@@ -211,5 +211,13 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         """
          Refreshs the list of classes having Value Map set when refresh button is clicked.
         """
-        self.classesFieldDict = self.refreshClassesDictList()
-        self.setState()
+        try:
+            try:
+                if not self.classesFieldDict:
+                    self.classesFieldDict = self.refreshClassesDictList()
+            except:
+                self.classesFieldDict = self.refreshClassesDictList()
+            self.setState()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(self.tr('Error loading classes to Code List Viewer: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
