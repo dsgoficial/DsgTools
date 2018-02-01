@@ -99,6 +99,8 @@ changelog=
 		.Validation Toolbox now show elapsed times for each process run;
 		.Validation Toolbox now has a clear flags button;
 		.Validation Toolbox now has a filter for flags;
+		.All parameters are now choosen before executing validation process;
+		.Validation Toolbox with new history log;
 		.Validation Toolbox with new history log;
 		.Status are now resolved in History interface of Validation Toolbox;
 		.Flags are loaded after execution of Validation Process;
