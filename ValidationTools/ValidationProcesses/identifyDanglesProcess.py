@@ -263,7 +263,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             #gets candidates from spatial index
             candidateIds = spatialIdx.intersects(bufferBB)
             #if there is only one feat in candidateIds, that means that it is not a dangle
-            candidateNumber = len(candidateIds)
+            bufferCount = len([id for id in candidateIds if buffer.intersects(allFeatureDict[id].geometry())])
             for id in candidateIds:
                 if not isRefLyr:
                     if buffer.intersects(allFeatureDict[id].geometry()) and \
@@ -271,16 +271,12 @@ class IdentifyDanglesProcess(ValidationProcess):
                         notDangleIndexList.append(i)
                         break
                 else:
-                    if candidateNumber == 1:
+                    if buffer.intersects(allFeatureDict[id].geometry()) and \
+                    (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
+                    qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
+                        candidateCount += 1
+                    if candidateCount >= bufferCount:
                         notDangleIndexList.append(i)
-                        break
-                    elif ignoreNotSplit:
-                        if buffer.intersects(allFeatureDict[id].geometry()) and \
-                        (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
-                        qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
-                            candidateCount += 1
-                if candidateCount == candidateNumber:
-                    notDangleIndexList.append(i)
         filteredDangleList = []
         for i in range(len(pointList)):
             if i not in notDangleIndexList:
