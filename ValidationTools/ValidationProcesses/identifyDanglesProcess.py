@@ -112,6 +112,11 @@ class IdentifyDanglesProcess(ValidationProcess):
 
             self.logLayerTime(refcl['tableSchema']+'.'+refcl['tableName'])
 
+            try:
+                QgsMapLayerRegistry.instance().removeMapLayer(filterLayer.id())
+            except:
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove filter layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 msg = self.tr('{0} features have dangles. Check flags.').format(numberOfProblems)
