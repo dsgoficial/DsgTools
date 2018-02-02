@@ -271,12 +271,19 @@ class IdentifyDanglesProcess(ValidationProcess):
                         notDangleIndexList.append(i)
                         break
                 else:
-                    if buffer.intersects(allFeatureDict[id].geometry()) and \
-                    (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
-                    qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
-                        candidateCount += 1
-                    if candidateCount >= bufferCount:
-                        notDangleIndexList.append(i)
+                    if ignoreNotSplit:
+                        if buffer.intersects(allFeatureDict[id].geometry()) and \
+                        (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
+                        qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
+                            candidateCount += 1
+                        if candidateCount >= bufferCount:
+                            notDangleIndexList.append(i)
+                    else:
+                        if buffer.intersects(allFeatureDict[id].geometry()) and \
+                        (qgisPoint.touches(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
+                            candidateCount += 1
+                        if candidateCount >= bufferCount:
+                            notDangleIndexList.append(i)
         filteredDangleList = []
         for i in range(len(pointList)):
             if i not in notDangleIndexList:
