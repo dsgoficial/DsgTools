@@ -183,9 +183,9 @@ class ValidationProcess(QObject):
             if status not in [0,3]: # neither running nor instatiating status should be logged
                 self.logProcess()
                 if self.logMsg:
-                    msg += "\n\n" + self.logMsg
+                    msg += "\n\n" + self.logMsg.encode("utf-8")
                 elif not self.dbUserName:
-                    msg += "Database username: {}".format(self.abstractDb.db.userName())
+                    msg += self.tr("Database username: {}").format(self.abstractDb.db.userName())
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
@@ -587,24 +587,23 @@ class ValidationProcess(QObject):
         # logging username
         logMsg = ""
         if self.dbUserName:
-            logMsg += "Database username: {0}".format(self.dbUserName)
+            logMsg += self.tr("Database username: {0}").format(self.dbUserName)
         else:
-            logMsg += "Unable to get database username."
+            logMsg += self.tr("Unable to get database username.")
         # logging process parameters
         if self.parameters:
-            parametersString = "\nParameters used on this execution of process {}\n".format(self.processAlias)
+            parametersString = self.tr("\nParameters used on this execution of process {}\n").format(self.processAlias)
             parametersString += self.jsonifyParameters(self.parameters)
             logMsg += parametersString
         else:
-            logMsg += "Unable to get database parameters for process {}.".format(self.processAlias)
+            logMsg += self.tr("Unable to get database parameters for process {}.").format(self.processAlias)
         # logging #Flag
-        logMsg += "\nNumber of flags raised by the process: {}".format(\
+        logMsg += self.tr("\nNumber of flags raised by the process: {}").format(\
                         str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
         # logging total time elapsed
         if self.totalTime:
-            logMsg += "\nTotal elapsed time for process {0}: {1}\n".format(self.processAlias, \
-                                     str(self.totalTime))
+            logMsg += self.tr("\nTotal elapsed time for process {0}: {1}\n").format(self.processAlias, self.totalTime)
         else:
-            logMsg += "\nUnable to get total elapsed time."
+            logMsg += self.tr("\nUnable to get total elapsed time.")
         self.logMsg = logMsg
-        QgsMessageLog.logMessage(self.tr(logMsg), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
