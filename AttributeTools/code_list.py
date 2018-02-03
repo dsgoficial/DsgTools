@@ -56,12 +56,14 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         Populates the field comboBox.
         """
         self.comboBox.clear()
+        # in case reload is used or index changed and comboBox is empty, for some reason
         try:
+            # gets the layer to be "translated"
             for lyr in self.classesFieldDict.keys():
                 if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
                     self.currLayer = lyr
                     break
-        except:
+        except: # leaves self.currLayer set as None
             pass
         if not self.currLayer:
             return        
@@ -70,6 +72,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
                 if self.currLayer.type() != QgsMapLayer.VectorLayer:
                     return        
                 for field in self.classesFieldDict[self.currLayer]:
+                    # iterates over every field that has a value map on database
                     valueDict, keys = self.getCodeListDict(field.name())
                     if len(keys) > 0:
                         self.comboBox.addItem(field.name())
@@ -176,7 +179,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
     def refreshClassesDictList(self):        
         """
         Refreshs the list of classes having Value Map set.
-        Populates the classComboBox
+        Populates the classComboBox.
         Returns the dict of classes and their attributes that have the value map set (classesFieldDict)
         """
         # checks if the selected class has a value map and fills the field combobox if necessary
@@ -184,6 +187,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         try:
             self.classesFieldDict.clear()
         except:
+            # this dict is composed by [ QgsLayer obj : [ 'Every attribute (QgsField obj) that has a value map of this specific layer' ] ]
             self.classesFieldDict = dict()
         layers = self.iface.legendInterface().layers()
         for layer in layers:
@@ -206,6 +210,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         """
         Slot that updates the code lists when the selected layer changes.
         """
+        # if index is changed, no need to reset dict, just updates field list and attr table...
         self.setState()
         self.loadCodeList()
 
@@ -217,6 +222,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         try:
             self.refreshClassesDictList()
             self.setState()
+            self.loadCodeList()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(self.tr('Error loading classes to Code List Viewer: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
