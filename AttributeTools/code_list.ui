@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>225</width>
-    <height>568</height>
+    <width>231</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,14 +15,7 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Field:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1">
+    <item row="2" column="1">
      <widget class="QComboBox" name="comboBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -38,7 +31,24 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Class</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Field:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="classComboBox"/>
+    </item>
+    <item row="4" column="0" colspan="3">
      <widget class="QTableWidget" name="tableWidget">
       <column>
        <property name="text">
@@ -50,6 +60,19 @@
         <string>Code</string>
        </property>
       </column>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="refreshButton">
+      <property name="minimumSize">
+       <size>
+        <width>170</width>
+        <height>34</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Reload</string>
+      </property>
      </widget>
     </item>
    </layout>
