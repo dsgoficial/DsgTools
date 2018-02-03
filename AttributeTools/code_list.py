@@ -45,18 +45,24 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-        self.classesFieldDict = self.refreshClassesDictList()
+        self.currLayer = None
+        self.refreshClassesDictList() # creates and populates self.classesFieldDict
         self.setState()
         
     @pyqtSlot()
     def setState(self):
         """
-        Sets the code list viewer initial state
+        Sets the code list viewer initial state.
+        Populates the field comboBox.
         """
         self.comboBox.clear()
-        for lyr in self.classesFieldDict.keys():
-            if lyr.name() == self.classComboBox.currentText():
-                self.currLayer = lyr
+        try:
+            for lyr in self.classesFieldDict.keys():
+                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
+                    self.currLayer = lyr
+                    break
+        except:
+            pass
         if not self.currLayer:
             return        
         try:
@@ -132,10 +138,13 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         """
         Slot that updates the code lists when the current active layers changes.
         """
-        for lyr in self.classesFieldDict.keys():
-            if lyr.name() == self.classComboBox.currentText():
-                self.currLayer = lyr
-        self.loadCodeList()   
+        try:
+            for lyr in self.classesFieldDict.keys():
+                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
+                    self.currLayer = lyr
+            self.loadCodeList()   
+        except:
+            pass
         
     def loadCodeList(self):
         """
@@ -167,44 +176,38 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
     def refreshClassesDictList(self):        
         """
         Refreshs the list of classes having Value Map set.
+        Populates the classComboBox
         Returns the dict of classes and their attributes that have the value map set (classesFieldDict)
         """
         # checks if the selected class has a value map and fills the field combobox if necessary
         self.classComboBox.clear()
-        listClasses = dict()
+        try:
+            self.classesFieldDict.clear()
+        except:
+            self.classesFieldDict = dict()
         layers = self.iface.legendInterface().layers()
         for layer in layers:
             for field in layer.pendingFields():
                 fieldIndex = layer.fieldNameIndex(field.name())
                 # only classes that have value maps may be enlisted on the feature
                 if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
-                    if layer not in listClasses.keys():
-                        listClasses[layer] = []
+                    if layer not in self.classesFieldDict.keys():
+                        self.classesFieldDict[layer] = []
                         # in case more tha a db is loaded and they have the same layer
                         # name for some class. 
                         db_name = layer.dataProvider().dataSourceUri().split("'")[1]
                         self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
-                    if field not in listClasses[layer]:
-                        listClasses[layer].append(field)
+                    if field not in self.classesFieldDict[layer]:
+                        self.classesFieldDict[layer].append(field)
         self.classComboBox.setCurrentIndex(0)
-        try:
-            self.currLayer = listClasses.keys()[0]
-        except:
-            self.currLayer = None
-        return listClasses
 
     @pyqtSlot(int)
     def on_classComboBox_currentIndexChanged(self):
         """
         Slot that updates the code lists when the selected layer changes.
         """
-        try:
-            if not self.classesFieldDict:
-                self.classesFieldDict = self.refreshClassesDictList()
-        except:
-            self.classesFieldDict = self.refreshClassesDictList()
         self.setState()
-        self.loadCodeList()   
+        self.loadCodeList()
 
     @pyqtSlot(bool)
     def on_refreshButton_clicked(self):
@@ -212,11 +215,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
          Refreshs the list of classes having Value Map set when refresh button is clicked.
         """
         try:
-            try:
-                if not self.classesFieldDict:
-                    self.classesFieldDict = self.refreshClassesDictList()
-            except:
-                self.classesFieldDict = self.refreshClassesDictList()
+            self.refreshClassesDictList()
             self.setState()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
