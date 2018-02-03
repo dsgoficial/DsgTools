@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>231</width>
+    <width>249</width>
     <height>632</height>
    </rect>
   </property>
@@ -15,7 +15,31 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="1">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Class</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="DsgCustomComboBox" name="classComboBox" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Field:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
      <widget class="QComboBox" name="comboBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -31,24 +55,20 @@
       </property>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="2" column="1">
+     <widget class="QPushButton" name="refreshButton">
+      <property name="minimumSize">
+       <size>
+        <width>170</width>
+        <height>34</height>
+       </size>
+      </property>
       <property name="text">
-       <string>Class</string>
+       <string>Reload</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="0">
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Field:</string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QComboBox" name="classComboBox"/>
-    </item>
-    <item row="4" column="0" colspan="3">
+    <item row="3" column="0" colspan="2">
      <widget class="QTableWidget" name="tableWidget">
       <column>
        <property name="text">
@@ -62,22 +82,17 @@
       </column>
      </widget>
     </item>
-    <item row="0" column="1">
-     <widget class="QPushButton" name="refreshButton">
-      <property name="minimumSize">
-       <size>
-        <width>170</width>
-        <height>34</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Reload</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DsgCustomComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

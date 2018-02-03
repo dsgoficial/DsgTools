@@ -27,7 +27,7 @@ from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
 from PyQt4.QtGui import QTableWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
@@ -191,18 +191,19 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             self.classesFieldDict = dict()
         layers = self.iface.legendInterface().layers()
         for layer in layers:
-            for field in layer.pendingFields():
-                fieldIndex = layer.fieldNameIndex(field.name())
-                # only classes that have value maps may be enlisted on the feature
-                if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
-                    if layer not in self.classesFieldDict.keys():
-                        self.classesFieldDict[layer] = []
-                        # in case more tha a db is loaded and they have the same layer
-                        # name for some class. 
-                        db_name = layer.dataProvider().dataSourceUri().split("'")[1]
-                        self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
-                    if field not in self.classesFieldDict[layer]:
-                        self.classesFieldDict[layer].append(field)
+            if isinstance(layer, QgsVectorLayer):
+                for field in layer.pendingFields():
+                    fieldIndex = layer.fieldNameIndex(field.name())
+                    # only classes that have value maps may be enlisted on the feature
+                    if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
+                        if layer not in self.classesFieldDict.keys():
+                            self.classesFieldDict[layer] = []
+                            # in case more tha a db is loaded and they have the same layer
+                            # name for some class. 
+                            db_name = layer.dataProvider().dataSourceUri().split("'")[1]
+                            self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
+                        if field not in self.classesFieldDict[layer]:
+                            self.classesFieldDict[layer].append(field)
         self.classComboBox.setCurrentIndex(0)
 
     @pyqtSlot(int)
