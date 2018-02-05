@@ -3561,7 +3561,7 @@ CREATE TABLE enc_torre_comunic_p (
     situacaofisica smallint,
     posicaoreledific smallint,
     ovgd smallint,
-    alturaestimada double precision,
+    alturaestimada real,
     modalidade smallint[] NOT NULL,
     id_complexo_comunicacao uuid,
     geom public.geometry(MultiPoint,[epsg])
@@ -3574,7 +3574,7 @@ CREATE TABLE enc_torre_energia_p (
     operacional smallint NOT NULL,
     situacaofisica smallint,
     ovgd smallint,
-    alturaestimada double precision,
+    alturaestimada real,
     geom public.geometry(MultiPoint,[epsg])
 )#
 ALTER TABLE enc_torre_energia_p OWNER TO postgres#
@@ -3588,7 +3588,6 @@ CREATE TABLE enc_trecho_comunic_l (
     operacional smallint NOT NULL,
     situacaofisica smallint,
     emduto smallint,
-    organizacao character varying(200),
     geom public.geometry(MultiLineString,[epsg])
 )#
 ALTER TABLE enc_trecho_comunic_l OWNER TO postgres#
