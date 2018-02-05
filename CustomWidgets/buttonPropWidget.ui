@@ -116,7 +116,7 @@
   <customwidget>
    <class>QgsColorButtonV2</class>
    <extends>QToolButton</extends>
-   <header>qgscolorbuttonv2.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>ShortcutChooserWidget</class>
