@@ -112,6 +112,11 @@ class IdentifyDanglesProcess(ValidationProcess):
 
             self.logLayerTime(refcl['tableSchema']+'.'+refcl['tableName'])
 
+            try:
+                QgsMapLayerRegistry.instance().removeMapLayer(filterLayer.id())
+            except:
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove filter layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 msg = self.tr('{0} features have dangles. Check flags.').format(numberOfProblems)
@@ -263,7 +268,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             #gets candidates from spatial index
             candidateIds = spatialIdx.intersects(bufferBB)
             #if there is only one feat in candidateIds, that means that it is not a dangle
-            candidateNumber = len(candidateIds)
+            bufferCount = len([id for id in candidateIds if buffer.intersects(allFeatureDict[id].geometry())])
             for id in candidateIds:
                 if not isRefLyr:
                     if buffer.intersects(allFeatureDict[id].geometry()) and \
@@ -271,16 +276,17 @@ class IdentifyDanglesProcess(ValidationProcess):
                         notDangleIndexList.append(i)
                         break
                 else:
-                    if candidateNumber == 1:
-                        notDangleIndexList.append(i)
-                        break
-                    elif ignoreNotSplit:
+                    if ignoreNotSplit:
                         if buffer.intersects(allFeatureDict[id].geometry()) and \
                         (qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9 or \
                         qgisPoint.intersects(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
                             candidateCount += 1
-                if candidateCount == candidateNumber:
-                    notDangleIndexList.append(i)
+                    else:
+                        if buffer.intersects(allFeatureDict[id].geometry()) and \
+                        (qgisPoint.touches(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
+                            candidateCount += 1
+                    if candidateCount == bufferCount:
+                        notDangleIndexList.append(i)
         filteredDangleList = []
         for i in range(len(pointList)):
             if i not in notDangleIndexList:
