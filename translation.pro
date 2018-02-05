@@ -193,6 +193,7 @@
 					CustomWidgets/AttributeValidityWidgets/__init__.py \
 					CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.py \
 					CustomWidgets/customSelector.py \
+					CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py \
 					CustomWidgets/CustomDbManagementWidgets/domainSetter.py \
 					CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py \
 					CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py \
@@ -212,6 +213,7 @@
 					CustomWidgets/customizationManagerWidget.py \
 					CustomWidgets/permissionWidget.py \
 					CustomWidgets/connectionWidget.py \
+					CustomWidgets/buttonPropWidget.py \
 					CustomWidgets/__init__.py \
 					ToolboxTools/models_and_scripts_installer.py \
 					ToolboxTools/__init__.py \
@@ -306,6 +308,7 @@
 					CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui \
 					CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui \
 					CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui \
+					CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui \
 					CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui \
 					CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui \
 					CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui \
@@ -326,6 +329,7 @@
 					CustomWidgets/connectionWidget.ui \
 					CustomWidgets/customizationManagerWidget.ui \
 					CustomWidgets/tabDbSelectorWidget.ui \
+					CustomWidgets/buttonPropWidget.ui \
 					ToolboxTools/models_and_scripts_installer.ui \
 					ConversionTools/convert_database.ui \
 					AttributeTools/attributes_viewer.ui \

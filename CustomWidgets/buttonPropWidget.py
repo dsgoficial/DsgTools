@@ -39,6 +39,8 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
         """Constructor."""
         super(ButtonPropWidget, self).__init__(parent)
         self.setupUi(self)
+        self.customCategoryCheckBox.hide()
+        self.customCategoryLineEdit.hide()
     
     @pyqtSlot(bool, name = 'on_colorCheckBox_toggled')
     @pyqtSlot(bool, name = 'on_tooltipCheckBox_toggled')
