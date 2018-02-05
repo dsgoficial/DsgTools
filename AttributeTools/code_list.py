@@ -27,7 +27,7 @@ from PyQt4 import QtGui, uic, QtCore
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
 from PyQt4.QtGui import QTableWidgetItem, QMessageBox
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
@@ -44,33 +44,39 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        
         self.iface = iface
-          
-        self.iface.currentLayerChanged.connect(self.setState)
-          
+        self.currLayer = None
+        self.refreshClassesDictList() # creates and populates self.classesFieldDict
         self.setState()
         
     @pyqtSlot()
     def setState(self):
         """
-        Sets the code list viewer initial state
+        Sets the code list viewer initial state.
+        Populates the field comboBox.
         """
         self.comboBox.clear()
-        self.currLayer = self.iface.activeLayer()
+        # in case reload is used or index changed and comboBox is empty, for some reason
+        try:
+            # gets the layer to be "translated"
+            for lyr in self.classesFieldDict.keys():
+                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
+                    self.currLayer = lyr
+                    break
+        except: # leaves self.currLayer set as None
+            pass
         if not self.currLayer:
-            return
-        
+            return        
         try:
             if QgsMapLayer is not None:
                 if self.currLayer.type() != QgsMapLayer.VectorLayer:
                     return        
-                for field in self.currLayer.pendingFields():
+                for field in self.classesFieldDict[self.currLayer]:
+                    # iterates over every field that has a value map on database
                     valueDict, keys = self.getCodeListDict(field.name())
                     if len(keys) > 0:
                         self.comboBox.addItem(field.name())
-                self.comboBox.setCurrentIndex(0)
-            
+                self.comboBox.setCurrentIndex(0)            
                 self.loadCodeList()
         except:
             pass
@@ -135,7 +141,13 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         """
         Slot that updates the code lists when the current active layers changes.
         """
-        self.loadCodeList()        
+        try:
+            for lyr in self.classesFieldDict.keys():
+                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
+                    self.currLayer = lyr
+            self.loadCodeList()   
+        except:
+            pass
         
     def loadCodeList(self):
         """
@@ -163,3 +175,55 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             self.tableWidget.setItem(row, 0, valueItem)
             self.tableWidget.setItem(row, 1, codeItem)
         self.tableWidget.sortItems(1)
+
+    def refreshClassesDictList(self):        
+        """
+        Refreshs the list of classes having Value Map set.
+        Populates the classComboBox.
+        Returns the dict of classes and their attributes that have the value map set (classesFieldDict)
+        """
+        # checks if the selected class has a value map and fills the field combobox if necessary
+        self.classComboBox.clear()
+        try:
+            self.classesFieldDict.clear()
+        except:
+            # this dict is composed by [ QgsLayer obj : [ 'Every attribute (QgsField obj) that has a value map of this specific layer' ] ]
+            self.classesFieldDict = dict()
+        layers = self.iface.legendInterface().layers()
+        for layer in layers:
+            if isinstance(layer, QgsVectorLayer):
+                for field in layer.pendingFields():
+                    fieldIndex = layer.fieldNameIndex(field.name())
+                    # only classes that have value maps may be enlisted on the feature
+                    if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
+                        if layer not in self.classesFieldDict.keys():
+                            self.classesFieldDict[layer] = []
+                            # in case more tha a db is loaded and they have the same layer
+                            # name for some class. 
+                            db_name = layer.dataProvider().dataSourceUri().split("'")[1]
+                            self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
+                        if field not in self.classesFieldDict[layer]:
+                            self.classesFieldDict[layer].append(field)
+        self.classComboBox.setCurrentIndex(0)
+
+    @pyqtSlot(int)
+    def on_classComboBox_currentIndexChanged(self):
+        """
+        Slot that updates the code lists when the selected layer changes.
+        """
+        # if index is changed, no need to reset dict, just updates field list and attr table...
+        self.setState()
+        self.loadCodeList()
+
+    @pyqtSlot(bool)
+    def on_refreshButton_clicked(self):
+        """
+         Refreshs the list of classes having Value Map set when refresh button is clicked.
+        """
+        try:
+            self.refreshClassesDictList()
+            self.setState()
+            self.loadCodeList()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(self.tr('Error loading classes to Code List Viewer: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
