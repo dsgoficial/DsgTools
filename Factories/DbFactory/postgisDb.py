@@ -3420,9 +3420,9 @@ class PostgisDb(AbstractDb):
         Identify gaps and overlaps in the coverage layer
         """
         self.checkAndOpenDb()
-        # checking for gaps
+        # checking for gaps with frame
         invalidCoverageRecordsList = []
-        sql = self.gen.checkCoverageForGaps(frameTable, geomColumn)
+        sql = self.gen.checkCoverageForGapsWithFrame(frameTable, geomColumn)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting gaps: ")+query.lastError().text())
@@ -3430,15 +3430,10 @@ class PostgisDb(AbstractDb):
             reason = self.tr('Gap between the frame layer and coverage layer')
             geom = query.value(0)
             invalidCoverageRecordsList.append( (0, reason, geom) )
-        # checking for overlaps
-        sql = self.gen.checkCoverageForOverlaps()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting overlaps: ")+query.lastError().text())
-        while query.next():
-            reason = self.tr('Overlap between the features of the coverage layer')
-            geom = query.value(0)
-            invalidCoverageRecordsList.append( (0, reason, geom) )
+        # checking for overlaps in coverage
+        invalidCoverageRecordsList += self.getOverlapsRecords('validation.coverage_temp','geom','id')
+        # checking for inner gaps in coverage
+        invalidCoverageRecordsList += self.getGapsRecords('validation.coverage_temp','geom','id')
         return invalidCoverageRecordsList
 
     def getOverlapsRecords(self, table, geomColumn, keyColumn, useTransaction = True):

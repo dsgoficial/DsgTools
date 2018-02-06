@@ -796,23 +796,6 @@ CREATE TABLE eco_ext_mineral_a (
     atividade smallint NOT NULL
 )#
 ALTER TABLE eco_ext_mineral_a OWNER TO postgres#
-CREATE TABLE eco_ext_mineral_l (
-    id serial NOT NULL,
-    nome character varying(80),
-    geometriaaproximada smallint NOT NULL,
-    tipoalterantrop smallint NOT NULL,
-    geom public.geometry(MultiLineString,[epsg]),
-    secaoativecon smallint NOT NULL,
-    operacional smallint NOT NULL,
-    situacaofisica smallint,
-    tipoextmin smallint NOT NULL,
-    tipoproduto smallint[] NOT NULL,
-    tipopocomina smallint NOT NULL,
-    procextracao smallint,
-    formaextracao smallint NOT NULL,
-    atividade smallint NOT NULL
-)#
-ALTER TABLE eco_ext_mineral_l OWNER TO postgres#
 CREATE TABLE eco_ext_mineral_p (
     id serial NOT NULL,
     nome character varying(80),
@@ -3561,7 +3544,7 @@ CREATE TABLE enc_torre_comunic_p (
     situacaofisica smallint,
     posicaoreledific smallint,
     ovgd smallint,
-    alturaestimada double precision,
+    alturaestimada real,
     modalidade smallint[] NOT NULL,
     id_complexo_comunicacao uuid,
     geom public.geometry(MultiPoint,[epsg])
@@ -3574,7 +3557,7 @@ CREATE TABLE enc_torre_energia_p (
     operacional smallint NOT NULL,
     situacaofisica smallint,
     ovgd smallint,
-    alturaestimada double precision,
+    alturaestimada real,
     geom public.geometry(MultiPoint,[epsg])
 )#
 ALTER TABLE enc_torre_energia_p OWNER TO postgres#
@@ -3588,7 +3571,6 @@ CREATE TABLE enc_trecho_comunic_l (
     operacional smallint NOT NULL,
     situacaofisica smallint,
     emduto smallint,
-    organizacao character varying(200),
     geom public.geometry(MultiLineString,[epsg])
 )#
 ALTER TABLE enc_trecho_comunic_l OWNER TO postgres#
@@ -5897,8 +5879,6 @@ ALTER TABLE ONLY eco_equip_agropec_p
     ADD CONSTRAINT eco_equip_agropec_p_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY eco_ext_mineral_a
     ADD CONSTRAINT eco_ext_mineral_a_pk PRIMARY KEY (id)#
-ALTER TABLE ONLY eco_ext_mineral_l
-    ADD CONSTRAINT eco_ext_mineral_l_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY eco_ext_mineral_p
     ADD CONSTRAINT eco_ext_mineral_p_pk PRIMARY KEY (id)#
 ALTER TABLE ONLY eco_plataforma_a
@@ -9558,16 +9538,6 @@ ALTER TABLE edgv.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_geometri
 ALTER TABLE edgv.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_tipoelemnat_fk FOREIGN KEY (tipoelemnat) REFERENCES dominios.tipo_elem_nat(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_formarocha_fk FOREIGN KEY (formarocha) REFERENCES dominios.forma_rocha(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_situacaoemagua_fk FOREIGN KEY (situacaoemagua) REFERENCES dominios.situacao_em_agua(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_atividade_fk FOREIGN KEY (atividade) REFERENCES dominios.atividade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoextmin_fk FOREIGN KEY (tipoextmin) REFERENCES dominios.tipo_ext_min(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_secaoativecon_fk FOREIGN KEY (secaoativecon) REFERENCES dominios.secao_ativ_econ(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_procextracao_fk FOREIGN KEY (procextracao) REFERENCES dominios.proc_extracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipopocomina_fk FOREIGN KEY (tipopocomina) REFERENCES dominios.tipo_poco_mina(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoalterantrop_fk FOREIGN KEY (tipoalterantrop) REFERENCES dominios.tipo_alter_antrop(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_formaextracao_fk FOREIGN KEY (formaextracao) REFERENCES dominios.forma_extracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.fer_cremalheira_l ADD CONSTRAINT fer_cremalheira_l_operacional_fk FOREIGN KEY (operacional) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -10527,8 +10497,6 @@ ALTER TABLE edgv.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_
 ALTER TABLE edgv.edf_edif_habitacional_a ADD CONSTRAINT edf_edif_habitacional_a_divisaoativecon_check CHECK (divisaoativecon <@ ARRAY[1::SMALLINT,10::SMALLINT,11::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,45::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,55::SMALLINT,74::SMALLINT,92::SMALLINT,95::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.veg_reflorestamento_a ADD CONSTRAINT veg_reflorestamento_a_cultivopredominante_check CHECK (cultivopredominante <@ ARRAY[1::SMALLINT,10::SMALLINT,100::SMALLINT,101::SMALLINT,102::SMALLINT,103::SMALLINT,104::SMALLINT,105::SMALLINT,106::SMALLINT,108::SMALLINT,11::SMALLINT,110::SMALLINT,111::SMALLINT,112::SMALLINT,113::SMALLINT,114::SMALLINT,115::SMALLINT,116::SMALLINT,117::SMALLINT,118::SMALLINT,119::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,4::SMALLINT,42::SMALLINT,43::SMALLINT,44::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,7::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,8::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,9::SMALLINT,90::SMALLINT,96::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.hid_rocha_em_agua_a ADD CONSTRAINT hid_rocha_em_agua_a_tipoelemnat_check CHECK (tipoelemnat = ANY(ARRAY[23]))#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoproduto_check CHECK (tipoproduto <@ ARRAY[100::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,37::SMALLINT,38::SMALLINT,39::SMALLINT,40::SMALLINT,41::SMALLINT,42::SMALLINT,43::SMALLINT,45::SMALLINT,46::SMALLINT,47::SMALLINT,48::SMALLINT,49::SMALLINT,5::SMALLINT,50::SMALLINT,51::SMALLINT,52::SMALLINT,53::SMALLINT,54::SMALLINT,55::SMALLINT,56::SMALLINT,57::SMALLINT,58::SMALLINT,59::SMALLINT,6::SMALLINT,60::SMALLINT,61::SMALLINT,62::SMALLINT,63::SMALLINT,64::SMALLINT,65::SMALLINT,66::SMALLINT,67::SMALLINT,68::SMALLINT,69::SMALLINT,70::SMALLINT,71::SMALLINT,72::SMALLINT,73::SMALLINT,74::SMALLINT,75::SMALLINT,76::SMALLINT,77::SMALLINT,78::SMALLINT,79::SMALLINT,80::SMALLINT,81::SMALLINT,82::SMALLINT,83::SMALLINT,84::SMALLINT,85::SMALLINT,86::SMALLINT,87::SMALLINT,88::SMALLINT,89::SMALLINT,90::SMALLINT,91::SMALLINT,92::SMALLINT,93::SMALLINT,94::SMALLINT,95::SMALLINT,99::SMALLINT])#
-ALTER TABLE edgv.eco_ext_mineral_l ADD CONSTRAINT eco_ext_mineral_l_tipoalterantrop_check CHECK (tipoalterantrop = ANY(ARRAY[32]))#
 ALTER TABLE edgv.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_classeativecon_check CHECK (classeativecon <@ ARRAY[10::SMALLINT,11::SMALLINT,12::SMALLINT,13::SMALLINT,14::SMALLINT,15::SMALLINT,16::SMALLINT,17::SMALLINT,18::SMALLINT,19::SMALLINT,2::SMALLINT,20::SMALLINT,21::SMALLINT,22::SMALLINT,23::SMALLINT,24::SMALLINT,25::SMALLINT,26::SMALLINT,27::SMALLINT,28::SMALLINT,29::SMALLINT,3::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,33::SMALLINT,34::SMALLINT,35::SMALLINT,36::SMALLINT,4::SMALLINT,5::SMALLINT,6::SMALLINT,7::SMALLINT,8::SMALLINT,9::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_grupoativecon_check CHECK (grupoativecon <@ ARRAY[15::SMALLINT,16::SMALLINT,19::SMALLINT,20::SMALLINT,23::SMALLINT,30::SMALLINT,31::SMALLINT,32::SMALLINT,6::SMALLINT,8::SMALLINT,95::SMALLINT,98::SMALLINT,99::SMALLINT])#
 ALTER TABLE edgv.edf_edif_energia_a ADD CONSTRAINT edf_edif_energia_a_tipoedifenergia_check CHECK (tipoedifenergia <@ ARRAY[1::SMALLINT,2::SMALLINT,3::SMALLINT,4::SMALLINT,5::SMALLINT,95::SMALLINT,99::SMALLINT])#
@@ -10769,7 +10737,6 @@ CREATE INDEX eco_equip_agropec_a_gist ON edgv.eco_equip_agropec_a USING gist (ge
 CREATE INDEX eco_equip_agropec_l_gist ON edgv.eco_equip_agropec_l USING gist (geom)#
 CREATE INDEX eco_equip_agropec_p_gist ON edgv.eco_equip_agropec_p USING gist (geom)#
 CREATE INDEX eco_ext_mineral_a_gist ON edgv.eco_ext_mineral_a USING gist (geom)#
-CREATE INDEX eco_ext_mineral_l_gist ON edgv.eco_ext_mineral_l USING gist (geom)#
 CREATE INDEX eco_ext_mineral_p_gist ON edgv.eco_ext_mineral_p USING gist (geom)#
 CREATE INDEX eco_plataforma_a_gist ON edgv.eco_plataforma_a USING gist (geom)#
 CREATE INDEX eco_plataforma_p_gist ON edgv.eco_plataforma_p USING gist (geom)#
@@ -12501,16 +12468,6 @@ ALTER TABLE ONLY edgv.hid_rocha_em_agua_a ALTER COLUMN geometriaaproximada SET D
 ALTER TABLE ONLY edgv.hid_rocha_em_agua_a ALTER COLUMN tipoelemnat SET DEFAULT 23#
 ALTER TABLE ONLY edgv.hid_rocha_em_agua_a ALTER COLUMN formarocha SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_rocha_em_agua_a ALTER COLUMN situacaoemagua SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN atividade SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN operacional SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN tipoextmin SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN secaoativecon SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN tipopocomina SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN procextracao SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN situacaofisica SET DEFAULT 95#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN tipoalterantrop SET DEFAULT 32#
-ALTER TABLE ONLY edgv.eco_ext_mineral_l ALTER COLUMN formaextracao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.fer_cremalheira_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.fer_cremalheira_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.fer_cremalheira_l ALTER COLUMN operacional SET DEFAULT 95#
