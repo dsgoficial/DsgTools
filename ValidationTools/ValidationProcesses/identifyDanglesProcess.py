@@ -22,7 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator
+from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsMapLayerRegistry
 
 from PyQt4.QtCore import QVariant
 
@@ -193,6 +193,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 localProgress.step()
                 continue
             pointList.append(point)
+            localProgress.step()
         return pointList
 
     def getCoordinateTransformer(self, inputLyr, outputLyr):
