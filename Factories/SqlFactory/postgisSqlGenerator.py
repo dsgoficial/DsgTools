@@ -1533,7 +1533,7 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(srid)
         return sql
 
-    def checkCoverageForGaps(self, frameTable, geomColumn):
+    def checkCoverageForGapsWithFrame(self, frameTable, geomColumn):
         frameSchema, frameTable = frameTable.split('.')
         sql = """
         select (ST_Dump(ST_SymDifference(a.geom, b.geom))).geom from
