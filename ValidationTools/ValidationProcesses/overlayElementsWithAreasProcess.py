@@ -49,7 +49,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.opTypeDict = OrderedDict([(self.tr('Overlay and Keep Elements'),-1), (self.tr('Remove outside elements'),0), (self.tr('Remove inside elements'),2)])
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': OrderedDict({'referenceDictList':overlayInterfaceDict, 'layersDictList':interfaceDict}), 'Overlay Type':deque(self.opTypeDict.keys())}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': OrderedDict({'referenceDictList':overlayInterfaceDict, 'layersDictList':interfaceDict}), 'Overlay Type':deque(self.opTypeDict.keys()), 'Only Selected':False}
 
     def execute(self):
         """
@@ -100,7 +100,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             self.finishedWithError()
             return 0
 
-    def runProcessinAlg(self, layerA, layerB):
+    def runProcessinAlg(self, layerA, layerB, onlySelected = False):
         """
         Runs the actual grass process
         'Overlay and Keep Elements': value -1, which stands for OR operations in GRASS
@@ -110,6 +110,10 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         alg = 'grass7:v.overlay'
 
         #getting table extent (bounding box)
+        if onlySelected:
+            auxLayer = self.createUnifiedLayer([layerA], onlySelected = onlySelected)
+            originalLayer = layerA
+            layerA = auxLayer
         extentA = layerA.extent()
         (xAmin, xAmax, yAmin, yAmax) = extentA.xMinimum(), extentA.xMaximum(), extentA.yMinimum(), extentA.yMaximum()
         extentB = layerB.extent()
@@ -137,6 +141,8 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             if isinstance(output, dict):
                 return output['error']
             self.updateOriginalLayerV2(layerA, output)
+        if onlySelected:
+            self.splitUnifiedLayer(layerA,[originalLayer])
         return []
     
     def runOverlay(self, alg, layerA, inputType, layerB, overlayType, extent, snap, minArea, outputFeatureList = False):
