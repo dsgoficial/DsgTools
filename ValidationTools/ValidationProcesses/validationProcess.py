@@ -467,7 +467,7 @@ class ValidationProcess(QObject):
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
 
-    def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = ''):
+    def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False):
         """
         Creates a unified layer from a list of layers
         """
@@ -494,7 +494,10 @@ class ValidationProcess(QObject):
 
         totalCount = 0
         for layer in layerList:
-            totalCount += layer.pendingFeatureCount()
+            if onlySelected:
+                totalCount += layer.selectedFeatureCount()
+            else:
+                totalCount += layer.pendingFeatureCount()
         self.localProgress = ProgressWidget(1, totalCount - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
         featlist = []
         if attributeBlackList != '':
@@ -506,7 +509,11 @@ class ValidationProcess(QObject):
             classname = layer.name()
             uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             keyColumn = uri.keyColumn()
-            for feature in layer.getFeatures():
+            if onlySelected:
+                featureList = lyr.selectedFeatures()
+            else:
+                featureList = lyr.getFeatures()
+            for feature in featureList:
                 newfeat = QgsFeature(coverage.pendingFields())
                 newfeat.setGeometry(feature.geometry())
                 newfeat['featid'] = feature.id()

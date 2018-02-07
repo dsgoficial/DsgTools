@@ -40,7 +40,7 @@ class CleanGeometriesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList, 'Only Selected':False}
         
     def runProcessinAlg(self, layer):
         """

@@ -44,7 +44,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':{}, 'layersDictList':interfaceDict})}
+            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':{}, 'layersDictList':interfaceDict}), 'Only Selected':False}
 
     def execute(self):
         """
@@ -79,7 +79,11 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 localProgress.step()
 
                 # snapping lyr to reference
-                features = [feature for feature in lyr.getFeatures()]
+                if self.parameters['Only Selected']:
+                    featureList = lyr.selectedFeatures()
+                else:
+                    featureList = lyr.getFeatures()
+                features = [feature for feature in featureList]
                 self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['tableName'], parent=self.iface.mapCanvas())
 
                 snappedFeatures = snapper.snapFeatures(features, tol)
