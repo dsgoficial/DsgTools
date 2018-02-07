@@ -245,7 +245,11 @@ class MultiLayerSelection(QgsMapTool):
         """
         Selects a given feature on canvas.
         """
-        layer.setSelectedFeatures([feature.id()])
+        idList = layer.selectedFeaturesIds()
+        featId = feature.id()
+        if featId not in idList:
+            idList.append(featId)
+        layer.setSelectedFeatures(idList)
         return 
 
     def setSelectionListFeature(self, listLayerFeature):
