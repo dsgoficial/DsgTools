@@ -1,4 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp"#
+CREATE EXTENSION IF NOT EXISTS hstore#
 CREATE EXTENSION IF NOT EXISTS postgis#
 COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial types and functions'#
 CREATE EXTENSION IF NOT EXISTS postgis_topology#
@@ -13205,3 +13206,41 @@ ALTER TABLE ONLY complexos.laz_complexo_desportivo_lazer ALTER COLUMN divisaoati
 ALTER TABLE ONLY complexos.laz_complexo_desportivo_lazer ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.laz_complexo_desportivo_lazer ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY complexos.laz_complexo_desportivo_lazer ALTER COLUMN turistico SET DEFAULT 95#
+
+CREATE OR REPLACE FUNCTION public.explode_geom()
+  RETURNS trigger AS
+$BODY$
+    DECLARE querytext1 text;
+    DECLARE querytext2 text;
+    DECLARE r record;
+    BEGIN
+	IF ST_NumGeometries(NEW.geom) > 1 THEN
+		querytext1 := 'INSERT INTO ' || quote_ident(TG_TABLE_SCHEMA) || '.' || quote_ident(TG_TABLE_NAME) || '(';
+		querytext2 := 'geom) SELECT ';
+		FOR r IN SELECT (each(hstore(NEW))).* 
+		LOOP
+			IF r.key <> 'geom' AND r.key <> 'id' THEN
+				querytext1 := querytext1 || quote_ident(r.key) || ',';
+				IF r.value <> '' THEN
+					querytext2 := querytext2 || quote_literal(r.value) || ',';
+				ELSE
+					querytext2 := querytext2 || 'NULL' || ',';					
+				END IF;
+			END IF;
+		END LOOP;
+		IF TG_OP = 'UPDATE' THEN
+			EXECUTE 'DELETE FROM ' || quote_ident(TG_TABLE_SCHEMA) || '.' || quote_ident(TG_TABLE_NAME) || ' WHERE id = ' || OLD.id;
+		END IF;
+		querytext1 := querytext1  || querytext2;
+		EXECUTE querytext1 || 'ST_Multi((ST_Dump(ST_AsEWKT(' || quote_literal(NEW.geom::text) || '))).geom);';
+		RETURN NULL;
+	ELSE
+		RETURN NEW;
+	END IF;
+    END;
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100#
+ALTER FUNCTION public.explode_geom() OWNER TO postgres#
+GRANT EXECUTE ON FUNCTION public.explode_geom() TO postgres#
+GRANT EXECUTE ON FUNCTION public.explode_geom() TO public#
