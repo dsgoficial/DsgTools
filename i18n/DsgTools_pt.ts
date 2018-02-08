@@ -7415,14 +7415,14 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna
+        <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo
+        <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
