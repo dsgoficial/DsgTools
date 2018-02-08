@@ -6,7 +6,7 @@
     <message>
         <location filename="../test/test_translations.py" line="48"/>
         <source>Good morning</source>
-        <translation>Bom dia</translation>
+        <translation type="obsolete">Bom dia</translation>
     </message>
 </context>
 <context>
@@ -163,112 +163,112 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Erro abrindo banco de dados.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="94"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="101"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="226"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="233"/>
         <source>Validation Problems Summary</source>
         <translation>Resumo de Problemas de Validação</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="230"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="237"/>
         <source>Classes with null lines:</source>
         <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="569"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="594"/>
         <source>Class</source>
         <translation>Classe</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="369"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="388"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="236"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="243"/>
         <source>Classes with null primary keys:</source>
         <translation>Classes com chaves primárias nulas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="242"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="249"/>
         <source>Features with attributes not in domain:</source>
         <translation>Feições com atributos fora do domínio:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="274"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="293"/>
         <source>Class: </source>
         <translation>Classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="255"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="262"/>
         <source>Features with null attributes in a not null field:</source>
         <translation>Feições com atributos nulos em campo não nulo:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="267"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="286"/>
         <source>Classes with classes that have elements but do not have output equivalent:</source>
         <translation>Classes com classes que tem elementos mas não tem equivalente de saída:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="272"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="291"/>
         <source>Classes with attributes that have no output attribute equivalent:</source>
         <translation>Classes com atributos que não possuem atributo de saída equivalente:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="287"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="306"/>
         <source>Conversion type: </source>
         <translation>Tipo de Conversão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="288"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="307"/>
         <source>Input database: </source>
         <translation>Banco de dados de entrada: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="289"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="308"/>
         <source>Output database: </source>
         <translation>Banco de dados de saída: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="290"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="309"/>
         <source>Read Summary</source>
         <translation>Resumo de Leitura</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="368"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="387"/>
         <source>Write Summary</source>
         <translation>Resumo de Escrita</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="404"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="423"/>
         <source>Error on layer </source>
         <translation>Erro na camada </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="404"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="423"/>
         <source>. Conversion not performed.</source>
         <translation>. Conversão não realizada.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="568"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="593"/>
         <source>Features not converted</source>
         <translation>Feições não convertidas</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="569"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="594"/>
         <source>Feature id</source>
         <translation>Id da Feição</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="138"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="145"/>
         <source>Problem finding EPSG: </source>
         <translation>Problema para encontrar EPSG: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="181"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="188"/>
         <source>Problem getting aggregation attributes: </source>
         <translation>Problema ao obter atributos de agregação: </translation>
     </message>
@@ -278,9 +278,14 @@ p, li { white-space: pre-wrap; }
         <translation>Erro abrindo banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="657"/>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="682"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="274"/>
+        <source>Features with invalid uuid foreign key:</source>
+        <translation>Feições com chave estrangeira do tipo uuid inválidas:</translation>
     </message>
 </context>
 <context>
@@ -7487,6 +7492,16 @@ Camada</translation>
         <source>Layer {0} is empty or there are no selected features!. Nothing to be done.</source>
         <translation>Camada {0} está vazia ou não há feições selecionadas! Nada a ser feito.</translation>
     </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <source>Identify Duplicated Geometries</source>
+        <translation>Identificar geometrias duplicadas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <source>Remove Duplicated Elements</source>
+        <translation>Remover feições duplicadas</translation>
+    </message>
 </context>
 <context>
     <name>ListManagerWidget</name>
@@ -8288,7 +8303,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="34"/>
         <source>Merge lines</source>
-        <translation>Unir linhas</translation>
+        <translation type="obsolete">Unir linhas</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="43"/>
@@ -8371,6 +8386,11 @@ Camada</translation>
         <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="50"/>
         <source>Clean Geometries</source>
         <translation>Limpar geometrias</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="34"/>
+        <source>Merge lines with common attributes</source>
+        <translation>Unir linhas com atributos comuns</translation>
     </message>
 </context>
 <context>
@@ -11767,12 +11787,12 @@ Camada</translation>
 <context>
     <name>SpatialiteDb</name>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="253"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="261"/>
         <source>Conversion not perfomed due to validation errors! Check log above for more information.</source>
         <translation>Conversão não realizada devido à erros de validação! Verifique o log acima para maiores informações.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="382"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="390"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
@@ -11802,47 +11822,47 @@ Camada</translation>
         <translation>Problema ao obter estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="364"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="372"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar query: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="293"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="301"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema ao obter coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="313"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="321"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="395"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="403"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="425"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="433"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="447"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="455"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="476"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="484"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="521"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="529"/>
         <source>Problem getting full table name: </source>
         <translation>Problema obtendo nome completo da tabela: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/spatialiteDb.py" line="534"/>
+        <location filename="../Factories/DbFactory/spatialiteDb.py" line="542"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
