@@ -1458,7 +1458,7 @@ CREATE TABLE edf_edif_constr_portuaria_p (
     id_condominio uuid,     
     id_conjunto_habitacional uuid,
     geom public.geometry(MultiPoint,[epsg]),
-    tipoedifport smallint NOT NULL,
+    tipoedifport smallint[] NOT NULL,
     jurisdicao smallint NOT NULL,
     concessionaria character varying(80),
     id_complexo_portuario uuid
@@ -8902,7 +8902,6 @@ ALTER TABLE edgv.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_port
 ALTER TABLE edgv.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_situacaofisica_fk FOREIGN KEY (situacaofisica) REFERENCES dominios.situacao_fisica(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_proprioadm_fk FOREIGN KEY (proprioadm) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
-ALTER TABLE edgv.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_tipoedifport_fk FOREIGN KEY (tipoedifport) REFERENCES dominios.tipo_edif_port(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.edf_edif_constr_portuaria_p ADD CONSTRAINT edf_edif_constr_portuaria_p_administracao_fk FOREIGN KEY (administracao) REFERENCES dominios.administracao(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.hid_banco_areia_l ADD CONSTRAINT hid_banco_areia_l_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.hid_banco_areia_l ADD CONSTRAINT hid_banco_areia_l_materialpredominante_fk FOREIGN KEY (materialpredominante) REFERENCES dominios.material_predominante(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
