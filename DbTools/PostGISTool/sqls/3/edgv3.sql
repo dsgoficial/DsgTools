@@ -11568,6 +11568,7 @@ ALTER TABLE ONLY edgv.edf_edif_pub_civil_a ALTER COLUMN situacaofisica SET DEFAU
 ALTER TABLE ONLY edgv.edf_edif_pub_civil_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_pub_civil_a ALTER COLUMN proprioadm SET DEFAULT 0#
 ALTER TABLE ONLY edgv.edf_edif_pub_civil_a ALTER COLUMN tipousoedif SET DEFAULT 95#
+ALTER TABLE ONLY edgv.edf_edif_pub_civil_a ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_desenv_social_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_desenv_social_p ALTER COLUMN tipoequipdesenvsocial SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_desenv_social_p ALTER COLUMN turistica SET DEFAULT 95#
@@ -11625,6 +11626,7 @@ ALTER TABLE ONLY edgv.edf_edif_industrial_a ALTER COLUMN proprioadm SET DEFAULT 
 ALTER TABLE ONLY edgv.hdv_eclusa_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hdv_eclusa_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_eclusa_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY edgv.hdv_eclusa_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_servico_social_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_servico_social_a ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_servico_social_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -11694,6 +11696,7 @@ ALTER TABLE ONLY edgv.edf_posto_policia_militar_a ALTER COLUMN tipoinstalmilitar
 ALTER TABLE ONLY edgv.edf_posto_policia_militar_a ALTER COLUMN tipousoedif SET DEFAULT 6#
 ALTER TABLE ONLY edgv.hid_ilha_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_ilha_a ALTER COLUMN tipoelemnat SET DEFAULT 21#
+ALTER TABLE ONLY edgv.hid_ilha_a ALTER COLUMN tipoilha SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_ext_mineral_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_ext_mineral_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_ext_mineral_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -11740,6 +11743,7 @@ ALTER TABLE ONLY edgv.enc_torre_comunic_p ALTER COLUMN ovgd SET DEFAULT 95#
 ALTER TABLE ONLY edgv.enc_torre_comunic_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.enc_torre_comunic_p ALTER COLUMN posicaoreledific SET DEFAULT 95#
 ALTER TABLE ONLY edgv.enc_torre_comunic_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY edgv.enc_torre_comunic_p ALTER COLUMN modalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edificacao_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edificacao_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edificacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -11770,6 +11774,7 @@ ALTER TABLE ONLY edgv.hid_canal_vala_l ALTER COLUMN finalidade SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_canal_vala_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_canal_vala_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_canal_vala_l ALTER COLUMN tipoalterantrop SET DEFAULT 30#
+ALTER TABLE ONLY edgv.hid_canal_vala_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_sumidouro_vertedouro_p ALTER COLUMN causa SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_sumidouro_vertedouro_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_trilha_picada_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -11827,6 +11832,7 @@ ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN matconstr SE
 ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_p ALTER COLUMN tipoedifagropec SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.enc_aerogerador_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_banco_areia_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_banco_areia_a ALTER COLUMN materialpredominante SET DEFAULT 95#
@@ -11834,6 +11840,7 @@ ALTER TABLE ONLY edgv.hid_banco_areia_a ALTER COLUMN tipobanco SET DEFAULT 1#
 ALTER TABLE ONLY edgv.hid_banco_areia_a ALTER COLUMN situacaoemagua SET DEFAULT 95#
 ALTER TABLE ONLY edgv.rel_aterro_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_aterro_p ALTER COLUMN tipoalterantrop SET DEFAULT 27#
+ALTER TABLE ONLY edgv.rel_aterro_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.laz_arquibancada_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.laz_arquibancada_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.laz_arquibancada_l ALTER COLUMN operacional SET DEFAULT 95#
@@ -11855,6 +11862,7 @@ ALTER TABLE ONLY edgv.edf_edif_pub_civil_p ALTER COLUMN situacaofisica SET DEFAU
 ALTER TABLE ONLY edgv.edf_edif_pub_civil_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_pub_civil_p ALTER COLUMN proprioadm SET DEFAULT 0#
 ALTER TABLE ONLY edgv.edf_edif_pub_civil_p ALTER COLUMN tipousoedif SET DEFAULT 95#
+ALTER TABLE ONLY edgv.edf_edif_pub_civil_p ALTER COLUMN tipoedifpubcivil SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.laz_arquibancada_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.laz_arquibancada_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.laz_arquibancada_a ALTER COLUMN operacional SET DEFAULT 95#
@@ -11870,7 +11878,7 @@ ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_p ALTER COLUMN matconstr SET DEF
 ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_p ALTER COLUMN proprioadm SET DEFAULT 0#
-ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_p ALTER COLUMN tipoedifport SET DEFAULT 95#
+ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_p ALTER COLUMN tipoedifport SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_banco_areia_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_banco_areia_l ALTER COLUMN materialpredominante SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_banco_areia_l ALTER COLUMN tipobanco SET DEFAULT 1#
@@ -11883,6 +11891,7 @@ ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_a ALTER COLUMN matconstr SE
 ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_agropec_ext_veg_pesca_a ALTER COLUMN tipoedifagropec SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_foz_maritima_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.laz_pista_competicao_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.laz_pista_competicao_l ALTER COLUMN tipopistacomp SET DEFAULT 95#
@@ -11910,6 +11919,7 @@ ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_a ALTER COLUMN geometriaaproxima
 ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_constr_portuaria_a ALTER COLUMN tipoedifport SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_foz_maritima_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.pto_pto_est_med_fenomenos_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.pto_pto_est_med_fenomenos_p ALTER COLUMN tipoptoestmed SET DEFAULT 95#
@@ -11930,12 +11940,14 @@ ALTER TABLE ONLY edgv.hid_corredeira_p ALTER COLUMN geometriaaproximada SET DEFA
 ALTER TABLE ONLY edgv.lml_area_especial_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_corte_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_corte_p ALTER COLUMN tipoalterantrop SET DEFAULT 26#
+ALTER TABLE ONLY edgv.rel_corte_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN usoprincipal SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN finalidade SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN tipoalterantrop SET DEFAULT 30#
+ALTER TABLE ONLY edgv.hid_canal_vala_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.tra_ponte_p ALTER COLUMN tipoponte SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_ponte_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_ponte_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
@@ -11993,12 +12005,14 @@ ALTER TABLE ONLY edgv.hid_comporta_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_corredeira_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_aterro_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_aterro_l ALTER COLUMN tipoalterantrop SET DEFAULT 27#
+ALTER TABLE ONLY edgv.rel_aterro_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.rel_ponto_cotado_batimetrico_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_p ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_p ALTER COLUMN tipoatracad SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_p ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_residencial_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_residencial_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_residencial_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -12042,6 +12056,7 @@ ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_a ALTER COLUMN geometriaaproximad
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_a ALTER COLUMN tipoatracad SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_residencial_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_residencial_a ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_residencial_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -12076,6 +12091,7 @@ ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_l ALTER COLUMN geometriaaproximad
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_l ALTER COLUMN tipoatracad SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_l ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY edgv.hdv_atracadouro_terminal_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.veg_veg_restinga_a ALTER COLUMN densidade SET DEFAULT 95#
 ALTER TABLE ONLY edgv.veg_veg_restinga_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.veg_veg_restinga_a ALTER COLUMN secundaria SET DEFAULT 95#
@@ -12122,6 +12138,7 @@ ALTER TABLE ONLY edgv.eco_ext_mineral_a ALTER COLUMN geometriaaproximada SET DEF
 ALTER TABLE ONLY edgv.eco_ext_mineral_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.eco_ext_mineral_a ALTER COLUMN tipoalterantrop SET DEFAULT 32#
 ALTER TABLE ONLY edgv.eco_ext_mineral_a ALTER COLUMN formaextracao SET DEFAULT 95#
+ALTER TABLE ONLY edgv.eco_ext_mineral_a ALTER COLUMN tipoproduto SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_abast_agua_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_abast_agua_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_abast_agua_p ALTER COLUMN matconstr SET DEFAULT 95#
@@ -12158,6 +12175,7 @@ ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_p ALTER COLUMN geometriaaproxim
 ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_p ALTER COLUMN tipoedifmetroferrov SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.tra_travessia_p ALTER COLUMN tipoembarcacao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_travessia_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_travessia_p ALTER COLUMN tipouso SET DEFAULT 95#
@@ -12199,6 +12217,7 @@ ALTER TABLE ONLY edgv.edf_edif_rodoviaria_p ALTER COLUMN geometriaaproximada SET
 ALTER TABLE ONLY edgv.edf_edif_rodoviaria_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_rodoviaria_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_rodoviaria_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_rodoviaria_p ALTER COLUMN tipoedifrod SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN necessitamanutencao SET DEFAULT 95#
@@ -12208,17 +12227,21 @@ ALTER TABLE ONLY edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN posicaopista S
 ALTER TABLE ONLY edgv.tra_passagem_elevada_viaduto_p ALTER COLUMN tipopassagviad SET DEFAULT 6#
 ALTER TABLE ONLY edgv.hid_ilha_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_ilha_l ALTER COLUMN tipoelemnat SET DEFAULT 21#
+ALTER TABLE ONLY edgv.hid_ilha_l ALTER COLUMN tipoilha SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN tipopavimentacao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN necessitamanutencao SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN posicaopista SET DEFAULT 95#
+ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
+ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_p ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.lml_area_pub_militar_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.lml_area_pub_militar_a ALTER COLUMN jurisdicao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.lml_area_pub_militar_a ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.cbge_passeio_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.cbge_passeio_l ALTER COLUMN calcada SET DEFAULT 95#
+ALTER TABLE ONLY edgv.cbge_passeio_l ALTER COLUMN pavimentacao SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.emu_poste_sinalizacao_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.emu_poste_sinalizacao_p ALTER COLUMN tipoposte SET DEFAULT ARRAY[5::SMALLINT]#
 ALTER TABLE ONLY edgv.emu_poste_sinalizacao_p ALTER COLUMN matconstr SET DEFAULT 95#
@@ -12239,6 +12262,8 @@ ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_l ALTER COLUMN necessitamanutencao
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_l ALTER COLUMN posicaopista SET DEFAULT 95#
+ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_l ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
+ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.fer_trecho_ferroviario_l ALTER COLUMN tipotrechoferrov SET DEFAULT 95#
 ALTER TABLE ONLY edgv.fer_trecho_ferroviario_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.fer_trecho_ferroviario_l ALTER COLUMN posicaorelativa SET DEFAULT 95#
@@ -12266,8 +12291,11 @@ ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_a ALTER COLUMN necessitamanutencao
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_a ALTER COLUMN posicaopista SET DEFAULT 95#
+ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_a ALTER COLUMN modaluso SET DEFAULT ARRAY[4::SMALLINT]#
+ALTER TABLE ONLY edgv.tra_obra_de_arte_viaria_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.cbge_passeio_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.cbge_passeio_a ALTER COLUMN calcada SET DEFAULT 95#
+ALTER TABLE ONLY edgv.cbge_passeio_a ALTER COLUMN pavimentacao SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_constr_lazer_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_lazer_a ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_lazer_a ALTER COLUMN matconstr SET DEFAULT 95#
@@ -12283,6 +12311,8 @@ ALTER TABLE ONLY edgv.edf_edif_comunic_a ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comunic_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comunic_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comunic_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_comunic_a ALTER COLUMN tipoedifcomunic SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY edgv.edf_edif_comunic_a ALTER COLUMN modalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_comporta_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_comporta_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_comporta_p ALTER COLUMN operacional SET DEFAULT 95#
@@ -12299,6 +12329,7 @@ ALTER TABLE ONLY edgv.edf_edif_rodoviaria_a ALTER COLUMN geometriaaproximada SET
 ALTER TABLE ONLY edgv.edf_edif_rodoviaria_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_rodoviaria_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_rodoviaria_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_rodoviaria_a ALTER COLUMN tipoedifrod SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN situacaoespacial SET DEFAULT 95#
 ALTER TABLE ONLY edgv.emu_elevador_l ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -12332,6 +12363,8 @@ ALTER TABLE ONLY edgv.edf_edif_comunic_p ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comunic_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comunic_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comunic_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_comunic_p ALTER COLUMN tipoedifcomunic SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY edgv.edf_edif_comunic_p ALTER COLUMN modalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_constr_lazer_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_lazer_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_lazer_p ALTER COLUMN matconstr SET DEFAULT 95#
@@ -12351,6 +12384,7 @@ ALTER TABLE ONLY edgv.hdv_fundeadouro_a ALTER COLUMN administracao SET DEFAULT 9
 ALTER TABLE ONLY edgv.tra_patio_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.tra_patio_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.tra_patio_a ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY edgv.tra_patio_a ALTER COLUMN finalidadepatio SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.dut_trecho_duto_l ALTER COLUMN situacaoespacial SET DEFAULT 95#
 ALTER TABLE ONLY edgv.dut_trecho_duto_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.dut_trecho_duto_l ALTER COLUMN posicaorelativa SET DEFAULT 95#
@@ -12364,6 +12398,7 @@ ALTER TABLE ONLY edgv.hid_fonte_dagua_p ALTER COLUMN qualidagua SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_fonte_dagua_p ALTER COLUMN regime SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_ilha_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.hid_ilha_p ALTER COLUMN tipoelemnat SET DEFAULT 21#
+ALTER TABLE ONLY edgv.hid_ilha_p ALTER COLUMN tipoilha SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.rel_dolina_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_dolina_p ALTER COLUMN tipoelemnat SET DEFAULT 16#
 ALTER TABLE ONLY edgv.hid_queda_dagua_p ALTER COLUMN tipoqueda SET DEFAULT 95#
@@ -12405,6 +12440,7 @@ ALTER TABLE ONLY edgv.edf_edif_energia_p ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_energia_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_energia_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_energia_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_energia_p ALTER COLUMN tipoedifenergia SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.laz_campo_quadra_a ALTER COLUMN tipocampoquadra SET DEFAULT 95#
 ALTER TABLE ONLY edgv.laz_campo_quadra_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.laz_campo_quadra_a ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -12440,6 +12476,7 @@ ALTER TABLE ONLY edgv.edf_edif_energia_a ALTER COLUMN matconstr SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_energia_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_energia_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_energia_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_energia_a ALTER COLUMN tipoedifenergia SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.laz_campo_quadra_p ALTER COLUMN tipocampoquadra SET DEFAULT 95#
 ALTER TABLE ONLY edgv.laz_campo_quadra_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.laz_campo_quadra_p ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -12560,6 +12597,8 @@ ALTER TABLE ONLY edgv.edf_edif_comerc_serv_p ALTER COLUMN matconstr SET DEFAULT 
 ALTER TABLE ONLY edgv.edf_edif_comerc_serv_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comerc_serv_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comerc_serv_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_comerc_serv_p ALTER COLUMN tipoedifcomercserv SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY edgv.edf_edif_comerc_serv_p ALTER COLUMN finalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_constr_est_med_fen_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_est_med_fen_a ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_est_med_fen_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
@@ -12628,6 +12667,8 @@ ALTER TABLE ONLY edgv.edf_edif_comerc_serv_a ALTER COLUMN matconstr SET DEFAULT 
 ALTER TABLE ONLY edgv.edf_edif_comerc_serv_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comerc_serv_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_comerc_serv_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_comerc_serv_a ALTER COLUMN tipoedifcomercserv SET DEFAULT ARRAY[95::SMALLINT]#
+ALTER TABLE ONLY edgv.edf_edif_comerc_serv_a ALTER COLUMN finalidade SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.lml_unidade_uso_sustentavel_a ALTER COLUMN tipounidprotegida SET DEFAULT 3#
 ALTER TABLE ONLY edgv.lml_unidade_uso_sustentavel_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.lml_unidade_uso_sustentavel_a ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -12678,6 +12719,7 @@ ALTER TABLE ONLY edgv.cbge_cemiterio_p ALTER COLUMN tipocemiterio SET DEFAULT 95
 ALTER TABLE ONLY edgv.cbge_cemiterio_p ALTER COLUMN denominacaoassociada SET DEFAULT 5#
 ALTER TABLE ONLY edgv.rel_corte_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_corte_a ALTER COLUMN tipoalterantrop SET DEFAULT 26#
+ALTER TABLE ONLY edgv.rel_corte_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.snb_dep_saneamento_a ALTER COLUMN tipoexposicao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.snb_dep_saneamento_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.snb_dep_saneamento_a ALTER COLUMN unidadevolume SET DEFAULT 95#
@@ -12707,6 +12749,7 @@ ALTER TABLE ONLY edgv.veg_veg_cultivada_a ALTER COLUMN finalidade SET DEFAULT 95
 ALTER TABLE ONLY edgv.veg_veg_cultivada_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.veg_veg_cultivada_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY edgv.veg_veg_cultivada_a ALTER COLUMN tipolavoura SET DEFAULT 95#
+ALTER TABLE ONLY edgv.veg_veg_cultivada_a ALTER COLUMN cultivopredominante SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.hid_vala_a ALTER COLUMN usoprincipal SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_vala_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_vala_a ALTER COLUMN finalidade SET DEFAULT 95#
@@ -12746,6 +12789,7 @@ ALTER TABLE ONLY edgv.eco_ext_mineral_p ALTER COLUMN geometriaaproximada SET DEF
 ALTER TABLE ONLY edgv.eco_ext_mineral_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.eco_ext_mineral_p ALTER COLUMN tipoalterantrop SET DEFAULT 32#
 ALTER TABLE ONLY edgv.eco_ext_mineral_p ALTER COLUMN formaextracao SET DEFAULT 95#
+ALTER TABLE ONLY edgv.eco_ext_mineral_p ALTER COLUMN tipoproduto SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.emu_acesso_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.emu_acesso_l ALTER COLUMN situacaoespacial SET DEFAULT 95#
 ALTER TABLE ONLY edgv.emu_acesso_l ALTER COLUMN situacaofisica SET DEFAULT 95#
@@ -12783,6 +12827,7 @@ ALTER TABLE ONLY edgv.hid_quebramar_molhe_a ALTER COLUMN geometriaaproximada SET
 ALTER TABLE ONLY edgv.hid_quebramar_molhe_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_quebramar_molhe_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_quebramar_molhe_a ALTER COLUMN situacaoemagua SET DEFAULT 95#
+ALTER TABLE ONLY edgv.hid_quebramar_molhe_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.rel_curva_nivel_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_curva_nivel_l ALTER COLUMN tipocurvanivel SET DEFAULT 2#
 ALTER TABLE ONLY edgv.rel_curva_nivel_l ALTER COLUMN depressao SET DEFAULT 0#
@@ -12791,6 +12836,7 @@ ALTER TABLE ONLY edgv.hid_quebramar_molhe_l ALTER COLUMN geometriaaproximada SET
 ALTER TABLE ONLY edgv.hid_quebramar_molhe_l ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_quebramar_molhe_l ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_quebramar_molhe_l ALTER COLUMN situacaoemagua SET DEFAULT 95#
+ALTER TABLE ONLY edgv.hid_quebramar_molhe_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.veg_brejo_pantano_a ALTER COLUMN densidade SET DEFAULT 95#
 ALTER TABLE ONLY edgv.veg_brejo_pantano_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.veg_brejo_pantano_a ALTER COLUMN secundaria SET DEFAULT 95#
@@ -12854,8 +12900,10 @@ ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_a ALTER COLUMN geometriaaproxim
 ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_metro_ferroviaria_a ALTER COLUMN tipoedifmetroferrov SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.cbge_poste_p ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.cbge_poste_p ALTER COLUMN matconstr SET DEFAULT 95#
+ALTER TABLE ONLY edgv.cbge_poste_p ALTER COLUMN tipoposte SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.cbge_deposito_geral_a ALTER COLUMN tipoexposicao SET DEFAULT 95#
 ALTER TABLE ONLY edgv.cbge_deposito_geral_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.cbge_deposito_geral_a ALTER COLUMN unidadevolume SET DEFAULT 95#
@@ -12904,6 +12952,7 @@ ALTER TABLE ONLY edgv.rel_rocha_a ALTER COLUMN tipoelemnat SET DEFAULT 23#
 ALTER TABLE ONLY edgv.rel_rocha_a ALTER COLUMN formarocha SET DEFAULT 95#
 ALTER TABLE ONLY edgv.rel_aterro_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.rel_aterro_a ALTER COLUMN tipoalterantrop SET DEFAULT 27#
+ALTER TABLE ONLY edgv.rel_aterro_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.cbge_area_de_propriedade_particular_a ALTER COLUMN tipoarea SET DEFAULT 1#
 ALTER TABLE ONLY edgv.cbge_area_de_propriedade_particular_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.cbge_praca_a ALTER COLUMN turistica SET DEFAULT 0#
@@ -12960,12 +13009,14 @@ ALTER TABLE ONLY edgv.enc_torre_energia_p ALTER COLUMN situacaofisica SET DEFAUL
 ALTER TABLE ONLY edgv.enc_torre_energia_p ALTER COLUMN ovgd SET DEFAULT 95#
 ALTER TABLE ONLY edgv.enc_torre_energia_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_dique_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
+ALTER TABLE ONLY edgv.hid_dique_a ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.veg_veg_area_contato_a ALTER COLUMN densidade SET DEFAULT 95#
 ALTER TABLE ONLY edgv.veg_veg_area_contato_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.veg_veg_area_contato_a ALTER COLUMN secundaria SET DEFAULT 95#
 ALTER TABLE ONLY edgv.veg_veg_area_contato_a ALTER COLUMN antropizada SET DEFAULT 95#
 ALTER TABLE ONLY edgv.veg_veg_area_contato_a ALTER COLUMN classificacaoporte SET DEFAULT 95#
 ALTER TABLE ONLY edgv.hid_dique_l ALTER COLUMN geometriaaproximada SET DEFAULT 0#
+ALTER TABLE ONLY edgv.hid_dique_l ALTER COLUMN matconstr SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -12974,6 +13025,7 @@ ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN geometriaapro
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_p ALTER COLUMN tipoedifaero SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.edf_edif_pub_militar_p ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_pub_militar_p ALTER COLUMN turistica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_pub_militar_p ALTER COLUMN jurisdicao SET DEFAULT 95#
@@ -13015,6 +13067,7 @@ ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_a ALTER COLUMN geometriaapro
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_a ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_a ALTER COLUMN cultura SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_a ALTER COLUMN proprioadm SET DEFAULT 0#
+ALTER TABLE ONLY edgv.edf_edif_constr_aeroportuaria_a ALTER COLUMN tipoedifaero SET DEFAULT ARRAY[95::SMALLINT]#
 ALTER TABLE ONLY edgv.cbge_area_construida_a ALTER COLUMN geometriaaproximada SET DEFAULT 0#
 ALTER TABLE ONLY edgv.edf_edif_pub_militar_a ALTER COLUMN operacional SET DEFAULT 95#
 ALTER TABLE ONLY edgv.edf_edif_pub_militar_a ALTER COLUMN turistica SET DEFAULT 95#
@@ -13139,6 +13192,7 @@ ALTER TABLE ONLY complexos.tra_estrut_transporte ALTER COLUMN jurisdicao SET DEF
 ALTER TABLE ONLY complexos.tra_estrut_transporte ALTER COLUMN situacaofisica SET DEFAULT 95#
 ALTER TABLE ONLY complexos.tra_estrut_transporte ALTER COLUMN administracao SET DEFAULT 95#
 ALTER TABLE ONLY complexos.tra_estrut_transporte ALTER COLUMN operacional SET DEFAULT 95#
+ALTER TABLE ONLY complexos.tra_estrut_transporte ALTER COLUMN modaluso SET DEFAULT  ARRAY[4::SMALLINT]#
 ALTER TABLE ONLY complexos.aer_complexo_aeroportuario ALTER COLUMN modaluso SET DEFAULT ARRAY[9::SMALLINT]#
 ALTER TABLE ONLY complexos.aer_complexo_aeroportuario ALTER COLUMN tipocomplexoaero SET DEFAULT 24#
 ALTER TABLE ONLY complexos.aer_complexo_aeroportuario ALTER COLUMN operacional SET DEFAULT 95#
