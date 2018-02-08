@@ -1586,12 +1586,17 @@ Camada</translation>
     <message>
         <location filename="../AttributeTools/code_list.py" line="228"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation>Um problema ocorreu! Verifique o log para detaalhes.</translation>
+        <translation type="obsolete">Um problema ocorreu! Verifique o log para detaalhes.</translation>
     </message>
     <message>
         <location filename="../AttributeTools/code_list.py" line="229"/>
         <source>Error loading classes to Code List Viewer: </source>
         <translation>Erro ao carregar classes no Visualizador de Code List: </translation>
+    </message>
+    <message>
+        <location filename="../AttributeTools/code_list.py" line="228"/>
+        <source>A problem occurred! Check log for details. (Do the layers have Value Maps?)</source>
+        <translation>Um problema ocorreu! Verifique o log para detalhes. (As camadas possuem mapa de valor?)</translation>
     </message>
 </context>
 <context>
@@ -6219,7 +6224,7 @@ Camada</translation>
         <translation>Buscando pontas soltas em {0}.{1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="320"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="321"/>
         <source>Dangle on {0}.{1}</source>
         <translation>Ponta solta em {0}.{1}</translation>
     </message>
@@ -7386,6 +7391,86 @@ Camada</translation>
         <location filename="../InventoryTools/inventoryTools.py" line="183"/>
         <source>Please, insert file extensions to be considered.</source>
         <translation>Por favor, insira extensões de arquivo que devem ser consideradas.</translation>
+    </message>
+</context>
+<context>
+    <name>LineOnLineOverlayProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="35"/>
+        <source>Overlay Lines with Lines</source>
+        <translation>Seccionar linhas com linhas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="50"/>
+        <source>Snap to Grid (adjust coordinates precision)</source>
+        <translation>Colar na grade (ajustar precisão de coordenadas)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <source>Remove Small Lines</source>
+        <translation>Remover linhas pequenas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <source>Clean Geometries</source>
+        <translation>Limpar geometrias</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="59"/>
+        <source>Starting </source>
+        <translation>Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="59"/>
+        <source> Process.</source>
+        <translation> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="62"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="66"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="86"/>
+        <source>Line on Line Overlay process complete.</source>
+        <translation>Processo de seccionar linhas com linhas completo.</translation>
     </message>
 </context>
 <context>
@@ -8585,7 +8670,7 @@ Camada</translation>
         <translation>Cortar e remover elementos dentro da área de corte</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="146"/>
+        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="152"/>
         <source>Problem executing grass7:v.overlay. Check your installed libs.
 </source>
         <translation>Problema ao executar grass7:v.overlay. Verifique as bibliotecas instaladas.
@@ -9239,7 +9324,7 @@ Camada</translation>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3538"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3533"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
@@ -9772,7 +9857,7 @@ Camada</translation>
         <translation>Problema criando índice espacial na tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3523"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3518"/>
         <source>Problem getting gaps: </source>
         <translation>Problema obtendo gaps: </translation>
     </message>
@@ -9782,17 +9867,17 @@ Camada</translation>
         <translation>Gap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3460"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3455"/>
         <source>Problem getting overlaps: </source>
         <translation>Problema obtendo overlaps: </translation>
     </message>
     <message>
         <location filename="../Factories/DbFactory/postgisDb.py" line="3444"/>
         <source>Overlap between the features of the coverage layer</source>
-        <translation>Overlap entre a camada de referência e a camada de cobertura</translation>
+        <translation type="obsolete">Overlap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3462"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3457"/>
         <source>Overlap between the features of the layer</source>
         <translation>Overlap entre as feições da camada</translation>
     </message>
@@ -9812,17 +9897,17 @@ Camada</translation>
         <translation>Problema ao apagar a tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3509"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3504"/>
         <source>Problem filtering flags: </source>
         <translation>Problema filtrando as flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3525"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3520"/>
         <source>Gap between the features of the layer</source>
         <translation>Gap entre as feições da camada</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3552"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3547"/>
         <source>Problem getting validation processes history table: </source>
         <translation>Problema ao obter o histórico dos processos de validação: </translation>
     </message>
@@ -11268,17 +11353,17 @@ Camada</translation>
         <translation>Uma camada de referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="94"/>
         <source>All features from </source>
         <translation>Todas as feições de </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="94"/>
         <source> snapped to reference </source>
         <translation> atraídas para a referência </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="90"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="94"/>
         <source> succesfully.
 </source>
         <translation> com sucesso.</translation>
@@ -11289,7 +11374,7 @@ Camada</translation>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="84"/>
+        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="88"/>
         <source>Processing features on </source>
         <translation>Processando feições na camada </translation>
     </message>
@@ -12285,17 +12370,17 @@ Camada</translation>
         <translation>Erro! Primitivas geométricas diferentes!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="498"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="501"/>
         <source>Building unified layers with  </source>
         <translation>Construindo camada unificada com </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="563"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="570"/>
         <source>Elapsed time for process {0} on layer {1}: {2}</source>
         <translation>Tempo decorrido para o processo {0} na camada {1}: {2}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="567"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="574"/>
         <source>Elapsed time for process {0}: {1}</source>
         <translation>Tempo decorrido para o processo {1}: {2}</translation>
     </message>
@@ -12305,17 +12390,17 @@ Camada</translation>
         <translation>Usuário do banco de dados: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="591"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="598"/>
         <source>Database username: {0}</source>
         <translation>Usuário do banco de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="593"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="600"/>
         <source>Unable to get database username.</source>
         <translation>Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="596"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="603"/>
         <source>
 Parameters used on this execution of process {}
 </source>
@@ -12324,18 +12409,18 @@ Parâmetros utilizados nesta execução do processo {}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="600"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="607"/>
         <source>Unable to get database parameters for process {}.</source>
         <translation>Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="602"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="609"/>
         <source>
 Number of flags raised by the process: {}</source>
         <translation>Número de flags apontadas pelo processo: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="606"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="613"/>
         <source>
 Total elapsed time for process {0}: {1}
 </source>
@@ -12344,7 +12429,7 @@ Tempo total de execução para o processo {0}: {1}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="608"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="615"/>
         <source>
 Unable to get total elapsed time.</source>
         <translation>
