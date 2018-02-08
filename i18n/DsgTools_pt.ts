@@ -7468,9 +7468,24 @@ Camada</translation>
         <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="86"/>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="93"/>
         <source>Line on Line Overlay process complete.</source>
         <translation>Processo de seccionar linhas com linhas completo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <source>Identify Small Lines</source>
+        <translation>Identificar linhas pequenas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="79"/>
+        <source>Empty layer or empty selection!. Nothing to be done.</source>
+        <translation>Camada vazia ou seleção vazia! Nada a ser feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="80"/>
+        <source>Layer {0} is empty or there are no selected features!. Nothing to be done.</source>
+        <translation>Camada {0} está vazia ou não há feições selecionadas! Nada a ser feito.</translation>
     </message>
 </context>
 <context>

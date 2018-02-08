@@ -42,7 +42,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {self.tr('Length'): 5.0, 'Classes': interfaceDictList, 'Only Selected':False, 'Only First Order Lines':False}
+            self.parameters = {self.tr('Length'): 1.0, 'Classes': interfaceDictList, 'Only Selected':False, 'Only First Order Lines':False}
             self.identifyDangles = IdentifyDanglesProcess(postgisDb, iface, instantiating = True)
             self.identifyDangles.parameters = self.parameters
 
