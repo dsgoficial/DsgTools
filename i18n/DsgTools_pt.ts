@@ -136,6 +136,15 @@ p, li { white-space: pre-wrap; }
         <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Noto Sans&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-weight:600;&quot;&gt;Version: 3.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
@@ -143,19 +152,30 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este Plugin foi desenvolvido de acordo com as Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais Brasileira.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.0.8&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-=======
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 3.1&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
->>>>>>> 07f7d49a750b80f9db215580f75c1a0b28b31fad
     </message>
 </context>
 <context>
     <name>AbstractDb</name>
     <message>
+        <location filename="Factories/DbFactory/abstractDb.py" line="63"/>
+        <source>Error when opening database.</source>
+        <translation type="obsolete">Erro abrindo banco de dados.</translation>
     </message>
+    <message>
         <location filename="../Factories/DbFactory/abstractDb.py" line="94"/>
+        <source>Problem counting elements: </source>
+        <translation>Problema na contagem dos elementos: </translation>
+    </message>
+    <message>
+        <location filename="../Factories/DbFactory/abstractDb.py" line="226"/>
+        <source>Validation Problems Summary</source>
+        <translation>Resumo de Problemas de Validação</translation>
+    </message>
+    <message>
         <location filename="../Factories/DbFactory/abstractDb.py" line="230"/>
         <source>Classes with null lines:</source>
+        <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
         <location filename="../Factories/DbFactory/abstractDb.py" line="569"/>
@@ -170,7 +190,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Factories/DbFactory/abstractDb.py" line="236"/>
         <source>Classes with null primary keys:</source>
-        <translation>Classes com chaves primárias nulas:</translation>
+        <translation>Classes com chaves primárias nulas: </translation>
     </message>
     <message>
         <location filename="../Factories/DbFactory/abstractDb.py" line="242"/>
@@ -261,11 +281,6 @@ p, li { white-space: pre-wrap; }
         <location filename="../Factories/DbFactory/abstractDb.py" line="657"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
-    </message>
-    <message>
-        <location filename="../Factories/DbFactory/abstractDb.py" line="274"/>
-        <source>Features with invalid uuid foreign key:</source>
-        <translation>Feições com chave estrangeira do tipo uuid inválidas:</translation>
     </message>
 </context>
 <context>
@@ -5052,7 +5067,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Novo Elemento</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.ui" line="152"/>
+        <location filename="ProductionTools/FieldToolBox/field_setup.ui" line="152"/>
         <source>Filter</source>
         <translation type="obsolete">Filtro</translation>
     </message>
@@ -12514,7 +12529,7 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Flags</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.ui" line="129"/>
+        <location filename="ValidationTools/validation_toolbox.ui" line="129"/>
         <source>Show suggestions</source>
         <translation type="obsolete">Mostrar sugestões</translation>
     </message>
