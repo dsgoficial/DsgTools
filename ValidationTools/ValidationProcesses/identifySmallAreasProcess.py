@@ -48,6 +48,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -55,10 +56,10 @@ class IdentifySmallAreasProcess(ValidationProcess):
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             recordList = []
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -66,27 +67,28 @@ class IdentifySmallAreasProcess(ValidationProcess):
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 localProgress.step()
 
-                allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 if self.parameters['Only Selected']:
                     featureList = lyr.selectedFeatures()
+                    size = len(featureList)
                 else:
                     featureList = lyr.getFeatures()
+                    size = len(lyr.allFeatureIds())
+
+                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     if feat.geometry().area() < tol:
                         geometry = binascii.hexlify(feat.geometry().asWkb())
                         recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], feat.id(), self.tr('Small Area.'), geometry, classAndGeom['geom']))
                     localProgress.step()
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
 
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 msg = str(numberOfProblems) + self.tr(' features have small areas. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 msg = self.tr('There are no small areas.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

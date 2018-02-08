@@ -29,7 +29,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating=False)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
         
         if not self.instantiating:
@@ -58,6 +58,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             tol = self.parameters['Angle']
             error = False
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -86,6 +87,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] + self.tr(' have out of bounds angle(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no out of bounds angles on ') + classAndGeom['tableName'] + '.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             if error:
                 self.setStatus(self.tr('There are features with angles out of bounds. Check log.'), 4) #Finished with errors
             else:

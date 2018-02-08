@@ -170,11 +170,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             self.addFlag(flagTupleList)
             msg = self.tr('Process finished with problems. Check flags.')
             self.setStatus(msg, 4) #Finished with flags
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         else:
             msg = self.tr('There are no area building errors.')
-            self.setStatus(msg, 1)
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
+            self.setStatus(msg, 1)     
     
     def relateAreasWithCentroids(self, cl, areaLyr, centroidLyr, relateDict, centroidIdx):
         """

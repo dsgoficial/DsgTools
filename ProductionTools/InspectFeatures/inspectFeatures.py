@@ -79,22 +79,20 @@ class InspectFeatures(QWidget,Ui_Form):
             parent.addAction(action)
         return action
     
-    def lol(self):
-        print 'lol'
-    
     def getIterateLayer(self):
 	    return self.mMapLayerComboBox.currentLayer()
 
     def enableTool(self, enabled = True):
         from qgis.core import QgsVectorLayer
         if enabled == None or not isinstance(enabled, QgsVectorLayer):
-            enabled = False
+            allowed = False
         else:
-            enabled = True
+            allowed = True
+        toggled = self.inspectPushButton.isChecked()
+        enabled = allowed and toggled
         self.backInspectButton.setEnabled(enabled)
         self.nextInspectButton.setEnabled(enabled)
         self.idSpinBox.setEnabled(enabled)
-
         
     def enableScale(self):
         """
@@ -113,8 +111,9 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Inspects the next feature
         """
-        method = getattr(self, 'testIndexFoward')
-        self.iterateFeature(method)
+        if self.nextInspectButton.isEnabled():
+            method = getattr(self, 'testIndexFoward')
+            self.iterateFeature(method)
     
     def testIndexFoward(self, index, maxIndex, minIndex):
         """
@@ -139,8 +138,9 @@ class InspectFeatures(QWidget,Ui_Form):
         """
         Inspects the previous feature
         """
-        method = getattr(self, 'testIndexBackwards')
-        self.iterateFeature(method)
+        if self.backInspectButton.isEnabled():
+            method = getattr(self, 'testIndexBackwards')
+            self.iterateFeature(method)
     
     @pyqtSlot(int, name = 'on_idSpinBox_valueChanged')
     def setNewId(self, newId):
@@ -157,9 +157,9 @@ class InspectFeatures(QWidget,Ui_Form):
                 return
             featIdList = self.getFeatIdList(currentLayer)
             if oldIndex not in featIdList:
-                oldId = 0
+                oldIndex = 0
             zoom = self.mScaleWidget.scale()
-            if oldId == newId:
+            if oldIndex == newId:
                 self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
                 return
             try:
@@ -169,8 +169,8 @@ class InspectFeatures(QWidget,Ui_Form):
                 self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
             except:
                 self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
-                self.idSpinBox.setValue(oldId)
-                self.makeZoom(zoom, currentLayer, oldId)
+                self.idSpinBox.setValue(oldIndex)
+                self.makeZoom(zoom, currentLayer, oldIndex)
 
     def getFeatIdList(self, currentLayer):
         #getting all features ids
@@ -181,6 +181,7 @@ class InspectFeatures(QWidget,Ui_Form):
             return []
         else:
             request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.asExpression())
+            request.setFlags(QgsFeatureRequest.NoGeometry)
             featIdList = [i.id() for i in currentLayer.getFeatures(request)]
         #sort is faster than sorted (but sort is just available for lists)
         featIdList.sort()
@@ -295,9 +296,11 @@ class InspectFeatures(QWidget,Ui_Form):
             toggled = self.inspectPushButton.isChecked()
         if toggled:
             self.splitter.show()
+            self.enableTool(self.mMapLayerComboBox.currentLayer())
             self.setToolTip(self.tr('Select a vector layer to enable tool'))
         else:
-            self.splitter.hide()         
+            self.splitter.hide()   
+            self.enableTool(False)      
 
     def setValues(self, featIdList, currentLayer):
         lyrName = currentLayer.name()

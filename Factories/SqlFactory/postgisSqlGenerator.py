@@ -23,9 +23,8 @@
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 from DsgTools.dsgEnums import DsgEnums
 
-import PyQt4
-
 class PostGISSqlGenerator(SqlGenerator):
+    
     def getComplexLinks(self, complex):
         sql = "SELECT complex_schema, complex, aggregated_schema, aggregated_class, column_name from complex_schema where complex = \'"+complex+'\''
         return sql
@@ -415,20 +414,39 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = "SELECT process_name, status FROM validation.process_history ORDER BY finished DESC LIMIT 1;"
         return sql
     
-    def deleteFlags(self, processName):
+    def deleteFlags(self, processName=None, className=None, flagId=None):
+        if not processName and not className and not flagId:
+            whereClause = ''
+        else:
+            clauseList = []
+            if processName:
+                processClause = """process_name = '{0}'""".format(processName)
+                clauseList.append(processClause)
+            if className:
+                classClause = """layer = '{0}'""".format(className)
+                clauseList.append(classClause)
+            if flagId:
+                try:
+                    for row in flagId:
+                        flagClauseRow = """id = {0} """.format(row)
+                        clauseList.append(flagClauseRow)
+                except TypeError:
+                    flagClause = """id = {0} """.format(flagId)
+                    clauseList.append(flagClause)
+            whereClause = """where {0}""".format(' AND '.join(clauseList))
         sql = """
         DELETE FROM validation.aux_flags_validacao_p 
         WHERE id in 
-        (SELECT id FROM validation.aux_flags_validacao_p where process_name = '%s')#
+        (SELECT id FROM validation.aux_flags_validacao_p {0})#
         
         DELETE FROM validation.aux_flags_validacao_l 
         WHERE id in 
-        (SELECT id FROM validation.aux_flags_validacao_l where process_name = '%s')#
+        (SELECT id FROM validation.aux_flags_validacao_l {0})#
 
         DELETE FROM validation.aux_flags_validacao_a 
         WHERE id in 
-        (SELECT id FROM validation.aux_flags_validacao_a where process_name = '%s')
-        """ % (processName, processName, processName)
+        (SELECT id FROM validation.aux_flags_validacao_a {0})
+        """.format(whereClause)
         return sql
     
     def testSpatialRule(self, class_a, necessity, predicate_function, class_b, min_card, max_card, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn):
@@ -514,24 +532,43 @@ class PostGISSqlGenerator(SqlGenerator):
         ) as foo2 where len < {2} order by foo2."{4}" """.format(schema, cl, areaTolerance, geometryColumn, keyColumn)
         return sql
     
-    def prepareVertexNearEdgesStruct(self, tableSchema, tableName, geometryColumn, keyColumn):
-        sql = """drop table if exists seg#
-        create temp table seg as (
-        SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
-        FROM
-           (SELECT
-              ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
-              ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
-              linestrings."{3}" as "{3}"
+    def prepareVertexNearEdgesStruct(self, tableSchema, tableName, geometryColumn, keyColumn, geomType):
+        if 'POLYGON' in geomType:
+            sql = """drop table if exists seg#
+            create temp table seg as (
+            SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
             FROM
-              (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}")))."{2}"
-               FROM only "{0}"."{1}" 
-               ) AS linestrings
-            ) AS segments)#
-        drop table if exists pontos#
-        create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}"))."{2}" as "{2}" from only "{0}"."{1}"#
-        create index pontos_gist on pontos using gist ("{2}")#
-        create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)
+            (SELECT
+                ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
+                ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
+                linestrings."{3}" as "{3}"
+                FROM
+                (SELECT "{3}" as "{3}", (ST_Dump(ST_Boundary("{2}"))).geom
+                FROM only "{0}"."{1}" 
+                ) AS linestrings
+                ) AS segments)#
+            drop table if exists pontos#
+            create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
+            create index pontos_gist on pontos using gist ("{2}")#
+            create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)
+        else:
+            sql = """drop table if exists seg#
+            create temp table seg as (
+            SELECT segments."{3}" as "{3}", ST_MakeLine(sp,ep) as "{2}"
+            FROM
+            (SELECT
+                ST_PointN("{2}", generate_series(1, ST_NPoints("{2}")-1)) as sp,
+                ST_PointN("{2}", generate_series(2, ST_NPoints("{2}")  )) as ep,
+                linestrings."{3}" as "{3}"
+                FROM
+                (SELECT "{3}" as "{3}", (ST_Dump("{2}")).geom
+                FROM only "{0}"."{1}" 
+                ) AS linestrings
+                ) AS segments)#
+            drop table if exists pontos#
+            create temp table pontos as select "{3}" as "{3}", (ST_DumpPoints("{2}")).geom as "{2}" from only "{0}"."{1}"#
+            create index pontos_gist on pontos using gist ("{2}")#
+            create index seg_gist on seg using gist ("{2}")""".format(tableSchema, tableName, geometryColumn, keyColumn)            
         return sql
 
     def getVertexNearEdgesStruct(self, epsg, tol, geometryColumn, keyColumn):
@@ -550,7 +587,7 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getNotSimple(self, tableSchema, tableName, geometryColumn, keyColumn):
         sql = """select foo."{3}" as "{3}", ST_MULTI(st_startpoint(foo."{2}")) as "{2}" from (
-        select "{3}" as "{3}", (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid("{2}"),ST_SRID("{2}")))))."{2}" as "{2}" from "{0}"."{1}"  
+        select "{3}" as "{3}", (ST_Dump(ST_Node(ST_SetSRID(ST_MakeValid("{2}"),ST_SRID("{2}"))))).geom as "{2}" from "{0}"."{1}"  
         where ST_IsSimple("{2}") = 'f') as foo where st_equals(st_startpoint(foo."{2}"),st_endpoint(foo."{2}"))""".format(tableSchema, tableName, geometryColumn, keyColumn)
         return sql
 
@@ -568,7 +605,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               ST_PointN("{3}", generate_series(3, ST_NPoints("{3}"))) as pt2,
                               linestrings."{4}" as "{4}"
                             FROM
-                              (SELECT "{4}" as "{4}", (ST_Dump("{3}"))."{3}" as "{3}"
+                              (SELECT "{4}" as "{4}", (ST_Dump("{3}")).geom as "{3}"
                                FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
             select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
@@ -585,7 +622,7 @@ class PostGISSqlGenerator(SqlGenerator):
                               ST_PointN("{3}", generate_series(2, ST_NPoints("{3}")) %  (ST_NPoints("{3}")-1)+1) as pt2,
                               linestrings."{4}" as "{4}"
                             FROM
-                              (SELECT "{4}" as "{4}", ST_Boundary((ST_Dump(ST_ForceRHR("{3}")))."{3}") as "{3}"
+                              (SELECT "{4}" as "{4}", (ST_Dump(ST_Boundary(ST_ForceRHR((ST_Dump("{3}")).geom)))).geom as "{3}"
                                FROM only "{0}"."{1}"
                                ) AS linestrings WHERE ST_NPoints(linestrings."{3}") > 2 ) as points)
             select distinct "{4}", anchor, angle from result where (result.angle % 360) < {2} or result.angle > (360.0 - ({2} % 360.0))""".format(tableSchema, tableName, angle, geometryColumn, keyColumn)
@@ -598,7 +635,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def forceValidity(self, tableSchema, tableName, idList, srid, keyColumn, geometryColumn):
         sql = """update "{0}"."{1}" set "{5}" = ST_Multi(result."{5}") from (
         select distinct parts."{4}", ST_Union(parts."{5}") as "{5}" from "{0}"."{1}" as source, 
-                                        (select "{4}" as "{4}", ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid("{5}"), {3})))."{5}")) as "{5}" from 
+                                        (select "{4}" as "{4}", ST_Multi(((ST_Dump(ST_SetSRID(ST_MakeValid("{5}"), {3}))).geom)) as "{5}" from 
                                         "{0}"."{1}"  where "{4}" in ({2})) as parts where ST_GeometryType(parts."{5}") = ST_GeometryType(source."{5}") group by parts."{4}"
         ) as result where  result."{4}" = "{0}"."{1}"."{4}" """.format(tableSchema, tableName, ','.join(idList), srid, keyColumn, geometryColumn)
         return sql
@@ -733,11 +770,11 @@ class PostGISSqlGenerator(SqlGenerator):
                 select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
                 from
                 (
-                    select short."{6}", St_SetPoint((ST_Dump(short."{5}"))."{5}", 0, 
+                    select short."{6}", St_SetPoint((ST_Dump(short."{5}")).geom, 0, 
                     ST_EndPoint(from_start)) as newline
                     from
                     (   select a."{6}" as "{6}", a."{5}" as "{5}",
-                        ST_ShortestLine(st_startpoint((ST_Dump(a."{5}"))."{5}"), 
+                        ST_ShortestLine(st_startpoint((ST_Dump(a."{5}")).geom), 
                         ST_Boundary(m."{7}")) as from_start
                         from "{0}"."{1}" a, "{3}"."{4}" m
                     ) as short
@@ -751,13 +788,13 @@ class PostGISSqlGenerator(SqlGenerator):
                 select simplelines."{6}" as "{6}", ST_Union(simplelines.newline) as "{5}"
                 from
                 (
-                    select short."{6}", St_SetPoint((ST_Dump(short."{5}"))."{5}", 
+                    select short."{6}", St_SetPoint((ST_Dump(short."{5}")).geom, 
                     short.index - 1, ST_EndPoint(from_start)) as newline
                     from
                     (   select a."{6}" as "{6}", a."{5}" as "{5}",
-                        ST_ShortestLine(st_endpoint((ST_Dump(a."{5}"))."{5}"), 
+                        ST_ShortestLine(st_endpoint((ST_Dump(a."{5}")).geom), 
                         ST_Boundary(m."{7}")) as from_start,
-                        ST_NPoints((ST_Dump(a."{5}"))."{5}") as index
+                        ST_NPoints((ST_Dump(a."{5}")).geom) as index
                         from "{0}"."{1}" a, "{3}"."{4}" m
                     ) as short
                     where ST_Length(from_start) < {2}
@@ -830,7 +867,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''DROP TABLE IF EXISTS {0}'''.format(tableName)
         return sql
     
-    def populateTempTable(self, tableName, attributes, prepareValues, geometry, srid, geomColumnName):
+    def populateTempTable(self, tableName, attributes, prepareValues):
         tableName = '"'+'"."'.join(tableName.split('.'))
         columnTupleString = '"'+'","'.join(map(str,attributes))+'"'
         valueTuppleString = ','.join(map(str,prepareValues))
@@ -977,9 +1014,10 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getGeomColumnTupleList(self, showViews = False):
         sql = """select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
-            left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc"""
+            left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc
+            where inn.type <> 'GEOMETRY' """
         if not showViews:
-            sql += """ where table_type = 'BASE TABLE'"""
+            sql += """ and table_type = 'BASE TABLE'"""
         return sql
     
     def getNotNullDict(self):
@@ -1402,7 +1440,10 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def removeRecordFromPropertyTable(self, settingType, configName, edgvVersion):
         tableName = self.getSettingTable(settingType)
-        sql = '''DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';'''.format(tableName, configName, edgvVersion)
+        if not edgvVersion:
+            sql = '''DELETE FROM public.{0} where name = '{1}';'''.format(tableName, configName)
+        else:
+            sql = '''DELETE FROM public.{0} where name = '{1}' and edgvversion = '{2}';'''.format(tableName, configName, edgvVersion)
         return sql
 
     def updateRecordFromPropertyTable(self, settingType, configName, edgvVersion, jsonDict):
@@ -1473,4 +1514,134 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def createViewStatement(self, viewName, viewDef):
         sql = """ CREATE OR REPLACE VIEW {0} AS {1}""".format(viewName, viewDef)
+        return sql
+
+    def checkPostGISAddonsInstallation(self):
+        sql = """SELECT COUNT(*) FROM pg_proc WHERE proname = 'st_geotablesummary' """
+        return sql    
+        
+    def createCoverageTempTable(self, srid):
+        sql = """
+        DROP TABLE IF EXISTS validation.coverage_temp;
+        CREATE TABLE validation.coverage_temp (
+            id serial NOT NULL,
+            featid bigint NOT NULL,
+            classname varchar(200) NOT NULL,
+            geom geometry(MULTIPOLYGON, {}) NOT NULL,
+            CONSTRAINT coverage_pk PRIMARY KEY (id)
+        )
+        """.format(srid)
+        return sql
+
+    def checkCoverageForGapsWithFrame(self, frameTable, geomColumn):
+        frameSchema, frameTable = frameTable.split('.')
+        sql = """
+        select (ST_Dump(ST_SymDifference(a.geom, b.geom))).geom from
+        (select ST_Union({0}) as geom from "{1}"."{2}") as a,
+        (select ST_Union(geom) as geom from validation.coverage_temp) as b
+        """.format(geomColumn, frameSchema, frameTable)
+        return sql
+
+    def checkCoverageForOverlaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
+        tableSchema, tableName = table.split('.')
+        sql = """
+        select (ST_Dump(foo.geom)).geom as geom from (
+        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S3')).geom
+        ) as foo 
+        where ST_IsEmpty(foo.geom) = 'f'
+        """.format(tableSchema, tableName, geomColumn, keyColumn)
+        return sql
+
+    def getProcessOrClassFlags(self, filterType=None):
+        """
+        Returns all process or classes that raised flags
+        """
+        # to allow changing cases as desired
+        # filterType = filterType.lower()
+        sql = ""
+        # problemas com o Enum.
+        if 'process' in filterType.lower():
+            filterType = 0
+        elif filterType:
+            filterType = 1
+        if filterType == DsgEnums.ProcessName:            
+            sql = """
+        SELECT DISTINCT process_name 
+            FROM validation.aux_flags_validacao;
+            """
+        elif filterType == DsgEnums.ClassName:      
+            sql = """
+        SELECT DISTINCT layer
+            FROM validation.aux_flags_validacao;
+            """
+        return sql
+
+    def getFilteredFlagsQuery(self, filterType=None, filteredElement=None):
+        """
+        Returns process or classes that raised flags filtered by
+        chosen element in comboBox
+        """
+        sql = ""
+        # problemas com o Enum.
+        if 'process' in filterType.lower():
+            filterTypeEnum = 0
+        elif filterType:
+            filterTypeEnum = 1
+        sql = """
+        SELECT * FROM validation.aux_flags_validacao;
+            """
+        whereClause = ""
+        if filterTypeEnum == DsgEnums.ProcessName: 
+            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+        elif filterType == DsgEnums.ClassName:
+            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+        if filteredElement and filteredElement <> '':
+            sql = sql + whereClause
+        return sql
+
+    def createFilteredFlagsViewTableQuery(self, filterType=None, filteredElement=None):
+        """
+        Returns the query for creating and populating a view table of flags raised in 
+        validation processes based on users settings.
+        """
+        sql = """
+        CREATE OR REPLACE VIEW validation.filtered_flags AS 
+        SELECT * FROM validation.aux_flags_validacao
+        """
+        whereClause = ""
+        # problemas com o Enum.
+        if 'process' in filterType.lower():
+            filterTypeEnum = 0
+        elif filterType:
+            filterTypeEnum = 1            
+        if filterTypeEnum == DsgEnums.ProcessName: 
+            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+        elif filterTypeEnum == DsgEnums.ClassName:
+            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+        if filteredElement and filteredElement <> '':
+            sql = sql + whereClause
+        return sql
+    
+    def checkCoverageForGaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
+        tableSchema, tableName = table.split('.')
+        sql = """
+        select (ST_Dump(foo.geom)).geom as geom from (
+        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S4')).geom
+        ) as foo 
+        where ST_IsEmpty(foo.geom) = 'f'
+        """.format(tableSchema, tableName, geomColumn, keyColumn)
+        return sql
+
+    def createValidationHistoryViewTableQuery(self):
+        """
+        Returns the query for creating and populating a view table.
+        Shows the history of validation processes, ordered by execution.
+        """
+        sql = """
+        CREATE OR REPLACE VIEW validation.process_history_view AS 
+        SELECT t.process_name, t.log, s.status, t.finished
+        FROM validation.process_history AS t
+        JOIN validation.status AS s ON t.status = s.id
+        ORDER BY t.finished DESC;
+        """
         return sql

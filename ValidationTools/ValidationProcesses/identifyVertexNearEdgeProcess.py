@@ -47,17 +47,18 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1            
             tol = self.parameters[self.tr('Tolerance')]
             error = False
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -69,7 +70,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                 #running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, classAndGeom['geom'], keyColumn)
+                result = self.abstractDb.getVertexNearEdgesRecords(tableSchema, tableName, tol, classAndGeom['geom'], keyColumn, classAndGeom['geomType'])
                 localProgress.step()
                 
                 # dropping temp table
@@ -86,6 +87,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] +self.tr(' have vertex(es) near edge(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no vertexes near edges on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             if error:
                 self.setStatus(self.tr('There are vertexes near edges. Check log.'), 4) #Finished with errors
             else:

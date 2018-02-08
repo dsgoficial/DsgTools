@@ -40,7 +40,7 @@ class CleanGeometriesProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList, 'Only Selected':False}
         
     def runProcessinAlg(self, layer):
         """
@@ -49,7 +49,7 @@ class CleanGeometriesProcess(ValidationProcess):
         alg = 'grass7:v.clean.advanced'
 
         #setting tools
-        tools = 'break,rmsa,rmdangle'
+        tools = 'rmsa,break,rmdupl,rmdangle'
         threshold = -1
 
         #getting table extent (bounding box)
@@ -66,17 +66,18 @@ class CleanGeometriesProcess(ValidationProcess):
         
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(layer, outputLayer)
+        #self.updateOriginalLayerV2(layer, outputLayer)
 
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
-        return self.getProcessingErrors(errorLayer)
+        return self.getProcessingErrors(errorLayer), outputLayer
 
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -95,7 +96,13 @@ class CleanGeometriesProcess(ValidationProcess):
                 srid = self.abstractDb.findEPSG(parameters=parameters)                        
 
                 # running the process in the temp table
-                result = self.runProcessinAlg(lyr)
+                coverage = self.createUnifiedLayer([lyr])
+                result, output = self.runProcessinAlg(coverage)
+                self.splitUnifiedLayer(output, [lyr])
+                try:
+                    QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
+                except:
+                    QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 
                 # storing flags
                 if len(result) > 0:
@@ -107,6 +114,7 @@ class CleanGeometriesProcess(ValidationProcess):
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + classAndGeom['lyrName'] + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no cleaning errors on ') + classAndGeom['lyrName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['lyrName'])
             if error:
                 self.setStatus(self.tr('There are cleaning errors. Check log.'), 4) #Finished with errors
             else:

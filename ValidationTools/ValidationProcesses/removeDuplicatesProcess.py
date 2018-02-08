@@ -41,12 +41,16 @@ class RemoveDuplicatesProcess(ValidationProcess):
         """
         return self.tr('Identify Duplicated Geometries')
 
+    def postProcess(self):
+        return self.preProcess()
+
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
+            self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
 
             # getting parameters after the execution of our pre process
@@ -55,10 +59,10 @@ class RemoveDuplicatesProcess(ValidationProcess):
             flagsClasses = self.flagsDict.keys()
             if len(flagsClasses) == 0:
                 self.setStatus(self.tr('There are no duplicated geometries.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('There are no duplicated geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             numberOfProblems = 0
             for cl in flagsClasses:
+                self.startTimeCount()
                 # preparation
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
@@ -73,6 +77,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(str(problems) + self.tr(' duplicated features from ') + cl + self.tr(' were removed.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(cl)
             self.setStatus(str(numberOfProblems) + self.tr(' duplicated features were removed.'), 1)
             return 1
         except Exception as e:

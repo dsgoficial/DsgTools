@@ -42,6 +42,12 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
             self.parameters = {'Classes': interfaceDictList, 'MaxDissolveArea': -1.0, 'AttributeBlackList (comma separated)':''}
+    
+    def preProcess(self):
+        """
+        Returns the name of the pre process that must run before, must be reimplemented in each process
+        """
+        return self.tr('Force Geometries Validity')       
 
     def postProcess(self):
         """
@@ -121,10 +127,12 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
             error = False
             classlist = []
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 output = self.runProcessinAlg(lyr)
+                self.logLayerTime(classAndGeom['lyrName'])
 
             if error:
                 self.setStatus(self.tr('There are dissolve errors. Check log.'), 4) #Finished with errors

@@ -24,18 +24,20 @@ import os, json
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
-from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit
+from PyQt4.QtGui import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem, QAction
+from PyQt4.QtGui import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit, QKeySequence, QShortcut
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsMessageLog
+from qgis.gui import QgsShortcutsManager
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.QmlTools.qmlParser import QmlParser
+from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 import acquisition_tools
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -47,17 +49,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         Constructor
         """
         super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.abstractDb = abstractDb
-
-        self.setupUi(self)
-        self.populateClassList()
-        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
         self.edgvVersion = self.abstractDb.getDatabaseVersion()
         if self.abstractDb.db.driverName() == 'QPSQL':
             self.geomTypeDict = self.abstractDb.getGeomTypeDict()
@@ -65,8 +57,30 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             self.domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
             self.geomStructDict = self.abstractDb.getGeomStructDict()
         self.returnDict = returnDict
-        
-        self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs')
+        self.setupUi(self)
+        self.tableComboBox.setCurrentIndex(-1)  
+        self.populateClassList()
+        self.treeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.treeWidget.customContextMenuRequested.connect(self.createMenu)        
+        self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
+        self.optionalDict = {self.tr('Yes'):'1', self.tr('No'):'0'}
+        self.buttonPropDict = dict()
+        self.qgisShortcutList = self.getQGISShortcutList()
+    
+    def getQGISShortcutList(self):
+        """
+        Returns all shortcuts from qgis
+        """
+        shortcutList = []
+        for shortcutItem in QgsShortcutsManager().instance().listAll():
+            if isinstance(shortcutItem, QAction):
+                for i in shortcutItem.shortcuts():
+                    if i not in shortcutList:
+                        shortcutList.append(i)
+            if isinstance(shortcutItem, QShortcut):
+                if shortcutItem not in shortcutList:
+                    shortcutList.append(shortcutItem)
+        return shortcutList
     
     def __del__(self):
         if self.abstractDb:
@@ -77,7 +91,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         """
         Populates the class list with all geometric classes from database
         """
-        self.classListWidget.clear()
+        self.tableComboBox.clear()
         self.geomClasses = []
         try:
             self.geomClasses = self.abstractDb.listGeomClassesFromDatabase()
@@ -85,16 +99,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         self.geomClasses.sort()
-        self.classListWidget.addItems(self.geomClasses)
-        
-    def on_filterEdit_textChanged(self, text):
-        """
-        Sets a filter to only show desired classes
-        """
-        classes = [edgvClass for edgvClass in self.geomClasses if text in edgvClass]
-        self.classListWidget.clear()
-        self.classListWidget.addItems(classes)
-        self.classListWidget.sortItems()        
+        self.tableComboBox.addItems(self.geomClasses)
+        self.tableComboBox.setCurrentIndex(-1)  
     
     def clearAttributeTableWidget(self):
         """
@@ -124,7 +130,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         return ret    
     
     @pyqtSlot(int)
-    def on_classListWidget_currentRowChanged(self,row):
+    def on_tableComboBox_currentIndexChanged(self,row):
         """
         Creates the attribute table according to database.
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
@@ -195,10 +201,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #clear the attribute table
         self.clearAttributeTableWidget()
         
-        if not self.classListWidget.item(row):
+        if row == -1:
             return
         
-        fullTableName = self.classListWidget.item(row).text()
+        fullTableName = self.tableComboBox.currentText()
         #getting schema name and table name
         schemaName, tableName = self.abstractDb.getTableSchema(fullTableName)
         #getting the QML path
@@ -230,10 +236,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         #clear the attribute table
         self.clearAttributeTableWidget()
         
-        if not self.classListWidget.item(row):
+        if row == -1:
             return
         
-        fullTableName = self.classListWidget.item(row).text()
+        fullTableName = self.tableComboBox.currentText()
         #getting schema name and table name
         qmlDict = self.buildQmlDict(fullTableName)
         count = 0
@@ -267,9 +273,10 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         """
         if attr in qmlDict.keys():
+            enableIgnoreOption = False
             #case the type is dict the cell widget must be a combobox
             if isinstance(qmlDict[attr],dict):
-                comboItem = QComboBox()
+                comboItem = DsgCustomComboBox()
                 comboItem.addItems(sorted(qmlDict[attr].keys()))
                 self.attributeTableWidget.setCellWidget(count, 1, comboItem)
             #case the type is tuple the cell widget must be a listwidget
@@ -287,6 +294,37 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         else:
             textItem = QLineEdit()
             self.attributeTableWidget.setCellWidget(count, 1, textItem)
+            enableIgnoreOption = True
+        #insert here aditional parameters
+        self.createAditionalParameters(count, enableIgnoreOption)
+    
+    def createAditionalParameters(self, count, enableIgnoreOption):
+        """
+        Creates aditional parameters upon creation of an attribute item
+        """
+        #editable item
+        comboItem = QComboBox()
+        comboItem.addItems([self.tr('Yes'), self.tr('No')])
+        self.attributeTableWidget.setCellWidget(count, 2, comboItem)
+        #ignored item
+        comboItem = QComboBox()
+        comboItem.addItems([self.tr('No'), self.tr('Yes')])
+        comboItem.setEnabled(enableIgnoreOption)
+        self.attributeTableWidget.setCellWidget(count, 3, comboItem)
+    
+    def validateShortcut(self, currentButtonName):
+        currentShortcut = self.buttonPropWidget.shortcutWidget.getShortcut(asQKeySequence = True)
+        if currentShortcut == 0:
+            return True
+        sList = []
+        for tableName in self.buttonPropDict.keys():
+            for buttonName in self.buttonPropDict[tableName].keys():
+                if 'buttonShortcut' in self.buttonPropDict[tableName][buttonName].keys() and buttonName != currentButtonName:
+                    sList.append(QKeySequence(self.buttonPropDict[tableName][buttonName]['buttonShortcut']))
+        if currentShortcut in self.qgisShortcutList or currentShortcut in sList:
+            return False
+        else:
+            return True
     
     @pyqtSlot(bool)
     def on_addUpdatePushButton_clicked(self):
@@ -297,14 +335,18 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         if self.buttonNameLineEdit.text() == '':
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Enter a button name!'))
             return
+
+        if not self.validateShortcut(self.buttonNameLineEdit.text()):
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Shortcut already set to another tool!'))
+            return
         
         # invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
 
         # class row in the classListWidget
-        classRow = self.classListWidget.currentRow()
+        classRow = self.tableComboBox.currentText()
 
-        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+        schemaName, tableName = self.abstractDb.getTableSchema(classRow)
         if self.abstractDb.db.driverName() == 'QSQLITE':
             category = schemaName + '_' + tableName.split('_')[0]
         else:
@@ -324,7 +366,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 item = leaf
                 for j in range(leaf.childCount()):
                     leafChild = leaf.child(j)
-                    if leafChild.text(0) == self.classListWidget.item(classRow).text():
+                    if leafChild.text(0) == self.tableComboBox.currentText():
                         leafChildInTree = True
                         item = leafChild
                         for k in range(leafChild.childCount()):
@@ -339,7 +381,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             item.setText(0, category)
         if not leafChildInTree:
             item = QTreeWidgetItem(item)
-            item.setText(0, self.classListWidget.item(classRow).text())
+            item.setText(0, classRow)
         if not buttonInTree:        
             # item that will be used to create the button
             buttonItem = QTreeWidgetItem(item)
@@ -351,7 +393,13 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         else:
             fullTableName = schemaName+'.'+tableName
         qmlDict = self.buildQmlDict(fullTableName)
-        
+        #add optional parameters to self.buttonPropDict
+        if fullTableName not in self.buttonPropDict.keys():
+            self.buttonPropDict[fullTableName] = dict()
+        #parameter dict from buttonPropWidget has the following format:
+        #{'buttonColor':--color of the button--, 'buttonToolTip'--button toolTip--, 'buttonGroupTag':--group tag of the button--}
+        self.buttonPropDict[fullTableName][self.buttonNameLineEdit.text()] = self.buttonPropWidget.getParameterDict()
+
         # accessing the attribute name and widget (QComboBox or QListWidget depending on data type)
         for i in range(self.attributeTableWidget.rowCount()):
             attribute = self.attributeTableWidget.item(i, 0).text()
@@ -377,8 +425,8 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
             
             #sweep tree for attribute
             attrFound = False
-            for i in range(buttonItem.childCount()):
-                attrItem = buttonItem.child(i)
+            for k in range(buttonItem.childCount()):
+                attrItem = buttonItem.child(k)
                 if attribute == attrItem.text(0):
                     attrFound = True
                     attributeItem = attrItem
@@ -387,15 +435,21 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 attributeItem = QTreeWidgetItem(buttonItem)
                 attributeItem.setText(0, attribute)
             attributeItem.setText(1, value)
+            for j in [2,3]:
+                itemCell = self.attributeTableWidget.cellWidget(i, j)
+                if itemCell:
+                    if itemCell.isEnabled():
+                        itemText = itemCell.currentText()
+                        attributeItem.setText(j, self.optionalDict[itemText])
             
     def recreateAttributeTable(self, buttonItem):
         """
         Making the attribute table with the actual values present in the tree widget
         """
         # class row in the classListWidget
-        classRow = self.classListWidget.currentRow()
+        classRow = self.tableComboBox.currentIndex()
 
-        schemaName, tableName = self.abstractDb.getTableSchema(self.classListWidget.item(classRow).text())
+        schemaName, tableName = self.abstractDb.getTableSchema(self.tableComboBox.currentText())
 
         # qml dict for this class (tableName)
         if self.abstractDb.db.driverName() == 'QSQLITE':
@@ -438,6 +492,16 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                                 widgetItem.item(i).setCheckState(Qt.Checked)
                 else:
                     value = widgetItem.setText(value)
+                for j in [2,3]:
+                    #populate the other properties of the attribute
+                    widgetItem = self.attributeTableWidget.cellWidget(i, j)
+                    if widgetItem:
+                        textList = [key for key in self.optionalDict.keys() if  self.optionalDict[key] == attrItem.text(j)]
+                        if len(textList) > 0:
+                            text = textList[0]
+                            for idx in range(widgetItem.count()):
+                                if widgetItem.itemText(idx) == text:
+                                    widgetItem.setCurrentIndex(idx)
             
     def getUiParameterJsonDict(self):
         """
@@ -455,6 +519,37 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
     def makeReclassificationDict(self):
         """
         Makes the reclassification dictionary used to perform the actual reclassification
+        Dictionary has the following format:
+        {
+            "category": {
+                "schema.table_name":{
+                    "buttonName":{
+                        "attrName": {"value":value, "isEditable":isEditable, "isIgnored":isIgnored}
+                        "buttonProp": {"buttonColor":buttonColor, "buttonToolTip":buttonToolTip, "buttonGroupTag":buttonGroupTag}
+                    }
+                },
+            "uiParameterJsonDict": {
+                "checkBox": bool, 
+                "slider": size
+                }, 
+            "version": version
+            }
+        }
+        old dict has the following format:
+        {
+            "category": {
+                "schema.table_name":{
+                    "buttonName":{
+                        "attrName": value
+                    }
+                },
+            "uiParameterJsonDict": {
+                    "checkBox": bool, 
+                    "slider": size
+                }, 
+            "version": version
+            }
+        }
         """
         reclassificationDict = dict()
         
@@ -472,10 +567,17 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                 reclassificationDict[categoryItem.text(0)][classItem.text(0)] = dict()
                 for k in range(classItem.childCount()):
                     buttonItem = classItem.child(k)
+                    #buttonItem.text(0) is the buttonName
                     reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)] = dict()
                     for l in range(buttonItem.childCount()):
                         attributeItem = buttonItem.child(l)
-                        reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = attributeItem.text(1)
+                        if attributeItem.text(0) == '':
+                            continue
+                        dictItem = {"value":attributeItem.text(1), "isEditable":attributeItem.text(2), "isIgnored":attributeItem.text(3)}
+                        reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)][attributeItem.text(0)] = dictItem
+                    if classItem.text(0) in self.buttonPropDict.keys():
+                        if buttonItem.text(0) in self.buttonPropDict[classItem.text(0)]:
+                            reclassificationDict[categoryItem.text(0)][classItem.text(0)][buttonItem.text(0)]["buttonProp"] = self.buttonPropDict[classItem.text(0)][buttonItem.text(0)]
         return reclassificationDict
     
     def readJsonFile(self, filename):
@@ -511,6 +613,7 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
         index = self.edgvVersion
         
         self.treeWidget.clear()
+        self.qgisShortcutList = self.getQGISShortcutList() #resets lists
         
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
@@ -531,31 +634,54 @@ class FieldSetup(QtGui.QDialog, FORM_CLASS):
                     buttonItem.setText(0, button)
                     for attribute in reclassificationDict[category][edgvClass][button].keys():
                         attributeItem = QTreeWidgetItem(buttonItem)
-                        attributeItem.setText(0, attribute)
-                        attributeItem.setText(1, reclassificationDict[category][edgvClass][button][attribute])
+                        attrDict = reclassificationDict[category][edgvClass][button][attribute]
+                        if attribute == 'buttonProp':
+                            if edgvClass not in self.buttonPropDict.keys():
+                                self.buttonPropDict[edgvClass] = dict()
+                            self.buttonPropDict[edgvClass][button] = attrDict
+                        else:
+                            attributeItem.setText(0, attribute)
+                            if isinstance(attrDict, dict):
+                                attributeItem.setText(1, attrDict['value'])
+                                attributeItem.setText(2, attrDict['isEditable'])
+                                attributeItem.setText(3, attrDict['isIgnored'])
+                            else:
+                                attributeItem.setText(1, attrDict)
                     
     def on_treeWidget_currentItemChanged(self, previous, current):
         """
         Adjusts the button visualization according to the selected item in the tree widget
         """
-        self.filterEdit.setText('')
         depth = self.depth(previous)
         if depth == 1:
             self.buttonNameLineEdit.setText('')
         elif depth == 2:
-            classItems = self.classListWidget.findItems(previous.text(0), Qt.MatchExactly)
-            self.classListWidget.setCurrentItem(classItems[0])
+            idx = self.tableComboBox.findData(previous.text(0), Qt.MatchExactly)
+            self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText('')
         elif depth == 3:
-            classItems = self.classListWidget.findItems(previous.parent().text(0), Qt.MatchExactly)
-            self.classListWidget.setCurrentItem(classItems[0])
+            idx = self.tableComboBox.findData(previous.parent().text(0), Qt.MatchExactly)
+            if idx != -1:
+                self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText(previous.text(0))
             self.recreateAttributeTable(previous)
+            self.populateOptionalParametersWidget(previous.text(0))
         elif depth == 4:
-            classItems = self.classListWidget.findItems(previous.parent().parent().text(0), Qt.MatchExactly)
-            self.classListWidget.setCurrentItem(classItems[0])
+            idx = self.tableComboBox.findData(previous.parent().parent().text(0), Qt.MatchExactly)
+            if idx != -1:
+                self.tableComboBox.setCurrentIndex(idx)
             self.buttonNameLineEdit.setText(previous.parent().text(0))
             self.recreateAttributeTable(previous.parent())
+    
+    def populateOptionalParametersWidget(self, buttonName):
+        """
+        Takes values from self.buttonPropDict and populates butonPropWidget
+        """
+        schemaName, tableName = self.abstractDb.getTableSchema(self.tableComboBox.currentText())
+        fullTableName = '.'.join([schemaName, tableName])
+        if fullTableName in self.buttonPropDict.keys():
+            if buttonName in self.buttonPropDict[fullTableName].keys():
+                self.buttonPropWidget.setInterface(self.buttonPropDict[fullTableName][buttonName])
 
     def depth(self, item):
         """

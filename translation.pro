@@ -29,6 +29,15 @@
 					ValidationTools/ValidationProcesses/snapGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py \
 					ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
+					ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py \
+					ValidationTools/ValidationProcesses/identifyDanglesProcess.py \
+					ValidationTools/ValidationProcesses/identifyOverlapsProcess.py \
+					ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py \
+					ValidationTools/ValidationProcesses/mergeLinesProcess.py \	
+					ValidationTools/ValidationProcesses/identifyGapsProcess.py \				
+					ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygons.py \	
+					ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \	
+					ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py \
 					ValidationTools/validation_toolbox.py \
 					ValidationTools/validation_config.py \
 					ValidationTools/setupEarthCoverage.py \
@@ -77,6 +86,11 @@
 					ProductionTools/ContourTool/contour_value.py \
 					ProductionTools/ContourTool/dsg_line_tool.py \
 					ProductionTools/ContourTool/__init__.py \
+					ProductionTools/Acquisition/__init__.py \
+					ProductionTools/Acquisition/acquisition.py \
+					ProductionTools/Acquisition/circle.py \
+					ProductionTools/Acquisition/geometricaAquisition.py \
+					ProductionTools/Acquisition/polygon.py \
 					resources_rc.py \
 					LayerTools/LoadLayersFromServer/loadLayersFromServer.py \
 					LayerTools/LoadLayersFromServer/__init__.py \
@@ -180,6 +194,7 @@
 					CustomWidgets/AttributeValidityWidgets/__init__.py \
 					CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.py \
 					CustomWidgets/customSelector.py \
+					CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py \
 					CustomWidgets/CustomDbManagementWidgets/domainSetter.py \
 					CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py \
 					CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py \
@@ -199,6 +214,7 @@
 					CustomWidgets/customizationManagerWidget.py \
 					CustomWidgets/permissionWidget.py \
 					CustomWidgets/connectionWidget.py \
+					CustomWidgets/buttonPropWidget.py \
 					CustomWidgets/__init__.py \
 					ToolboxTools/models_and_scripts_installer.py \
 					ToolboxTools/__init__.py \
@@ -233,8 +249,9 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
 					ProductionTools/StyleManagerTool/__init__.py \
 					ProductionTools/StyleManagerTool/styleManagerTool.py \
-					CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py
-					CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py
+					CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py \
+					CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py \
+					CustomWidgets/customReferenceAndLayersParameterSelector.py
 					
 
 
@@ -292,6 +309,7 @@
 					CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui \
 					CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui \
 					CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui \
+					CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui \
 					CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui \
 					CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui \
 					CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui \
@@ -312,6 +330,7 @@
 					CustomWidgets/connectionWidget.ui \
 					CustomWidgets/customizationManagerWidget.ui \
 					CustomWidgets/tabDbSelectorWidget.ui \
+					CustomWidgets/buttonPropWidget.ui \
 					ToolboxTools/models_and_scripts_installer.ui \
 					ConversionTools/convert_database.ui \
 					AttributeTools/attributes_viewer.ui \
@@ -323,6 +342,7 @@
 					DbTools/BatchDbCreator/createBatchIncrementing.ui \
 					DbTools/BatchDbCreator/batchDbCreator.ui \
 					ProductionTools/StyleManagerTool/styleManagerTool.ui \
+					CustomWidgets/customReferenceAndLayersParameterSelector.ui \
 
  TRANSLATIONS    = i18n/DsgTools_pt.ts
 

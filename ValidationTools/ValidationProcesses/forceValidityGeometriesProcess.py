@@ -46,7 +46,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         """
         Gets the process that should be execute after this one
         """
-        return self.tr('Deaggregate Geometries')
+        return [self.tr('Deaggregate Geometries'), self.tr('Identify Invalid Geometries')] #more than one post process (this is treated in validationManager)
 
     def execute(self):
         """
@@ -55,10 +55,8 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-
             # getting parameters after the execution of our pre process
             self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
-            
             classesWithFlags = self.flagsDict.keys()
             if len(classesWithFlags) == 0:
                 self.setStatus(self.tr('There are no invalid geometries.'), 1) #Finished
@@ -66,6 +64,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
                 return 1
             numberOfProblems = 0
             for cl in classesWithFlags:
+                self.startTimeCount()
                 # preparation
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()
@@ -77,6 +76,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
                 problems = self.abstractDb.forceValidity(processTableName, self.flagsDict[cl], keyColumn)
                 localProgress.step()
                 numberOfProblems += problems
+                self.logLayerTime(cl) #check this time later (I guess time will be counted twice due to postProcess)
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
                 QgsMessageLog.logMessage(self.tr('{0} features from {1} were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

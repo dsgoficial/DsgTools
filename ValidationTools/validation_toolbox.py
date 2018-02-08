@@ -46,6 +46,7 @@ from DsgTools.ValidationTools.validation_history import ValidationHistory
 from DsgTools.ValidationTools.rules_editor import RulesEditor
 from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
 from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
+from DsgTools.dsgEnums import DsgEnums
 
 class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
     def __init__(self, iface):
@@ -67,12 +68,13 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.tableView.customContextMenuRequested.connect(self.createMenuEditFlagStatus)
+        self.tableView.customContextMenuRequested.connect(self.createContextMenu)
         self.ruleEnforcer = None
         self.attributeRulesEditorPushButton.hide()
         self.itemList = []
+        self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
 
-    def createMenuEditFlagStatus(self, position):
+    def createContextMenu(self, position):
         """
         Creates the flag menu
         """
@@ -80,10 +82,24 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         item = self.tableView.indexAt(position)
         if item:
             menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
+            menu.addAction(self.tr('Remove flag'), self.removeCurrentFlag)
 #             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
 #             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
+        
     
+    def removeCurrentFlag(self):
+        """
+        Creates the remove flag menu
+        """
+        try:
+            flagId = self.tableView.selectionModel().selection().indexes()[0].data()
+        except:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
+            return
+        self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
+        self.refreshFlags()
+
     @pyqtSlot()
     def on_theSelectionModel_selectionChanged(self):
         """
@@ -97,7 +113,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         print 'visited'
 
-    def setFlagUnvisited(self):
+    def setFlagUnvisited(self): 
         """
         To do
         """
@@ -107,8 +123,11 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Zooms the map canvas to the current selected flag
         """
-        idx =  self.tableView.selectionModel().selection().indexes()[0].data()
-        
+        try:
+            idx =  self.tableView.selectionModel().selection().indexes()[0].data()
+        except:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
+            return
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
         if dimension == 0:
             layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
@@ -127,13 +146,25 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.iface.mapCanvas().setExtent(mapbox)
         self.iface.mapCanvas().refresh()
     
+    def loadAllFlagLayers(self):
+        """
+        Loads all flags
+        """
+        pointLayer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
+        lineLayer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
+        areaLayer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
+        self.loadFlagLyr([pointLayer, lineLayer, areaLayer])
+    
     def loadFlagLyr(self, layer):
         """
         Loads the flag layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
         layer: layer name
         """
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
-        return self.layerLoader.load([layer], uniqueLoad = True)[layer['lyrName']]
+        if isinstance(layer, list):
+            return self.layerLoader.load(layer, uniqueLoad = True)
+        else:
+            return self.layerLoader.load([layer], uniqueLoad = True)[layer['lyrName']]
     
     def checkFlagsLoaded(self, layer):
         """
@@ -232,6 +263,34 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         QApplication.restoreOverrideCursor()
 
     @pyqtSlot(bool)
+    def on_reRunButton_clicked(self):
+        """
+        Re-runs last process with the same attributes.
+        """
+        if not self.validationManager:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to run process!'))
+            return
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        try:
+            procReturn = self.validationManager.runLastProcess()
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            procReturn = 0
+            QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
+        self.populateProcessList()
+        if procReturn == 0:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
+        elif procReturn == -1:
+            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
+        elif procReturn == -2:
+            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('No previous process run this session.'))
+        else:
+            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
+            #executou! show!
+
+    @pyqtSlot(bool)
     def on_runButton_clicked(self):
         """
         Runs the current selected process
@@ -243,7 +302,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         processName = selectedItems[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
-            procReturn = self.validationManager.executeProcess(processName)
+            procReturn = self.validationManager.executeProcessV2(processName)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -258,6 +317,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         else:
             QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
+            #load flag layers
+            self.loadAllFlagLayers()
+        self.iface.mapCanvas().refresh() #atualizar canvas para mostrar resultado para o usuário
 
     @pyqtSlot(int, name='on_validationTabWidget_currentChanged')
     def refreshFlags(self):
@@ -266,7 +328,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel.select()
-    
+        self.refreshOnChangeProcessOrClass()
+
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
         """
@@ -278,7 +341,31 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
-            
+
+    @pyqtSlot(int, name = 'on_customFilterComboBox_currentIndexChanged')
+    def refreshFlagListOnClassProcessSelection(self):        
+        """
+        Refreshs the list of Classes or Processes accordingly to the
+        type of filter chosen
+        """
+        filterType = self.filterTypeComboBox.currentText()
+        filteredElement = self.customFilterComboBox.currentText()
+        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(filterType=filterType, filteredElement=filteredElement)
+        self.projectModel.setTable('validation.filtered_flags')
+        self.projectModel.select()
+        
+    @pyqtSlot(int, name = 'on_filterTypeComboBox_currentIndexChanged')
+    def refreshOnChangeProcessOrClass(self):
+        """
+        Refreshs the list of processes or classes available 
+        for filtering the view
+        """
+        filterType = self.filterTypeComboBox.currentText()
+        self.customFilterComboBox.clear()
+        if self.configWindow.widget.abstractDb:
+            listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
+            self.customFilterComboBox.addItems(listProcessesOrClasses)    
+
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
         """
@@ -303,3 +390,54 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
+
+    @pyqtSlot(bool)
+    def on_clearAllPushButton_clicked(self):
+        """
+        Deletes all flags from validation.aux_flags
+        1- Get abstractDb
+        2- Delete flag
+        """
+        try:
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear all flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            self.configWindow.widget.abstractDb.deleteProcessFlags()
+            QApplication.restoreOverrideCursor()
+            #refresh
+            self.refreshFlags()
+            self.iface.mapCanvas().refresh()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+
+    @pyqtSlot(bool)
+    def on_clearSelectedPushButton_clicked(self):
+        """
+        Deletes selected flags on the panel from validation.aux_flags
+        """
+        try:
+            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+
+            filterType = self.filterTypeComboBox.currentText()
+            processName, layerName = None, None
+            # check what is filtered
+            if self.filterDict[filterType] == DsgEnums.ProcessName:
+                processName = self.customFilterComboBox.currentText()
+            elif self.filterDict[filterType] == DsgEnums.ClassName:
+                layerName = self.customFilterComboBox.currentText()
+            if (processName or layerName):
+                self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
+            else:
+                QApplication.restoreOverrideCursor()
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
+                return
+            QApplication.restoreOverrideCursor()
+            # refresh View Table with lasting flags
+            self.refreshFlags()
+            self.iface.mapCanvas().refresh()
+        except Exception as e:
+            QApplication.restoreOverrideCursor()
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))

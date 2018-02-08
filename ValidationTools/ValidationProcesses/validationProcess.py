@@ -21,13 +21,15 @@
  ***************************************************************************/
 """
 import binascii
+from datetime import datetime
+import json
 # Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QVariant
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField
+from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -48,7 +50,25 @@ class ValidationProcess(QObject):
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
         self.processAlias = self.tr('Validation Process')
         self.instantiating = instantiating
-        
+        self.totalTime = 0
+        self.startTime = 0
+        self.endTime = 0
+        self.dbUserName = None
+        self.logMsg = None
+        self.processName = None
+
+    def setProcessName(self, processName):
+        """
+        Identifies the process name as it is.
+        """
+        self.processName = processName
+
+    def setDbUserName(self, userName):
+        """
+        Identifies the database username.
+        """
+        self.dbUserName = userName
+
     def setParameters(self, params):
         """
         Define the process parameteres
@@ -160,6 +180,12 @@ class ValidationProcess(QObject):
         msg: Status text message
         """
         try:
+            if status not in [0,3]: # neither running nor instatiating status should be logged
+                self.logProcess()
+                if self.logMsg:
+                    msg += "\n\n" + self.logMsg
+                elif not self.dbUserName:
+                    msg += self.tr("Database username: {}").format(self.abstractDb.db.userName())
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
@@ -217,7 +243,8 @@ class ValidationProcess(QObject):
         """
         Updates the original layer using the grass output layer
         pgInputLyr: postgis input layer
-        grassOutputLyr: grass output layer
+        qgisOutputVector: qgis output layer
+        Speed up tips: http://nyalldawson.net/2016/10/speeding-up-your-pyqgis-scripts/
         """
         provider = pgInputLayer.dataProvider()
         # getting keyColumn because we want to be generic
@@ -266,6 +293,95 @@ class ValidationProcess(QObject):
         pgInputLayer.addFeatures(addList, True)
         #removing features from the layer.
         pgInputLayer.deleteFeatures(idsToRemove)
+
+    def updateOriginalLayerV2(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None, deleteFeatures = True):
+        """
+        Updates the original layer using the grass output layer
+        pgInputLyr: postgis input layer
+        qgisOutputVector: qgis output layer
+        Speed up tips: http://nyalldawson.net/2016/10/speeding-up-your-pyqgis-scripts/
+        1- Make pgIdList, by querying it with flag QgsFeatureRequest.NoGeometry
+        2- Build output dict
+        3- Perform operation
+        """
+        provider = pgInputLayer.dataProvider()
+        # getting keyColumn because we want to be generic
+        uri = QgsDataSourceURI(pgInputLayer.dataProvider().dataSourceUri())
+        keyColumn = uri.keyColumn()
+        # starting edition mode
+        pgInputLayer.startEditing()
+        pgInputLayer.beginEditCommand('Updating layer')
+        addList = []
+        idsToRemove = []
+        inputDict = dict()
+        #this is done to work generically with output layers that are implemented different from ours
+        isMulti = QgsWKBTypes.isMultiType(int(pgInputLayer.wkbType())) #
+        #making the changes and inserts
+        #this request only takes ids to build inputDict
+        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
+        for feature in pgInputLayer.getFeatures(request):
+            inputDict[feature.id()] = dict()
+            inputDict[feature.id()]['featList'] = []
+            inputDict[feature.id()]['featWithoutGeom'] = feature
+        inputDictKeys = inputDict.keys()
+        if qgisOutputVector:
+            for feat in qgisOutputVector.dataProvider().getFeatures():
+                if keyColumn == '':
+                    featid = feat.id()
+                else:
+                    featid = feat[keyColumn]
+                if featid in inputDictKeys: #verificar quando keyColumn = ''
+                    inputDict[featid]['featList'].append(feat)
+        elif featureTupleList:
+            for gfid, gf in featureTupleList:
+                if gfid in inputDictKeys and gf['classname'] == pgInputLayer.name():
+                    inputDict[gfid]['featList'].append(gf)
+        else:
+            for feat in featureList:
+                if keyColumn == '':
+                    featid = feat.id()
+                else:
+                    featid = feat[keyColumn]
+                if featid in inputDictKeys:
+                    inputDict[featid]['featList'].append(feat)
+        #finally, do what must be done
+        for id in inputDictKeys:
+            outFeats = inputDict[id]['featList']
+            #starting to make changes
+            for i in range(len(outFeats)):
+                if i == 0:
+                    #let's update this feature
+                    newGeom = outFeats[i].geometry()
+                    if newGeom:
+                        if isMulti:
+                            newGeom.convertToMultiType()
+                        pgInputLayer.changeGeometry(id, newGeom) #It is faster according to the api
+                    else:
+                        if id not in idsToRemove:
+                            idsToRemove.append(id)
+                else:
+                    #for the rest, let's add them
+                    newFeat = QgsFeature(inputDict[id]['featWithoutGeom'])
+                    newGeom = outFeats[i].geometry()
+                    if newGeom:
+                        if isMulti and newGeom:
+                            newGeom.convertToMultiType()
+                        newFeat.setGeometry(newGeom)
+                        if keyColumn != '':
+                            idx = newFeat.fieldNameIndex(keyColumn)
+                            newFeat.setAttribute(idx, provider.defaultValue(idx))
+                        addList.append(newFeat)
+                    else:
+                        if id not in idsToRemove:
+                            idsToRemove.append(id)
+            #in the case we don't find features in the output we should mark them to be removed
+            if len(outFeats) == 0 and deleteFeatures:
+                idsToRemove.append(id)
+        #pushing the changes into the edit buffer
+        pgInputLayer.addFeatures(addList, True)
+        #removing features from the layer.
+        pgInputLayer.deleteFeatures(idsToRemove)
+        pgInputLayer.endEditCommand()
 
     def getProcessingErrors(self, layer):
         """
@@ -331,7 +447,7 @@ class ValidationProcess(QObject):
         #getting the output as a QgsVectorLayer
         outputLayer = QgsVectorLayer(self.abstractDb.getURI(processTableName, True).uri(), processTableName, "postgres")
         #updating the original layer (lyr)
-        self.updateOriginalLayer(lyr, outputLayer)
+        self.updateOriginalLayerV2(lyr, outputLayer)
         #dropping the temp table as we don't need it anymore
         self.abstractDb.dropTempTable(processTableName)
     
@@ -351,12 +467,12 @@ class ValidationProcess(QObject):
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
 
-    def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = ''):
+    def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False):
         """
         Creates a unified layer from a list of layers
         """
         #getting srid from something like 'EPSG:31983'
-        srid = layerList[0].crs().authid().split(':')[-1]
+        srid = layerList[0].crs().authid().split(':')[-1] #quem disse que tudo tem que ter mesmo srid? TODO: mudar isso
         # creating the layer
         geomtype = layerList[0].dataProvider().geometryType()
         for lyr in layerList:
@@ -366,6 +482,7 @@ class ValidationProcess(QObject):
         coverage = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid), "coverage", "memory")
         provider = coverage.dataProvider()
         coverage.startEditing()
+        coverage.beginEditCommand('Creating coverage layer') #speedup
 
         #defining fields
         if not attributeTupple:
@@ -377,7 +494,10 @@ class ValidationProcess(QObject):
 
         totalCount = 0
         for layer in layerList:
-            totalCount += layer.pendingFeatureCount()
+            if onlySelected:
+                totalCount += layer.selectedFeatureCount()
+            else:
+                totalCount += layer.pendingFeatureCount()
         self.localProgress = ProgressWidget(1, totalCount - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
         featlist = []
         if attributeBlackList != '':
@@ -389,7 +509,11 @@ class ValidationProcess(QObject):
             classname = layer.name()
             uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             keyColumn = uri.keyColumn()
-            for feature in layer.getFeatures():
+            if onlySelected:
+                featureList = lyr.selectedFeatures()
+            else:
+                featureList = lyr.getFeatures()
+            for feature in featureList:
                 newfeat = QgsFeature(coverage.pendingFields())
                 newfeat.setGeometry(feature.geometry())
                 newfeat['featid'] = feature.id()
@@ -397,6 +521,7 @@ class ValidationProcess(QObject):
                 if attributeTupple:
                     attributeList = []
                     attributes = [field.name() for field in feature.fields() if (field.type() != 6 and field.name() != keyColumn)]
+                    attributes.sort()
                     for attribute in attributes:
                         if attribute not in bList:
                             attributeList.append(u'{0}'.format(feature[attribute])) #done due to encode problems
@@ -407,6 +532,7 @@ class ValidationProcess(QObject):
         
         #inserting new features into layer
         coverage.addFeatures(featlist, True)
+        coverage.endEditCommand()
         coverage.commitChanges()
         return coverage
 
@@ -417,12 +543,74 @@ class ValidationProcess(QObject):
         for layer in layerList:
             classname = layer.name()
             tupplelist = [(feature['featid'], feature) for feature in outputLayer.getFeatures()]
-            self.updateOriginalLayer(layer, None, featureTupleList=tupplelist)
+            self.updateOriginalLayerV2(layer, None, featureTupleList=tupplelist)
 
     def getGeometryColumnFromLayer(self, layer):
         uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
         geomColumn = uri.geometryColumn()
         return geomColumn
-        
-                    
-                    
+
+    def startTimeCount(self):
+        self.startTime = datetime.now()
+        self.endTime = 0
+    
+    def endTimeCount(self, cummulative = True):
+        self.endTime = datetime.now()
+        elapsedTime = (self.endTime - self.startTime)
+        if cummulative:
+            if self.totalTime == 0:
+                self.totalTime = elapsedTime
+            else:
+                self.totalTime += elapsedTime
+        return elapsedTime
+
+    def logLayerTime(self, lyr):
+        time = self.endTimeCount()
+        if self.startTime != 0 and self.endTime != 0:
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
+    def logTotalTime(self):
+        if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    
+    def jsonifyParameters(self, params):
+        """
+        Sets a dict type feature to a json structure in order to make it visually better
+        both to expose on log and to save it on validation history table.
+        parameter params: a dict type variable
+        returns: a json structured text
+        """
+        return json.dumps(params, sort_keys=True, indent=4)
+
+    def logProcess(self):
+        """
+        Returns information to user:
+        -userName (get information from abstractDb.db.userName())
+        -parameters (get parameters from parameter dict) ***
+        -layersRun (the layers that were used)
+        -flagNumber (number of flags)
+        -elapsedTime
+        """
+        # logging username
+        logMsg = ""
+        if self.dbUserName:
+            logMsg += self.tr("Database username: {0}").format(self.dbUserName)
+        else:
+            logMsg += self.tr("Unable to get database username.")
+        # logging process parameters
+        if self.parameters:
+            parametersString = self.tr("\nParameters used on this execution of process {}\n").format(self.processAlias)
+            parametersString += self.jsonifyParameters(self.parameters)
+            logMsg += parametersString
+        else:
+            logMsg += self.tr("Unable to get database parameters for process {}.").format(self.processAlias)
+        # logging #Flag
+        logMsg += self.tr("\nNumber of flags raised by the process: {}").format(\
+                        str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
+        # logging total time elapsed
+        if self.totalTime:
+            logMsg += self.tr("\nTotal elapsed time for process {0}: {1}\n").format(self.processAlias, self.totalTime)
+        else:
+            logMsg += self.tr("\nUnable to get total elapsed time.")
+        self.logMsg = logMsg
+        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)

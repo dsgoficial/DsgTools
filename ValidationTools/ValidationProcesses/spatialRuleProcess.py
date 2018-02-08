@@ -86,6 +86,7 @@ class SpatialRuleProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
@@ -118,11 +119,9 @@ class SpatialRuleProcess(ValidationProcess):
                         self.addClassesToBeDisplayedList(tuple[0])
                     msg = str(numberOfInvGeom) + self.tr(' features are invalid. Check flags.')
                     self.setStatus(msg, 4) #Finished with flags
-                    QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     msg = self.tr('All features are valid.')
                     self.setStatus(msg, 1) #Finished
-                    QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
             return 1             
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
