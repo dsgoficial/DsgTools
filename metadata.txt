@@ -8,9 +8,9 @@
 
 [general]
 name=DSG Tools
-qgisMinimumVersion=2.14
+qgisMinimumVersion=2.18
 description=Brazilian Army Cartographic Production Tools
-version=3.0.8
+version=3.1
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -71,17 +71,50 @@ changelog=
 	3.0.2 - Fixing others errors and improving some features (many thanks to our users)
 	3.0.3 - Fixing encoding problems in some systems (utf-8 encoding problems)
 	3.0.4 - Updating our BDGEx access to use the new urls. Fixing some problems with databases using schemas in uppercase 
-	3.0.5 - Bug fix when using OpenLayers Plugin layers. Minor improvements.
 	3.0.6 - Bug fix on (Re)classification tool
 	3.0.7 - Bug fix on Circle Tool, Zoom to Flag and Database Conversion
 	3.0.8 - Bug fix on image processing on windows and bug fix on generic selection tool
+	3.1 - New Features:
+	      	.New database model: EDGV 3.0 (experimental);
+		.New validation process: Merge lines with common attributes;
+		.New validation process: Identify Dangles;
+		.New validation process: Overlay Lines with Lines;
+		.New validation process: Overlay Elements with Areas;
+		.New validation process: Identify gaps and overlaps in earth coverage;
+		.New validation process: Identify layer gaps;
+		.New validation process: Identify layer overlaps;
+	      Enhancements:
+                .Generic selection now opens a context menu to choose features when they are overlapping;
+	      	.Minimum area tool now enables rotation in cursor shape;
+	      	.Right angle digitizing tool now works with lines as well;
+		.Circle digitizing now works with lines as well;
+		.New setup interface for (Re)Classification tool;
+		.(Re)Classification tool now enables color choosing;
+		.(Re)Classification tool now enables shortcut assignment;
+		.(Re)Classification tool now enables setting ignored attributes;
+		.(Re)Classification tool now enables setting attributes as hidden;
+		.(Re)Classification tool now enables setting attributes as not editable;
+		.(Re)Classification tool now enables tooltip for buttons;
+		.(Re)Classification tool now enables user to choose which forms must be opened;
+		.Validation Toolbox now has a Re-run process button (runs previous process with same parameters);
+		.Validation Toolbox now show elapsed times for each process run;
+		.Validation Toolbox now has a clear flags button;
+		.Validation Toolbox now has a filter for flags;
+		.All parameters are now choosen before executing validation process;
+		.Validation Toolbox with new history log;
+		.Status are now resolved in History interface of Validation Toolbox;
+		.Flags are loaded after execution of Validation Process;
+		.Several shortcuts are now enabled for Production Tools;
+             Database Bug Fix:
+                .EDGV 2.1.3 bug fix: uuid values on primary keys of some geometric tables;
+	     Several other bug fixes.
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script
 
-homepage=http://hub.qgis.org/projects/dsgtools
-tracker=http://hub.qgis.org/projects/dsgtools
-repository=https://github.com/lcoandrade/DsgTools
+homepage=https://github.com/dsgoficial/DsgTools/wiki
+tracker=https://github.com/dsgoficial/DsgTools/issues
+repository=https://github.com/dsgoficial/DsgTools
 icon=icons/dsg.png
 # experimental flag
 experimental=False

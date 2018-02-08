@@ -65,7 +65,7 @@ class SnapGeometriesProcess(ValidationProcess):
             
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
-        self.updateOriginalLayer(layer, outputLayer)
+        self.updateOriginalLayerV2(layer, outputLayer)
           
         #getting error flags
         errorLayer = processing.getObject(ret['error'])
@@ -78,6 +78,7 @@ class SnapGeometriesProcess(ValidationProcess):
         """
         #abstract method. MUST be reimplemented.
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -88,6 +89,7 @@ class SnapGeometriesProcess(ValidationProcess):
                 return 1
             error = False
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
@@ -108,6 +110,7 @@ class SnapGeometriesProcess(ValidationProcess):
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) of layer ') + classAndGeom['tableName'] + self.tr(' with snapping errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no snapping errors on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             if error:
                 self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
             else:

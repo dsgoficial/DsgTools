@@ -34,7 +34,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l', 'p'], withElements=True, excludeValidation = True)
             # adjusting process parameters
             interfaceDictList = []
             for key in self.classesWithElemDict:
@@ -53,9 +53,9 @@ class DeaggregateGeometriesProcess(ValidationProcess):
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
@@ -63,16 +63,19 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                 localProgress.step()
                 localProgress.step()
 
-                allIds = lyr.allFeatureIds()
-                localProgress = ProgressWidget(1, len(allIds) - 1, self.tr('Running process on ') + classAndGeom['lyrName'], parent=self.iface.mapCanvas())
                 lyr.startEditing()
                 provider = lyr.dataProvider()
                 uri = QgsDataSourceURI(provider.dataSourceUri())
                 keyColumn = uri.keyColumn()
+
                 if self.parameters['Only Selected']:
                     featureList = lyr.selectedFeatures()
+                    size = len(featureList)
                 else:
                     featureList = lyr.getFeatures()
+                    size = len(lyr.allFeatureIds())
+
+                localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['lyrName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     geom = feat.geometry()
                     if not geom:
@@ -96,10 +99,10 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         lyr.updateFeature(feat)
                         lyr.addFeatures(addList,True)
                     localProgress.step()
-                localProgress.step()
+                self.logLayerTime(classAndGeom['lyrName'])
+
             msg = self.tr('All geometries are now single parted.')
             self.setStatus(msg, 1) #Finished
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
 from qgis.gui import QgsMapMouseEvent
 import math
 from PyQt4 import QtCore, QtGui
@@ -19,6 +19,18 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.snapCursorRubberBand = None
         self.initVariable()
         self.setAction(action)
+
+    def getSuppressOptions(self):
+        qgisSettigns = QSettings()
+        qgisSettigns.beginGroup('Qgis/digitizing')
+        setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
+        qgisSettigns.endGroup()
+        if not setting:
+            return False
+        if setting.lower() == u'false':
+            return False
+        else:
+            return True
 
     def setAction(self, action):
         self.toolAction = action
@@ -52,10 +64,12 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.canvas.setCursor(self.cur)
 
     def deactivate(self):
+        self.initVariable()
         if self.toolAction:
             self.toolAction.setChecked(False)
         if self is not None:
             QgsMapTool.deactivate(self)
+
    
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Escape:
@@ -116,8 +130,12 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         return QgsPoint(x, y)
     
     def getRubberBand(self):
-        rubberBand = QgsRubberBand(self.canvas, True)
-        rubberBand.setFillColor(QColor(255, 0, 0, 40))
+        geomType = self.iface.activeLayer().geometryType()
+        if geomType == QGis.Polygon:
+            rubberBand = QgsRubberBand(self.canvas, True)
+            rubberBand.setFillColor(QColor(255, 0, 0, 40))
+        elif geomType == QGis.Line:
+            rubberBand = QgsRubberBand(self.canvas, False)
         rubberBand.setBorderColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
@@ -142,17 +160,22 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             for i in range(fields.count()):
                 feature.setAttribute(i, provider.defaultValue(i))                
             form = QgsAttributeDialog(layer, feature, False)
-            form.setIsAddDialog(True)
-            if not form.dialog().exec_():
-                ok = False
+            form.setMode(QgsAttributeForm.AddFeatureMode)
+            formSuppress = layer.editFormConfig().suppress()
+            if formSuppress == QgsEditFormConfig.SuppressDefault:
+                if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
+                    layer.addFeature(feature, True)
+                else:
+                    if not form.dialog().exec_():
+                        feature.setAttributes(form.feature().attributes())
+            elif formSuppress == QgsEditFormConfig.SuppressOff:
+                if not form.dialog().exec_():
+                    feature.setAttributes(form.feature().attributes())
             else:
-                ok = True
-            if ok:
-                feature.setAttributes(form.feature().attributes())
-                layer.endEditCommand()
-                self.initVariable()    
-            else:
-                self.initVariable()   
+                layer.addFeature(feature, True)
+            layer.endEditCommand()
+            self.canvas.refresh()
+            self.initVariable()   
 
     def createSnapCursor(self, point):
         self.snapCursorRubberBand = self.getSnapRubberBand()
@@ -172,13 +195,22 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        lyrType = self.iface.activeLayer().geometryType()
         # Transforming the points
-        poly = geom.asPolygon()
-        newPolyline = []
-        for j in xrange(len(poly)):
-            line = poly[j]
-            for i in xrange(len(line)):
-                point = line[i]
-                newPolyline.append(coordinateTransformer.transform(point))
-        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])                
-        return qgsPolygon    
+        if lyrType == QGis.Line:
+            geomList = geom.asPolyline()
+        elif lyrType == QGis.Polygon:
+            geomList = geom.asPolygon()
+        newGeom = []
+        for j in xrange(len(geomList)):
+            if lyrType == QGis.Line:
+                newGeom.append(coordinateTransformer.transform(geomList[j]))
+            elif lyrType == QGis.Polygon:
+                line = geomList[j]
+                for i in xrange(len(line)):
+                    point = line[i]
+                    newGeom.append(coordinateTransformer.transform(point))
+        if lyrType == QGis.Line:
+            return QgsGeometry.fromPolyline(newGeom + [newGeom[0]])
+        elif lyrType == QGis.Polygon:
+            return QgsGeometry.fromPolygon([newGeom])                   

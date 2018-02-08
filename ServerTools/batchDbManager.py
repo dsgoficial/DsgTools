@@ -149,7 +149,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb].decode('utf-8'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
 
     @pyqtSlot(bool)
@@ -268,7 +268,14 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                     dbsDict[dbName].importStylesIntoDb(style)
                     successList.append(dbName)
                 except Exception as e:
-                    exceptionDict[dbName] =  ':'.join(e.args)
+                    errors = []
+                    for arg in e.args:
+                        if isinstance(arg, basestring):
+                            s = '{}'.format(arg.encode('utf-8'))
+                        else:
+                            s = str(arg)
+                        errors.append(s)
+                    exceptionDict[dbName] =  ':'.join(errors)
         return successList, exceptionDict
     
     def getStyleDir(self, versionList):
@@ -358,6 +365,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def on_customizeFromSQLFilePushButton_clicked(self):
         dbsDict = self.instantiateAbstractDbs()
         sqlFilePath = self.getSQLFile()
+        if sqlFilePath == '':
+            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchCustomizeFromSQLFile(dbsDict, sqlFilePath)
         QApplication.restoreOverrideCursor()

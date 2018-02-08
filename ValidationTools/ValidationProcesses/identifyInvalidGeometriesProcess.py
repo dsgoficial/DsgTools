@@ -41,6 +41,12 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
             self.parameters = {'Classes': interfaceDictList, 'Only Selected':False}
+    
+    def preProcess(self):
+        """
+        Gets the process that should be execute before this one
+        """
+        return self.tr('Remove Empty Geometries')
 
     def execute(self):
         """
@@ -48,16 +54,17 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
+            self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             classesWithGeom = []
             recordFlagList = []
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -78,17 +85,15 @@ class IdentifyInvalidGeometriesProcess(ValidationProcess):
                         for r in result:
                             featId, reason, geom = r
                             recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featId, reason, geom, classAndGeom['geom']))
-
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             # storing flags
             if len(recordFlagList) > 0:
                 numberOfProblems = self.addFlag(recordFlagList) 
                 msg = str(numberOfProblems) + self.tr(' features are invalid. Check flags.')
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 msg = self.tr('All features are valid.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

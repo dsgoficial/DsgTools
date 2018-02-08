@@ -29,7 +29,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating=False)
+        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Not Simple Geometries')
 
         if not self.instantiating:
@@ -58,6 +58,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
             classesWithGeom = []
             recordFlagList = []
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -78,17 +79,15 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
                         for r in result:
                             featId, geom = r
                             recordFlagList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], featId, self.tr('Not simple geometry.'), geom, classAndGeom['geom']))
-
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             # storing flags
             if len(recordFlagList) > 0:
                 numberOfProblems = self.addFlag(recordFlagList)
                 msg = str(numberOfProblems) + self.tr(' features are not simple. Check flags.')        
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             else:
                 msg = self.tr('All features are simple.')
                 self.setStatus(msg, 1) #Finished
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

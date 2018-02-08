@@ -48,13 +48,14 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
+            self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -75,9 +76,9 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                     if not feat.geometry():
                         lyr.deleteFeature(feat.id())
                 localProgress.step()
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             msg = self.tr('Process executed successfully!')
             self.setStatus(msg, 1) #Finished
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

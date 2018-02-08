@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>337</width>
-    <height>618</height>
+    <width>397</width>
+    <height>579</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DSGTools: Validation Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout">
+   <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <widget class="QTabWidget" name="validationTabWidget">
       <property name="currentIndex">
@@ -32,17 +32,24 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QPushButton" name="historyButton">
+        <item row="0" column="1">
+         <widget class="QLineEdit" name="databaseLineEdit"/>
+        </item>
+        <item row="0" column="2">
+         <widget class="QPushButton" name="openDbPushButton">
           <property name="text">
-           <string>Open History</string>
+           <string>Open</string>
           </property>
          </widget>
         </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QLineEdit" name="databaseLineEdit"/>
+        <item row="1" column="0" colspan="3">
+         <widget class="QLineEdit" name="filterLineEdit">
+          <property name="placeholderText">
+           <string>Filter by process name</string>
+          </property>
+         </widget>
         </item>
-        <item row="2" column="0" colspan="4">
+        <item row="2" column="0" colspan="3">
          <widget class="QTreeWidget" name="processTreeWidget">
           <property name="minimumSize">
            <size>
@@ -73,25 +80,37 @@
           </column>
          </widget>
         </item>
-        <item row="3" column="2" colspan="2">
-         <widget class="QPushButton" name="runButton">
-          <property name="text">
-           <string>Run Process</string>
+        <item row="3" column="0" colspan="3">
+         <widget class="QSplitter" name="splitter_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="openDbPushButton">
-          <property name="text">
-           <string>Open</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="4">
-         <widget class="QLineEdit" name="filterLineEdit">
-          <property name="placeholderText">
-           <string>Filter by process name</string>
-          </property>
+          <widget class="QSplitter" name="splitter">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <widget class="QPushButton" name="reRunButton">
+            <property name="text">
+             <string>Re-Run Last Process</string>
+            </property>
+           </widget>
+           <widget class="QPushButton" name="historyButton">
+            <property name="text">
+             <string>Open History</string>
+            </property>
+           </widget>
+          </widget>
+          <widget class="QPushButton" name="runButton">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Run Process</string>
+           </property>
+          </widget>
          </widget>
         </item>
        </layout>
@@ -100,8 +119,25 @@
        <attribute name="title">
         <string>Flags</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_3">
+       <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
+         <widget class="QComboBox" name="filterTypeComboBox">
+          <item>
+           <property name="text">
+            <string>Process Name</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Class Name</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="DsgCustomComboBox" name="customFilterComboBox" native="true"/>
+        </item>
+        <item row="1" column="0" colspan="2">
          <widget class="QTableView" name="tableView">
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
@@ -123,10 +159,17 @@
           </attribute>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="suggestionCheckBox">
+        <item row="2" column="0">
+         <widget class="QPushButton" name="clearSelectedPushButton">
           <property name="text">
-           <string>Show suggestions</string>
+           <string>Clear Filtered Flags</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="clearAllPushButton">
+          <property name="text">
+           <string>Clear All Flags</string>
           </property>
          </widget>
         </item>
@@ -168,6 +211,14 @@
    </layout>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DsgCustomComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -40,23 +40,24 @@ class SnapToGridProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Snap': 0.001, 'Classes': interfaceDictList}
+            self.parameters = {'Coordinate Precision': 0.001, 'Classes': interfaceDictList}
 
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             classesWithElem = self.parameters['Classes']
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 1
             #getting parameters
             tol = self.parameters['Snap']
             for key in classesWithElem:
+                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
@@ -79,6 +80,7 @@ class SnapToGridProcess(ValidationProcess):
                 
                 #setting status
                 QgsMessageLog.logMessage(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             #returning success
             self.setStatus(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped successfully.'), 1) #Finished
             return 1

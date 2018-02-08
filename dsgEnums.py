@@ -23,3 +23,5 @@
 class DsgEnums:
     #generic manager and database enumerate
     Property, Database = range(2)
+    #generic validation property
+    ProcessName, ClassName = range(2)

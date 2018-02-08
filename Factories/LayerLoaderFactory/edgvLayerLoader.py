@@ -176,7 +176,7 @@ class EDGVLayerLoader(QObject):
                     if not domLyr:
                         domLyr = self.loadDomain(domain, domainGroup)
                         loadedLayers.append(domLyr)
-                    domLyrName = domLyr.name()
+                        domLyrName = domLyr.name()
                     if lyr not in domLayerDict.keys():
                         domLayerDict[lyr] = dict()
                     if attr not in domLayerDict[lyr].keys():
