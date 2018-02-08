@@ -42,15 +42,15 @@ class LineOnLineOverlayProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList, 'Only Selected':False}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Classes': interfaceDictList, 'Only Selected':False, 'Only First Order Lines':True}
             self.identifyDangles = IdentifyDanglesProcess(postgisDb, iface, instantiating = True)
             self.identifyDangles.parameters = self.parameters
     
     def preProcess(self):
-        return [self.tr('Snap to Grid (adjust coordinates precision)'), self.tr('Remove Small Lines')]
+        return [self.tr('Snap to Grid (adjust coordinates precision)'), self.tr('Identify Small Lines'), self.tr('Remove Small Lines')]
 
     def postProcess(self):
-         return [self.tr('Clean Geometries'), self.tr('Remove Small Lines')] #more than one post process (this is treated in validationManager)
+         return [self.tr('Clean Geometries'), self.tr('Identify Duplicated Geometries'), self.tr('Remove Duplicated Elements'), self.tr('Identify Small Lines'), self.tr('Remove Small Lines'), self.tr('Identify Small Lines')] #more than one post process (this is treated in validationManager)
 
     def execute(self):
         """
@@ -75,13 +75,20 @@ class LineOnLineOverlayProcess(ValidationProcess):
                 else:
                     featureDict = {i.id():i for i in lyr.getFeatures()}
                 featureList = featureDict.values()
+                if featureList == []:
+                    self.setStatus(self.tr('Empty layer or empty selection!. Nothing to be done.'), 1) #Finished
+                    QgsMessageLog.logMessage(self.tr('Layer {0} is empty or there are no selected features!. Nothing to be done.').format(lyr.name()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    continue
                 spatialIdx = self.buildSpatialIndex(featureList)
                 size = len(featureList)                   
                 endVerticesDict = self.identifyDangles.buildInitialAndEndPointDict(featureList, cl['tableSchema'], cl['tableName'])
                 pointList = self.identifyDangles.searchDanglesOnPointDict(endVerticesDict, cl['tableSchema'], cl['tableName'])
-                extendedList = self.extendLines(featureDict, spatialIdx, pointList, endVerticesDict, self.parameters['Snap'])
-                lyr.updateFeatures(extendedList)
-                
+                filteredPointList = self.identifyDangles.filterPointListWithFilterLayer(pointList, lyr, self.parameters['Snap'], isRefLyr = True, ignoreNotSplit = False)
+                extendedList = self.extendLines(featureDict, spatialIdx, filteredPointList, endVerticesDict, self.parameters['Snap'])
+                lyr.beginEditCommand('Extending lines')
+                for feat in extendedList:
+                    lyr.updateFeature(feat)
+                lyr.endEditCommand()
             else:
                 self.setStatus(self.tr('Line on Line Overlay process complete.'), 1) #Finished
             return 1
@@ -121,16 +128,17 @@ class LineOnLineOverlayProcess(ValidationProcess):
             #get the line to be prolonged from featId
             extendLineCandidate = featureDict[prolongId]
             for id in spatialIdx.intersects(bufferBB):
-                if buffer.intersects(featureDict[id].geometry()) and \
-                   (qgisPoint.distance(featureDict[id].geometry()) < 10**-9 or \
-                   qgisPoint.touches(featureDict[id].geometry())):
+                if buffer.intersects(featureDict[id].geometry()):
                    #if we have entered this if, we extend the line and break
-                   #extend line
+                   #extended line. After trying to extend, we must check if the extended line intersects the current id,
+                   #if it does, apply extension.
                    extendedLine = self.extendLine(extendLineCandidate.geometry(), qgisPoint, d)
-                   #update feat geom
-                   extendLineCandidate.setGeometry(extendedLine)
-                   updateDict[extendLineCandidate.id] = extendLineCandidate
-                   break
+                   #false positive case
+                   if extendedLine != extendLineCandidate.geometry() and extendedLine.intersects(featureDict[id].geometry()):
+                       #update feat geom
+                       extendLineCandidate.setGeometry(extendedLine)
+                       updateDict[extendLineCandidate.id()] = extendLineCandidate
+                       break
         return updateDict.values()
     
     def extendLine(self, geom, referencePoint, d):
@@ -141,7 +149,9 @@ class LineOnLineOverlayProcess(ValidationProcess):
         """
         isMultipart = geom.isMultipart()
         segment = self.getSegment(geom, referencePoint)
-        if segment[1] == referencePoint:
+        if segment == []:
+            return geom
+        if QgsGeometry.fromPoint(segment[1]).equals(referencePoint):
             extendedPoint = self.getExtendedPoint(segment[0], segment[1], d)
             newLine = QgsGeometry.fromPolyline([segment[1], extendedPoint])
         else:
