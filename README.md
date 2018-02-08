@@ -7,11 +7,13 @@
 
 DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV Defesa F Ter 2ª Edição). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
 
-DSGTools 3.0 has the following features:
+Current changelog can be viewed on https://github.com/dsgoficial/DsgTools/wiki (portuguese only, for now).
+
+DSGTools 3.1 has the following features:
 
 - Creation, Storage and Deletion of PostGIS servers configurations;
-- Database creation using Spatialite and PostGIS according to EDGV version 2.1.3 and EDGV version FTer_2a_Ed (cadaster);
-- Layer loading by category and class as defined by EDGV version 2.1.3 and EDGV version FTer_2a_Ed (cadaster);
+- Database creation using Spatialite and PostGIS according to EDGV version 2.1.3, EDGV version 3.0 and EDGV version FTer_2a_Ed;
+- Layer loading by category and class as defined by EDGV version 2.1.3, EDGV version 3.0 and EDGV version FTer_2a_Ed;
 - Layer loading grouping by geometric primitive and schema for any PostGIS database;
 - Manipulation of complex features (Creation, Editing, Deletion, Zoom, Association, Disassociation) and;
 - Access to some WM(T)S services provided by BDGEx (Brazilian Army SDI);
@@ -48,12 +50,12 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 
 O plugin foi todo desenvolvido em python e está disponível para download pelo próprio QGIS ou pelo endereço http://plugins.qgis.org/plugins/DsgTools/.
 
-Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.0:
+Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.1 (changelog completo disponível em https://github.com/dsgoficial/DsgTools/wiki ):
 
 - Criação, armazenamento e remoção de configuração de servidores PostGIS;
-- Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3;
-- Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV Defesa F Ter 2ª Edição;
-- Carregamento de camadas por classe e por categoria conforme definido na EDGV 2.1.3 e na ET-EDGV Defesa F Ter 2ª Edição;
+- Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
+- Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
+- Carregamento de camadas por classe e por categoria conforme definido na ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
 - Manipulação de feições complexas (criação, edição, remoção, zoom, associação e desassociação);
 - Acesso a alguns serviços WM(T)S do BDGEx e;
 - Acesso ao mapa índice de produtos vetoriais e matriciais do BDGEx.
