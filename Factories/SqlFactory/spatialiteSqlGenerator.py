@@ -129,6 +129,8 @@ class SpatialiteSqlGenerator(SqlGenerator):
             sql = 'select name, sql from sqlite_master where type = \'table\' and (name like \'cb_%\' or name like \'complexos_%\' or name like \'public_%\')'
         elif edgvVersion == 'FTer_2a_Ed':
             sql = 'select name, sql from sqlite_master where type = \'table\' and (name like \'ge_%\' or name like \'pe_%\' or name like \'complexos_%\' or name like \'public_%\')' 
+        elif edgvVersion == '3.0':
+            sql = sql = 'select name, sql from sqlite_master where type = \'table\' and (name like \'edgv_%\' or name like \'complexos_%\' or name like \'public_%\')'
         return sql  
     
     def getAggregationColumn(self):
