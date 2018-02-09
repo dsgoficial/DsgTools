@@ -155,6 +155,28 @@ class Utils:
                 pass
         return refDict
 
+    def parseMultiFromDb(self, qmlRecordDict, lyrList):
+        """
+        dict in the form {'lyrName': {'attributeName':'domainTableName'}}
+        """
+        refDict = dict()
+        for lyr in lyrList:
+            try:
+                qml = qmlRecordDict[lyr]
+                try:
+                    doc = parseString(qml)
+                except:
+                    doc = parseString(qml.encode('utf-8'))
+                refDict[lyr] = dict()
+                for node in doc.getElementsByTagName('edittype'):
+                    if node.getAttribute('widgetv2type') == 'ValueRelation':
+                        attrName = node.getAttribute('name')
+                        refDict[lyr][attrName] = node.getElementsByTagName(
+                            'widgetv2config')[0].getAttribute('Layer')
+            except:
+                pass
+        return refDict
+
     def getRecursiveInheritance(self, parent, resultList, inhDict):
         if parent not in resultList:
             resultList.append(parent)

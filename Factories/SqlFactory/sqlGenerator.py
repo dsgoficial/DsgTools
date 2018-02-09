@@ -136,4 +136,8 @@ class SqlGenerator:
         return None
     
     def getTableExtent(self, tableSchema, tableName):
-        return None    
+        return None
+
+    def getQmlRecords(self, layerList):
+        sql = """select layername, domainqml from public_multi_qmls where layername in ({0})""".format(','.join(layerList))
+        return sql
