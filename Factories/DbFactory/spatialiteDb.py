@@ -124,6 +124,8 @@ class SpatialiteDb(AbstractDb):
 
                 if 'GEOMETRY' in classDict[className].keys():
                     classDict[className]['GEOMETRY'] = 'geom'
+                if 'geometry' in classDict[className].keys():
+                    classDict[className]['geometry'] = 'geom'
                 if 'OGC_FID' in classDict[className].keys():
                     classDict[className]['OGC_FID'] = 'id'
 
@@ -204,7 +206,7 @@ class SpatialiteDb(AbstractDb):
                                         if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
                                             invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
                         if outputClass in domainDict.keys():
-                            if (inputAttrList[i] not in ['geom','GEOMETRY','id','OGC_FID'] and schema <> 'complexos') or (schema == 'complexos' and inputAttrList[i] <> 'id'):
+                            if (inputAttrList[i] not in ['geom','GEOMETRY','geometry','id','OGC_FID'] and schema <> 'complexos') or (schema == 'complexos' and inputAttrList[i] <> 'id'):
                                 if inputAttrList[i] not in outputdbStructure[outputClass].keys():
                                     invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
                         #validates fk field
@@ -426,13 +428,17 @@ class SpatialiteDb(AbstractDb):
 
     def getGeomTypeDict(self, loadCentroids=False):
         self.checkAndOpenDb()
-        sql = self.gen.getGeomByPrimitive()
+        edgvVersion = self.getDatabaseVersion()
+        sql = self.gen.getGeomByPrimitive(edgvVersion)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
         geomDict = dict()
         while query.next():
-            type = query.value(0)
+            if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+                type = query.value(0)
+            else:
+                type = self.getResolvedGeomType(query.value(0))
             tableName = query.value(1)
             layerName = '_'.join(tableName.split('_')[1::])
             if type not in geomDict.keys():
@@ -448,7 +454,8 @@ class SpatialiteDb(AbstractDb):
             'layerName' :
         '''
         self.checkAndOpenDb()
-        sql = self.gen.getGeomTablesFromGeometryColumns()
+        edgvVersion = self.getDatabaseVersion()
+        sql = self.gen.getGeomTablesFromGeometryColumns(edgvVersion)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
@@ -458,7 +465,10 @@ class SpatialiteDb(AbstractDb):
         while query.next():
             isCentroid = False
             srid = query.value(0)
-            geometryType = query.value(2)
+            if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+                geometryType = query.value(2)
+            else:
+                geometryType = self.getResolvedGeomType(query.value(2))
             tableName = query.value(3)
             tableSchema = tableName.split('_')[0]
             geometryColumn = query.value(1)
@@ -535,13 +545,33 @@ class SpatialiteDb(AbstractDb):
         centroids are hidden by default
         """
         self.checkAndOpenDb()
-        sql = self.gen.getGeomColumnTupleList()
+        edgvVersion = self.getDatabaseVersion()
+        sql = self.gen.getGeomColumnTupleList(edgvVersion)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
         geomList = []
         while query.next():
-            geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
+            if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+                geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
+            else:
+                geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), self.getResolvedGeomType(int(query.value(2))), 'BASE TABLE'))
         return geomList
     
-        
+    def getResolvedGeomType(self, geometryType):
+        geomDict = {0:'GEOMETRY',
+                    1:'POINT',
+                    2:'LINESTRING',
+                    3:'POLYGON',
+                    4:'MULTIPOINT',
+                    5:'MULTILINESTRING',
+                    6:'MULTIPOLYGON',
+                    7:'GEOMETRYCOLLECTION',
+                    8:'CIRCULARSTRING',
+                    9:'COMPOUNDCURVE',
+                    10:'CURVEPOLYGON',
+                    11:'MULTICURVE',
+                    12:'MULTISURFACE',
+                    13:'CURVE',
+                    14:'SURFACE'}
+        return geomDict[geometryType]
