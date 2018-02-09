@@ -13213,7 +13213,9 @@ $BODY$
     DECLARE querytext2 text;
     DECLARE r record;
     BEGIN
-	IF ST_NumGeometries(NEW.geom) > 1 THEN
+    IF pg_trigger_depth() <> 1 AND ST_NumGeometries(NEW.geom) = 1 THEN
+		RETURN NEW;
+	ELSE
 		querytext1 := 'INSERT INTO ' || quote_ident(TG_TABLE_SCHEMA) || '.' || quote_ident(TG_TABLE_NAME) || '(';
 		querytext2 := 'geom) SELECT ';
 		FOR r IN SELECT (each(hstore(NEW))).* 
@@ -13233,8 +13235,6 @@ $BODY$
 		querytext1 := querytext1  || querytext2;
 		EXECUTE querytext1 || 'ST_Multi((ST_Dump(ST_AsEWKT(' || quote_literal(NEW.geom::text) || '))).geom);';
 		RETURN NULL;
-	ELSE
-		RETURN NEW;
 	END IF;
     END;
 $BODY$
