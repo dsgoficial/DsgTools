@@ -1647,3 +1647,7 @@ class PostGISSqlGenerator(SqlGenerator):
         ORDER BY t.finished DESC;
         """
         return sql
+
+    def getQmlRecords(self, layerList):
+        sql = """select layername, domainqml from public.domain_qml where layername in ('{1}')""".format("','".join(layerList))
+        return sql

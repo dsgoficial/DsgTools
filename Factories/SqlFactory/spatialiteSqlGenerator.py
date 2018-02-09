@@ -210,3 +210,7 @@ class SpatialiteSqlGenerator(SqlGenerator):
         else:
             sql = """select f_table_name, f_geometry_column, geometry_type from geometry_columns"""
         return sql
+
+    def getQmlRecords(self, layerList):
+        sql = """select layername, domainqml from public_domain_qml where layername in ('{1}')""".format("','".join(layerList))
+        return sql
