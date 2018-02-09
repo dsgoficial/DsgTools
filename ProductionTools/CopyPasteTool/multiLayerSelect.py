@@ -25,7 +25,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QColor, QMenu
+from PyQt4.QtGui import QColor, QMenu, QCursor
 
 import numpy as np
 from PyQt4.QtCore import Qt
@@ -225,6 +225,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Deactivate tool.
         """
+        QtGui.QApplication.restoreOverrideCursor()
         try:
             if self.toolAction:
                 self.toolAction.setChecked(False)
@@ -237,6 +238,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Activate tool.
         """
+        QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
