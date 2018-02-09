@@ -310,6 +310,8 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
+        elif self.getDatabaseVersion() == '3.0':
+            schemaList = ['edgv', 'complexos']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
         else:
@@ -339,6 +341,8 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
+        elif self.getDatabaseVersion() == '3.0':
+            schemaList = ['edgv', 'complexos', 'dominios']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
         else:
