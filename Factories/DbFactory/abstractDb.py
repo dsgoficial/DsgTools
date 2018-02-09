@@ -627,6 +627,8 @@ class AbstractDb(QObject):
         styleDir = os.path.join(currentPath, '..', '..', 'Styles')
         if dbVersion == '2.1.3':
             styleDir = os.path.join(styleDir, 'edgv_213')
+        elif dbVersion == '3.0':
+            styleDir = os.path.join(styleDir, 'edgv_3')
         elif dbVersion == 'FTer_2a_Ed':
             styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
         else:
@@ -697,3 +699,23 @@ class AbstractDb(QObject):
                 mi = self.utmGrid.getMIfromInom(inom)
         frame = self.createFrameFromInom(inom)
         return mi, inom, frame
+
+    def getQmlDict(self, layerList):
+        edgvVersion = self.getDatabaseVersion()
+        if edgvVersion in ['2.1.3','FTer_2a_Ed']:
+            qmlPath = self.getQmlDir()
+            return self.utils.parseMultiQml(qmlPath, layerList)
+        else:
+            qmlRecordDict = self.getQmlRecordDict(layerList)
+            return self.utils.parseMultiFromDb(qmlRecordDict, layerList)
+    
+    def getQmlRecordDict(self, layerList):
+        self.checkAndOpenDb()
+        sql = self.gen.getQmlRecords(layerList)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting qmlRecordDict: ")+query.lastError().text())
+        qmlDict = dict()
+        while query.next():
+            qmlDict[query.value(0)] = query.value(1)
+        return qmlDict

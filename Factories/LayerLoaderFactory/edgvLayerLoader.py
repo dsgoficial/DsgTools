@@ -166,8 +166,7 @@ class EDGVLayerLoader(QObject):
         
     def loadDomains(self, layerList, loadedLayers, domainGroup):
         domLayerDict = dict()
-        qmlPath = self.abstractDb.getQmlDir()
-        qmlDict = self.utils.parseMultiQml(qmlPath, layerList)
+        qmlDict = self.abstractDb.getQmlDict(layerList)
         for lyr in layerList:
             if lyr in qmlDict.keys():
                 for attr in qmlDict[lyr].keys():
