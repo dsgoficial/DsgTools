@@ -13220,7 +13220,7 @@ $BODY$
 		LOOP
 			IF r.key <> 'geom' AND r.key <> 'id' THEN
 				querytext1 := querytext1 || quote_ident(r.key) || ',';
-				IF r.value <> '' THEN
+				IF r.value <> '' AND r.value <> '{}' THEN
 					querytext2 := querytext2 || quote_literal(r.value) || ',';
 				ELSE
 					querytext2 := querytext2 || 'NULL' || ',';					
