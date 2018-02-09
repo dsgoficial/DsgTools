@@ -4139,7 +4139,7 @@ CREATE TABLE hid_rocha_em_agua_a (
     geom public.geometry(MultiPolygon,[epsg]),
     formarocha smallint,
     situacaoemagua smallint NOT NULL,
-    alturalamina double precision
+    alturalamina real
 )#
 ALTER TABLE hid_rocha_em_agua_a OWNER TO postgres#
 CREATE TABLE hid_rocha_em_agua_p (
