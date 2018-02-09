@@ -172,12 +172,18 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getStylesFromDb(self, dbVersion):
         return None
 
-    def getGeomTablesFromGeometryColumns(self):
-        sql = 'select srid, f_geometry_column, type, f_table_name from geometry_columns'
+    def getGeomTablesFromGeometryColumns(self, edgvVersion):
+        if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+            sql = 'select srid, f_geometry_column, type, f_table_name from geometry_columns'
+        else:
+            sql = 'select srid, f_geometry_column, geometry_type, f_table_name from geometry_columns'
         return sql
 
-    def getGeomByPrimitive(self):
-        sql = """select type, f_table_name from geometry_columns"""
+    def getGeomByPrimitive(self, edgvVersion):
+        if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+            sql = """select type, f_table_name from geometry_columns"""
+        else:
+            sql = """select geometry_type, f_table_name from geometry_columns"""
         return sql
     
     def getGeomColumnDict(self):
@@ -196,6 +202,9 @@ class SpatialiteSqlGenerator(SqlGenerator):
         sql = "SELECT f_table_name as name FROM geometry_columns WHERE f_table_name LIKE '%{0}%' ORDER BY name".format(name)
         return sql
 
-    def getGeomColumnTupleList(self, showViews = False):
-        sql = """select f_table_name, f_geometry_column, type from geometry_columns"""
+    def getGeomColumnTupleList(self, edgvVersion, showViews = False):
+        if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+            sql = """select f_table_name, f_geometry_column, type from geometry_columns"""
+        else:
+            sql = """select f_table_name, f_geometry_column, geometry_type from geometry_columns"""
         return sql
