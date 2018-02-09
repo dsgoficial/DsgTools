@@ -104,7 +104,7 @@ class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
         self.toLs = []
         self.fromTreeWidget.clear()
         self.fromTreeWidget.clear()
-        if isinstance(fromDictList, list):
+        if not isinstance(fromDictList, int):
             self.addItemsToTree(self.fromTreeWidget, fromDictList, self.fromLs, unique = unique)
     
     def getChildNode(self, parentNode, textList):

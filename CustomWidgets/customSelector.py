@@ -61,7 +61,8 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         self.toLs = []
         self.fromList.clear()
         self.toList.clear()
-        self.setFromList(fromList, unique)
+        if not isinstance(fromList, int):
+            self.setFromList(fromList, unique)
     
     def setFromList(self, fromList, unique=False):
         """
