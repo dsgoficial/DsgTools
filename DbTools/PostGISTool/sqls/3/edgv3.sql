@@ -13562,3 +13562,11 @@ create trigger a_explode_geometry   before insert or update   on public.aux_obje
 create trigger a_explode_geometry   before insert or update   on public.aux_objeto_desconhecido_l   for each row   execute procedure public.explode_geom()#
 create trigger a_explode_geometry   before insert or update   on public.aux_objeto_desconhecido_p   for each row   execute procedure public.explode_geom()#
 create trigger a_explode_geometry   before insert or update   on public.aux_ponto_p   for each row   execute procedure public.explode_geom()#
+CREATE TABLE public.domain_qml
+(
+    id serial NOT NULL,
+    layername text,
+    domainqml text,
+    CONSTRAINT domain_qml_pkey PRIMARY KEY (id)
+)#
+ALTER TABLE public.domain_qml OWNER to postgres#
