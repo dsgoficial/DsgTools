@@ -1649,5 +1649,5 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getQmlRecords(self, layerList):
-        sql = """select layername, domainqml from public.domain_qml where layername in ('{1}')""".format("','".join(layerList))
+        sql = """select layername, domainqml from public.domain_qml where layername in ('{0}')""".format("','".join(layerList))
         return sql
