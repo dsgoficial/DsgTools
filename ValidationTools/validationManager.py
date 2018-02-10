@@ -68,8 +68,9 @@ class ValidationManager(QObject):
                 chars = list(fileBaseName)
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
-                self.processList.append(processClass)
-                self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
+                if processClass != 'UnbuildEarthCoveragePolygonsProcess':
+                    self.processList.append(processClass)
+                    self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
             
     def instantiateProcessByName(self, processName, instantiating):
         """
