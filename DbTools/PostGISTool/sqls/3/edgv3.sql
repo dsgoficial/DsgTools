@@ -5740,7 +5740,7 @@ CREATE TABLE public.db_metadata(
 	dbimplversion varchar(50) NOT NULL DEFAULT 1,
 	CONSTRAINT edgvversioncheck CHECK (edgvversion = '3.0')
 )#
-INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('3.0','1')#
+INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('3.0','2')#
 
 SET search_path = complexos, pg_catalog#
 ALTER TABLE ONLY aer_complexo_aeroportuario
