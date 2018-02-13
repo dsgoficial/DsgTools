@@ -837,18 +837,22 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem checking user: ")+query.lastError().text())
         return False
     
-    def dropDatabase(self, candidateName):
+    def dropDatabase(self, candidateName, dropTemplate = False):
         """
         Drops a database from server
         candidataName: database name
         """
         self.checkAndOpenDb()
         if self.checkSuperUser():
+            if dropTemplate:
+                self.setDbAsTemplate(dbName = candidataName, setTemplate = False)
             self.dropAllConections(candidateName)
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
+        else:
+            raise Exception(self.tr('Problem dropping database: user must have permission for that.')))
     
     def createResolvedDomainViews(self, createViewClause, fromClause, useTransaction = True):
         """
