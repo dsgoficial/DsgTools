@@ -1651,3 +1651,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getQmlRecords(self, layerList):
         sql = """select layername, domainqml from public.domain_qml where layername in ('{0}')""".format("','".join(layerList))
         return sql
+    
+    def getImplementationVersion(self):
+        sql = """select dbimplversion from public.db_metadata limit 1"""
+        return sql
