@@ -687,7 +687,7 @@ CREATE TABLE cbge_trecho_arruamento_a (
     nrfaixas integer,
     trafego smallint NOT NULL,
     tipopavimentacao smallint NOT NULL,
-    geom public.geometry(MultiLineString,[epsg]),
+    geom public.geometry(MultiPolygon,[epsg]),
     meiofio smallint NOT NULL,
     sargeta smallint NOT NULL
 )#
@@ -3355,7 +3355,7 @@ CREATE TABLE enc_aerogerador_p (
     id serial NOT NULL,
     geometriaaproximada smallint NOT NULL,
     alturatorreaer real,
-    geom public.geometry(MultiPolygon,[epsg])
+    geom public.geometry(MultiPoint,[epsg])
 )#
 ALTER TABLE enc_aerogerador_p OWNER TO postgres#
 CREATE TABLE enc_antena_comunic_p (
@@ -4336,6 +4336,7 @@ ALTER TABLE laz_ruina_p OWNER TO postgres#
 CREATE TABLE laz_sitio_arqueologico_a (
     id serial NOT NULL,
     nome character varying(80),
+    geometriaaproximada smallint NOT NULL,
     turistica smallint NOT NULL,
     cultura smallint NOT NULL,
     geom public.geometry(MultiPolygon,[epsg])
@@ -4344,6 +4345,7 @@ ALTER TABLE laz_sitio_arqueologico_a OWNER TO postgres#
 CREATE TABLE laz_sitio_arqueologico_p (
     id serial NOT NULL,
     nome character varying(80),
+    geometriaaproximada smallint NOT NULL,
     turistica smallint NOT NULL,
     cultura smallint NOT NULL,
     geom public.geometry(MultiPoint,[epsg])
@@ -4834,7 +4836,7 @@ ALTER TABLE rel_pico_p OWNER TO postgres#
 CREATE TABLE rel_ponto_cotado_altimetrico_p (
     id serial NOT NULL,
     geometriaaproximada smallint NOT NULL,
-    geom public.geometry(MultiPolygon,[epsg]),
+    geom public.geometry(MultiPoint,[epsg]),
     cotacomprovada smallint NOT NULL,
     cota double precision NOT NULL
 )#
@@ -4842,14 +4844,14 @@ ALTER TABLE rel_ponto_cotado_altimetrico_p OWNER TO postgres#
 CREATE TABLE rel_ponto_cotado_batimetrico_p (
     id serial NOT NULL,
     geometriaaproximada smallint NOT NULL,
-    geom public.geometry(MultiPolygon,[epsg]),
+    geom public.geometry(MultiPoint,[epsg]),
     profundidade double precision NOT NULL
 )#
 ALTER TABLE rel_ponto_cotado_batimetrico_p OWNER TO postgres#
 CREATE TABLE rel_ponto_hipsometrico_p (
     id serial NOT NULL,
     geometriaaproximada smallint NOT NULL,
-    geom public.geometry(MultiPolygon,[epsg])
+    geom public.geometry(MultiPoint,[epsg])
 )#
 ALTER TABLE rel_ponto_hipsometrico_p OWNER TO postgres#
 CREATE TABLE rel_rocha_a (
@@ -4902,7 +4904,7 @@ CREATE TABLE rod_trecho_rodoviario_a (
     nrfaixas integer,
     trafego smallint NOT NULL,
     tipopavimentacao smallint NOT NULL,
-    geom public.geometry(MultiLineString,[epsg]),
+    geom public.geometry(MultiPolygon,[epsg]),
     sigla character varying(6),
     codtrechorod character varying(25),
     limitevelocidade real,
@@ -9753,6 +9755,7 @@ ALTER TABLE edgv.snb_dep_saneamento_a ADD CONSTRAINT snb_dep_saneamento_a_situac
 ALTER TABLE edgv.snb_dep_saneamento_a ADD CONSTRAINT snb_dep_saneamento_a_tipodepgeral_fk FOREIGN KEY (tipodepgeral) REFERENCES dominios.tipo_dep_geral(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.snb_dep_saneamento_a ADD CONSTRAINT snb_dep_saneamento_a_finalidadedep_fk FOREIGN KEY (finalidadedep) REFERENCES dominios.finalidade_deposito(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.snb_dep_saneamento_a ADD CONSTRAINT snb_dep_saneamento_a_tratamento_fk FOREIGN KEY (tratamento) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE edgv.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.laz_sitio_arqueologico_p ADD CONSTRAINT laz_sitio_arqueologico_p_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.cbge_retorno_p ADD CONSTRAINT cbge_retorno_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
@@ -9793,6 +9796,7 @@ ALTER TABLE edgv.veg_campo_a ADD CONSTRAINT veg_campo_a_secundaria_fk FOREIGN KE
 ALTER TABLE edgv.veg_campo_a ADD CONSTRAINT veg_campo_a_classificacaoporte_fk FOREIGN KEY (classificacaoporte) REFERENCES dominios.classificacao_porte(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.veg_campo_a ADD CONSTRAINT veg_campo_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.veg_campo_a ADD CONSTRAINT veg_campo_a_densidade_fk FOREIGN KEY (densidade) REFERENCES dominios.densidade(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE edgv.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_turistica_fk FOREIGN KEY (turistica) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.laz_sitio_arqueologico_a ADD CONSTRAINT laz_sitio_arqueologico_a_cultura_fk FOREIGN KEY (cultura) REFERENCES dominios.auxiliar(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE edgv.ver_arvore_isolada_p ADD CONSTRAINT ver_arvore_isolada_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada) REFERENCES dominios.booleano(code) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION#
