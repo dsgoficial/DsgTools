@@ -857,7 +857,7 @@ class PostgisDb(AbstractDb):
             if not query.exec_(sql):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
         else:
-            raise Exception(self.tr('Problem dropping database: user must have permission for that.')))
+            raise Exception(self.tr('Problem dropping database: user must have permission for that.'))
     
     def createResolvedDomainViews(self, createViewClause, fromClause, useTransaction = True):
         """
