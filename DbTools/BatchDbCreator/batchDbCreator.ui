@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>412</width>
-    <height>148</height>
+    <width>547</width>
+    <height>223</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -40,6 +40,12 @@
    <layout class="QGridLayout" name="gridLayout">
     <item row="1" column="0">
      <widget class="QRadioButton" name="patternRadioButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Create databases based on an auto incrementing pattern</string>
       </property>
@@ -47,6 +53,12 @@
     </item>
     <item row="0" column="0">
      <widget class="QRadioButton" name="csvRadioButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="text">
        <string>Create databases from csv file list</string>
       </property>

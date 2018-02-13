@@ -2642,7 +2642,7 @@ class PostgisDb(AbstractDb):
     def setStructureFromSql(self, version, epsg, useTransaction = True, closeAfterUsage = True):
         self.checkAndOpenDb()
         edgvPath = self.getCreationSqlPath(version)
-        commands = self.getCommandsFromFile(edgvPath, epsg = epsg)
+        commands = [i for i in self.getCommandsFromFile(edgvPath, epsg = epsg) if i != '']
         if useTransaction:
             self.db.transaction()
         query = QSqlQuery(self.db)
