@@ -114,7 +114,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dbsDict = dict()
         selectedDbNameList = self.getSelectedDbList()
         if instantiateTemplates:
-            for templateName in ['template_213', 'template_FTer_2a_Ed']:
+            for templateName in ['template_edgv_213', 'template_edgv_fter_2a_ed', 'template_edgv_3']:
                 if templateName not in selectedDbNameList:
                     if templateName != 'dsgtools_admindb':
                         selectedDbNameList.append(templateName)
@@ -248,7 +248,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         #TODO: Reimplement
         styleList = []
         version = None
-        if os.path.basename(styleDir) in ['edgv_213','edgv_FTer_2a_Ed']:
+        if os.path.basename(styleDir) in ['edgv_213','edgv_FTer_2a_Ed', 'edgv_3']:
             version = os.path.basename(styleDir)
         else:
             parentFolder = os.path.dirname(styleDir)
