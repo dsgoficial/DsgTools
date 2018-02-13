@@ -837,10 +837,32 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem checking user: ")+query.lastError().text())
         return False
     
-    def checkTemplateImplementationVersion(self, edgvVersion):
+    def checkTemplateImplementationVersion(self, edgvVersion = None):
+        """
+        Returns True if templateSql version is larger than installed template
+        Works when abstractDb is connected to the template
+        """
+        if not edgvVersion:
+            edgvVersion = self.getDatabaseVersion()
         templateName = self.getTemplateName(edgvVersion)
-        fileImplementationVersion = self.parseSqlFile(edgvVersion)
-        templateImplementationVersion = self.getImplementationVersion(templateName)
+        fileImplementationVersion = self.getImplementationVersionFromFile(edgvVersion)
+        templateImplementationVersion = self.getImplementationVersion()
+        if templateImplementationVersion < fileImplementationVersion:
+            return True
+        else:
+            return False
+    
+    def getImplementationVersion(self):
+        """
+        Returns implementation version
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getImplementationVersion()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting implementation version: ') + query.lastError().text()) 
+        while query.next():
+            return query.value(0)
     
     def dropDatabase(self, candidateName, dropTemplate = False):
         """
@@ -850,7 +872,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         if self.checkSuperUser():
             if dropTemplate:
-                self.setDbAsTemplate(dbName = candidataName, setTemplate = False)
+                self.setDbAsTemplate(dbName = candidateName, setTemplate = False)
             self.dropAllConections(candidateName)
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
@@ -874,6 +896,7 @@ class PostgisDb(AbstractDb):
                 sql = sql.replace('[VIEW]', createViewClause).replace('[FROM]', fromClause)
                 file.close()
                 commands = sql.split('#')
+                commands = [i for i in sql.split('#') if i != '']
                 if useTransaction:
                     self.db.transaction()
                 query = QSqlQuery(self.db)
@@ -2513,8 +2536,10 @@ class PostgisDb(AbstractDb):
         if closeAfterUse:
             self.db.close()
     
-    def checkTemplate(self, version):
+    def checkTemplate(self, version = None):
         self.checkAndOpenDb()
+        if not version:
+            version = self.getDatabaseVersion()
         dbName = self.getTemplateName(version)
         sql = self.gen.checkTemplate()
         query = QSqlQuery(sql, self.db)
@@ -2606,13 +2631,13 @@ class PostgisDb(AbstractDb):
         commands = sql.split('#')
         return commands
     
-    def getImplementationVersionFromFile(self, edgvPath):
+    def getImplementationVersionFromFile(self, edgvVersion):
+        edgvPath = self.getCreationSqlPath(edgvVersion)
         commands = self.getCommandsFromFile(edgvPath)
         searchString = 'INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('
         for command in commands:
             if searchString in command:
                 return command.split(searchString)[-1].split(',')[-1].replace(')','').replace("'","")
-
 
     def setStructureFromSql(self, version, epsg, useTransaction = True, closeAfterUsage = True):
         self.checkAndOpenDb()
