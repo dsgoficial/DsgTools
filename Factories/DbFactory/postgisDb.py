@@ -837,6 +837,11 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem checking user: ")+query.lastError().text())
         return False
     
+    def checkTemplateImplementationVersion(self, edgvVersion):
+        templateName = self.getTemplateName(edgvVersion)
+        fileImplementationVersion = self.parseSqlFile(edgvVersion)
+        templateImplementationVersion = self.getImplementationVersion(templateName)
+    
     def dropDatabase(self, candidateName, dropTemplate = False):
         """
         Drops a database from server
@@ -2589,14 +2594,30 @@ class PostgisDb(AbstractDb):
             edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
         return edgvPath
     
+    def getCommandsFromFile(self, edgvPath, epsg = None):
+        """
+        Gets all sql commands from file
+        """
+        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+        sql = file.read()
+        if epsg:
+            sql = sql.replace('[epsg]', str(epsg))
+        file.close()
+        commands = sql.split('#')
+        return commands
+    
+    def getImplementationVersionFromFile(self, edgvPath):
+        commands = self.getCommandsFromFile(edgvPath)
+        searchString = 'INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('
+        for command in commands:
+            if searchString in command:
+                return command.split(searchString)[-1].split(',')[-1].replace(')','').replace("'","")
+
+
     def setStructureFromSql(self, version, epsg, useTransaction = True, closeAfterUsage = True):
         self.checkAndOpenDb()
         edgvPath = self.getCreationSqlPath(version)
-        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
-        sql = file.read()
-        sql = sql.replace('[epsg]', str(epsg))
-        file.close()
-        commands = sql.split('#')
+        commands = self.getCommandsFromFile(edgvPath, epsg = epsg)
         if useTransaction:
             self.db.transaction()
         query = QSqlQuery(self.db)
