@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=2.18
 description=Brazilian Army Cartographic Production Tools
-version=3.1
+version=3.1.1
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=
@@ -108,6 +108,15 @@ changelog=
              Database Bug Fix:
                 .EDGV 2.1.3 bug fix: uuid values on primary keys of some geometric tables;
 	     Several other bug fixes.
+	3.1.1 - Bug fixes:
+		.Bug fix on EDGV 3.0
+		.Bug fix on Help url
+		.Bug fix on Generic Selection Tool
+		.Bug fix on Server Management Tools
+		.Bug fix on Field Toolbox
+		.Bug fix on Load Layers From Server
+		.Fixed missing translations
+		.Fixed missing Style Folder
 
 # Tags are comma separated with spaces allowed
 tags=EDGV,PostGIS,Spatialite,Brazilian,Army,Exército,Brasileiro,DSG,Diretoria,Serviço,Geográfico,BDGEx,Database,Spatial,INDE,SDI,Infrastructure,Image,Fusion,HSV,Model,Script

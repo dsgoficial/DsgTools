@@ -205,7 +205,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 return lyr
         fullName = '''"{0}"."{1}"'''.format(schema, tableName)
         pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-        if useInheritance:
+        if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_Edgv']:
             sql = ''
         else:
             sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            

@@ -38,12 +38,13 @@
 		<file>icons/codelist.png</file>
 		<file>icons/militarySimbology.png</file>
 		<file>icons/batchDatabase.png</file>
-                <file>icons/page_white_wrench.png</file>
-                <file>icons/custom_tools.png</file>
+        <file>icons/page_white_wrench.png</file>
+        <file>icons/custom_tools.png</file>
 		<file>icons/genericSelect.png</file>  
 		<file>icons/attributeSelector.png</file> 
-                <file>icons/refresh.png</file> 
-                <file>icons/circle.png</file> 
-                <file>icons/home.png</file> 
+        <file>icons/refresh.png</file> 
+        <file>icons/circle.png</file> 
+        <file>icons/home.png</file> 
+        <file>icons/bug.png</file> 
     </qresource>
 </RCC>

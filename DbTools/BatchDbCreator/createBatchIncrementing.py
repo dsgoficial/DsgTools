@@ -23,6 +23,7 @@
 import os, sqlite3
 import json
 
+from qgis.core import QgsMessageLog
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
 from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
