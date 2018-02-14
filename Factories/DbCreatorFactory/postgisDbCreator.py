@@ -45,6 +45,15 @@ class PostgisDbCreator(DbCreator):
         '''
         if version:
             hasTemplate = self.abstractDb.checkTemplate(version)
+            if hasTemplate:
+                templateName = self.abstractDb.getTemplateName(version)
+                templateDb = self.instantiateNewDb(templateName)
+                mustUpdateTemplate = templateDb.checkTemplateImplementationVersion()
+                if mustUpdateTemplate:
+                    templateName = templateDb.db.databaseName()
+                    templateDb.__del__()
+                    self.abstractDb.dropDatabase(templateName, dropTemplate = True)
+                    hasTemplate = False
             if not hasTemplate:
                 self.abstractDb.createTemplateDatabase(version)
                 templateName = self.abstractDb.getTemplateName(version)

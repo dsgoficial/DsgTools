@@ -320,7 +320,11 @@ class MultiLayerSelection(QgsMapTool):
                     # layers from different dabases may have the same name
                     # hence the need of db_name
                     self.iface.setActiveLayer(layer) # a layer must be active in order to get db_name
-                    db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
+                    dsUri = self.iface.activeLayer().dataProvider().dataSourceUri()
+                    if '/' in dsUri:
+                        db_name = dsUri
+                    else:
+                        db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
                     # handling CTRL key and left/right click actions

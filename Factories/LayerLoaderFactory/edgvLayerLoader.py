@@ -198,12 +198,14 @@ class EDGVLayerLoader(QObject):
     def setDomainsAndRestrictionsWithQml(self, vlayer):
         qmldir = ''
         try:
-            qmldir = self.abstractDb.getQmlDir()
+            qmldir, qmlType = self.abstractDb.getQml(vlayer.name())
         except Exception as e:
-            self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
-        vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
-        #treat case of qml with multi
-        vlayer.loadNamedStyle(vlayerQml, False)
+        if qmlType == 'db':
+            vlayer.applyNamedStyle(qmldir)
+        else:
+            vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
+            #treat case of qml with multi
+            vlayer.loadNamedStyle(vlayerQml, False)
         return vlayer

@@ -1105,6 +1105,8 @@ class PostGISSqlGenerator(SqlGenerator):
     def alterSearchPath(self, dbName, version):
         if version == '2.1.3':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';'.format(dbName)
+        elif version == '3.0':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';'.format(dbName)
         elif version == 'FTer_2a_Ed':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';'.format(dbName)
         return sql
@@ -1650,4 +1652,8 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getQmlRecords(self, layerList):
         sql = """select layername, domainqml from public.domain_qml where layername in ('{0}')""".format("','".join(layerList))
+        return sql
+    
+    def getImplementationVersion(self):
+        sql = """select dbimplversion from public.db_metadata limit 1"""
         return sql

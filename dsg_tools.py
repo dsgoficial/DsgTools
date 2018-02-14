@@ -459,6 +459,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/bug.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Report bug / Suggest features'),
+            callback=self.showBugTracker,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/help.png'
         action = self.add_action(
             icon_path,
@@ -736,9 +746,13 @@ class DsgTools:
         """
         Shows the help
         """
-        self.iface.openURL("http://www.geoportal.eb.mil.br/images/dsgtools/help/index.html", False)
-        #index = os.path.join(os.path.dirname(__file__), 'help', 'index')
-        #showPluginHelp('DsgTools', index)
+        self.iface.openURL("https://github.com/dsgoficial/DsgTools/wiki", False)
+
+    def showBugTracker(self):
+        """
+        Shows the bug tracker
+        """
+        self.iface.openURL("https://github.com/dsgoficial/DsgTools/issues", False)
 
     def showConvertDatabase(self):
         """

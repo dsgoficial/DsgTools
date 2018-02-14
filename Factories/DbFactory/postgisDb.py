@@ -837,18 +837,49 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem checking user: ")+query.lastError().text())
         return False
     
-    def dropDatabase(self, candidateName):
+    def checkTemplateImplementationVersion(self, edgvVersion = None):
+        """
+        Returns True if templateSql version is larger than installed template
+        Works when abstractDb is connected to the template
+        """
+        if not edgvVersion:
+            edgvVersion = self.getDatabaseVersion()
+        templateName = self.getTemplateName(edgvVersion)
+        fileImplementationVersion = self.getImplementationVersionFromFile(edgvVersion)
+        templateImplementationVersion = self.getImplementationVersion()
+        if templateImplementationVersion < fileImplementationVersion:
+            return True
+        else:
+            return False
+    
+    def getImplementationVersion(self):
+        """
+        Returns implementation version
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getImplementationVersion()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr('Problem getting implementation version: ') + query.lastError().text()) 
+        while query.next():
+            return query.value(0)
+    
+    def dropDatabase(self, candidateName, dropTemplate = False):
         """
         Drops a database from server
         candidataName: database name
         """
         self.checkAndOpenDb()
         if self.checkSuperUser():
+            if dropTemplate:
+                self.setDbAsTemplate(dbName = candidateName, setTemplate = False)
             self.dropAllConections(candidateName)
             sql = self.gen.dropDatabase(candidateName)
             query = QSqlQuery(self.db)
             if not query.exec_(sql):
                 raise Exception(self.tr('Problem dropping database: ') + query.lastError().text())
+        else:
+            raise Exception(self.tr('Problem dropping database: user must have permission for that.'))
     
     def createResolvedDomainViews(self, createViewClause, fromClause, useTransaction = True):
         """
@@ -865,6 +896,7 @@ class PostgisDb(AbstractDb):
                 sql = sql.replace('[VIEW]', createViewClause).replace('[FROM]', fromClause)
                 file.close()
                 commands = sql.split('#')
+                commands = [i for i in sql.split('#') if i != '']
                 if useTransaction:
                     self.db.transaction()
                 query = QSqlQuery(self.db)
@@ -2504,8 +2536,10 @@ class PostgisDb(AbstractDb):
         if closeAfterUse:
             self.db.close()
     
-    def checkTemplate(self, version):
+    def checkTemplate(self, version = None):
         self.checkAndOpenDb()
+        if not version:
+            version = self.getDatabaseVersion()
         dbName = self.getTemplateName(version)
         sql = self.gen.checkTemplate()
         query = QSqlQuery(sql, self.db)
@@ -2585,14 +2619,30 @@ class PostgisDb(AbstractDb):
             edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
         return edgvPath
     
+    def getCommandsFromFile(self, edgvPath, epsg = None):
+        """
+        Gets all sql commands from file
+        """
+        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
+        sql = file.read()
+        if epsg:
+            sql = sql.replace('[epsg]', str(epsg))
+        file.close()
+        commands = sql.split('#')
+        return commands
+    
+    def getImplementationVersionFromFile(self, edgvVersion):
+        edgvPath = self.getCreationSqlPath(edgvVersion)
+        commands = self.getCommandsFromFile(edgvPath)
+        searchString = 'INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('
+        for command in commands:
+            if searchString in command:
+                return command.split(searchString)[-1].split(',')[-1].replace(')','').replace("'","")
+
     def setStructureFromSql(self, version, epsg, useTransaction = True, closeAfterUsage = True):
         self.checkAndOpenDb()
         edgvPath = self.getCreationSqlPath(version)
-        file = codecs.open(edgvPath, encoding='utf-8', mode="r")
-        sql = file.read()
-        sql = sql.replace('[epsg]', str(epsg))
-        file.close()
-        commands = sql.split('#')
+        commands = [i for i in self.getCommandsFromFile(edgvPath, epsg = epsg) if i != '']
         if useTransaction:
             self.db.transaction()
         query = QSqlQuery(self.db)

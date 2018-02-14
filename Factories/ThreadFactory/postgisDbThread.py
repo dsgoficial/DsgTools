@@ -102,7 +102,7 @@ class PostgisDbThread(GenericThread):
         (ret, msg) = self.createDatabaseStructure()
         self.signals.processingFinished.emit(ret, msg, self.getId())
 
-    def connectToTemplate(self):
+    def connectToTemplate(self, setInnerDb = True):
         """
         Connects to the template database to speed up database creation
         :return:
@@ -115,7 +115,9 @@ class PostgisDbThread(GenericThread):
         template = self.dbFactory.createDbFactory('QPSQL')
         template.connectDatabaseWithParameters(host, port, database, user, password)
         template.checkAndOpenDb()
-        self.db = template.db
+        if setInnerDb:
+            self.db = template.db
+        return template
 
     def createDatabaseStructure(self):
         """
@@ -140,6 +142,14 @@ class PostgisDbThread(GenericThread):
         """
         commands = []
         hasTemplate = self.abstractDb.checkTemplate(self.version)
+        if hasTemplate:
+            templateDb = self.connectToTemplate(setInnerDb = False)
+            mustUpdateTemplate = templateDb.checkTemplateImplementationVersion()
+            if mustUpdateTemplate:
+                templateName = templateDb.db.databaseName()
+                templateDb.__del__()
+                self.abstractDb.dropDatabase(templateName, dropTemplate = True)
+                hasTemplate = False
         if not hasTemplate:
             file = codecs.open(edgvPath, encoding='utf-8', mode="r")
             sql = file.read()
