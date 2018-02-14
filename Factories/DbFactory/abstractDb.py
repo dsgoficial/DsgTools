@@ -709,13 +709,25 @@ class AbstractDb(QObject):
             qmlRecordDict = self.getQmlRecordDict(layerList)
             return self.utils.parseMultiFromDb(qmlRecordDict, layerList)
     
-    def getQmlRecordDict(self, layerList):
+    def getQmlRecordDict(self, inputLayer):
         self.checkAndOpenDb()
-        sql = self.gen.getQmlRecords(layerList)
+        if isinstance(inputLayer, list):
+            sql = self.gen.getQmlRecords(inputLayer)
+        else:
+            sql = self.gen.getQmlRecords([inputLayer])
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting qmlRecordDict: ")+query.lastError().text())
         qmlDict = dict()
         while query.next():
-            qmlDict[query.value(0)] = query.value(1)
+            if isinstance(inputLayer, list): 
+                qmlDict[query.value(0)] = query.value(1)
+            else:
+                return query.value(1)
         return qmlDict
+    
+    def getQml(self, layerName):
+        if self.getDatabaseVersion() == '3.0':
+            return (self.getQmlRecordDict(layerName), 'db')
+        else:
+            return (self.getQmlDir(), 'dir')
