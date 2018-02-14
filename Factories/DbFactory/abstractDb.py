@@ -702,7 +702,7 @@ class AbstractDb(QObject):
 
     def getQmlDict(self, layerList):
         edgvVersion = self.getDatabaseVersion()
-        if edgvVersion in ['2.1.3','FTer_2a_Ed']:
+        if edgvVersion in ['2.1.3','FTer_2a_Ed']: #this does not have 3.0, do not change it!!!!
             qmlPath = self.getQmlDir()
             return self.utils.parseMultiQml(qmlPath, layerList)
         else:
