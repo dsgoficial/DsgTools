@@ -3525,14 +3525,14 @@ class PostgisDb(AbstractDb):
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
 
-    def getFilteredFlagsView(self, filterType=None,filteredElement=None):
+    def getFilteredFlagsView(self, className=None,processName=None):
         """
         Returns a list of flagged features accordingly to what
         was chosen to filter and which element was chosen as such
         (e.g. a process named 'identifyDuplicatedGeometries') 
         """        
         self.checkAndOpenDb()
-        sql = self.gen.getFilteredFlagsQuery(filterType, filteredElement)
+        sql = self.gen.getFilteredFlagsQuery(className=className, processName=processName)
         outFiltered = []
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -3541,13 +3541,13 @@ class PostgisDb(AbstractDb):
             outFiltered.append(str(query.value(0)))
         return outFiltered
 
-    def createFilteredFlagsViewTable(self, filterType=None,filteredElement=None):
+    def createFilteredFlagsViewTable(self, className=None,processName=None):
         """
         Cretas a View Table if it doesn't exist and populates it
         with data considering the users selection of filtering
         """
         self.checkAndOpenDb()
-        sql = self.gen.createFilteredFlagsViewTableQuery(filterType, filteredElement)
+        sql = self.gen.createFilteredFlagsViewTableQuery(className=className, processName=processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
