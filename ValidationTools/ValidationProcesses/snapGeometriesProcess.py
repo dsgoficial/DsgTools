@@ -22,6 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 import processing, binascii
 
 class SnapGeometriesProcess(ValidationProcess):
@@ -157,4 +158,4 @@ class SnapGeometriesProcess(ValidationProcess):
             except Exception as e:
                 QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 self.finishedWithError()
-    return 0            
+                return 0            
