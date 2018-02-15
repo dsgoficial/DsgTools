@@ -122,12 +122,6 @@ class SnapGeometriesProcess(ValidationProcess):
     #         self.finishedWithError()
     #         return 0
 
-    def preProcess(self):
-        return [self.tr('Snap to Grid (adjust coordinates precision)'), self.tr('Identify Small Lines'), self.tr('Remove Small Lines')]
-
-    def postProcess(self):
-         return [self.tr('Clean Geometries'), self.tr('Identify Duplicated Geometries'), self.tr('Remove Duplicated Elements'), self.tr('Identify Small Lines'), self.tr('Remove Small Lines'), self.tr('Identify Small Lines')] #more than one post process (this is treated in validationManager)
-
     def execute(self):
         """
         Reimplementation of the execute method from the parent class
