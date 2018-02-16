@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>579</height>
+    <width>466</width>
+    <height>567</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,9 @@
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <widget class="QTabWidget" name="validationTabWidget">
+      <property name="toolTip">
+       <string>Configure </string>
+      </property>
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -32,24 +35,28 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
+        <item row="0" column="1" colspan="2">
          <widget class="QLineEdit" name="databaseLineEdit"/>
         </item>
-        <item row="0" column="2">
+        <item row="0" column="3">
          <widget class="QPushButton" name="openDbPushButton">
           <property name="text">
            <string>Open</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="3">
-         <widget class="QLineEdit" name="filterLineEdit">
-          <property name="placeholderText">
-           <string>Filter by process name</string>
+        <item row="3" column="0" colspan="2">
+         <widget class="QPushButton" name="reRunButton">
+          <property name="text">
+           <string>Re-Run Last Process</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/plugins/DsgTools/icons/re-run.png</normaloff>:/plugins/DsgTools/icons/re-run.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="2" column="0" colspan="3">
+        <item row="2" column="0" colspan="4">
          <widget class="QTreeWidget" name="processTreeWidget">
           <property name="minimumSize">
            <size>
@@ -80,37 +87,28 @@
           </column>
          </widget>
         </item>
-        <item row="3" column="0" colspan="3">
-         <widget class="QSplitter" name="splitter_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="1" column="0" colspan="4">
+         <widget class="QLineEdit" name="filterLineEdit">
+          <property name="placeholderText">
+           <string>Filter by process name</string>
           </property>
-          <widget class="QSplitter" name="splitter">
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <widget class="QPushButton" name="reRunButton">
-            <property name="text">
-             <string>Re-Run Last Process</string>
-            </property>
-           </widget>
-           <widget class="QPushButton" name="historyButton">
-            <property name="text">
-             <string>Open History</string>
-            </property>
-           </widget>
-          </widget>
-          <widget class="QPushButton" name="runButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Run Process</string>
-           </property>
-          </widget>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="2">
+         <widget class="QPushButton" name="runButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Run Process</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/plugins/DsgTools/icons/run.png</normaloff>:/plugins/DsgTools/icons/run.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>
@@ -173,36 +171,276 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="0" colspan="2">
+         <widget class="QPushButton" name="historyButton">
+          <property name="text">
+           <string>Open History</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/plugins/DsgTools/icons/history.png</normaloff>:/plugins/DsgTools/icons/history.png</iconset>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
         <string>Rules</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="1" column="1">
-         <widget class="QPushButton" name="rulesEditorButton">
-          <property name="text">
-           <string>Show Spatial Rules Editor</string>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Spatial Rules</string>
           </property>
+          <layout class="QGridLayout" name="gridLayout_4">
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="spatialRuleEnforcerRadio">
+             <property name="text">
+              <string>Start/Stop Spatial Rule Enforcer</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="DsgCustomComboBox" name="spatialRulesComboBox" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="createSpatialRulePushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Add spatial rule</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="importSpatialRulePushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Import spatial rule</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/plugins/DsgTools/icons/import.png</normaloff>:/plugins/DsgTools/icons/import.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="configureSpatialRulePushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Configure spatial rule</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QPushButton" name="attributeRulesEditorPushButton">
-          <property name="text">
-           <string>Show Attribute Rules Editor</string>
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>Attribute Rules</string>
           </property>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="attributeRuleEnforcerRadio">
+             <property name="text">
+              <string>Start/Stop Attribute Rule Enforcer</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <item>
+              <widget class="DsgCustomComboBox" name="attributeRulesComboBox" native="true">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="createAttributeRulePushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Add spatial rule</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="importAttributeRulePushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Import spatial rule</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/plugins/DsgTools/icons/import.png</normaloff>:/plugins/DsgTools/icons/import.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="configureAttributeRulePushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>30</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="toolTip">
+                <string>Configure spatial rule</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../resources.qrc">
+                 <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="QRadioButton" name="ruleEnforcerRadio">
-          <property name="text">
-           <string>Start/Stop Spatial Rule Enforcer</string>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <property name="checkable">
-           <bool>true</bool>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>226</height>
+           </size>
           </property>
-         </widget>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="attributeRulesEditorPushButton">
+            <property name="text">
+             <string>Show Attribute Rules Editor</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="rulesEditorButton">
+            <property name="text">
+             <string>Show Spatial Rules Editor</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -219,6 +457,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
