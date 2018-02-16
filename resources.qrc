@@ -51,5 +51,8 @@
         <file>icons/run.png</file>
         <file>icons/re-run.png</file>
         <file>icons/history.png</file>
+        <file>icons/flags.png</file>
+        <file>icons/flags_all.png</file>
+        <file>icons/export.png</file>
     </qresource>
 </RCC>

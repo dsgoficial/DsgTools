@@ -70,7 +70,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createContextMenu)
         self.ruleEnforcer = None
-        self.attributeRulesEditorPushButton.hide()
         self.itemList = []
         self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
 
