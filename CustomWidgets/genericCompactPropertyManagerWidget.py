@@ -96,7 +96,9 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             'selectedConfig':--name of the selected config--, 
         }
         """
-        pass
+        parameterDict = dict()
+        parameterDict['selectedConfig'] = self.propertyComboBox.currentText()
+        return parameterDict
     
     def setInterface(self, parameterDict):
         """
@@ -106,7 +108,11 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             'selectedConfig':--name of the selected config--, 
         }
         """
-        pass
+        if 'selectedConfig' in parameterDict:
+            idx = self.propertyComboBox.findText(parameterDict['selectedConfig'], flags = Qt.MatchFlags)
+            if idx != -1:
+                self.propertyComboBox.setCurrentIndex(idx)
+
 
     @pyqtSlot(bool)
     def on_importPropertyPushButton_clicked(self):
