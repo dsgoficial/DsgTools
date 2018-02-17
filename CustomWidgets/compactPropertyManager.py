@@ -47,6 +47,7 @@ class CompactPropertyManager(QtGui.QWidget, FORM_CLASS):
         super(CompactPropertyManager, self).__init__(parent)
         self.setupUi(self)
         self.changeTooltips('')
+        self.genericDbManager = genericDbManager
     
     def changeTooltips(self, propertyName):
         """
