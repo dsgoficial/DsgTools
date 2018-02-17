@@ -112,7 +112,20 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             idx = self.propertyComboBox.findText(parameterDict['selectedConfig'], flags = Qt.MatchFlags)
             if idx != -1:
                 self.propertyComboBox.setCurrentIndex(idx)
-
+    
+    @pyqtSlot(bool)
+    def on_createPropertyPushButton_clicked(self):
+        """
+        Creates property
+        """
+        pass
+    
+    @pyqtSlot(bool)
+    def on_removePropertyPushButton_clicked(self):
+        """
+        Removes property
+        """
+        pass
 
     @pyqtSlot(bool)
     def on_importPropertyPushButton_clicked(self):
@@ -160,4 +173,9 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + ':'.join(e.args))
 
-    
+    @pyqtSlot(bool)
+    def on_updatePropertyPushButton_clicked(self):
+        """
+        Removes property
+        """
+        pass
