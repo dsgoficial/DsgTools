@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
-    <height>37</height>
+    <width>236</width>
+    <height>28</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,7 +132,7 @@
     </widget>
    </item>
    <item row="0" column="5">
-    <widget class="QPushButton" name="editPropertyPushButton">
+    <widget class="QPushButton" name="updatePropertyPushButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
        <horstretch>0</horstretch>
