@@ -36,7 +36,7 @@ from qgis.core import QgsMessageLog
 import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'compactPropertyManager.ui'))
+    os.path.dirname(__file__), 'genericCompactPropertyManagerWidget.ui'))
 
 class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
     Add, Remove, Import, Export, Update = range(5)
