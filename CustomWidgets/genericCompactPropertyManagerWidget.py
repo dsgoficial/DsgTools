@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, importlib
 
 # Qt imports
 from PyQt4 import QtGui, uic, QtCore
@@ -46,7 +46,6 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         super(GenericCompactPropertyManagerWidget, self).__init__(parent)
         self.setupUi(self)
-        self.changeTooltips('')
         self.genericDbManager = genericDbManager
         self.textDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                     'Customization':self.tr('Customization'), 
@@ -55,8 +54,40 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
                     'FieldToolBoxConfig':self.tr('Field Toolbox Configuration'),
                     'Permission':self.tr('Permissions'),
                     'AttributeRuleConfig':self.tr('Attribute Rule Configuration'),
-                    'SpatialRuleConfig':self.tr('Spatial Rule Configuration')}
+                    'SpatialRuleConfig':self.tr('Spatial Rule Configuration'),
+                    'Generic':self.tr('Generic Property')}
+        self.changeTooltips(self.textDict[self.getWhoAmI()])
+
+    def refresh(self):
+        """
+        Refreshes interface
+        """
+        pass
     
+    def getWhoAmI(self):
+        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('CompactPropertyManagerWidget','')
+    
+    def instantiateManagerObject(self, abstractDb, dbDict, edgvVersion):
+        """
+        Reimplemented in each child.
+        """
+        objectName = self.getWhoAmI()
+        chars = list(processClass)
+        objectName[0] = objectName[0].lower()
+        fileBaseName = ''.join(objectName)
+        mod = importlib.import_module('DsgTools.ServerManagementTools.{0}'.format(fileBaseName), fromlist=[objectName])
+        klass = getattr(mod, objectName)
+        return klass(abstractDb, dbDict, edgvVersion)
+    
+    def setParameters(self, abstractDb):
+        """
+        1. Get abstract db
+        2. Instantiate manager object
+        """
+        self.abstractDb = abstractDb
+        self.genericManager = self.instantiateManagerObject(abstractDb, {self.abstractDb.db.databaseName():self.abstractDb}, self.abstractDb.getDatabaseVersion())
+
+
     def changeTooltips(self, propertyName):
         """
         Changes all buttons' tooltips according to propertyName
@@ -86,7 +117,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
 
 
     def getWhoAmI(self):
-        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('GenericCompactPropertyManagerWidget','')  
+        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('CompactPropertyManagerWidget','')
 
     def getParameterDict(self):
         """
@@ -116,14 +147,15 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_createPropertyPushButton_clicked(self):
         """
-        Creates property
+        1. Open custom manager according to property type;
+        2. Use manager to apply to database
         """
         pass
     
     @pyqtSlot(bool)
     def on_removePropertyPushButton_clicked(self):
         """
-        Removes property
+        Removes property from database and promps if user wants to delete from server as well.
         """
         pass
 
@@ -176,6 +208,13 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_updatePropertyPushButton_clicked(self):
         """
-        Removes property
+        Updates property
+        """
+        pass
+    
+    @pyqtSlot(int)
+    def on_propertyComboBox_currentIndexChanged(self, idx):
+        """
+        Get property and emmits signal with property
         """
         pass
