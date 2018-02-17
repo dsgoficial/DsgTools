@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>530</width>
-    <height>414</height>
+    <width>466</width>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -64,7 +64,7 @@
           <property name="minimumSize">
            <size>
             <width>0</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
           <attribute name="headerMinimumSectionSize">
@@ -220,7 +220,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="CompactPropertyManager" name="spatialRulePropertyManager" native="true"/>
+            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManager" native="true"/>
            </item>
           </layout>
          </widget>
@@ -232,8 +232,8 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
            <item row="1" column="0">
-            <widget class="CompactPropertyManager" name="spatialRulePropertyManager_3" native="true">
-             <widget class="CompactPropertyManager" name="spatialRulePropertyManager_2" native="true">
+            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManager_3" native="true">
+             <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManager_2" native="true">
               <property name="geometry">
                <rect>
                 <x>0</x>
@@ -266,7 +266,7 @@
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>103</height>
+            <height>119</height>
            </size>
           </property>
          </spacer>
@@ -304,9 +304,9 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>CompactPropertyManager</class>
+   <class>GenericCompactPropertyManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.compactPropertyManager.h</header>
+   <header>DsgTools.CustomWidgets.genericCompactPropertyManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
