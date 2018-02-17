@@ -86,7 +86,27 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
 
 
     def getWhoAmI(self):
-        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('GenericCompactPropertyManagerWidget','')    
+        return str(self.__class__).split('.')[-1].replace('\'>', '').replace('GenericCompactPropertyManagerWidget','')  
+
+    def getParameterDict(self):
+        """
+        This is used to get ui state
+        Returns a dict in the format:
+        {
+            'selectedConfig':--name of the selected config--, 
+        }
+        """
+        pass
+    
+    def setInterface(self, parameterDict):
+        """
+        Uses parameterDict to populate interface
+        Sets the interface with a dict in the format:
+        {
+            'selectedConfig':--name of the selected config--, 
+        }
+        """
+        pass
 
     @pyqtSlot(bool)
     def on_importPropertyPushButton_clicked(self):
