@@ -66,6 +66,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.databaseLineEdit.setReadOnly(True)
         self.configWindow = ValidationConfig()
         self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
+        self.configWindow.widget.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createContextMenu)
