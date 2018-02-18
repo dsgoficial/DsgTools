@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>430</height>
+    <width>383</width>
+    <height>398</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,38 +28,10 @@
         <string>Processes</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>Database</string>
-          </property>
-         </widget>
+        <item row="0" column="0" colspan="2">
+         <widget class="ConnectionComboBox" name="connectionSelectorComboBox" native="true"/>
         </item>
-        <item row="0" column="1" colspan="2">
-         <widget class="QLineEdit" name="databaseLineEdit"/>
-        </item>
-        <item row="0" column="3">
-         <widget class="QPushButton" name="openDbPushButton">
-          <property name="text">
-           <string>Open</string>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QPushButton" name="reRunButton">
-          <property name="toolTip">
-           <string>Re-Run Last Process</string>
-          </property>
-          <property name="text">
-           <string>Re-Run Last Process</string>
-          </property>
-          <property name="icon">
-           <iconset resource="../resources.qrc">
-            <normaloff>:/plugins/DsgTools/icons/re-run.png</normaloff>:/plugins/DsgTools/icons/re-run.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0" colspan="4">
+        <item row="2" column="0" colspan="2">
          <widget class="QTreeWidget" name="processTreeWidget">
           <property name="minimumSize">
            <size>
@@ -90,14 +62,21 @@
           </column>
          </widget>
         </item>
-        <item row="1" column="0" colspan="4">
-         <widget class="QLineEdit" name="filterLineEdit">
-          <property name="placeholderText">
-           <string>Filter by process name</string>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="reRunButton">
+          <property name="toolTip">
+           <string>Re-Run Last Process</string>
+          </property>
+          <property name="text">
+           <string>Re-Run Last Process</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../resources.qrc">
+            <normaloff>:/plugins/DsgTools/icons/re-run.png</normaloff>:/plugins/DsgTools/icons/re-run.png</iconset>
           </property>
          </widget>
         </item>
-        <item row="3" column="2" colspan="2">
+        <item row="3" column="1">
          <widget class="QPushButton" name="runButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -114,6 +93,13 @@
           <property name="icon">
            <iconset resource="../resources.qrc">
             <normaloff>:/plugins/DsgTools/icons/run.png</normaloff>:/plugins/DsgTools/icons/run.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLineEdit" name="filterLineEdit">
+          <property name="placeholderText">
+           <string>Filter by process name</string>
           </property>
          </widget>
         </item>
@@ -203,27 +189,18 @@
         <string>Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
-        <item row="0" column="0">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Spatial Rules</string>
+        <item row="2" column="0">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
           </property>
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
-            <widget class="QRadioButton" name="spatialRuleEnforcerRadio">
-             <property name="text">
-              <string>Start/Stop Spatial Rule Enforcer</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManagerWidget" native="true"/>
-           </item>
-          </layout>
-         </widget>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>119</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="1" column="0">
          <widget class="QGroupBox" name="groupBox_2">
@@ -247,36 +224,27 @@
           </layout>
          </widget>
         </item>
-        <item row="2" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Spatial Rules</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>119</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="3" column="0">
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QPushButton" name="attributeRulesEditorPushButton">
-            <property name="text">
-             <string>Show Attribute Rules Editor</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="rulesEditorButton">
-            <property name="text">
-             <string>Show Spatial Rules Editor</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+          <layout class="QGridLayout" name="gridLayout_5">
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="spatialRuleEnforcerRadio">
+             <property name="text">
+              <string>Start/Stop Spatial Rule Enforcer</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManagerWidget" native="true"/>
+           </item>
+          </layout>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -302,6 +270,12 @@
    <class>AttributeRulesCompactPropertyManagerWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.attributeRulesCompactPropertyManagerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ConnectionComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.AdvancedConnectionWidgets.connectionComboBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
