@@ -145,8 +145,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         1. Open custom manager according to property type;
         2. Use manager to apply to database
         """
-        dlg = GenericParameterSetter()
-        dlg.connectionWidget.hide()
+        dlg = GenericParameterSetter(hideDbUi = True)
         if not dlg.exec_():
             return
         templateDb, propertyName, edgvVersion = dlg.getParameters()
