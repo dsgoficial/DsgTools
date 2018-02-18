@@ -20,7 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+import os
+from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtSql import QSqlDatabase
 from PyQt4.QtGui import QApplication, QCursor, QMessageBox
@@ -28,23 +29,44 @@ from PyQt4.QtGui import QApplication, QCursor, QMessageBox
 from qgis.core import QgsMessageLog
 
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from DsgTools.ServerTools.viewServers import ViewServers
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
-class ConnectionComboBox(DsgCustomComboBox):
+FORM_CLASS, _ = uic.loadUiType(os.path.join(
+    os.path.dirname(__file__), 'connectionComboBox.ui'))
+class ConnectionComboBox(QtGui.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     dbChanged = pyqtSignal(AbstractDb)
     problemOccurred = pyqtSignal(str)
     def __init__(self, parent=None):
         super(ConnectionComboBox, self).__init__(parent)
+        self.setupUi(self)
         self.parent = parent
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.serverAbstractDb = None
-        self.displayDict = {'2.1.3':'EDGV 2.1.3', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model')}
-        self.lineEdit().setPlaceholderText(self.tr('Select a database'))
-        self.currentIndexChanged.connect(self.loadDatabase)
+        self.displayDict = {'2.1.3':'EDGV 2.1.3', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
         self.instantiateAbstractDb = False
+        self.viewServers = ViewServers()
+        self.viewServers.defaultChanged.connect(self.loadServerAbstractDb)
+        self.connectionSelectorComboBox.addItem(self.tr('Select database'))
+        self.loadServerAbstractDb()
+    
+    def loadServerAbstractDb(self):
+        """
+        Checks if there is a default db in self.viewServers . If there isn't one, disables connection combo
+        """
+        if self.viewServers.defaultConnectionDict == dict():
+            self.connectionSelectorComboBox.setEnabled(False)
+        else:
+            self.connectionSelectorComboBox.setEnabled(True)
+            (host, port, user, password) = self.viewServers.getDefaultConnectionParameters()
+            serverAbstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+            serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
+            serverAbstractDb.checkAndOpenDb()
+            self.setServerDb(serverAbstractDb)
+
     
     def closeDatabase(self):
         try:
@@ -55,7 +77,7 @@ class ConnectionComboBox(DsgCustomComboBox):
             self.abstractDb = None
 
     def clear(self):
-        super(ConnectionComboBox, self).clear()
+        self.connectionSelectorComboBox.clear()
         self.closeDatabase()
     
     def setServerDb(self, serverAbstractDb):
@@ -66,7 +88,7 @@ class ConnectionComboBox(DsgCustomComboBox):
                 dbList = self.serverAbstractDb.getEDGVDbsFromServer(parentWidget = self.parent)
                 dbList.sort()
                 self.clear()
-                self.addItem(self.tr('Select Database'))
+                self.connectionSelectorComboBox.addItem(self.tr('Select Database'))
                 self.addItems(dbList)
             else:
                 self.clear()
@@ -90,28 +112,34 @@ class ConnectionComboBox(DsgCustomComboBox):
                 itemList.append(newText)
         if itemList == []:
             itemList = items
-        super(ConnectionComboBox, self).addItems(itemList)
+        self.connectionSelectorComboBox.addItems(itemList)
     
     def currentDb(self):
         if self.currentIndex() == 0:
             return None
         else:
             return self.currentText().split(' (')[0]
-                
-    def loadDatabase(self):
+    
+    @pyqtSlot(int, name = 'on_connectionSelectorComboBox_currentIndexChanged')
+    def loadDatabase(self, idx):
         """
         Loads the selected database
         """
         try:
-            if self.serverAbstractDb and self.currentIndex() > 0:
+            if self.serverAbstractDb and idx > 0:
                 if not self.instantiateAbstractDb:
                     self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()
-                    dbName = self.currentText().split(' (')[0]
+                    dbName = self.connectionSelectorComboBox.currentText().split(' (')[0]
                     self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                     self.abstractDb.checkAndOpenDb()
                     self.dbChanged.emit(self.abstractDb)
+                    self.connectionChanged.emit()
         except Exception as e:
             self.closeDatabase()
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)   
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    
+    @pyqtSlot(bool)
+    def on_serverPushButton_clicked(self):
+        self.viewServers.exec_()

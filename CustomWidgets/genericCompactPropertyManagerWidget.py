@@ -76,9 +76,9 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         objectName = self.getWhoAmI()
         chars = list(objectName)
-        objectName[0] = chars[0].lower()
-        fileBaseName = ''.join(objectName)
-        mod = importlib.import_module('DsgTools.ServerManagementTools.{0}'.format(fileBaseName), fromlist=[objectName])
+        chars[0] = chars[0].lower()
+        fileBaseName = ''.join(chars)
+        mod = __import__('DsgTools.ServerManagementTools.{0}Manager'.format(fileBaseName), fromlist=['{0}Manager'.format(objectName)])
         klass = getattr(mod, objectName)
         return klass(abstractDb, dbDict, edgvVersion)
     
