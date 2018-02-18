@@ -45,3 +45,15 @@ class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWi
         Constructor
         """
         super(AttributeRulesCompactPropertyManagerWidget, self).__init__(genericDbManager = manager, parent = parent)
+    
+    def populateConfigInterface(self, templateDb, jsonDict = None):
+        '''
+        Must be reimplemented in each child
+        '''
+        fieldDlg = FieldSetup(templateDb,returnDict = True)
+        if jsonDict:
+            fieldDlg.loadReclassificationConf(jsonDict)
+        if fieldDlg.exec_():
+            return fieldDlg.makeReclassificationDict()
+        else:
+            return None
