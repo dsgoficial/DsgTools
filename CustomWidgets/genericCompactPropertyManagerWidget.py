@@ -31,6 +31,8 @@ from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu, 
 from DsgTools.CustomWidgets.listSelector import ListSelector
 from DsgTools.Utils.utils import Utils
 from DsgTools.dsgEnums import DsgEnums
+from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
+from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 
 from qgis.core import QgsMessageLog
 import json
@@ -53,10 +55,11 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
                     'ValidationConfig':self.tr('Validation'), 
                     'FieldToolBoxConfig':self.tr('Field Toolbox Configuration'),
                     'Permission':self.tr('Permissions'),
-                    'AttributeRuleConfig':self.tr('Attribute Rule Configuration'),
-                    'SpatialRuleConfig':self.tr('Spatial Rule Configuration'),
+                    'AttributeRules':self.tr('Attribute Rules Configuration'),
+                    'SpatialRules':self.tr('Spatial Rules Configuration'),
                     'Generic':self.tr('Generic Property')}
-        self.changeTooltips(self.textDict[self.getWhoAmI()])
+        self.widgetName = self.textDict[self.getWhoAmI()]
+        self.changeTooltips(self.widgetName)
 
     def refresh(self):
         """
@@ -72,8 +75,8 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         Reimplemented in each child.
         """
         objectName = self.getWhoAmI()
-        chars = list(processClass)
-        objectName[0] = objectName[0].lower()
+        chars = list(objectName)
+        objectName[0] = chars[0].lower()
         fileBaseName = ''.join(objectName)
         mod = importlib.import_module('DsgTools.ServerManagementTools.{0}'.format(fileBaseName), fromlist=[objectName])
         klass = getattr(mod, objectName)
@@ -85,8 +88,8 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         2. Instantiate manager object
         """
         self.abstractDb = abstractDb
-        self.genericManager = self.instantiateManagerObject(abstractDb, {self.abstractDb.db.databaseName():self.abstractDb}, self.abstractDb.getDatabaseVersion())
-
+        self.genericDbManager = self.instantiateManagerObject(abstractDb, {self.abstractDb.db.databaseName():self.abstractDb}, self.abstractDb.getDatabaseVersion())
+        self.refresh()
 
     def changeTooltips(self, propertyName):
         """
@@ -107,14 +110,6 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.importPropertyPushButton.setEnabled(enabled)
         self.exportPropertyPushButton.setEnabled(enabled)
         self.updatePropertyPushButton.setEnabled(enabled)
-    
-    def setGenericDbManager(self, genericDbManager):
-        """
-        Sets generic dbManager and adjusts tooltips
-        """
-        self.genericDbManager = genericDbManager
-        self.changeTooltips(self.textDict[self.genericDbManager.getManagerType()])
-
 
     def getWhoAmI(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('CompactPropertyManagerWidget','')
@@ -150,7 +145,26 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         1. Open custom manager according to property type;
         2. Use manager to apply to database
         """
-        pass
+        dlg = GenericParameterSetter()
+        dlg.connectionWidget.hide()
+        if not dlg.exec_():
+            return
+        templateDb, propertyName, edgvVersion = dlg.getParameters()
+        if not self.abstractDb:
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a database!'))
+            return
+        if propertyName == '':
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a {0} name!').format(self.widgetName))
+            return
+        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! {0} name already exists!').format(self.widgetName))
+            return
+        setupDict = self.populateConfigInterface(templateDb)
+        if fieldSetupDict:
+            self.genericDbManager.createSetting(propertyName, edgvVersion, setupDict)
+            self.refresh()
+            QMessageBox.information(self, self.tr('Success!'), self.tr('{0} configuration {1} created successfuly!').format(self.widgetName, propertyName))        
+  
     
     @pyqtSlot(bool)
     def on_removePropertyPushButton_clicked(self):
@@ -174,10 +188,10 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully imported.'))
+            QMessageBox.information(self, self.tr('Success! {0} successfully imported.').format(self.widgetName))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing ') +self.widgetName + ': '  + ':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing {0}: {1}').format(self.widgetName, ':'.join(e.args)) )
         self.refresh()
     
     @pyqtSlot(bool)
@@ -200,10 +214,10 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             for exportProperty in exportPropertyList:
                 self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success!'), self.widgetName + self.tr(' successfully exported.'))
+            QMessageBox.information(self, self.tr('Success! {0} successfully exported.').format(self.widgetName))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting ') + self.widgetName + ': ' + ':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting {0}: {1}').format(self.widgetName, ':'.join(e.args)) )
 
     @pyqtSlot(bool)
     def on_updatePropertyPushButton_clicked(self):
@@ -218,3 +232,6 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         Get property and emmits signal with property
         """
         pass
+    
+    def populateConfigInterface(self, abstractDb):
+        return None

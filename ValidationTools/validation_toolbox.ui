@@ -200,7 +200,7 @@
       </widget>
       <widget class="QWidget" name="tab_3">
        <attribute name="title">
-        <string>Rules</string>
+        <string>Settings</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_6">
         <item row="0" column="0">
@@ -220,7 +220,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManager" native="true"/>
+            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManagerWidget" native="true"/>
            </item>
           </layout>
          </widget>
@@ -231,20 +231,6 @@
            <string>Attribute Rules</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="1" column="0">
-            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManager_3" native="true">
-             <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManager_2" native="true">
-              <property name="geometry">
-               <rect>
-                <x>0</x>
-                <y>10</y>
-                <width>215</width>
-                <height>10</height>
-               </rect>
-              </property>
-             </widget>
-            </widget>
-           </item>
            <item row="0" column="0">
             <widget class="QRadioButton" name="attributeRuleEnforcerRadio">
              <property name="text">
@@ -254,6 +240,9 @@
               <bool>true</bool>
              </property>
             </widget>
+           </item>
+           <item row="1" column="0" colspan="2">
+            <widget class="AttributeRulesCompactPropertyManagerWidget" name="attributeRulePropertyManagerWidget" native="true"/>
            </item>
           </layout>
          </widget>
@@ -307,6 +296,12 @@
    <class>GenericCompactPropertyManagerWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.genericCompactPropertyManagerWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>AttributeRulesCompactPropertyManagerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.attributeRulesCompactPropertyManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
