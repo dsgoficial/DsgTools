@@ -66,7 +66,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         # self.databaseLineEdit.setReadOnly(True)
         self.configWindow = ValidationConfig()
         self.connectionSelectorComboBox.connectionChanged.connect(self.updateDbLineEdit)
-        # self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
+        self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createContextMenu)
@@ -383,7 +383,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         try:
             self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
-            dlg = AttributeRulesEditor(self.cconnectionSelectorComboBox.abstractDb)
+            dlg = AttributeRulesEditor(self.connectionSelectorComboBox.abstractDb)
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))

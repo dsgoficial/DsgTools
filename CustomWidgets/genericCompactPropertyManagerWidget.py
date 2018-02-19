@@ -42,13 +42,13 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
     Add, Remove, Import, Export, Update = range(5)
-    def __init__(self, genericDbManager = None, parent = None):
+    def __init__(self, parent = None):
         """
         Constructor
         """
         super(GenericCompactPropertyManagerWidget, self).__init__(parent)
         self.setupUi(self)
-        self.genericDbManager = genericDbManager
+        self.genericDbManager = None
         self.textDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                     'Customization':self.tr('Customization'), 
                     'Style':self.tr('Style'), 
