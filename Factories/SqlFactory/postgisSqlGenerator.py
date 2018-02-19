@@ -1558,10 +1558,10 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getProcessOrClassFlags(self, filterType=None, filteringClass=None, filteringProcess=None):
         """
-        Returns all process or classes that raised flags
+        Returns all process or classes that raised flags.
+        This method cannot have both filters on. It WILL 
+        have the process filter ignored.
         """
-        # to allow changing cases as desired
-        # filterType = filterType.lower()
         sql = ""
         if filterType == "process":          
             sql = """
@@ -1574,9 +1574,11 @@ class PostGISSqlGenerator(SqlGenerator):
             FROM validation.aux_flags_validacao;
             """
         if filteringClass:
-            sql.replace(";", " WHERE layer = \'{0}\';".format(filteringClass))
-        if filteringProcess:
-            sql.replace(";", " WHERE process = \'{0}\';".format(filteringProcess))
+            # case there's a layer selected to filter the processes
+            sql = sql.replace(";", " WHERE layer = \'{0}\';".format(filteringClass))
+        elif filteringProcess:
+            # case there's a process to filter classes
+            sql = sql.replace(";", " WHERE process_name = \'{0}\';".format(filteringProcess))
         return sql
 
     def getFilteredFlagsQuery(self, className=None, processName=None):
@@ -1591,7 +1593,7 @@ class PostGISSqlGenerator(SqlGenerator):
         if className and className != '': 
             whereClause = " WHERE layer = '{0}';".format(className)
             if processName and processName != '':
-                whereClause.replace(";", " AND process_name = '{0}';".format(className))
+                whereClause = whereClause.replace(";", " AND process_name = '{0}';".format(className))
         elif processName and processName != '':
             whereClause = " WHERE process_name = '{0}';".format(processName)
         else:
@@ -1613,13 +1615,12 @@ class PostGISSqlGenerator(SqlGenerator):
         if className and className != '': 
             whereClause = " WHERE layer = '{0}';".format(className)
             if processName and processName != '':
-                whereClause.replace(";", " AND process_name = '{0}';".format(className))
+                whereClause = whereClause.replace(";", " AND process_name = '{0}';".format(processName))
         elif processName and processName != '':
             whereClause = " WHERE process_name = '{0}';".format(processName)
         else:
             whereClause = ";"
-        sql = sql + whereClause
-        return sql
+        return sql + whereClause
     
     def checkCoverageForGaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
         tableSchema, tableName = table.split('.')
