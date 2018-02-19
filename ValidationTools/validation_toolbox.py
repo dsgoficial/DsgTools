@@ -388,16 +388,15 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.processChanged = True
         className = self.classFilterComboBox.currentText()
         processName = self.processFilterComboBox.currentText()
-        # if there's a process selected, classes should be repopulated
+        # classes should be repopulated for filtering purposes
         # clear classes available
         self.classFilterComboBox.clear()
         listClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("class", filteringProcess=processName)
         # repopulate classes available for selected class
         self.classFilterComboBox.addItems(listClasses)
         # getting text index for resetting after repopulation
-        idx = max(0, self.classFilterComboBox.findText(className)) # case index = -1
+        idx = max(0, self.classFilterComboBox.findText(className))
         self.classFilterComboBox.setCurrentIndex(idx)
-        className = self.classFilterComboBox.currentText()
         self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(className=className, processName=processName)
         self.projectModel.select()
 
