@@ -247,6 +247,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Selects a given feature on canvas.
         """
+        layer.startEditing()
         idList = layer.selectedFeaturesIds()
         featId = feature.id()
         if featId not in idList:
