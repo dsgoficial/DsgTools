@@ -31,8 +31,6 @@ from PyQt4.QtCore import pyqtSlot, Qt, QSettings
 from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
 from PyQt4.QtSql import QSqlDatabase,QSqlQuery
 
-
-
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'attributeRuleWidget.ui'))
 
@@ -151,5 +149,3 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
             not self.mFieldExpressionWidget.isValidExpression(self.mFieldExpressionWidget.currentText()):
             msg += self.tr('Invalid rule!\n')
         return msg
-
-
