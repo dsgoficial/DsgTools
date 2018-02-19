@@ -53,7 +53,7 @@ class ListSelector(QtGui.QDialog, FORM_CLASS):
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
-        self.done(0)
+        self.done(1)
 
     @pyqtSlot()
     def on_buttonBox_rejected(self):
