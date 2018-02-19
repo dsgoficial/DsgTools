@@ -74,13 +74,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         Reimplemented in each child.
         """
-        objectName = self.getWhoAmI()
-        chars = list(objectName)
-        chars[0] = chars[0].lower()
-        fileBaseName = ''.join(chars)
-        mod = __import__('DsgTools.ServerManagementTools.{0}Manager'.format(fileBaseName), fromlist=['{0}Manager'.format(objectName)])
-        klass = getattr(mod, objectName)
-        return klass(abstractDb, dbDict, edgvVersion)
+        pass
     
     def setParameters(self, abstractDb):
         """
@@ -148,10 +142,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         dlg = GenericParameterSetter(hideDbUi = True)
         if not dlg.exec_():
             return
-        templateDb, propertyName, edgvVersion = dlg.getParameters()
-        if not self.abstractDb:
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a database!'))
-            return
+        propertyName = dlg.getParameters()
         if propertyName == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a {0} name!').format(self.widgetName))
             return

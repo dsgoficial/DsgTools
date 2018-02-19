@@ -81,4 +81,7 @@ class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
         self.done(0)
 
     def getParameters(self):
-        return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())
+        if self.isHidden:
+            return self.customNameLineEdit.text()
+        else:
+            return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())
