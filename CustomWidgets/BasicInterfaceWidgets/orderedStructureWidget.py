@@ -56,9 +56,8 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         """
         rowCount = self.tableWidget.rowCount()
         self.tableWidget.insertRow(rowCount)
-        widgetItem = QTableWidgetItem()
         widget = self.instantiateWidgetItem()
-        self.tableWidget.setCellWidget(rowCount, 1, widgetItem)
+        self.tableWidget.setCellWidget(rowCount, 0, widget)
     
     @pyqtSlot(bool)
     def on_removeRulePushButton_clicked(self):

@@ -14,17 +14,47 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
-    <widget class="DsgCustomComboBox" name="layerComboBox" native="true"/>
+    <widget class="DsgCustomComboBox" name="layerComboBox" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item row="0" column="1">
-    <widget class="DsgCustomComboBox" name="attributeComboBox" native="true"/>
+    <widget class="DsgCustomComboBox" name="attributeComboBox" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QgsFieldExpressionWidget" name="mFieldExpressionWidget"/>
+    <widget class="QgsFieldExpressionWidget" name="mFieldExpressionWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
    </item>
    <item row="0" column="3">
     <widget class="QLineEdit" name="descriptionLineEdit">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="inputMask">
       <string/>
      </property>
