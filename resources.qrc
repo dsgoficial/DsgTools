@@ -54,5 +54,7 @@
         <file>icons/flags.png</file>
         <file>icons/flags_all.png</file>
         <file>icons/export.png</file>
+        <file>icons/up.png</file>
+        <file>icons/down.png</file>
     </qresource>
 </RCC>
