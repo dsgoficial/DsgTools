@@ -39,19 +39,22 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
     def __init__(self, layerDict, interfaceDict = {}, parent = None):
         """Constructor."""
-        super(AttributeRuleWidget, self).__init__(parent = )
+        super(AttributeRuleWidget, self).__init__(parent = parent)
         self.setupUi(self)
         self.layerDict = layerDict
         self.layerComboBox.addItem(self.tr('Select a layer'))
         self.layerComboBox.addItems(layerDict.keys())
-        self.attributeComboBox.setEnabled(False)
-        self.mFieldExpressionWidget.setEnabled(False)
-        self.descriptionLineEdit.setEnabled(False)
+        self.setComponentsEnabled(False)
     
     def clearAll(self):
         self.attributeComboBox.clear()
         self.mFieldExpressionWidget.setRow(-1)
         self.descriptionLineEdit.clear()
+    
+    def setComponentsEnabled(self, enabled):
+        self.attributeComboBox.setEnabled(enabled)
+        self.mFieldExpressionWidget.setEnabled(enabled)
+        self.descriptionLineEdit.setEnabled(enabled)
     
     @pyqtSlot(int, name = 'on_layerComboBox_currentIndexChanged')
     def filterAttributeCombo(self, idx):
@@ -60,5 +63,8 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
             key = self.layerComboBox.currentText()
             self.attributeComboBox.addItem(self.tr('Select attribute'))
             self.attributeComboBox.addItems(self.layerDict[key])
+            self.setComponentsEnabled(True)
+        else:
+            self.setComponentsEnabled(False)
 
 

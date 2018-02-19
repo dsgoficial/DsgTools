@@ -37,7 +37,6 @@ class OrderedAttributeRulesWidget(OrderedStructureWidget):
         Initializates OrderedAttributeRulesWidget
         """
         super(OrderedAttributeRulesWidget, self).__init__(parent)
-        self.setupUi(self)
         self.modulePath = 'DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleWidget'
         self.package = 'AttributeRuleWidget'
         self.args = [{'a':['a1','a2','a3'], 'b':['b1','b2','b3']}]
