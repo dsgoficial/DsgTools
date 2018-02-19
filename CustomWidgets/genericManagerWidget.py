@@ -53,7 +53,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Field Toolbox Configuration'),
                             'Permission':self.tr('Permissions'),
-                            'AttributeRuleConfig':self.tr('Attribute Rule Configuration'),
+                            'AttributeRules':self.tr('Attribute Rule Configuration'),
                             'SpatialRuleConfig':self.tr('Spatial Rule Configuration')}
         self.captionDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                             'Customization':self.tr('Customization'), 
@@ -61,7 +61,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Reclassification Setup Files'),
                             'Permission':self.tr('Select a dsgtools permission profile'),
-                            'AttributeRuleConfig':self.tr('Attribute Rule Configuration file'),
+                            'AttributeRules':self.tr('Attribute Rule Configuration file'),
                             'SpatialRuleConfig':self.tr('Spatial Rule Configuration file')}
         self.filterDict = {'EarthCoverage':self.tr('Earth Coverage Setup File (*.dsgearthcov)'), 
                             'Customization':self.tr('DsgTools Customization File (*.dsgcustom)'), 
@@ -69,7 +69,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                             'ValidationConfig':self.tr('DsgTools Validation Configuration File (*.dsgvalidcfg)'), 
                             'FieldToolBoxConfig':self.tr('Reclassification Setup Files (*.reclas)'),
                             'Permission':self.tr('DsgTools Permission Profile File (*.dsgperm)'),
-                            'AttributeRuleConfig':self.tr('Attribute Rule Configuration file (*.dsgattrrul)'),
+                            'AttributeRules':self.tr('Attribute Rule Configuration file (*.dsgattrrul)'),
                             'SpatialRuleConfig':self.tr('Spatial Rule Configuration file (*.dsgspatrul)')}
         self.widgetName = self.textDict[self.getWhoAmI()]
         self.genericDict = None

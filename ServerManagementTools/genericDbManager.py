@@ -50,8 +50,11 @@ class GenericDbManager(QObject):
                     'Style':'.dsgstyle', 
                     'ValidationConfig':'.dsgvalidcfg', 
                     'FieldToolBoxConfig':'.reclas',
-                    'Permission':'.dsgperm'}
+                    'Permission':'.dsgperm',
+                    'AttributeRules':'.dsgattrrul',
+                    'SpatialRules':'.dsgspatrul'}
         self.edgvVersion = edgvVersion
+        self.createPropertyTable()
 
     def getManagerType(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Manager','')
@@ -380,3 +383,10 @@ class GenericDbManager(QObject):
         Method that is reimplemented in each child
         """
         return []
+    
+    def createPropertyTable(self):
+        settingType = self.getManagerType()
+        for dbName in self.dbDict.keys():
+            abstractDb = self.instantiateAbstractDb(dbName)
+            if not abstractDb.checkIfExistsConfigTable(settingType):
+                abstractDb.createPropertyTable(settingType, useTransaction = True)

@@ -44,7 +44,7 @@ class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWi
         """
         Constructor
         """
-        super(AttributeRulesCompactPropertyManagerWidget, self).__init__(genericDbManager = manager, parent = parent)
+        super(AttributeRulesCompactPropertyManagerWidget, self).__init__(parent = parent)
     
     def populateConfigInterface(self, templateDb, jsonDict = None):
         '''
