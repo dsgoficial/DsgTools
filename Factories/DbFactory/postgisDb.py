@@ -41,6 +41,8 @@ class PostgisDb(AbstractDb):
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        # dict to text showing for no process or class selected
+        self.dictNoClassNoProcess = { 'No Process' : self.tr("Select a process..."), 'No Layer' : self.tr("Select a layer...") }
 
     def getDatabaseParameters(self):
         """
@@ -3514,6 +3516,11 @@ class PostgisDb(AbstractDb):
         based on existing flags.
         """
         self.checkAndOpenDb()
+        # 
+        if filteringProcess == self.dictNoClassNoProcess['No Process']:
+            filteringProcess = ''
+        if filteringClass == self.dictNoClassNoProcess['No Layer']:
+            filteringClass = ''
         sql = self.gen.getProcessOrClassFlags(filterType, filteringClass=filteringClass, filteringProcess=filteringProcess)
         # list of all filtered flags
         classesOrProcesses = []
@@ -3522,9 +3529,9 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
         # adding first item to the lists
         if filterType == "process":
-            initialItem = self.tr("Select process...")
+            initialItem = self.dictNoClassNoProcess['No Process']
         if filterType == "class":
-            initialItem = self.tr("Select layer...")
+            initialItem = self.dictNoClassNoProcess['No Layer']
         classesOrProcesses.append(initialItem)
         while query.next():
             classesOrProcesses.append(str(query.value(0)))
@@ -3537,9 +3544,9 @@ class PostgisDb(AbstractDb):
         (e.g. a process named 'identifyDuplicatedGeometries') 
         """        
         self.checkAndOpenDb()
-        if className == self.tr("Select layer..."):
+        if className == self.dictNoClassNoProcess['No Layer']:
             className = ''
-        if processName == self.tr("Select process..."):
+        if processName == self.dictNoClassNoProcess['No Process']:
             processName = ''
         sql = self.gen.getFilteredFlagsQuery(className=className, processName=processName)
         outFiltered = []
@@ -3556,9 +3563,9 @@ class PostgisDb(AbstractDb):
         with data considering the users selection of filtering
         """
         self.checkAndOpenDb()
-        if className == self.tr("Select layer..."):
+        if className == self.dictNoClassNoProcess['No Layer']:
             className = ''
-        if processName == self.tr("Select process..."):
+        if processName == self.dictNoClassNoProcess['No Process']:
             processName = ''
         sql = self.gen.createFilteredFlagsViewTableQuery(className=className, processName=processName)
         query = QSqlQuery(sql, self.db)
