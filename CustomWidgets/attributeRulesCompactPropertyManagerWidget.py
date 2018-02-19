@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
-from DsgTools.ServerManagementTools.fieldToolBoxConfigManager import FieldToolBoxConfigManager
+from DsgTools.ServerManagementTools.attributeRulesManager import AttributeRulesManager
 from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.CustomWidgets.genericCompactPropertyManagerWidget import GenericCompactPropertyManagerWidget
@@ -57,3 +57,6 @@ class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWi
             return fieldDlg.makeReclassificationDict()
         else:
             return None
+    
+    def instantiateManagerObject(self, abstractDb, dbDict, edgvVersion):
+        return AttributeRulesManager(abstractDb, dbDict, edgvVersion)
