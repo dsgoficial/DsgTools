@@ -72,7 +72,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.ruleEnforcer = None
         self.attributeRulesEditorPushButton.hide()
         self.itemList = []
-        self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
+        # self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
 
     def createContextMenu(self, position):
         """
@@ -337,6 +337,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             listClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("class")
             self.classFilterComboBox.addItems(listClasses)
             self.processFilterComboBox.addItems(listProcesses)
+        self.processFilterComboBox.setCurrentIndex(0)
+        self.classFilterComboBox.setCurrentIndex(0)
 
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
@@ -351,23 +353,36 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
 
     @pyqtSlot(int, name = 'on_procesFilterComboBox_currentIndexChanged')
-    def refreshFlagListOnProcessSelection(self):        
+    def refreshFlagListOnProcessSelection(self, classChanged=False):        
         """
         Refreshs the list of processes available for filtering the view
         """
-        className = self.classFilterComboBox.currentText()
-        processName = self.processFilterComboBox.currentText()
-        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(className=className, processName=processName)
-        self.projectModel.setTable('validation.filtered_flags')
-        self.projectModel.select()
-        
+        if self.processFilterComboBox.currentIndex() == 0:
+            continue
+        elif not classChanged:
+            # this way, this function will not be called into a loop if
+            # the class is changed. 
+            self.refreshFlagListOnClassSelection(processChanged=True)
+
     @pyqtSlot(int, name = 'on_classFilterComboBox_currentIndexChanged')
-    def refreshFlagListOnClassSelection(self):
+    def refreshFlagListOnClassSelection(self, processChanged=False):
         """
         Refreshs the list of classes available for filtering the view
         """
-        # the execution is the same as changing the class name, just updating the SQL properly
         className = self.classFilterComboBox.currentText()
+        processName = self.processFilterComboBox.currentText()
+        if processName == '': # this indicates 1st execution
+            self.processFilterComboBox.setCurrentIndex(0)
+        if processChanged: # the signal was sent from process combo box
+            # then we check if the className is in the list of classes affected
+            # by that process
+            listProcesses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("process", filteringClass=className)
+
+        self.processFilterComboBox.clear()
+        listProcesses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("process", filteringClass=className)
+        self.processFilterComboBox.addItems(listProcesses)
+        if processName not in listProcesses:
+            self.processFilterComboBox.setCurrentIndex(0)
         processName = self.processFilterComboBox.currentText()
         self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(className=className, processName=processName)
         self.projectModel.setTable('validation.filtered_flags')
