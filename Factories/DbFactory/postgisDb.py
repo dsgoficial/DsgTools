@@ -3514,7 +3514,7 @@ class PostgisDb(AbstractDb):
         based on existing flags.
         """
         self.checkAndOpenDb()
-        sql = self.gen.getProcessOrClassFlags(filterType, filteringClass=None, filteringProcess=None)
+        sql = self.gen.getProcessOrClassFlags(filterType, filteringClass=filteringClass, filteringProcess=filteringProcess)
         # list of all filtered flags
         classesOrProcesses = []
         query = QSqlQuery(sql, self.db)
