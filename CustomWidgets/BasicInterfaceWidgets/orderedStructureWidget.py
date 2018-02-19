@@ -21,9 +21,11 @@
  ***************************************************************************/
 """
 import os
+from collections import deque
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from PyQt4.QtGui import QTableWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'orderedStructureWidget.ui'))
@@ -36,14 +38,46 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         """
         super(OrderedStructureWidget, self).__init__(parent)
         self.setupUi(self)
+        self.modulePath = None
+        self.package = None
+        self.args = None
+    
+    def instantiateWidgetItem(self):
+        """
+        Dynamically instantiates object
+        """
+        #1. get module using importlib
+        mod = importlib.import_module(self.modulePath, package=self.package)
+        #2. get class object
+        klass = getattr(mod,self.package)
+        #3. instantiating the class, *args get list from args, unpacks and gives to klass to instantiate an obj
+        obj = klass(*self.args)
+        return obj
     
     @pyqtSlot(bool)
     def on_addRulePushButton_clicked(self):
-        pass
+        """
+        1. Instantiate new line
+        2. Add new line in the end
+        """
+        rowCount = self.tableWidget.rowCount()
+        self.tableWidget.insertRow(rowCount)
+        widgetItem = QTableWidgetItem()
+        widget = self.instantiateWidgetItem()
+        self.tableWidget.setCellWidget(rowCount, 1, widgetItem)
     
     @pyqtSlot(bool)
     def on_removeRulePushButton_clicked(self):
-        pass
+        """
+        1. Get selected row
+        2. Remove selected row
+        3. Update control list
+        """
+        selected = self.tableWidget.selectedIndexes()
+        rowList = [i.row() for i in selected]
+        rowList.sort(reverse=True)
+        for row in rowList:
+            self.tableWidget.removeRow(row)
 
     @pyqtSlot(bool)
     def on_moveRuleUpPushButton_clicked(self):
