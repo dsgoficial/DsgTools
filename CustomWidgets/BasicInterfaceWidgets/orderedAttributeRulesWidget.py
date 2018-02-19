@@ -28,6 +28,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtGui import QTableWidgetItem
 
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedStructureWidget import OrderedStructureWidget
+from DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleWidget import AttributeRuleWidget
 
 class OrderedAttributeRulesWidget(OrderedStructureWidget):
 
@@ -39,4 +40,7 @@ class OrderedAttributeRulesWidget(OrderedStructureWidget):
         self.setupUi(self)
         self.modulePath = 'DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleWidget'
         self.package = 'AttributeRuleWidget'
-        self.args = None
+        self.args = [{'a':['a1','a2','a3'], 'b':['b1','b2','b3']}]
+    
+    def instantiateWidgetItem(self):
+        return AttributeRuleWidget(*self.args)

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, importlib
 from collections import deque
 # Qt imports
 from PyQt4 import QtGui, uic
@@ -44,15 +44,9 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
     
     def instantiateWidgetItem(self):
         """
-        Dynamically instantiates object
+        Must be reimplemented in each child.
         """
-        #1. get module using importlib
-        mod = importlib.import_module(self.modulePath, package=self.package)
-        #2. get class object
-        klass = getattr(mod,self.package)
-        #3. instantiating the class, *args get list from args, unpacks and gives to klass to instantiate an obj
-        obj = klass(*self.args)
-        return obj
+        pass
     
     @pyqtSlot(bool)
     def on_addRulePushButton_clicked(self):
