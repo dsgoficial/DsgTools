@@ -1556,7 +1556,7 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(tableSchema, tableName, geomColumn, keyColumn)
         return sql
 
-    def getProcessOrClassFlags(self, filterType=None):
+    def getProcessOrClassFlags(self, filterType=None, filteringClass=None, filteringProcess=None):
         """
         Returns all process or classes that raised flags
         """
@@ -1573,6 +1573,10 @@ class PostGISSqlGenerator(SqlGenerator):
         SELECT DISTINCT layer
             FROM validation.aux_flags_validacao;
             """
+        if filteringClass:
+            sql.replace(";", " WHERE layer = \'{0}\';".format(filteringClass))
+        if filteringProcess:
+            sql.replace(";", " WHERE process = \'{0}\';".format(filteringProcess))
         return sql
 
     def getFilteredFlagsQuery(self, className=None, processName=None):
@@ -1586,12 +1590,13 @@ class PostGISSqlGenerator(SqlGenerator):
         whereClause = ""
         if className and className != '': 
             whereClause = " WHERE layer = '{0}';".format(className)
-            if processName and process != '':
+            if processName and processName != '':
                 whereClause.replace(";", " AND process_name = '{0}';".format(className))
-        elif processName and process != '':
-            whereClause = " WHERE layer = '{0}';".format(processName)
+        elif processName and processName != '':
+            whereClause = " WHERE process_name = '{0}';".format(processName)
         else:
             whereClause = ";"
+        
         sql = sql.replace(";", whereClause)
         return sql
 

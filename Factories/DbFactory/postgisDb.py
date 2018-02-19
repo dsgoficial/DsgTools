@@ -3508,19 +3508,24 @@ class PostgisDb(AbstractDb):
             invalidRecordsList.append( (0, reason, geom) )
         return invalidRecordsList
     
-    def fillComboBoxProcessOrClasses(self, filterType=None):
+    def fillComboBoxProcessOrClasses(self, filterType=None, filteringClass=None, filteringProcess=None):
         """
         Returns a list of possible classes or processes
         based on existing flags.
         """
         self.checkAndOpenDb()
-        sql = self.gen.getProcessOrClassFlags(filterType)
+        sql = self.gen.getProcessOrClassFlags(filterType, filteringClass=None, filteringProcess=None)
         # list of all filtered flags
         classesOrProcesses = []
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
-        classesOrProcesses.append("")
+        # adding first item to the lists
+        if filterType == "process":
+            initialItem = self.tr("Select process...")
+        if filterType == "class":
+            initialItem = self.tr("Select layer...")
+        classesOrProcesses.append(initialItem)
         while query.next():
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
@@ -3532,6 +3537,10 @@ class PostgisDb(AbstractDb):
         (e.g. a process named 'identifyDuplicatedGeometries') 
         """        
         self.checkAndOpenDb()
+        if className == self.tr("Select layer..."):
+            className = ''
+        if processName == self.tr("Select process..."):
+            processName = ''
         sql = self.gen.getFilteredFlagsQuery(className=className, processName=processName)
         outFiltered = []
         query = QSqlQuery(sql, self.db)
@@ -3547,6 +3556,10 @@ class PostgisDb(AbstractDb):
         with data considering the users selection of filtering
         """
         self.checkAndOpenDb()
+        if className == self.tr("Select layer..."):
+            className = ''
+        if processName == self.tr("Select process..."):
+            processName = ''
         sql = self.gen.createFilteredFlagsViewTableQuery(className=className, processName=processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
