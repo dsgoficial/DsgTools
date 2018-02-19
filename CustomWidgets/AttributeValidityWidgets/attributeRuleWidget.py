@@ -127,9 +127,9 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         """
         Validates fields. Returns True if all information are filled correctly.
         """
-        if self.layerComboBox.currentIndex() == -1:
+        if self.layerComboBox.currentIndex() < 1:
             return False
-        if self.attributeComboBox.currentIndex() == -1:
+        if self.attributeComboBox.currentIndex() < 1:
             return False
         if self.mFieldExpressionWidget.currentText() == '' or \
             not self.mFieldExpressionWidget.isValidExpression(self.mFieldExpressionWidget.currentText()):
@@ -141,9 +141,9 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         Error reason
         """
         msg = ''
-        if self.layerComboBox.currentIndex() == -1:
+        if self.layerComboBox.currentIndex() < 1:
             msg += self.tr('Invalid layer!\n')
-        if self.attributeComboBox.currentIndex() == -1:
+        if self.attributeComboBox.currentIndex() < 1:
             msg += self.tr('Invalid attribute!\n')
         if self.mFieldExpressionWidget.currentText() == '' or \
             not self.mFieldExpressionWidget.isValidExpression(self.mFieldExpressionWidget.currentText()):
