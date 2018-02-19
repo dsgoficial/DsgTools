@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AttributeRuleWidget</class>
+ <widget class="QWidget" name="AttributeRuleWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>694</width>
+    <height>56</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="DsgCustomComboBox" name="layerComboBox" native="true"/>
+   </item>
+   <item row="0" column="1">
+    <widget class="QWidget" name="attributeComboBox" native="true"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QgsFieldExpressionWidget" name="mFieldExpressionWidget"/>
+   </item>
+   <item row="0" column="3">
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFieldExpressionWidget</class>
+   <extends>QWidget</extends>
+   <header>qgsfieldexpressionwidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DsgCustomComboBox</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

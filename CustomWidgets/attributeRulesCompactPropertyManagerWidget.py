@@ -32,7 +32,7 @@ from DsgTools.ServerManagementTools.attributeRulesManager import AttributeRulesM
 from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.CustomWidgets.genericCompactPropertyManagerWidget import GenericCompactPropertyManagerWidget
-from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
+from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
 from DsgTools.Utils.utils import Utils
 from DsgTools.dsgEnums import DsgEnums
 
@@ -50,11 +50,11 @@ class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWi
         '''
         Must be reimplemented in each child
         '''
-        fieldDlg = FieldSetup(templateDb,returnDict = True)
+        dlg = AttributeRulesEditor(templateDb,returnDict = True)
         if jsonDict:
-            fieldDlg.loadReclassificationConf(jsonDict)
-        if fieldDlg.exec_():
-            return fieldDlg.makeReclassificationDict()
+            dlg.setInterface(jsonDict)
+        if dlg.exec_():
+            return dlg.getParameterDict()
         else:
             return None
     
