@@ -3579,7 +3579,7 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+            raise Exception(self.tr('Problem while retrieving flags dict: ') + query.lastError().text())
         nrFlags = 0
         while query.next():
             nrFlags += 1
@@ -3593,5 +3593,21 @@ class PostgisDb(AbstractDb):
         sql = self.gen.createValidationHistoryViewTableQuery()
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
         return
+    
+    def getValidationLog(self):
+        """
+        Returns the query for a list of all logs registered for each
+        process executed.
+        """
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        self.checkAndOpenDb()
+        sql = self.gen.createValidationHistoryViewTableQuery()
+        query = QSqlQuery(sql, self.db)
+        log = []
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
+        while query.next():
+            log.append(query.value(0))
+        return log

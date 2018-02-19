@@ -31,7 +31,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_history.ui'))
 
 class ValidationHistory(QtGui.QDialog, FORM_CLASS):
-    def __init__(self,postgisDb, parent=None):
+    def __init__(self, postgisDb, parent=None):
         """
         Constructor
         """
@@ -47,8 +47,8 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             self.projectModel = QSqlTableModel(None,self.postgisDb.db)
             self.refreshViewTable()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Did you select a database?)'))
+            QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -63,6 +63,7 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         """
         if e.key() == Qt.Key_F5:
             self.refreshViewTable()
+            self.getUserName()
 
     def refreshViewTable(self):
         """
@@ -77,4 +78,13 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         header.setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
+    
+    def getUserName(self):
+        log = self.postgisDb.getValidationLog()
+        users = [self.tr("Select a username...")]
+        for l in log:
+            for line in l.split("\n"):
+                if line == self.tr("Database username:"):
+                    users.append(l)
+        print len(users), list(set(users))
         
