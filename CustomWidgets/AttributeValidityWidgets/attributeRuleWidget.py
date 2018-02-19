@@ -43,8 +43,7 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         self.layerComboBox.addItem(self.tr('Select a layer'))
         self.layerComboBox.addItems(layerDict.keys())
         self.setComponentsEnabled(False)
-        self.validKeys = ['layerName', 'attributeName', 'attributeRule', 'description']
-        self.validKeys.sort()
+        self.validKeys = ['attributeName', 'attributeRule', 'description', 'layerName']
         if parameterDict != {}:
             self.populateInterface(parameterDict)
     
