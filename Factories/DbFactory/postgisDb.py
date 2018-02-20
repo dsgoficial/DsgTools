@@ -3629,7 +3629,7 @@ class PostgisDb(AbstractDb):
         inputDict = self.getGeomColumnDictV2(excludeValidation = True)
         for key in inputDict.keys():
             uri = self.getURIV2(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'], '')
-            lyr = QgsVectorLayer(uri, inputDict['lyrName'], 'postgis', False)
+            lyr = QgsVectorLayer(uri, inputDict['lyrName'], 'postgres', False)
             outputKey = '{0}.{1} ({2})'.format(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'])
             lyrDict[outputKey] = lyr
         return lyrDict
