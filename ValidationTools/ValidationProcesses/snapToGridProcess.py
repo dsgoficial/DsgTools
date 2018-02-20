@@ -55,7 +55,7 @@ class SnapToGridProcess(ValidationProcess):
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
             #getting parameters
-            tol = self.parameters['Snap']
+            tol = self.parameters['Coordinate Precision']
             for key in classesWithElem:
                 self.startTimeCount()
                 # preparation
