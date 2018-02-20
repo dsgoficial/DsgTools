@@ -150,7 +150,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! {0} name already exists!').format(self.widgetName))
             return
         setupDict = self.populateConfigInterface(self.abstractDb)
-        if fieldSetupDict:
+        if setupDict:
             self.genericDbManager.createSetting(propertyName, edgvVersion, setupDict)
             self.refresh()
             QMessageBox.information(self, self.tr('Success!'), self.tr('{0} configuration {1} created successfuly!').format(self.widgetName, propertyName))        
