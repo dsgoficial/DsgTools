@@ -49,7 +49,7 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     @pyqtSlot(bool, name = 'on_addRulePushButton_clicked')
-    def addItem(self, parameterDict = {})
+    def addItem(self, parameterDict = {}):
         """
         1. Instantiate new line
         2. Add new line in the end

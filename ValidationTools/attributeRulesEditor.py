@@ -48,3 +48,10 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         self.abstractDb = abstractDb
         self.setupUi(self)
 
+    @pyqtSlot(bool)
+    def on_okPushButton_clicked(self):
+        pass
+    
+    @pyqtSlot(bool)
+    def on_cancelPushButton_clicked(self):
+        self.close()
