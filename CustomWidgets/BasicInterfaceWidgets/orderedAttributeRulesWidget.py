@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import os
-from collections import deque
+from collections import OrderedDict
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
@@ -40,6 +40,20 @@ class OrderedAttributeRulesWidget(OrderedStructureWidget):
         self.modulePath = 'DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleWidget'
         self.package = 'AttributeRuleWidget'
         self.args = [{'a':['a1','a2','a3'], 'b':['b1','b2','b3']}]
+        self.tableWidget.setHorizontalHeaderLabels([self.tr('Attribute Rules')])
     
     def instantiateWidgetItem(self):
         return AttributeRuleWidget(*self.args)
+    
+    def validateJson(self, inputJson):
+        """
+        Validates input json
+        """
+        for key in inputJson.keys():
+            if 'rule_#' not in key:
+                return False
+            if not inputJson[key].validateJson():
+                return False
+        return True
+    
+
