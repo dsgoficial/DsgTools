@@ -81,6 +81,9 @@ class GenericDbManager(QObject):
         if not serverAbstractDb.hasAdminDb():
             return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
         adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
+        managerType = self.getManagerType()
+        if not adminDb.checkIfExistsConfigTable(managerType):
+            adminDb.createPropertyTable(managerType, isAdminDb = True)
         return adminDb
             
     def instantiateTemplateDb(self, edgvVersion):
