@@ -1636,10 +1636,12 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(tableSchema, tableName, geomColumn, keyColumn)
         return sql
 
-    def createValidationHistoryViewTableQuery(self):
+    def createValidationHistoryViewTableQuery(self, idListString=None):
         """
         Returns the query for creating and populating a view table.
         Shows the history of validation processes, ordered by execution.
+        If the optional parameter idListString is given, the list will
+        be filtered to a list of given IDs (format: (int)(id_1, id_2, ...)
         """
         sql = """
         CREATE OR REPLACE VIEW validation.process_history_view AS 
@@ -1648,6 +1650,8 @@ class PostGISSqlGenerator(SqlGenerator):
         JOIN validation.status AS s ON t.status = s.id
         ORDER BY t.finished DESC;
         """
+        if idListString:
+            sql = sql.replace("ORDER BY t.finished DESC;", "WHERE t.id in {0} ORDER BY t.finished DESC;").format(idListString)
         return sql
 
     def getQmlRecords(self, layerList):
@@ -1663,6 +1667,6 @@ class PostGISSqlGenerator(SqlGenerator):
         Returns the query for a list of all logs UNIQUE registered for each
         process executed.
         """
-        sql = """SELECT DISTINCT log FROM validation.process_history;"""
+        sql = """SELECT DISTINCT log, id FROM validation.process_history;"""
         # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
         return sql
