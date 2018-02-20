@@ -41,8 +41,6 @@ class PostgisDb(AbstractDb):
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
-        # dict to text showing for no process or class selected
-        self.dictNoClassNoProcess = { 'No Process' : self.tr("Select a process..."), 'No Layer' : self.tr("Select a layer...") }
 
     def getDatabaseParameters(self):
         """
@@ -3510,45 +3508,31 @@ class PostgisDb(AbstractDb):
             invalidRecordsList.append( (0, reason, geom) )
         return invalidRecordsList
     
-    def fillComboBoxProcessOrClasses(self, filterType=None, filteringClass=None, filteringProcess=None):
+    def fillComboBoxProcessOrClasses(self, filterType=None):
         """
         Returns a list of possible classes or processes
         based on existing flags.
         """
         self.checkAndOpenDb()
-        # 
-        if filteringProcess == self.dictNoClassNoProcess['No Process']:
-            filteringProcess = ''
-        if filteringClass == self.dictNoClassNoProcess['No Layer']:
-            filteringClass = ''
-        sql = self.gen.getProcessOrClassFlags(filterType, filteringClass=filteringClass, filteringProcess=filteringProcess)
+        sql = self.gen.getProcessOrClassFlags(filterType)
         # list of all filtered flags
         classesOrProcesses = []
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
-        # adding first item to the lists
-        if filterType == "process":
-            initialItem = self.dictNoClassNoProcess['No Process']
-        if filterType == "class":
-            initialItem = self.dictNoClassNoProcess['No Layer']
-        classesOrProcesses.append(initialItem)
+        classesOrProcesses.append("")
         while query.next():
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
 
-    def getFilteredFlagsView(self, className=None,processName=None):
+    def getFilteredFlagsView(self, filterType=None,filteredElement=None):
         """
         Returns a list of flagged features accordingly to what
         was chosen to filter and which element was chosen as such
         (e.g. a process named 'identifyDuplicatedGeometries') 
         """        
         self.checkAndOpenDb()
-        if className == self.dictNoClassNoProcess['No Layer']:
-            className = ''
-        if processName == self.dictNoClassNoProcess['No Process']:
-            processName = ''
-        sql = self.gen.getFilteredFlagsQuery(className=className, processName=processName)
+        sql = self.gen.getFilteredFlagsQuery(filterType, filteredElement)
         outFiltered = []
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -3557,17 +3541,13 @@ class PostgisDb(AbstractDb):
             outFiltered.append(str(query.value(0)))
         return outFiltered
 
-    def createFilteredFlagsViewTable(self, className=None,processName=None):
+    def createFilteredFlagsViewTable(self, filterType=None,filteredElement=None):
         """
         Cretas a View Table if it doesn't exist and populates it
         with data considering the users selection of filtering
         """
         self.checkAndOpenDb()
-        if className == self.dictNoClassNoProcess['No Layer']:
-            className = ''
-        if processName == self.dictNoClassNoProcess['No Process']:
-            processName = ''
-        sql = self.gen.createFilteredFlagsViewTableQuery(className=className, processName=processName)
+        sql = self.gen.createFilteredFlagsViewTableQuery(filterType, filteredElement)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
