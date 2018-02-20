@@ -25,7 +25,7 @@ from collections import deque
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtGui import QTableWidgetItem
+from PyQt4.QtGui import QTableWidgetItem, QTableWidgetSelectionRange
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'orderedStructureWidget.ui'))
@@ -86,19 +86,28 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
             return
         for idx in selected:
             self.moveUp(self.tableWidget, idx.row(), 0)
+        self.tableWidget.setRangeSelected(QTableWidgetSelectionRange(firstItemIdx, 0, selected[-1].row()-1, 0), True)
 
     
     @pyqtSlot(bool)
     def on_moveRuleDownPushButton_clicked(self):
-        pass
+        selected = self.tableWidget.selectedIndexes()
+        if selected == []:
+            return
+        firstItemIdx = selected[-1].row() + 1
+        if firstItemIdx > self.tableWidget.rowCount(): #last item in selection, do nothing
+            return
+        for idx in selected[::-1]:
+            self.moveDown(self.tableWidget, idx.row(), 0)
+        self.tableWidget.setRangeSelected(QTableWidgetSelectionRange(firstItemIdx-1, 0, selected[-1].row()+1, 0), True)
     
     def moveDown(self, tableWidget, rowIdx, columnIdx):
         """
         Moves item down
         """
         tableWidget.insertRow(rowIdx+2)
-        widget = tableWidget.takeItem(rowIdx, columnIdx).cellWidget()
-        tableWidget.setItem(rowIdx+2, columnIdx, )
+        tableWidget.takeItem(rowIdx, columnIdx)
+        tableWidget.setCellWidget(rowIdx+2, columnIdx, tableWidget.cellWidget(rowIdx, columnIdx))
         tableWidget.removeRow(rowIdx)
 
     def moveUp(self, tableWidget, rowIdx, columnIdx):
@@ -106,7 +115,8 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         Moves item up
         """
         tableWidget.insertRow(rowIdx-1)
-        tableWidget.setItem(rowIdx-1, columnIdx, tableWidget.takeItem(rowIdx+1, columnIdx))
+        tableWidget.takeItem(rowIdx+1, columnIdx)
+        tableWidget.setCellWidget(rowIdx-1, columnIdx, tableWidget.cellWidget(rowIdx+1, columnIdx))
         tableWidget.removeRow(rowIdx+1)
 
         
