@@ -55,6 +55,7 @@ class MultiLayerSelection(QgsMapTool):
         self.reset()
         self.blackList = ['moldura']
         self.cursorChanged = False
+        self.cursorChangingHotkey = QtCore.Qt.Key_Alt
         #self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
         #self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
     
@@ -70,7 +71,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
         """
-        if e.key() == QtCore.Qt.Key_F2 and not self.cursorChanged:
+        if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
             self.cursorChanged = True
             QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         else:
