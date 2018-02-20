@@ -48,8 +48,8 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         """
         pass
     
-    @pyqtSlot(bool)
-    def on_addRulePushButton_clicked(self):
+    @pyqtSlot(bool, name = 'on_addRulePushButton_clicked')
+    def addItem(self, parameterDict = {})
         """
         1. Instantiate new line
         2. Add new line in the end
@@ -57,6 +57,8 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         rowCount = self.tableWidget.rowCount()
         self.tableWidget.insertRow(rowCount)
         widget = self.instantiateWidgetItem()
+        if parameterDict:
+            widget.populateInterface(parameterDict)
         self.tableWidget.setCellWidget(rowCount, 0, widget)
     
     @pyqtSlot(bool)
@@ -119,5 +121,37 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         tableWidget.setCellWidget(rowIdx-1, columnIdx, tableWidget.cellWidget(rowIdx+1, columnIdx))
         tableWidget.removeRow(rowIdx+1)
 
-        
+    def validate(self):
+        for i in range(self.tableWidget.rowCount()):
+            if not self.tableWidget.cellWidget(i, 0).validate():
+                return False
+        return True
+    
+    def invalidatedReason(self):
+        msg = ''
+        for i in range(self.tableWidget.rowCount()):
+            if not self.tableWidget.cellWidget(i, 0).validate():
+                msg += self.tr('Error for rule #{0}:\n'.format(i+1))+self.tableWidget.cellWidget(i, 0).invalidatedReason()
+        return msg
+    
+    def populateInterface(self, parameterDict):
+        """
+        Populates interface with parameters from parameterDict.
+        """
+        for rule in parameterDict.keys():
+            self.addItem(parameterDict = parameterDict)
+    
+    def getParameterDict(self):
+        """
+        Returns an OrderedDict with the number of the rule and the rule json
+        """
+        parameterDict = OrderedDict()
+        for i in range(self.tableWidget.rowCount()):
+            parameterDict['rule_#{0}'.format(i+1)] = self.tableWidget.cellWidget(i, 0).getParameterDict()
+        return parameterDict
 
+    def validateJson(self, inputJson):
+        """
+        Validates input json. Reimplemented in each child.
+        """
+        pass
