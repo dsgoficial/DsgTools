@@ -209,22 +209,22 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
         dbList = self.genericDbManager.dbDict.keys()
-        ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
         header, operation = self.getApplyHeader()
-        self.outputMessage(operation, header, ret, successDict, exceptionDict)
+        self.outputMessage(operation, header, successDict, exceptionDict)
 
     @pyqtSlot(bool)
     def on_deletePushButton_clicked(self):
-        ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
         header, operation = self.getDeleteHeader()
-        self.outputMessage(operation, header, ret, successDict, exceptionDict)
+        self.outputMessage(operation, header, successDict, exceptionDict)
 
     @pyqtSlot(bool)
     def on_uninstallFromSelectedPushButton_clicked(self):
         dbList = []
-        ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
         header, operation = self.getUninstallFromSelected()
-        self.outputMessage(operation, header, ret, successDict, exceptionDict)
+        self.outputMessage(operation, header, successDict, exceptionDict)
 
     def getViewType(self):
         if self.databasePerspectivePushButton.isChecked():
@@ -254,13 +254,11 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
         self.treeWidget.header().setStretchLastSection(False)
     
-    def outputMessage(self, operation, header, ret, successDict, exceptionDict):
+    def outputMessage(self, operation, header, successDict, exceptionDict):
         """
         successDict = {configName: [--list of successful databases--]}
         exceptionDict = {configName: {dbName: errorText}}
         """
-        if ret in [-1, 0]:
-            return
         viewType = self.getViewType()
         msg = header
         for setting in successDict.keys():
@@ -308,29 +306,21 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     def selectConfig(self):
         availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
         dlg = ListSelector(availableConfig,[])
-        result = dlg.exec_()
-        if result:
-            return dlg.getSelected()
-        else:
-            return None
+        dlg.exec_()
+        selectedConfig = dlg.getSelected()
+        return selectedConfig
 
     def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):
         """
         Executes the setting work according to manageType
         successDict = {configName: [--list of successful databases--]}
         exceptionDict = {configName: {dbName: errorText}}
-        returns: -1 case canceled clicked cancel
-                 0 nothing done by the user and then clicked ok
-                 1 user have selected some confs and clicked ok
         """
         if selectedConfig == []:
             selectedConfig = self.selectConfig()
-            if not selectedConfig:
-                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Operation canceled by user!'))
-                return (-1, dict(),dict())
             if selectedConfig == []:
                 QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
-                return (0, dict(),dict())
+                return (dict(),dict())
         successDict = dict()
         exceptionDict = dict()
         if self.lookAndPromptForStructuralChanges(dbList = dbList):
@@ -342,10 +332,10 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
                 if errorDict != dict():
                     exceptionDict[config] = errorDict
             self.refresh()
-            return (1, successDict, exceptionDict)
+            return successDict, exceptionDict
         else:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Operation canceled by user!'))
-            return (-1, dict(),dict())
+            return (dict(),dict())
     
     def createMenuAssigned(self, position):
         """
@@ -407,14 +397,14 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         if installList <> []:
             #install:
-            ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
             header, operation = self.getApplyHeader()
-            self.outputMessage(operation, header, ret, successDict, exceptionDict)
+            self.outputMessage(operation, header, successDict, exceptionDict)
         if uninstallList <> []:
             #uninstall:
-            ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
             header, operation = self.getUninstallSelectedSettingHeader()
-            self.outputMessage(operation, header, ret, successDict, exceptionDict)
+            self.outputMessage(operation, header, successDict, exceptionDict)
 
     def manageSelectedSetting(self):
         """
@@ -437,14 +427,14 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         if installList <> []:
             #install:
-            ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = uiParameterDict['parameterList'], dbList = installList)
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = uiParameterDict['parameterList'], dbList = installList)
             header, operation = self.getApplyHeader()
-            self.outputMessage(operation, header, ret, successDict, exceptionDict)
+            self.outputMessage(operation, header, successDict, exceptionDict)
         if uninstallList <> []:
             #uninstall:
-            ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uiParameterDict['parameterList'], dbList = uninstallList)
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uiParameterDict['parameterList'], dbList = uninstallList)
             header, operation = self.getUninstallSelectedSettingHeader()
-            self.outputMessage(operation, header, ret, successDict, exceptionDict)
+            self.outputMessage(operation, header, successDict, exceptionDict)
 
     def updateSelectedSetting(self):
         """
@@ -462,9 +452,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
         newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
         if newDict:
-            ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Update, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Update, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
             header, operation = self.getUpdateSelectedSettingHeader()
-            self.outputMessage(operation, header, ret, successDict, exceptionDict)
+            self.outputMessage(operation, header, successDict, exceptionDict)
     
     def cloneSelectedSetting(self):
         currItem = self.treeWidget.currentItem()
@@ -477,9 +467,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         originalDict = self.genericDbManager.getSetting(settingName, edgvVersion)
         newDict = self.populateConfigInterface(templateDb, jsonDict = originalDict)
         if newDict:
-            ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Create, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
+            successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Create, selectedConfig = [settingName], parameterDict = {'newJsonDict':newDict})
             header, operation = self.getUpdateSelectedSettingHeader()
-            self.outputMessage(operation, header, ret, successDict, exceptionDict)
+            self.outputMessage(operation, header, successDict, exceptionDict)
 
     def getParametersFromInterface(self):
         """
@@ -528,9 +518,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
     def uninstallSettings(self):
         edgvVersion = self.genericDbManager.edgvVersion
         uiParameterDict = self.getParametersFromInterface()
-        ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList = uiParameterDict['databaseList'], selectedConfig = uiParameterDict['parameterList'])
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList = uiParameterDict['databaseList'], selectedConfig = uiParameterDict['parameterList'])
         header, operation = self.getUninstallSelectedSettingHeader()
-        self.outputMessage(operation, header, ret, successDict, exceptionDict)
+        self.outputMessage(operation, header, successDict, exceptionDict)
     
     def deleteSelectedSetting(self):
         edgvVersion = self.genericDbManager.edgvVersion
@@ -538,9 +528,9 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         settingTextList = ', '.join(uiParameterDict['parameterList'])
         if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete ')+settingTextList+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
             return
-        ret, successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete, selectedConfig = uiParameterDict['parameterList'])
+        successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete, selectedConfig = uiParameterDict['parameterList'])
         header, operation = self.getDeleteHeader()
-        self.outputMessage(operation, header, ret, successDict, exceptionDict)
+        self.outputMessage(operation, header, successDict, exceptionDict)
     
     def lookAndPromptForStructuralChanges(self, dbList = []):
         '''

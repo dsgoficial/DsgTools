@@ -101,7 +101,6 @@ class SnapGeometriesProcess(ValidationProcess):
 
     #             # running the process in the temp table
     #             result = self.runProcessinAlg(lyr)
-                
     #             # storing flags
     #             if len(result) > 0:
     #                 error = True
