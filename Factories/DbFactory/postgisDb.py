@@ -1166,6 +1166,23 @@ class PostgisDb(AbstractDb):
         
         return uri
     
+    def getURIV2(self, tableSchema, tableName, geometryColumnm, sql = ''):
+        """
+        New inplementation giving parameters.
+        """
+        host = self.db.hostName()
+        port = self.db.port()
+        database = self.db.databaseName()
+        user = self.db.userName()
+        password = self.db.password()
+
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        id = self.getPrimaryKeyColumn(table)
+        uri.setDataSource(tableSchema, tableName, geometryColumnm, sql, id)
+        
+        return uri
+    
     def getDuplicatedGeomRecords(self, cl, geometryColumn, keyColumn):
         """
         Gets duplicated records
@@ -3595,3 +3612,24 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
         return
+    
+    def instantiateQgsVectorLayer(self, uri):
+        pass
+    
+    def setDataSourceUri(self, schema, tableName, geometryColumn, sql, pkColumm):
+        uri = QgsDataSourceURI() 
+
+
+    def getLayerDict(self):
+        """
+        Returns a dict:
+        {'table_schema.table_name (geometryColumn):QgsVectorLayer'}
+        """
+        lyrDict = dict()
+        inputDict = self.getGeomColumnDictV2(excludeValidation = True)
+        for key in inputDict.keys():
+            uri = self.getURIV2(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'], '')
+            lyr = QgsVectorLayer(uri, inputDict['lyrName'], 'postgis', False)
+            outputKey = '{0}.{1} ({2})'.format(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'])
+            lyrDict[outputKey] = lyr
+        return lyrDict
