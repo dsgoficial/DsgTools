@@ -69,7 +69,8 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         if idx > 0:
             key = self.layerComboBox.currentText()
             self.attributeComboBox.addItem(self.tr('Select attribute'))
-            self.attributeComboBox.addItems(self.layerDict[key].pendingFields())
+            self.attributeComboBox.addItems(self.layerDict[key])
+            # self.attributeComboBox.addItems(self.layerDict[key].pendingFields())
             self.setComponentsEnabled(True)
         else:
             self.setComponentsEnabled(False)

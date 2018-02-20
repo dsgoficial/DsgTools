@@ -74,8 +74,40 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_moveRuleUpPushButton_clicked(self):
-        pass
+        """
+        1. Get id range
+        2. For each id in range, swap with pivot
+        """
+        selected = self.tableWidget.selectedIndexes()
+        if selected == []:
+            return
+        firstItemIdx = selected[0].row() - 1
+        if firstItemIdx < 0: #first item in selection, do nothing
+            return
+        for idx in selected:
+            self.moveUp(self.tableWidget, idx.row(), 0)
+
     
     @pyqtSlot(bool)
     def on_moveRuleDownPushButton_clicked(self):
         pass
+    
+    def moveDown(self, tableWidget, rowIdx, columnIdx):
+        """
+        Moves item down
+        """
+        tableWidget.insertRow(rowIdx+2)
+        widget = tableWidget.takeItem(rowIdx, columnIdx).cellWidget()
+        tableWidget.setItem(rowIdx+2, columnIdx, )
+        tableWidget.removeRow(rowIdx)
+
+    def moveUp(self, tableWidget, rowIdx, columnIdx):
+        """
+        Moves item up
+        """
+        tableWidget.insertRow(rowIdx-1)
+        tableWidget.setItem(rowIdx-1, columnIdx, tableWidget.takeItem(rowIdx+1, columnIdx))
+        tableWidget.removeRow(rowIdx+1)
+
+        
+
