@@ -1152,6 +1152,10 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName = 'field_toolbox_config'
         elif settingType == 'ValidationConfig':
             tableName = 'validation_config'
+        elif settingType == 'AttributeRules':
+            tableName = 'attribute_rules'
+        elif settingType == 'SpatialRules':
+            tableName = 'spatial_rules'
         else:
             raise Exception(self.tr('Setting type not defined!'))
         return tableName

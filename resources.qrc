@@ -46,5 +46,15 @@
         <file>icons/circle.png</file> 
         <file>icons/home.png</file> 
         <file>icons/bug.png</file> 
+        <file>icons/config.png</file>
+        <file>icons/import.png</file>
+        <file>icons/run.png</file>
+        <file>icons/re-run.png</file>
+        <file>icons/history.png</file>
+        <file>icons/flags.png</file>
+        <file>icons/flags_all.png</file>
+        <file>icons/export.png</file>
+        <file>icons/up.png</file>
+        <file>icons/down.png</file>
     </qresource>
 </RCC>

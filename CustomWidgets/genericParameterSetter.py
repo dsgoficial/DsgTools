@@ -32,12 +32,16 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericParameterSetter.ui'))
 
 class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, parent = None, nameList = None):
+    def __init__(self, parent = None, nameList = None, hideDbUi = False):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.nameList = nameList
         self.setupUi(self)
-        self.connectionWidget.tabWidget.removeTab(1)
+        self.isHidden = hideDbUi
+        if hideDbUi:
+            self.connectionWidget.hide()
+        else:
+            self.connectionWidget.tabWidget.removeTab(1)
         regex = QtCore.QRegExp('[a-z][a-z\_0-9]*')
         validator = QtGui.QRegExpValidator(regex, self.customNameLineEdit)
         self.customNameLineEdit.setValidator(validator)
@@ -48,8 +52,9 @@ class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
         if self.nameList:
             if self.customNameLineEdit.text() in self.nameList:
                 return False
-        if self.connectionWidget.abstractDb == None:
-            return False
+        if not self.isHidden:
+            if self.connectionWidget.abstractDb == None:
+                return False
         return True
     
     def validateUiReason(self):
@@ -76,4 +81,7 @@ class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
         self.done(0)
 
     def getParameters(self):
-        return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())
+        if self.isHidden:
+            return self.customNameLineEdit.text()
+        else:
+            return (self.connectionWidget.abstractDb , self.customNameLineEdit.text(), self.connectionWidget.abstractDb.getDatabaseVersion())

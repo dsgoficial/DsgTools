@@ -80,7 +80,7 @@ class ServerConfigurator(QDialog, FORM_CLASS):
             return False
         return True
 
-    def storeServerConfiguration(self, name, host, port, user, password):
+    def storeServerConfiguration(self, name, host, port, user, password, isDefault = False):
         '''
         Stores server configuration in QSettings
         '''
@@ -104,6 +104,10 @@ class ServerConfigurator(QDialog, FORM_CLASS):
         settings.setValue('port', port)
         settings.setValue('username', user)
         settings.setValue('password', password)
+        if isDefault:
+            settings.setValue('isDefault', True)
+        else:
+            settings.setValue('isDefault', False)
         settings.endGroup()
         return 1
 
