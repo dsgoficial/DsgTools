@@ -41,6 +41,7 @@ class PostgisDb(AbstractDb):
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        self.databaseEncoding = 'utf-8'
 
     def getDatabaseParameters(self):
         """
@@ -3603,11 +3604,11 @@ class PostgisDb(AbstractDb):
         """
         # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
         self.checkAndOpenDb()
-        sql = self.gen.createValidationHistoryViewTableQuery()
+        sql = self.gen.getValidationLogQuery()
         query = QSqlQuery(sql, self.db)
         log = []
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
         while query.next():
-            log.append(query.value(0))
+            log.append(query.value(0).encode(self.databaseEncoding))
         return log
