@@ -149,7 +149,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! {0} name already exists!').format(self.widgetName))
             return
-        setupDict = self.populateConfigInterface(templateDb)
+        setupDict = self.populateConfigInterface(self.abstractDb)
         if fieldSetupDict:
             self.genericDbManager.createSetting(propertyName, edgvVersion, setupDict)
             self.refresh()

@@ -37,7 +37,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'attributeRulesEditor.ui'))
 
 class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, parent = None):
+    def __init__(self, abstractDb, jsonDict = {}, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         # Set up the user interface from Designer.
