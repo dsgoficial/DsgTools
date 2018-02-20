@@ -3586,18 +3586,18 @@ class PostgisDb(AbstractDb):
             nrFlags += 1
         return nrFlags
 
-    def createValidationHistoryViewTable(self):
+    def createValidationHistoryViewTable(self, idListString=None):
         """
         Creates the view table for validation processes history. 
         """
         self.checkAndOpenDb()
-        sql = self.gen.createValidationHistoryViewTableQuery()
+        sql = self.gen.createValidationHistoryViewTableQuery(idListString=idListString)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
         return
     
-    def getValidationLog(self):
+    def getValidationLog(self, idList=False):
         """
         Returns the query for a list of all logs registered for each
         process executed.
@@ -3606,9 +3606,14 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         sql = self.gen.getValidationLogQuery()
         query = QSqlQuery(sql, self.db)
-        log = []
+        log = [] # list of logs
+        idL = [] # list of ID in the same order as the logs appears
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
         while query.next():
             log.append(query.value(0).encode(self.databaseEncoding))
-        return log
+            idL.append(query.value(1))
+        if idList:            
+            return log, idL
+        else:
+            return log
