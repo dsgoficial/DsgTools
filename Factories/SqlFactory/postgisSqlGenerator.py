@@ -1387,7 +1387,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''SELECT id, name, jsondict, edgvversion from public.{0} where name = '{1}' and edgvversion = '{2}' '''.format(tableName, propertyName, edgvVersion)
         return sql
 
-    def createPropertyTable(self, settingType):
+    def createPropertyTable(self, settingType, isAdminDb = False):
         tableName = self.getSettingTable(settingType)
         sql = '''CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
         CREATE TABLE IF NOT EXISTS public.{0}(
@@ -1399,8 +1399,18 @@ class PostGISSqlGenerator(SqlGenerator):
                 CONSTRAINT {0}_unique_name_and_version UNIQUE (name,edgvversion)
                 );
             '''.format(tableName)
+        if isAdminDb:
+            sql += '''CREATE TABLE public.applied_{0}(
+                id uuid NOT NULL DEFAULT uuid_generate_v4(),
+                id_{0} uuid NOT NULL,
+                dboid oid NOT NULL,
+                CONSTRAINT applied_{0}_pk PRIMARY KEY (id),
+                CONSTRAINT applied_{0}_id_{0}_config_fk FOREIGN KEY (id_{0}) REFERENCES public.{0} (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+            );
+            ALTER TABLE public.applied_{0} OWNER TO postgres;
+            '''.format(tableName)
         return sql
-    
+
     def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter = None):
         if versionFilter:
             versionFilter = ''' where edgvversion = '{0}' '''.format(versionFilter)

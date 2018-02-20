@@ -64,8 +64,9 @@ class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
         if self.nameList:
             if self.customNameLineEdit.text() in self.nameList:
                 validateReason += self.tr('Parameter already exists! Choose another name!\n')
-        if self.connectionWidget.abstractDb == None:
-            validateReason += self.tr('Select a template database!\n')
+        if not self.isHidden:
+            if self.connectionWidget.abstractDb == None:
+                validateReason += self.tr('Select a template database!\n')
         return validateReason
     
     @pyqtSlot(bool)

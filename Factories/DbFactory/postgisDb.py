@@ -3249,11 +3249,11 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
     
-    def createPropertyTable(self, settingType, useTransaction = True):
+    def createPropertyTable(self, settingType, useTransaction = True, isAdminDb = False):
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
-        createSql = self.gen.createPropertyTable(settingType)
+        createSql = self.gen.createPropertyTable(settingType, isAdminDb = isAdminDb)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             if useTransaction:
@@ -3632,4 +3632,3 @@ class PostgisDb(AbstractDb):
             lyr = QgsVectorLayer(uri, inputDict['lyrName'], 'postgres', False)
             outputKey = '{0}.{1} ({2})'.format(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'])
             lyrDict[outputKey] = lyr
-        return lyrDict
