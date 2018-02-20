@@ -1660,9 +1660,9 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getValidationLogQuery(self):
         """
-        Returns the query for a list of all logs registered for each
+        Returns the query for a list of all logs UNIQUE registered for each
         process executed.
         """
-        sql = """SELECT log FROM validation.process_history;"""
+        sql = """SELECT DISTINCT log FROM validation.process_history;"""
         # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
         return sql
