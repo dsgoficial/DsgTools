@@ -37,13 +37,13 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'attributeRulesEditor.ui'))
 
 class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, parameterDict = {}, parent = None):
+    def __init__(self, abstractDb, parameterDict = None, parent = None):
         """Constructor."""
         super(AttributeRulesEditor, self).__init__(parent)
         self.abstractDb = abstractDb
         self.setupUi(self)
         self.attributeRulesWidget.setArgs([self.abstractDb.getLayerDict()])
-        if parameterDict != {}:
+        if parameterDict:
             self.attributeRulesWidget.populateInterface(parameterDict)
 
     @pyqtSlot(bool)

@@ -50,7 +50,7 @@ class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWi
         '''
         Must be reimplemented in each child
         '''
-        dlg = AttributeRulesEditor(templateDb, jsonDict = jsonDict)
+        dlg = AttributeRulesEditor(templateDb, parameterDict = jsonDict)
         if jsonDict:
             dlg.setInterface(jsonDict)
         if dlg.exec_():
