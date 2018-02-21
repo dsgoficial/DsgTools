@@ -56,7 +56,6 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
             msg = self.attributeRulesWidget.invalidatedReason()
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Errors on interface! Check log for details!'))
-            self.done(0)
             return
         self.done(1)
     
