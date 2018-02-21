@@ -47,9 +47,15 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.abstractDb = abstractDb
         self.setupUi(self)
+        self.attributeRulesWidget.args = self.abstractDb.getLayerDict()
 
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
+        """
+        1. Validate widget
+        2. Export jsonDict
+        """
+        self.attributeRulesWidget.
         pass
     
     @pyqtSlot(bool)

@@ -38,8 +38,6 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         """
         super(OrderedStructureWidget, self).__init__(parent)
         self.setupUi(self)
-        self.modulePath = None
-        self.package = None
         self.args = None
     
     def instantiateWidgetItem(self):
