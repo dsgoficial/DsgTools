@@ -29,7 +29,7 @@
     </widget>
    </item>
    <item row="0" column="0" colspan="3">
-    <widget class="OrderedAttributeRulesWidget" name="widget" native="true"/>
+    <widget class="OrderedAttributeRulesWidget" name="attributeRulesWidget" native="true"/>
    </item>
    <item row="1" column="0">
     <spacer name="horizontalSpacer">
