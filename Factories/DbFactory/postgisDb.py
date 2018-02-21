@@ -3632,3 +3632,4 @@ class PostgisDb(AbstractDb):
             lyr = QgsVectorLayer(uri.uri(), inputDict[key]['lyrName'], 'postgres', False)
             outputKey = '{0}.{1} ({2})'.format(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'])
             lyrDict[outputKey] = lyr
+        return lyrDict
