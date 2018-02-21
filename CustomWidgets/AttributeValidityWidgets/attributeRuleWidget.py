@@ -69,9 +69,14 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         if idx > 0:
             key = self.layerComboBox.currentText()
             self.attributeComboBox.addItem(self.tr('Select attribute'))
-            self.attributeComboBox.addItems(self.layerDict[key])
-            # self.attributeComboBox.addItems(self.layerDict[key].pendingFields())
+            #get attribute names
+            attrNames = [i.name() for i in self.layerDict[key].pendingFields()]
+            #add items to combo box
+            self.attributeComboBox.addItems(attrNames)
+            #after everything is ok, set components enabled
             self.setComponentsEnabled(True)
+            #set layer on mFieldExpressionWidget
+            self.mFieldExpressionWidget.setLayer(self.layerDict[key])
         else:
             self.setComponentsEnabled(False)
     
@@ -134,7 +139,7 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         if self.mFieldExpressionWidget.currentText() == '' or \
             not self.mFieldExpressionWidget.isValidExpression(self.mFieldExpressionWidget.currentText()):
             return False
-        return False
+        return True
     
     def invalidatedReason(self):
         """
