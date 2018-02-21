@@ -41,7 +41,9 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.layerDict = layerDict
         self.layerComboBox.addItem(self.tr('Select a layer'))
-        self.layerComboBox.addItems(layerDict.keys())
+        layerNames = layerDict.keys()
+        layerNames.sort()
+        self.layerComboBox.addItems(layerNames)
         self.setComponentsEnabled(False)
         self.validKeys = ['attributeName', 'attributeRule', 'description', 'layerName']
         if parameterDict != {}:
