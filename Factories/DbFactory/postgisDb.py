@@ -1178,7 +1178,7 @@ class PostgisDb(AbstractDb):
 
         uri = QgsDataSourceURI()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        id = self.getPrimaryKeyColumn(table)
+        id = self.getPrimaryKeyColumn('{0}.{1}'.format(tableSchema, tableName))
         uri.setDataSource(tableSchema, tableName, geometryColumnm, sql, id)
         
         return uri
@@ -3628,7 +3628,7 @@ class PostgisDb(AbstractDb):
         lyrDict = dict()
         inputDict = self.getGeomColumnDictV2(excludeValidation = True)
         for key in inputDict.keys():
-            uri = self.getURIV2(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'], '')
-            lyr = QgsVectorLayer(uri, inputDict['lyrName'], 'postgres', False)
-            outputKey = '{0}.{1} ({2})'.format(inputDict['tableSchema'], inputDict['tableName'], inputDict['geom'])
+            uri = self.getURIV2(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'], '')
+            lyr = QgsVectorLayer(uri, inputDict[key]['lyrName'], 'postgres', False)
+            outputKey = '{0}.{1} ({2})'.format(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'])
             lyrDict[outputKey] = lyr

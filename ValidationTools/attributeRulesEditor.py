@@ -55,9 +55,17 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         1. Validate widget
         2. Export jsonDict
         """
-        self.attributeRulesWidget.
-        pass
+        if not self.attributeRulesWidget.validate():
+            msg = self.attributeRulesWidget.invalidatedReason()
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Errors on interface! Check log for details!'))
+            self.done(0)
+            return
+        self.done(1)
     
     @pyqtSlot(bool)
     def on_cancelPushButton_clicked(self):
         self.close()
+    
+    def getParameterDict(self):
+        return self.attributeRulesWidget.getParameterDict()
