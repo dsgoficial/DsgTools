@@ -65,7 +65,11 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         Refreshes interface
         """
-        pass
+        self.propertyComboBox.clear()
+        if self.genericDbManager:
+            propertyList = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys()
+            propertyList.sort()
+            self.propertyComboBox.addItems(propertyList)
     
     def getWhoAmI(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('CompactPropertyManagerWidget','')
@@ -151,7 +155,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         setupDict = self.populateConfigInterface(self.abstractDb)
         if setupDict:
-            self.genericDbManager.createSetting(propertyName, edgvVersion, setupDict)
+            self.genericDbManager.createSetting(propertyName, self.genericDbManager.edgvVersion, setupDict)
             self.refresh()
             QMessageBox.information(self, self.tr('Success!'), self.tr('{0} configuration {1} created successfuly!').format(self.widgetName, propertyName))        
   
