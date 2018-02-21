@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import os, importlib
-from collections import deque
+from collections import OrderedDict
 # Qt imports
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
