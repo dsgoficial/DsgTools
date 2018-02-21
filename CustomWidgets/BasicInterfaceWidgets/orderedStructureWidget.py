@@ -40,6 +40,9 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.args = None
     
+    def setArgs(self, args):
+        self.args = args
+
     def instantiateWidgetItem(self):
         """
         Must be reimplemented in each child.

@@ -37,17 +37,14 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'attributeRulesEditor.ui'))
 
 class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
-    def __init__(self, abstractDb, jsonDict = {}, parent = None):
+    def __init__(self, abstractDb, parameterDict = {}, parent = None):
         """Constructor."""
-        super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
+        super(AttributeRulesEditor, self).__init__(parent)
         self.abstractDb = abstractDb
         self.setupUi(self)
-        self.attributeRulesWidget.args = self.abstractDb.getLayerDict()
+        self.attributeRulesWidget.setArgs([self.abstractDb.getLayerDict()])
+        if parameterDict != {}:
+            self.attributeRulesWidget.populateInterface(parameterDict)
 
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
