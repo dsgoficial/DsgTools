@@ -182,7 +182,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.importSetting(filename)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success! {0} successfully imported.').format(self.widgetName))
+            QMessageBox.information(self, self.tr('Sucess!'), self.tr('Success! {0} successfully imported.').format(self.widgetName))
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing {0}: {1}').format(self.widgetName, ':'.join(e.args)) )
@@ -208,7 +208,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             for exportProperty in exportPropertyList:
                 self.genericDbManager.exportSetting(exportProperty, edgvVersion, folder)
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Success! {0} successfully exported.').format(self.widgetName))
+            QMessageBox.information(self, self.tr('Success!'), self.tr('Success! {0} successfully exported.').format(self.widgetName))
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem exporting {0}: {1}').format(self.widgetName, ':'.join(e.args)) )
@@ -229,3 +229,10 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
     
     def populateConfigInterface(self, abstractDb):
         return None
+    
+    def selectConfig(self):
+        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
+        dlg = ListSelector(availableConfig,[])
+        dlg.exec_()
+        selectedConfig = dlg.getSelected()
+        return selectedConfig
