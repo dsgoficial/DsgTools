@@ -141,7 +141,7 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         Populates interface with parameters from parameterDict.
         """
         for rule in parameterDict.keys():
-            self.addItem(parameterDict = parameterDict)
+            self.addItem(parameterDict = parameterDict[self.widgetKey])
     
     def getParameterDict(self):
         """
