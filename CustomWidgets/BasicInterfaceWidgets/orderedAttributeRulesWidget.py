@@ -39,7 +39,7 @@ class OrderedAttributeRulesWidget(OrderedStructureWidget):
         super(OrderedAttributeRulesWidget, self).__init__(parent)
         self.args = None
         self.tableWidget.setHorizontalHeaderLabels([self.tr('Attribute Rules')])
-        self.widgetKey = 'orderedAttributeRules'
+        self.widgetKey = 'orderedAttributeRulesWidget'
     
     def instantiateWidgetItem(self):
         return AttributeRuleWidget(*self.args)
