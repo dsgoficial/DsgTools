@@ -154,6 +154,13 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
 
     def validateJson(self, inputJson):
         """
-        Validates input json. Reimplemented in each child.
+        Validates input json
         """
-        pass
+        for key in inputJson.keys():
+            if 'rule_#' not in key:
+                return False
+        for i in range(self.tableWidget.rowCount()):
+            jsonKey = 'rule_#{0}'.format(i+1)
+            if not self.tableWidget.cellWidget(i, 0).validateJson(inputJson[jsonKey]):
+                return False
+        return True
