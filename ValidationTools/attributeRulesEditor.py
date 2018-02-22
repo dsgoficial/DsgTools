@@ -72,7 +72,7 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         return self.tr('Invalid tag for attributeRulesEditor!')
     
     def getParameterDict(self):
-        return {'rulesEditor':self.attributeRulesWidget.getParameterDict()}
+        return {'attributeRulesEditor':self.attributeRulesWidget.getParameterDict()}
     
     def populateInterface(self, parameterDict):
-        self.attributeRulesWidget.populateInterface(parameterDict)
+        self.attributeRulesWidget.populateInterface(parameterDict['attributeRulesEditor'])
