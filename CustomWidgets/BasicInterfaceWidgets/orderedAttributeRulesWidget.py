@@ -44,15 +44,4 @@ class OrderedAttributeRulesWidget(OrderedStructureWidget):
     def instantiateWidgetItem(self):
         return AttributeRuleWidget(*self.args)
     
-    def validateJson(self, inputJson):
-        """
-        Validates input json
-        """
-        for key in inputJson.keys():
-            if 'rule_#' not in key:
-                return False
-            if not inputJson[key].validateJson():
-                return False
-        return True
-    
 

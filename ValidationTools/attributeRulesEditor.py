@@ -44,7 +44,8 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.attributeRulesWidget.setArgs([self.abstractDb.getLayerDict()])
         if parameterDict:
-            self.attributeRulesWidget.populateInterface(parameterDict)
+            if self.validate():
+                self.attributeRulesWidget.populateInterface(parameterDict['attributeRulesEditor'])
 
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
@@ -76,3 +77,9 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
     
     def populateInterface(self, parameterDict):
         self.attributeRulesWidget.populateInterface(parameterDict['attributeRulesEditor'])
+    
+    def validateJson(self, parameterDict):
+        if ['attributeRulesEditor'] != parameterDict.keys():
+            return False
+        return self.attributeRulesWidget.validateJson(parameterDict['attributeRulesEditor'])
+
