@@ -51,8 +51,6 @@ class AttributeRulesCompactPropertyManagerWidget(GenericCompactPropertyManagerWi
         Must be reimplemented in each child
         '''
         dlg = AttributeRulesEditor(templateDb, parameterDict = jsonDict)
-        if jsonDict:
-            dlg.populateInterface(jsonDict)
         if dlg.exec_():
             return dlg.getParameterDict()
         else:
