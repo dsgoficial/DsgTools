@@ -64,15 +64,15 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         self.close()
     
     def validate(self, parameterDict):
-        if 'attributeRulesEditor' not in parameterDict.keys():
+        if 'orderedAttributeRulesWidget' not in parameterDict.keys():
             return False
         return True
     
     def invalidatedReason(self):
-        return self.tr('Invalid tag for attributeRulesEditor!')
+        return self.tr('Invalid tag for orderedAttributeRulesWidget!')
     
     def getParameterDict(self):
-        return {'attributeRulesEditor':self.attributeRulesWidget.getParameterDict()}
+        return {'orderedAttributeRulesWidget':self.attributeRulesWidget.getParameterDict()}
     
     def populateInterface(self, parameterDict):
-        self.attributeRulesWidget.populateInterface(parameterDict['attributeRulesEditor'])
+        self.attributeRulesWidget.populateInterface(parameterDict['orderedAttributeRulesWidget'])
