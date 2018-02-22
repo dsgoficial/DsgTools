@@ -59,7 +59,8 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         self.tableWidget.insertRow(rowCount)
         widget = self.instantiateWidgetItem()
         if parameterDict:
-            widget.populateInterface(parameterDict)
+            for key in parameterDict.keys():
+                widget.populateInterface(parameterDict[key])
         self.tableWidget.setCellWidget(rowCount, 0, widget)
     
     @pyqtSlot(bool)
