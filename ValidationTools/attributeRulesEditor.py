@@ -63,5 +63,16 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
     def on_cancelPushButton_clicked(self):
         self.close()
     
+    def validate(self, parameterDict):
+        if 'attributeRulesEditor' not in parameterDict.keys():
+            return False
+        return True
+    
+    def invalidatedReason(self):
+        return self.tr('Invalid tag for attributeRulesEditor!')
+    
     def getParameterDict(self):
-        return self.attributeRulesWidget.getParameterDict()
+        return {'rulesEditor':self.attributeRulesWidget.getParameterDict()}
+    
+    def populateInterface(self, parameterDict):
+        self.attributeRulesWidget.populateInterface(parameterDict)

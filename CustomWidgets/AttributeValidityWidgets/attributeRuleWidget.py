@@ -104,9 +104,8 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         Populates interface with parameters from parameterDict.
         """
         if parameterDict:
-            if not self.validateJson():
-                invalidatedJsonReason = self.invalidateJsonReason()
-                raise Exception(self.tr('Invalid Attribute Rule Widget json config!\n{0}').format(json.dumps(parameterDict, sort_keys=True, indent=4)))
+            if not self.validateJson(parameterDict):
+                raise Exception(self.tr('Invalid Attribute Rule Widget json config!'))
             #set layer combo
             idx = self.layerComboBox.findText(parameterDict['layerName'], flags = Qt.MatchExactly)
             self.layerComboBox.setCurrentIndex(idx)

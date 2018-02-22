@@ -155,10 +155,9 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
             return
         setupDict = self.populateConfigInterface(self.abstractDb)
         if setupDict:
-            self.genericDbManager.createSetting(propertyName, self.genericDbManager.edgvVersion, setupDict)
+            self.genericDbManager.createAndInstall(propertyName, setupDict, self.genericDbManager.edgvVersion, dbList = [self.abstractDb.db.databaseName()])
             self.refresh()
             QMessageBox.information(self, self.tr('Success!'), self.tr('{0} configuration {1} created successfuly!').format(self.widgetName, propertyName))        
-  
     
     @pyqtSlot(bool)
     def on_removePropertyPushButton_clicked(self):
@@ -181,11 +180,13 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.genericDbManager.importSetting(filename)
+            settingName = os.path.basename(fullFilePath).split('.')[0]
+            self.genericDbManager.installSetting(settingName, dbList = [self.abstractDb.db.databaseName()])
             QApplication.restoreOverrideCursor()
-            QMessageBox.information(self, self.tr('Sucess!'), self.tr('Success! {0} successfully imported.').format(self.widgetName))
+            QMessageBox.information(self, self.tr('Sucess!'), self.tr('Success! {0} successfully imported and installed in {1}.').format(widgetType, settingName))
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing {0}: {1}').format(self.widgetName, ':'.join(e.args)) )
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem importing {0}: {1}').format(widgetType, ':'.join(e.args)) )
         self.refresh()
     
     @pyqtSlot(bool)
@@ -193,7 +194,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         Export selected properties.
         """
-        exportPropertyList = self.selectConfig()
+        exportPropertyList = [self.propertyComboBox.currentText()]
         if exportPropertyList == []:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
             return
@@ -216,23 +217,28 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_updatePropertyPushButton_clicked(self):
         """
-        Updates property
+        Updates property.
+        1. Get propertyName
+        2. Get propertyDict
+        3. Instantiate config interface and get new dict
+        4. Update property
         """
-        pass
+        propertyName = self.propertyComboBox.currentText()
+        propertyDict = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property)
+        if propertyName not in propertyDict.keys():
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem getting {0}: Invalid property {1}').format(self.widgetName, propertyName) )
+            return
+        parameterDict = self.genericDbManager.getSetting(propertyName, self.genericDbManager.edgvVersion)
+        setupDict = self.populateConfigInterface(self.abstractDb, jsonDict = parameterDict)
+        if setupDict:
+            try:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                self.genericDbManager.updateSetting(propertyName, setupDict)
+                QApplication.restoreOverrideCursor()
+                QMessageBox.information(self, self.tr('Success!'), self.tr('Success! Property {0} successfully updated.').format(propertyName))
+            except Exception as e:
+                QApplication.restoreOverrideCursor()
+                QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem updating {0}').format(propertyName) )
     
-    @pyqtSlot(int)
-    def on_propertyComboBox_currentIndexChanged(self, idx):
-        """
-        Get property and emmits signal with property
-        """
-        pass
-    
-    def populateConfigInterface(self, abstractDb):
+    def populateConfigInterface(self, abstractDb, jsonDict = None):
         return None
-    
-    def selectConfig(self):
-        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
-        dlg = ListSelector(availableConfig,[])
-        dlg.exec_()
-        selectedConfig = dlg.getSelected()
-        return selectedConfig
