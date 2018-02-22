@@ -45,7 +45,7 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         self.attributeRulesWidget.setArgs([self.abstractDb.getLayerDict()])
         if parameterDict:
             if self.validateJson(parameterDict):
-                self.attributeRulesWidget.populateInterface(parameterDict['attributeRulesEditor'])
+                self.attributeRulesWidget.populateInterface(parameterDict['orderedAttributeRulesWidget'])
 
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
@@ -65,7 +65,7 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         self.close()
     
     def validate(self, parameterDict):
-        if 'attributeRulesEditor' not in parameterDict.keys():
+        if 'orderedAttributeRulesWidget' not in parameterDict.keys():
             return False
         return True
     
@@ -73,13 +73,13 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         return self.tr('Invalid tag for attributeRulesEditor!')
     
     def getParameterDict(self):
-        return {'attributeRulesEditor':self.attributeRulesWidget.getParameterDict()}
+        return {'orderedAttributeRulesWidget':self.attributeRulesWidget.getParameterDict()}
     
     def populateInterface(self, parameterDict):
-        self.attributeRulesWidget.populateInterface(parameterDict['attributeRulesEditor'])
+        self.attributeRulesWidget.populateInterface(parameterDict['orderedAttributeRulesWidget'])
     
     def validateJson(self, parameterDict):
-        if ['attributeRulesEditor'] != parameterDict.keys():
+        if ['orderedAttributeRulesWidget'] != parameterDict.keys():
             return False
-        return self.attributeRulesWidget.validateJson(parameterDict['attributeRulesEditor'])
+        return self.attributeRulesWidget.validateJson(parameterDict['orderedAttributeRulesWidget'])
 

@@ -50,7 +50,7 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         pass
     
     @pyqtSlot(bool, name = 'on_addRulePushButton_clicked')
-    def addItem(self, parameterDict = {}):
+    def addItem(self, parameterDict = None):
         """
         1. Instantiate new line
         2. Add new line in the end
@@ -59,8 +59,7 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         self.tableWidget.insertRow(rowCount)
         widget = self.instantiateWidgetItem()
         if parameterDict:
-            for key in parameterDict.keys():
-                widget.populateInterface(parameterDict[key])
+            widget.populateInterface(parameterDict)
         self.tableWidget.setCellWidget(rowCount, 0, widget)
     
     @pyqtSlot(bool)
@@ -140,27 +139,30 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         """
         Populates interface with parameters from parameterDict.
         """
-        for rule in parameterDict.keys():
-            self.addItem(parameterDict = parameterDict[self.widgetKey])
+        for ruleDict in parameterDict[self.widgetKey]:
+            self.addItem(parameterDict = ruleDict)
     
     def getParameterDict(self):
         """
         Returns an OrderedDict with the number of the rule and the rule json
         """
-        parameterDict = OrderedDict()
+        parameterList = []
         for i in range(self.tableWidget.rowCount()):
-            parameterDict['rule_#{0}'.format(i+1)] = self.tableWidget.cellWidget(i, 0).getParameterDict()
-        return parameterDict
+            parameterList.append(self.tableWidget.cellWidget(i, 0).getParameterDict())
+        return {self.widgetKey:parameterList} #outputs list of widgets parameters
 
     def validateJson(self, inputJson):
         """
         Validates input json
+        inputJson = {
+            'widgetKey' : [
+                -list of widgets-
+            ]
+        }
         """
-        for key in inputJson.keys():
-            if 'rule_#' not in key:
-                return False
+        if [self.widgetKey] != inputJson.keys():
+            return False
         for i in range(self.tableWidget.rowCount()):
-            jsonKey = 'rule_#{0}'.format(i+1)
-            if not self.tableWidget.cellWidget(i, 0).validateJson(inputJson[jsonKey]):
+            if not self.tableWidget.cellWidget(i, 0).validateJson(inputJson[self.widgetKey][i]):
                 return False
         return True
