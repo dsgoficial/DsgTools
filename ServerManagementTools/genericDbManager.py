@@ -393,3 +393,6 @@ class GenericDbManager(QObject):
             abstractDb = self.instantiateAbstractDb(dbName)
             if not abstractDb.checkIfExistsConfigTable(settingType):
                 abstractDb.createPropertyTable(settingType, useTransaction = True)
+    
+    def updateMaterializationFromDatabase(self, settingType, settingName, edgvVersion, newJsonDict):
+        pass
