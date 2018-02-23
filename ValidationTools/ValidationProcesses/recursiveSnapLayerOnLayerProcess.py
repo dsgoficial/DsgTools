@@ -44,12 +44,11 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
             # getting tables with elements
             self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            interfaceDict = dict()
-            for key in self.classesWithElemDict:
-                cat, lyrName, geom, geomType, tableType = key.split(',')
-                interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
+            customInterface = RecursiveSnapParameters()
+            for key in self.classesWithElemDict.keys():
+                customInterface.append(key)
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Reference and Layers': OrderedDict({'referenceDictList':{}, 'layersDictList':interfaceDict}), 'Only Selected':False}
+            self.parameters = {'Snap': 5.0, 'Ordered Layers': customInterface, 'Only Selected':False}
 
     def execute(self):
         """
@@ -58,46 +57,46 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
-            refKey = self.parameters['Reference and Layers'][0]
-            classesWithElemKeys = self.parameters['Reference and Layers'][1]
-            if len(classesWithElemKeys) == 0:
-                self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                return 1
+            # refKey = self.parameters['Reference and Layers'][0]
+            # classesWithElemKeys = self.parameters['Reference and Layers'][1]
+            # if len(classesWithElemKeys) == 0:
+            #     self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
+            #     return 1
 
-            if not refKey:
-                self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
-                return 1
+            # if not refKey:
+            #     self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
+            #     return 1
 
-            # preparing reference layer
-            refcl = self.classesWithElemDict[refKey]
-            reflyr = self.loadLayerBeforeValidationProcess(refcl)
-            snapper = DsgGeometrySnapper(reflyr)
-            snapper.featureSnapped.connect(self.updateProgress)
-            tol = self.parameters['Snap']
-            msg = ''
-            for key in classesWithElemKeys:
-                # preparation
-                clDict = self.classesWithElemDict[key]
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + clDict['tableName'], parent=self.iface.mapCanvas())
-                localProgress.step()
-                lyr = self.loadLayerBeforeValidationProcess(clDict)
-                localProgress.step()
+            # # preparing reference layer
+            # refcl = self.classesWithElemDict[refKey]
+            # reflyr = self.loadLayerBeforeValidationProcess(refcl)
+            # snapper = DsgGeometrySnapper(reflyr)
+            # snapper.featureSnapped.connect(self.updateProgress)
+            # tol = self.parameters['Snap']
+            # msg = ''
+            # for key in classesWithElemKeys:
+            #     # preparation
+            #     clDict = self.classesWithElemDict[key]
+            #     localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + clDict['tableName'], parent=self.iface.mapCanvas())
+            #     localProgress.step()
+            #     lyr = self.loadLayerBeforeValidationProcess(clDict)
+            #     localProgress.step()
 
-                # snapping lyr to reference
-                if self.parameters['Only Selected']:
-                    featureList = lyr.selectedFeatures()
-                else:
-                    featureList = lyr.getFeatures()
-                features = [feature for feature in featureList]
-                self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['tableName'], parent=self.iface.mapCanvas())
+            #     # snapping lyr to reference
+            #     if self.parameters['Only Selected']:
+            #         featureList = lyr.selectedFeatures()
+            #     else:
+            #         featureList = lyr.getFeatures()
+            #     features = [feature for feature in featureList]
+            #     self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Processing features on ') + clDict['tableName'], parent=self.iface.mapCanvas())
 
-                snappedFeatures = snapper.snapFeatures(features, tol)
-                self.updateOriginalLayerV2(lyr, None, featureList=snappedFeatures)
-                self.logLayerTime(clDict['lyrName'])
+            #     snappedFeatures = snapper.snapFeatures(features, tol)
+            #     self.updateOriginalLayerV2(lyr, None, featureList=snappedFeatures)
+            #     self.logLayerTime(clDict['lyrName'])
 
-                localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['tableName']+ self.tr(' succesfully.\n')
-                QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-                msg += localMsg
+            #     localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['tableName']+ self.tr(' succesfully.\n')
+            #     QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            #     msg += localMsg
             self.setStatus(msg, 1) #Finished
             return 1
         except Exception as e:
