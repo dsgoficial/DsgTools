@@ -69,7 +69,7 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
             if len(snapList) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
-            
+            self.startTimeCount()
             for snapItem in snapList:
                 #reference layer
                 refcl = self.classesWithElemDict[self.interfaceDict[snapItem['referenceLayer']]]
@@ -79,7 +79,6 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
                 tol = snapItem['snap']
                 msg = ''
                 for key in snapItem['snapLayerList']:
-                    self.startTimeCount()
                     # preparation
                     clDict = self.classesWithElemDict[self.interfaceDict[key]]
                     localProgress = ProgressWidget(0, 1, self.tr('Preparing snapping of {0} on {1}').format(clDict['tableName'], refcl['tableName']), parent=self.iface.mapCanvas())
