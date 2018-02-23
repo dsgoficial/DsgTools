@@ -40,7 +40,9 @@ class SnapChooserWidget(QtGui.QWidget, FORM_CLASS):
         super(SnapChooserWidget, self).__init__(parent = parent)
         self.setupUi(self)
         self.layerList = layerList
-        self.refresh(layerList)
+        self.layerList.sort()
+        self.layerComboBox.addItem(self.tr('Select a layer'))
+        self.layerComboBox.addItems(self.layerList)
         self.validKeys = ['layerName', 'snap']
         self.snapDoubleSpinBox.setDecimals(20)
         self.snapDoubleSpinBox.setMaximum(1000000)
@@ -48,9 +50,9 @@ class SnapChooserWidget(QtGui.QWidget, FORM_CLASS):
         if parameterDict != {}:
             self.populateInterface(parameterDict)
     
-    def refresh(self, inputList):
+    def refresh(self, blackList):
         currentText = self.layerComboBox.currentText()
-        refreshList = list(inputList) #copy of the reference inputList
+        refreshList = [i for i in self.layerList if i not in blackList]
         if currentText not in refreshList and self.layerComboBox.currentIndex() > 0:
             refreshList.append(currentText)
         refreshList.sort()

@@ -68,48 +68,41 @@ class OrderedRecursiveSnapWidget(OrderedStructureWidget):
         row = self.tableWidget.rowCount() - 1
         newItemWidget = self.tableWidget.cellWidget(row,0)
         newItemWidget.layerComboBox.currentIndexChanged.connect(self.componentsRefresher)
+        newItemWidget.layerComboBox.currentIndexChanged.emit(-1)
     
-    @pyqtSlot(bool)
-    def on_removeRulePushButton_clicked(self):
+    @pyqtSlot(bool, name = 'on_removeRulePushButton_clicked')
+    def removeItem(self):
         """
         1. Get selected row
         2. Remove selected row
         3. Update control list
         """
-        selected = self.tableWidget.selectedIndexes()
-        rowList = [i.row() for i in selected]
-        rowList.sort(reverse=True)
-        for row in rowList:
-            self.tableWidget.removeRow(row)
+        super(OrderedRecursiveSnapWidget, self).removeItem()
+        self.componentsRefresher()
     
     def componentsRefresher(self):
         """
         1. Get all widgets
-        2. Disable all signals
-        3. Iterate over widgets and build black list from selected texts
+        2. Iterate over widgets and build black list from selected texts
+        3. Disable all signals
         4. Refresh all combos with remaining values plus selected one
         5. Reconnect signals
         """
-        #1. get widgetList:
+        #1. get widgetList and blackList:
         widgetList = [self.tableWidget.cellWidget(i,0) for i in range(self.tableWidget.rowCount())]
-        #2. disconect signals
+        blackList = [i.layerComboBox.currentText() for i in widgetList if i.layerComboBox.currentIndex() > 0]
+        currentText = self.sender().currentText()
+        if currentText not in blackList:
+            blackList.append(currentText)
+        #3. disconect signals
         for widget in widgetList:
             try:
                 widget.layerComboBox.currentIndexChanged.disconnect(self.componentsRefresher)
             except:
                 pass
-        #3. build black list
-        blackList = []
-        for widget in widgetList:
-            selectedText = widget.getSelectedItem()
-            if selectedText:
-                if selectedText not in blackList:
-                    blackList.append(selectedText)
-        newList = [i for i in self.args[0] if i not in blackList]
         #4. refresh combos
         for widget in widgetList:
-            if widget.layerComboBox != self.sender():
-                widget.refresh(newList)
+            widget.refresh(blackList)
         #5. reconnect signals
         for widget in widgetList:
             widget.layerComboBox.currentIndexChanged.connect(self.componentsRefresher)

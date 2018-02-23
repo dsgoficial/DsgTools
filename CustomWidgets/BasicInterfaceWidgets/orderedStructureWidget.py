@@ -62,8 +62,8 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
             widget.populateInterface(parameterDict)
         self.tableWidget.setCellWidget(rowCount, 0, widget)
     
-    @pyqtSlot(bool)
-    def on_removeRulePushButton_clicked(self):
+    @pyqtSlot(bool, name = 'on_removeRulePushButton_clicked')
+    def removeItem(self)
         """
         1. Get selected row
         2. Remove selected row
