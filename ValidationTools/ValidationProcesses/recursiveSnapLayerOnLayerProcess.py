@@ -20,7 +20,6 @@
  *                                                                         *
  ***************************************************************************/
 """
-import list
 from qgis.core import QgsMessageLog, QgsVectorLayer
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
