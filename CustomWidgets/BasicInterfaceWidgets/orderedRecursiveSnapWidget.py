@@ -108,7 +108,8 @@ class OrderedRecursiveSnapWidget(OrderedStructureWidget):
         newList = [i for i in self.args if i not in blackList]
         #4. refresh combos
         for widget in widgetList:
-            widget.refresh(newList)
+            if widget.layerComboBox != self.sender():
+                widget.refresh(newList)
         #5. reconnect signals
         for widget in widgetList:
             widget.layerComboBox.currentIndexChanged.connect(self.componentsRefresher)
