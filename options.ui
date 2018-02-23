@@ -113,7 +113,13 @@
        </layout>
       </item>
       <item row="1" column="0">
-       <widget class="QListWidget" name="blackListWidget"/>
+       <widget class="QListWidget" name="blackListWidget">
+        <item>
+         <property name="text">
+          <string>moldura</string>
+         </property>
+        </item>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -134,18 +140,18 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsdoublespinbox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
