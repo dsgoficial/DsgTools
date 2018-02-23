@@ -47,6 +47,7 @@ from DsgTools.InventoryTools.inventoryTools import InventoryTools
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
+from DsgTools.options import Options
 from DsgTools.ProductionTools.ContourTool.calc_contour import CalcContour
 from DsgTools.ProductionTools.FieldToolBox.field_toolbox import FieldToolbox
 from DsgTools.AttributeTools.code_list import CodeList
@@ -454,6 +455,16 @@ class DsgTools:
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
+            text=self.tr('Options'),
+            callback=self.showOptions,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/dsg.png'
+        action = self.add_action(
+            icon_path,
             text=self.tr('About'),
             callback=self.showAbout,
             parent=self.dsgTools,
@@ -759,6 +770,16 @@ class DsgTools:
         self.opInstaller.uninstallDsgToolsOp()
         self.unload()
         self.initGui()
+
+    def showOptions(self):
+        """
+        Shows the options
+        """
+        dlg = Options()
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
 
     def showHelp(self):
         """
