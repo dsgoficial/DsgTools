@@ -20,7 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os, deque
+import os
+from collections import deque
 
 from PyQt4 import QtGui
 
@@ -38,7 +39,7 @@ class AttributeRuleProcess(ValidationProcess):
         super(AttributeRuleProcess,self).__init__(postgisDb, iface, instantiating)
         
         self.processAlias = self.tr('Attribute Rule Checker')
-        if instantiating:
+        if not instantiating:
             self.propertyDict = self.postgisDb.getPropertyDict('AttributeRules')
             self.parameters = {'Rules Setting': deque(self.propertyDict.keys())}
 
@@ -51,8 +52,7 @@ class AttributeRuleProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName())
-            selectedRuleDict = self.parameters['Rules Setting'][]
-            ruleList = 
+            selectedRuleDict = self.parameters['Rules Setting']
 
             if len(invalidGeomRecordList) > 0:
                 numberOfInvGeom = self.addFlag(invalidGeomRecordList)
