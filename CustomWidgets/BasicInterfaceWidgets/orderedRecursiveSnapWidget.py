@@ -105,7 +105,7 @@ class OrderedRecursiveSnapWidget(OrderedStructureWidget):
             if selectedText:
                 if selectedText not in blackList:
                     blackList.append(selectedText)
-        newList = [i for i in self.args if i not in blackList]
+        newList = [i for i in self.args[0] if i not in blackList]
         #4. refresh combos
         for widget in widgetList:
             if widget.layerComboBox != self.sender():
