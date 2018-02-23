@@ -91,7 +91,9 @@ class ProcessParametersDialog(QtGui.QDialog):
             self.required.append(options.keys()[0])
 
         _firstWidget = None
-        formLayout = QtGui.QFormLayout()
+        # formLayout = QtGui.QFormLayout()
+        layout = QtGui.QGridLayout()
+        rowCount = 0
         for k, v in options.iteritems():
             if isinstance(v, list):
                 if len(v)> 0 and isinstance(v[0], dict) == False:
@@ -122,8 +124,6 @@ class ProcessParametersDialog(QtGui.QDialog):
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
             if self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
                 getattr(widget, self.SETTERS[type(widget)])([v.values])
-
-            
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
@@ -131,25 +131,26 @@ class ProcessParametersDialog(QtGui.QDialog):
                 label.setStyleSheet("color: red;")
 
             self.__widgets[k] = (label, widget)
-            formLayout.addRow(label, widget)
-
+            layout.addWidget(label, rowCount, 0)
+            layout.addWidget(widget, rowCount, 1)
+            rowCount += 1
             if _firstWidget is None:
                 _firstWidget = widget
 
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
-        scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
-        w = QtGui.QWidget()
-        w.setLayout(formLayout)
-        scrollArea.setWidget(w)
+        # scrollArea = QtGui.QScrollArea()
+        # scrollArea.setWidgetResizable(True)
+        # scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
+        # w = QtGui.QWidget()
+        # w.setLayout(formLayout)
+        # scrollArea.setWidget(w)
 
         buttons = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
-        layout = QtGui.QGridLayout()
-        layout.addWidget(scrollArea)
-        layout.addWidget(buttons)
+        # layout = QtGui.QGridLayout()
+        # layout.addWidget(scrollArea)
+        layout.addWidget(buttons, rowCount+1, 1)
         self.setLayout(layout)
 
         _firstWidget.setFocus()
