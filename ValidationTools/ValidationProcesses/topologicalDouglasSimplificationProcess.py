@@ -109,6 +109,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
             QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.name() for i in classlist]) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 
             self.setStatus(self.tr('Simplification process complete.'), 1) #Finished
+            self.logLayerTime('unified layer')
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
