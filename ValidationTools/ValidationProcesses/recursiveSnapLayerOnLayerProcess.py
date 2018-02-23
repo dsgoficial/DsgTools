@@ -28,8 +28,9 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from collections import OrderedDict
 
 class RecursiveSnapParameters(list):
-    def __init__(self):
+    def __init__(self, x):
         super(RecursiveSnapParameters, self).__init__()
+        self.values = x
 
 class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -43,9 +44,7 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
             # getting tables with elements
             self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            customInterface = RecursiveSnapParameters()
-            for key in self.classesWithElemDict.keys():
-                customInterface.append(key)
+            customInterface = RecursiveSnapParameters(self.classesWithElemDict)
             # adjusting process parameters
             self.parameters = {'Snap': 5.0, 'Ordered Layers': customInterface, 'Only Selected':False}
 

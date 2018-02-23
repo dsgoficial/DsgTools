@@ -122,6 +122,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
             if self.WIDGETS[type(v)] == RecursiveSnapParameters:
                 widget.setTitle(self.tr('Select layers and snap parameters'))
+                getattr(widget, self.SETTERS[type(widget)])(v.values)
 
             
             else:
