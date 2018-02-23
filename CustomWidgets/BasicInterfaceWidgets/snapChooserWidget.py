@@ -40,9 +40,9 @@ class SnapChooserWidget(QtGui.QWidget, FORM_CLASS):
         super(SnapChooserWidget, self).__init__(parent = parent)
         self.setupUi(self)
         self.layerList = layerList
-        self.refresh()
+        self.refresh(layerList)
         self.validKeys = ['layerName', 'snap']
-        widget.setDecimals(20)
+        self.snapDoubleSpinBox.setDecimals(20)
         self.snapDoubleSpinBox.setMaximum(1000000)
         self.snapDoubleSpinBox.setMinimum(0.00000000000000001)
         if parameterDict != {}:
