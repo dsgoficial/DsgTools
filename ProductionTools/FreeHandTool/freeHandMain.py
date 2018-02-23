@@ -26,6 +26,17 @@ class FreeHandMain:
     def __init__(self, iface):
         #construtor
         self.iface = iface
+        self.acquisitionFree = AcquisitionFree(iface.mapCanvas())
+        self.acquisitionFreeController = AcquisitionFreeController(
+            self.acquisitionFree,
+            iface
+        )
+
+    def setAcquisitionFreeController(self, acquisitionFreeController):
+        self.acquisitionFreeController = acquisitionFreeController
+    
+    def getAcquisitionFreeController(self):
+        return self.acquisitionFreeController
 
     def setIface(self, iface):
         self.iface = iface 
@@ -33,17 +44,17 @@ class FreeHandMain:
     def getIface(self):
         return self.iface
 
+    def registerActionOnController(self, action):
+        acquisitionFreeController = self.getAcquisitionFreeController()
+        acquisitionFreeController.setActionAcquisitionFree(action)
+        acquisitionFreeController.connectToolSignals()
+
     def setAction(self, action):
+        self.registerActionOnController(action)
         self.action = action
 
     def getAction(self):
         return self.action
 
-    def run(self, action):
-        iface = self.getIface()
-        self.acquisitionFree = AcquisitionFree(iface.mapCanvas())
-        self.acquisitionFreeController = AcquisitionFreeController(
-            self.acquisitionFree, 
-            self.getAction(), 
-            iface
-        )
+    def run(self):
+        pass

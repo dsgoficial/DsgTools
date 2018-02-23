@@ -23,15 +23,12 @@ from qgis import core, gui
 
 class AcquisitionFreeController(object):
 
-    def __init__(self, acquisitionFree, actionAcquisitionFree, iface):
+    def __init__(self, acquisitionFree, iface):
         #Construtor
         super(AcquisitionFreeController, self).__init__()
         self.acquisitionFree = acquisitionFree
-        self.actionAcquisitionFree = actionAcquisitionFree
-        self.actionAcquisitionFree.setEnabled(False)
         self.iface = iface
         self.active = False
-        self.connectToolSignals()
            
     def setIface(self, iface):
         #Método para definir classe iface
@@ -136,15 +133,10 @@ class AcquisitionFreeController(object):
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setMode(gui.QgsAttributeForm.AddFeatureMode)
         result = attrDialog.exec_()
-        if result:
-            layer.addFeatures([feature])
-            layer.removeSelection()
 
     def addFeatureWithoutForm(self, layer, feature):
         layer.addFeatures([feature])
         layer.removeSelection()
-
-                
 
     def activateTool(self):
         #Método para iniciar a ferramenta 
@@ -164,14 +156,4 @@ class AcquisitionFreeController(object):
             tool = self.getAcquisitionFree()
             tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
         self.setActiveState(False)
-    
-    def addActionToolBar(self):
-        #Método para adicionar action do plugin na toolbar do Qgis
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        self.getIface().digitizeToolBar().addAction(actionAcquisitionFree)
-
-    def removeActionToolBar(self):
-        #Método para remover action do plugin na toolbar do Qgis
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        self.getIface().digitizeToolBar().removeAction(actionAcquisitionFree)
       
