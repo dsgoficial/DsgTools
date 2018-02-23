@@ -50,132 +50,71 @@ class Options(QtGui.QDialog, FORM_CLASS):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
         self.setupUi(self)
+        self.setInterfaceWithParametersFromConfig()
     
     @pyqtSlot(bool)
     def on_addPushButton_clicked(self):
         newValue = self.addParameterLineEdit.text()
-        valueList = [self.blackListWidget.itemAt(i,0).text() for i in range(self.blackListView.count())]
+        valueList = [self.blackListWidget.itemAt(i,0).text() for i in range(self.blackListWidget.count())]
         if newValue == '':
-            QMessageBox.warning(self, self.tr('Fill in a value before adding!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill in a value before adding!'))
             return
         if newValue in valueList:
-            QMessageBox.warning(self, self.tr('Value already in black list!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Value already in black list!'))
             return
         self.blackListWidget.addItem(newValue)
-        self.blackListView.sortItems(order = Qt.AscendingOrder)
-    
-    def validateParameters(self):
-        if self.geogigPathLineEdit.text() == '':
-            return False
-        if self.serverIPLineEdit.text() == '':
-            return False
-        if self.portLineEdit.text() == '':
-            return False
-        if self.userLineEdit.text() == '':
-            return False
-        if self.passwordLineEdit.text() == '':
-            return False
-        if self.schemaLineEdit.text() == '':
-            return False
-        if self.repositoryNameLineEdit.text() == '':
-            return False
-        if self.localDbNameLineEdit.text() == '':
-            return False
-        if self.branchNameLineEdit.text() == '':
-            return False
-        return True
-
-    def invalidatedReason(self):
-        msg = ''
-        if self.geogigPathLineEdit.text() == '':
-            msg += self.tr('Enter Geogig path!\n')
-        if self.serverIPLineEdit.text() == '':
-            msg += self.tr('Enter server IP!\n')
-        if self.portLineEdit.text() == '':
-            msg += self.tr('Enter server port!\n')
-        if self.userLineEdit.text() == '':
-            msg += self.tr('Enter server user!\n')
-        if self.passwordLineEdit.text() == '':
-            msg += self.tr('Enter server password!\n')
-        if self.schemaLineEdit.text() == '':
-            msg += self.tr('Enter server schema!\n')
-        if self.repositoryNameLineEdit.text() == '':
-            msg += self.tr('Enter repository name!\n')
-        if self.localDbNameLineEdit.text() == '':
-            msg += self.tr('Enter database name!\n')
-        if self.branchNameLineEdit.text() == '':
-            msg += self.tr('Enter a branch name!\n')
-        return msg
+        self.blackListWidget.sortItems(order = Qt.AscendingOrder)
+        self.addParameterLineEdit.setText('')
     
     def getParameters(self):
-        geogigPath = self.geogigPathLineEdit.text()
-        serverIP =  self.serverIPLineEdit.text()
-        port = self.portLineEdit.text()
-        user = self.userLineEdit.text()
-        password = self.passwordLineEdit.text()
-        schema = self.schemaLineEdit.text()
-        repo = self.repositoryNameLineEdit.text()
-        dbName = self.localDbNameLineEdit.text()
-        branchName = self.branchNameLineEdit.text()
-        return (geogigPath, serverIP, port, user, password, schema, repo, dbName, branchName)
+        freeHandTolerance = self.toleranceQgsDoubleSpinBox.value()
+        freeHandSmoothIterations = self.smoothIterationsQgsSpinBox.value()
+        freeHandSmoothOffset = self.smoothOffsetQgsDoubleSpinBox.value()
+        algIterations = self.algIterationsQgsSpinBox.value()
+        valueList = [self.blackListWidget.itemAt(i,0).text() for i in range(self.blackListWidget.count())]
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList)
 
     def loadParametersFromConfig(self):
         settings = QSettings()
-        settings.beginGroup('Geogig_PG')
-        geogigPath = settings.value('geogigPath')
-        serverIP = settings.value('serverIP')
-        port = settings.value('port')
-        user = settings.value('username')
-        password = settings.value('password')
-        schema = settings.value('schema')
-        repo = settings.value('repo')
-        dbName = settings.value('dbName')
-        branchName = settings.value('branchName')
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        freeHandTolerance = settings.value('freeHandTolerance')
+        freeHandSmoothIterations = settings.value('freeHandSmoothIterations')
+        freeHandSmoothOffset = settings.value('freeHandSmoothOffset')
+        algIterations = settings.value('algIterations')
+        valueList = settings.value('valueList')
+        if valueList:
+            valueList = valueList.split(';')
         settings.endGroup()
-        return (geogigPath, serverIP, port, user, password, schema, repo, dbName, branchName)
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList)
     
     def setInterfaceWithParametersFromConfig(self):
-        (geogigPath, serverIP, port, user, password, schema, repo, dbName, branchName) = self.loadParametersFromConfig()
-        if geogigPath != '':
-            self.geogigPathLineEdit.setText(geogigPath)
-        if serverIP != '':
-            self.serverIPLineEdit.setText(serverIP)
-        if port != '':
-            self.portLineEdit.setText(port)
-        if user != '':
-            self.userLineEdit.setText(user)
-        if password != '':
-            self.passwordLineEdit.setText(password)
-        if schema != '':
-            self.schemaLineEdit.setText(schema)
-        if repo != '':
-            self.repoLineEdit.setText(repo)
-        if dbName != '':
-            self.dbNameLineEdit.setText(dbName)
-        if branchName != '':
-            self.branchNameLineEdit.setText(branchName)
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.loadParametersFromConfig()
+        
+        if freeHandTolerance != '' and freeHandTolerance:
+            self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
+        if freeHandSmoothIterations != '' and freeHandSmoothIterations:
+            self.smoothIterationsQgsSpinBox.setValue(int(freeHandSmoothIterations))
+        if freeHandSmoothOffset != '' and freeHandSmoothOffset:
+            self.smoothOffsetQgsDoubleSpinBox.setValue(float(freeHandSmoothOffset))
+        if algIterations != '' and algIterations:
+            self.algIterationsQgsSpinBox.setValue(int(algIterations))
+        if valueList != '' and valueList:
+            self.blackListWidget.clear()
+            self.blackListWidget.addItems(valueList)
+            self.blackListWidget.sortItems(order = Qt.AscendingOrder)
     
     def storeParametersInConfig(self):
-        (geogigPath, serverIP, port, user, password, schema, repo, dbName, branchName) = self.getParameters()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.getParameters()
         settings = QSettings()
-        settings.beginGroup('Geogig_PG')
-        settings.setValue('geogigPath', geogigPath)
-        settings.setValue('serverIP', serverIP)
-        settings.setValue('port', port)
-        settings.setValue('user', user)
-        settings.setValue('password', password)
-        settings.setValue('schema', schema)
-        settings.setValue('repo', repo)
-        settings.setValue('dbName', dbName)
-        settings.setValue('branchName', branchName)
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        settings.setValue('freeHandTolerance', freeHandTolerance)
+        settings.setValue('freeHandSmoothIterations', freeHandSmoothIterations)
+        settings.setValue('freeHandSmoothOffset', freeHandSmoothOffset)
+        settings.setValue('algIterations', algIterations)
+        settings.setValue('valueList', ';'.join(valueList))
         settings.endGroup()
     
-    @pyqtSlot(bool)
-    def on_okPushButton_clicked(self):
-        if not self.validateParameters():
-            msg = self.invalidatedReason()
-            QMessageBox.warning(self, msg)
-            return
+    @pyqtSlot()
+    def on_buttonBox_accepted(self):
         self.storeParametersInConfig()
-        self.done(1)
-        self.close
+        self.close()

@@ -452,7 +452,7 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/dsg.png'
+        icon_path = ':/plugins/DsgTools/icons/custom_tools.png'
         action = self.add_action(
             icon_path,
             text=self.tr('Options'),
