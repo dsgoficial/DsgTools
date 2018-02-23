@@ -50,7 +50,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomTableSelector: "getSelectedNodes",
                QtGui.QComboBox:"currentText",
                CustomReferenceAndLayersParameterSelector:"getParameters",
-               RecursiveSnapParameters:"getHierarchicalSnapDict",
+               OrderedRecursiveSnapWidget:"getHierarchicalSnapDict",
                AuxLayerSelector:"getParameters",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
@@ -58,7 +58,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                QtGui.QDoubleSpinBox: "setValue",
                CustomSnaperParameterSelector: "setInitialState",
                CustomReferenceAndLayersParameterSelector: "setInitialState",
-               RecursiveSnapParameters:"setInitialState",
+               OrderedRecursiveSnapWidget:"setInitialState",
                CustomTableSelector: "setInitialState",
                AuxLayerSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
@@ -120,9 +120,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == RecursiveSnapParameters:
-                widget.setTitle(self.tr('Select layers and snap parameters'))
-                getattr(widget, self.SETTERS[type(widget)])(v.values)
+            if self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
+                getattr(widget, self.SETTERS[type(widget)])([v.values])
 
             
             else:

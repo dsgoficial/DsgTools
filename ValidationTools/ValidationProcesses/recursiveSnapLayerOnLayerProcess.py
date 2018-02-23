@@ -44,9 +44,9 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
             # getting tables with elements
             self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            customInterface = RecursiveSnapParameters(self.classesWithElemDict)
+            customInterface = RecursiveSnapParameters(self.classesWithElemDict.keys())
             # adjusting process parameters
-            self.parameters = {'Snap': 5.0, 'Ordered Layers': customInterface, 'Only Selected':False}
+            self.parameters = {'Ordered Layers': customInterface, 'Only Selected':False}
 
     def execute(self):
         """
