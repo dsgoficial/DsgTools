@@ -78,9 +78,9 @@ class OrderedRecursiveSnapWidget(OrderedStructureWidget):
         3. Update control list
         """
         super(OrderedRecursiveSnapWidget, self).removeItem()
-        self.componentsRefresher()
+        self.componentsRefresher(onDelete = True)
     
-    def componentsRefresher(self):
+    def componentsRefresher(self, onDelete = False):
         """
         1. Get all widgets
         2. Iterate over widgets and build black list from selected texts
@@ -91,9 +91,10 @@ class OrderedRecursiveSnapWidget(OrderedStructureWidget):
         #1. get widgetList and blackList:
         widgetList = [self.tableWidget.cellWidget(i,0) for i in range(self.tableWidget.rowCount())]
         blackList = [i.layerComboBox.currentText() for i in widgetList if i.layerComboBox.currentIndex() > 0]
-        currentText = self.sender().currentText()
-        if currentText not in blackList:
-            blackList.append(currentText)
+        if not onDelete:
+            currentText = self.sender().currentText()
+            if currentText not in blackList:
+                blackList.append(currentText)
         #3. disconect signals
         for widget in widgetList:
             try:
