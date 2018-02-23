@@ -48,10 +48,23 @@ class SnapChooserWidget(QtGui.QWidget, FORM_CLASS):
         if parameterDict != {}:
             self.populateInterface(parameterDict)
     
-    def refresh(self):
+    def refresh(self, inputList):
+        currentText = self.layerComboBox.currentText()
+        refreshList = list(inputList) #copy of the reference inputList
+        if currentText not in refreshList and self.layerComboBox.currentIndex() > 0:
+            refreshList.append(currentText)
+        refreshList.sort()
         self.layerComboBox.clear()
         self.layerComboBox.addItem(self.tr('Select a layer'))
-        self.layerComboBox.addItems(self.layerList)
+        self.layerComboBox.addItems(refreshList)
+        idx = self.layerComboBox.findText(currentText, flags = Qt.MatchExactly)
+        self.layerComboBox.setCurrentIndex(idx)
+    
+    def getSelectedItem(self):
+        if self.layerComboBox.currentIndex() > 0:
+            return self.layerComboBox.currentText()
+        else:
+            return None
     
     def clearAll(self):
         """
