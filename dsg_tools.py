@@ -60,6 +60,7 @@ from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
 from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
+from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
 
 from qgis.utils import showPluginHelp
 try:
@@ -124,6 +125,7 @@ class DsgTools:
         self.styleManagerTool = StyleManagerTool(iface)
         self.copyPasteTool = CopyPasteTool(iface)
         self.acquisition = Acquisition(iface)
+        self.freeHandAcquisiton = FreeHandMain(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -663,6 +665,22 @@ class DsgTools:
         productiontools.addAction(action)
         self.toolbar.addAction(action)
         self.acquisition.setCircleAction(action)
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
+
+        icon_path = ':/plugins/DsgTools/icons/free_hand.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Free Hand Acquisition'),
+            callback=self.freeHandAcquisiton.run,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.freeHandAcquisiton.setAction(action)
+        action.setEnabled(False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
         self.inspectFeatures = InspectFeatures(self.iface, parent = productiontools)
