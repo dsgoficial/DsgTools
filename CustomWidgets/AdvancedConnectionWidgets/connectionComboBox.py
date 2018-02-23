@@ -85,7 +85,7 @@ class ConnectionComboBox(QtGui.QWidget, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
             if self.serverAbstractDb:
-                dbList = self.serverAbstractDb.getEDGVDbsFromServer(parentWidget = self.parent)
+                dbList = self.serverAbstractDb.getEDGVDbsFromServer(parentWidget = self.parent, getDatabaseVersions = False)
                 dbList.sort()
                 self.clear()
                 self.connectionSelectorComboBox.addItem(self.tr('Select Database'))
