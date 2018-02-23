@@ -3307,8 +3307,10 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.commit()
     
-    def getPropertyDict(self, settingType):
+    def getPropertyDict(self, settingType, getOnlySameVersion = False):
         self.checkAndOpenDb()
+        if getOnlySameVersion:
+            myEdgvVersion = self.getDatabaseVersion()
         sql = self.gen.getAllPropertiesFromDb(settingType)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -3316,6 +3318,9 @@ class PostgisDb(AbstractDb):
         propertyDict = dict()
         while query.next():
             edgvVersion = query.value(0)
+            if getOnlySameVersion:
+                if myEdgvVersion != edgvVersion:
+                    continue
             name = query.value(1)
             jsonDict = json.loads(query.value(2))
             if edgvVersion not in propertyDict.keys():
