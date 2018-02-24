@@ -487,7 +487,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         
         somethingMade = False
         reclassifiedFeatures = 0
-        
+        deleteList = []
         #button that sent the signal
         self.buttonName = self.sender().text().split(' [')[0]
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)

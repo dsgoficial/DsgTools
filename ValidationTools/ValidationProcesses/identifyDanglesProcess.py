@@ -59,7 +59,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceLineDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.opTypeDict = OrderedDict([(self.tr('Consider dangle on unsegmented lines'),0), (self.tr('Ignore dangle on unsegmented lines'),1)])
-            self.parameters = {'Only Selected':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict}), 'Identification Type':deque(self.opTypeDict.keys())}
+            self.parameters = {'Only Selected':False, 'Ignore search radius on inner layer search':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict}), 'Identification Type':deque(self.opTypeDict.keys())}
             self.unbuildProc = UnbuildEarthCoveragePolygonsProcess(postgisDb, iface, instantiating = True)
             self.unbuildProc.parameters = {'Snap': -1.0, 'MinArea': 0.001} #no snap and no small area
     
@@ -106,7 +106,8 @@ class IdentifyDanglesProcess(ValidationProcess):
             #filter pointList with filterLayer
             filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, self.parameters['Search Radius'])
             #filter with own layer
-            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, reflyr, self.parameters['Search Radius'], isRefLyr = True, ignoreNotSplit = ignoreNotSplit)
+            if not self.parameters['Ignore search radius on inner layer search']: #True when looking for dangles on contour lines
+                filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, reflyr, self.parameters['Search Radius'], isRefLyr = True, ignoreNotSplit = ignoreNotSplit)
             #build flag list with filtered points
             recordList = self.buildFlagList(filteredPointList, endVerticesDict, refcl['tableSchema'], refcl['tableName'], refcl['geom'])
 
