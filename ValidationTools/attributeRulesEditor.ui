@@ -14,24 +14,35 @@
    <string>Attribute Rules Editor</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="1">
-    <widget class="QPushButton" name="okPushButton">
-     <property name="text">
-      <string>Ok</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="cancelPushButton">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0" colspan="3">
+   <item row="0" column="0" colspan="4">
     <widget class="OrderedAttributeRulesWidget" name="attributeRulesWidget" native="true"/>
    </item>
    <item row="1" column="0">
+    <widget class="OrderedAttributeRuleTypesWidget" name="attributeRuleTypesWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="3">
+    <widget class="QTreeWidget" name="treeWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <column>
+      <property name="text">
+       <string notr="true">1</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -44,6 +55,20 @@
      </property>
     </spacer>
    </item>
+   <item row="2" column="2">
+    <widget class="QPushButton" name="okPushButton">
+     <property name="text">
+      <string>Ok</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="3">
+    <widget class="QPushButton" name="cancelPushButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -51,6 +76,12 @@
    <class>OrderedAttributeRulesWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedAttributeRulesWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>OrderedAttributeRuleTypesWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedAttributeRuleTypesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
