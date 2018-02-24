@@ -86,20 +86,37 @@ class AcquisitionFreeController(object):
             actionAcquisitionFree.setEnabled(True)
         else:
             actionAcquisitionFree.setEnabled(False)
+    
+    def getParametersFromConfig(self):
+        settings = QtCore.QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        parameters = {
+            u'freeHandTolerance' : settings.value('freeHandTolerance'),
+            u'freeHandSmoothIterations' : settings.value('freeHandSmoothIterations'),
+            u'freeHandSmoothOffset' : settings.value('freeHandSmoothOffset'),
+            u'algIterations' : settings.value('algIterations')
+        }
+        settings.endGroup()
+        return parameters
 
     def getTolerance(self, layer):
         #Método para obter tolerância para simplificação de geometria
         #Parâmetro de entrada: layer (camada em uso)
+        parameters = self.getParametersFromConfig()
         if layer.crs().projectionAcronym() == "longlat":
             return 0.000
-        return 2.000
+        return parameters[u'freeHandTolerance']
 
     def simplifyGeometry(self, geom, tolerance):
         #Método para simplificar geometria
+        parameters = self.getParametersFromConfig()
         sGeom = geom
-        for x in range(2):
-            sGeom = sGeom.simplify(tolerance)
-            sGeom = sGeom.smooth(3, 0.25)
+        for x in range(int(parameters[u'algIterations'])):
+            sGeom = sGeom.simplify(float(tolerance))
+            sGeom = sGeom.smooth(
+                int(parameters[u'freeHandSmoothIterations']),
+                float(parameters[u'freeHandSmoothOffset'])
+            )
         return sGeom
 
     def reprojectGeometry(self, geom):
