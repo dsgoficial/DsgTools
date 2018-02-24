@@ -65,7 +65,6 @@ class SnapLayerOnLayerProcess(ValidationProcess):
                 return 1
 
             # preparing reference layer
-            self.startTimeCount()
             refcl = self.classesWithElemDict[refKey]
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
             snapper = DsgGeometrySnapper(reflyr)

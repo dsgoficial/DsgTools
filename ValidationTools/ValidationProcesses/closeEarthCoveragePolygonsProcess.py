@@ -323,7 +323,6 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -365,8 +364,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 self.prepareReclassification(cl, areaLyr, centroidLyr, relateDict)
                 self.reclassifyAreasWithCentroids(coverageClassList, areaLyr, centroidLyr, relateDict)
                 localProgress.step()
-            self.raiseFlags(areaLyr)
-            self.endTimeCount()    
+            self.raiseFlags(areaLyr)     
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

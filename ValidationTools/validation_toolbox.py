@@ -63,14 +63,14 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.edgvLayer = None
         self.flagLyr = None
         self.iface = iface
-        # self.databaseLineEdit.setReadOnly(True)
+        self.databaseLineEdit.setReadOnly(True)
         self.configWindow = ValidationConfig()
-        self.connectionSelectorComboBox.connectionChanged.connect(self.updateDbLineEdit)
-        self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
+        self.configWindow.widget.connectionChanged.connect(self.updateDbLineEdit)
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createContextMenu)
         self.ruleEnforcer = None
+        self.attributeRulesEditorPushButton.hide()
         self.itemList = []
         self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
 
@@ -97,7 +97,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         except:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
             return
-        self.connectionSelectorComboBox.abstractDb.deleteProcessFlags(flagId = flagId)
+        self.configWindow.widget.abstractDb.deleteProcessFlags(flagId = flagId)
         self.refreshFlags()
 
     @pyqtSlot()
@@ -160,7 +160,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Loads the flag layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
         layer: layer name
         """
-        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.connectionSelectorComboBox.abstractDb)
+        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface,self.configWindow.widget.abstractDb)
         if isinstance(layer, list):
             return self.layerLoader.load(layer, uniqueLoad = True)
         else:
@@ -177,7 +177,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             if lyr.name() == layer:
                 candidateLyrs.append(lyr)
         for lyr in candidateLyrs:
-            if self.connectionSelectorComboBox.abstractDb.isLyrInDb(lyr):
+            if self.configWindow.widget.abstractDb.isLyrInDb(lyr):
                 return True
         return False
 
@@ -193,7 +193,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Shows the validation history
         """
-        historyWindow = ValidationHistory(self.connectionSelectorComboBox.abstractDb)
+        historyWindow = ValidationHistory(self.configWindow.widget.abstractDb)
         historyWindow.exec_()
     
     @pyqtSlot()
@@ -203,12 +203,15 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         database = ''
         try:
-            self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
-            self.validationManager = ValidationManager(self.connectionSelectorComboBox.abstractDb, self.iface)
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
+            database = self.configWindow.widget.comboBoxPostgis.currentText()
+            self.databaseLineEdit.setText(database)
+            self.validationManager = ValidationManager(self.configWindow.widget.abstractDb, self.iface)
             self.populateProcessList()
+            self.databaseLineEdit.setText(database)
 
             # adjusting flags table model
-            self.projectModel = QSqlTableModel(None,self.connectionSelectorComboBox.abstractDb.db)
+            self.projectModel = QSqlTableModel(None,self.configWindow.widget.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()
             self.tableView.setModel(self.projectModel)
@@ -243,7 +246,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             
             status = None
             try:
-                status = self.connectionSelectorComboBox.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
+                status = self.configWindow.widget.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
             except Exception as e:
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
                 QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -323,7 +326,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Changes the current tab in the validation tool box
         """
-        if self.validationTabWidget.currentIndex() == 1 and self.connectionSelectorComboBox.abstractDb <> None:
+        if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
             self.projectModel.select()
         self.refreshOnChangeProcessOrClass()
 
@@ -333,8 +336,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Opens the spatial rule editor
         """
         try:
-            self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
-            dlg = RulesEditor(self.connectionSelectorComboBox.abstractDb)
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
+            dlg = RulesEditor(self.configWindow.widget.abstractDb)
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
@@ -347,7 +350,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         filterType = self.filterTypeComboBox.currentText()
         filteredElement = self.customFilterComboBox.currentText()
-        self.connectionSelectorComboBox.abstractDb.createFilteredFlagsViewTable(filterType=filterType, filteredElement=filteredElement)
+        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(filterType=filterType, filteredElement=filteredElement)
         self.projectModel.setTable('validation.filtered_flags')
         self.projectModel.select()
         
@@ -359,8 +362,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         filterType = self.filterTypeComboBox.currentText()
         self.customFilterComboBox.clear()
-        if self.connectionSelectorComboBox.abstractDb:
-            listProcessesOrClasses = self.connectionSelectorComboBox.abstractDb.fillComboBoxProcessOrClasses(filterType)
+        if self.configWindow.widget.abstractDb:
+            listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
             self.customFilterComboBox.addItems(listProcessesOrClasses)    
 
     @pyqtSlot(bool)
@@ -382,8 +385,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         Opens the attribute rule editor
         """
         try:
-            self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
-            dlg = AttributeRulesEditor(self.connectionSelectorComboBox.abstractDb)
+            self.configWindow.widget.abstractDb.checkAndOpenDb()
+            dlg = AttributeRulesEditor(self.configWindow.widget.abstractDb)
             dlg.exec_()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
@@ -399,7 +402,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear all flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 return
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.connectionSelectorComboBox.abstractDb.deleteProcessFlags()
+            self.configWindow.widget.abstractDb.deleteProcessFlags()
             QApplication.restoreOverrideCursor()
             #refresh
             self.refreshFlags()
@@ -426,7 +429,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             elif self.filterDict[filterType] == DsgEnums.ClassName:
                 layerName = self.customFilterComboBox.currentText()
             if (processName or layerName):
-                self.connectionSelectorComboBox.abstractDb.deleteProcessFlags(processName,layerName)
+                self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
             else:
                 QApplication.restoreOverrideCursor()
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))

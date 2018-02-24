@@ -23,8 +23,8 @@
 import os
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, QSettings, pyqtSignal
-from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QCursor, QRadioButton
+from PyQt4.QtCore import *
+from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QCursor
 from PyQt4.QtSql import QSqlDatabase
 from serverConfigurator import ServerConfigurator
 
@@ -37,8 +37,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
 
 class ViewServers(QtGui.QDialog, FORM_CLASS):
-    defaultChanged = pyqtSignal()
-    def __init__(self, iface = None, parent=None):
+    def __init__(self, iface, parent=None):
         '''Constructor.'''
         super(ViewServers, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -47,10 +46,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.iface = iface
         self.abstractDbFactory = DbFactory()
         self.initGui()
-        host, port, user, password = self.getDefaultConnectionParameters()
-        self.defaultConnectionDict = self.setDefaultConnectionParameters(host, port, user, password)
     
     def initGui(self):
         '''
@@ -68,7 +66,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         self.tableWidget.setRowCount(len(currentConnections))
         for i, connection in enumerate(currentConnections):
             self.tableWidget.setItem(i, 0, QTableWidgetItem(connection))
-            (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
+            (host, port, user, password) = self.getServerConfiguration(connection)
             self.tableWidget.setItem(i, 1, QTableWidgetItem(host))
             self.tableWidget.setItem(i, 2, QTableWidgetItem(port))
             self.tableWidget.setItem(i, 3, QTableWidgetItem(user))
@@ -76,49 +74,13 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Not Saved')))
             else:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
-            radio = QRadioButton()
-            if isDefault:
-                radio.setChecked(True)
-            self.tableWidget.setCellWidget(i, 5, radio)
-    
-    def setDefaultConnectionParameters(self, host, port, user, password):
-        defaultConnectionDict = dict()
-        if host and port and user and password:
-            defaultConnectionDict['host'] = host
-            defaultConnectionDict['port'] = port
-            defaultConnectionDict['user'] = user
-            defaultConnectionDict['password'] = password
-        else:
-            defaultConnectionDict = dict()
-        return defaultConnectionDict
-    
-    def getDefaultConnectionParameters(self):
-        currentConnections = self.getServers()
-        for i, connection in enumerate(currentConnections):
-            (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
-            if isDefault == True:
-                return (host, port, user, password)
-        return (None, None, None, None)
-
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
         '''
-        Closes the dialog if default connection is set
+        Closes the dialog
         '''
-        currentConnections = self.getServers()
-        self.tableWidget.setRowCount(len(currentConnections))
-        for i, connection in enumerate(currentConnections):
-            if self.tableWidget.cellWidget(i, 5).isChecked():
-                (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
-                dlg = ServerConfigurator(self)
-                dlg.setServerConfiguration(connection)
-                dlg.storeServerConfiguration(connection, host, port, user, password, isDefault = True)
-                self.setDefaultConnectionParameters(host, port, user, password)
-                self.defaultChanged.emit()
-                self.done(0)
-                return
-        QMessageBox.warning(self, self.tr('Info!'), self.tr('Set default connection before closing!'))
+        self.done(0)
         
     @pyqtSlot(bool)
     def on_addButton_clicked(self):
@@ -197,10 +159,9 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         port = settings.value('port')
         user = settings.value('username')
         password = settings.value('password')
-        isDefault = settings.value('isDefault')
         settings.endGroup()
         
-        return (host, port, user, password, isDefault)
+        return (host, port, user, password)
     
     def removeServerConfiguration(self, name):
         '''
