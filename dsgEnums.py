@@ -25,5 +25,3 @@ class DsgEnums:
     Property, Database = range(2)
     #generic validation property
     ProcessName, ClassName = range(2)
-    #property enum
-    PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = range(6)

@@ -26,7 +26,7 @@ from PyQt4.QtGui import QCompleter, QComboBox, QSortFilterProxyModel
 
 class DsgCustomComboBox(QComboBox):
     def __init__(self, parent=None):
-        super(DsgCustomComboBox, self).__init__(parent = parent)
+        super(DsgCustomComboBox, self).__init__(parent)
 
         self.setFocusPolicy(Qt.StrongFocus)
         self.setEditable(True)

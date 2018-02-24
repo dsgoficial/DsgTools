@@ -759,7 +759,7 @@ class PostgisDb(AbstractDb):
         """
         return 'public.aux_moldura_a'
     
-    def getEDGVDbsFromServer(self, parentWidget = None, getDatabaseVersions = True):
+    def getEDGVDbsFromServer(self, parentWidget = None):
         """
         Gets edgv databases from 'this' server
         """
@@ -778,41 +778,34 @@ class PostgisDb(AbstractDb):
         if parentWidget:
             progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = parentWidget)
             progress.initBar()
-        if getDatabaseVersions:
-            for database in dbList:
-                db = None
-                db = QSqlDatabase("QPSQL")
-                db.setDatabaseName(database)
-                db.setHostName(self.db.hostName())
-                db.setPort(self.db.port())
-                db.setUserName(self.db.userName())
-                db.setPassword(self.db.password())
-                if not db.open():
-                    raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+        for database in dbList:
+            db = None
+            db = QSqlDatabase("QPSQL")
+            db.setDatabaseName(database)
+            db.setHostName(self.db.hostName())
+            db.setPort(self.db.port())
+            db.setUserName(self.db.userName())
+            db.setPassword(self.db.password())
+            if not db.open():
+                raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
 
-                query2 = QSqlQuery(db)
-                if query2.exec_(self.gen.getGeometryTablesCount()):
-                    while query2.next():
-                        count = query2.value(0)
-                        if count > 0:
-                            query3 = QSqlQuery(db)
-                            if query3.exec_(self.gen.getEDGVVersion()):
-                                while query3.next():
-                                    version = query3.value(0)
-                                    if version:
-                                        edvgDbList.append((database,version))
-                                    else:
-                                        edvgDbList.append((database,'Non_EDGV'))
-                            else:
-                                edvgDbList.append((database,'Non_EDGV'))
-                if parentWidget:
-                    progress.step()
-        else:
-            for database in dbList:
-                if database not in ['postgres', 'dsgtools_admindb', 'template_edgv_213', 'template_edgv_3', 'template_edgv_fter_2a_ed', 'template0', 'template1']:
-                    edvgDbList.append(database)
-                if parentWidget:
-                        progress.step()
+            query2 = QSqlQuery(db)
+            if query2.exec_(self.gen.getGeometryTablesCount()):
+                while query2.next():
+                    count = query2.value(0)
+                    if count > 0:
+                        query3 = QSqlQuery(db)
+                        if query3.exec_(self.gen.getEDGVVersion()):
+                            while query3.next():
+                                version = query3.value(0)
+                                if version:
+                                    edvgDbList.append((database,version))
+                                else:
+                                    edvgDbList.append((database,'Non_EDGV'))
+                        else:
+                            edvgDbList.append((database,'Non_EDGV'))
+            if parentWidget:
+                progress.step()
         return edvgDbList
     
     def getDbsFromServer(self):
@@ -1170,23 +1163,6 @@ class PostgisDb(AbstractDb):
         id = self.getPrimaryKeyColumn(table)
         uri.setDataSource(schema, layer_name, geomColumn, sql, id)
         uri.disableSelectAtId(True)
-        
-        return uri
-    
-    def getURIV2(self, tableSchema, tableName, geometryColumnm, sql = ''):
-        """
-        New inplementation giving parameters.
-        """
-        host = self.db.hostName()
-        port = self.db.port()
-        database = self.db.databaseName()
-        user = self.db.userName()
-        password = self.db.password()
-
-        uri = QgsDataSourceURI()
-        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
-        id = self.getPrimaryKeyColumn('{0}.{1}'.format(tableSchema, tableName))
-        uri.setDataSource(tableSchema, tableName, geometryColumnm, sql, id)
         
         return uri
     
@@ -3259,11 +3235,11 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
     
-    def createPropertyTable(self, settingType, useTransaction = True, isAdminDb = False):
+    def createPropertyTable(self, settingType, useTransaction = True):
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
-        createSql = self.gen.createPropertyTable(settingType, isAdminDb = isAdminDb)
+        createSql = self.gen.createPropertyTable(settingType)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             if useTransaction:
@@ -3317,10 +3293,8 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.commit()
     
-    def getPropertyDict(self, settingType, getOnlySameVersion = False):
+    def getPropertyDict(self, settingType):
         self.checkAndOpenDb()
-        if getOnlySameVersion:
-            myEdgvVersion = self.getDatabaseVersion()
         sql = self.gen.getAllPropertiesFromDb(settingType)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -3328,9 +3302,6 @@ class PostgisDb(AbstractDb):
         propertyDict = dict()
         while query.next():
             edgvVersion = query.value(0)
-            if getOnlySameVersion:
-                if myEdgvVersion != edgvVersion:
-                    continue
             name = query.value(1)
             jsonDict = json.loads(query.value(2))
             if edgvVersion not in propertyDict.keys():
@@ -3627,24 +3598,3 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
         return
-    
-    def instantiateQgsVectorLayer(self, uri):
-        pass
-    
-    def setDataSourceUri(self, schema, tableName, geometryColumn, sql, pkColumm):
-        uri = QgsDataSourceURI() 
-
-
-    def getLayerDict(self):
-        """
-        Returns a dict:
-        {'table_schema.table_name (geometryColumn):QgsVectorLayer'}
-        """
-        lyrDict = dict()
-        inputDict = self.getGeomColumnDictV2(excludeValidation = True)
-        for key in inputDict.keys():
-            uri = self.getURIV2(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'], '')
-            lyr = QgsVectorLayer(uri.uri(), inputDict[key]['lyrName'], 'postgres', False)
-            outputKey = '{0}.{1} ({2})'.format(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'])
-            lyrDict[outputKey] = lyr
-        return lyrDict
