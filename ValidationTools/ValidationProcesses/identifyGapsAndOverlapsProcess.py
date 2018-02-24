@@ -118,6 +118,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
             self.abstractDb.dropTempTable('validation.coverage_temp')
             self.logLayerTime('coverage')
 
+
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

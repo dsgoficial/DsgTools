@@ -6,99 +6,56 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>941</width>
-    <height>490</height>
+    <width>948</width>
+    <height>483</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Attribute Rules Editor</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0">
-    <widget class="SelectFileWidget" name="widget" native="true"/>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="okPushButton">
+     <property name="text">
+      <string>Ok</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="cancelPushButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="OrderedAttributeRulesWidget" name="attributeRulesWidget" native="true"/>
    </item>
    <item row="1" column="0">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="ListManagerWidget" name="widget_2" native="true"/>
-     </item>
-     <item>
-      <widget class="NewAttributeRuleBuilderWidget" name="widget_3" native="true">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>40</width>
+       <height>20</height>
+      </size>
      </property>
-    </widget>
+    </spacer>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SelectFileWidget</class>
+   <class>OrderedAttributeRulesWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.selectFileWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ListManagerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.AttributeValidityWidgets.listManagerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>NewAttributeRuleBuilderWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.AttributeValidityWidgets.newAttributeRuleBuilderWidget.h</header>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedAttributeRulesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>AttributeRulesEditor</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>AttributeRulesEditor</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <resources>
+  <include location="../resources.qrc"/>
+ </resources>
+ <connections/>
 </ui>

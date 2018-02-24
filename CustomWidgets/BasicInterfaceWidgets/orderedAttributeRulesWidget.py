@@ -5,9 +5,9 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2017-03-03
+        begin                : 2018-02-19
         git sha              : $Format:%H$
-        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
@@ -20,10 +20,28 @@
  *                                                                         *
  ***************************************************************************/
 """
-class DsgEnums:
-    #generic manager and database enumerate
-    Property, Database = range(2)
-    #generic validation property
-    ProcessName, ClassName = range(2)
-    #property enum
-    PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = range(6)
+import os
+from collections import OrderedDict
+# Qt imports
+from PyQt4 import QtGui, uic
+from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from PyQt4.QtGui import QTableWidgetItem
+
+from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedStructureWidget import OrderedStructureWidget
+from DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleWidget import AttributeRuleWidget
+
+class OrderedAttributeRulesWidget(OrderedStructureWidget):
+
+    def __init__(self, parent=None):
+        """
+        Initializates OrderedAttributeRulesWidget
+        """
+        super(OrderedAttributeRulesWidget, self).__init__(parent)
+        self.args = None
+        self.tableWidget.setHorizontalHeaderLabels([self.tr('Attribute Rules')])
+        self.widgetKey = 'attributeRuleWidgetList'
+    
+    def instantiateWidgetItem(self):
+        return AttributeRuleWidget(*self.args)
+    
+

@@ -112,7 +112,7 @@ class TopologicalCleanProcess(ValidationProcess):
             else:
                 nameList = [i.name() for i in classlist]
                 QgsMessageLog.logMessage(self.tr('There are no cleaning errors on ') + ', '.join(nameList) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-
+            self.logLayerTime('unified layer')
             if error:
                 self.setStatus(self.tr('There are cleaning errors. Check log.'), 4) #Finished with errors
             else:

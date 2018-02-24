@@ -28,6 +28,8 @@ from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
+from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedRecursiveSnapWidget import OrderedRecursiveSnapWidget
+from DsgTools.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProcess import RecursiveSnapParameters
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
@@ -38,6 +40,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                tuple: CustomSnaperParameterSelector,
                deque:QtGui.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
+               RecursiveSnapParameters:OrderedRecursiveSnapWidget,
                dict:AuxLayerSelector,
                bool: QtGui.QCheckBox}
     GETTERS = {QtGui.QLineEdit: "text",
@@ -47,6 +50,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomTableSelector: "getSelectedNodes",
                QtGui.QComboBox:"currentText",
                CustomReferenceAndLayersParameterSelector:"getParameters",
+               OrderedRecursiveSnapWidget:"getHierarchicalSnapDict",
                AuxLayerSelector:"getParameters",
                QtGui.QCheckBox: "isChecked"}
     SETTERS = {QtGui.QLineEdit: "setText",
@@ -54,6 +58,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                QtGui.QDoubleSpinBox: "setValue",
                CustomSnaperParameterSelector: "setInitialState",
                CustomReferenceAndLayersParameterSelector: "setInitialState",
+               OrderedRecursiveSnapWidget:"setInitialState",
                CustomTableSelector: "setInitialState",
                AuxLayerSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
@@ -64,6 +69,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                   CustomSnaperParameterSelector: lambda x: True,
                   CustomReferenceAndLayersParameterSelector: lambda x: True,
                   CustomTableSelector: lambda x: True,
+                  RecursiveSnapParameters: lambda x: True,
                   AuxLayerSelector: lambda x: True,
                   QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
@@ -85,7 +91,9 @@ class ProcessParametersDialog(QtGui.QDialog):
             self.required.append(options.keys()[0])
 
         _firstWidget = None
-        formLayout = QtGui.QFormLayout()
+        # formLayout = QtGui.QFormLayout()
+        layout = QtGui.QGridLayout()
+        rowCount = 0
         for k, v in options.iteritems():
             if isinstance(v, list):
                 if len(v)> 0 and isinstance(v[0], dict) == False:
@@ -114,6 +122,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
+            if self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
+                getattr(widget, self.SETTERS[type(widget)])([v.values])
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
@@ -121,25 +131,26 @@ class ProcessParametersDialog(QtGui.QDialog):
                 label.setStyleSheet("color: red;")
 
             self.__widgets[k] = (label, widget)
-            formLayout.addRow(label, widget)
-
+            layout.addWidget(label, rowCount, 0)
+            layout.addWidget(widget, rowCount, 1)
+            rowCount += 1
             if _firstWidget is None:
                 _firstWidget = widget
 
-        scrollArea = QtGui.QScrollArea()
-        scrollArea.setWidgetResizable(True)
-        scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
-        w = QtGui.QWidget()
-        w.setLayout(formLayout)
-        scrollArea.setWidget(w)
+        # scrollArea = QtGui.QScrollArea()
+        # scrollArea.setWidgetResizable(True)
+        # scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
+        # w = QtGui.QWidget()
+        # w.setLayout(formLayout)
+        # scrollArea.setWidget(w)
 
         buttons = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
-        layout = QtGui.QGridLayout()
-        layout.addWidget(scrollArea)
-        layout.addWidget(buttons)
+        # layout = QtGui.QGridLayout()
+        # layout.addWidget(scrollArea)
+        layout.addWidget(buttons, rowCount+1, 1)
         self.setLayout(layout)
 
         _firstWidget.setFocus()

@@ -107,7 +107,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
             except:
                 QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.name() for i in classlist]) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-
+            self.logLayerTime('unified layer')
             self.setStatus(self.tr('Simplification process complete.'), 1) #Finished
             self.logLayerTime('unified layer')
             return 1
