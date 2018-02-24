@@ -18,9 +18,9 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtCore, QtGui, Qt
 from qgis import core, gui
-import math
+import math, json
 
 class AcquisitionFree(gui.QgsMapTool):
  
@@ -31,6 +31,7 @@ class AcquisitionFree(gui.QgsMapTool):
         super(AcquisitionFree, self).__init__(canvas)
         self.canvas = canvas
         self.rubberBand = None
+        self.rubberBandToStopState = None
         self.drawing = False
         self.snapCursorRubberBand = None
         self.active = False
@@ -91,6 +92,12 @@ class AcquisitionFree(gui.QgsMapTool):
     def getRubberBand(self):
         return self.rubberBand
 
+    def setRubberBandToStopState(self, rb):
+        self.rubberBandToStopState = rb
+
+    def getRubberBandToStopState(self):
+        return self.rubberBandToStopState
+
     def setGeometryType(self, geomType):
         self.geometryType = geomType
 
@@ -107,7 +114,7 @@ class AcquisitionFree(gui.QgsMapTool):
         return (self.getGeometryType() != core.QGis.Line)
         
     def keyPressEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Delete:
+        if event.key() in [QtCore.Qt.Key_Delete, QtCore.Qt.Key_Backspace]:
             self.setStopedState(True)
             self.removeVertice()
             event.ignore()
@@ -125,21 +132,36 @@ class AcquisitionFree(gui.QgsMapTool):
    
     def removeVertice(self):
         rubberBand = self.getRubberBand()
-        if rubberBand and rubberBand.numberOfVertices() > 30:
+        if rubberBand and rubberBand.numberOfVertices() > 50:
             for x in range(50):
                 rubberBand.removeLastPoint()
+            if self.isPolygon():
+                lastPoint = rubberBand.asGeometry().asPolygon()[-2]
+            else:
+                lastPoint = rubberBand.asGeometry().asPolyline()[-1]
+            self.startRubberBandToStopState(
+                core.QgsPoint(
+                    lastPoint[0], lastPoint[1]
+                )
+            )
         elif rubberBand:
             self.setStopedState(False)
+            self.getRubberBandToStopState().reset()
             self.cancelEdition()
+        
                
     def createSnapRubberBand(self):
-        rubberBand = gui.QgsRubberBand(
-            self.getCanvas(), 
-            geometryType = core.QGis.Point
-        )
+        rubberBand = self.getSnapRubberBand()
+        if rubberBand:
+            rubberBand.reset()
+        else:
+            rubberBand = gui.QgsRubberBand(
+                self.getCanvas(), 
+                geometryType = core.QGis.Point
+            )
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
         rubberBand.setBorderColor(QtGui.QColor(255, 0, 0, 200))
-        rubberBand.setWidth(2)
+        rubberBand.setWidth(5)
         rubberBand.setIcon(gui.QgsRubberBand.ICON_X)
         return rubberBand 
 
@@ -149,6 +171,7 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setSnapRubberBand(snapRubberBand) 
 		    
     def canvasReleaseEvent(self, event):
+        self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else ''
         if self.getStopedState():
             self.setStopedState(False)
         elif self.getActiveState():
@@ -169,20 +192,36 @@ class AcquisitionFree(gui.QgsMapTool):
         layer = self.getCanvas().currentLayer()
         if layer:
             self.startRubberBand(pointMap, layer)
+
+    def startRubberBandToStopState(self, point):
+        rubberBandToStopState = self.getRubberBandToStopState()
+        if rubberBandToStopState:
+            rubberBandToStopState.reset()
+        if self.isPolygon():
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Polygon)
+            rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
+            rubberBand.setWidth(2)
+        else:
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Line)
+            rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
+            rubberBand.setWidth(1)
+        rubberBand.setLineStyle(QtCore.Qt.DotLine)
+        rubberBand.addPoint(point)
+        self.setRubberBandToStopState(rubberBand)
     
     def startRubberBand(self, pointMap, layer):
-            self.setDrawingState(True)
-            self.setGeometryType(layer.geometryType())
-            if self.isPolygon():
-                rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Polygon)
-                rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
-                rubberBand.setWidth(2)
-            else:
-                rubberBand = gui.QgsRubberBand(self.getCanvas())
-                rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
-                rubberBand.setWidth(1)
-            rubberBand.addPoint(pointMap)
-            self.setRubberBand(rubberBand)
+        self.setDrawingState(True)
+        self.setGeometryType(layer.geometryType())
+        if self.isPolygon():
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Polygon)
+            rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
+            rubberBand.setWidth(2)
+        else:
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Line)
+            rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
+            rubberBand.setWidth(1)
+        rubberBand.addPoint(pointMap)
+        self.setRubberBand(rubberBand)
         
     def canvasMoveEvent(self, event):
         if self.getRubberBand():
@@ -193,19 +232,31 @@ class AcquisitionFree(gui.QgsMapTool):
                 snapRubberBand.hide()
                 snapRubberBand.reset(geometryType=core.QGis.Point)
                 self.setSnapRubberBand(None)
-
             oldPoint = core.QgsPoint(event.mapPoint())
             event.snapPoint(gui.QgsMapMouseEvent.SnapProjectConfig)
             point = core.QgsPoint(event.mapPoint())
             if oldPoint != point:
                 self.createSnapCursor(point)
-
             if self.getRubberBand():
                 if self.contadorVert == 0:        
                     self.getRubberBand().addPoint(point)
                     self.contadorVert+=1
                 else:
                     self.getRubberBand().addPoint(oldPoint)
+        if self.getRubberBandToStopState():
+            self.updateRubberBandToStopState(
+                self.toMapCoordinates( event.pos() )
+            )
+
+    def updateRubberBandToStopState(self, point):
+        rubberBand = self.getRubberBandToStopState()
+        if rubberBand.asGeometry():
+            listPoints = rubberBand.asGeometry().asPolygon() if self.isPolygon() else rubberBand.asGeometry().asPolyline()
+            if self.isPolygon() and len(listPoints) >= 3:
+                rubberBand.removeLastPoint()
+            elif not(self.isPolygon()) and len(listPoints) >= 2:
+                rubberBand.removeLastPoint()
+            rubberBand.addPoint(point)
 
     def finishEdition(self, event):
         event.snapPoint(gui.QgsMapMouseEvent.SnapProjectConfig)

@@ -102,6 +102,40 @@ class AcquisitionFreeController(object):
             sGeom = sGeom.smooth(3, 0.25)
         return sGeom
 
+    def reprojectGeometry(self, geom):
+        # Defining the crs from src and destiny
+        iface = self.getIface()
+        canvas = iface.mapCanvas()
+        epsg = canvas.mapSettings().destinationCrs().authid()
+        crsSrc = core.QgsCoordinateReferenceSystem(epsg)
+        #getting srid from something like 'EPSG:31983'
+        layer = canvas.currentLayer()
+        srid = layer.crs().authid()
+        crsDest = core.QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
+        if srid != epsg:
+            # Creating a transformer
+            coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest)
+            lyrType = iface.activeLayer().geometryType()
+            # Transforming the points
+            if lyrType == core.QGis.Line:
+                geomList = geom.asPolyline()
+            elif lyrType == core.QGis.Polygon:
+                geomList = geom.asPolygon()
+            newGeom = []
+            for j in xrange(len(geomList)):
+                if lyrType == core.QGis.Line:
+                    newGeom.append(coordinateTransformer.transform(geomList[j]))
+                elif lyrType == core.QGis.Polygon:
+                    line = geomList[j]
+                    for i in xrange(len(line)):
+                        point = line[i]
+                        newGeom.append(coordinateTransformer.transform(point))
+            if lyrType == core.QGis.Line:
+                return core.QgsGeometry.fromPolyline(newGeom)
+            elif lyrType == core.QGis.Polygon:
+                return core.QgsGeometry.fromPolygon([newGeom])
+        return geom        
+
     def createFeature(self, geom):
         #Método para criar feição
         #Parâmetro de entrada: geom (geometria adquirida)
@@ -110,6 +144,7 @@ class AcquisitionFreeController(object):
             canvas = self.getIface().mapCanvas()
             layer = canvas.currentLayer() 
             tolerance = self.getTolerance(layer)
+            geom = self.reprojectGeometry(geom)
             simplifyGeometry = self.simplifyGeometry(geom, tolerance)
             fields = layer.pendingFields()
             feature = core.QgsFeature()
