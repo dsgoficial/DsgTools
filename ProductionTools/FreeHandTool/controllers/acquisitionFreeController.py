@@ -37,7 +37,7 @@ class AcquisitionFreeController(object):
 
     def getIface(self):
         #Método para obter classe iface do Qgis
-        #Parâmetro de saída: iface (classe do Qgis)
+        #Parâmetro de retorno: iface (classe do Qgis)
         return self.iface
 
     def setActionAcquisitionFree(self, actionAcquisitionFree):
@@ -47,7 +47,7 @@ class AcquisitionFreeController(object):
         
     def getActionAcquisitionFree(self):
         #Método para obter a classe ActionAcquisitionFree
-        #Parâmetro de saída: self.actionAcquisitionFree (classe ActionAcquisitionFree)
+        #Parâmetro de retorno: self.actionAcquisitionFree (classe ActionAcquisitionFree)
         return self.actionAcquisitionFree 
 
     def setAcquisitionFree(self, acquisitionFree):
@@ -57,17 +57,17 @@ class AcquisitionFreeController(object):
 
     def getAcquisitionFree(self):
         #Método para obter a classe AcquisitionFree
-        #Parâmetro de saída: self.acquisitionFree (classe AcquisitionFree)
+        #Parâmetro de retorno: self.acquisitionFree (classe AcquisitionFree)
         return self.acquisitionFree
 
     def setActiveState(self, state):
-        #Método para definir estado da tool (ativada ou desativada)
+        #Método para definir estado da ferramento (ativada ou desativada)
         #Parâmetro de entrada: state (boleano)
         self.active = state
     
     def getActiveState(self):
         #Método para obter estado da tool (ativada ou desativada)
-        #Parâmetro de saída: state (boleano)
+        #Parâmetro de retorno: state (boleano)
         return self.active
     
     def connectToolSignals(self):
@@ -88,6 +88,8 @@ class AcquisitionFreeController(object):
             actionAcquisitionFree.setEnabled(False)
     
     def getParametersFromConfig(self):
+        #Método para obter as configurações da tool do QSettings
+        #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
         settings = QtCore.QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         parameters = {
@@ -102,6 +104,7 @@ class AcquisitionFreeController(object):
     def getTolerance(self, layer):
         #Método para obter tolerância para simplificação de geometria
         #Parâmetro de entrada: layer (camada em uso)
+        #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
         if layer.crs().projectionAcronym() == "longlat":
             return 0.000
@@ -109,6 +112,8 @@ class AcquisitionFreeController(object):
 
     def simplifyGeometry(self, geom, tolerance):
         #Método para simplificar geometria
+        #Parâmetro de entrada: geom (Geometria adquirida), tolerance (Tolerância para simplificação)
+        #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
         sGeom = geom
         for x in range(int(parameters[u'algIterations'])):
@@ -178,15 +183,22 @@ class AcquisitionFreeController(object):
                 self.addFeatureWithForm(layer, feature)
             
     def getFormSuppressStateSettings(self):
+        #Método para verificar se o formulário de aquisição está suprimido nas configurações do projeto
+        #Parâmetro de retorno: suppressForm ( boleano )
         s = QtCore.QSettings()
-        return s.value(u"Qgis/digitizing/disable_enter_attribute_values_dialog")
+        suppressForm = s.value(u"Qgis/digitizing/disable_enter_attribute_values_dialog")
+        return suppressForm
 
     def addFeatureWithForm(self, layer, feature):
+        #Método para adicionar a feição com formulário
+        #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
         attrDialog.setMode(gui.QgsAttributeForm.AddFeatureMode)
         result = attrDialog.exec_()
 
     def addFeatureWithoutForm(self, layer, feature):
+        #Método para adicionar a feição sem formulário
+        #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         layer.addFeatures([feature])
         layer.removeSelection()
 
