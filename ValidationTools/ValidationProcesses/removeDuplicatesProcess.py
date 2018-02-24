@@ -62,7 +62,6 @@ class RemoveDuplicatesProcess(ValidationProcess):
                 return 1
             numberOfProblems = 0
             for cl in flagsClasses:
-                self.startTimeCount()
                 # preparation
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + cl, parent=self.iface.mapCanvas())
                 localProgress.step()

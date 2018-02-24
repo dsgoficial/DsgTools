@@ -54,6 +54,8 @@ class MultiLayerSelection(QgsMapTool):
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = ['moldura']
+        self.cursorChanged = False
+        self.cursorChangingHotkey = QtCore.Qt.Key_Alt
         #self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
         #self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
     
@@ -64,6 +66,17 @@ class MultiLayerSelection(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         self.rubberBand.reset(QGis.Polygon)
+    
+    def keyPressEvent(self, e):
+        """
+        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
+        """
+        if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
+            self.cursorChanged = True
+            QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+        else:
+            self.cursorChanged = False
+            QtGui.QApplication.restoreOverrideCursor()         
 
     def canvasMoveEvent(self, e):
         """
@@ -238,7 +251,6 @@ class MultiLayerSelection(QgsMapTool):
         """
         Activate tool.
         """
-        QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
@@ -248,6 +260,8 @@ class MultiLayerSelection(QgsMapTool):
         Selects a given feature on canvas.
         """
         idList = layer.selectedFeaturesIds()
+        self.iface.setActiveLayer(layer)
+        layer.startEditing()
         featId = feature.id()
         if featId not in idList:
             idList.append(featId)
@@ -360,4 +374,3 @@ class MultiLayerSelection(QgsMapTool):
                     self.iface.setActiveLayer(t[0])
                 else:
                     self.iface.openFeatureForm(t[0], t[1], showModal=False)
-                

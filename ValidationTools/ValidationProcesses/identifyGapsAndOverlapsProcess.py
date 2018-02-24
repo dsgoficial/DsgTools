@@ -116,7 +116,8 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
 
             # dropping temp table
             self.abstractDb.dropTempTable('validation.coverage_temp')
-            self.logLayerTime('coverage_temp')
+            self.logLayerTime('coverage')
+
 
             return 1
         except Exception as e:
