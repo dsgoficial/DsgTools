@@ -2244,7 +2244,10 @@ class PostgisDb(AbstractDb):
         for i in query1Split:
             attrSplit = i.split('=')
             attribute = attrSplit[0]
-            checkList.append(int(attrSplit[1]))
+            try:
+                checkList.append(int(attrSplit[1]))
+            except:
+                pass #ignore checks that are not from dsgtools
         return tableName, attribute, checkList
     
     def parseCheckConstraintWithAny(self, queryValue0, queryValue1):

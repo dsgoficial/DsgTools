@@ -69,7 +69,6 @@ class MergeLinesProcess(ValidationProcess):
                 return 1
             recordList = []
             for key in classesWithElem:
-                self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())

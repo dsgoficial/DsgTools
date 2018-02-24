@@ -40,7 +40,7 @@ class SnapToGridProcess(ValidationProcess):
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
-            self.parameters = {'Coordinate Precision': 0.001, 'Classes': interfaceDictList}
+            self.parameters = {'Coordinate Precision': 0.000000001, 'Classes': interfaceDictList}
 
     def execute(self):
         """
@@ -55,7 +55,7 @@ class SnapToGridProcess(ValidationProcess):
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
             #getting parameters
-            tol = self.parameters['Snap']
+            tol = self.parameters['Coordinate Precision']
             for key in classesWithElem:
                 self.startTimeCount()
                 # preparation
