@@ -118,3 +118,16 @@ class Options(QtGui.QDialog, FORM_CLASS):
     def on_buttonBox_accepted(self):
         self.storeParametersInConfig()
         self.close()
+    
+    @pyqtSlot(bool)
+    def on_removePushButton_clicked(self):
+        selectedItems = self.blackListWidget.selectedItems()
+        for item in selectedItems:
+            self.blackListWidget.removeItemWidget(item)
+    
+    def firstTimeConfig(self):
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.loadParametersFromConfig()
+        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList):
+            self.storeParametersInConfig()
+        
+        

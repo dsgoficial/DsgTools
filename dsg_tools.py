@@ -461,6 +461,7 @@ class DsgTools:
             add_to_menu=False,
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
+        Options().firstTimeConfig()
 
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
