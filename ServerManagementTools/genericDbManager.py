@@ -52,7 +52,8 @@ class GenericDbManager(QObject):
                     'FieldToolBoxConfig':'.reclas',
                     'Permission':'.dsgperm',
                     'AttributeRules':'.dsgattrrul',
-                    'SpatialRules':'.dsgspatrul'}
+                    'SpatialRules':'.dsgspatrul',
+                    'ValidationWorkspace':'.dsgworksp'}
         self.edgvVersion = edgvVersion
         self.createPropertyTable()
 
