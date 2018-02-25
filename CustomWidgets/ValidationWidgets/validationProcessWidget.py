@@ -35,11 +35,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validationProcessWidget.ui'))
 
 class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, parameterDict = {}, parent = None):
+    def __init__(self, validationManager, parameterDict = {}, parent = None):
         """Constructor."""
-        super(AttributeRuleTypeWidget, self).__init__(parent = parent)
+        super(ValidationProcessWidget, self).__init__(parent = parent)
         self.setupUi(self)
-        self.validKeys = ['attributeRuleType', 'ruleColor']
+        self.validationManager = validationManager
+        self.validKeys = ['parameters', 'validationProcess']
         if parameterDict != {}:
             self.populateInterface(parameterDict)
     
@@ -103,3 +104,7 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
         if self.attributeRuleTypeLineEdit.text() == '':
             msg += self.tr('Invalid rule name!\n')
         return msg
+    
+    @pyqtSlot(bool)
+    def on_parametersPushButton_clicked(self):
+        pass
