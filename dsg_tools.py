@@ -47,6 +47,7 @@ from DsgTools.InventoryTools.inventoryTools import InventoryTools
 from DsgTools.ToolboxTools.models_and_scripts_installer import ModelsAndScriptsInstaller
 from DsgTools.ConversionTools.convert_database import ConvertDatabase
 from DsgTools.aboutdialog import AboutDialog
+from DsgTools.options import Options
 from DsgTools.ProductionTools.ContourTool.calc_contour import CalcContour
 from DsgTools.ProductionTools.FieldToolBox.field_toolbox import FieldToolbox
 from DsgTools.AttributeTools.code_list import CodeList
@@ -60,6 +61,7 @@ from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
 from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
+from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
 
 from qgis.utils import showPluginHelp
 try:
@@ -124,6 +126,7 @@ class DsgTools:
         self.styleManagerTool = StyleManagerTool(iface)
         self.copyPasteTool = CopyPasteTool(iface)
         self.acquisition = Acquisition(iface)
+        self.freeHandAcquisiton = FreeHandMain(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -449,6 +452,16 @@ class DsgTools:
             add_to_toolbar=False)
         self.dsgTools.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/custom_tools.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Options'),
+            callback=self.showOptions,
+            parent=self.dsgTools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.dsgTools.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/dsg.png'
         action = self.add_action(
             icon_path,
@@ -665,6 +678,22 @@ class DsgTools:
         self.acquisition.setCircleAction(action)
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
+
+        icon_path = ':/plugins/DsgTools/icons/free_hand.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Free Hand Acquisition'),
+            callback=self.freeHandAcquisiton.run,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        self.freeHandAcquisiton.setAction(action)
+        action.setEnabled(False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
         self.inspectFeatures = InspectFeatures(self.iface, parent = productiontools)
         self.minimumAreaTool = MinimumAreaTool(self.iface, parent = productiontools)
         self.toolbar.addWidget(self.minimumAreaTool)
@@ -741,6 +770,16 @@ class DsgTools:
         self.opInstaller.uninstallDsgToolsOp()
         self.unload()
         self.initGui()
+
+    def showOptions(self):
+        """
+        Shows the options
+        """
+        dlg = Options()
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
 
     def showHelp(self):
         """

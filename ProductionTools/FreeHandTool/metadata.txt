@@ -1,0 +1,29 @@
+; the next section is mandatory
+[general]
+; start of mandatory metadata
+name=Aquisição livre
+qgisMinimumVersion=2.0
+description=Ferramenta para adquirir feições
+version=version Version 1.0.0
+author=jossan
+email=me@hotmail.com
+; end of mandatory metadata
+
+; start of optional metadata
+
+; experimental flag
+experimental=false
+
+changelog=false
+  Ready for QGIS 2.0
+  fixed for use with QGIS > 1.8
+
+; tags are in comma separated value format, spaces are allowed
+tags=digitizing
+
+; these metadata can be empty
+; in a future version of the web application it will
+; be probably possible to create a project on redmine
+; if they are not filled
+
+
