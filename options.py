@@ -71,7 +71,7 @@ class Options(QtGui.QDialog, FORM_CLASS):
         freeHandSmoothIterations = self.smoothIterationsQgsSpinBox.value()
         freeHandSmoothOffset = self.smoothOffsetQgsDoubleSpinBox.value()
         algIterations = self.algIterationsQgsSpinBox.value()
-        valueList = [self.blackListWidget.itemAt(i,0).text() for i in range(self.blackListWidget.count())]
+        valueList = [self.blackListWidget.item(i).text() for i in range(self.blackListWidget.count())]
         return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList)
 
     def loadParametersFromConfig(self):
@@ -122,8 +122,13 @@ class Options(QtGui.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         selectedItems = self.blackListWidget.selectedItems()
-        for item in selectedItems:
-            self.blackListWidget.removeItemWidget(item)
+        idxList = []
+        for i in range(self.blackListWidget.count()):
+            if self.blackListWidget.item(i) in selectedItems:
+                idxList.append(i)
+        idxList.sort(reverse=True)
+        for i in idxList:
+            self.blackListWidget.takeItem(i)
     
     def firstTimeConfig(self):
         (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.loadParametersFromConfig()

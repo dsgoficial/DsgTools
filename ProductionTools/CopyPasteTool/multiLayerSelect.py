@@ -24,6 +24,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI
+from PyQt4.QtCore import QSettings
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu, QCursor
 
@@ -53,9 +54,17 @@ class MultiLayerSelection(QgsMapTool):
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
         self.reset()
-        self.blackList = ['moldura']
-        #self.iface.mapCanvas().setContextMenuPolicy(Qt.CustomContextMenu)
-        #self.iface.mapCanvas().customContextMenuRequested.connect(self.createContextMenu)
+        self.blackList = self.getBlackList()
+    
+    def getBlackList(self):
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        valueList = settings.value('valueList')
+        if valueList:
+            valueList = valueList.split(';')
+            return valueList
+        else:
+            return ['moldura']
     
     def reset(self):
         """
@@ -152,7 +161,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Verifies if terms in black list appear on lyrName
         """
-        for item in self.blackList:
+        for item in self.getBlackList():
             if item.lower() in lyrName.lower():
                 return True
         return False
