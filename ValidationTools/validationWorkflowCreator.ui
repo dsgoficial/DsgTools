@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WorkspaceCreator</class>
- <widget class="QDialog" name="WorkspaceCreator">
+ <class>ValidationWorkflowCreator</class>
+ <widget class="QDialog" name="ValidationWorkflowCreator">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Create Validation Workspace</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
@@ -25,14 +25,14 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Workspace Name</string>
+        <string>Workflow Name</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="workspaceNameLineEdit">
+      <widget class="QLineEdit" name="workflowNameLineEdit">
        <property name="placeholderText">
-        <string>Enter a workspace name</string>
+        <string>Enter a workflow name</string>
        </property>
       </widget>
      </item>
@@ -44,30 +44,30 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="workspaceAuthorLineEdit">
+      <widget class="QLineEdit" name="workflowAuthorLineEdit">
        <property name="placeholderText">
-        <string>Enter a workspace author name</string>
+        <string>Enter a workflow author name</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>Workspace Version</string>
+        <string>Workflow Version</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QLineEdit" name="workspaceVersionLineEdit">
+      <widget class="QLineEdit" name="workflowVersionLineEdit">
        <property name="placeholderText">
-        <string>Enter a workspace version</string>
+        <string>Enter a workflow version</string>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Workspace Version Date</string>
+        <string>Workflow Version Date</string>
        </property>
       </widget>
      </item>
@@ -81,7 +81,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QWidget" name="workspaceOrderedWidget" native="true">
+    <widget class="QWidget" name="workflowOrderedWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -114,7 +114,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>WorkspaceCreator</receiver>
+   <receiver>ValidationWorkflowCreator</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -130,7 +130,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>WorkspaceCreator</receiver>
+   <receiver>ValidationWorkflowCreator</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
