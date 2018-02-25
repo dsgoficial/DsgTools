@@ -28,20 +28,20 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtGui import QTableWidgetItem
 
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedStructureWidget import OrderedStructureWidget
-from DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleTypeWidget import AttributeRuleTypeWidget
+from DsgTools.CustomWidgets.ValidationWidgets.validationProcessWidget import ValidationProcessWidget
 
-class OrderedAttributeRuleTypesWidget(OrderedStructureWidget):
+class OrderedValidationProcessesWidget(OrderedStructureWidget):
 
     def __init__(self, parent=None):
         """
         Initializates OrderedAttributeRulesWidget
         """
-        super(OrderedAttributeRuleTypesWidget, self).__init__(parent)
+        super(OrderedValidationProcessesWidget, self).__init__(parent)
         self.args = None
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('Attribute Rule Types')])
-        self.widgetKey = 'attributeRuleTypeWidgetList'
+        self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Processes')])
+        self.widgetKey = 'validationProcessWidgetList'
     
     def instantiateWidgetItem(self):
-        return AttributeRuleTypeWidget()
+        return ValidationProcessWidget()
     
 
