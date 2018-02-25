@@ -115,7 +115,7 @@
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfieldexpressionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>DsgCustomComboBox</class>
