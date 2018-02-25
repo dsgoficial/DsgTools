@@ -76,7 +76,7 @@ class AcquisitionFreeController(object):
         iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
         iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.activated.connect(self.activateTool)
+        actionAcquisitionFree.triggered.connect(self.activateTool)
 
     def checkToActiveAction(self):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
