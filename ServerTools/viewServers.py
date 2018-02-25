@@ -168,12 +168,13 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             test = self.testServer(name)
+            if test:
+                QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection online.'))
+            else:
+                QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection was not successful. Check log for details.'))
             QApplication.restoreOverrideCursor()
         except:
             QApplication.restoreOverrideCursor()
-        if test:
-            QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection online.'))
-        else:
             QMessageBox.warning(self, self.tr('Info!'), self.tr('Connection was not successful. Check log for details.'))
         
     def getServers(self):
