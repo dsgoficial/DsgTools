@@ -44,11 +44,14 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.postgisDb = postgisDb
         self.dbEncoding = 'utf-8'
-        self.dictNoUser = { 'No User' : self.tr("Select a username...") } # text used as indicator of userName box contents
+        self.dictNoUser = { 'No User' : self.tr("Select a username..."), # no user name is selected
+                            'Error' : self.tr("Processes with no user set"), # "username" for processes unable to retrieve db user
+                            'User Name Error' : self.tr("Unable to get database username.") # log message raised on username retrieving error
+                          } # text used as indicator of userName box contents
         self.idxManChgd = True # first execution should not raise currentIndexChange
         try:
             self.projectModel = QSqlTableModel(None,self.postgisDb.db)
-            self.refreshViewTable()
+            self.refreshViewTable(createTable=True)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Did you select a database?)'))
             QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
@@ -62,7 +65,8 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
 
     def keyPressEvent(self, e):
         """
-        Refreshes table if F5 is pressed.
+        Reimplementation of keyPressEvent() in order to set some Keys behaviour when pressed.
+        :param e: keyboard event.
         """
         if e.key() == Qt.Key_F5:
             """
@@ -71,53 +75,66 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             username = self.userFilterComboBox.currentText()
             if username == self.dictNoUser['No User']:
                 username=None
-            self.refreshViewTable(username=username)
+            self.refreshViewTable(createTable=True)
         elif e.key() == Qt.Key_Escape:
             """
             Esc closes the window.
             """
             self.hide()
 
-    def refreshViewTable(self, idListString=None):
-        print 1, self.idxManChgd
+    def refreshViewTable(self, idListString=None, createTable=False):
         """
         Refreshes the view table.
+        :param idListString: ID list string for filtering table.
+        :param createTable: boolean that indicates whether table is being created (True) or updated (False).
         """
         self.postgisDb.createValidationHistoryViewTable(idListString=idListString) # refreshes the view
         self.projectModel.setTable('validation.process_history_view')
         self.projectModel.select()
         self.tableView.setModel(self.projectModel)
-        self.fillUsernameComboBox()
+        if createTable:
+            # if table is "fully refreshed", then it is as of re-creating the view
+            # instead of updating it. 
+            self.fillUsernameComboBox(keepSelection=(not createTable))
         header = self.tableView.horizontalHeader()
         header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
 
-    def getUserProcessbyId(self):
-        print 2, self.idxManChgd
+    def getUserProcessbyId(self, username=None):
         """
         Returns a string containing a list of process ID by username (format: (int)(id_1, id_2, ...)).
+        :param username: user whose processes are supposed to be shown.
         """
-        username = self.userFilterComboBox.currentText()
-        if username == self.tr("Select a username..."):
-            # case no user is specified, no filter should be applied
-            return
         ids = "("
         logs, idL = self.postgisDb.getValidationLog(idList=True)
-        users = []
-        for idx, log in enumerate(logs):
-            for line in log.split("\n"):
-                # treating the log string as a list of strings (lines) 
-                if self.tr("Database username: {0}").format(username).decode(self.dbEncoding) in line.decode(self.dbEncoding):
-                    # buiding up the string
-                    ids += "{0}, ".format(idL[idx])
+        if username == self.dictNoUser['No User']:
+            # case no user is specified, no filter should be applied
+            return
+        elif username == self.dictNoUser['Error']:
+            # if username wasn't retrieved, the string pattern in log is different
+            for idx, log in enumerate(logs):
+                for line in log.split("\n"):
+                    # treating the log string as a list of strings (lines) 
+                    if self.tr("{0}").format(self.dictNoUser['User Name Error']).decode(self.dbEncoding) in line.decode(self.dbEncoding):
+                        # buiding up the string
+                        ids += "{0}, ".format(idL[idx])
+        else:
+            for idx, log in enumerate(logs):
+                for line in log.split("\n"):
+                    # treating the log string as a list of strings (lines) 
+                    if self.tr("Database username: {0}").format(username).decode(self.dbEncoding) in line.decode(self.dbEncoding):
+                        # buiding up the string
+                        ids += "{0}, ".format(idL[idx])                
         # fixing the string's ending
         ids = (ids + ")").replace(", )", ")")
+        if ids == "()":
+            # in case there's no id to be filtered
+            return "(-9999)"
         return ids
 
     def getUsernameList(self):
-        print 3, self.idxManChgd
         """
         Get the usernames from the log and returns it as a list.
         "Select a username..." is always the first element of this list.
@@ -131,32 +148,33 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             for line in l.split("\n"):
                 if self.tr("Database username:").decode(self.dbEncoding) in line.decode(self.dbEncoding):
                     # treating the log string as a list of strings (lines) 
-                    users.append(line.split(": ")[1])
+                    users.append(line.split(": ")[1])                    
         # in order to "Select a username..." always be first and the list to only have unique names
-        return [self.dictNoUser['No User']] + sorted(list(set(users)))
+        # and for the last item to be processes with username retrieving error 
+        return [self.dictNoUser['No User']] + sorted(list(set(users))) + [self.dictNoUser['Error']]
     
-    def fillUsernameComboBox(self):
-        print 4, self.idxManChgd
+    def fillUsernameComboBox(self, keepSelection=False):
         """
         Loads the username list to the combobox.
+        :param keepSelection: boolean indicating if selection on comboBox should be kept and 
+                              usernames list is not updated.
         """
         username = self.userFilterComboBox.currentText()
-        userList = self.getUsernameList()
-        self.userFilterComboBox.clear()
-        self.userFilterComboBox.addItems(userList)
-        if username and username != self.dictNoUser['No User']:
+        if keepSelection:
             # if there's a user already selected it is expected
             # to keep that user selected upon table update.
             idx = max(0, self.userFilterComboBox.findText(username)) # case idx = -1
             self.userFilterComboBox.setCurrentIndex(idx)
-            self.idxManChgd = True
         else:
+            userList = self.getUsernameList()
+            self.userFilterComboBox.clear()
+            self.userFilterComboBox.addItems(userList)
             self.userFilterComboBox.setCurrentIndex(0)
-            self.idxManChgd = True
+        # in order to indexChanged signal not trigger the repopulating method 
+        self.idxManChgd = True
 
     @pyqtSlot(int)
     def on_userFilterComboBox_currentIndexChanged(self):
-        print 5, self.idxManChgd
         """
         Filters the view to only show the process ran by a given User.
         """
@@ -165,8 +183,9 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             self.idxManChgd = False
             return
         username = self.userFilterComboBox.currentText()
+        # if no user is specified, list should not be filtered
         if username != self.dictNoUser['No User']:
-            idListString = self.getUserProcessbyId()
+            idListString = self.getUserProcessbyId(username=username)
         else:
             idListString = None
-        self.refreshViewTable(idListString=idListString)
+        self.refreshViewTable(idListString=idListString, createTable=False)
