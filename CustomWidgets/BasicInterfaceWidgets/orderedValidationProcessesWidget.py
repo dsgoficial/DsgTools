@@ -42,6 +42,6 @@ class OrderedValidationProcessesWidget(OrderedStructureWidget):
         self.widgetKey = 'validationProcessWidgetList'
     
     def instantiateWidgetItem(self):
-        return ValidationProcessWidget()
+        return ValidationProcessWidget(None)
     
 
