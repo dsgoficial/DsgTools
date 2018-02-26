@@ -81,7 +81,7 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QWidget" name="workflowOrderedWidget" native="true">
+    <widget class="OrderedValidationWorkflowItemsWidget" name="workflowOrderedWidget" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
@@ -107,6 +107,12 @@
    <class>QgsDateTimeEdit</class>
    <extends>QDateTimeEdit</extends>
    <header>qgsdatetimeedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>OrderedValidationWorkflowItemsWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedValidationWorkflowItemsWidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>
