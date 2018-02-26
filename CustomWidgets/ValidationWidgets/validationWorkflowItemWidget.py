@@ -35,12 +35,14 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validationWorkflowItemWidget.ui'))
 
 class ValidationWorkflowItemWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, validationManager, parameterDict = {}, parent = None):
+    def __init__(self, parameterDict = {}, parent = None):
         """Constructor."""
         super(ValidationWorkflowItemWidget, self).__init__(parent = parent)
         self.setupUi(self)
-        self.validationManager = validationManager
         self.validKeys = ['name', 'validationProcessList']
+        self.parent = parent
+        if self.parent:
+            self.validationManager = parent.validationManager
         if parameterDict != {}:
             self.populateInterface(parameterDict)
     

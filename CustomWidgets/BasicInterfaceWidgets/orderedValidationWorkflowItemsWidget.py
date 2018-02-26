@@ -40,8 +40,12 @@ class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
         self.args = None
         self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Workflow Item')])
         self.widgetKey = 'validationWorkflowItemsWidgetList'
+        self.parent = parent
+        if self.parent:
+            self.validationManager = parent.validationManager
+        
     
     def instantiateWidgetItem(self):
-        return ValidationWorkflowItemWidget(None)
+        return ValidationWorkflowItemWidget(parent = self)
     
 
