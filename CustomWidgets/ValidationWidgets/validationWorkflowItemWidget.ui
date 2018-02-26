@@ -65,7 +65,7 @@
   <customwidget>
    <class>OrderedValidationProcessesWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.ValidationWidgets.orderedValidationProcessesWidget.h</header>
+   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedValidationProcessesWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

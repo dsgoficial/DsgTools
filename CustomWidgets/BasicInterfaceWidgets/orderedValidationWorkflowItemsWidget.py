@@ -28,7 +28,7 @@ from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from PyQt4.QtGui import QTableWidgetItem
 
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedStructureWidget import OrderedStructureWidget
-from DsgTools.CustomWidgets.ValidationWidgets.workflowItemWidget import WorkflowItemWidget
+from DsgTools.CustomWidgets.ValidationWidgets.validationWorkflowItemWidget import ValidationWorkflowItemWidget
 
 class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
 
@@ -36,12 +36,12 @@ class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
         """
         Initializates OrderedValidationWorkflowItemsWidget
         """
-        super(OrderedValidationProcessesWidget, self).__init__(parent)
+        super(OrderedValidationWorkflowItemsWidget, self).__init__(parent)
         self.args = None
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Workflow')])
+        self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Workflow Item')])
         self.widgetKey = 'validationWorkflowItemsWidgetList'
     
     def instantiateWidgetItem(self):
-        return ValidationProcessWidget()
+        return ValidationWorkflowItemWidget(None)
     
 
