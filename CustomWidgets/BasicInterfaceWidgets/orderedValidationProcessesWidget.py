@@ -40,8 +40,9 @@ class OrderedValidationProcessesWidget(OrderedStructureWidget):
         self.args = None
         self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Processes')])
         self.widgetKey = 'validationProcessWidgetList'
+        self.parent = parent
+        if self.parent:
+            self.validationManager = self.parent.parent().parent().validationManager
     
     def instantiateWidgetItem(self):
-        return ValidationProcessWidget(None)
-    
-
+        return ValidationProcessWidget(parent = self)

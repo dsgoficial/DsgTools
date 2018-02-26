@@ -42,6 +42,7 @@ class ValidationWorkflowCreator(QtGui.QDialog, FORM_CLASS):
         super(ValidationWorkflowCreator, self).__init__(parent)
         self.validationManager = validationManager
         self.setupUi(self)
+        self.workflowOrderedWidget.parent = self
 
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):

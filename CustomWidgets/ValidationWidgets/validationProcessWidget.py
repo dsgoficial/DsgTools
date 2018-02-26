@@ -35,14 +35,28 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validationProcessWidget.ui'))
 
 class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
-    def __init__(self, validationManager, parameterDict = {}, parent = None):
+    def __init__(self, parameterDict = {}, parent = None):
         """Constructor."""
         super(ValidationProcessWidget, self).__init__(parent = parent)
         self.setupUi(self)
-        self.validationManager = validationManager
+        self.parent = parent
+        if self.parent:
+            self.validationManager = parent.validationManager
         self.validKeys = ['parameters', 'validationProcess']
+        self.setInitialState()
         if parameterDict != {}:
             self.populateInterface(parameterDict)
+    
+    def setInitialState(self):
+        self.validationProcessComboBox.clear()
+        self.validationProcessComboBox.addItem(self.tr('Select a validation process'))
+        self.validationProcessComboBox.addItems(self.validationManager.processDict.keys())
+    
+    @pyqtSlot(int)
+    def on_validationProcessComboBox_currentIndexChanged(self):
+        styleSheet = "background-color:rgb({0},{1},{2});".format(255, 0, 0)
+        self.parametersPushButton.setStyleSheet(styleSheet)
+        self.parametersPushButton.setToolTip(self.tr('Set parameters'))
     
     def clearAll(self):
         """
@@ -53,16 +67,14 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
     def getParameterDict(self):
         """
         Components:
-        parameterDict = {'layerName':--name of the layer--,
-                         'attributeName': --name of the attribute,
-                         'attributeRule': --expression--,
-                         'description': --description--}
+        parameterDict = {'validationProcess':--name of the validation process--,
+                         'parameters': --parameter dict--}
         """
         if not self.validate():
             raise Exception(self.invalidatedReason())
         parameterDict = dict()
-        parameterDict['attributeRuleType'] = self.attributeRuleTypeLineEdit.text()
-        parameterDict['ruleColor'] = ','.join(map(str,self.mColorButton.color().getRgb()))
+        parameterDict['validationProcess'] = self.validationProcessComboBox.currentText()
+        parameterDict['parameters'] = ''
         return parameterDict
 
     def populateInterface(self, parameterDict):
@@ -71,11 +83,9 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
         """
         if parameterDict:
             if not self.validateJson(parameterDict):
-                raise Exception(self.tr('Invalid Attribute Rule Type Widget json config!'))
+                raise Exception(self.tr('Invalid Validation Process Widget json config!'))
             #set layer combo
-            self.attributeRuleTypeLineEdit.setText(parameterDict['attributeRuleType'])
-            R,G,B,A = map(int,parameterDict['ruleColor'].split(',')) #QColor only accepts int values
-            self.mColorButton.setColor(QColor(R,G,B,A))
+            self.validationProcessComboBox.setText(parameterDict['attributeRuleType'])
     
     def validateJson(self, inputJson):
         """

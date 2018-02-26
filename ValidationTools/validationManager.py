@@ -51,7 +51,6 @@ class ValidationManager(QObject):
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
-
     def setAvailableProcesses(self):
         """
         Sets all available processes.
@@ -68,10 +67,9 @@ class ValidationManager(QObject):
                 chars = list(fileBaseName)
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
-                if processClass != 'UnbuildEarthCoveragePolygonsProcess':
-                    self.processList.append(processClass)
-                    self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
-            
+                self.processList.append(processClass)
+                self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
+        
     def instantiateProcessByName(self, processName, instantiating):
         """
         This method instantiate a process by its name.
