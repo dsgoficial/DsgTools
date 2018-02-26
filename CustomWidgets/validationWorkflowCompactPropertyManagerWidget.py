@@ -28,10 +28,10 @@ from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
 from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
 
 #DsgTools imports
-from DsgTools.ServerManagementTools.workspaceManager import WorkspaceManager
 from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
 from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
 from DsgTools.CustomWidgets.genericCompactPropertyManagerWidget import GenericCompactPropertyManagerWidget
+from DsgTools.ServerManagementTools.validationWorkflowManager import ValidationWorkflowManager
 from DsgTools.ValidationTools.validationWorkflowCreator import ValidationWorkflowCreator
 from DsgTools.Utils.utils import Utils
 from DsgTools.dsgEnums import DsgEnums
@@ -58,3 +58,16 @@ class ValidationWorkflowCompactPropertyManagerWidget(GenericCompactPropertyManag
     
     def instantiateManagerObject(self, abstractDb, dbDict, edgvVersion):
         return ValidationWorkflowManager(abstractDb, dbDict, edgvVersion)
+    
+    @pyqtSlot(bool)
+    def on_createPropertyPushButton_clicked(self):
+        """
+        1. Open custom manager according to property type;
+        2. Use manager to apply to database
+        """
+        setupDict = self.populateConfigInterface(self.parent.validationManager)
+        if setupDict:
+            self.genericDbManager.createAndInstall(propertyName, setupDict, self.genericDbManager.edgvVersion, dbList = [self.abstractDb.db.databaseName()])
+            self.refresh()
+            QMessageBox.information(self, self.tr('Success!'), self.tr('{0} configuration {1} created successfuly!').format(self.widgetName, propertyName))        
+ 

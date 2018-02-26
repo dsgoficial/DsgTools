@@ -67,6 +67,8 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.configWindow = ValidationConfig()
         self.connectionSelectorComboBox.connectionChanged.connect(self.updateDbLineEdit)
         self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
+        self.connectionSelectorComboBox.dbChanged.connect(self.validationWorkflowPropertyManagerWidget.setParameters)
+        self.validationWorkflowPropertyManagerWidget.parent = self
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
         self.tableView.customContextMenuRequested.connect(self.createContextMenu)

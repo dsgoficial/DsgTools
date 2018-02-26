@@ -57,9 +57,11 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
                     'Permission':self.tr('Permissions'),
                     'AttributeRules':self.tr('Attribute Rules Configuration'),
                     'SpatialRules':self.tr('Spatial Rules Configuration'),
-                    'Generic':self.tr('Generic Property')}
+                    'Generic':self.tr('Generic Property'),
+                    'ValidationWorkflow':self.tr('Validation Workflow')}
         self.widgetName = self.textDict[self.getWhoAmI()]
         self.changeTooltips(self.widgetName)
+        self.parent = parent
 
     def refresh(self):
         """
