@@ -58,6 +58,14 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
         self.parametersPushButton.setStyleSheet(styleSheet)
         self.parametersPushButton.setToolTip(self.tr('Set parameters'))
     
+    @pyqtSlot(bool)
+    def on_parametersPushButton_clicked(self):
+        if self.validationProcessComboBox.currentIndex() < 1:
+            return
+        processAlias = self.validationProcessComboBox.currentText()
+        params, processChain = self.validationManager.getParams(processAlias, restoreOverride = False)
+        self.parametersPushButton.setStyleSheet('')
+    
     def clearAll(self):
         """
         Clears all widget information
@@ -114,7 +122,3 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
         if self.attributeRuleTypeLineEdit.text() == '':
             msg += self.tr('Invalid rule name!\n')
         return msg
-    
-    @pyqtSlot(bool)
-    def on_parametersPushButton_clicked(self):
-        pass
