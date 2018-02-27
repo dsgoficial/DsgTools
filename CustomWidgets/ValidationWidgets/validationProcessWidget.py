@@ -43,6 +43,8 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
         if self.parent:
             self.validationManager = parent.validationManager
         self.validKeys = ['parameters', 'validationProcess']
+        self.parameters = None
+        self.processChain = None
         self.setInitialState()
         if parameterDict != {}:
             self.populateInterface(parameterDict)
@@ -61,10 +63,13 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_parametersPushButton_clicked(self):
         if self.validationProcessComboBox.currentIndex() < 1:
+            self.parameters = None
+            self.processChain = None
             return
         processAlias = self.validationProcessComboBox.currentText()
-        params, processChain = self.validationManager.getParams(processAlias, restoreOverride = False)
-        self.parametersPushButton.setStyleSheet('')
+        self.parameters, self.processChain = self.validationManager.getParams(processAlias, restoreOverride = False)
+        if self.parameters:
+            self.parametersPushButton.setStyleSheet('')
     
     def clearAll(self):
         """
@@ -82,7 +87,7 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
             raise Exception(self.invalidatedReason())
         parameterDict = dict()
         parameterDict['validationProcess'] = self.validationProcessComboBox.currentText()
-        parameterDict['parameters'] = ''
+        parameterDict['parameters'] = self.parameters
         return parameterDict
 
     def populateInterface(self, parameterDict):
@@ -93,7 +98,7 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
             if not self.validateJson(parameterDict):
                 raise Exception(self.tr('Invalid Validation Process Widget json config!'))
             #set layer combo
-            self.validationProcessComboBox.setText(parameterDict['attributeRuleType'])
+            self.validationProcessComboBox.setText(parameterDict['validationProcess'])
     
     def validateJson(self, inputJson):
         """
