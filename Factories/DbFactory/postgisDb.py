@@ -41,6 +41,7 @@ class PostgisDb(AbstractDb):
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        self.databaseEncoding = 'utf-8'
 
     def getDatabaseParameters(self):
         """
@@ -3579,19 +3580,76 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+            raise Exception(self.tr('Problem while retrieving flags dict: ') + query.lastError().text())
         nrFlags = 0
         while query.next():
             nrFlags += 1
         return nrFlags
 
-    def createValidationHistoryViewTable(self):
+    def createValidationHistoryViewTable(self, idListString=None):
         """
         Creates the view table for validation processes history. 
         """
         self.checkAndOpenDb()
-        sql = self.gen.createValidationHistoryViewTableQuery()
+        sql = self.gen.createValidationHistoryViewTableQuery(idListString=idListString)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
         return
+    
+    def getValidationLog(self, idList=False):
+        """
+        Returns a list of all logs registered for each process executed.
+        """
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        self.checkAndOpenDb()
+        sql = self.gen.getValidationLogQuery()
+        query = QSqlQuery(sql, self.db)
+        log = [] # list of logs
+        idL = [] # list of ID in the same order as the logs appears
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
+        while query.next():
+            log.append(query.value(0).encode(self.databaseEncoding))
+            idL.append(query.value(1))
+        if idList:            
+            return log, idL
+        else:
+            return log
+        
+    def getValidationHistory(self, idListString=False):
+        """
+        Returns a list of all logs registered for each process executed.
+        :param idList: boolean indicating whether or not to return the list of IDs as well.
+        :param consolidate: boolean indicating whether or not the logs should be consoliodated into one.
+        """
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        self.checkAndOpenDb()
+        sql = self.gen.getValidationHistoryQuery(idListString=idListString)
+        query = QSqlQuery(sql, self.db)
+        history = [] # list of logs
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
+        while query.next():
+            history.append([query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)])
+        return history
+
+    def createCompactValidationHistory(self, compactHistory):
+        """
+        Creates and populates the compact validation history table from a given list of logs.
+        """
+        self.checkAndOpenDb()
+        # table creation
+        sql = self.gen.createCompactValidationHistoryQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+        # table population
+        for log in compactHistory:
+            sql = self.gen.populateCompactValidationHistoryQuery(log=log)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                self.db.rollback()
+                raise Exception(self.tr("Problem while populating compact validation processes history table: ")+query.lastError().text())
+        self.db.commit()
+        return True
