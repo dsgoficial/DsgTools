@@ -74,12 +74,14 @@ class ProcessParametersDialog(QtGui.QDialog):
                   QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
-    def __init__(self, parent, options, required=None, title=None):
+    def __init__(self, parent, options, required=None, title=None, restoreOverride = True):
         """
         Constructor
         """
         super(ProcessParametersDialog, self).__init__(parent)
-        QApplication.restoreOverrideCursor()
+        self.restoreOverride = restoreOverride
+        if self.restoreOverride:
+            QApplication.restoreOverrideCursor()
         self.__widgets = dict()
         self.__values = dict()
 
@@ -169,7 +171,8 @@ class ProcessParametersDialog(QtGui.QDialog):
             if not self.VALIDATORS[type(widget)](value) and widget.isVisible():
                 widget.setFocus()
                 return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        if self.restoreOverride:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         return super(ProcessParametersDialog, self).accept()
 
     @property

@@ -108,5 +108,10 @@ class ValidationWorkflowItemWidget(QtGui.QWidget, FORM_CLASS):
         return msg
     
     @pyqtSlot(bool)
-    def on_parametersPushButton_clicked(self):
-        pass
+    def on_mGroupBox_collapsedStateChanged(self):
+        for i in range(self.parent.tableWidget.rowCount()):
+            self.parent.tableWidget.resizeRowToContents(i)
+    
+    @pyqtSlot(str)
+    def on_workspaceItemLineEdit_textEdited(self, text):
+        self.mGroupBox.setTitle(text)

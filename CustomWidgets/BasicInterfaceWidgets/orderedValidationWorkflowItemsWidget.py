@@ -47,5 +47,3 @@ class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
     
     def instantiateWidgetItem(self):
         return ValidationWorkflowItemWidget(parent = self)
-    
-

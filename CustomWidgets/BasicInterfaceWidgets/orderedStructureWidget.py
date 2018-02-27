@@ -61,6 +61,7 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
         if parameterDict:
             widget.populateInterface(parameterDict)
         self.tableWidget.setCellWidget(rowCount, 0, widget)
+        self.tableWidget.resizeRowToContents(rowCount)
     
     @pyqtSlot(bool, name = 'on_removeRulePushButton_clicked')
     def removeItem(self):
