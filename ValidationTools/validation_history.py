@@ -44,7 +44,8 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.postgisDb = postgisDb
         self.dbEncoding = 'utf-8'
-        self.dictNoUser = { 'No User' : self.tr("Select a username..."), # no user name is selected
+        self.dictNoUser = {
+                            'No User' : self.tr("Select a username..."), # no user name is selected
                             'Error' : self.tr("Processes with no user set"), # "username" for processes unable to retrieve db user
                             'User Name Error' : self.tr("Unable to get database username.") # log message raised on username retrieving error
                           } # text used as indicator of userName box contents
@@ -76,6 +77,7 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             if username == self.dictNoUser['No User']:
                 username=None
             self.refreshViewTable(createTable=True)
+            self.consolidateLogs()
         elif e.key() == Qt.Key_Escape:
             """
             Esc closes the window.
@@ -88,19 +90,40 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         :param idListString: ID list string for filtering table.
         :param createTable: boolean that indicates whether table is being created (True) or updated (False).
         """
+        if createTable:
+            # recreate the consolidated table
+            self.consolidateLogs()
+            # if table is "fully refreshed", then it is as of re-creating the view
+            # instead of updating it.
+            self.fillUsernameComboBox(keepSelection=(not createTable))
         self.postgisDb.createValidationHistoryViewTable(idListString=idListString) # refreshes the view
         self.projectModel.setTable('validation.process_history_view')
         self.projectModel.select()
-        self.tableView.setModel(self.projectModel)
-        if createTable:
-            # if table is "fully refreshed", then it is as of re-creating the view
-            # instead of updating it. 
-            self.fillUsernameComboBox(keepSelection=(not createTable))
+        self.tableView.setModel(self.projectModel)        
         header = self.tableView.horizontalHeader()
         header.setResizeMode(0, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(1, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(2, QtGui.QHeaderView.ResizeToContents)
         header.setResizeMode(3, QtGui.QHeaderView.ResizeToContents)
+
+    def getUsernameList(self):
+        """
+        Get the usernames from the log and returns it as a list.
+        "Select a username..." is always the first element of this list.
+        """
+        log = self.postgisDb.getValidationLog()
+        log = list(set(log)) # to get only unique logs, in order to fasten the for loop
+        users = []
+        # there may be a better way, as the current code iterates over each line for every log
+        # present in the database. 
+        for l in log:
+            for line in l.split("\n"):
+                if self.tr("Database username:").decode(self.dbEncoding) in line.decode(self.dbEncoding):
+                    # treating the log string as a list of strings (lines) 
+                    users.append(line.split(": ")[1])                    
+        # in order to "Select a username..." always be first and the list to only have unique names
+        # and for the last item to be processes with username retrieving error 
+        return [self.dictNoUser['No User']] + sorted(list(set(users))) + [self.dictNoUser['Error']]
 
     def getUserProcessbyId(self, username=None):
         """
@@ -133,25 +156,6 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             # in case there's no id to be filtered
             return "(-9999)"
         return ids
-
-    def getUsernameList(self):
-        """
-        Get the usernames from the log and returns it as a list.
-        "Select a username..." is always the first element of this list.
-        """
-        log = self.postgisDb.getValidationLog()
-        log = list(set(log))
-        users = []
-        # there may be a better way, as the current code iterates over each line for every log
-        # present in the database. 
-        for l in log:
-            for line in l.split("\n"):
-                if self.tr("Database username:").decode(self.dbEncoding) in line.decode(self.dbEncoding):
-                    # treating the log string as a list of strings (lines) 
-                    users.append(line.split(": ")[1])                    
-        # in order to "Select a username..." always be first and the list to only have unique names
-        # and for the last item to be processes with username retrieving error 
-        return [self.dictNoUser['No User']] + sorted(list(set(users))) + [self.dictNoUser['Error']]
     
     def fillUsernameComboBox(self, keepSelection=False):
         """
@@ -172,6 +176,31 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             self.userFilterComboBox.setCurrentIndex(0)
         # in order to indexChanged signal not trigger the repopulating method 
         self.idxManChgd = True
+    
+    def consolidateLogs(self):
+        """
+        This method consolidates the log messages of each stage of process into one
+        big log message. It keeps the first ID and timestamp of process instance and
+        the status of the last instance is conserved. Table validation.compact_process_history
+        is created and populated.
+        """
+        fullHistory = self.postgisDb.getValidationHistory()
+        for idx, log in enumerate(fullHistory):
+            try:
+                sameProcessName = fullHistory[idx-1][1] == fullHistory[idx][1]
+            except:
+                sameProcessName = False
+            if idx == 0:
+                # starting loop initiates the compact log list
+                compactHistory = [log]
+            elif sameProcessName and fullHistory[idx][3] != 3:
+                # if it is a continuation of the same process, logs are concatenated
+                compactHistory[len(compactHistory) - 1][2] += r"\n" + fullHistory[idx][2]
+                compactHistory[len(compactHistory) - 1][3] = fullHistory[idx][3]
+            else:
+                # if status is "Running", it is a new instance of the same process previously
+                compactHistory.append(fullHistory[idx])
+        self.postgisDb.createCompactValidationHistory(compactHistory)
 
     @pyqtSlot(int)
     def on_userFilterComboBox_currentIndexChanged(self):

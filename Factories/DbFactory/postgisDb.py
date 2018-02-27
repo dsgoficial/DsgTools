@@ -3599,8 +3599,7 @@ class PostgisDb(AbstractDb):
     
     def getValidationLog(self, idList=False):
         """
-        Returns the query for a list of all logs registered for each
-        process executed.
+        Returns a list of all logs registered for each process executed.
         """
         # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
         self.checkAndOpenDb()
@@ -3617,3 +3616,40 @@ class PostgisDb(AbstractDb):
             return log, idL
         else:
             return log
+        
+    def getValidationHistory(self, idListString=False):
+        """
+        Returns a list of all logs registered for each process executed.
+        :param idList: boolean indicating whether or not to return the list of IDs as well.
+        :param consolidate: boolean indicating whether or not the logs should be consoliodated into one.
+        """
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        self.checkAndOpenDb()
+        sql = self.gen.getValidationHistoryQuery(idListString=idListString)
+        query = QSqlQuery(sql, self.db)
+        history = [] # list of logs
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
+        while query.next():
+            history.append([query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)])
+        return history
+
+    def createCompactValidationHistory(self, compactHistory):
+        """
+        Creates and populates the compact validation history table from a given list of logs.
+        """
+        self.checkAndOpenDb()
+        # table creation
+        sql = self.gen.createCompactValidationHistoryQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+        # table population
+        for log in compactHistory:
+            sql = self.gen.populateCompactValidationHistoryQuery(log=log)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                self.db.rollback()
+                raise Exception(self.tr("Problem while populating compact validation processes history table: ")+query.lastError().text())
+        self.db.commit()
+        return True
