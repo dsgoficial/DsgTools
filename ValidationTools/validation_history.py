@@ -207,7 +207,8 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         """
         Filters the view to only show the process ran by a given User.
         """
-        if self.idxManChgd:
+        username = self.userFilterComboBox.currentText()
+        if self.idxManChgd and username == '':
             # if the index has been manually changed, no action is required.
             self.idxManChgd = False
             return
