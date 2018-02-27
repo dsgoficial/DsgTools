@@ -49,7 +49,6 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
                             'Error' : self.tr("Processes with no user set"), # "username" for processes unable to retrieve db user
                             'User Name Error' : self.tr("Unable to get database username.") # log message raised on username retrieving error
                           } # text used as indicator of userName box contents
-        self.idxManChgd = True # first execution should not raise currentIndexChange
         try:
             self.projectModel = QSqlTableModel(None,self.postgisDb.db)
             self.refreshViewTable(createTable=True)
@@ -175,7 +174,6 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
             self.userFilterComboBox.addItems(userList)
             self.userFilterComboBox.setCurrentIndex(0)
         # in order to indexChanged signal not trigger the repopulating method 
-        self.idxManChgd = True
     
     def consolidateLogs(self):
         """
@@ -208,9 +206,8 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         Filters the view to only show the process ran by a given User.
         """
         username = self.userFilterComboBox.currentText()
-        if self.idxManChgd and username == '':
-            # if the index has been manually changed, no action is required.
-            self.idxManChgd = False
+        if username == '':
+            # if the index was set on first execution, no action is required.
             return
         username = self.userFilterComboBox.currentText()
         # if no user is specified, list should not be filtered
