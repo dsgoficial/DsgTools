@@ -255,6 +255,10 @@ class MultiLayerSelection(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
 
+    def openFeatureForm(self, layer, feature):
+        self.iface.setActiveLayer(layer)
+        self.iface.openFeatureForm(layer, feature, showModal=False)
+
     def setSelectionFeature(self, layer, feature):
         """
         Selects a given feature on canvas.
@@ -355,7 +359,7 @@ class MultiLayerSelection(QgsMapTool):
                         if e.button() == QtCore.Qt.LeftButton:
                             action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
                         elif e.button() == QtCore.Qt.RightButton:
-                            action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
+                            action.triggered[()].connect(lambda t=t[i] : self.openFeatureForm(t[0], t[1]))
                 # "Select All" always selects all features
                 # Sugestion: Open all atribute tables? 
                 if e.button() == QtCore.Qt.LeftButton:
