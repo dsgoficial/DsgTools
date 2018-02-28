@@ -72,7 +72,8 @@ class Options(QtGui.QDialog, FORM_CLASS):
         freeHandSmoothOffset = self.smoothOffsetQgsDoubleSpinBox.value()
         algIterations = self.algIterationsQgsSpinBox.value()
         valueList = [self.blackListWidget.item(i).text() for i in range(self.blackListWidget.count())]
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList)
+        undoPoints = self.undoQgsSpinBox.value()
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints)
 
     def loadParametersFromConfig(self):
         settings = QSettings()
@@ -82,29 +83,32 @@ class Options(QtGui.QDialog, FORM_CLASS):
         freeHandSmoothOffset = settings.value('freeHandSmoothOffset')
         algIterations = settings.value('algIterations')
         valueList = settings.value('valueList')
+        undoPoints = settings.value('undoPoints')
         if valueList:
             valueList = valueList.split(';')
         settings.endGroup()
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList)
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints)
     
     def setInterfaceWithParametersFromConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.loadParametersFromConfig()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints) = self.loadParametersFromConfig()
         
-        if freeHandTolerance != '' and freeHandTolerance:
+        if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
-        if freeHandSmoothIterations != '' and freeHandSmoothIterations:
+        if freeHandSmoothIterations:
             self.smoothIterationsQgsSpinBox.setValue(int(freeHandSmoothIterations))
-        if freeHandSmoothOffset != '' and freeHandSmoothOffset:
+        if freeHandSmoothOffset:
             self.smoothOffsetQgsDoubleSpinBox.setValue(float(freeHandSmoothOffset))
-        if algIterations != '' and algIterations:
+        if algIterations:
             self.algIterationsQgsSpinBox.setValue(int(algIterations))
-        if valueList != '' and valueList:
+        if valueList:
             self.blackListWidget.clear()
             self.blackListWidget.addItems(valueList)
             self.blackListWidget.sortItems(order = Qt.AscendingOrder)
+        if undoPoints:
+            self.undoQgsSpinBox.setValue(int(undoPoints))
     
     def storeParametersInConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.getParameters()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints) = self.getParameters()
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         settings.setValue('freeHandTolerance', freeHandTolerance)
@@ -112,6 +116,7 @@ class Options(QtGui.QDialog, FORM_CLASS):
         settings.setValue('freeHandSmoothOffset', freeHandSmoothOffset)
         settings.setValue('algIterations', algIterations)
         settings.setValue('valueList', ';'.join(valueList))
+        settings.setValue('undoPoints', undoPoints)
         settings.endGroup()
     
     @pyqtSlot()
@@ -131,8 +136,8 @@ class Options(QtGui.QDialog, FORM_CLASS):
             self.blackListWidget.takeItem(i)
     
     def firstTimeConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList) = self.loadParametersFromConfig()
-        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList):
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints) = self.loadParametersFromConfig()
+        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints):
             self.storeParametersInConfig()
         
         

@@ -172,12 +172,22 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setActiveState(False)
         self.contadorVert = 0
         self.getCanvas().refresh()
+    
+    def getParametersFromConfig(self):
+        #Método para obter as configurações da tool do QSettings
+        #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
+        settings = QtCore.QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        undoPoints = settings.value('undoPoints')
+        settings.endGroup()
+        return undoPoints
    
     def removeVertice(self):
         #Método para remover vertices
         rubberBand = self.getRubberBand()
-        if rubberBand and rubberBand.numberOfVertices() > 50:
-            for x in range(50):
+        qtnUndoPoints = self.getParametersFromConfig()
+        if rubberBand and rubberBand.numberOfVertices() > qtnUndoPoints:
+            for x in range(qtnUndoPoints):
                 rubberBand.removeLastPoint()
             if self.isPolygon():
                 lastPoint = rubberBand.asGeometry().asPolygon()[-2]
