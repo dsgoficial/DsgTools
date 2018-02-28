@@ -223,6 +223,7 @@ class MultiLayerSelection(QgsMapTool):
                             else:
                                 #opens feature form. The tag showModal is to lock qgis window or not. 
                                 #Current procedure is to imitate qgis way of doing things, so showModal = False
+                                self.iface.setActiveLayer(lyr)
                                 self.iface.openFeatureForm(lyr,feat, showModal=False)
                                 return
                         #if code reaches here, it means that it is an incremental selection.
