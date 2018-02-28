@@ -287,8 +287,8 @@ class MultiLayerSelection(QgsMapTool):
         """
         Filter a given list of features for its strongest geometry
 
-        arg listLayerFeature: a list os items as of [layer, feature, geometry_type]
-        returns a list [layer, feature]
+        :param listLayerFeature: a list os items as of [layer, feature, geometry_type]
+        :return: a list [layer, feature]
         """
         if listLayerFeature:
             strongest_geometry = np.array(np.array(listLayerFeature)[:,2], 'int').min()
@@ -299,6 +299,21 @@ class MultiLayerSelection(QgsMapTool):
             if i[2] == strongest_geometry:
                 l.append(i)
         return l
+    
+    def createRubberBand(self, featureString):
+        """
+        Creates a rubber band around from a given a standard feature string.
+        :param featureString: string containing database, layer and feature ID ("database.layer (feat_id = 0)")
+        """
+        print featureString
+        pass
+
+    def createMultipleRubberBand(self, featureList):
+        """
+        Creates rubberbands around features.
+        :param featureList: a list os items as of [layer, feature, geometry_type]
+        """
+        pass
 
     def createContextMenu(self, e):
         """
@@ -343,6 +358,7 @@ class MultiLayerSelection(QgsMapTool):
                             # line added to make sure the action is associated with
                             # current loop value.
                             action.triggered[()].connect(lambda t=[e, selected] : self.selectFeatures(t[0], hasControlModifyer=t[1]))
+                            
                         elif e.button() == QtCore.Qt.RightButton:
                             # remove feature from candidates of selection and set layer for selection
                             action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
@@ -352,16 +368,19 @@ class MultiLayerSelection(QgsMapTool):
                     else:
                         if e.button() == QtCore.Qt.LeftButton:
                             action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
+                            action.hovered[()].connect(lambda s=s : self.createRubberBand(featureString=s))
                         elif e.button() == QtCore.Qt.RightButton:
                             action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
-                # "Select All" always selects all features
-                # Sugestion: Open all atribute tables? 
+                # to trigger "Hover" signal on QMenu on each feature
+                action.hovered[()].connect(lambda s=s : self.createRubberBand(featureString=s))
                 if e.button() == QtCore.Qt.LeftButton:
-                    menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
+                    genericAction = menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 else:
-                    menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))    
+                    genericAction = menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))
+                # to trigger "Hover" signal on QMenu for the multiple options
+                genericAction.hovered[()].connect(lambda s=s : self.createMultipleRubberBand(featureString=s))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
-            elif t:                
+            elif t:
                 t = t[0]
                 selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
                 if e.button() == QtCore.Qt.LeftButton:
@@ -370,4 +389,3 @@ class MultiLayerSelection(QgsMapTool):
                     self.iface.setActiveLayer(t[0])
                 else:
                     self.iface.openFeatureForm(t[0], t[1], showModal=False)
-                
