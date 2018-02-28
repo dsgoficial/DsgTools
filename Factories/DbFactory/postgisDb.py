@@ -310,7 +310,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
-        elif self.getDatabaseVersion() == '3.0':
+        elif self.getDatabaseVersion() in ('3.0', '2.1.3 Pro', '3.0 Pro'):
             schemaList = ['edgv', 'complexos']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
@@ -341,7 +341,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
-        elif self.getDatabaseVersion() == '3.0':
+        elif self.getDatabaseVersion() in ('3.0', '2.1.3 Pro', '3.0 Pro'):
             schemaList = ['edgv', 'complexos', 'dominios']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
@@ -2603,10 +2603,14 @@ class PostgisDb(AbstractDb):
     def getTemplateName(self, version):
         if version == '2.1.3':
             return 'template_edgv_213'
+        elif version == '2.1.3 Pro':
+            return 'template_edgv_213_pro'
         elif version == 'FTer_2a_Ed':
             return 'template_edgv_fter_2a_ed'
         elif version == '3.0':
             return 'template_edgv_3'
+        elif version == '3.0 Pro':
+            return 'template_edgv_3_pro'
     
     def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True, useTransaction = True):
         self.checkAndOpenDb()
@@ -2638,10 +2642,14 @@ class PostgisDb(AbstractDb):
         edgvPath = ''
         if version == '2.1.3':
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif version == '2.1.3 Pro':
+            edgvPath = os.path.join(currentPath, 'sqls', '213_Pro', 'edgv213_pro.sql')
         elif version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
         elif version == '3.0':
             edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
+        elif version == '3.0 Pro':
+            edgvPath = os.path.join(currentPath, 'sqls', '3_Pro', 'edgv3_pro.sql')
         elif version == 'admin':
             edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
         return edgvPath

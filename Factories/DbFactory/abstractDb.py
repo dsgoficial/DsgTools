@@ -52,7 +52,7 @@ class AbstractDb(QObject):
         self.utils = Utils()
         self.signals = DbSignals()
         self.slotConnected = False
-        self.versionFolderDict = dict({'2.1.3':'edgv_213','FTer_2a_Ed':'edgv_FTer_2a_Ed','3.0':'3'})
+        self.versionFolderDict = dict({'2.1.3':'edgv_213','2.1.3 Pro':'edgv_213_pro','FTer_2a_Ed':'edgv_FTer_2a_Ed','3.0':'3','3.0 Pro':'3_Pro'})
         self.utmGrid = UtmGrid()
 
     def __del__(self):
@@ -609,8 +609,12 @@ class AbstractDb(QObject):
         version = self.getDatabaseVersion()
         if version == '3.0':
             qmlPath = os.path.join(qmlVersionPath, 'edgv_3')
+        elif version == '3.0 Pro':
+            qmlPath = os.path.join(qmlVersionPath, 'edgv_3_pro')
         elif version == '2.1.3':
             qmlPath = os.path.join(qmlVersionPath, 'edgv_213')
+        elif version == '2.1.3 Pro':
+            qmlPath = os.path.join(qmlVersionPath, 'edgv_213_pro')
         elif version == 'FTer_2a_Ed':
             qmlPath = os.path.join(qmlVersionPath, 'FTer_2a_Ed')
         else:
@@ -627,8 +631,12 @@ class AbstractDb(QObject):
         styleDir = os.path.join(currentPath, '..', '..', 'Styles')
         if dbVersion == '2.1.3':
             styleDir = os.path.join(styleDir, 'edgv_213')
+        elif dbVersion == '2.1.3 Pro':
+            styleDir = os.path.join(styleDir, 'edgv_213_pro')
         elif dbVersion == '3.0':
             styleDir = os.path.join(styleDir, 'edgv_3')
+        elif dbVersion == '3.0 Pro':
+            styleDir = os.path.join(styleDir, 'edgv_3_pro')
         elif dbVersion == 'FTer_2a_Ed':
             styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
         else:

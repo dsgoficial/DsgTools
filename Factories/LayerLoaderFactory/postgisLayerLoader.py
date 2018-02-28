@@ -107,7 +107,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = semifinalList
         return finalList
 
-    def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, parent = None):
+    def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, customForm = False, parent = None):
         """
         1. Get loaded layers
         2. Filter layers;
@@ -157,7 +157,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm)
                         if vlayer:
                             loadedLayers.append(vlayer)
                             if isinstance(lyr, dict):
@@ -176,7 +176,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         localProgress.step()
         return loadedDict
 
-    def loadLayer(self, inputParam, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False):
+    def loadLayer(self, inputParam, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, customForm = False):
         """
         Loads a layer
         :param lyrName: Layer nmae
@@ -223,6 +223,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 fullPath = self.getStyle(stylePath, tableName)
                 if fullPath:
                     vlayer.applyNamedStyle(fullPath)
+            if customForm:
+                vlayer = self.createAndApplyCustomForm(self, vlayer)
             iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
             if not vlayer.isValid():
                 QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -349,3 +351,6 @@ class PostGISLayerLoader(EDGVLayerLoader):
             if attrName in notNullDict[lyrName]['attributes']:
                 allowNull = False
         return allowNull
+
+    def createAndApplyCustomForm(self, lyr):
+        pass
