@@ -23,10 +23,17 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
+      <item row="2" column="1">
+       <widget class="QgsDoubleSpinBox" name="smoothOffsetQgsDoubleSpinBox">
+        <property name="value">
+         <double>0.250000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Tolerance</string>
+         <string>Smooth Iterations</string>
         </property>
        </widget>
       </item>
@@ -37,10 +44,17 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Smooth Iterations</string>
+         <string>Algorithm Iterations</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Tolerance</string>
         </property>
        </widget>
       </item>
@@ -58,24 +72,24 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QgsDoubleSpinBox" name="smoothOffsetQgsDoubleSpinBox">
-        <property name="value">
-         <double>0.250000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Algorithm Iterations</string>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="1">
        <widget class="QgsSpinBox" name="algIterationsQgsSpinBox">
         <property name="value">
          <number>2</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QgsSpinBox" name="undoQgsSpinBox">
+        <property name="value">
+         <number>50</number>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Number of points removed on undo action</string>
         </property>
        </widget>
       </item>
@@ -154,18 +168,18 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsdoublespinbox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -96,7 +96,8 @@ class AcquisitionFreeController(object):
             u'freeHandTolerance' : settings.value('freeHandTolerance'),
             u'freeHandSmoothIterations' : settings.value('freeHandSmoothIterations'),
             u'freeHandSmoothOffset' : settings.value('freeHandSmoothOffset'),
-            u'algIterations' : settings.value('algIterations')
+            u'algIterations' : settings.value('algIterations'),
+            u'undoPoints' : settings.value('undoPoints')
         }
         settings.endGroup()
         return parameters
