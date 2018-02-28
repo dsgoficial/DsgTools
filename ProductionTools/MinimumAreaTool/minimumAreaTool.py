@@ -223,6 +223,16 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         self.createDict(customDict = customSizesDict)
         self.populateComboWithCustomSizes(customSizesDict)
     
+    def updateAndPopulateSizes(self, sizeDict):
+        self.size = sizeDict
+        self.populateSizeComboBoxWithDict()
+    
+    def populateSizeComboBoxWithDict(self):
+        self.sizesComboBox.clear()
+        self.sizesComboBox.addItem(self.tr('SIZES'))
+        for key in self.sizes:
+            self.sizesComboBox.addItem(key)
+    
     def populateComboWithCustomSizes(self, customSizesDict):
         """
         Add to sizesComboBox values from customSizesDict and adds values to self.sizes 
