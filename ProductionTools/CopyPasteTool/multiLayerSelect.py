@@ -51,12 +51,13 @@ class MultiLayerSelection(QgsMapTool):
         QgsMapTool.__init__(self, self.canvas)
         self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
         self.hoverRubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
-        mFillColor = QColor( 254, 178, 76, 63 )
+        mFillColor = QColor( 255, 0, 0, 63 )
         self.rubberBand.setColor(mFillColor)
+        self.hoverRubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = self.getBlackList()
-        self.menuHovered = False
+        self.menuHovered = False # indicates hovering actions over context menu
     
     def getBlackList(self):
         settings = QSettings()
@@ -81,6 +82,7 @@ class MultiLayerSelection(QgsMapTool):
         Used only on rectangle select.
         """
         if self.menuHovered:
+            # deactivates rubberband when the context menu is "destroyed" 
             self.hoverRubberBand.reset(QGis.Polygon)
         if not self.isEmittingPoint:
             return
@@ -307,8 +309,8 @@ class MultiLayerSelection(QgsMapTool):
     def createRubberBand(self, feature, layer):
         """
         Creates a rubber band around from a given a standard feature string.
-        :param feature: string containing database, layer and feature ID ("database.layer (feat_id = 0)")
-        :param layer:
+        :param feature: taget feature to be highlighted 
+        :param layer: layer containing the target feature
         """
         self.hoverRubberBand.reset(QGis.Polygon)
         self.hoverRubberBand.addGeometry(feature.geometry(), layer)
@@ -331,7 +333,7 @@ class MultiLayerSelection(QgsMapTool):
         """  
         selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         # setting a list of features to iterate over
-        layerList = self.getPrimitiveDict(e, hasControlModifyer = selected)
+        layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
         layers = []
         for key in layerList.keys():
             layers += layerList[key]
@@ -368,7 +370,7 @@ class MultiLayerSelection(QgsMapTool):
                             # line added to make sure the action is associated with
                             # current loop value.
                             action.triggered[()].connect(lambda t=[e, selected] : self.selectFeatures(t[0], hasControlModifyer=t[1]))
-                            # to trigger "Hover" signal on QMenu on each feature
+                            # to trigger "Hover" signal on QMenu for each feature
                             action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0]))
                         elif e.button() == QtCore.Qt.RightButton:
                             # remove feature from candidates of selection and set layer for selection
