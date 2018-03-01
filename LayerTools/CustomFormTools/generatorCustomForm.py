@@ -356,7 +356,7 @@ class GeneratorCustomForm(object):
 
         return lineEdit 
 
-    def create(self, formFile, layerData, fieldsSorted, vlayer):
+    def create(self, formFile, vlayer, withFilter = False):
         dialog = self.getDialogTemplate()
         allWidgetsTabAttr = u""
         allWidgetsTabControl = u""
@@ -368,13 +368,13 @@ class GeneratorCustomForm(object):
                 allWidgetsTabControl += self.createLineEdit(field, rowControl, readOnly = True)
                 rowControl+=1
             elif field == u'tipo':
-                if u'filter' in layerData:
+                if withFilter:
                     allWidgetsTabAttr += self.createComboBox(u'filter', rowAttr)
                     rowAttr+=1
                 allWidgetsTabAttr += self.createComboBox(field, rowAttr)
-            elif (field in layerData)  and layerData[field]:
+            elif vlayer.editFormConfig().widgetType(idx) == 'ValueMap':
                 allWidgetsTabAttr += self.createComboBox(field, rowAttr)
-            elif (field in layerData):
+            elif vlayer.editFormConfig().widgetType(idx) in ['LineEdit', 'UniqueValues']:
                 allWidgetsTabAttr += self.createLineEdit(field, rowAttr)
             rowAttr+=1
         if vlayer.geometryType() == 1:

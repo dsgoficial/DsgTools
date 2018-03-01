@@ -1673,3 +1673,11 @@ class PostGISSqlGenerator(SqlGenerator):
     def getImplementationVersion(self):
         sql = """select dbimplversion from public.db_metadata limit 1"""
         return sql
+    
+    def getAttrListWithFilter(self):
+        sql = """select distinct table_name from information_schema.columns where table_schema = 'dominios' and column_name = 'filter'"""
+        return sql
+    
+    def getFilterJsonList(self, domainName):
+        sql = """select row_to_json(a) from (select * from dominios.{0}) as a """.format(domainName)
+        return sql
