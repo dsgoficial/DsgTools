@@ -2456,7 +2456,10 @@ class PostgisDb(AbstractDb):
         while query.next():
             aux = json.loads(query.value(0))
             if not otherKey:
-                otherKey = [key for key in aux.keys() if key <> refPk][0]
+                if 'code_name' in aux.keys():
+                    otherKey = 'code_name'
+                else:
+                    otherKey = [key for key in aux.keys() if key <> refPk][0]
             domainDict[aux[refPk]] = aux[otherKey]
         return domainDict, otherKey
     
