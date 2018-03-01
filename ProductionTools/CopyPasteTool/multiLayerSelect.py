@@ -53,7 +53,7 @@ class MultiLayerSelection(QgsMapTool):
         self.hoverRubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
         mFillColor = QColor( 254, 178, 76, 63 )
         self.rubberBand.setColor(mFillColor)
-        self.hoverRubberBand.setColor(QColor( 255, 0, 0, 20 ))
+        self.hoverRubberBand.setColor(QColor( 255, 0, 0, 90 ))
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = self.getBlackList()
