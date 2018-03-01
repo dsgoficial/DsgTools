@@ -50,11 +50,13 @@ class MultiLayerSelection(QgsMapTool):
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
         mFillColor = QColor( 254, 178, 76, 63 )
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = self.getBlackList()
+        self.menuHovered = False
     
     def getBlackList(self):
         settings = QSettings()
@@ -78,10 +80,12 @@ class MultiLayerSelection(QgsMapTool):
         """
         Used only on rectangle select.
         """
+        if self.menuHovered:
+            self.hoverRubberBand.reset(QGis.Polygon)
         if not self.isEmittingPoint:
             return
         self.endPoint = self.toMapCoordinates( e.pos() )
-        self.showRect(self.startPoint, self.endPoint)
+        self.showRect(self.startPoint, self.endPoint)        
 
     def showRect(self, startPoint, endPoint):
         """
@@ -300,20 +304,26 @@ class MultiLayerSelection(QgsMapTool):
                 l.append(i)
         return l
     
-    def createRubberBand(self, featureString):
+    def createRubberBand(self, feature, layer):
         """
         Creates a rubber band around from a given a standard feature string.
-        :param featureString: string containing database, layer and feature ID ("database.layer (feat_id = 0)")
+        :param feature: string containing database, layer and feature ID ("database.layer (feat_id = 0)")
+        :param layer:
         """
-        print featureString
-        pass
+        self.hoverRubberBand.reset(QGis.Polygon)
+        self.hoverRubberBand.addGeometry(feature.geometry(), layer)
+        # to inform the code that menu has been hovered over
+        self.menuHovered = True
 
     def createMultipleRubberBand(self, featureList):
         """
         Creates rubberbands around features.
         :param featureList: a list os items as of [layer, feature, geometry_type]
         """
-        pass
+        self.hoverRubberBand.reset(QGis.Polygon)
+        for item in featureList:
+            self.hoverRubberBand.addGeometry(item[1].geometry(), item[0])
+        self.menuHovered = True
 
     def createContextMenu(self, e):
         """
@@ -358,27 +368,28 @@ class MultiLayerSelection(QgsMapTool):
                             # line added to make sure the action is associated with
                             # current loop value.
                             action.triggered[()].connect(lambda t=[e, selected] : self.selectFeatures(t[0], hasControlModifyer=t[1]))
-                            
+                            # to trigger "Hover" signal on QMenu on each feature
+                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0]))
                         elif e.button() == QtCore.Qt.RightButton:
                             # remove feature from candidates of selection and set layer for selection
                             action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
+                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0]))
                             t.pop(i-pop)
                             pop += 1
                             continue
                     else:
                         if e.button() == QtCore.Qt.LeftButton:
                             action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
-                            action.hovered[()].connect(lambda s=s : self.createRubberBand(featureString=s))
+                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0]))     
                         elif e.button() == QtCore.Qt.RightButton:
                             action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
-                # to trigger "Hover" signal on QMenu on each feature
-                action.hovered[()].connect(lambda s=s : self.createRubberBand(featureString=s))
+                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0]))
                 if e.button() == QtCore.Qt.LeftButton:
                     genericAction = menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
                 else:
                     genericAction = menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))
                 # to trigger "Hover" signal on QMenu for the multiple options
-                genericAction.hovered[()].connect(lambda s=s : self.createMultipleRubberBand(featureString=s))
+                genericAction.hovered[()].connect(lambda t=t : self.createMultipleRubberBand(featureList=t))
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 t = t[0]
