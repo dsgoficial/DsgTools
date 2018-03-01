@@ -53,7 +53,7 @@ class GeneratorCustomInitCode(object):
     def formatTableFilter(self, tableFilter):
         tableFilterFormated = {}
         for line in tableFilter:
-            tableFilterFormated[line[1]] = line[0]
+            tableFilterFormated[line['filter']] = line['code']
         return tableFilterFormated
 
     def getTemplateInitCodeNotFilter(self):

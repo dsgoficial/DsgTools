@@ -34,6 +34,8 @@ from qgis.utils import iface
 #DsgTools imports
 from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.LayerTools.CustomFormTools.generatorCustomInitCode import GeneratorCustomInitCode
+from DsgTools.LayerTools.CustomFormTools.generatorCustomForm import GeneratorCustomForm
 
 class PostGISLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
@@ -43,6 +45,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.provider = 'postgres'
         self.setDatabaseConnection()
         self.buildUri()
+        self.generatorCustomForm = GeneratorCustomForm()
+        self.generatorCustomInitCode = GeneratorCustomInitCode()
 
     def checkLoaded(self, name, loadedLayers):
         """
@@ -141,6 +145,9 @@ class PostGISLayerLoader(EDGVLayerLoader):
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
         lyrDict = self.getLyrDict(filteredDictList, isEdgv=isEdgv)
+        if customForm:
+            self.filterDict = self.abstractDb.getFilterDict()
+            self.rulesDict = dict()
         
         #5. Build Groups
         groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
@@ -157,7 +164,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in lyrDict[prim].keys():
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
                         if vlayer:
                             loadedLayers.append(vlayer)
                             if isinstance(lyr, dict):
@@ -205,7 +212,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 return lyr
         fullName = '''"{0}"."{1}"'''.format(schema, tableName)
         pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-        if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_Edgv']:
+        if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_Edgv', '2.1.3 Pro', '3.0 Pro']:
             sql = ''
         else:
             sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
@@ -224,7 +231,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 if fullPath:
                     vlayer.applyNamedStyle(fullPath)
             if customForm:
-                vlayer = self.createAndApplyCustomForm(self, vlayer)
+                vlayer = self.loadFormCustom(vlayer)
             iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
             if not vlayer.isValid():
                 QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -352,5 +359,56 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 allowNull = False
         return allowNull
 
-    def createAndApplyCustomForm(self, lyr):
-        pass
+    def getPathUiForm(self, dbName, layerName):
+        #alterar
+        pathUiForm =  os.path.join(
+            os.path.dirname(__file__), '..', '..', 'LayerTools', 'CustomFormTools',
+            'formsCustom' ,
+            '{0}_{1}.ui'.format(dbName, layerName)
+        )
+        return pathUiForm
+
+    def newUiForm(self, pathUiForm):
+        formFile = open(pathUiForm, "w")
+        return formFile
+    
+    def loadFormCustom(self, lyr):
+        pathUiForm = self.getPathUiForm(self.database, lyr.name())
+        formFile = self.newUiForm(pathUiForm)
+        #inserir flag do filtro
+        withFilter = True if lyr.name() in self.filterDict.keys() else False
+        self.generatorCustomForm.create(formFile, lyr, withFilter = withFilter)
+        lyr.editFormConfig().setInitCodeSource(2)
+        lyr.editFormConfig().setLayout(2)
+        lyr.editFormConfig().setUiForm(pathUiForm)
+        initCode = self.createCustomInitCode(lyr)
+        if initCode:
+            lyr.editFormConfig().setInitFunction("formOpen")
+            lyr.editFormConfig().setInitCode(initCode)
+        return lyr
+
+    def getRulesSelected(self, lyr):
+        rules = []
+        # currentlayerName = lyr.name()
+        # if  self.getRules():
+        #     allRules = self.getRules().getRulesToForm() 
+        #     selectedRuleOnOrder = { allRules["order_rules"][k.encode("utf-8")] : k.encode("utf-8")  for k in data['selectedRulesType']}
+        #     for order in reversed(sorted(selectedRuleOnOrder)):
+        #         ruleName = selectedRuleOnOrder[order]
+        #         for lyrName in  allRules[ruleName]:
+        #             if  currentlayerName == lyrName:
+        #                 rules.append(allRules[ruleName][currentlayerName])
+        #     return rules
+        return {}
+
+    def createCustomInitCode(self, lyr):
+
+        rules = self.getRulesSelected(lyr)
+        # dbData = data['userData']['dbJson'][data['dbAlias']]
+        # layerData = dbData[data['nameGeom']][data['nameCatLayer']][data['layerName']]
+        if lyr.name() in self.filterDict.keys():
+            initCode = self.generatorCustomInitCode.getInitCodeWithFilter(self.filterDict[lyr.name()], rules) #layerData['filter'] é o resultado da query select * from dominios.<nome do dominio do atributo com filtro>
+            return initCode
+        else:
+            initCode = self.generatorCustomInitCode.getInitCodeNotFilter(rules)
+            return initCode

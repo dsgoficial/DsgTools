@@ -3656,3 +3656,50 @@ class PostgisDb(AbstractDb):
             outputKey = '{0}.{1} ({2})'.format(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'])
             lyrDict[outputKey] = lyr
         return lyrDict
+    
+    def getAttrListWithFilter(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getAttrListWithFilter()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting list of attributes with filter: ")+query.lastError().text())
+        attrList = []
+        while query.next():
+            attrList.append(query.value(0))
+        return attrList
+    
+    def getAttrFilterDomainJsonList(self, domainNameList):
+        self.checkAndOpenDb()
+        jsonDict = dict()
+        for domainName in domainNameList:
+            sql = self.gen.getFilterJsonList(domainName)
+            query = QSqlQuery(sql, self.db)
+            localList = []
+            if not query.isActive():
+                raise Exception(self.tr("Problem getting domain json list: ")+query.lastError().text())
+            while query.next():
+                localList.append(json.loads(query.value(0)))
+            jsonDict[domainName] = localList
+        return jsonDict
+    
+    def getFilterDict(self):
+        """
+        returns a dict:
+            {
+                "tableName": [list of domain tuples]
+            }
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomTablesDomains()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        filterDict = dict()
+        attrList = self.getAttrListWithFilter()
+        jsonDict = self.getAttrFilterDomainJsonList(attrList)
+        while query.next():
+            #parse done in parseFkQuery to make code cleaner.
+            tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
+            if domainTable.split('.')[-1] in attrList:
+                filterDict[tableName] = jsonDict[domainTable.split('.')[-1]]
+        return filterDict
