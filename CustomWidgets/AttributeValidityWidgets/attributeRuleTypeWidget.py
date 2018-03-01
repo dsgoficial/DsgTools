@@ -39,8 +39,8 @@ class AttributeRuleTypeWidget(QtGui.QWidget, FORM_CLASS):
         """Constructor."""
         super(AttributeRuleTypeWidget, self).__init__(parent = parent)
         self.setupUi(self)
-        self.validKeys = ['attributeRuleType', 'ruleColor']
-        if parameterDict != {}:
+        self.validKeys = ['attributeRuleType', 'ruleColor', 'rank']
+        if isinstance(parameterDict, dict) and parameterDict != {}:
             self.populateInterface(parameterDict)
     
     def clearAll(self):
@@ -62,6 +62,7 @@ class AttributeRuleTypeWidget(QtGui.QWidget, FORM_CLASS):
         parameterDict = dict()
         parameterDict['attributeRuleType'] = self.attributeRuleTypeLineEdit.text()
         parameterDict['ruleColor'] = ','.join(map(str,self.mColorButton.color().getRgb()))
+        parameterDict['rank'] = self.rankSpinBox.value()
         return parameterDict
 
     def populateInterface(self, parameterDict):
@@ -73,8 +74,9 @@ class AttributeRuleTypeWidget(QtGui.QWidget, FORM_CLASS):
                 raise Exception(self.tr('Invalid Attribute Rule Type Widget json config!'))
             #set layer combo
             self.attributeRuleTypeLineEdit.setText(parameterDict['attributeRuleType'])
-            R,G,B,A = map(int,parameterDict['ruleColor'].split(',')) #QColor only accepts int values
-            self.mColorButton.setColor(QColor(R,G,B,A))
+            R,G,B = map(int,parameterDict['ruleColor'].split(',')) #QColor only accepts int values
+            self.mColorButton.setColor(QColor(R,G,B))
+            self.rankSpinBox.setValue(parameterDict['rank'])
     
     def validateJson(self, inputJson):
         """
