@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
-    <widget class="AttributeRuleTypeWidget" name="widget" native="true"/>
+    <widget class="AttributeRuleTypeWidget" name="attributeRuleTypeWidget" native="true"/>
    </item>
    <item row="1" column="0" colspan="3">
     <widget class="OrderedAttributeRulesWidget" name="attributeRulesWidget" native="true">

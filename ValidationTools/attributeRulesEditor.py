@@ -46,6 +46,7 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         if parameterDict:
             if self.validateJson(parameterDict):
                 self.attributeRulesWidget.populateInterface(parameterDict['orderedAttributeRulesWidget'])
+                self.attributeRuleTypeWidget.populateInterface(parameterDict['attributeRuleTypeWidget'])
 
     @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
@@ -53,12 +54,25 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
         1. Validate widget
         2. Export jsonDict
         """
-        if not self.attributeRulesWidget.validate():
-            msg = self.attributeRulesWidget.invalidatedReason()
+        if not self.validate():
+            msg = self.invalidatedReason()
             QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Errors on interface! Check log for details!'))
             return
         self.done(1)
+    
+    def validate(self):
+        if not self.attributeRuleTypeWidget.validate():
+            return False
+        if not self.attributeRulesWidget.validate():
+            return False
+        return True
+    
+    def invalidatedReason(self):
+        msg = ''
+        msg += self.attributeRuleTypeWidget.invalidatedReason()
+        msg += self.attributeRulesWidget.invalidatedReason()
+        return msg
     
     @pyqtSlot(bool)
     def on_cancelPushButton_clicked(self):
@@ -69,17 +83,27 @@ class AttributeRulesEditor(QtGui.QDialog, FORM_CLASS):
             return False
         return True
     
-    def invalidatedReason(self):
-        return self.tr('Invalid tag for attributeRulesEditor!')
+    def invalidatedJsonReason(self):
+        msg = ''
+        if ['attributeRuleTypeWidget', 'orderedAttributeRulesWidget'] != parameterDict.keys():
+            msg += self.tr('Invalid tags for attributeRulesEditor!\n')
+        msg += self.attributeRulesWidget.invalidatedJsonReason()
+        msg += self.attributeRuleTypeWidget.invalidatedJsonReason()
     
     def getParameterDict(self):
-        return {'orderedAttributeRulesWidget':self.attributeRulesWidget.getParameterDict()}
+        return {'attributeRuleTypeWidget':self.attributeRuleTypeWidget.getParameterDict(),
+        'orderedAttributeRulesWidget':self.attributeRulesWidget.getParameterDict()}
     
     def populateInterface(self, parameterDict):
+        self.attributeRuleTypeWidget.populateInterface(parameterDict['attributeRuleTypeWidget'])
         self.attributeRulesWidget.populateInterface(parameterDict['orderedAttributeRulesWidget'])
     
     def validateJson(self, parameterDict):
-        if ['orderedAttributeRulesWidget'] != parameterDict.keys():
+        if ['attributeRuleTypeWidget', 'orderedAttributeRulesWidget'] != parameterDict.keys():
             return False
-        return self.attributeRulesWidget.validateJson(parameterDict['orderedAttributeRulesWidget'])
+        if not self.attributeRulesWidget.validateJson(parameterDict['orderedAttributeRulesWidget']):
+            return False
+        if not self.attributeRuleTypeWidget.validateJson(parameterDict['attributeRuleTypeWidget']):
+            return False
+        return True
 
