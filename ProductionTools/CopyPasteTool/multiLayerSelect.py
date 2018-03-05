@@ -194,6 +194,7 @@ class MultiLayerSelection(QgsMapTool):
             primitiveDict[geomType].append(lyr)
         else:
             if hasControlModifyer:
+                # if control is being held, only features with the same geometry will be selected 
                 return { firstGeom : primitiveDict[firstGeom] }
             else:
                 return primitiveDict
