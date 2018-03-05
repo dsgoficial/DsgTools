@@ -151,9 +151,7 @@ class MultiLayerSelection(QgsMapTool):
             self.showRect(self.startPoint, self.endPoint)
         else:
             self.isEmittingPoint = False
-            # selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
             self.createContextMenu(e)
-            # self.selectFeatures(e, hasControlModifyer = selected)
     
     def getCursorRect(self, e):
         """
@@ -185,6 +183,10 @@ class MultiLayerSelection(QgsMapTool):
             if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
                 continue
             geomType = lyr.geometryType()
+            if hasControlModifyer:
+                if primitiveDict.keys():
+                    # getting geometry of first selected feature
+                    firstGeom = geomType
             if geomType not in primitiveDict.keys():
                 primitiveDict[geomType] = []
             #removes selection
