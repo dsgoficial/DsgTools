@@ -183,21 +183,13 @@ class MultiLayerSelection(QgsMapTool):
             if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
                 continue
             geomType = lyr.geometryType()
-            if not primitiveDict.keys():
-                # getting geometry of first selected feature
-                firstGeom = geomType
             if geomType not in primitiveDict.keys():
                 primitiveDict[geomType] = []
             #removes selection
             if (not hasControlModifyer and e.button() == QtCore.Qt.LeftButton) or (hasControlModifyer and e.button() == QtCore.Qt.RightButton):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
-        else:
-            if hasControlModifyer:
-                # if control is being held, only features with the same geometry will be selected 
-                return { firstGeom : primitiveDict[firstGeom] }
-            else:
-                return primitiveDict
+        return primitiveDict
 
     def selectFeatures(self, e, bbRect=None, hasControlModifyer=False):
         """
@@ -344,11 +336,31 @@ class MultiLayerSelection(QgsMapTool):
             self.hoverRubberBand.addGeometry(item[1].geometry(), item[0])
         self.menuHovered = True
 
+    def checkSelectedLayers(self):
+        """
+        Checks if there are layers selected on canvas. If there are, returns the geometry type of
+        selected feature(s). If more than one type of feature is selected, the "strongest" geometry
+        is returned.
+        """
+        geom = None
+        for layer in self.iface.legendInterface().layers():
+            selection = layer.selectedFeatures()
+            if len(selection):
+                if geom == None:
+                    geom = layer.geometryType()
+                    continue
+                elif layer.geometryType() < geom:
+                    geom = layer.geometryType()
+                    continue
+        return geom
+
     def createContextMenu(self, e):
         """
         Creates the context menu for overlapping layers
         """  
-        selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        if selected:
+            firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
         layers = []
@@ -364,8 +376,14 @@ class MultiLayerSelection(QgsMapTool):
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
-                        if geom.intersects(rect):
-                            t.append([layer, feature, layer.geometryType()])
+                        if selected:
+                            # if Control was held, appending behaviour is different
+                            if geom.intersects(rect) and layer.geometryType() == firstGeom:
+                                # only appends features if it has the same geometry as first selected feature
+                                t.append([layer, feature, layer.geometryType()])
+                        else:
+                            if geom.intersects(rect):
+                                t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
             if len(t) > 1:
                 pop = 0 # number of features 
