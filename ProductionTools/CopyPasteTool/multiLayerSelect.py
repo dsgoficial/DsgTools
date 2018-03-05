@@ -183,10 +183,9 @@ class MultiLayerSelection(QgsMapTool):
             if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
                 continue
             geomType = lyr.geometryType()
-            if hasControlModifyer:
-                if primitiveDict.keys():
-                    # getting geometry of first selected feature
-                    firstGeom = geomType
+            if not primitiveDict.keys():
+                # getting geometry of first selected feature
+                firstGeom = geomType
             if geomType not in primitiveDict.keys():
                 primitiveDict[geomType] = []
             #removes selection
@@ -194,7 +193,10 @@ class MultiLayerSelection(QgsMapTool):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
         else:
-            return primitiveDict
+            if hasControlModifyer:
+                return { firstGeom : primitiveDict[firstGeom] }
+            else:
+                return primitiveDict
 
     def selectFeatures(self, e, bbRect=None, hasControlModifyer=False):
         """
