@@ -270,6 +270,8 @@ class MultiLayerSelection(QgsMapTool):
         featId = feature.id()
         if featId not in idList:
             idList.append(featId)
+        else:
+            idList.pop(idList.index(featId))
         layer.setSelectedFeatures(idList)
         return 
 
@@ -384,6 +386,10 @@ class MultiLayerSelection(QgsMapTool):
                     if geom:
                         if selected:
                             # if Control was held, appending behaviour is different
+                            if not firstGeom:
+                                firstGeom = layer.geometryType()
+                            elif firstGeom > layer.geometryType():
+                                firstGeom = layer.geometryType()
                             if geom.intersects(rect) and layer.geometryType() == firstGeom:
                                 # only appends features if it has the same geometry as first selected feature
                                 t.append([layer, feature, layer.geometryType()])
