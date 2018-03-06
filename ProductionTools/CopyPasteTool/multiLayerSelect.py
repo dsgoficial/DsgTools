@@ -178,10 +178,13 @@ class MultiLayerSelection(QgsMapTool):
         """
         #these layers are ordered by view order
         primitiveDict = dict()
+        firstGeom = self.checkSelectedLayers()
         for lyr in self.iface.legendInterface().layers(): #ordered layers
             #layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
             if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
                 continue
+            if hasControlModifyer and (not firstGeom) and (not primitiveDict.keys() or lyr.geometryType() < firstGeom):
+                firstGeom = lyr.geometryType()
             geomType = lyr.geometryType()
             if geomType not in primitiveDict.keys():
                 primitiveDict[geomType] = []
@@ -189,7 +192,10 @@ class MultiLayerSelection(QgsMapTool):
             if (not hasControlModifyer and e.button() == QtCore.Qt.LeftButton) or (hasControlModifyer and e.button() == QtCore.Qt.RightButton):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
-        return primitiveDict
+        if hasControlModifyer and firstGeom in [0, 1, 2]:
+            return { firstGeom : primitiveDict[firstGeom] }
+        else:
+            return primitiveDict
 
     def selectFeatures(self, e, bbRect=None, hasControlModifyer=False):
         """
@@ -404,13 +410,12 @@ class MultiLayerSelection(QgsMapTool):
                         if e.button() == QtCore.Qt.LeftButton: 
                             # line added to make sure the action is associated with
                             # current loop value.
-                            action.triggered[()].connect(lambda t=[e, selected] : self.selectFeatures(t[0], hasControlModifyer=t[1]))
+                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
                             # to trigger "Hover" signal on QMenu for each feature
                             action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))
                         elif e.button() == QtCore.Qt.RightButton:
                             # remove feature from candidates of selection and set layer for selection
                             action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))
                             t.pop(i-pop)
                             pop += 1
                             continue
