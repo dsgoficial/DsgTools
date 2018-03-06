@@ -43,7 +43,7 @@ class MultiLayerSelection(QgsMapTool):
         3- Right Click: Opens feature form
         4- Control + Right Click: clears selection and set feature's layer as activeLayer. activeLayer's definition
         follows priority of item 1;
-        5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangle are added to selection
+        5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangl'e are added to selection
         """
         self.iface = iface        
         self.canvas = canvas
@@ -63,7 +63,7 @@ class MultiLayerSelection(QgsMapTool):
     
     def keyPressEvent(self, e):
         """
-        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
+        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (Alt).
         """
         if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
             self.cursorChanged = True
@@ -269,7 +269,6 @@ class MultiLayerSelection(QgsMapTool):
         """
         Activate tool.
         """
-        QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
