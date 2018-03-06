@@ -57,7 +57,20 @@ class MultiLayerSelection(QgsMapTool):
         self.rubberBand.setWidth(1)
         self.reset()
         self.blackList = self.getBlackList()
+        self.cursorChanged = False
+        self.cursorChangingHotkey = QtCore.Qt.Key_Alt
         self.menuHovered = False # indicates hovering actions over context menu
+    
+    def keyPressEvent(self, e):
+        """
+        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
+        """
+        if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
+            self.cursorChanged = True
+            QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+        else:
+            self.cursorChanged = False
+            QtGui.QApplication.restoreOverrideCursor()
     
     def getBlackList(self):
         settings = QSettings()
