@@ -134,7 +134,7 @@ class MultiLayerSelection(QgsMapTool):
                 if r is not None:
                     #builds bbRect and select from layer, adding selection
                     bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
-                    layer.select(self.reprojectSearchArea(layer, bbRect), True)
+                    layer.select(bbRect, True)
             self.rubberBand.hide()
 
     def canvasPressEvent(self, e):
@@ -206,7 +206,7 @@ class MultiLayerSelection(QgsMapTool):
         for primitive in primitives:
             for lyr in primitiveDict[primitive]:
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
-                bbRect = self.reprojectSearchArea(lyr, bbRect)
+                # bbRect = self.reprojectSearchArea(lyr, bbRect)
                 for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
                     selectedIds = lyr.selectedFeaturesIds() #list of selected ids
                     featGeom = feat.geometry()
@@ -266,6 +266,8 @@ class MultiLayerSelection(QgsMapTool):
         Selects a given feature on canvas.
         """
         idList = layer.selectedFeaturesIds()
+        self.iface.setActiveLayer(layer)
+        layer.startEditing()
         featId = feature.id()
         if featId not in idList:
             idList.append(featId)
@@ -324,12 +326,12 @@ class MultiLayerSelection(QgsMapTool):
             t = []
             for layer in layers:
                 # iterate over features inside the mouse bounding box 
-                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
-                bbRect = self.reprojectSearchArea(layer, bbRect)
+                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect) #this maps cursor rect to lyr coordinates
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
-                        if geom.intersects(rect):
+                        searchRect = self.reprojectSearchArea(layer, rect)
+                        if geom.intersects(searchRect):
                             t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
             if len(t) > 1:
@@ -381,19 +383,16 @@ class MultiLayerSelection(QgsMapTool):
                     self.openFeatureForm(t[0], t[1])
 
     def reprojectSearchArea(self, layer, geom):
+        #geom always have canvas coordinates
         epsg = self.canvas.mapSettings().destinationCrs().authid()
-        crsSrc = QgsCoordinateReferenceSystem(epsg)
         #getting srid from something like 'EPSG:31983'
         srid = layer.crs().authid()
+        if epsg == srid:
+            return geom
+        crsSrc = QgsCoordinateReferenceSystem(epsg)
         crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
-        lyrType = self.iface.activeLayer().geometryType()
-        newGeom = []
-        geomList = QgsGeometry.fromRect(geom).asPolygon()
-        for j in xrange(len(geomList)):
-            line = geomList[j]
-            for i in xrange(len(line)):
-                point = line[i]
-                newGeom.append(coordinateTransformer.transform(point))
-        return QgsGeometry.fromPolygon([newGeom]).boundingBox()	
+        auxGeom = QgsGeometry.fromRect(geom)
+        auxGeom.transform(coordinateTransformer)
+        return auxGeom.boundingBox()
