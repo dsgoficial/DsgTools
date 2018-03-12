@@ -1612,19 +1612,19 @@ class PostGISSqlGenerator(SqlGenerator):
         CREATE OR REPLACE VIEW validation.filtered_flags AS 
         SELECT * FROM validation.aux_flags_validacao
         """
-        whereClause = ""
+        whereClause = ";"
         # problemas com o Enum.
         if 'process' in filterType.lower():
             filterTypeEnum = 0
         elif filterType:
             filterTypeEnum = 1            
         if filterTypeEnum == DsgEnums.ProcessName: 
-            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
+            whereClause = " WHERE process_name = '{0}'".format(filteredElement)
         elif filterTypeEnum == DsgEnums.ClassName:
-            whereClause = " WHERE layer = '{0}';".format(filteredElement)
+            whereClause = " WHERE layer = '{0}'".format(filteredElement)
         if filteredElement and filteredElement <> '':
             sql = sql + whereClause
-        return sql
+        return sql + ' ORDER BY id;'
     
     def checkCoverageForGaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
         tableSchema, tableName = table.split('.')
