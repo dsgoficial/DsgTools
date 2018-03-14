@@ -5419,7 +5419,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="558"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="559"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -5450,7 +5450,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="581"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="582"/>
         <source>Select Stored Config (optional)</source>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
@@ -5465,7 +5465,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Reclassificação do DsgTools</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="558"/>
+        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="559"/>
         <source>{} features reclassified with success!</source>
         <translation>{} feições reclassificadas com sucesso!</translation>
     </message>
@@ -10451,7 +10451,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Banco de dados vazio</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="78"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="79"/>
         <source>Process executed successfully!</source>
         <translation>Processo executado com sucesso!</translation>
     </message>
@@ -10466,12 +10466,12 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="59"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="60"/>
         <source>Preparing execution for </source>
         <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="65"/>
+        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="66"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
@@ -12430,44 +12430,49 @@ Camada</translation>
         <translation>Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="209"/>
+        <location filename="../ValidationTools/validationManager.py" line="212"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="209"/>
+        <location filename="../ValidationTools/validationManager.py" line="212"/>
         <source>It seems that process {0} is already running. Would you like to ignore it and start another process?</source>
         <translation>Parace que o processo {0} está rodando. Você gostaria de ignorá-lo e rodar outro processo?</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="220"/>
+        <location filename="../ValidationTools/validationManager.py" line="223"/>
         <source>Process parameters setter for process {0}</source>
         <translation>Seletor de parâmetros para o processo {0}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="210"/>
+        <location filename="../ValidationTools/validationManager.py" line="213"/>
         <source>Unable to run process {0}. Process {1} is already running.
 </source>
         <translation>Não foi possível rodar o processo {0}. O processo {1} já está rodando.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="167"/>
+        <location filename="../ValidationTools/validationManager.py" line="170"/>
         <source>Process {0} Log:
 </source>
         <translation>Log do Processo {0}:
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="173"/>
+        <location filename="../ValidationTools/validationManager.py" line="176"/>
         <source>Process {0} ran with status {1}
 </source>
         <translation>Processo {0} rodou com status {1}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="185"/>
+        <location filename="../ValidationTools/validationManager.py" line="188"/>
         <source>Process parameters setter for process(es) {0}</source>
         <translation>Ajustador de parâmetros de processo(s) {0}</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/validationManager.py" line="158"/>
+        <source>Spatial Rule Checker</source>
+        <translation>Verificador de regras espaciais</translation>
     </message>
 </context>
 <context>

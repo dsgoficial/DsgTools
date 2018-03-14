@@ -141,8 +141,8 @@ class ProcessParametersDialog(QtGui.QDialog):
         layout.addWidget(scrollArea)
         layout.addWidget(buttons)
         self.setLayout(layout)
-
-        _firstWidget.setFocus()
+        if _firstWidget:
+            _firstWidget.setFocus()
 
     def accept(self):
         """
