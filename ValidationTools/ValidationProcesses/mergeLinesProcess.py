@@ -104,7 +104,7 @@ class MergeLinesProcess(ValidationProcess):
                         if not feat[column]:
                             attributes.append('')
                         else:
-                            attributes.append('{}'.format(feat[column]))
+                            attributes.append(u'{}'.format(feat[column]))
                     # making a string out of the key
                     attributes = ''.join(attributes)
                     if attributes not in featuresDict.keys():
