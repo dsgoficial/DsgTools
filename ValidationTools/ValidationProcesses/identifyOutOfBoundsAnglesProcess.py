@@ -23,14 +23,16 @@
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(IdentifyOutOfBoundsAnglesProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
+        self.geometryHandler = DsgGeometryHandler(iface, parent = iface.mapCanvas())
         
         if not self.instantiating:
             # getting tables with elements
@@ -61,20 +63,14 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom, selectedFeatures = self.parameters['Only Selected'])
-                tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
-                localProgress.step()
-                
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
+                result = self.geometryHandler.getOutOfBoundsAngleList(lyr, tol, onlySelected = self.parameters['Only Selected'])
                 localProgress.step()
-                result = self.abstractDb.getOutOfBoundsAnglesRecords(tableSchema, tableName, tol, classAndGeom['geom'], classAndGeom['geomType'], keyColumn)
+                
                 localProgress.step()
 
-                # dropping temp table
-                self.abstractDb.dropTempTable(processTableName)
                 
                 # storing flags
                 if len(result) > 0:
