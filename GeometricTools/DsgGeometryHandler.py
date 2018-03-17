@@ -41,21 +41,11 @@ class DsgGeometryHandler(QObject):
         else:
             return featureList
     
-    def getOutOfBoundsAngle(self, geom, angle):
-        outOfBoundsList = []
-        geomV2 = geom.geometry()
-        for iPart in xrange(geomV2.partCount()):
-            for iRing in xrange(geomV2.ringCount(iPart)):
-                nVerts = geomV2.vertexCount(iPart, iRing)
-                for i in xrange(nVerts):
-                    if geom.angleAtVertex(i) < angle:
-                        outOfBoundsList.append(geom.vertexAt(i))
-        return outOfBoundsList
-    
-    def getOutOfBoundsAngleList(self, lyr, angle, onlySelected = False):
-        featureList, size = self.getFeatures(lyr, onlySelected = onlySelected)
-        outOfBoundsList = []
-        for feat in featureList:
-            outOfBoundsList += self.getOutOfBoundsAngle(feat.geometry(), angle)
-        return outOfBoundsList
-                        
+    def getClockWiseList(self, pointList):
+        pointSum = 0
+        for i in xrange(len(pointList) - 1):
+            pointSum += (pointList[i+1].x() - pointList[i].x())*(pointList[i+1].y() + pointList[i].y())
+        if pointSum > 0:
+            return pointList
+        else:
+            return pointList[::-1]
