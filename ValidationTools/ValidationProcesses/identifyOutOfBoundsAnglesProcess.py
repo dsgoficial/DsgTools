@@ -53,10 +53,10 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             for i in xrange(nVertex):
                 vertexAngle = (linearRing[i].azimuth(linearRing[(i-1)%nVertex]) - linearRing[i].azimuth(linearRing[(i+1)%nVertex]) + 360) % 360
                 if vertexAngle % 360 < angle:
-                    geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
+                    geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
                     outOfBoundsList.append(geomDict)
                 elif 360 - vertexAngle < angle:
-                    geomDict = {'angle': (360 - vertexAngle)  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
+                    geomDict = {'angle': (360 - vertexAngle)  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
                     outOfBoundsList.append(geomDict)
     
     def getOutOfBoundsAngleInLine(self, feat, geometry_column, part, angle, outOfBoundsList):
