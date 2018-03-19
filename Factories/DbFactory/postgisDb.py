@@ -1759,7 +1759,7 @@ class PostgisDb(AbstractDb):
         for feat in featureMap.values():
             if not attributes:
                 # getting only provider fields (we ignore expression fields - type = 6)
-                attributes = [field.name() for field in feat.fields() if field.type() != 6]
+                attributes = [field.name() for field in feat.fields() if field.type() != 6 and field.fieldName() != '']
             # getting keyColumn idx
             keyIdx = feat.fieldNameIndex(keyColumn)
             # getting only the needed attribute values
