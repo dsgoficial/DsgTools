@@ -1,2 +1,3 @@
 cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_floresta_a,1..*
 cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_campo_a,1..*
+cb.adm_area_pub_civil_a,0_deve (ser),0_igual,cb.adm_area_pub_civil_a,

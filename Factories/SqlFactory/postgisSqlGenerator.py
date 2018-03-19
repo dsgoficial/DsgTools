@@ -1495,7 +1495,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAttributesFromTable(self, tableSchema, tableName, typeFilter = []):
-        if typeFilter <> []:
+        if typeFilter != []:
             whereClause = """ and data_type in ('{0}') """.format("','".join(typeFilter))
         else:
             whereClause = """"""
@@ -1700,11 +1700,17 @@ class PostGISSqlGenerator(SqlGenerator):
         ); """
         return sql
 
-    def populateCompactValidationHistoryQuery(self, log):
+    def populateCompactValidationHistoryQuery(self, logList):
         """
         Returns the query for compact validation history table population.
+        :param logList: either a list of logs or a log line [id, process_name, log_text, status, finished_timestamp]
         """
         sql = ""
-        sql += """INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES (%s, \'%s\', \'%s\', %s, \'%s\');"""\
-        % (log[0], log[1], log[2].replace(r"\n", "\n"), log[3], str(log[4].toPyDateTime()))
+        if isinstance(logList, list):
+            for log in logList:
+                sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
+                format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
+        elif logList:
+            sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
+                format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
         return sql
