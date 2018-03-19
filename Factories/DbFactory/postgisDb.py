@@ -1765,10 +1765,10 @@ class PostgisDb(AbstractDb):
             # getting only the needed attribute values
             values = []
             for field in attributes:
-                if field.name() == keyColumn:
+                if field == keyColumn:
                     values.append(feat.id())
                 else:
-                    values.append(feat.attribute(fieldname))
+                    values.append(feat.attribute(field))
             if not feat.geometry():
                 continue
             geometry = binascii.hexlify(feat.geometry().asWkb())
