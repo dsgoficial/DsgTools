@@ -23,6 +23,6 @@
 
 from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
 
-class FlippingLineTool(MultiLayerSelection):
+class FlipLineTool(MultiLayerSelection):
     def __init__(self):
         pass

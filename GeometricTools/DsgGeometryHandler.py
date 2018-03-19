@@ -49,3 +49,24 @@ class DsgGeometryHandler(QObject):
             return pointList
         else:
             return pointList[::-1]
+
+    def reprojectFeature(self, geom, canvasCrs):
+        """
+        Reprojects geom from the canvas crs to the reference crs
+        geom: geometry to be reprojected
+        canvasCrs: canvas crs (from crs)
+        """
+        destCrs = self.reference.crs()
+        if canvasCrs.authid() != destCrs.authid():
+            coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
+            geom.transform(coordinateTransformer)
+    
+    def flipLine(self, feature):
+        """
+        Inverts the flow from a given feature.
+        :param feature: feature to be flipped.
+        :returns: flipped feature.
+        """
+        geom = feature.geometry()
+        x = geom.asPolyline()
+        print len(x), x

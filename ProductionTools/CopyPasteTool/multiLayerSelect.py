@@ -373,10 +373,22 @@ class MultiLayerSelection(QgsMapTool):
                     geom = layer.geometryType()
                     continue
         return geom
+    
+    def addActionToMenu(self, action, onTriggeredAction, onHoveredAction=None):
+        """
+        Adds action the command to the action. If onHoveredAction is given, signal "hovered" is applied with given action.
+        :param action: QAction associated with target context menu
+        :param onTriggeredAction: action to be executed when the given action is triggered
+        :param onHoveredAction: action to be executed whilst the given action is hovered
+        """
+        action.triggered[()].connect(onTriggeredAction)
+        if onHoveredAction:
+            action.hovered[()].connect(onHoveredAction)
 
     def createContextMenu(self, e):
         """
-        Creates the context menu for overlapping layers
+        Creates the context menu for overlapping layers.
+        :param e: mouse event caught from canvas.
         """  
         selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         if selected:
@@ -424,32 +436,33 @@ class MultiLayerSelection(QgsMapTool):
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
                     # handling CTRL key and left/right click actions
-                    if selected:
-                        if e.button() == QtCore.Qt.LeftButton: 
-                            # line added to make sure the action is associated with
-                            # current loop value.
-                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
-                            # to trigger "Hover" signal on QMenu for each feature
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))
-                        elif e.button() == QtCore.Qt.RightButton:
+                    if e.button() == QtCore.Qt.LeftButton: 
+                            # line added to make sure the action is associated with current loop value,
+                            # lambda function is used with standard parameter set to current loops value.
+                            triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
+                            hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
+                    elif e.button() == QtCore.Qt.RightButton:
+                        if selected:                        
+                            triggeredAction = lambda layer=layer : self.iface.setActiveLayer(layer)
+                            hoveredAction = None
                             # remove feature from candidates of selection and set layer for selection
-                            action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
                             t.pop(i-pop)
                             pop += 1
                             continue
-                    else:
-                        if e.button() == QtCore.Qt.LeftButton:
-                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))     
-                        elif e.button() == QtCore.Qt.RightButton:
-                            action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))
+                        else:
+                            triggeredAction = lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                            hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
+                    self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                # setting the action for the "All" options
                 if e.button() == QtCore.Qt.LeftButton:
-                    genericAction = menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
+                    action = menu.addAction(self.tr('Select All'))
+                    triggeredAction = lambda t=t: self.setSelectionListFeature(t)
                 else:
-                    genericAction = menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))
+                    action = menu.addAction(self.tr('Open All Attribute Tables'))
+                    triggeredAction = lambda t=t: self.openMultipleFeatureForm(t)
                 # to trigger "Hover" signal on QMenu for the multiple options
-                genericAction.hovered[()].connect(lambda t=t : self.createMultipleRubberBand(featureList=t))
+                hoveredAction = lambda t=t : self.createMultipleRubberBand(featureList=t)
+                self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 t = t[0]
