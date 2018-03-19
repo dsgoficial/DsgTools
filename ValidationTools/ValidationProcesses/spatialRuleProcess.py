@@ -78,8 +78,7 @@ class SpatialRuleProcess(ValidationProcess):
                 min_card = cardinality.split('..')[0]
                 max_card = cardinality.split('..')[1]
             else:
-                min_card = -1
-                max_card = 99999999            
+                min_card = max_card = None         
             rule = split[1]+' '+split[2]
             ret.append((layer1, necessity, predicate, layer2, min_card, max_card, rule))
             
