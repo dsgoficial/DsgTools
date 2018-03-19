@@ -1759,13 +1759,16 @@ class PostgisDb(AbstractDb):
         for feat in featureMap.values():
             if not attributes:
                 # getting only provider fields (we ignore expression fields - type = 6)
-                attributes = [field.name() for field in feat.fields() if field.type() != 6 and field.typeName() != '']
+                attributes = [field.name() for field in feat.fields() if field.type() != 6]
             # getting keyColumn idx
             keyIdx = feat.fieldNameIndex(keyColumn)
             # getting only the needed attribute values
-            values = [feat.attribute(fieldname) for fieldname in attributes]
-            # setting the feature id
-            values[keyIdx] = feat.id()
+            values = []
+            for field in attributes:
+                if field.name() == keyColumn:
+                    values.append(feat.id())
+                else:
+                    values.append(feat.attribute(fieldname))
             if not feat.geometry():
                 continue
             geometry = binascii.hexlify(feat.geometry().asWkb())
