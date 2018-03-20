@@ -62,6 +62,7 @@ from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDia
 from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
 from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
+from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
 
 from qgis.utils import showPluginHelp
 try:
@@ -127,6 +128,7 @@ class DsgTools:
         self.copyPasteTool = CopyPasteTool(iface)
         self.acquisition = Acquisition(iface)
         self.freeHandAcquisiton = FreeHandMain(iface)
+        self.flipLineTool = FlipLine(iface.mapCanvas(), iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -655,13 +657,13 @@ class DsgTools:
         action = self.add_action(
             icon_path,
             text=self.tr('DSGTools: Flip Line Tool'),
-            callback=self.copyPasteTool.selectFlip,
+            callback=self.flipLineTool.selectFlipLine,
             parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
         productiontools.addAction(action)
         self.toolbar.addAction(action)
-        self.copyPasteTool.setSelectorAction(action)
+        self.flipLineTool.setAction(action)
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
         action.setToolTip(self.tr("DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool."))

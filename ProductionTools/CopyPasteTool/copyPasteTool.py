@@ -17,7 +17,6 @@ class CopyPasteTool:
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool1 = MultiLayerSelection(self.iface.mapCanvas(), self.iface)
-        self.tool2 = FlipLine(self.iface.mapCanvas(), self.iface)
         self.iface.actionToggleEditing().triggered.connect(self.closeCursor)
         self.selectorAction = None
 
@@ -32,9 +31,6 @@ class CopyPasteTool:
                               
     def selectMulti(self):
         self.iface.mapCanvas().setMapTool(self.tool1)
-
-    def selectFlip(self):
-        self.iface.mapCanvas().setMapTool(self.tool2)
 
     def copyPaste(self):
         if (self.iface.activeLayer()) and (len(self.iface.activeLayer().selectedFeatures()) == 1):
