@@ -80,6 +80,17 @@ class FlipLine(MultiLayerSelection):
                     layer.select(bbRect, True)
             self.rubberBand.hide()
 
+    def getAllSelectedFeatures(self):
+        """
+        Gets all selected lines on canvas.
+        """
+        selection = []
+        for layer in self.iface.legendInterface().layers():
+            if (not isinstance(layer, QgsVectorLayer)) or layer.geometryType() != 1:
+                return
+            selection += layer.selectedFeatures()
+        return selection
+
     def createContextMenu(self, e):
         """
         Reimplementation of parent method.
@@ -90,8 +101,13 @@ class FlipLine(MultiLayerSelection):
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
+        # getting all features that are already selected on canvas
+        layers = self.getAllSelectedFeatures()
         # only line should be dealt with by this tool
-        layers = layerList[1]
+        if 1 in layerList.keys():
+            layers += layerList[1]
+        else:
+            return
         if layers:
             menu = QtGui.QMenu()
             rect = self.getCursorRect(e)
@@ -137,12 +153,8 @@ class FlipLine(MultiLayerSelection):
                             hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # setting the action for the "All" options
-                if e.button() == QtCore.Qt.LeftButton:
-                    action = menu.addAction(self.tr('Select All'))
-                    triggeredAction = lambda t=t: self.setSelectionListFeature(t)
-                else:
-                    action = menu.addAction(self.tr('Open All Attribute Tables'))
-                    triggeredAction = lambda t=t: self.openMultipleFeatureForm(t)
+                action = menu.addAction(self.tr('Invert All Lines'))
+                triggeredAction = lambda t=t: self.invertListFeature(t)
                 # to trigger "Hover" signal on QMenu for the multiple options
                 hoveredAction = lambda t=t : self.createMultipleRubberBand(featureList=t)
                 self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
