@@ -32,15 +32,23 @@ from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSe
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class FlipLine(MultiLayerSelection):
+    """
+    Tool expected behaviour:
+    1- Right Click: selects the clicked feature (only lines)
+    2- Ctrl+ Right Click: 
+    """
     def __init__(self, canvas, iface):
         super(FlipLine, self).__init__(canvas, iface)
 
     def selectFlipLine(self):
+        """
+        Method for instantiating tool.
+        """
         self.iface.mapCanvas().setMapTool(FlipLine(self.iface.mapCanvas(), self.iface))
 
     def activate(self):
         """
-        Activate tool.
+        Activates tool.
         """
         if self.toolAction:
             self.toolAction.setChecked(True)
@@ -87,9 +95,26 @@ class FlipLine(MultiLayerSelection):
         selection = []
         for layer in self.iface.legendInterface().layers():
             if (not isinstance(layer, QgsVectorLayer)) or layer.geometryType() != 1:
-                return
-            selection += layer.selectedFeatures()
+                continue
+            for feat in layer.selectedFeatures():
+                selection.append([layer, feat, layer.geometryType()])
         return selection
+
+    def flipLine(self, layer, line):
+        """
+        Flips the given line.
+        :param layer: layer containing the target feature
+        :param line: target feature to be flipped 
+        """
+        print "INVERTEU {} (id={})!".format(layer.name(), line.id())
+
+    def flipLineList(self, lineList):
+        """
+        Flips all lines in a given list.
+        :param lineList: a list os items as of [layer, line_feature, geometry_type]
+        """
+        for item in lineList:
+             self.flipLine(layer=item[0], line=item[1])
 
     def createContextMenu(self, e):
         """
@@ -97,22 +122,21 @@ class FlipLine(MultiLayerSelection):
         :param e: mouse event caught from canvas
         """ 
         selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
-        if selected:
-            firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
         # getting all features that are already selected on canvas
-        layers = self.getAllSelectedFeatures()
+        t = self.getAllSelectedFeatures()
         # only line should be dealt with by this tool
         if 1 in layerList.keys():
-            layers += layerList[1]
-        else:
+            layers = layerList[1]
+        elif not layers:
             return
         if layers:
             menu = QtGui.QMenu()
             rect = self.getCursorRect(e)
-            t = []
             for layer in layers:
+                if not isinstance(layer, QgsVectorLayer):
+                    continue
                 # iterate over features inside the mouse bounding box 
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
@@ -141,30 +165,21 @@ class FlipLine(MultiLayerSelection):
                             triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
                             hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     elif e.button() == QtCore.Qt.RightButton:
-                        if selected:                        
-                            triggeredAction = lambda layer=layer : self.iface.setActiveLayer(layer)
-                            hoveredAction = None
-                            # remove feature from candidates of selection and set layer for selection
-                            t.pop(i-pop)
-                            pop += 1
-                            continue
-                        else:
-                            triggeredAction = lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False)
-                            hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
+                        triggeredAction = lambda t=t[i] : self.flipLine(layer=t[0], line=t[1])
+                        hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # setting the action for the "All" options
                 action = menu.addAction(self.tr('Invert All Lines'))
-                triggeredAction = lambda t=t: self.invertListFeature(t)
+                triggeredAction = lambda t=t: self.flipLineList(lineList=t)
                 # to trigger "Hover" signal on QMenu for the multiple options
                 hoveredAction = lambda t=t : self.createMultipleRubberBand(featureList=t)
                 self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 t = t[0]
-                selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
                 if e.button() == QtCore.Qt.LeftButton:
                     self.selectFeatures(e, hasControlModifyer = selected)
                 elif selected:
                     self.iface.setActiveLayer(t[0])
                 else:
-                    self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                    self.flipLine(layer=t[0], line=t[1])
