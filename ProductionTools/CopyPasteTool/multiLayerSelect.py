@@ -289,9 +289,8 @@ class MultiLayerSelection(QgsMapTool):
 
     def setSelectionListFeature(self, listLayerFeature):
         """
-        Selects all features in a given list on canvas.
-        
-        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        Selects all features in a given list on canvas.        
+        :param listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
         """
         for item in listLayerFeature:
             self.setSelectionFeature(item[0], item[1])
@@ -300,8 +299,7 @@ class MultiLayerSelection(QgsMapTool):
     def openMultipleFeatureForm(self, listLayerFeature):
         """
         Opens all features Attribute Tables of a given list.
-        
-        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        :param listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
         """
         for item in listLayerFeature:
             self.iface.openFeatureForm(item[0], item[1], showModal=False)
@@ -309,7 +307,6 @@ class MultiLayerSelection(QgsMapTool):
     def filterStrongestGeometry(self, listLayerFeature):
         """
         Filter a given list of features for its strongest geometry
-
         :param listLayerFeature: a list os items as of [layer, feature, geometry_type]
         :return: a list [layer, feature]
         """
