@@ -10,12 +10,14 @@ from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, QSize
 from PyQt4.QtGui import QIcon, QMessageBox, QCursor, QPixmap, QAction
 from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
 from DsgTools.ProductionTools.CopyPasteTool.interface_copyPaste import CopyPaste
+from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
 
 class CopyPasteTool:
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool1 = MultiLayerSelection(self.iface.mapCanvas(), self.iface)
+        self.tool2 = FlipLine(self.iface.mapCanvas(), self.iface)
         self.iface.actionToggleEditing().triggered.connect(self.closeCursor)
         self.selectorAction = None
 
@@ -30,7 +32,10 @@ class CopyPasteTool:
                               
     def selectMulti(self):
         self.iface.mapCanvas().setMapTool(self.tool1)
-           
+
+    def selectFlip(self):
+        self.iface.mapCanvas().setMapTool(self.tool2)
+
     def copyPaste(self):
         if (self.iface.activeLayer()) and (len(self.iface.activeLayer().selectedFeatures()) == 1):
             layer = self.iface.activeLayer().selectedFeatures()[0]

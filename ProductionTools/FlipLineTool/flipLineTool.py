@@ -23,6 +23,18 @@
 
 from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
 
-class FlipLineTool(MultiLayerSelection):
-    def __init__(self):
+class FlipLine(MultiLayerSelection):
+    def __init__(self, canvas, iface):
+        super(FlipLine, self).__init__(canvas, iface)
+        print 'done'
+
+    def activate(self):
+        """
+        Activate tool.
+        """
+        if self.toolAction:
+            self.toolAction.setChecked(True)
+        QgsMapTool.activate(self)
+
+    def deactivate(self):
         pass
