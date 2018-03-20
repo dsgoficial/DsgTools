@@ -651,6 +651,21 @@ class DsgTools:
         self.iface.registerMainWindowAction(action, '')
         action.setToolTip(self.tr("DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband."))
         
+        icon_path = ':/plugins/DsgTools/icons/flipLineTool.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Flip Line Tool'),
+            callback=self.copyPasteTool.selectFlip,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+        self.copyPasteTool.setSelectorAction(action)
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
+        action.setToolTip(self.tr("DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool."))
+
         icon_path = ':/plugins/DsgTools/icons/home.png'
         action = self.add_action(
             icon_path,
@@ -664,7 +679,7 @@ class DsgTools:
         self.acquisition.setPolygonAction(action)
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
-        action.setToolTip(self.tr("DSGTools: Right Degree Angle Digitizing\nControl modifyer: disables tool while control is pressed."))
+        action.setToolTip(self.tr("DSGTools: Right Degree Angle Digitizing\nControl modifier: disables tool while control is pressed."))
 
         icon_path = ':/plugins/DsgTools/icons/circle.png'
         action = self.add_action(
