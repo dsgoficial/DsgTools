@@ -22,12 +22,9 @@
 """
 
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI, QgsVectorLayer
+from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI, QgsVectorLayer, QgsMessageLog
 from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QColor, QMenu, QCursor
 
-import numpy as np
-from PyQt4.QtCore import Qt
 from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
@@ -39,12 +36,26 @@ class FlipLine(MultiLayerSelection):
     """
     def __init__(self, canvas, iface):
         super(FlipLine, self).__init__(canvas, iface)
+        self.DsgGeometryHandler = DsgGeometryHandler(canvas, iface)
 
-    def selectFlipLine(self):
+    def flipSelectedLines(self):
         """
         Method for instantiating tool.
-        """
-        self.iface.mapCanvas().setMapTool(FlipLine(self.iface.mapCanvas(), self.iface))
+        """        
+        # get all selected features and remove all features that are not lines
+        selectedFeatures = self.getAllSelectedFeatures()
+        pop = 0
+        for idx, item in enumerate(selectedFeatures):
+            if item[2] != 1:
+                selectedFeatures.pop(idx-pop)
+                pop += 1
+        # if not selectedFeatures:
+        #     QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr("There are no lines selected!"))
+        #     QgsMessageLog.logMessage(self.tr('Error flipping lines (did you select lines to be flipped?)'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        #     return
+        # call the method for flipping features from geometry module
+        flippedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures)
+        print [line.id() for line in flippedLines]
 
     def activate(self):
         """
@@ -90,7 +101,7 @@ class FlipLine(MultiLayerSelection):
 
     def getAllSelectedFeatures(self):
         """
-        Gets all selected lines on canvas.
+        Reimplemented for parent class. Gets all selected lines on canvas.
         """
         selection = []
         for layer in self.iface.legendInterface().layers():
@@ -111,14 +122,14 @@ class FlipLine(MultiLayerSelection):
     def flipLineList(self, lineList):
         """
         Flips all lines in a given list.
-        :param lineList: a list os items as of [layer, line_feature, geometry_type]
+        :param lineList: a list os items as of [layer, line_feature[, geometry_type]]
         """
         for item in lineList:
              self.flipLine(layer=item[0], line=item[1])
-
+            
     def createContextMenu(self, e):
         """
-        Reimplementation of parent method.
+        Reimplementation of parent method. Context Menu created to support feature selection.
         :param e: mouse event caught from canvas
         """ 
         selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
@@ -157,20 +168,18 @@ class FlipLine(MultiLayerSelection):
                     else:
                         db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
-                    action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
+                    action = menu.addAction(s)
                     # handling CTRL key and left/right click actions
                     if e.button() == QtCore.Qt.LeftButton: 
                             # line added to make sure the action is associated with current loop value,
                             # lambda function is used with standard parameter set to current loops value.
-                            triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
+                            triggeredAction = lambda t=t[i] : self.setSelectionFeature(layer=t[0], feature=t[1], selectAll=selected)
                             hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
-                    elif e.button() == QtCore.Qt.RightButton:
-                        triggeredAction = lambda t=t[i] : self.flipLine(layer=t[0], line=t[1])
-                        hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # setting the action for the "All" options
-                action = menu.addAction(self.tr('Invert All Lines'))
-                triggeredAction = lambda t=t: self.flipLineList(lineList=t)
+                if e.button() == QtCore.Qt.LeftButton:
+                    action = menu.addAction(self.tr('Select All Lines'))
+                    triggeredAction = lambda t=t: self.setSelectionListFeature(listLayerFeature=t)
                 # to trigger "Hover" signal on QMenu for the multiple options
                 hoveredAction = lambda t=t : self.createMultipleRubberBand(featureList=t)
                 self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
@@ -179,7 +188,3 @@ class FlipLine(MultiLayerSelection):
                 t = t[0]
                 if e.button() == QtCore.Qt.LeftButton:
                     self.selectFeatures(e, hasControlModifyer = selected)
-                elif selected:
-                    self.iface.setActiveLayer(t[0])
-                else:
-                    self.flipLine(layer=t[0], line=t[1])

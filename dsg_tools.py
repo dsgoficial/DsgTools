@@ -657,7 +657,7 @@ class DsgTools:
         action = self.add_action(
             icon_path,
             text=self.tr('DSGTools: Flip Line Tool'),
-            callback=self.flipLineTool.selectFlipLine,
+            callback=self.flipLineTool.flipSelectedLines,
             parent=productiontools,
             add_to_menu=False,
             add_to_toolbar=False)
