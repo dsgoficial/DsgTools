@@ -36,7 +36,7 @@ class FlipLine(MultiLayerSelection):
     """
     def __init__(self, canvas, iface):
         super(FlipLine, self).__init__(canvas, iface)
-        self.DsgGeometryHandler = DsgGeometryHandler(canvas, iface)
+        self.DsgGeometryHandler = DsgGeometryHandler(iface)
 
     def flipSelectedLines(self):
         """
@@ -49,13 +49,13 @@ class FlipLine(MultiLayerSelection):
             if item[2] != 1:
                 selectedFeatures.pop(idx-pop)
                 pop += 1
-        # if not selectedFeatures:
-        #     QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr("There are no lines selected!"))
-        #     QgsMessageLog.logMessage(self.tr('Error flipping lines (did you select lines to be flipped?)'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        #     return
+        if not selectedFeatures:
+            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr("There are no lines selected!"))
+            QgsMessageLog.logMessage(self.tr('Error flipping lines (did you select lines to be flipped?)'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return
         # call the method for flipping features from geometry module
         flippedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures)
-        print [line.id() for line in flippedLines]
+        print [line[1].id() for line in flippedLines]
 
     def activate(self):
         """
