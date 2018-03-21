@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI, QgsVectorLayer, QgsMessageLog
 from PyQt4 import QtCore, QtGui
 
@@ -50,8 +50,9 @@ class FlipLine(MultiLayerSelection):
                 selectedFeatures.pop(idx-pop)
                 pop += 1
         if not selectedFeatures:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr("There are no lines selected!"))
-            QgsMessageLog.logMessage(self.tr('Error flipping lines (did you select lines to be flipped?)'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.iface.messageBar().pushMessage(self.tr('Error!'), self.tr('There are no lines selected!'), level=QgsMessageBar.CRITICAL, duration=3)
+            # QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr("There are no lines selected!"))
+            # QgsMessageLog.logMessage(self.tr('Error flipping lines (did you select lines to be flipped?)'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
         # call the method for flipping features from geometry module
         flippedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures)
@@ -62,8 +63,12 @@ class FlipLine(MultiLayerSelection):
         Activates tool.
         """
         if self.toolAction:
-            self.toolAction.setChecked(True)
-        QgsMapTool.activate(self)
+            self.toolAction.setChecked(False)
+        # QgsMapTool.activate(self)
+    
+    def setAction(self, action):
+        self.toolAction = action
+        # self.toolAction.setCheckable(True)
 
     def checkSelectedLayers(self):
         """
