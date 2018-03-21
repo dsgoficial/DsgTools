@@ -61,12 +61,40 @@ class DsgGeometryHandler(QObject):
             coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
             geom.transform(coordinateTransformer)
 
-    def flipLine(self, feature):
+    def flipFeature(self, layer, feature):
         """
-        Inverts the flow from a given feature.
+        Inverts the flow from a given feature. THE GIVEN FEATURE IS ALTERED.
+        :param layer: layer containing the target feature for flipping.
         :param feature: feature to be flipped.
         :returns: flipped feature.
         """
         geom = feature.geometry()
-        x = geom.asPolyline()
-        print len(x), x
+        nodes = geom.asPolyline()
+        flippedFeatureGeom = QgsGeometry.fromPolyline(nodes.reverse())
+        layer.changeGeometry(feature.id(), flippedFeatureGeom)
+        return flippedFeatureGeom
+    
+    # MISSING REPROJECTION
+    def flipFeatureList(self, featureList, debugging=False):
+        """
+        Inverts the flow from all features of a given list. ALL GIVEN FEATURES ARE ALTERED.
+        :param featureList: list of features to be flipped ([layer, feature[, geometry_type]).
+        :param debugging: optional parameter to indicate whether or not a list of features that failed
+                          to be reversed should be returner. 
+        :returns: list of flipped features.
+        """
+        reversedFeatureList = []
+        failedFeatureList = []
+        for item in featureList:
+            layer, feature = item[0], item[1]
+            if not isinstance(layer, QgsVectorLayer):
+                # ignore non-vector layers.
+                continue
+            try:
+                reversedFeatureList.append(self.flipFeature(layer, feature))
+            except:
+                failedFeatureList.append(self.flipFeature(layer, feature))
+        if debugging and failedFeatureList:
+            return reversedFeatureList, failedFeatureList
+        else:
+            return reversedFeatureList
