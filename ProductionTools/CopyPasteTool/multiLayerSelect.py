@@ -273,35 +273,37 @@ class MultiLayerSelection(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
 
-    def setSelectionFeature(self, layer, feature):
+    def setSelectionFeature(self, layer, feature, selectAll=False):
         """
-        Selects a given feature on canvas.
+        Selects a given feature on canvas. 
+        :param layer: layer containing the target feature
+        :param feature: taget feature to be selected
+        :param selectAll: boolean indicating whether or not this fuction was called from a select all command
+                          so it doesn't remove selection from those that are selected already from the list
         """
         layer.startEditing()
         idList = layer.selectedFeaturesIds()
         featId = feature.id()
         if featId not in idList:
             idList.append(featId)
-        else:
+        elif not selectAll:
             idList.pop(idList.index(featId))
         layer.setSelectedFeatures(idList)
         return 
 
     def setSelectionListFeature(self, listLayerFeature):
         """
-        Selects all features in a given list on canvas.
-        
-        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        Selects all features in a given list on canvas.        
+        :param listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
         """
         for item in listLayerFeature:
-            self.setSelectionFeature(item[0], item[1])
+            self.setSelectionFeature(layer=item[0], feature=item[1], selectAll=True)
         return
 
     def openMultipleFeatureForm(self, listLayerFeature):
         """
         Opens all features Attribute Tables of a given list.
-        
-        arg listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
+        :param listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
         """
         for item in listLayerFeature:
             self.iface.openFeatureForm(item[0], item[1], showModal=False)
@@ -309,7 +311,6 @@ class MultiLayerSelection(QgsMapTool):
     def filterStrongestGeometry(self, listLayerFeature):
         """
         Filter a given list of features for its strongest geometry
-
         :param listLayerFeature: a list os items as of [layer, feature, geometry_type]
         :return: a list [layer, feature]
         """
@@ -373,10 +374,63 @@ class MultiLayerSelection(QgsMapTool):
                     geom = layer.geometryType()
                     continue
         return geom
+    
+    def addActionToMenu(self, action, onTriggeredAction, onHoveredAction=None):
+        """
+        Adds action the command to the action. If onHoveredAction is given, signal "hovered" is applied with given action.
+        :param action: QAction associated with target context menu
+        :param onTriggeredAction: action to be executed when the given action is triggered
+        :param onHoveredAction: action to be executed whilst the given action is hovered
+        """
+        action.triggered[()].connect(onTriggeredAction)
+        if onHoveredAction:
+            action.hovered[()].connect(onHoveredAction)
+
+    # def createMenuDict(self, featureList):
+    #     """
+    #     Creates a dictionary ({ (str)Layer_Name : [(int)feature_id] }) from a given list
+    #     :param featureList: a list os items as of [layer, feature[, geometry_type]]
+    #     """
+    #     menuDict = dict()
+    #     for item in featureList:
+    #         if item[0].name() not in menuDict.keys():
+    #             menuDict[item[0].name()] = [item[1].id()]
+    #         else:
+    #             menuDict[item[0].name()].append(item[1].id())
+    #     return menuDict
+
+    # def setContextMenuStyle(self, dictMenuSelected, dictMenuNotSelected):
+    #     """
+    #     Defines how many "submenus" the context menu should have.
+    #     There are 3 context menu scenarios to be handled:
+    #     1- both dicts are filled and context menu should have 2 "submenus" - DB.Classes > Selected / Not Selected > Feature IDs;
+    #     2- one of them is filled and there are more than 1 class to be enlisted (1 submenu necessary) - DB.Class > Feature IDs; and
+    #     3- one of them is filled and there is only one class with features selected - DB.Class (feat_id = NR)
+    #     """
+    #     # finding out filling conditions
+    #     selectedDict = bool(dictMenuSelected)
+    #     notSelectedDict = bool(dictMenuNotSelected)
+    #     # finding out if one of either dictionaty are filled ("Exclusive or")
+    #     selectedXORnotSelected = (selectedDict != notSelectedDict)
+    #     # finding out if there is more than one class to be listed on menu
+    #     nrClass = max(len(dictMenuSelected), len(dictMenuNotSelected))
+    #     # Case 1: 2 submenus to be filled = "3 context menus"
+    #     if selectedDict and notSelectedDict:
+    #         # setting up menus
+    #         menu = QtGui.QMenu()
+    #         selectedMenu = QtGui.QAction(self.tr('Selected Features'), menu)
+    #         notSelectedMenu = QtGui.QAction(self.tr(''), menu)
+    #         # get the list of all classes to be enlisted
+    #         classes = dictMenuSelected.keys() + dictMenuNotSelected.keys()
+    #         # getting unique classes
+    #         classes = list(set(classes))
+    #         for cl in classes:
+    #             { cl : menu.addAction(cl) }
 
     def createContextMenu(self, e):
         """
-        Creates the context menu for overlapping layers
+        Creates the context menu for overlapping layers.
+        :param e: mouse event caught from canvas.
         """  
         selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         if selected:
@@ -424,32 +478,33 @@ class MultiLayerSelection(QgsMapTool):
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, layer.name(), feature.id())
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
                     # handling CTRL key and left/right click actions
-                    if selected:
-                        if e.button() == QtCore.Qt.LeftButton: 
-                            # line added to make sure the action is associated with
-                            # current loop value.
-                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
-                            # to trigger "Hover" signal on QMenu for each feature
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))
-                        elif e.button() == QtCore.Qt.RightButton:
+                    if e.button() == QtCore.Qt.LeftButton: 
+                            # line added to make sure the action is associated with current loop value,
+                            # lambda function is used with standard parameter set to current loops value.
+                            triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
+                            hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
+                    elif e.button() == QtCore.Qt.RightButton:
+                        if selected:                        
+                            triggeredAction = lambda layer=layer : self.iface.setActiveLayer(layer)
+                            hoveredAction = None
                             # remove feature from candidates of selection and set layer for selection
-                            action.triggered[()].connect(lambda layer=layer : self.iface.setActiveLayer(layer))
                             t.pop(i-pop)
                             pop += 1
                             continue
-                    else:
-                        if e.button() == QtCore.Qt.LeftButton:
-                            action.triggered[()].connect(lambda t=t[i] : self.setSelectionFeature(t[0], t[1]))
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))     
-                        elif e.button() == QtCore.Qt.RightButton:
-                            action.triggered[()].connect(lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False))
-                            action.hovered[()].connect(lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2]))
+                        else:
+                            triggeredAction = lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                            hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
+                    self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                # setting the action for the "All" options
                 if e.button() == QtCore.Qt.LeftButton:
-                    genericAction = menu.addAction(self.tr('Select All'), lambda t=t: self.setSelectionListFeature(t))
+                    action = menu.addAction(self.tr('Select All'))
+                    triggeredAction = lambda t=t: self.setSelectionListFeature(t)
                 else:
-                    genericAction = menu.addAction(self.tr('Open All Attribute Tables'), lambda t=t: self.openMultipleFeatureForm(t))
+                    action = menu.addAction(self.tr('Open All Attribute Tables'))
+                    triggeredAction = lambda t=t: self.openMultipleFeatureForm(t)
                 # to trigger "Hover" signal on QMenu for the multiple options
-                genericAction.hovered[()].connect(lambda t=t : self.createMultipleRubberBand(featureList=t))
+                hoveredAction = lambda t=t : self.createMultipleRubberBand(featureList=t)
+                self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 t = t[0]
