@@ -20,17 +20,21 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, QGis
+import math
+from math import pi
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(IdentifyOutOfBoundsAnglesProcess,self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
+        self.geometryHandler = DsgGeometryHandler(iface, parent = iface.mapCanvas())
         
         if not self.instantiating:
             # getting tables with elements
@@ -41,6 +45,62 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
             self.parameters = {'Angle': 10.0, 'Classes': interfaceDictList, 'Only Selected':False}
+    
+    def getOutOfBoundsAngleInPolygon(self, feat, geometry_column, part, angle, outOfBoundsList):
+        for linearRing in part.asPolygon():
+            linearRing = self.geometryHandler.getClockWiseList(linearRing)
+            nVertex = len(linearRing)-1
+            for i in xrange(nVertex):
+                vertexAngle = (linearRing[i].azimuth(linearRing[(i-1)%nVertex]) - linearRing[i].azimuth(linearRing[(i+1)%nVertex]) + 360) % 360
+                if vertexAngle % 360 < angle:
+                    geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
+                    outOfBoundsList.append(geomDict)
+                elif 360 - vertexAngle < angle:
+                    geomDict = {'angle': (360 - vertexAngle)  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
+                    outOfBoundsList.append(geomDict)
+    
+    def getOutOfBoundsAngleInLine(self, feat, geometry_column, part, angle, outOfBoundsList):
+        line = part.asPolyline()
+        nVertex = len(line)-1
+        for i in xrange(1,nVertex):
+            vertexAngle = (line[i].azimuth(line[(i-1)%nVertex]) - line[i].azimuth(line[(i+1)%nVertex]) + 360) % 360
+            if vertexAngle % 360 < angle:
+                geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
+                outOfBoundsList.append(geomDict)
+            elif 360 - vertexAngle < angle:
+                geomDict = {'angle': (360 - vertexAngle)  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
+                outOfBoundsList.append(geomDict)
+    
+    def getOutOfBoundsAngle(self, feat, angle, geometry_column):
+        outOfBoundsList = []
+        geom = feat.geometry()
+        for part in geom.asGeometryCollection():
+            if part.type() == QGis.Polygon:
+                self.getOutOfBoundsAngleInPolygon(feat, geometry_column, part, angle, outOfBoundsList)
+            if part.type() == QGis.Line:
+                self.getOutOfBoundsAngleInLine(feat, geometry_column, part, angle, outOfBoundsList)
+            
+        return outOfBoundsList
+    
+    def getOutOfBoundsAngleList(self, lyr, angle, geometry_column, onlySelected = False):
+        featureList, size = self.getFeatures(lyr, onlySelected = onlySelected)
+        outOfBoundsList = []
+        for feat in featureList:
+            outOfBoundsList += self.getOutOfBoundsAngle(feat, angle, geometry_column)
+        return outOfBoundsList
+    
+    def buildAndRaiseOutOfBoundsFlag(self, tableSchema, tableName, flagLyr, geomDictList):
+        """
+        
+        """
+        featFlagList = []
+        for geomDict in geomDictList:
+            # reason = self.tr('Angle of {0} degrees is out of bound.').format(geomDict['angle'])
+            reason = '{0}'.format(geomDict['angle'])
+            newFlag = self.buildFlagFeature(flagLyr, self.processName, tableSchema, tableName, geomDict['feat_id'], geomDict['geometry_column'], geomDict['geom'], reason)
+            featFlagList.append(newFlag)
+        return self.raiseVectorFlags(flagLyr, featFlagList)
+
 
     def execute(self):
         """
@@ -57,33 +117,21 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 return 1
             tol = self.parameters['Angle']
             error = False
+            flagLyr = self.getFlagLyr(0)
             for key in classesWithElem:
                 self.startTimeCount()
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
-                localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
-                localProgress.step()
-                processTableName, lyr, keyColumn = self.prepareExecution(classAndGeom, selectedFeatures = self.parameters['Only Selected'])
-                tableSchema, tableName = self.abstractDb.getTableSchema(processTableName)
-                localProgress.step()
-                
+                lyr = self.loadLayerBeforeValidationProcess(classAndGeom)
                 # running the process
                 localProgress = ProgressWidget(0, 1, self.tr('Running process on ')+classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()
-                result = self.abstractDb.getOutOfBoundsAnglesRecords(tableSchema, tableName, tol, classAndGeom['geom'], classAndGeom['geomType'], keyColumn)
+                result = self.getOutOfBoundsAngleList(lyr, tol, classAndGeom['geom'], onlySelected = self.parameters['Only Selected'])
                 localProgress.step()
-
-                # dropping temp table
-                self.abstractDb.dropTempTable(processTableName)
                 
                 # storing flags
                 if len(result) > 0:
-                    error = True
-                    recordList = []
-                    for tupple in result:
-                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], tupple[0], self.tr('Angle out of bound.'), tupple[1], classAndGeom['geom']))
-                        self.addClassesToBeDisplayedList(tupple[0]) 
-                    numberOfProblems = self.addFlag(recordList)
+                    numberOfProblems = self.buildAndRaiseOutOfBoundsFlag(classAndGeom['tableSchema'], classAndGeom['tableName'], flagLyr, result)
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] + self.tr(' have out of bounds angle(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
                     QgsMessageLog.logMessage(self.tr('There are no out of bounds angles on ') + classAndGeom['tableName'] + '.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
