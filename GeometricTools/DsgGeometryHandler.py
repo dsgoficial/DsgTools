@@ -111,8 +111,9 @@ class DsgGeometryHandler(QObject):
                 nodes = nodes[::-1]
                 flippedFeatureGeom = QgsGeometry.fromPolygon(nodes)
         # setting feature geometry to the flipped one
-        feature.setGeometry(flippedFeatureGeom)
-        layer.updateFeature(feature)
+        # feature.setGeometry(flippedFeatureGeom)
+        # layer.updateFeature(feature)
+        layer.changeGeometry(feature.id(), flippedFeatureGeom)
         if refreshCanvas:
             self.iface.mapCanvas().refresh()
         return [layer, feature, geomType]
