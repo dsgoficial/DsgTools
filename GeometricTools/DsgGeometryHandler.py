@@ -51,16 +51,23 @@ class DsgGeometryHandler(QObject):
         else:
             return pointList[::-1]
 
-    def reprojectFeature(self, geom, canvasCrs):
+    def reprojectFeature(self, geom, referenceCrs, canvasCrs=None, coordinateTransformer=None, debugging=False):
         """
-        Reprojects geom from the canvas crs to the reference crs
+        Reprojects geom from the canvas crs to the reference crs.
         :param geom: geometry to be reprojected
-        :param canvasCrs: canvas crs (from crs)
+        :param referenceCrs: reference CRS (coordinate reference system). 
+        :param canvasCrs: canvas CRS. If not given, it'll be evaluated on runtime execution.
+        :param coordinateTransformer: the coordinate transformer for canvas to reference CRS
+        :param debbuging: if True, method returns the the list [geometry, canvasCrs, referenceCrs, coordinateTransformer]
         """
-        destCrs = self.reference.crs()
-        if canvasCrs.authid() != destCrs.authid():
-            coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
+        if not canvasCrs:
+            canvasCrs = self.canvas.mapRenderer().destinationCrs()
+        if canvasCrs.authid() != referenceCrs.authid():
+            if not coordinateTransformer:
+                coordinateTransformer = QgsCoordinateTransform(canvasCrs, referenceCrs)
             geom.transform(coordinateTransformer)
+        if debugging:
+            return [geom, canvasCrs, referenceCrs, coordinateTransformer]
 
     def flipFeature(self, layer, feature, geomType=None, refreshCanvas=False):
         """
@@ -129,13 +136,22 @@ class DsgGeometryHandler(QObject):
         """
         reversedFeatureList = []
         failedFeatureList = []
+        # starting CRStransformer and layer CRS dicts
+        layerCrsDict = dict()
+        transformerDict = dict()
+        # getting canvas CRS
+        canvasCrs = self.canvas.mapRenderer().destinationCrs()
         for item in featureList:
             layer, feature = item[0], item[1]
             if not isinstance(layer, QgsVectorLayer):
                 # ignore non-vector layers.
                 continue
             # reprojecting feature to layer CRS
-            # self.reprojectFeature(feature.geometry, canvasCrs)
+            if layer not in layerCrsDict.keys():
+                layerCrsDict[layer] = layer.crs()
+            if layer not in transformerDict.keys():
+                transformerDict[layer] = QgsCoordinateTransform(canvasCrs=canvasCrs, referenceCrs=layerCrsDict[layer])
+            self.reprojectFeature(geom=feature.geometry, referenceCrs=layerCrsDict[layer], canvasCrs=canvasCrs, coordinateTransformer=transformerDict[layer])
             if len(item) == 3:
                 geomType = item[2]
             else:
