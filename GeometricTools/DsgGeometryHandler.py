@@ -29,6 +29,7 @@ class DsgGeometryHandler(QObject):
         super(DsgGeometryHandler, self).__init__()
         self.parent = parent
         self.iface = iface
+        self.canvas = iface.mapCanvas()
     
     def getFeatures(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
         if onlySelected:
@@ -150,7 +151,7 @@ class DsgGeometryHandler(QObject):
             if layer not in layerCrsDict.keys():
                 layerCrsDict[layer] = layer.crs()
             if layer not in transformerDict.keys():
-                transformerDict[layer] = QgsCoordinateTransform(canvasCrs=canvasCrs, referenceCrs=layerCrsDict[layer])
+                transformerDict[layer] = QgsCoordinateTransform(canvasCrs, layerCrsDict[layer])
             self.reprojectFeature(geom=feature.geometry, referenceCrs=layerCrsDict[layer], canvasCrs=canvasCrs, coordinateTransformer=transformerDict[layer])
             if len(item) == 3:
                 geomType = item[2]
