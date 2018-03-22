@@ -23,7 +23,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  ***************************************************************************/
 """
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceURI, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
+from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceURI, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
 from PyQt4.QtCore import QSettings
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu, QCursor
@@ -142,19 +142,20 @@ class MultiLayerSelection(QgsMapTool):
             firstGeom = self.checkSelectedLayers()
             self.isEmittingPoint = False
             r = self.rectangle()
+            if r is None:
+                return
             layers = self.canvas.layers()
             for layer in layers:
                 #ignore layers on black list and features that are not vector layers
-                if layer.type() != QgsMapLayer.VectorLayer or (self.layerHasPartInBlackList(layer.name())):
+                if not isinstance(layer, QgsVectorLayer) or (self.layerHasPartInBlackList(layer.name())):
                     continue
-                if firstGeom and layer.geometryType() != firstGeom:
+                if firstGeom is not None and layer.geometryType() != firstGeom:
                     # if there are features already selected, shift will only get the same type geometry
                     # if more than one ty of geometry is present, only the strongest will be selected
                     continue
-                if r is not None:
-                    #builds bbRect and select from layer, adding selection
-                    bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
-                    layer.select(bbRect, True)
+                #builds bbRect and select from layer, adding selection
+                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
+                layer.select(bbRect, True)
             self.rubberBand.hide()
 
     def canvasPressEvent(self, e):
@@ -436,7 +437,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Creates the context menu for overlapping layers.
         :param e: mouse event caught from canvas.
-        """  
+        """
         selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         if selected:
             firstGeom = self.checkSelectedLayers()
@@ -451,8 +452,9 @@ class MultiLayerSelection(QgsMapTool):
             t = []
             for layer in layers:
                 # iterate over features inside the mouse bounding box 
+                rect = self.reprojectSearchArea(layer, rect)
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
-                bbRect = self.reprojectSearchArea(layer, bbRect)
+                # bbRect = self.reprojectSearchArea(layer, bbRect)
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
