@@ -137,22 +137,11 @@ class DsgGeometryHandler(QObject):
         """
         reversedFeatureList = []
         failedFeatureList = []
-        # starting CRStransformer and layer CRS dicts
-        layerCrsDict = dict()
-        transformerDict = dict()
-        # getting canvas CRS
-        canvasCrs = self.canvas.mapRenderer().destinationCrs()
         for item in featureList:
             layer, feature = item[0], item[1]
             if not isinstance(layer, QgsVectorLayer):
                 # ignore non-vector layers.
                 continue
-            # reprojecting feature to layer CRS
-            if layer not in layerCrsDict.keys():
-                layerCrsDict[layer] = layer.crs()
-            if layer not in transformerDict.keys():
-                transformerDict[layer] = QgsCoordinateTransform(canvasCrs, layerCrsDict[layer])
-            self.reprojectFeature(geom=feature.geometry, referenceCrs=layerCrsDict[layer], canvasCrs=canvasCrs, coordinateTransformer=transformerDict[layer])
             if len(item) == 3:
                 geomType = item[2]
             else:
