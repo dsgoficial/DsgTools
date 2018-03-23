@@ -74,7 +74,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                   QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True}
 
-    def __init__(self, parent, options, required=None, title=None, restoreOverride = True):
+    def __init__(self, parent, options, required=None, title=None, restoreOverride = True, withElements = True):
         """
         Constructor
         """
