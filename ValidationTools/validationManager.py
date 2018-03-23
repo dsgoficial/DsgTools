@@ -155,9 +155,12 @@ class ValidationManager(QObject):
         processChain, parameterDict = self.getProcessChain(process)
         #get parameters from dialog
         if not lastParameters:
-            params = self.getParametersWithUi(processChain, parameterDict)
-            if params == -1:
-                return -1
+            if process != self.tr('Spatial Rule Checker'):
+                params = self.getParametersWithUi(processChain, parameterDict)
+                if params == -1:
+                    return -1
+            else:
+                params = {}
             self.lastParameters = params
             self.lastProcess = process
         else:
@@ -168,7 +171,7 @@ class ValidationManager(QObject):
             process.setParameters(params)
             process.setDbUserName(self.postgisDb.getDatabaseParameters()[2])
             process.setProcessName(self.processDict[process.processAlias])
-            ret = process.execute() #run bitch run!
+            ret = process.execute() # run bitch run!
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             # process.logTotalTime()
