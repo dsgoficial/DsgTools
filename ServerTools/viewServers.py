@@ -96,7 +96,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
         currentConnections = self.getServers()
         for i, connection in enumerate(currentConnections):
             (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
-            if isDefault == True:
+            if isDefault == True or isDefault == u'true':
                 return (host, port, user, password)
         return (None, None, None, None)
 
@@ -114,7 +114,7 @@ class ViewServers(QtGui.QDialog, FORM_CLASS):
                 dlg = ServerConfigurator(self)
                 dlg.setServerConfiguration(connection)
                 dlg.storeServerConfiguration(connection, host, port, user, password, isDefault = True)
-                self.setDefaultConnectionParameters(host, port, user, password)
+                self.defaultConnectionDict = self.setDefaultConnectionParameters(host, port, user, password)
                 self.defaultChanged.emit()
                 self.done(0)
                 return
