@@ -32,11 +32,11 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class AttributeRuleProcess(ValidationProcess):
     
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating=False, withElements = True):
         """
         Constructor
         """
-        super(AttributeRuleProcess,self).__init__(postgisDb, iface, instantiating)
+        super(AttributeRuleProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         
         self.processAlias = self.tr('Attribute Rule Checker')
         if not instantiating:
