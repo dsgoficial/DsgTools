@@ -25,11 +25,11 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class RemoveSmallAreasProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating=False, withElements = True):
         """
         Constructor
         """
-        super(RemoveSmallAreasProcess, self).__init__(postgisDb, iface, instantiating)
+        super(RemoveSmallAreasProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Remove Small Areas')
         
         #self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallAreasProcess')

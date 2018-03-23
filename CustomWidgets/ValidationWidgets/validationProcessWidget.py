@@ -67,7 +67,7 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
             self.processChain = None
             return
         processAlias = self.validationProcessComboBox.currentText()
-        self.parameters, self.processChain = self.validationManager.getParams(processAlias, restoreOverride = False)
+        self.parameters, self.processChain = self.validationManager.getParams(processAlias, restoreOverride = False, withElements = False)
         if self.parameters:
             self.parametersPushButton.setStyleSheet('')
     
