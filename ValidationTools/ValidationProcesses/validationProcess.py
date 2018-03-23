@@ -36,7 +36,7 @@ from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoader
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class ValidationProcess(QObject):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """

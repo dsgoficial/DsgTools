@@ -31,11 +31,11 @@ import json
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating)
+        super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Unbuild Earth Coverage Polygons')
         self.instantiating = instantiating
         if not self.instantiating:
