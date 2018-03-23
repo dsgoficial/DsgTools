@@ -28,16 +28,16 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from collections import OrderedDict
 
 class SnapLayerOnLayerProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(SnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating)
+        super(SnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Snap Layer on Layer')
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceDict = dict()
             for key in self.classesWithElemDict:

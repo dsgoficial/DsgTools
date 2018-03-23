@@ -30,11 +30,11 @@ import json
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating=False, withElements = True):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(CloseEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Close Earth Coverage Polygons')
         
     def preProcess(self):
