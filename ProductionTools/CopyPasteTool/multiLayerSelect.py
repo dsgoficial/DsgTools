@@ -451,10 +451,8 @@ class MultiLayerSelection(QgsMapTool):
             rect = self.getCursorRect(e)
             t = []
             for layer in layers:
-                # iterate over features inside the mouse bounding box 
-                rect = self.reprojectSearchArea(layer, rect)
+                # iterate over features inside the mouse bounding box
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
-                # bbRect = self.reprojectSearchArea(layer, bbRect)
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
@@ -469,7 +467,7 @@ class MultiLayerSelection(QgsMapTool):
                                 # only appends features if it has the same geometry as first selected feature
                                 t.append([layer, feature, layer.geometryType()])
                         else:
-                            if geom.intersects(rect):
+                            if geom.intersects(searchRect):
                                 t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
             if len(t) > 1:
