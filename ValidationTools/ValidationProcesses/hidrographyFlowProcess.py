@@ -87,7 +87,7 @@ class HidrographyFlowProcess(ValidationProcess):
 
     def setNodeType(self, nodePoint, dictStartingEndingLines, frameLayer=''):
         """
-        Sets the point type given all lines that flows from and to it.
+        Sets the node type given all lines that flows from and to it.
         :param nodePoint: point to be classified.
         :param dictStartingEndingLines: dict of { 'start' : [lines], 'end' : [lines] }
         :return: returns the point type.
