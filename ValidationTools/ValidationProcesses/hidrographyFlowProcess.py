@@ -53,7 +53,7 @@ class HidrographyFlowProcess(ValidationProcess):
                 if isMulti:
                     if len(nodes) > 1:
                         # if feat is multipart and has more than one part, a flag should be raised
-                        continue
+                        continue # CHANGE TO RAISE FLAG
                     elif len(nodes) == 0:
                         # if no part is found, skip feature
                         continue
@@ -77,6 +77,13 @@ class HidrographyFlowProcess(ValidationProcess):
                 if feat not in nodeDict[pInit]['start']:
                     nodeDict[pEnd]['start'].append(feat)
         print nodeDict
+
+    def fillNodeTable(self, dictNode):
+        """
+        Method to populate validation.aux_validation_nodes_p with all nodes.
+        :param dictNode: dictionary containing info of all lines reaching from and to each node.
+        """
+        pass
 
     def execute(self):
         lyr = self.iface.activeLayer()
