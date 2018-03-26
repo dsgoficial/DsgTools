@@ -83,7 +83,7 @@ class HidrographyFlowProcess(ValidationProcess):
                     nodeDict[pEnd] = { 'start' : [], 'end' : [] }
                 if feat not in nodeDict[pInit]['start']:
                     nodeDict[pEnd]['start'].append(feat)
-        print nodeDict
+        return nodeDict
 
     def setNodeType(self, nodePoint, dictStartingEndingLines, frameLayer=''):
         """
@@ -92,15 +92,36 @@ class HidrographyFlowProcess(ValidationProcess):
         :param dictStartingEndingLines: dict of { 'start' : [lines], 'end' : [lines] }
         :return: returns the point type.
         """
-        hasStartLine = bool(dictStartingEndingLines['start'])
-        hasEndLine = bool(dictStartingEndingLines['end'])
+        sizeFlowIn = len(dictStartingEndingLines['start'])
+        sizeFlowOut = len(dictStartingEndingLines['end'])
+        hasStartLine = bool(sizeFlowIn)
+        hasEndLine = bool(sizeFlowOut)
         # "exclusive or"
         startXORendLine = (hasStartLine != hasEndLine)
         # case 1: all lines either flow in or out 
         if startXORendLine:
             # case 1.a: point is over the frame
-            pass
-
+            return 1, 0, 0
+        elif sizeFlowIn >= sizeFlowOut:
+            # case 2 "confluence"
+            return 0, 1, 0
+        else:
+            # case 3 "ramification"
+            return 0, 0, 1
+        
+    def classifyAllNodes(self, lyr):
+        """
+        Classifies all nodes of features from a given layer.
+        :param lyr: target layer to which nodes identification is required.
+        """
+        c1, c2, c3 = 0, 0, 0
+        dictNode = self.identifyAllNodes(lyr)
+        for node in dictNode.keys():
+            r1, r2, r3 = self.setNodeType(node, dictNode[node])
+            c1 += r1
+            c2 += r2
+            c3 += r3
+        print c1, c2, c3
 
     def fillNodeTable(self, dictNode):
         """
@@ -109,6 +130,66 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         pass
 
+    def getLineLastNode(self, lyr, feat, geomType=None):
+        """
+        Returns the ending point of a line.
+        :param lyr: layer containing target feature.
+        :param feat: feature which last node is requested.
+        :param geomType: int regarding to layer geometry type (1 for lines).
+        """
+        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        n = n[0] if isMulti else n
+        lastNode = QgsFeature()
+        lastNode.setGeometry(QgsGeometry.fromPoint(n[-1]))
+        return lastNode
+
+    def selectUpstreamLines(self, initNode, lyr, dictNode):
+        """
+        Selects all lines that are upstream from a initial node and returns a list of lines with
+        possible wrong flow direction.
+        :param initNode: initial node point target of all flow comparison. 
+        """
+        initNode = [initNode]
+        geomType = lyr.geometryType()
+        selection = flippedLines = []
+        # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
+        while initNode:
+            for node in initNode:
+                newInitNode = [] # new list of initial node(s)
+                wrongFlow = dictNode[node]['start']
+                if wrongFlow:
+                    # if point is supposed to be downward, points starting there have the wrong flow                    
+                    for feat in wrongFlow:
+                        # flip feature direction with wrong flow
+                        # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)
+                        self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
+                        flippedLines.append(feat)
+                        # after flipped, get last node
+                        ln = self.getLineLastNode(lyr, feat, geomType)
+                        newInitNode.append(ln)
+                rightFlow = dictNode[node]['end']
+                if rightFlow:
+                    # if lines end there, then they are connected and flowing there
+                    selection += rightFlow + wrongFlow
+                # all the endings are now new starts
+                for feat in rightFlow:
+                    ln = self.getLineLastNode(lyr, feat, geomType)
+                    newInitNode.append(ln)
+            # check new starts up to no new starts are found
+            initNode = newInitNode
+        lyr.removeSelection()
+        lyr.startEditting()
+        lyr.setSelectedFeatures(selection)
+        return flippedLines
+
     def execute(self):
         lyr = self.iface.activeLayer()
-        self.identifyAllNodes(lyr)
+        d = self.identifyAllNodes(lyr)
+        for feat in lyr.selectedFeatures():
+            n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=1)
+            isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+            n = n[0] if isMulti else n
+            initNode = QgsFeature()
+            initNode.setGeometry(QgsGeometry.fromPoint(n[0]))
+        self.selectUpstreamLines(initNode, lyr, d)

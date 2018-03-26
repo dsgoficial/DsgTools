@@ -1719,3 +1719,34 @@ class PostGISSqlGenerator(SqlGenerator):
             sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
                 format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
         return sql
+
+    def createHidNodeTableQuery(self):
+        """
+        Creates the table for saving node information during hidrography validation process.
+        """
+        sql = """
+        DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
+        CREATE TABLE validation.aux_hid_nodes_p (
+            id SERIAL NOT NULL,
+            flow_in VARCHAR(1000),
+            flow_out VARCHAR(1000),
+            layer VARCHAR(40) NOT NULL,
+            node_type SMALLINT NOT NULL,
+            geom GEOMETRY,
+            CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
+            );
+        """
+        return sql
+
+    def fillHidNodeTableQuery(self, idsFlowIn, idsFlowOut, ):
+        """
+        Updates table inserting info based on layer dictionary of node dictionary.
+        :param layerNodeDict: { 'layer_name' : { nodePoint_geometry : { 'start' : {feature_id} }, 'end' : {feature_id} } }
+        :param nodePointTypeDict: { nodePoint_geometry : nodePointType }
+        """
+        sql = ""
+        for lyr in layerNodeDict.keys():
+            for nodePoint in layerNodeDict[lyr].keys():
+                sql += """INSERT INTO validation.aux_hid_nodes_p (flow_in, flow_out, layer, node_type, geom) VALUES('{}', '{}', '{}', {}, {});\n"""\
+                .format(layerNodeDict[lyr][nodePoint]['start'], layerNodeDict[lyr][nodePoint]['end'], lyr, nodePoint)            
+        return sql
