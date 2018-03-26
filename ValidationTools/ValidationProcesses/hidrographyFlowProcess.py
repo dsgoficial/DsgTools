@@ -34,6 +34,12 @@ class HidrographyFlowProcess(ValidationProcess):
         self.nodeDict = dict()
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.parameters = {'Only Selected' : True}
+        self.dictNodeType = {
+                             0 : 'Flag',
+                             1 : 'Fonte d\'Água',
+                             2 : 'Sumidouro',
+                             3 : 'Moldura'
+                            }
 
     def identifyAllNodes(self, lyr):
         """
@@ -60,9 +66,10 @@ class HidrographyFlowProcess(ValidationProcess):
                     else:
                         # if feat is multipart, "nodes" is a list of list
                         nodes = nodes[0]                
-                # identifying if INITIAL node is already listed
+                # initial node
                 pInit = QgsFeature()
                 pInit.setGeometry(QgsGeometry.fromPoint(nodes[0]))
+                # final node
                 pEnd = QgsFeature()
                 pEnd.setGeometry(QgsGeometry.fromPoint(nodes[-1]))
                 # filling starting node information into dictionary
@@ -77,6 +84,23 @@ class HidrographyFlowProcess(ValidationProcess):
                 if feat not in nodeDict[pInit]['start']:
                     nodeDict[pEnd]['start'].append(feat)
         print nodeDict
+
+    def setNodeType(self, nodePoint, dictStartingEndingLines, frameLayer=''):
+        """
+        Sets the point type given all lines that flows from and to it.
+        :param nodePoint: point to be classified.
+        :param dictStartingEndingLines: dict of { 'start' : [lines], 'end' : [lines] }
+        :return: returns the point type.
+        """
+        hasStartLine = bool(dictStartingEndingLines['start'])
+        hasEndLine = bool(dictStartingEndingLines['end'])
+        # "exclusive or"
+        startXORendLine = (hasStartLine != hasEndLine)
+        # case 1: all lines either flow in or out 
+        if startXORendLine:
+            # case 1.a: point is over the frame
+            pass
+
 
     def fillNodeTable(self, dictNode):
         """
