@@ -37,7 +37,7 @@ class HidrographyFlowProcess(ValidationProcess):
 
     def identifyAllNodes(self, lyr):
         """
-        Identifies all nodes from a given list. The result is returned as a dict of dict.
+        Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
         :param lyr: target layer to which nodes identification is required.
         :return: { node_id : { start : [feature_id_Which_Starts_with_node], end : feature_id_Which_Ends_with_node } }.
         """
@@ -51,13 +51,32 @@ class HidrographyFlowProcess(ValidationProcess):
             nodes = self.DsgGeometryHandler.getFeatureNodes(lyr, feat)
             if nodes:
                 if isMulti:
-                    for node in nodes:
-                        # identifying if INITIAL node is already listed
-                        if node[0] not in nodeDict.keys():
-                            p = QgsFeature()
-                            g = QgsGeometry.fromPoint(node[0])
-                            p.setGeometry(g)
-                            print p.geometry().x(), node[0]
+                    if len(nodes) > 1:
+                        # if feat is multipart and has more than one part, a flag should be raised
+                        continue
+                    elif len(nodes) == 0:
+                        # if no part is found, skip feature
+                        continue
+                    else:
+                        # if feat is multipart, "nodes" is a list of list
+                        nodes = nodes[0]                
+                # identifying if INITIAL node is already listed
+                pInit = QgsFeature()
+                pInit.setGeometry(QgsGeometry.fromPoint(nodes[0]))
+                pEnd = QgsFeature()
+                pEnd.setGeometry(QgsGeometry.fromPoint(nodes[-1]))
+                # filling starting node information into dictionary
+                if pInit not in nodeDict.keys():
+                    # if the point is not already started into dictionary, it creates a new item
+                    nodeDict[pInit] = { 'start' : [], 'end' : [] }
+                if feat not in nodeDict[pInit]['start']:
+                    nodeDict[pInit]['start'].append(feat)                            
+                # filling ending node information into dictionary
+                if pEnd not in nodeDict.keys():
+                    nodeDict[pEnd] = { 'start' : [], 'end' : [] }
+                if feat not in nodeDict[pInit]['start']:
+                    nodeDict[pEnd]['start'].append(feat)
+        print nodeDict
 
     def execute(self):
         lyr = self.iface.activeLayer()
