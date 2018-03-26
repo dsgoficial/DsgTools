@@ -70,6 +70,37 @@ class DsgGeometryHandler(QObject):
         if debugging:
             return [geom, canvasCrs, referenceCrs, coordinateTransformer]
 
+    def getFeatureNodes(self, layer, feature, geomType=None):
+        """
+        Inverts the flow from a given feature. THE GIVEN FEATURE IS ALTERED. Standard behaviour is to not
+        refresh canvas map.
+        :param layer: layer containing the target feature for flipping.
+        :param feature: feature to be flipped.
+        :param geomType: if layer geometry type is not given, it'll calculate it (0,1 or 2).
+        :returns: feature as of a list of points (nodes).
+        """
+        if not geomType:
+            geomType = layer.geometryType()
+        # getting whether geometry is multipart or not
+        isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType()))
+        geom = feature.geometry()
+        if geomType == 0:
+            if isMulti:
+                nodes = geom.asMultiPoint()       
+            else:
+                nodes = geom.asPoint()              
+        elif geomType == 1:
+            if isMulti:
+                nodes = geom.asMultiPolyline()
+            else:
+                nodes = geom.asPolyline()     
+        elif geomType == 2:
+            if isMulti:
+                nodes = geom.asMultiPolygon()           
+            else:
+                nodes = geom.asPolygon()
+        return nodes
+
     def flipFeature(self, layer, feature, geomType=None, refreshCanvas=False):
         """
         Inverts the flow from a given feature. THE GIVEN FEATURE IS ALTERED. Standard behaviour is to not
