@@ -451,6 +451,8 @@ class MultiLayerSelection(QgsMapTool):
             rect = self.getCursorRect(e)
             t = []
             for layer in layers:
+                if not isinstance(layer, QgsVectorLayer):
+                    continue
                 # iterate over features inside the mouse bounding box
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, rect)
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
