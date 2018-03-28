@@ -234,6 +234,8 @@ class HidrographyFlowProcess(ValidationProcess):
         crs = lyr.crs().authid()
         for feat in lyr.selectedFeatures():
             n = self.getLineLastNode(lyr, feat, 1)
-        print self.selectUpstreamLines(n, lyr, d)
-        # self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        # print self.fillNodeTable(lyr, d)
+        if self.parameters['Only Selected']:
+            print self.selectUpstreamLines(n, lyr, d)
+        else:
+            self.abstractDb.createHidNodeTable(crs.split(':')[1])
+            print self.fillNodeTable(lyr, d)
