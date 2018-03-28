@@ -3656,3 +3656,42 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr("Problem while populating compact validation processes history table: ")+query.lastError().text())
         self.db.commit()
         return True
+
+    def createHidNodeTable(self, crs=None, useTransaction=True):
+        """
+        Creates the aux_hid_nodes_p table into validation schema.
+        :param crs: CRS for geometry column
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :return: (bool) indication whether changes were made or not.
+        """
+        # sql = self.gen.createHidNodeTableQuery(crs)
+        sql = self.gen.createHidNodeTableQuery()        
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
+    def insertHidValNode(self, layerName, node, nodeType, useTransaction=True):
+        """
+        Populates hidrography validation table with node information.
+        :param layerName: (str) layer name which feature owner of node point belongs to.
+        :param node: (QgsPoint) node point to be registered.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :nodeType: (int) indicates the point type (confluence, water source, etc).
+        :return: (bool) indication whether changes were made or not.
+        """
+        sql = self.gen.fillHidNodeTableQuery(layerName, node, nodeType)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True

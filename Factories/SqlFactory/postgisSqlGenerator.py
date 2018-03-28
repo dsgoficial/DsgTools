@@ -1728,25 +1728,23 @@ class PostGISSqlGenerator(SqlGenerator):
         DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
         CREATE TABLE validation.aux_hid_nodes_p (
             id SERIAL NOT NULL,
-            flow_in VARCHAR(1000),
-            flow_out VARCHAR(1000),
             layer VARCHAR(40) NOT NULL,
             node_type SMALLINT NOT NULL,
-            geom GEOMETRY,
+            geom VARCHAR(1000) NOT NULL,
             CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
             );
-        """
+        """#.format(crs)
         return sql
 
-    def fillHidNodeTableQuery(self, idsFlowIn, idsFlowOut, ):
+    def fillHidNodeTableQuery(self, layerName, node, nodeType):
         """
         Updates table inserting info based on layer dictionary of node dictionary.
-        :param layerNodeDict: { 'layer_name' : { nodePoint_geometry : { 'start' : {feature_id} }, 'end' : {feature_id} } }
-        :param nodePointTypeDict: { nodePoint_geometry : nodePointType }
+        :param layerName: (str) layer name which feature owner of node point belongs to.
+        :param node: (QgsPoint) node point to be registered.
+        :nodeType: (int) indicates the point type (confluence, water source, etc).
+        :return: return insertion query.
         """
         sql = ""
-        for lyr in layerNodeDict.keys():
-            for nodePoint in layerNodeDict[lyr].keys():
-                sql += """INSERT INTO validation.aux_hid_nodes_p (flow_in, flow_out, layer, node_type, geom) VALUES('{}', '{}', '{}', {}, {});\n"""\
-                .format(layerNodeDict[lyr][nodePoint]['start'], layerNodeDict[lyr][nodePoint]['end'], lyr, nodePoint)            
+        sql += """INSERT INTO validation.aux_hid_nodes_p (layer, geom, node_type) VALUES('{}', '{}', {});\n"""\
+        .format(layerName, node, nodeType)            
         return sql
