@@ -1720,9 +1720,10 @@ class PostGISSqlGenerator(SqlGenerator):
                 format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
         return sql
 
-    def createHidNodeTableQuery(self):
+    def createHidNodeTableQuery(self, crs):
         """
         Creates the table for saving node information during hidrography validation process.
+        :param crs: CRS for geometry column.
         """
         sql = """
         DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
@@ -1730,21 +1731,21 @@ class PostGISSqlGenerator(SqlGenerator):
             id SERIAL NOT NULL,
             layer VARCHAR(40) NOT NULL,
             node_type SMALLINT NOT NULL,
-            geom VARCHAR(1000) NOT NULL,
+            geom geometry('MultiPoint', {}) NOT NULL,
             CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
             );
-        """#.format(crs)
+        """.format(crs)
         return sql
 
-    def fillHidNodeTableQuery(self, layerName, node, nodeType):
+    def fillHidNodeTableQuery(self, layerName, nodeWkt, nodeType, crs):
         """
         Updates table inserting info based on layer dictionary of node dictionary.
         :param layerName: (str) layer name which feature owner of node point belongs to.
-        :param node: (QgsPoint) node point to be registered.
+        :param nodeWkt: (QgsMultiPoint WKT) node point to be registered.
         :nodeType: (int) indicates the point type (confluence, water source, etc).
         :return: return insertion query.
         """
         sql = ""
-        sql += """INSERT INTO validation.aux_hid_nodes_p (layer, geom, node_type) VALUES('{}', '{}', {});\n"""\
-        .format(layerName, node, nodeType)            
+        sql += """INSERT INTO validation.aux_hid_nodes_p (layer, geom, node_type) VALUES('{0}', ST_GeomFromText('{1}', {3}), {2});\n"""\
+        .format(layerName, nodeWkt, nodeType, crs)            
         return sql
