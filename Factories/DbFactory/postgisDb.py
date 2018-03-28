@@ -3657,40 +3657,41 @@ class PostgisDb(AbstractDb):
         self.db.commit()
         return True
 
-    def createHidNodeTable(self, crs=None, useTransaction=True):
+    def createHidNodeTable(self, crs, useTransaction=True):
         """
         Creates the aux_hid_nodes_p table into validation schema.
-        :param crs: CRS for geometry column
+        :param crs: CRS for geometry column.
         :param useTransaction: indicates whether transaction should be confirmed into database.
         :return: (bool) indication whether changes were made or not.
         """
-        # sql = self.gen.createHidNodeTableQuery(crs)
-        sql = self.gen.createHidNodeTableQuery()        
+        sql = self.gen.createHidNodeTableQuery(crs)
+        # sql = self.gen.createHidNodeTableQuery()        
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+            raise Exception(self.tr("Problem while creating hidrography nodes table: ")+query.lastError().text())
             return False
         elif useTransaction:
             self.db.commit()
         return True
 
-    def insertHidValNode(self, layerName, node, nodeType, useTransaction=True):
+    def insertHidValNode(self, layerName, node, nodeType, crs, useTransaction=True):
         """
         Populates hidrography validation table with node information.
         :param layerName: (str) layer name which feature owner of node point belongs to.
         :param node: (QgsPoint) node point to be registered.
         :param useTransaction: indicates whether transaction should be confirmed into database.
         :nodeType: (int) indicates the point type (confluence, water source, etc).
+        :param crs: CRS for geometry column.
         :return: (bool) indication whether changes were made or not.
         """
-        sql = self.gen.fillHidNodeTableQuery(layerName, node, nodeType)
+        sql = self.gen.fillHidNodeTableQuery(layerName, node, nodeType, crs)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             if useTransaction:
                 self.db.rollback()
-            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+            raise Exception(self.tr("Problem while populating hidrography nodes table: ")+query.lastError().text())
             return False
         elif useTransaction:
             self.db.commit()

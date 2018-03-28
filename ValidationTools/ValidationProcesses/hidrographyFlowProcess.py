@@ -139,10 +139,11 @@ class HidrographyFlowProcess(ValidationProcess):
         :param dictNode: dictionary containing info of all lines reaching from and to each node.
         """
         lyrName = lyr.name()
+        crs = lyr.crs().authid().split(":")[1]
         for node in dictNode.keys():
             nodeType = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=dictNode[node])
             nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
-            if self.abstractDb.insertHidValNode(layerName=lyrName, node=nWkt, nodeType=nodeType):
+            if self.abstractDb.insertHidValNode(layerName=lyrName, node=nWkt, nodeType=nodeType, crs=crs):
                 continue
             else:
                 return False
@@ -229,10 +230,9 @@ class HidrographyFlowProcess(ValidationProcess):
     def execute(self):
         lyr = self.iface.activeLayer()
         d = self.identifyAllNodes(lyr)
-        # crs = lyr.crs().authid()
+        crs = lyr.crs().authid()
         # for feat in lyr.selectedFeatures():
         #     n = self.getLineInitialNode(lyr, feat, 1)
         # print self.selectUpstreamLines(n, lyr, d)
-        # self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        self.abstractDb.createHidNodeTable()
+        self.abstractDb.createHidNodeTable(crs.split(':')[1])
         print self.fillNodeTable(lyr, d)
