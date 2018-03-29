@@ -48,5 +48,6 @@
         <file>icons/bug.png</file> 
         <file>icons/free_hand.png</file>
         <file>icons/flipLineTool.png</file>
+        <file>icons/rasterToolTip.png</file>
     </qresource>
 </RCC>

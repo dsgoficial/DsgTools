@@ -63,6 +63,7 @@ from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
 from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
 from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
+from DsgTools.ImageTools.bandToolTip import PxBandValueToolTip
 
 from qgis.utils import showPluginHelp
 try:
@@ -129,6 +130,7 @@ class DsgTools:
         self.acquisition = Acquisition(iface)
         self.freeHandAcquisiton = FreeHandMain(iface)
         self.flipLineTool = FlipLine(iface.mapCanvas(), iface)
+        self.pxBandValueToolTip = PxBandValueToolTip(iface)
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -709,6 +711,22 @@ class DsgTools:
         action.setEnabled(False)
         productiontools.addAction(action)
         self.toolbar.addAction(action)
+
+        icon_path = ':/plugins/DsgTools/icons/genericSelect.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Raster Tooltip'),
+            callback=self.pxBandValueToolTip.openDialog,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.toolbar.addAction(action)
+        self.pxBandValueToolTip.setAction(action)
+        #enable shortcut config
+        self.iface.registerMainWindowAction(action, '')
+        action.setToolTip(self.tr("Show Information of Pixel Value for Raster Layers."))
+        
 
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
