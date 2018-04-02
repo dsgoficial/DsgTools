@@ -100,8 +100,8 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         sizeFlowOut = len(dictStartingEndingLinesEntry['start'])
         sizeFlowIn = len(dictStartingEndingLinesEntry['end'])
-        hasStartLine = bool(sizeFlowIn)
-        hasEndLine = bool(sizeFlowOut)
+        hasStartLine = bool(sizeFlowOut)
+        hasEndLine = bool(sizeFlowIn)
         # "exclusive or"
         startXORendLine = (hasStartLine != hasEndLine)
         # case 1: all lines either flow in or out 
@@ -203,15 +203,15 @@ class HidrographyFlowProcess(ValidationProcess):
                     for feat in wrongFlow:
                         if feat.id() in selection:
                             continue
-                        # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)
+                        # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
+                        fn = self.getLineLastNode(lyr, feat, geomType)
                         # flip wrong lines
-                        self.DsgGeometryHandler.flipFeature(lyr, feat, 1)
-                        fn = self.getLineInitialNode(lyr, feat, geomType)
+                        self.DsgGeometryHandler.flipFeature(lyr, feat, 1)                        
                         newInitNode.append(fn)
                         selection.append(feat.id())
                         flippedLines.append(feat.id())                
                 if rightFlow:
-                    # if lines end there, then they are connected and flowing there
+                    # if lines end there, then they are connected and flowing that way
                     # all the endings are now new starts
                     for feat in rightFlow:
                         if feat.id() in selection:
@@ -221,6 +221,7 @@ class HidrographyFlowProcess(ValidationProcess):
                         selection.append(feat.id())
             # check new starts up to no new starts are found
             initNode = newInitNode
+        # update flipped lines representation on canvas
         self.iface.mapCanvas().refresh()
         lyr.removeSelection()
         lyr.startEditing()
@@ -231,8 +232,8 @@ class HidrographyFlowProcess(ValidationProcess):
         lyr = self.iface.activeLayer()
         d = self.identifyAllNodes(lyr)
         crs = lyr.crs().authid()
-        # for feat in lyr.selectedFeatures():
-        #     n = self.getLineInitialNode(lyr, feat, 1)
-        # print self.selectUpstreamLines(n, lyr, d)
-        self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        print self.fillNodeTable(lyr, d)
+        for feat in lyr.selectedFeatures():
+            n = self.getLineLastNode(lyr, feat, 1)
+        print self.selectUpstreamLines(n, lyr, d)
+        # self.abstractDb.createHidNodeTable(crs.split(':')[1])
+        # print self.fillNodeTable(lyr, d)
