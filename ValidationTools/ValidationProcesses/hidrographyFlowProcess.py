@@ -190,35 +190,41 @@ class HidrographyFlowProcess(ValidationProcess):
         if not isinstance(firstNode, list):
             initNode = [firstNode]
         geomType = lyr.geometryType()
-        selection = flippedLines = []
+        selection = flippedLines = rightLines = []
         # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
         while initNode:
             for node in initNode:
                 newInitNode = [] # new list of initial node(s)
-                # lines that flow from an ending point are wrong
+                # lines that flow from a starting point are wrong
                 wrongFlow = dictNode[node]['start']
                 rightFlow = dictNode[node]['end']
                 if wrongFlow:
-                    # if point is supposed to be downward, points starting there have the wrong flow                    
                     for feat in wrongFlow:
-                        if feat.id() in selection:
+                        if feat.id() in flippedLines:
                             continue
                         # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
                         fn = self.getLineLastNode(lyr, feat, geomType)
                         # flip wrong lines
+<<<<<<< HEAD
                         self.DsgGeometryHandler.flipFeature(lyr, feat, 1)                        
+=======
+                        self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
+                        fn = self.getLineInitialNode(lyr, feat, geomType)
+>>>>>>> 7e8eec2763d4c2f7b501234ebfb4a6df26d7bcdc
                         newInitNode.append(fn)
                         selection.append(feat.id())
-                        flippedLines.append(feat.id())                
+                        flippedLines.append(feat.id())
                 if rightFlow:
                     # if lines end there, then they are connected and flowing that way
                     # all the endings are now new starts
                     for feat in rightFlow:
-                        if feat.id() in selection:
+                        if feat.id() in rightLines:
                             continue
                         fn = self.getLineInitialNode(lyr, feat, geomType)
                         newInitNode.append(fn)
-                        selection.append(feat.id())
+                        rightLines.append(feat.id())
+                selection += rightLines + flippedLines
+            selection = list(set(selection)) 
             # check new starts up to no new starts are found
             initNode = newInitNode
         # update flipped lines representation on canvas
@@ -237,3 +243,9 @@ class HidrographyFlowProcess(ValidationProcess):
         print self.selectUpstreamLines(n, lyr, d)
         # self.abstractDb.createHidNodeTable(crs.split(':')[1])
         # print self.fillNodeTable(lyr, d)
+        if self.parameters['Only Selected']:
+            print self.selectUpstreamLines(n, lyr, d)
+        else:
+            self.abstractDb.createHidNodeTable(crs.split(':')[1])
+            print self.fillNodeTable(lyr, d)
+        
