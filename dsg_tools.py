@@ -56,6 +56,7 @@ from DsgTools.ValidationTools.validation_toolbox import ValidationToolbox
 from DsgTools.ProductionTools.MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeatures
 from DsgTools.ProductionTools.StyleManagerTool.styleManagerTool import StyleManagerTool
+from DsgTools.ProductionTools.DsgRasterInfoTool.dsgRasterInfoTool import DsgRasterInfoTool
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
 from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
@@ -119,6 +120,7 @@ class DsgTools:
         self.contourDock = None
         self.fieldDock = None
         self.militaryDock = None
+        self.rasterInfoDock = None
 
         self.processManager = ProcessManager(iface)
 
@@ -568,6 +570,17 @@ class DsgTools:
         productiontools.addAction(action)
         self.productionButton.addAction(action)
 
+        icon_path = ':/plugins/DsgTools/icons/frame.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Raster Info Tool'),
+            callback=self.showRasterInfoDock,
+            parent=productiontools,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        productiontools.addAction(action)
+        self.productionButton.addAction(action)
+
         icon_path = ':/plugins/DsgTools/icons/complex.png'
         action = self.add_action(
             icon_path,
@@ -709,16 +722,18 @@ class DsgTools:
         action.setEnabled(False)
         productiontools.addAction(action)
         self.toolbar.addAction(action)
-
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
         self.inspectFeatures = InspectFeatures(self.iface, parent = productiontools)
         self.minimumAreaTool = MinimumAreaTool(self.iface, parent = productiontools)
+        self.dsgRasterInfoTool = DsgRasterInfoTool(self.iface, parent = productiontools)
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
         # self.inspectFeatures.enableShortcuts()
         # self.iface.registerMainWindowAction(self.inspectFeatures.action, '')
         self.toolbar.addWidget(self.styleManagerTool)
+        self.toolbar.addWidget(self.dsgRasterInfoTool)
+        
 
     
     def createMilitaryMenu(self, parentMenu, icon_path):
@@ -892,6 +907,16 @@ class DsgTools:
         else:
             self.validationToolbox = ValidationToolbox(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+    
+    def showRasterInfoDock(self):
+        """
+        Shows the Raster Info dock
+        """
+        if self.rasterInfoDock:
+            self.iface.removeDockWidget(self.rasterInfoDock)
+        else:
+            self.rasterInfoDock = DsgRasterInfoTool(self.iface)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.rasterInfoDock)
 
     def showComplexDock(self):
         """
