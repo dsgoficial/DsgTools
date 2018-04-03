@@ -23,11 +23,14 @@
 
 import os
 
+from qgis.core import QgsGeometry, QgsRaster
+
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QTimer
 from PyQt4.QtGui import QDockWidget, QToolTip, QAction
 
 from DsgTools.ProductionTools.DsgRasterInfoTool.bandValueTool import BandValueTool
+from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
 
@@ -49,15 +52,16 @@ class DsgRasterInfoTool(QDockWidget, FORM_CLASS):
         super(DsgRasterInfoTool, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
-        self.bandValueTool = BandValueTool(iface, self)
+        self.timerMapTips = QTimer( self.canvas )
+        self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        # self.timerMapTips.timeout.connect( self.showToolTip )
     
     @pyqtSlot(bool, name = 'on_showBandsCheckBox_toggled')
     def activateBandValueTool(self, state):
         if state:
-            self.bandValueTool.activate()
+            self.iface.mapCanvas().xyCoordinates.connect(self.showToolTip)
         else:
-            self.bandValueTool.deactivate()
-            self.canvas.unsetMapTool(self.bandValueTool)
+            self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
     
     @pyqtSlot(bool, name = 'on_adaptableVisualCheckBox_toggled')
     def activateStretchTool(self, state):
@@ -72,3 +76,33 @@ class DsgRasterInfoTool(QDockWidget, FORM_CLASS):
             self.iface.mainWindow().findChild( QAction, 'mActionLocalCumulativeCutStretch' ).trigger()
         except AttributeError:
             pass
+    
+    def getPixelValue(self, mousePos, rasterLayer):
+        """
+        
+        """
+        rasterCrs = rasterLayer.crs()
+        mousePosGeom = QgsGeometry.fromPoint(mousePos)
+        canvasCrs = self.canvas.mapRenderer().destinationCrs()
+        self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, canvasCrs)
+        mousePos = mousePosGeom.asPoint()
+        # identify pixel(s) information
+        i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
+        if i.isValid():
+            text = ", ".join(['{0:g}'.format(r) for r in i.results().values() if r is not None] )
+        else:
+            text = ""
+        return text
+
+    def showToolTip(self, qgsPoint):
+        """
+        
+        """
+        self.timerMapTips.stop()
+        self.timerMapTips.start( 6000 ) # time in milliseconds
+        if self.canvas.underMouse():
+            raster = self.rasterComboBox.currentLayer()
+            if raster:
+                text = self.getPixelValue(qgsPoint, raster)
+                p = self.canvas.mapToGlobal( self.canvas.mouseLastXY() )
+                QToolTip.showText( p, text, self.canvas )
