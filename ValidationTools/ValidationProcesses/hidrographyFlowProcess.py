@@ -38,12 +38,12 @@ class HidrographyFlowProcess(ValidationProcess):
         self.danglesClass = IdentifyDanglesProcess(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Hidrography Network Directioning')
         self.parameters = { 'Only Selected' : False, 'Snap' : 2.0 }
-        self.dictNodeType = {
-                             0 : 'Flag',
-                             1 : 'Fonte d\'Água',
-                             2 : 'Sumidouro',
-                             3 : 'Moldura'
-                            }
+        self.nodeTypeExceptionsDict = {
+                                        0 : 'Flag',
+                                        1 : 'Fonte d\'Água',
+                                        2 : 'Sumidouro',
+                                        3 : 'Moldura'
+                                       }
 
     def identifyAllNodes(self, lyr):
         """
@@ -123,8 +123,8 @@ class HidrographyFlowProcess(ValidationProcess):
                 # case 1.a.ii: waterway is flowing to mapped area (point over the frame has on line ending line(s))
                 elif hasStartLine:
                     return 2
-            # case 1.b: point that legimately only flows from
-            # case 1.c: point that legimately only flows out
+            # case 1.b: point that legitimately only flows from
+            # case 1.c: point that legitimately only flows out
             # case 1.d: points that are not supposed to have one way flow (flags)
             return 0
         # case 2 "confluence"
@@ -134,20 +134,24 @@ class HidrographyFlowProcess(ValidationProcess):
         else:
             return 4
         
-    # def classifyAllNodes(self, lyr):
-    #     """
-    #     Classifies all nodes of features from a given layer. NÃO IRÁ FICAR
-    #     :param lyr: target layer to which nodes identification is required.
-    #     """
-    #     c1, c2, c3, c4 = 0, 0, 0
-    #     dictNode = self.identifyAllNodes(lyr)
-    #     for node in dictNode.keys():
-    #         r1, r2, r3, r4 = self.nodeType(node, dictNode[node])
-    #         c1 += r1
-    #         c2 += r2
-    #         c3 += r3
-    #         c4 += r4
-    #     print c1, c2, c3, c4
+    def classifyAllNodes(self, dictNode, frameLyrContour, searchRadius, nodeList=None):
+        """
+        Classifies all nodes of features from a given layer.
+        :param dictNode: dictionaty of flow in and out for each hidrography node to be classified.
+        :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
+                         to be classified. Node MUST be in dict given, if not, it'll be ignored.
+        :return: a dictionary of node and its node type (int) 
+        """
+        nodeTypeDict = dict()
+        nodeKeys = dictNode.keys()
+        if not nodeList:
+            nodeList = nodeKeys
+        for node in nodeList:
+            if node not in nodeKeys:
+                continue
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=dictNode[node], \
+                                               frameLyrContour=frameLyrContour, searchRadius=searchRadius)
+        return nodeTypeDict
 
     def fillNodeTable(self, lyr, dictNode, frameLyrBoundingBox, searchRadius):
         """
@@ -210,6 +214,8 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         if not isinstance(firstNode, list):
             initNode = [firstNode]
+        else:
+            initNode = firstNode
         geomType = lyr.geometryType()
         selection = flippedLines = rightLines = []
         # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
@@ -253,7 +259,9 @@ class HidrographyFlowProcess(ValidationProcess):
         return flippedLines
 
     def execute(self):
+        # PARÂMETROS PARA TESTE
         frame = pt_drenagem = trecho_drenagem = None
+        searchRadius = 2.0
         for lyer in self.canvas.layers():
             if lyer.name() == 'aux_moldura_a':
                 frameLayer = lyer
@@ -265,19 +273,19 @@ class HidrographyFlowProcess(ValidationProcess):
                 trecho_drenagem = lyer
             elif trecho_drenagem and pt_drenagem and frame:
                 break
-        frameBB = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
-        frameBB = QgsGeometry().fromPolyline(frameBB[0][0])
+        frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
+        frame = QgsGeometry().fromPolyline(frame[0][0])
         d = self.identifyAllNodes(trecho_drenagem)
         crs = trecho_drenagem.crs().authid()
-        # for feat in pt_drenagem.selectedFeatures():
-        #     n = feat.geometry().asPoint()
-        # print self.selectUpstreamLines(n, lyr, d)
-        self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        print self.fillNodeTable(trecho_drenagem, d, frameBB, 5)
-        self.canvas.refresh()
+        for feat in pt_drenagem.selectedFeatures():
+            n = feat.geometry().asMultiPoint()
+        print self.selectUpstreamLines(n, trecho_drenagem, d)
+        # # TESTE DE POPULAÇÃO DAS TABELAS
+        # self.abstractDb.createHidNodeTable(crs.split(':')[1])
+        # print self.fillNodeTable(trecho_drenagem, d, frame, searchRadius)
+        # # TESTE DE CLASSIFICAÇÃO DOS NÓS
+        # print self.classifyAllNodes(d, frame, searchRadius)
         # if self.parameters['Only Selected']:
-        #     print self.selectUpstreamLines(n, trecho_drenagem, d)
-        # else:
-        #     self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        #     print self.fillNodeTable(trecho_drenagem, d, frameBB, 2.0)
+        # # TESTE DE SELEÇÃO DE UPSTREAM
+        # print self.selectUpstreamLines(n, trecho_drenagem, d)
         
