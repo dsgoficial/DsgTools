@@ -24,17 +24,20 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeo
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 
 class HidrographyFlowProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(HidrographyFlowProcess, self).__init__(postgisDb, iface, instantiating)
         self.nodeDict = dict()
+        self.canvas = self.iface.mapCanvas()
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        self.danglesClass = IdentifyDanglesProcess(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Hidrography Network Directioning')
-        self.parameters = { 'Only Selected' : False }
+        self.parameters = { 'Only Selected' : False, 'Snap' : 2.0 }
         self.dictNodeType = {
                              0 : 'Flag',
                              1 : 'Fonte d\'Água',
@@ -82,20 +85,26 @@ class HidrographyFlowProcess(ValidationProcess):
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
 
-    def nodeOnFrame(self, nodeGeom, frameLyr):
+    def nodeOnFrame(self, node, frameLyrContour, searchRadius):
         """
         Identify whether or not node is over the frame. Returns True if point is over the frame and false if
         node is not on frame. If identification fails, returns 'None'.
-        :param node: QgsGeometry to be identified as over the frame layer or not.
-        :param frameLyr: QgsVectorLayer frame layer to be checked.        
+        :param node: node (QgsPoint) to be identified as over the frame layer or not.
+        :param frameLyrContour: bounding box for the frame layer to be checked.
+        :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
         """
-        pass
-
-    def nodeType(self, nodePoint, dictStartingEndingLinesEntry, frameLayer=''):
+        qgisPoint = QgsGeometry.fromPoint(node)
+        # buildgin a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
+        buf = QgsGeometry.fromWkt(buf)
+        return buf.intersects(frameLyrContour)
+        
+    def nodeType(self, nodePoint, dictStartingEndingLinesEntry, frameLyrContour, searchRadius):
         """
         Sets the node type given all lines that flows from and to it.
         :param nodePoint: point to be classified.
         :param dictStartingEndingLinesEntry: dict of { 'start' : [lines], 'end' : [lines] }.
+        :param frameLyrContour: bounding box for the frame layer to be checked.
         :return: returns the point type.
         """
         sizeFlowOut = len(dictStartingEndingLinesEntry['start'])
@@ -107,32 +116,40 @@ class HidrographyFlowProcess(ValidationProcess):
         # case 1: all lines either flow in or out 
         if startXORendLine:
             # case 1.a: point is over the frame
+            if self.nodeOnFrame(node=nodePoint, frameLyrContour=frameLyrContour, searchRadius=searchRadius):
+                # case 1.a.i: waterway is flowing away from mapped area (point over the frame has on line ending line(s))
+                if hasEndLine:
+                    return 1
+                # case 1.a.ii: waterway is flowing to mapped area (point over the frame has on line ending line(s))
+                elif hasStartLine:
+                    return 2
             # case 1.b: point that legimately only flows from
             # case 1.c: point that legimately only flows out
             # case 1.d: points that are not supposed to have one way flow (flags)
             return 0
         # case 2 "confluence"
         elif sizeFlowIn >= sizeFlowOut:
-            return 1
+            return 3
         # case 3 "ramification"
         else:
-            return 2
+            return 4
         
-    def classifyAllNodes(self, lyr):
-        """
-        Classifies all nodes of features from a given layer. NÃO IRÁ FICAR
-        :param lyr: target layer to which nodes identification is required.
-        """
-        c1, c2, c3 = 0, 0, 0
-        dictNode = self.identifyAllNodes(lyr)
-        for node in dictNode.keys():
-            r1, r2, r3 = self.nodeType(node, dictNode[node])
-            c1 += r1
-            c2 += r2
-            c3 += r3
-        print c1, c2, c3
+    # def classifyAllNodes(self, lyr):
+    #     """
+    #     Classifies all nodes of features from a given layer. NÃO IRÁ FICAR
+    #     :param lyr: target layer to which nodes identification is required.
+    #     """
+    #     c1, c2, c3, c4 = 0, 0, 0
+    #     dictNode = self.identifyAllNodes(lyr)
+    #     for node in dictNode.keys():
+    #         r1, r2, r3, r4 = self.nodeType(node, dictNode[node])
+    #         c1 += r1
+    #         c2 += r2
+    #         c3 += r3
+    #         c4 += r4
+    #     print c1, c2, c3, c4
 
-    def fillNodeTable(self, lyr, dictNode):
+    def fillNodeTable(self, lyr, dictNode, frameLyrBoundingBox, searchRadius):
         """
         Method to populate validation.aux_validation_nodes_p with all nodes.
         :param lyr: layer which dictNode is created from.
@@ -141,8 +158,12 @@ class HidrographyFlowProcess(ValidationProcess):
         lyrName = lyr.name()
         crs = lyr.crs().authid().split(":")[1]
         for node in dictNode.keys():
-            nodeType = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=dictNode[node])
+            # classify points
+            nodeType = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=dictNode[node], \
+                                             frameLyrContour=frameLyrBoundingBox, searchRadius=searchRadius)
+            # get node geometry as wkt for database loading
             nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
+            # if node is loaded into database, the following method returns True
             if self.abstractDb.insertHidValNode(layerName=lyrName, node=nWkt, nodeType=nodeType, crs=crs):
                 continue
             else:
@@ -205,12 +226,9 @@ class HidrographyFlowProcess(ValidationProcess):
                         # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
                         fn = self.getLineLastNode(lyr, feat, geomType)
                         # flip wrong lines
-<<<<<<< HEAD
                         self.DsgGeometryHandler.flipFeature(lyr, feat, 1)                        
-=======
                         self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
                         fn = self.getLineInitialNode(lyr, feat, geomType)
->>>>>>> 7e8eec2763d4c2f7b501234ebfb4a6df26d7bcdc
                         newInitNode.append(fn)
                         selection.append(feat.id())
                         flippedLines.append(feat.id())
@@ -235,17 +253,31 @@ class HidrographyFlowProcess(ValidationProcess):
         return flippedLines
 
     def execute(self):
-        lyr = self.iface.activeLayer()
-        d = self.identifyAllNodes(lyr)
-        crs = lyr.crs().authid()
-        for feat in lyr.selectedFeatures():
-            n = self.getLineLastNode(lyr, feat, 1)
-        print self.selectUpstreamLines(n, lyr, d)
-        # self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        # print self.fillNodeTable(lyr, d)
-        if self.parameters['Only Selected']:
-            print self.selectUpstreamLines(n, lyr, d)
-        else:
-            self.abstractDb.createHidNodeTable(crs.split(':')[1])
-            print self.fillNodeTable(lyr, d)
+        frame = pt_drenagem = trecho_drenagem = None
+        for lyer in self.canvas.layers():
+            if lyer.name() == 'aux_moldura_a':
+                frameLayer = lyer
+                frame = [feat for feat in lyer.getFeatures()]
+                frame = frame[0]
+            elif lyer.name() == 'aux_hid_nodes_p':
+                pt_drenagem = lyer
+            elif lyer.name() == 'hid_trecho_drenagem_l':
+                trecho_drenagem = lyer
+            elif trecho_drenagem and pt_drenagem and frame:
+                break
+        frameBB = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
+        frameBB = QgsGeometry().fromPolyline(frameBB[0][0])
+        d = self.identifyAllNodes(trecho_drenagem)
+        crs = trecho_drenagem.crs().authid()
+        # for feat in pt_drenagem.selectedFeatures():
+        #     n = feat.geometry().asPoint()
+        # print self.selectUpstreamLines(n, lyr, d)
+        self.abstractDb.createHidNodeTable(crs.split(':')[1])
+        print self.fillNodeTable(trecho_drenagem, d, frameBB, 5)
+        self.canvas.refresh()
+        # if self.parameters['Only Selected']:
+        #     print self.selectUpstreamLines(n, trecho_drenagem, d)
+        # else:
+        #     self.abstractDb.createHidNodeTable(crs.split(':')[1])
+        #     print self.fillNodeTable(trecho_drenagem, d, frameBB, 2.0)
         
