@@ -30,9 +30,7 @@ from PyQt4.QtGui import QToolTip
 
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'bandToolTip.ui'))
-
-class PxBandValueToolTip(QgsMapTool, FORM_CLASS):
+class BandValueTool(QgsMapTool):
     """
     This class is supposed to help revision operators. It shows, on mouse hovering
     raster layer's band values. For a MDS product, altimetry is, then, given.
@@ -41,19 +39,20 @@ class PxBandValueToolTip(QgsMapTool, FORM_CLASS):
     2- On mouse click: create a new instance of desired layer (filled on config).
         * behaviour 2 is an extrapolation of first conception
     """
-    def __init__(self, iface):
+    def __init__(self, iface, parent):
         """
         Class constructor.
         """
         # super(QgsRasterLayer, self).__init__()
         self.canvas = iface.mapCanvas()
-        super(QgsMapTool, self).__init__(self.canvas)
+        super(BandValueTool, self).__init__(self.canvas)
+        self.parent = parent
         self.iface = iface
         self.toolAction = None
         self.QgsMapToolEmitPoint = QgsMapToolEmitPoint(self.canvas)
+        self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.timerMapTips = QTimer( self.canvas )
         self.timerMapTips.timeout.connect( self.showToolTip )
-        self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.activated = False
         self.canvasCrs = self.canvas.mapRenderer().destinationCrs()
     
@@ -69,8 +68,8 @@ class PxBandValueToolTip(QgsMapTool, FORM_CLASS):
         """
         if self.toolAction:
             self.activated = True
-            self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
+        self.canvas.setMapTool(self)
     
     def deactivate(self):
         """
@@ -86,28 +85,10 @@ class PxBandValueToolTip(QgsMapTool, FORM_CLASS):
         except:
             pass        
 
-    def canvasPressEvent(self, e):
-        """
-        Create a feature of Selected Layer.
-        TODO
-        """
-        pass
-
     def canvasMoveEvent(self, e):
         QToolTip.hideText()
         self.timerMapTips.start( 500 ) # time in milliseconds
-        self.showToolTip()
-
-    def getRasterLayers(self):
-        """
-        Gets all loaded raster layers.
-        """
-        rasters = []
-        lyrs = self.canvas.layers()
-        for lyr in lyrs:
-            if isinstance(lyr, QgsRasterLayer):
-                rasters.append(lyr)
-        return rasters                
+        self.showToolTip()               
     
     def getPixelValue(self, rasterLayer):
         """
@@ -132,12 +113,8 @@ class PxBandValueToolTip(QgsMapTool, FORM_CLASS):
         """
         self.timerMapTips.stop()
         if self.canvas.underMouse():
-            raster = self.getRasterLayers()
-            raster = raster[0] if raster else None
+            raster = self.parent.rasterComboBox.currentLayer()
             if raster:
                 text = self.getPixelValue(raster)
                 p = self.canvas.mapToGlobal( self.canvas.mouseLastXY() )
                 QToolTip.showText( p, text, self.canvas )
-
-    def openDialog(self):
-        self.canvas.setMapTool(PxBandValueToolTip(self.iface))
