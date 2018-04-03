@@ -33,6 +33,7 @@ from DsgTools.ProductionTools.DsgRasterInfoTool.bandValueTool import BandValueTo
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
+# from DsgTools.ProductionTools.DsgRasterInfoTool.dsgRasterInfoTool_ui import Ui_Form
 
 class DsgRasterInfoTool(QWidget, FORM_CLASS):
     """
