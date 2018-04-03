@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DsgRasterInfoTool</class>
+ <widget class="QDockWidget" name="DsgRasterInfoTool">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>266</width>
+    <height>111</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DSGTools: Raster Information Tool</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="minimumSize">
+         <size>
+          <width>81</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>81</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Raster Layer</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QgsMapLayerComboBox" name="rasterComboBox">
+        <property name="filters">
+         <set>QgsMapLayerProxyModel::RasterLayer</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QCheckBox" name="showBandsCheckBox">
+        <property name="minimumSize">
+         <size>
+          <width>111</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>111</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Show Bands</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="adaptableVisualCheckBox">
+        <property name="minimumSize">
+         <size>
+          <width>131</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>131</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Adaptable Visual</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
