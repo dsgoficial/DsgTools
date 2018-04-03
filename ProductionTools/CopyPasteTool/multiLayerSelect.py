@@ -371,14 +371,15 @@ class MultiLayerSelection(QgsMapTool):
         """
         geom = None
         for layer in self.iface.legendInterface().layers():
-            selection = layer.selectedFeatures()
-            if len(selection):
-                if geom == None:
-                    geom = layer.geometryType()
-                    continue
-                elif layer.geometryType() < geom:
-                    geom = layer.geometryType()
-                    continue
+            if isinstance(layer, QgsVectorLayer):
+                selection = layer.selectedFeatures()
+                if len(selection):
+                    if geom == None:
+                        geom = layer.geometryType()
+                        continue
+                    elif layer.geometryType() < geom:
+                        geom = layer.geometryType()
+                        continue
         return geom
     
     def addActionToMenu(self, action, onTriggeredAction, onHoveredAction=None):
