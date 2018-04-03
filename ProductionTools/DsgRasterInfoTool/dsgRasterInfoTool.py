@@ -27,14 +27,14 @@ from qgis.core import QgsGeometry, QgsRaster
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QTimer
-from PyQt4.QtGui import QDockWidget, QToolTip, QAction
+from PyQt4.QtGui import QWidget, QToolTip, QAction, QIcon
 
 from DsgTools.ProductionTools.DsgRasterInfoTool.bandValueTool import BandValueTool
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
 
-class DsgRasterInfoTool(QDockWidget, FORM_CLASS):
+class DsgRasterInfoTool(QWidget, FORM_CLASS):
     """
     This class is supposed to help revision operators. It shows, on mouse hovering
     raster layer's band values. For a MDS product, altimetry is, then, given.
@@ -51,19 +51,60 @@ class DsgRasterInfoTool(QDockWidget, FORM_CLASS):
         self.canvas = iface.mapCanvas()
         super(DsgRasterInfoTool, self).__init__(parent)
         self.setupUi(self)
+        self.parent = parent
+        self.splitter.hide()
         self.iface = iface
         self.timerMapTips = QTimer( self.canvas )
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        self.addShortcuts()
+    
+    def add_action(self, icon_path, text, callback, parent=None):
+        icon = QIcon(icon_path)
+        action = QAction(icon, text, parent)
+        action.triggered.connect(callback)
+        if parent:
+            parent.addAction(action)
+        return action
+
+    def addShortcuts(self):
+        icon_path = ':/plugins/DsgTools/icons/rasterToolTip.png'
+        text = self.tr('DSGTools: Raster information tool')
+        self.activateToolAction = self.add_action(icon_path, text, self.rasterInfoPushButton.toggle, parent = self.parent)
+        self.iface.registerMainWindowAction(self.activateToolAction, '')
+        icon_path = ':/plugins/DsgTools/icons/band_tooltip.png'
+        text = self.tr('DSGTools: Band tooltip')
+        self.bandTooltipButtonAction = self.add_action(icon_path, text, self.bandTooltipButton.toggle, parent = self.parent)
+        self.iface.registerMainWindowAction(self.bandTooltipButtonAction, '')
+        icon_path = ':/plugins/DsgTools/icons/dynamic_histogram_viewer.png'
+        text = self.tr('DSGTools: Dynamic Histogram Viewer')
+        self.dynamicHistogramButtonAction = self.add_action(icon_path, text, self.dynamicHistogramButton.toggle, parent = self.parent)
+        self.iface.registerMainWindowAction(self.dynamicHistogramButtonAction, '')
         # self.timerMapTips.timeout.connect( self.showToolTip )
     
-    @pyqtSlot(bool, name = 'on_showBandsCheckBox_toggled')
+    def deactivate(self):
+        self.activateBandValueTool(False)
+        self.activateStretchTool(False)
+
+    @pyqtSlot(bool, name = 'on_rasterInfoPushButton_toggled')
+    def toggleBar(self, toggled=None):
+        """
+        Shows/Hides the tool bar
+        """
+        if toggled is None:
+            toggled = self.rasterInfoPushButton.isChecked()
+        if toggled:
+            self.splitter.show()
+        else:
+            self.splitter.hide()      
+    
+    @pyqtSlot(bool, name = 'on_bandTooltipButton_toggled')
     def activateBandValueTool(self, state):
         if state:
             self.iface.mapCanvas().xyCoordinates.connect(self.showToolTip)
         else:
             self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
     
-    @pyqtSlot(bool, name = 'on_adaptableVisualCheckBox_toggled')
+    @pyqtSlot(bool, name = 'on_dynamicHistogramButton_toggled')
     def activateStretchTool(self, state):
         if state:
             self.iface.mapCanvas().extentsChanged.connect(self.stretch_raster)

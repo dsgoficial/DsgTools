@@ -726,11 +726,14 @@ class DsgTools:
         self.iface.registerMainWindowAction(action, '')
         self.inspectFeatures = InspectFeatures(self.iface, parent = productiontools)
         self.minimumAreaTool = MinimumAreaTool(self.iface, parent = productiontools)
+        self.dsgRasterInfoTool = DsgRasterInfoTool(self.iface, parent = productiontools)
         self.toolbar.addWidget(self.minimumAreaTool)
         self.toolbar.addWidget(self.inspectFeatures)
         # self.inspectFeatures.enableShortcuts()
         # self.iface.registerMainWindowAction(self.inspectFeatures.action, '')
         self.toolbar.addWidget(self.styleManagerTool)
+        self.toolbar.addWidget(self.dsgRasterInfoTool)
+        
 
     
     def createMilitaryMenu(self, parentMenu, icon_path):

@@ -49,5 +49,7 @@
         <file>icons/free_hand.png</file>
         <file>icons/flipLineTool.png</file>
         <file>icons/rasterToolTip.png</file>
+        <file>icons/band_tooltip.png</file>
+        <file>icons/dynamic_histogram_viewer.png</file>
     </qresource>
 </RCC>
