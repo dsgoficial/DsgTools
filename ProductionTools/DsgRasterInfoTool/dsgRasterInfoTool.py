@@ -32,10 +32,10 @@ from PyQt4.QtGui import QWidget, QToolTip, QAction, QIcon
 from DsgTools.ProductionTools.DsgRasterInfoTool.bandValueTool import BandValueTool
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
-# from DsgTools.ProductionTools.DsgRasterInfoTool.dsgRasterInfoTool_ui import Ui_Form
+# FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
+from DsgTools.ProductionTools.DsgRasterInfoTool.dsgRasterInfoTool_ui import Ui_DsgRasterInfoTool
 
-class DsgRasterInfoTool(QWidget, FORM_CLASS):
+class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     """
     This class is supposed to help revision operators. It shows, on mouse hovering
     raster layer's band values. For a MDS product, altimetry is, then, given.
