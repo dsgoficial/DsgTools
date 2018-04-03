@@ -241,21 +241,23 @@ class HidrographyFlowProcess(ValidationProcess):
                 if rightFlow:
                     # if lines end there, then they are connected and flowing that way
                     # all the endings are now new starts
-                    for feat in rightFlow:
-                        if feat.id() in rightLines:
+                    for feat2 in rightFlow:
+                        if feat2.id() in rightLines:
                             continue
-                        fn = self.getLineInitialNode(lyr, feat, geomType)
+                        fn = self.getLineInitialNode(lyr, feat2, geomType)
                         newInitNode.append(fn)
-                        rightLines.append(feat.id())
+                        rightLines.append(feat2.id())
                 selection += rightLines + flippedLines
+                lyr.startEditing()
+                lyr.setSelectedFeatures(selection)
             selection = list(set(selection)) 
             # check new starts up to no new starts are found
             initNode = newInitNode
         # update flipped lines representation on canvas
         self.iface.mapCanvas().refresh()
-        lyr.removeSelection()
-        lyr.startEditing()
-        lyr.setSelectedFeatures(selection)
+        # lyr.removeSelection()
+        # lyr.startEditing()
+        # lyr.setSelectedFeatures(selection)
         return flippedLines
 
     def execute(self):
