@@ -100,9 +100,6 @@
         <height>32</height>
        </size>
       </property>
-      <property name="filters">
-       <set>QgsMapLayerProxyModel::RasterLayer</set>
-      </property>
      </widget>
      <widget class="QPushButton" name="bandTooltipButton">
       <property name="sizePolicy">
