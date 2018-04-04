@@ -481,7 +481,7 @@ class MultiLayerSelection(QgsMapTool):
                     # hence the need of db_name
                     self.iface.setActiveLayer(layer) # a layer must be active in order to get db_name
                     dsUri = self.iface.activeLayer().dataProvider().dataSourceUri()
-                    if '/' in dsUri:
+                    if '/' in dsUri or '\\' in dsUri:
                         db_name = dsUri
                     else:
                         db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
