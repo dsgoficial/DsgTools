@@ -114,8 +114,11 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     
     def stretch_raster(self):
         try:
+            formerLayer = self.iface.activeLayer()
             layer = self.rasterComboBox.currentLayer()
+            self.iface.setActiveLayer(layer)
             self.iface.mainWindow().findChild( QAction, 'mActionLocalCumulativeCutStretch' ).trigger()
+            self.iface.setActiveLayer(formerLayer)
         except AttributeError:
             pass
     
