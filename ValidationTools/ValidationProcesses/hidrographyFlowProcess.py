@@ -119,20 +119,24 @@ class HidrographyFlowProcess(ValidationProcess):
             if self.nodeOnFrame(node=nodePoint, frameLyrContour=frameLyrContour, searchRadius=searchRadius):
                 # case 1.a.i: waterway is flowing away from mapped area (point over the frame has on line ending line(s))
                 if hasEndLine:
-                    return 1
+                    return 3
                 # case 1.a.ii: waterway is flowing to mapped area (point over the frame has on line ending line(s))
                 elif hasStartLine:
-                    return 2
+                    return 4
             # case 1.b: point that legitimately only flows from
+            elif hasEndLine:
+                return 1
             # case 1.c: point that legitimately only flows out
+            elif hasStartLine:
+                return 2
             # case 1.d: points that are not supposed to have one way flow (flags)
             return 0
         # case 2 "confluence"
         elif sizeFlowIn >= sizeFlowOut:
-            return 3
+            return 5
         # case 3 "ramification"
         else:
-            return 4
+            return 6
         
     def classifyAllNodes(self, dictNode, frameLyrContour, searchRadius, nodeList=None):
         """
@@ -278,59 +282,33 @@ class HidrographyFlowProcess(ValidationProcess):
         self.iface.mapCanvas().refresh()
         return flippedLines
 
-    # def selectDownstreamLines(self, firstNode, lyr, dictNode, flipWrongLines=False):
-    #     """
-    #     Selects all lines that are downstream from a initial node (should be a starting point) and returns a list of
-    #     lines with possible wrong flow direction.
-    #     :param initNode: initial node point target of all flow comparison.
-    #     :param flipWrongLines: if set True, it'll flip all lines that may have wrong flow.        
-    #     """
-    #     if not isinstance(firstNode, list):
-    #         initNode = [firstNode]
-    #     else:
-    #         initNode = firstNode
-    #     geomType = lyr.geometryType()
-    #     selection, flippedLines, newInitNode = [], [], []
-    #     # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
-    #     while initNode:
-    #         for node in initNode:
-    #             # lines that flow from an ending point are wrong
-    #             wrongFlow = dictNode[node]['end']
-    #             rightFlow = dictNode[node]['start']
-    #             if wrongFlow:
-    #                 for feat in wrongFlow:
-    #                     if feat.id() in selection:
-    #                         continue
-    #                     # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
-    #                     fn = self.getLineInitialNode(lyr, feat, geomType)
-    #                     # flip wrong lines
-    #                     if flipWrongLines:
-    #                         self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
-    #                     newInitNode.append(fn)
-    #                     flippedLines.append(feat.id())
-    #                     selection.append(feat.id())                        
-    #             if rightFlow:
-    #                 # if lines end there, then they are connected and flowing that way
-    #                 for feat in rightFlow:
-    #                     if feat.id() in selection:
-    #                         continue
-    #                     fn = self.getLineLastNode(lyr, feat, geomType)
-    #                     newInitNode.append(fn)
-    #                     selection.append(feat.id())
-    #         # check new starts up to no new starts are found
-    #         initNode = newInitNode
-    #         newInitNode = [] # new list of initial node(s)
-    #     lyr.removeSelection()
-    #     lyr.startEditing()
-    #     lyr.setSelectedFeatures(selection)
-    #     # update flipped lines representation on canvas
-    #     self.iface.mapCanvas().refresh()
-    #     return flippedLines
+    def getBlackListFeatures(self, nodeDict, nodeDictType, nodeList=None):
+        """
+        Gets all features directly connected to "strong" nodes.
+        Strong nodes are: water fountains or sinks and all nodes over frame.
+        :return: a list of feature ids that are not supposed to have their course changed.
+        """
+        nodeTypeBl = [1, 2, 3, 4]
+        featBl = []
+        if not nodeList:
+            nodeList = nodeDict.keys()
+        for node in nodeList:
+            featureList = nodeDict['start'] + nodeDict['end']
+            for feat in featureList:
+                if nodeDictType[node] in nodeTypeBl:
+                    featBl.append(feat.id())
+        return featBl
+
+    def getFlagsForAllFrameNodes(self, dictNode, dictNodeType, nodeList=None):
+        """
+        
+        """
+        pass
 
     def execute(self):
         # PARÂMETROS PARA TESTE
         frame, pt_drenagem, trecho_drenagem = None, None, None
-        searchRadius = 2.0
+        searchRadius = 5.0
         for lyer in self.canvas.layers():
             if lyer.name() == 'aux_moldura_a':
                 frameLayer = lyer
@@ -351,10 +329,11 @@ class HidrographyFlowProcess(ValidationProcess):
         # # TESTE DE SELEÇÃO DE UPSTREAM
         # print self.selectUpstreamLines(n, trecho_drenagem, d)
         # # TESTE DE SELEÇÃO DE DOWNSTREAM
-        print self.selectUpDownstreamLines(n, trecho_drenagem, d, 'downstream', flipWrongLines=False)
-        # # TESTE DE POPULAÇÃO DAS TABELAS
+        # print self.selectUpDownstreamLines(n, trecho_drenagem, d, 'downstream', ignoreWrongFlow=True, flipWrongLines=False)
+        # TESTE DE POPULAÇÃO DAS TABELAS
         # self.abstractDb.createHidNodeTable(crs.split(':')[1])
         # print self.fillNodeTable(trecho_drenagem, d, frame, searchRadius)
+        # self.iface.mapCanvas().refresh()
         # # TESTE DE CLASSIFICAÇÃO DOS NÓS
-        # print self.classifyAllNodes(d, frame, searchRadius)
+        # dictNodeType = self.classifyAllNodes(d, frame, searchRadius)
         # if self.parameters['Only Selected']:
