@@ -206,63 +206,108 @@ class HidrographyFlowProcess(ValidationProcess):
             return n[0][0]
         return n[0]
 
-    def selectUpstreamLines(self, firstNode, lyr, dictNode):
+    def selectUpstreamLines(self, firstNode, lyr, dictNode, flipWrongLines=False):
         """
-        Selects all lines that are upstream from a initial node (it's an ending point) and returns a list of
+        Selects all lines that are upstream from a initial node (should be an ending point) and returns a list of
         lines with possible wrong flow direction.
-        :param initNode: initial node point target of all flow comparison. 
+        :param firstNode: initial node point target of all flow comparison.
+        :param flipWrongLines: if set True, it'll flip all lines that may have wrong flow
         """
         if not isinstance(firstNode, list):
             initNode = [firstNode]
         else:
             initNode = firstNode
         geomType = lyr.geometryType()
-        selection = flippedLines = rightLines = []
+        selection, flippedLines, newInitNode = [], [], []
         # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
         while initNode:
             for node in initNode:
-                newInitNode = [] # new list of initial node(s)
                 # lines that flow from a starting point are wrong
                 wrongFlow = dictNode[node]['start']
                 rightFlow = dictNode[node]['end']
                 if wrongFlow:
                     for feat in wrongFlow:
-                        if feat.id() in flippedLines:
+                        if feat.id() in selection:
                             continue
                         # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
                         fn = self.getLineLastNode(lyr, feat, geomType)
                         # flip wrong lines
-                        self.DsgGeometryHandler.flipFeature(lyr, feat, 1)                        
-                        self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
-                        fn = self.getLineInitialNode(lyr, feat, geomType)
+                        if flipWrongLines:
+                            self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
                         newInitNode.append(fn)
-                        selection.append(feat.id())
                         flippedLines.append(feat.id())
+                        selection.append(feat.id())                        
                 if rightFlow:
                     # if lines end there, then they are connected and flowing that way
                     # all the endings are now new starts
-                    for feat2 in rightFlow:
-                        if feat2.id() in rightLines:
+                    for feat in rightFlow:
+                        if feat.id() in selection:
                             continue
-                        fn = self.getLineInitialNode(lyr, feat2, geomType)
+                        fn = self.getLineInitialNode(lyr, feat, geomType)
                         newInitNode.append(fn)
-                        rightLines.append(feat2.id())
-                selection += rightLines + flippedLines
-                lyr.startEditing()
-                lyr.setSelectedFeatures(selection)
-            selection = list(set(selection)) 
+                        selection.append(feat.id())
             # check new starts up to no new starts are found
             initNode = newInitNode
+            newInitNode = [] # new list of initial node(s)
+        lyr.removeSelection()
+        lyr.startEditing()
+        lyr.setSelectedFeatures(selection)
         # update flipped lines representation on canvas
         self.iface.mapCanvas().refresh()
-        # lyr.removeSelection()
-        # lyr.startEditing()
-        # lyr.setSelectedFeatures(selection)
+        return flippedLines
+
+    def selectDownstreamLines(self, firstNode, lyr, dictNode, flipWrongLines=False):
+        """
+        Selects all lines that are downstream from a initial node (should be a starting point) and returns a list of
+        lines with possible wrong flow direction.
+        :param initNode: initial node point target of all flow comparison.
+        :param flipWrongLines: if set True, it'll flip all lines that may have wrong flow.        
+        """
+        if not isinstance(firstNode, list):
+            initNode = [firstNode]
+        else:
+            initNode = firstNode
+        geomType = lyr.geometryType()
+        selection, flippedLines, newInitNode = [], [], []
+        # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
+        while initNode:
+            for node in initNode:
+                # lines that flow from an ending point are wrong
+                wrongFlow = dictNode[node]['end']
+                rightFlow = dictNode[node]['start']
+                if wrongFlow:
+                    for feat in wrongFlow:
+                        if feat.id() in selection:
+                            continue
+                        # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
+                        fn = self.getLineInitialNode(lyr, feat, geomType)
+                        # flip wrong lines
+                        if flipWrongLines:
+                            self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
+                        newInitNode.append(fn)
+                        flippedLines.append(feat.id())
+                        selection.append(feat.id())                        
+                if rightFlow:
+                    # if lines end there, then they are connected and flowing that way
+                    for feat in rightFlow:
+                        if feat.id() in selection:
+                            continue
+                        fn = self.getLineLastNode(lyr, feat, geomType)
+                        newInitNode.append(fn)
+                        selection.append(feat.id())
+            # check new starts up to no new starts are found
+            initNode = newInitNode
+            newInitNode = [] # new list of initial node(s)
+        lyr.removeSelection()
+        lyr.startEditing()
+        lyr.setSelectedFeatures(selection)
+        # update flipped lines representation on canvas
+        self.iface.mapCanvas().refresh()
         return flippedLines
 
     def execute(self):
         # PARÂMETROS PARA TESTE
-        frame = pt_drenagem = trecho_drenagem = None
+        frame, pt_drenagem, trecho_drenagem = None, None, None
         searchRadius = 2.0
         for lyer in self.canvas.layers():
             if lyer.name() == 'aux_moldura_a':
@@ -281,13 +326,13 @@ class HidrographyFlowProcess(ValidationProcess):
         crs = trecho_drenagem.crs().authid()
         for feat in pt_drenagem.selectedFeatures():
             n = feat.geometry().asMultiPoint()
-        print self.selectUpstreamLines(n, trecho_drenagem, d)
+        # # TESTE DE SELEÇÃO DE UPSTREAM
+        # print self.selectUpstreamLines(n, trecho_drenagem, d)
+        # # TESTE DE SELEÇÃO DE DOWNSTREAM
+        print self.selectDownstreamLines(n, trecho_drenagem, d)
         # # TESTE DE POPULAÇÃO DAS TABELAS
         # self.abstractDb.createHidNodeTable(crs.split(':')[1])
         # print self.fillNodeTable(trecho_drenagem, d, frame, searchRadius)
         # # TESTE DE CLASSIFICAÇÃO DOS NÓS
         # print self.classifyAllNodes(d, frame, searchRadius)
         # if self.parameters['Only Selected']:
-        # # TESTE DE SELEÇÃO DE UPSTREAM
-        # print self.selectUpstreamLines(n, trecho_drenagem, d)
-        
