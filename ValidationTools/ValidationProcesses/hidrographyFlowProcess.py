@@ -25,6 +25,7 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 import processing, binascii
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
+from datetime import datetime
 
 class HidrographyFlowProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False):
@@ -210,7 +211,7 @@ class HidrographyFlowProcess(ValidationProcess):
             return n[0][0]
         return n[0]
 
-    def selectUpDownstreamLines(self, firstNode, lyr, dictNode, direction, ignoreWrongFlow=False, flipWrongLines=False):
+    def selectUpDownstreamLines(self, firstNode, lyr, dictNode, direction, ignoreWrongFlow=False, flipWrongLines=False, ignoreSelection=False):
         """
         Selects all lines that are upstream or downstream from an initial node and returns a list of
         lines with possible wrong flow direction.
@@ -220,6 +221,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :param dictNode: dictionary containing info of all lines reaching from and to each node.
         :param ignoreWrongFlow: if set True, code will not set selection on 'wrong flowing lines'.
         :param flipWrongLines: if set True, it'll flip all lines that may have wrong flow.
+        :param ignoreSelection: if True, method will not select any lines.
         """
         if not isinstance(firstNode, list):
             initNode = [firstNode]
@@ -274,10 +276,12 @@ class HidrographyFlowProcess(ValidationProcess):
             initNode = newInitNode
             newInitNode = [] # new list of initial node(s)
         if ignoreWrongFlow:
+            # remove flagged lines from selection
             selection = list(set(selection) - set(flippedLines))
-        lyr.removeSelection()
-        lyr.startEditing()
-        lyr.setSelectedFeatures(selection)
+        if not ignoreSelection:
+            lyr.removeSelection()
+            lyr.startEditing()
+            lyr.setSelectedFeatures(selection)
         # update flipped lines representation on canvas
         self.iface.mapCanvas().refresh()
         return flippedLines
@@ -285,25 +289,50 @@ class HidrographyFlowProcess(ValidationProcess):
     def getBlackListFeatures(self, nodeDict, nodeDictType, nodeList=None):
         """
         Gets all features directly connected to "strong" nodes.
-        Strong nodes are: water fountains or sinks and all nodes over frame.
+        Strong nodes are: water fountains or sinks and all nodes over frame (up or downstream).
         :return: a list of feature ids that are not supposed to have their course changed.
         """
+        # codes for blacklisted types of nodes
         nodeTypeBl = [1, 2, 3, 4]
         featBl = []
         if not nodeList:
             nodeList = nodeDict.keys()
         for node in nodeList:
-            featureList = nodeDict['start'] + nodeDict['end']
+            featureList = nodeDict[node]['start'] + nodeDict[node]['end']
             for feat in featureList:
-                if nodeDictType[node] in nodeTypeBl:
-                    featBl.append(feat.id())
+                if nodeDictType[node] not in nodeTypeBl:
+                    continue
+                # if node has blacklisted type, it'll be added to the list
+                featBl.append(feat.id())
         return featBl
 
-    def getFlagsForAllFrameNodes(self, dictNode, dictNodeType, nodeList=None):
+    def getFlagsForAllFrameNodes(self, lyr, dictNode, dictNodeType, nodeList=None, blacklist=True, flipWrongLines=False, ignoreWrongFlow=False, ignoreSelection=True):
         """
-        
+        Get all possible wrong flow lines to be treated. If blacklist argument is given,
+        list will be filtered with blacklisted lines, according to current modelling rules.
         """
-        pass
+        frameNodeTypes = [3, 4]
+        flagLineList = []
+        if not nodeList:
+            nodeList = dictNode.keys()
+        featBlackList = self.getBlackListFeatures(nodeDict=dictNode, nodeDictType=dictNodeType,\
+                                                  nodeList=nodeList)
+        for node in nodeList:
+            if dictNodeType[node] not in frameNodeTypes:
+                continue
+            # if node is on frame, we add to flags all pointed lines to be flipped that are not blacklisted
+            elif dictNodeType[node] == 3:
+                # if waterway is 'going outside' of mapped region, we want to get all upstream lines
+                direction = 'upstream'
+            elif dictNodeType[node] == 4:
+                # if waterway is 'going inside' of mapped region, we want to get all downstream lines
+                direction = 'downstream'
+            flagCandidates = self.selectUpDownstreamLines(firstNode=node, lyr=lyr, dictNode=dictNode, \
+                                                          direction=direction, ignoreWrongFlow=ignoreWrongFlow, \
+                                                          flipWrongLines=flipWrongLines, ignoreSelection=ignoreSelection)
+            flagLineList += flagCandidates
+        flagLineList = list(set(flagLineList) - set(featBlackList))
+        return flagLineList
 
     def execute(self):
         # PARÂMETROS PARA TESTE
@@ -323,6 +352,7 @@ class HidrographyFlowProcess(ValidationProcess):
         frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
         frame = QgsGeometry().fromPolyline(frame[0][0])
         d = self.identifyAllNodes(trecho_drenagem)
+        dNodeType = self.classifyAllNodes(d, frame, searchRadius)
         crs = trecho_drenagem.crs().authid()
         for feat in pt_drenagem.selectedFeatures():
             n = feat.geometry().asMultiPoint()
@@ -337,3 +367,9 @@ class HidrographyFlowProcess(ValidationProcess):
         # # TESTE DE CLASSIFICAÇÃO DOS NÓS
         # dictNodeType = self.classifyAllNodes(d, frame, searchRadius)
         # if self.parameters['Only Selected']:
+        # # TESTE DE FLAGS DE DIRECIONAMENTO
+        flagList = self.getFlagsForAllFrameNodes(lyr=trecho_drenagem, dictNode=d, dictNodeType=dNodeType)
+        print len(flagList)
+        trecho_drenagem.removeSelection()
+        trecho_drenagem.startEditing()
+        trecho_drenagem.setSelectedFeatures(flagList)
