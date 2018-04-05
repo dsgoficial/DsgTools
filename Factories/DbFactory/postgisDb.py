@@ -3699,7 +3699,7 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr("Problem while populating compact validation processes history table: ")+query.lastError().text())
         self.db.commit()
         return True
-=======
+
     def instantiateQgsVectorLayer(self, uri):
         pass
     

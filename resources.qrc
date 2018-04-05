@@ -46,13 +46,11 @@
         <file>icons/circle.png</file> 
         <file>icons/home.png</file> 
         <file>icons/bug.png</file> 
-<<<<<<< HEAD
         <file>icons/free_hand.png</file>
         <file>icons/flipLineTool.png</file>
         <file>icons/rasterToolTip.png</file>
         <file>icons/band_tooltip.png</file>
         <file>icons/dynamic_histogram_viewer.png</file>
-=======
         <file>icons/config.png</file>
         <file>icons/import.png</file>
         <file>icons/run.png</file>
@@ -63,6 +61,5 @@
         <file>icons/export.png</file>
         <file>icons/up.png</file>
         <file>icons/down.png</file>
->>>>>>> 3.2_dev_AttributeValidator_#102
     </qresource>
 </RCC>
