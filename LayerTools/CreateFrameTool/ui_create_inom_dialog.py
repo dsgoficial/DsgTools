@@ -21,9 +21,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import *
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import *
 from PyQt4.QtGui import QMessageBox
 
 import os

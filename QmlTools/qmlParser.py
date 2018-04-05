@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtXml import *
+from PyQt4.QtXml import QDomDocument
 
 class QmlParser:
     def __init__(self, fileName):
