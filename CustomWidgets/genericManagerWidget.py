@@ -47,25 +47,30 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         super(GenericManagerWidget, self).__init__(parent)
         self.setupUi(self)
         self.genericDbManager = genericDbManager
-        self.versionDict = {'2.1.3':1, 'FTer_2a_Ed':2, 'Non_Edgv':3}
         self.textDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                             'Customization':self.tr('Customization'), 
                             'Style':self.tr('Style'), 
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Field Toolbox Configuration'),
-                            'Permission':self.tr('Permissions')}
+                            'Permission':self.tr('Permissions'),
+                            'AttributeRules':self.tr('Attribute Rule Configuration'),
+                            'SpatialRuleConfig':self.tr('Spatial Rule Configuration')}
         self.captionDict = {'EarthCoverage':self.tr('Earth Coverage'), 
                             'Customization':self.tr('Customization'), 
                             'Style':self.tr('Style'), 
                             'ValidationConfig':self.tr('Validation'), 
                             'FieldToolBoxConfig':self.tr('Reclassification Setup Files'),
-                            'Permission':self.tr('Select a dsgtools permission profile')}
+                            'Permission':self.tr('Select a dsgtools permission profile'),
+                            'AttributeRules':self.tr('Attribute Rule Configuration file'),
+                            'SpatialRuleConfig':self.tr('Spatial Rule Configuration file')}
         self.filterDict = {'EarthCoverage':self.tr('Earth Coverage Setup File (*.dsgearthcov)'), 
                             'Customization':self.tr('DsgTools Customization File (*.dsgcustom)'), 
                             'Style':self.tr('DsgTools Styles File (*.dsgstyle)'), 
                             'ValidationConfig':self.tr('DsgTools Validation Configuration File (*.dsgvalidcfg)'), 
                             'FieldToolBoxConfig':self.tr('Reclassification Setup Files (*.reclas)'),
-                            'Permission':self.tr('DsgTools Permission Profile File (*.dsgperm)')}
+                            'Permission':self.tr('DsgTools Permission Profile File (*.dsgperm)'),
+                            'AttributeRules':self.tr('Attribute Rule Configuration file (*.dsgattrrul)'),
+                            'SpatialRuleConfig':self.tr('Spatial Rule Configuration file (*.dsgspatrul)')}
         self.widgetName = self.textDict[self.getWhoAmI()]
         self.genericDict = None
         self.setComponentsEnabled(False)

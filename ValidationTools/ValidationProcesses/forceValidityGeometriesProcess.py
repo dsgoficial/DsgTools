@@ -53,11 +53,13 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         Reimplementation of the execute method from the parent class
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             # getting parameters after the execution of our pre process
             self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyInvalidGeometriesProcess')
             classesWithFlags = self.flagsDict.keys()
+            self.startTimeCount()
             if len(classesWithFlags) == 0:
                 self.setStatus(self.tr('There are no invalid geometries.'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('There are no invalid geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)

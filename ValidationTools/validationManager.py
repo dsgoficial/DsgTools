@@ -51,7 +51,6 @@ class ValidationManager(QObject):
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             
-
     def setAvailableProcesses(self):
         """
         Sets all available processes.
@@ -68,10 +67,9 @@ class ValidationManager(QObject):
                 chars = list(fileBaseName)
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
-                if processClass != 'UnbuildEarthCoveragePolygonsProcess':
-                    self.processList.append(processClass)
-                    self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
-            
+                self.processList.append(processClass)
+                self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
+        
     def instantiateProcessByName(self, processName, instantiating):
         """
         This method instantiate a process by its name.
@@ -133,6 +131,20 @@ class ValidationManager(QObject):
             return self.executeProcessV2(self.lastProcess, lastParameters = self.lastParameters)
         else:
             return -2
+        
+    def getParams(self, process, lastParameters = None, restoreOverride = True):
+        #get process chain
+        processChain, parameterDict = self.getProcessChain(process)
+        #get parameters from dialog
+        if not lastParameters:
+            params = self.getParametersWithUi(processChain, parameterDict, restoreOverride = restoreOverride)
+            if params == -1:
+                return -1
+            self.lastParameters = params
+            self.lastProcess = process
+        else:
+            params = lastParameters
+        return params, processChain
     
     def executeProcessV2(self, process, lastParameters = None):
         """
@@ -180,12 +192,12 @@ class ValidationManager(QObject):
                 return 0
         return 1
     
-    def getParametersWithUi(self, processChain, parameterDict):
+    def getParametersWithUi(self, processChain, parameterDict, restoreOverride = True):
         """
         Builds interface
         """
         processText = ', '.join([process.processAlias for process in processChain])
-        dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText))
+        dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText), restoreOverride = restoreOverride)
         if dlg.exec_() == 0:
             return -1
         # get parameters

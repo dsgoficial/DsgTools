@@ -311,7 +311,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos']
-        elif self.getDatabaseVersion() == '3.0':
+        elif self.getDatabaseVersion() in ('3.0', '2.1.3 Pro', '3.0 Pro'):
             schemaList = ['edgv', 'complexos']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
@@ -342,7 +342,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()        
         if self.getDatabaseVersion() == '2.1.3':
             schemaList = ['cb', 'complexos', 'dominios']
-        elif self.getDatabaseVersion() == '3.0':
+        elif self.getDatabaseVersion() in ('3.0', '2.1.3 Pro', '3.0 Pro'):
             schemaList = ['edgv', 'complexos', 'dominios']
         elif self.getDatabaseVersion() == 'FTer_2a_Ed':
             schemaList = ['pe','ge', 'complexos']
@@ -760,7 +760,7 @@ class PostgisDb(AbstractDb):
         """
         return 'public.aux_moldura_a'
     
-    def getEDGVDbsFromServer(self, parentWidget = None):
+    def getEDGVDbsFromServer(self, parentWidget = None, getDatabaseVersions = True):
         """
         Gets edgv databases from 'this' server
         """
@@ -779,34 +779,41 @@ class PostgisDb(AbstractDb):
         if parentWidget:
             progress = ProgressWidget(1,len(dbList),self.tr('Reading selected databases... '), parent = parentWidget)
             progress.initBar()
-        for database in dbList:
-            db = None
-            db = QSqlDatabase("QPSQL")
-            db.setDatabaseName(database)
-            db.setHostName(self.db.hostName())
-            db.setPort(self.db.port())
-            db.setUserName(self.db.userName())
-            db.setPassword(self.db.password())
-            if not db.open():
-                raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
+        if getDatabaseVersions:
+            for database in dbList:
+                db = None
+                db = QSqlDatabase("QPSQL")
+                db.setDatabaseName(database)
+                db.setHostName(self.db.hostName())
+                db.setPort(self.db.port())
+                db.setUserName(self.db.userName())
+                db.setPassword(self.db.password())
+                if not db.open():
+                    raise Exception(self.tr("Problem opening databases: ")+db.lastError().databaseText())
 
-            query2 = QSqlQuery(db)
-            if query2.exec_(self.gen.getGeometryTablesCount()):
-                while query2.next():
-                    count = query2.value(0)
-                    if count > 0:
-                        query3 = QSqlQuery(db)
-                        if query3.exec_(self.gen.getEDGVVersion()):
-                            while query3.next():
-                                version = query3.value(0)
-                                if version:
-                                    edvgDbList.append((database,version))
-                                else:
-                                    edvgDbList.append((database,'Non_EDGV'))
-                        else:
-                            edvgDbList.append((database,'Non_EDGV'))
-            if parentWidget:
-                progress.step()
+                query2 = QSqlQuery(db)
+                if query2.exec_(self.gen.getGeometryTablesCount()):
+                    while query2.next():
+                        count = query2.value(0)
+                        if count > 0:
+                            query3 = QSqlQuery(db)
+                            if query3.exec_(self.gen.getEDGVVersion()):
+                                while query3.next():
+                                    version = query3.value(0)
+                                    if version:
+                                        edvgDbList.append((database,version))
+                                    else:
+                                        edvgDbList.append((database,'Non_EDGV'))
+                            else:
+                                edvgDbList.append((database,'Non_EDGV'))
+                if parentWidget:
+                    progress.step()
+        else:
+            for database in dbList:
+                if database not in ['postgres', 'dsgtools_admindb', 'template_edgv_213', 'template_edgv_3', 'template_edgv_fter_2a_ed', 'template0', 'template1']:
+                    edvgDbList.append(database)
+                if parentWidget:
+                        progress.step()
         return edvgDbList
     
     def getDbsFromServer(self):
@@ -1164,6 +1171,23 @@ class PostgisDb(AbstractDb):
         id = self.getPrimaryKeyColumn(table)
         uri.setDataSource(schema, layer_name, geomColumn, sql, id)
         uri.disableSelectAtId(True)
+        
+        return uri
+    
+    def getURIV2(self, tableSchema, tableName, geometryColumnm, sql = ''):
+        """
+        New inplementation giving parameters.
+        """
+        host = self.db.hostName()
+        port = self.db.port()
+        database = self.db.databaseName()
+        user = self.db.userName()
+        password = self.db.password()
+
+        uri = QgsDataSourceURI()
+        uri.setConnection(str(host),str(port), str(database), str(user), str(password))
+        id = self.getPrimaryKeyColumn('{0}.{1}'.format(tableSchema, tableName))
+        uri.setDataSource(tableSchema, tableName, geometryColumnm, sql, id)
         
         return uri
     
@@ -2224,7 +2248,10 @@ class PostgisDb(AbstractDb):
         for i in query1Split:
             attrSplit = i.split('=')
             attribute = attrSplit[0]
-            checkList.append(int(attrSplit[1]))
+            try:
+                checkList.append(int(attrSplit[1]))
+            except:
+                pass #ignore checks that are not from dsgtools
         return tableName, attribute, checkList
     
     def parseCheckConstraintWithAny(self, queryValue0, queryValue1):
@@ -2433,7 +2460,10 @@ class PostgisDb(AbstractDb):
         while query.next():
             aux = json.loads(query.value(0))
             if not otherKey:
-                otherKey = [key for key in aux.keys() if key <> refPk][0]
+                if 'code_name' in aux.keys():
+                    otherKey = 'code_name'
+                else:
+                    otherKey = [key for key in aux.keys() if key <> refPk][0]
             domainDict[aux[refPk]] = aux[otherKey]
         return domainDict, otherKey
     
@@ -2580,10 +2610,14 @@ class PostgisDb(AbstractDb):
     def getTemplateName(self, version):
         if version == '2.1.3':
             return 'template_edgv_213'
+        elif version == '2.1.3 Pro':
+            return 'template_edgv_213_pro'
         elif version == 'FTer_2a_Ed':
             return 'template_edgv_fter_2a_ed'
         elif version == '3.0':
             return 'template_edgv_3'
+        elif version == '3.0 Pro':
+            return 'template_edgv_3_pro'
     
     def setDbAsTemplate(self, version = None, dbName = None, setTemplate = True, useTransaction = True):
         self.checkAndOpenDb()
@@ -2615,10 +2649,14 @@ class PostgisDb(AbstractDb):
         edgvPath = ''
         if version == '2.1.3':
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif version == '2.1.3 Pro':
+            edgvPath = os.path.join(currentPath, 'sqls', '213_Pro', 'edgv213_pro.sql')
         elif version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
         elif version == '3.0':
             edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
+        elif version == '3.0 Pro':
+            edgvPath = os.path.join(currentPath, 'sqls', '3_Pro', 'edgv3_pro.sql')
         elif version == 'admin':
             edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
         return edgvPath
@@ -3236,11 +3274,11 @@ class PostgisDb(AbstractDb):
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
     
-    def createPropertyTable(self, settingType, useTransaction = True):
+    def createPropertyTable(self, settingType, useTransaction = True, isAdminDb = False):
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
-        createSql = self.gen.createPropertyTable(settingType)
+        createSql = self.gen.createPropertyTable(settingType, isAdminDb = isAdminDb)
         query = QSqlQuery(self.db)
         if not query.exec_(createSql):
             if useTransaction:
@@ -3294,8 +3332,10 @@ class PostgisDb(AbstractDb):
         if useTransaction:
             self.db.commit()
     
-    def getPropertyDict(self, settingType):
+    def getPropertyDict(self, settingType, getOnlySameVersion = False):
         self.checkAndOpenDb()
+        if getOnlySameVersion:
+            myEdgvVersion = self.getDatabaseVersion()
         sql = self.gen.getAllPropertiesFromDb(settingType)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -3303,6 +3343,9 @@ class PostgisDb(AbstractDb):
         propertyDict = dict()
         while query.next():
             edgvVersion = query.value(0)
+            if getOnlySameVersion:
+                if myEdgvVersion != edgvVersion:
+                    continue
             name = query.value(1)
             jsonDict = json.loads(query.value(2))
             if edgvVersion not in propertyDict.keys():
@@ -3656,3 +3699,71 @@ class PostgisDb(AbstractDb):
                 raise Exception(self.tr("Problem while populating compact validation processes history table: ")+query.lastError().text())
         self.db.commit()
         return True
+=======
+    def instantiateQgsVectorLayer(self, uri):
+        pass
+    
+    def setDataSourceUri(self, schema, tableName, geometryColumn, sql, pkColumm):
+        uri = QgsDataSourceURI() 
+
+
+    def getLayerDict(self):
+        """
+        Returns a dict:
+        {'table_schema.table_name (geometryColumn):QgsVectorLayer'}
+        """
+        lyrDict = dict()
+        inputDict = self.getGeomColumnDictV2(excludeValidation = True)
+        for key in inputDict.keys():
+            uri = self.getURIV2(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'], '')
+            lyr = QgsVectorLayer(uri.uri(), inputDict[key]['lyrName'], 'postgres', False)
+            outputKey = '{0}.{1} ({2})'.format(inputDict[key]['tableSchema'], inputDict[key]['tableName'], inputDict[key]['geom'])
+            lyrDict[outputKey] = lyr
+        return lyrDict
+    
+    def getAttrListWithFilter(self):
+        self.checkAndOpenDb()
+        sql = self.gen.getAttrListWithFilter()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting list of attributes with filter: ")+query.lastError().text())
+        attrList = []
+        while query.next():
+            attrList.append(query.value(0))
+        return attrList
+    
+    def getAttrFilterDomainJsonList(self, domainNameList):
+        self.checkAndOpenDb()
+        jsonDict = dict()
+        for domainName in domainNameList:
+            sql = self.gen.getFilterJsonList(domainName)
+            query = QSqlQuery(sql, self.db)
+            localList = []
+            if not query.isActive():
+                raise Exception(self.tr("Problem getting domain json list: ")+query.lastError().text())
+            while query.next():
+                localList.append(json.loads(query.value(0)))
+            jsonDict[domainName] = localList
+        return jsonDict
+    
+    def getFilterDict(self):
+        """
+        returns a dict:
+            {
+                "tableName": [list of domain tuples]
+            }
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.getGeomTablesDomains()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        filterDict = dict()
+        attrList = self.getAttrListWithFilter()
+        jsonDict = self.getAttrFilterDomainJsonList(attrList)
+        while query.next():
+            #parse done in parseFkQuery to make code cleaner.
+            tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
+            if domainTable.split('.')[-1] in attrList:
+                filterDict[tableName] = jsonDict[domainTable.split('.')[-1]]
+        return filterDict

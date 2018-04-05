@@ -50,8 +50,12 @@ class GenericDbManager(QObject):
                     'Style':'.dsgstyle', 
                     'ValidationConfig':'.dsgvalidcfg', 
                     'FieldToolBoxConfig':'.reclas',
-                    'Permission':'.dsgperm'}
+                    'Permission':'.dsgperm',
+                    'AttributeRules':'.dsgattrrul',
+                    'SpatialRules':'.dsgspatrul',
+                    'ValidationWorkspace':'.dsgworksp'}
         self.edgvVersion = edgvVersion
+        self.createPropertyTable()
 
     def getManagerType(self):
         return str(self.__class__).split('.')[-1].replace('\'>', '').replace('Manager','')
@@ -78,6 +82,9 @@ class GenericDbManager(QObject):
         if not serverAbstractDb.hasAdminDb():
             return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
         adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
+        managerType = self.getManagerType()
+        if not adminDb.checkIfExistsConfigTable(managerType):
+            adminDb.createPropertyTable(managerType, isAdminDb = True)
         return adminDb
             
     def instantiateTemplateDb(self, edgvVersion):
@@ -380,3 +387,13 @@ class GenericDbManager(QObject):
         Method that is reimplemented in each child
         """
         return []
+    
+    def createPropertyTable(self):
+        settingType = self.getManagerType()
+        for dbName in self.dbDict.keys():
+            abstractDb = self.instantiateAbstractDb(dbName)
+            if not abstractDb.checkIfExistsConfigTable(settingType):
+                abstractDb.createPropertyTable(settingType, useTransaction = True)
+    
+    def updateMaterializationFromDatabase(self, abstractDb, propertyDict):
+        pass

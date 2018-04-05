@@ -147,6 +147,10 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
         onlyParents = self.onlyParentsCheckBox.isChecked()
+        if 'Pro' in self.customServerConnectionWidget.edgvType:
+            customForm = True if not self.customFormCheckBox.isChecked() else False
+        else:
+            customForm = False
         #3- Build factory dict
         factoryDict = dict()
         dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
@@ -163,7 +167,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                     if i in self.lyrDict.keys():
                         if dbName in self.lyrDict[i].keys():
                             selectedClasses.append(self.lyrDict[i][dbName])
-                factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, parent=self)
+                factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, customForm = customForm, parent=self)
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)

@@ -997,10 +997,6 @@ class DsgTools:
         """
         Shows the dialog that loads layers from server
         """
-        try:
-            self.layerButton.setDefaultAction(self.toolbar.sender())
-        except:
-            pass
         dlg = LoadLayersFromServer(self.iface)
         dlg.show()
         result = dlg.exec_()
