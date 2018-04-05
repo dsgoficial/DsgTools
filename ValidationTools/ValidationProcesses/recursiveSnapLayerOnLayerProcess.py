@@ -33,16 +33,16 @@ class RecursiveSnapParameters(list):
         self.values = x
 
 class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(RecursiveSnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating)
+        super(RecursiveSnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Recursive Snap Layer on Layer')
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             self.interfaceDict = dict()
             for key in self.classesWithElemDict.keys():

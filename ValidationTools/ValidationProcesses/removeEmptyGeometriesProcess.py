@@ -25,16 +25,16 @@ from DsgTools.ValidationTools.ValidationProcesses.validationProcess import Valid
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 class RemoveEmptyGeometriesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating=False, withElements = True):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(RemoveEmptyGeometriesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Remove Empty Geometries')
     
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=[], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=[], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceDictList = []
             for key in self.classesWithElemDict:
@@ -55,6 +55,7 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
                 # preparation
+            for key in classesWithElem:
                 classAndGeom = self.classesWithElemDict[key]
                 localProgress = ProgressWidget(0, 1, self.tr('Preparing execution for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 localProgress.step()

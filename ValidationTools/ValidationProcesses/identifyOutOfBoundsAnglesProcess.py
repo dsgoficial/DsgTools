@@ -28,17 +28,17 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(IdentifyOutOfBoundsAnglesProcess,self).__init__(postgisDb, iface, instantiating)
+        super(IdentifyOutOfBoundsAnglesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
         self.geometryHandler = DsgGeometryHandler(iface, parent = iface.mapCanvas())
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceDictList = []
             for key in self.classesWithElemDict:

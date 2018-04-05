@@ -26,16 +26,16 @@ from collections import deque, OrderedDict
 import processing, binascii
 
 class OverlayElementsWithAreasProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(OverlayElementsWithAreasProcess,self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Overlay Elements with Areas')
         
         if not self.instantiating:
             # getting tables with elements
-            self.overlayElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
+            self.overlayElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements = withElements, excludeValidation = True)
             # adjusting overlayer process parameters
             overlayInterfaceDict = dict()
             for key in self.overlayElemDict:

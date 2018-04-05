@@ -27,16 +27,16 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 from collections import OrderedDict
 class IdentifyGapsAndOverlapsProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(IdentifyGapsAndOverlapsProcess,self).__init__(postgisDb, iface, instantiating)
+        super(IdentifyGapsAndOverlapsProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Identify Earth Coverage Gaps and Overlaps')
 
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceDict = dict()
             for key in self.classesWithElemDict:
