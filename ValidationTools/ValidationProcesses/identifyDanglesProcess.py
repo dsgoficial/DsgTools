@@ -36,23 +36,23 @@ import binascii
 
 from collections import OrderedDict
 class IdentifyDanglesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(IdentifyDanglesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Identify Dangles')
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceDict = dict()
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             # getting tables with elements
-            self.linesWithElement = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
+            self.linesWithElement = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceLineDict = dict()
             for key in self.linesWithElement:

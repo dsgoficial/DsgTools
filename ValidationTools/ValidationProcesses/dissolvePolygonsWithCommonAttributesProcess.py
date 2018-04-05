@@ -26,16 +26,16 @@ from PyQt4.QtCore import QVariant
 import processing, binascii
 
 class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
-    def __init__(self, postgisDb, iface, instantiating=False):
+    def __init__(self, postgisDb, iface, instantiating=False, withElements = True):
         """
         Constructor
         """
-        super(self.__class__,self).__init__(postgisDb, iface, instantiating)
+        super(DissolvePolygonsWithCommonAttributesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Dissolve polygons with common attributes')
         
         if not self.instantiating:
             # getting tables with elements
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a'], withElements=withElements, excludeValidation = True)
             # adjusting process parameters
             interfaceDictList = []
             for key in self.classesWithElemDict:

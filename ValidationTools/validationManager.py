@@ -70,7 +70,7 @@ class ValidationManager(QObject):
                 self.processList.append(processClass)
                 self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
         
-    def instantiateProcessByName(self, processName, instantiating):
+    def instantiateProcessByName(self, processName, instantiating, withElements = True):
         """
         This method instantiate a process by its name.
         The import is made dynamically using the __import__ function.
@@ -90,15 +90,15 @@ class ValidationManager(QObject):
                 #obtaining the class name
                 klass = getattr(mod, processClass)
                 #instantiating the class
-                currProc = klass(self.postgisDb, self.iface, instantiating)
+                currProc = klass(self.postgisDb, self.iface, instantiating, withElements = withElements)
                 return currProc
                
-    def getProcessChain(self, processAlias):
+    def getProcessChain(self, processAlias, withElements = True):
         """
         Method to determine all processes that must be run
         This is a simple implementation, a recursive approach must be done if we want complex process graphs
         """
-        currProc = self.instantiateProcessByName(self.processDict[processAlias], False)
+        currProc = self.instantiateProcessByName(self.processDict[processAlias], False, withElements = withElements)
         preProcessList, parameterDict = self.generateProcessObjects(currProc.preProcess(), currProc.parameters)
         postProcessList, parameterDict = self.generateProcessObjects(currProc.postProcess(), parameterDict)
         postProcessAlias = currProc.postProcess()
@@ -132,12 +132,12 @@ class ValidationManager(QObject):
         else:
             return -2
         
-    def getParams(self, process, lastParameters = None, restoreOverride = True):
+    def getParams(self, process, lastParameters = None, restoreOverride = True, withElements = True):
         #get process chain
-        processChain, parameterDict = self.getProcessChain(process)
+        processChain, parameterDict = self.getProcessChain(process, withElements = withElements)
         #get parameters from dialog
         if not lastParameters:
-            params = self.getParametersWithUi(processChain, parameterDict, restoreOverride = restoreOverride)
+            params = self.getParametersWithUi(processChain, parameterDict, restoreOverride = restoreOverride, withElements = withElements)
             if params == -1:
                 return -1
             self.lastParameters = params
@@ -192,12 +192,12 @@ class ValidationManager(QObject):
                 return 0
         return 1
     
-    def getParametersWithUi(self, processChain, parameterDict, restoreOverride = True):
+    def getParametersWithUi(self, processChain, parameterDict, restoreOverride = True, withElements = True):
         """
         Builds interface
         """
         processText = ', '.join([process.processAlias for process in processChain])
-        dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText), restoreOverride = restoreOverride)
+        dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText), restoreOverride = restoreOverride, withElements = withElements)
         if dlg.exec_() == 0:
             return -1
         # get parameters
