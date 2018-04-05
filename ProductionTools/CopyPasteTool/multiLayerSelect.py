@@ -89,6 +89,17 @@ class MultiLayerSelection(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         self.rubberBand.reset(QGis.Polygon)
+    
+    def keyPressEvent(self, e):
+        """
+        Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (F2).
+        """
+        if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
+            self.cursorChanged = True
+            QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+        else:
+            self.cursorChanged = False
+            QtGui.QApplication.restoreOverrideCursor()         
 
     def canvasMoveEvent(self, e):
         """
@@ -247,6 +258,7 @@ class MultiLayerSelection(QgsMapTool):
                             else:
                                 #opens feature form. The tag showModal is to lock qgis window or not. 
                                 #Current procedure is to imitate qgis way of doing things, so showModal = False
+                                self.iface.setActiveLayer(lyr)
                                 self.iface.openFeatureForm(lyr,feat, showModal=False)
                                 return
                         #if code reaches here, it means that it is an incremental selection.
@@ -278,6 +290,10 @@ class MultiLayerSelection(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
+    
+    def openFeatureForm(self, layer, feature):
+        self.iface.setActiveLayer(layer)
+        self.iface.openFeatureForm(layer, feature, showModal=False)
 
     def setSelectionFeature(self, layer, feature, selectAll=False):
         """
@@ -287,8 +303,9 @@ class MultiLayerSelection(QgsMapTool):
         :param selectAll: boolean indicating whether or not this fuction was called from a select all command
                           so it doesn't remove selection from those that are selected already from the list
         """
-        layer.startEditing()
         idList = layer.selectedFeaturesIds()
+        self.iface.setActiveLayer(layer)
+        layer.startEditing()
         featId = feature.id()
         if featId not in idList:
             idList.append(featId)

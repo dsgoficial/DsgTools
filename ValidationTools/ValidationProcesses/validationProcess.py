@@ -519,9 +519,9 @@ class ValidationProcess(QObject):
             uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             keyColumn = uri.keyColumn()
             if onlySelected:
-                featureList = lyr.selectedFeatures()
+                featureList = layer.selectedFeatures()
             else:
-                featureList = lyr.getFeatures()
+                featureList = layer.getFeatures()
             for feature in featureList:
                 newfeat = QgsFeature(coverage.pendingFields())
                 newfeat.setGeometry(feature.geometry())
@@ -540,7 +540,7 @@ class ValidationProcess(QObject):
                 self.localProgress.step()
         
         #inserting new features into layer
-        coverage.addFeatures(featlist, True)
+        coverage.addFeatures(featlist, False)
         coverage.endEditCommand()
         coverage.commitChanges()
         return coverage
@@ -551,7 +551,7 @@ class ValidationProcess(QObject):
         """
         for layer in layerList:
             classname = layer.name()
-            tupplelist = [(feature['featid'], feature) for feature in outputLayer.getFeatures()]
+            tupplelist = [(feature['featid'], feature) for feature in outputLayer.getFeatures() if feature['classname'] == classname]
             self.updateOriginalLayerV2(layer, None, featureTupleList=tupplelist)
 
     def getGeometryColumnFromLayer(self, layer):
@@ -565,7 +565,7 @@ class ValidationProcess(QObject):
     
     def endTimeCount(self, cummulative = True):
         self.endTime = datetime.now()
-        elapsedTime = (self.endTime - self.startTime)
+        elapsedTime = (self.endTime - self.startTime) if self.startTime != 0 else self.endTime
         if cummulative:
             if self.totalTime == 0:
                 self.totalTime = elapsedTime

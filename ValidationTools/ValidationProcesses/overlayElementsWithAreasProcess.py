@@ -71,7 +71,6 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
             overlayer = self.overlayElemDict[overlayerKey]
             overLyr = self.loadLayerBeforeValidationProcess(overlayer)
             for lyrKey in lyrListKeys:
-                self.startTimeCount()
                 # preparation
                 cl = self.classesWithElemDict[lyrKey]
                 lyr = self.loadLayerBeforeValidationProcess(cl)                   

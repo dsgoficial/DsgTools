@@ -1158,6 +1158,12 @@ class PostGISSqlGenerator(SqlGenerator):
             tableName = 'field_toolbox_config'
         elif settingType == 'ValidationConfig':
             tableName = 'validation_config'
+        elif settingType == 'AttributeRules':
+            tableName = 'attribute_rules'
+        elif settingType == 'SpatialRules':
+            tableName = 'spatial_rules'
+        elif settingType == 'ValidationWorkflow':
+            tableName = 'validation_workflow'
         else:
             raise Exception(self.tr('Setting type not defined!'))
         return tableName
@@ -1389,7 +1395,7 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = '''SELECT id, name, jsondict, edgvversion from public.{0} where name = '{1}' and edgvversion = '{2}' '''.format(tableName, propertyName, edgvVersion)
         return sql
 
-    def createPropertyTable(self, settingType):
+    def createPropertyTable(self, settingType, isAdminDb = False):
         tableName = self.getSettingTable(settingType)
         sql = '''CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA public;
         CREATE TABLE IF NOT EXISTS public.{0}(
@@ -1401,8 +1407,18 @@ class PostGISSqlGenerator(SqlGenerator):
                 CONSTRAINT {0}_unique_name_and_version UNIQUE (name,edgvversion)
                 );
             '''.format(tableName)
+        if isAdminDb:
+            sql += '''CREATE TABLE public.applied_{0}(
+                id uuid NOT NULL DEFAULT uuid_generate_v4(),
+                id_{0} uuid NOT NULL,
+                dboid oid NOT NULL,
+                CONSTRAINT applied_{0}_pk PRIMARY KEY (id),
+                CONSTRAINT applied_{0}_id_{0}_config_fk FOREIGN KEY (id_{0}) REFERENCES public.{0} (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE CASCADE
+            );
+            ALTER TABLE public.applied_{0} OWNER TO postgres;
+            '''.format(tableName)
         return sql
-    
+
     def getPropertyPerspectiveDict(self, settingType, perspective, versionFilter = None):
         if versionFilter:
             versionFilter = ''' where edgvversion = '{0}' '''.format(versionFilter)
@@ -1718,4 +1734,11 @@ class PostGISSqlGenerator(SqlGenerator):
         elif logList:
             sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
                 format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
+        return sql
+    def getAttrListWithFilter(self):
+        sql = """select distinct table_name from information_schema.columns where table_schema = 'dominios' and column_name = 'filter'"""
+        return sql
+    
+    def getFilterJsonList(self, domainName):
+        sql = """select row_to_json(a) from (select * from dominios.{0}) as a """.format(domainName)
         return sql

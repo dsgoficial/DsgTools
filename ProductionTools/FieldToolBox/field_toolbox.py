@@ -487,7 +487,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         
         somethingMade = False
         reclassifiedFeatures = 0
-        
+        deleteList = []
         #button that sent the signal
         self.buttonName = self.sender().text().split(' [')[0]
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
@@ -498,6 +498,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         mapLayers = self.iface.mapCanvas().layers()
         #we need to get the authid that thefines the ref system of destination layer
         crsSrc = QgsCoordinateReferenceSystem(reclassificationLayer.crs().authid())
+        deleteList = []
         for mapLayer in mapLayers:
             if mapLayer.type() != QgsMapLayer.VectorLayer:
                 continue
