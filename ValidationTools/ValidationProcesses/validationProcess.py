@@ -56,6 +56,15 @@ class ValidationProcess(QObject):
         self.dbUserName = None
         self.logMsg = None
         self.processName = None
+    
+    def getFlagLyr(self, dimension):
+        if dimension == 0:
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
+        elif dimension == 1:
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
+        elif dimension == 2:
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
+        return self.loadLayerBeforeValidationProcess(layer)
 
     def setProcessName(self, processName):
         """
@@ -614,3 +623,35 @@ class ValidationProcess(QObject):
             logMsg += self.tr("\nUnable to get total elapsed time.")
         self.logMsg = logMsg
         QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
+    def raiseVectorFlags(self, flagLyr, featFlagList):
+        flagLyr.startEditing()
+        flagLyr.beginEditCommand('Raising flags') #speedup
+        flagLyr.addFeatures(featFlagList, False)
+        flagLyr.endEditCommand()
+        flagLyr.commitChanges()
+        return len(featFlagList)
+    
+    def buildFlagFeature(self, flagLyr, processName, tableSchema, tableName, feat_id, geometry_column, geom, reason):
+        newFeat = QgsFeature(flagLyr.pendingFields())
+        newFeat['process_name'] = processName
+        newFeat['layer'] = '{0}.{1}'.format(tableSchema, tableName)
+        newFeat['feat_id'] = feat_id
+        newFeat['reason'] = reason
+        newFeat['geometry_column'] = geometry_column
+        newFeat['user_fixed'] = False
+        newFeat['dimension'] = geom.type()
+        newFeat.setGeometry(geom)
+        return newFeat
+            
+    def getFeatures(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
+        if onlySelected:
+            featureList = lyr.selectedFeatures()
+            size = len(featureList)
+        else:
+            featureList = [i for i in lyr.getFeatures()] if not returnIterator else lyr.getFeatures()
+            size = len(lyr.allFeatureIds())
+        if returnIterator:
+            return featureList, size
+        else:
+            return featureList

@@ -163,14 +163,27 @@ class ValidationManager(QObject):
                 QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 return 0
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        params, processChain = self.getParams(process, lastParameters = lastParameters)
+        #get process chain
+        processChain, parameterDict = self.getProcessChain(process)
+        #get parameters from dialog
+        if not lastParameters:
+            if process != self.tr('Spatial Rule Checker'):
+                params = self.getParametersWithUi(processChain, parameterDict)
+                if params == -1:
+                    return -1
+            else:
+                params = {}
+            self.lastParameters = params
+            self.lastProcess = process
+        else:
+            params = lastParameters
         #execute each process
         for process in processChain:
             QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             process.setParameters(params)
             process.setDbUserName(self.postgisDb.getDatabaseParameters()[2])
             process.setProcessName(self.processDict[process.processAlias])
-            ret = process.execute() #run bitch run!
+            ret = process.execute() # run bitch run!
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             # process.logTotalTime()
