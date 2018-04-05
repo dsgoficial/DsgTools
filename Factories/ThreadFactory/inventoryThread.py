@@ -27,10 +27,7 @@ import shutil
 from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
-from qgis.core import *
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, QgsVectorFileWriter, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsField, QgsPoint
 from qgis._core import QgsAction, QgsPoint
 
 from DsgTools.Factories.ThreadFactory.genericThread import GenericThread

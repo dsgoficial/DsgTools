@@ -20,8 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import QUrl
+from PyQt4.QtGui import QProgressBar
 from qgis._core import QgsAction
 
 import sip

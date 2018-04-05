@@ -20,11 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from PyQt4.QtSql import *
+from PyQt4.QtSql import QSqlDatabase, QSqlQuery
 
-from qgis.core import *
+from qgis.core import QgsDataSourceURI, QgsMessageLog, QgsGeometry
 
 import sys, os
 from uuid import uuid4
