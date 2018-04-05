@@ -136,8 +136,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         elif dimension == 1:
             layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
         elif dimension == 2:
-            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
-            
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
         flagLyr = self.loadFlagLyr(layer)
         flagLyr.setLayerTransparency(50)
         flagLyr.removeSelection()
@@ -208,7 +207,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
             self.validationManager = ValidationManager(self.connectionSelectorComboBox.abstractDb, self.iface)
             self.populateProcessList()
-
             # adjusting flags table model
             self.projectModel = QSqlTableModel(None,self.connectionSelectorComboBox.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
@@ -217,8 +215,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.processTreeWidget.clear()
-    
+            self.processTreeWidget.clear()    
 
     def on_filterLineEdit_textChanged(self, text):
         for i in self.itemList:

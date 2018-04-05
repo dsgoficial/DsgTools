@@ -23,6 +23,7 @@
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 from DsgTools.dsgEnums import DsgEnums
 
+DB_ENCODING = 'utf-8'
 class PostGISSqlGenerator(SqlGenerator):
     
     def getComplexLinks(self, complex):
@@ -468,8 +469,7 @@ class PostGISSqlGenerator(SqlGenerator):
                 (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) = 'f' THEN 1 ELSE 0 END) count, a.{6} geom 
                     FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
                 WHERE foo.count > 0
-                """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn)
-                
+                """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn)                
             elif necessity == '\'t\'':
                 sql = """SELECT DISTINCT foo.id, foo.geom FROM
                 (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) = 'f' THEN 1 ELSE 0 END) count, a.{6} geom 
@@ -483,6 +483,12 @@ class PostGISSqlGenerator(SqlGenerator):
                     (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom 
                         FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
                     WHERE foo.count < {8}
+                    """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card)
+                elif min_card is None and max_card is None:
+                    sql = """SELECT DISTINCT foo.id, foo.geom FROM
+                    (SELECT a.{4} id, SUM(CASE WHEN {0}(a.{6},b.{7}) THEN 1 ELSE 0 END) count, a.{6} geom 
+                        FROM {1} as a,{2} as b {3} GROUP BY a.{4}, a.{6}) as foo
+                    WHERE foo.count != 0;
                     """.format(predicate_function, class_a, class_b, sameClassRestriction, aKeyColumn, bKeyColumn, aGeomColumn, bGeomColumn, min_card)
                 else:
                     sql = """SELECT DISTINCT foo.id, foo.geom FROM
@@ -1510,7 +1516,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
 
     def getAttributesFromTable(self, tableSchema, tableName, typeFilter = []):
-        if typeFilter <> []:
+        if typeFilter != []:
             whereClause = """ and data_type in ('{0}') """.format("','".join(typeFilter))
         else:
             whereClause = """"""
@@ -1652,18 +1658,23 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(tableSchema, tableName, geomColumn, keyColumn)
         return sql
 
-    def createValidationHistoryViewTableQuery(self):
+    def createValidationHistoryViewTableQuery(self, idListString=None):
         """
         Returns the query for creating and populating a view table.
         Shows the history of validation processes, ordered by execution.
+        If the optional parameter idListString is given, the list will
+        be filtered to a list of given IDs (format: "(int)(id_1, id_2, ...)").
+        This method uses the data on compact_process_history.
         """
         sql = """
         CREATE OR REPLACE VIEW validation.process_history_view AS 
         SELECT t.process_name, t.log, s.status, t.finished
-        FROM validation.process_history AS t
+        FROM validation.compact_process_history AS t
         JOIN validation.status AS s ON t.status = s.id
         ORDER BY t.finished DESC;
         """
+        if idListString:
+            sql = sql.replace("ORDER BY t.finished DESC;", "WHERE t.id in {0} ORDER BY t.finished DESC;").format(idListString)
         return sql
 
     def getQmlRecords(self, layerList):
@@ -1674,6 +1685,56 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select dbimplversion from public.db_metadata limit 1"""
         return sql
     
+    def getValidationLogQuery(self):
+        """
+        Returns the query for a list of all logs UNIQUE registered for each
+        process executed.
+        """
+        sql = """SELECT DISTINCT log, id FROM validation.compact_process_history;"""
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        return sql
+    
+    def getValidationHistoryQuery(self, idListString=None):
+        """
+        Returns the query of all validation processes available informations.
+        :param idListString:
+        """
+        sql = """SELECT * FROM validation.process_history;"""
+        if idListString:
+            sql = sql.replace(";", " WHERE id IN {};".format(idListString))
+        return sql
+    
+    def createCompactValidationHistoryQuery(self):
+        """
+        Returns the query for compact validation history table creation.
+        """
+        sql = """
+            DROP TABLE IF EXISTS validation.compact_process_history CASCADE;
+            CREATE TABLE validation.compact_process_history (
+                id serial NOT NULL,
+                process_name varchar(200) NOT NULL,
+                log text NOT NULL,
+                status int NOT NULL,
+                finished timestamp NOT NULL,
+                CONSTRAINT compact_process_history_pk PRIMARY KEY (id),
+                CONSTRAINT compact_process_history_status_fk FOREIGN KEY (status) REFERENCES validation.status (id) MATCH FULL ON UPDATE NO ACTION ON DELETE NO ACTION
+        ); """
+        return sql
+
+    def populateCompactValidationHistoryQuery(self, logList):
+        """
+        Returns the query for compact validation history table population.
+        :param logList: either a list of logs or a log line [id, process_name, log_text, status, finished_timestamp]
+        """
+        sql = ""
+        if isinstance(logList, list):
+            for log in logList:
+                sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
+                format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
+        elif logList:
+            sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
+                format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
+        return sql
     def getAttrListWithFilter(self):
         sql = """select distinct table_name from information_schema.columns where table_schema = 'dominios' and column_name = 'filter'"""
         return sql
