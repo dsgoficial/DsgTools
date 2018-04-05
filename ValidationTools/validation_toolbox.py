@@ -207,7 +207,6 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
             self.validationManager = ValidationManager(self.connectionSelectorComboBox.abstractDb, self.iface)
             self.populateProcessList()
-            self.databaseLineEdit.setText(database)
             # adjusting flags table model
             self.projectModel = QSqlTableModel(None,self.connectionSelectorComboBox.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
