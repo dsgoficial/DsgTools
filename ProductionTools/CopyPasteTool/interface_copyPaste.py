@@ -2,7 +2,7 @@
 from builtins import range
 from qgis.gui import *
 from qgis.core import *
-from PyQt4.Qt import *
+from qgis.PyQt.Qt import *
 from qgis.PyQt import QtCore, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 from qgis.PyQt.QtCore import pyqtSlot, QSettings, QObject
@@ -55,7 +55,7 @@ class CopyPaste(QtWidgets.QDialog, FORM_CLASS):
     def startCopyPaste(self):
         selectedLayers = self.getSelectedLayers()
         if selectedLayers:
-            layers = QgsMapLayerRegistry.instance().mapLayers()    
+            layers = QgsProject.instance().mapLayers()    
             grupo={}
             for x in range(len(layers)):
                 if list(layers.keys())[x][:-17] in selectedLayers:

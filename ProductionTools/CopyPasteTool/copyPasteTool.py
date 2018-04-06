@@ -6,7 +6,7 @@ import os
 # Qt imports
 import psycopg2
 from qgis.PyQt import QtWidgets, uic, QtCore
-from qgis.core import QgsPoint , QgsDataSourceUri, QgsVectorLayer, QgsMapLayerRegistry
+from qgis.core import QgsPoint , QgsDataSourceUri, QgsVectorLayer
 from qgis.gui import QgsMessageBar, QgsMapTool
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, QSize
 from qgis.PyQt.QtGui import QIcon, QCursor, QPixmap

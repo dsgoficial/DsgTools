@@ -21,9 +21,9 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, \
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateTransform, QgsWKBTypes
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 
 class DsgGeometryHandler(QObject):
     def __init__(self, iface, parent = None):

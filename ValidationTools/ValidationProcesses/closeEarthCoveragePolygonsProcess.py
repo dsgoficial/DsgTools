@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from qgis.PyQt.QtCore import QVariant
 import processing, binascii
@@ -108,7 +108,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         store the polygonize return in the memory area layer with the following attributes:
         cl - original area class
         """
-        QgsMapLayerRegistry.instance().addMapLayer(lineLyr)
+        QgsProject.instance().addMapLayer(lineLyr)
         ret = processing.runalg('qgis:polygonize', lineLyr, False, True, None)
         if not ret:
             raise Exception(self.tr('Problem executing qgis:polygonize. Check your installed libs.\n'))
@@ -124,7 +124,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             addList.append(newFeat)
         areaLyr.dataProvider().addFeatures(addList)
         #removing from registry
-        QgsMapLayerRegistry.instance().removeMapLayer(lineLyr.id())
+        QgsProject.instance().removeMapLayer(lineLyr.id())
         
     def raiseFlags(self, areaLyr):
         """

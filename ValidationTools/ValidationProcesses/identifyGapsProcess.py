@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 

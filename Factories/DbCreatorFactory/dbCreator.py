@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-#PyQt4 Imports
+#5 Imports
 
 from builtins import str
 from builtins import range

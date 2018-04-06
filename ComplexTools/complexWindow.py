@@ -24,7 +24,7 @@ from builtins import str
 from builtins import range
 import os
 
-#PyQt4 imports
+#PyQt5 imports
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSlot, QObject, Qt
 from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox

@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import qgis.utils
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
@@ -103,7 +103,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
             output = self.runProcessinAlg(coverage)
             self.splitUnifiedLayer(output, classlist)
             try:
-                QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
+                QgsProject.instance().removeMapLayer(coverage.id())
             except:
                 QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.name() for i in classlist]) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)

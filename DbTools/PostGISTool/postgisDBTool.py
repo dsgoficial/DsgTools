@@ -23,10 +23,8 @@
 import os
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import QSettings
-from PyQt4.QtGui import QMessageLog
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtWidgets import QDialog, QMessageLog
 
 #QGIS Imports
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog, QgsCredentials

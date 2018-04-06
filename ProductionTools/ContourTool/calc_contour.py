@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QGis
+from qgis.core import QgsMapLayer, QgsGeometry, QGis
 from qgis.gui import QgsMessageBar
 
 #DSGTools imports

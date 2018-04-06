@@ -26,7 +26,7 @@ from xml.dom.minidom import parse, parseString
 # Qt imports
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 
 # QGIS imports
 from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, QGis
