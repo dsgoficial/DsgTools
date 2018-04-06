@@ -35,7 +35,7 @@ class NewDomainTableCustomization(DbCustomization):
         sql = ''
         for modItem in self.customJson['AddDomainTable']:
             sql += '''CREATE TABLE IF NOT EXISTS dominios."{0}";\n'''.format(modItem['domainName'])
-            for code in modItem['valueDict'].keys():
+            for code in list(modItem['valueDict'].keys()):
                 sql += '''INSERT INTO dominios."{0}" (code, code_name) VALUES ({1}, '{2}');\n'''.format(modItem['domainName'],code, modItem['valueDict'][code])
         return sql
     
@@ -46,6 +46,6 @@ class NewDomainTableCustomization(DbCustomization):
         #Abstract method. Must be reimplemented in each child.
         sql = ''
         for modItem in self.customJson['AddDomainTable']:
-            for code in modItem['valueDict'].keys():
+            for code in list(modItem['valueDict'].keys()):
                 sql += '''DROP TABLE IF EXISTS dominios."{0}";'''.format(modItem['domainName'])
         return sql

@@ -20,14 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QSettings, qVersion, QCoreApplication, QTranslator, Qt
-from PyQt4.QtGui import QIcon, QToolButton, QMenu, QAction
+from __future__ import absolute_import
+from builtins import object
+from qgis.PyQt.QtCore import QSettings, qVersion, QCoreApplication, QTranslator, Qt
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 
 import os.path
 import sys
 
 # Initialize Qt resources from file resources_rc.py
-import resources_rc
+from . import resources_rc
 
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
@@ -72,7 +75,7 @@ try:
 except:
     pass
 
-class DsgTools:
+class DsgTools(object):
     """QGIS Plugin Implementation."""
 
     def __init__(self, iface):

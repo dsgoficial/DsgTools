@@ -20,11 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -94,7 +95,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
             else:
                 toAddList.append(i)
                 self.fromLs.append(i)
-        if toAddList <> []:
+        if toAddList != []:
             self.fromList.addItems(toAddList)
             self.fromList.sortItems()
             self.fromLs.sort()
@@ -136,7 +137,7 @@ class CustomSelector(QtGui.QWidget, FORM_CLASS):
         """
         Adds the selected items to the "to" list
         """
-        if len(selectedItems) <> 0:
+        if len(selectedItems) != 0:
             listedItems = []
             for i in range(self.fromList.__len__()):
                 itemToSelect = self.fromList.item(i)

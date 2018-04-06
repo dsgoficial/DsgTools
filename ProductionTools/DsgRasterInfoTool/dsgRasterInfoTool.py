@@ -25,9 +25,10 @@ import os
 
 from qgis.core import QgsGeometry, QgsRaster
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QTimer
-from PyQt4.QtGui import QWidget, QToolTip, QAction, QIcon
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QTimer
+from qgis.PyQt.QtWidgets import QWidget, QToolTip, QAction
+from qgis.PyQt.QtGui import QIcon
 
 from DsgTools.ProductionTools.DsgRasterInfoTool.bandValueTool import BandValueTool
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
@@ -134,7 +135,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
         if i.isValid():
-            text = ", ".join(['{0:g}'.format(r) for r in i.results().values() if r is not None] )
+            text = ", ".join(['{0:g}'.format(r) for r in list(i.results().values()) if r is not None] )
         else:
             text = ""
         return text

@@ -24,9 +24,10 @@ import os, sqlite3
 import json
 
 from qgis.core import QgsMessageLog
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtGui import QCursor
 from DsgTools.Utils.utils import Utils
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.CustomWidgets.tabDbSelectorWidget import TabDbSelectorWidget
@@ -55,9 +56,9 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
         parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
-        if self.databaseParameterWidget.prefixLineEdit.text() <> '':
+        if self.databaseParameterWidget.prefixLineEdit.text() != '':
             parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
-        if self.databaseParameterWidget.sufixLineEdit.text() <> '':
+        if self.databaseParameterWidget.sufixLineEdit.text() != '':
             parameterDict['sufix'] = self.databaseParameterWidget.sufixLineEdit.text()
         parameterDict['dbBaseName'] = self.databaseParameterWidget.dbNameLineEdit.text()
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
@@ -77,13 +78,13 @@ class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
         parameterDict = self.getParameters()
         dbDict, errorDict = self.createDatabases(parameterDict)
         creationMsg = ''
-        if len(dbDict.keys()) > 0:
-            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(dbDict.keys()))
+        if len(list(dbDict.keys())) > 0:
+            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(list(dbDict.keys())))
         errorMsg = ''
-        if len(errorDict.keys()) > 0:
+        if len(list(errorDict.keys())) > 0:
             frameList = []
             errorList = []
-            for key in errorDict.keys():
+            for key in list(errorDict.keys()):
                 errorList.append(key)
                 QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             if len(errorList) > 0:

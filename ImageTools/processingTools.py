@@ -21,14 +21,16 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os
 import osgeo.gdal
 import osgeo.osr
 import numpy
 
 # Import the PyQt and QGIS libraries
-from PyQt4 import uic
-from PyQt4.QtGui import QMessageBox, QFileDialog
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
@@ -102,7 +104,7 @@ class ProcessingTools(QDialog, FORM_CLASS):
         '''
         Adds image files to be processed
         '''
-        fileNames = QFileDialog.getOpenFileNames(self, self.tr("Select Images"), "", self.tr("Image files (*.tif)"))
+        fileNames, __ = QFileDialog.getOpenFileNames(self, self.tr("Select Images"), "", self.tr("Image files (*.tif)"))
         self.fileListWidget.addItems(fileNames)
 
     @pyqtSlot(bool)

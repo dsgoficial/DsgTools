@@ -25,9 +25,9 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
@@ -164,7 +164,7 @@ class ChangeNullityWidget(QtGui.QWidget, FORM_CLASS):
             invalidatedReason += self.tr('A table must be chosen.\n')
         if self.actionComboBox.currentIndex() == 0:
             invalidatedReason += self.tr('An action be chosen.\n')
-        if self.allAttributesCheckBox.checkState() <> 2 and self.attributeComboBox.currentIndex() == 0:
+        if self.allAttributesCheckBox.checkState() != 2 and self.attributeComboBox.currentIndex() == 0:
             invalidatedReason += self.tr('An attribute must be chosen.\n')
         return invalidatedReason
     

@@ -107,19 +107,19 @@ class MergeLinesProcess(ValidationProcess):
                             attributes.append('{}'.format(feat[column]))
                     # making a string out of the key
                     attributes = ''.join(attributes)
-                    if attributes not in featuresDict.keys():
+                    if attributes not in list(featuresDict.keys()):
                         featuresDict[attributes] = []
                     # storing the features
                     featuresDict[attributes].append(feat)
 
                     localProgress.step()
 
-                localProgress = ProgressWidget(1, len(featuresDict.keys()), self.tr('Merging lines for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
+                localProgress = ProgressWidget(1, len(list(featuresDict.keys())), self.tr('Merging lines for ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 lyr.startEditing()
                 lyr.beginEditCommand('Merging lines')
                 idsToRemove = []
                 # iterating over the dictionary
-                for key in featuresDict.keys():
+                for key in list(featuresDict.keys()):
                     # getting all features of a group
                     features = featuresDict[key]
                     for feature in features:

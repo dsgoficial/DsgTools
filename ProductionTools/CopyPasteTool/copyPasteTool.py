@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
+from builtins import range
+from builtins import object
 import os
 
 # Qt imports
 import psycopg2
-from PyQt4 import QtGui, uic, QtCore
+from qgis.PyQt import QtGui, uic, QtCore
 from qgis.core import QgsPoint , QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
 from qgis.gui import QgsMessageBar, QgsMapTool
-from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, QSize
-from PyQt4.QtGui import QIcon, QMessageBox, QCursor, QPixmap, QAction
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, QSize
+from qgis.PyQt.QtGui import QIcon, QCursor, QPixmap
+from qgis.PyQt.QtWidgets import QMessageBox, QAction
 from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
 from DsgTools.ProductionTools.CopyPasteTool.interface_copyPaste import CopyPaste
 from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
 
-class CopyPasteTool:
+class CopyPasteTool(object):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()

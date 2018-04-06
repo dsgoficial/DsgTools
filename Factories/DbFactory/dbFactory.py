@@ -20,9 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 import os
 
-from PyQt4.QtSql import QSqlDatabase
+from qgis.PyQt.QtSql import QSqlDatabase
 
 #DSG Tools imports
 from DsgTools.Factories.DbFactory.spatialiteDb import SpatialiteDb
@@ -30,7 +31,7 @@ from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
 
 from qgis.core import QgsMessageLog
 
-class DbFactory:
+class DbFactory(object):
     def createDbFactory(self,driverName):
         #TODO Treat none return
         if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded

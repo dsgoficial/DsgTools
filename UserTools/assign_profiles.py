@@ -23,11 +23,12 @@
 import os
 
 #PyQt imports
-from PyQt4.QtGui import QApplication, QCursor
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt
 
 # DSGTools imports
 from DsgTools.UserTools.profile_editor import ProfileEditor

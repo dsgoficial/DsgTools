@@ -25,8 +25,8 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # DSGTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
@@ -78,12 +78,12 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
         version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()
         categories = dict()
-        for layerName in geomDict.keys():
+        for layerName in list(geomDict.keys()):
             schema = geomDict[layerName]['schema']
             category = geomDict[layerName]['category']
-            if schema not in categories.keys():
+            if schema not in list(categories.keys()):
                 categories[schema] = dict()
-            if category not in categories[schema].keys():
+            if category not in list(categories[schema].keys()):
                 categories[schema][category] = dict()
             if layerName not in categories[schema][category]:
                 categories[schema][category][layerName] = dict()
@@ -103,7 +103,7 @@ class CreateProfileWithProfileManager(QtGui.QDialog, FORM_CLASS):
             profileName = self.lineEdit.text()
         permissionDict = self.permissionManager.getSettings()
         edgvVersion = self.versionCombo.currentText()
-        if edgvVersion in permissionDict.keys():
+        if edgvVersion in list(permissionDict.keys()):
             if profileName in permissionDict[edgvVersion]:
                 QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
                 return

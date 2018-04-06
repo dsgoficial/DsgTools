@@ -18,7 +18,9 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from PyQt4 import QtGui, QtCore
+from builtins import range
+from builtins import object
+from qgis.PyQt import QtGui, QtCore
 from qgis import core, gui
 
 class AcquisitionFreeController(object):
@@ -145,12 +147,12 @@ class AcquisitionFreeController(object):
             elif lyrType == core.QGis.Polygon:
                 geomList = geom.asPolygon()
             newGeom = []
-            for j in xrange(len(geomList)):
+            for j in range(len(geomList)):
                 if lyrType == core.QGis.Line:
                     newGeom.append(coordinateTransformer.transform(geomList[j]))
                 elif lyrType == core.QGis.Polygon:
                     line = geomList[j]
-                    for i in xrange(len(line)):
+                    for i in range(len(line)):
                         point = line[i]
                         newGeom.append(coordinateTransformer.transform(point))
             if lyrType == core.QGis.Line:

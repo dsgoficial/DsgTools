@@ -23,9 +23,9 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QMessageBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'alter_user_password.ui'))
@@ -54,7 +54,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         """
         newpassword = self.newPasswordLineEdit.text()
         newpassword_2 = self.newPasswordLineEdit_2.text()
-        if newpassword <> newpassword_2:
+        if newpassword != newpassword_2:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! Password not altered!'))
             return
         if self.user:
@@ -105,7 +105,7 @@ class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
         Logs all internal errors into QGIS' log
         """
         msg = ''
-        errorDbList = exceptionDict.keys()
+        errorDbList = list(exceptionDict.keys())
         if len(errorDbList)> 0:
             msg += self.tr('\Users with error:')
             msg+= ', '.join(errorDbList)

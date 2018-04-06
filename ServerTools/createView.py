@@ -23,9 +23,10 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtGui import QAbstractItemView, QApplication, QCursor, QMessageBox
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtWidgets import QAbstractItemView, QApplication, QMessageBox
+from qgis.PyQt.QtGui import QCursor
 # DSGTools imports
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

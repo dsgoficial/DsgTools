@@ -55,12 +55,12 @@ def sqlParser(sqlFile, isSpatialite):
             if 'NOT NULL' in field:
                 att = field.split(' ')[0]
                 if att not in  ['','id','geom']:
-                    if tableKey in notNullDict.keys():
+                    if tableKey in list(notNullDict.keys()):
                         notNullDict[tableKey].append(att)
             else:
                 att = field.split(' ')[0]
                 if  att not in  ['','id','geom'] and 'id_' not in att and 'CONSTRAINT' not in att:
-                    if tableKey in otherAttrDict.keys():
+                    if tableKey in list(otherAttrDict.keys()):
                         if att not in otherAttrDict[tableKey]:
                             otherAttrDict[tableKey].append(att)
                         
@@ -72,20 +72,20 @@ def sqlParser(sqlFile, isSpatialite):
             else:
                 parentKey = parent
 
-            if parentKey in notNullDict.keys():
+            if parentKey in list(notNullDict.keys()):
                 notNullDict[tableKey] += notNullDict[parentKey]
             
-            if parentKey in otherAttrDict.keys():
+            if parentKey in list(otherAttrDict.keys()):
                 for item in otherAttrDict[parentKey]:
                     if item not in otherAttrDict[tableKey]:
                         otherAttrDict[tableKey].append(item)
                     
                         
-    for key in notNullDict.keys():
+    for key in list(notNullDict.keys()):
         if notNullDict[key] == []:
             notNullDict.pop(key)
     
-    for key in otherAttrDict.keys():
+    for key in list(otherAttrDict.keys()):
         if otherAttrDict[key] == []:
             otherAttrDict.pop(key)
             

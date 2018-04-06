@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import QXmlStreamWriter, QFile, QIODevice
+from qgis.PyQt.QtCore import QFile, QIODevice
 
 def generateQml(filename, attrs, codelists):
     xmlWriter = QXmlStreamWriter()
@@ -48,7 +48,7 @@ def generateQml(filename, attrs, codelists):
             #closing edittype
             xmlWriter.writeEndElement()
 
-        for key in codelists.keys():
+        for key in list(codelists.keys()):
             #starting edittype
             xmlWriter.writeStartElement("edittype")
             xmlWriter.writeAttribute("widgetv2type","ValueMap")
@@ -61,7 +61,7 @@ def generateQml(filename, attrs, codelists):
 
             #Writing pair key-value
             codelist = codelists[key]
-            for codeValue in codelist.keys():
+            for codeValue in list(codelist.keys()):
                 code = codelist[codeValue]
 
                 #starting value

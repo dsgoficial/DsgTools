@@ -23,7 +23,9 @@
 
 #PyQt4 Imports
 
-from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
+from builtins import str
+from builtins import range
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, QObject
 
 #DsgTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
@@ -35,7 +37,7 @@ class DbCreator(QObject):
         super(DbCreator,self).__init__()
         self.dbFactory = DbFactory()
         self.parentWidget = parentWidget
-        if isinstance(createParam, unicode):
+        if isinstance(createParam, str):
             self.outputDir = createParam
         if isinstance(createParam, AbstractDb):
             self.abstractDb = createParam
@@ -82,7 +84,7 @@ class DbCreator(QObject):
                     newDb = self.createDb(dbName, srid, paramDict, parentWidget = self.parentWidget)
                 outputDbDict[dbName] = newDb
             except Exception as e:
-                if dbName not in errorDict.keys():
+                if dbName not in list(errorDict.keys()):
                     errorDict[dbName] = ':'.join(e.args)
                 else:
                     errorDict[dbName] += '\n' + ':'.join(e.args)
@@ -113,20 +115,20 @@ class DbCreator(QObject):
                     newDb = self.createDb(dbName, srid, paramDict, parentWidget = self.parentWidget)
                 outputDbDict[dbName] = newDb
             except Exception as e:
-                if dbName not in errorDict.keys():
+                if dbName not in list(errorDict.keys()):
                     errorDict[dbName] = ':'.join(e.args)
                 else:
                     errorDict[dbName] += '\n' + ':'.join(e.args)
             if self.parentWidget:
                 progress.step()
         if createFrame:
-            for dbName in outputDbDict.keys():
+            for dbName in list(outputDbDict.keys()):
                 try:           
                     scale = self.scaleMIDict[len(mi.split('-'))]
                     mi = [i for i in miList if i in dbName][0]
                     outputDbDict[dbName].createFrame('mi', scale, mi, paramDict = paramDict)
                 except Exception as e:
-                    if dbName not in errorDict.keys():
+                    if dbName not in list(errorDict.keys()):
                         errorDict[dbName] = ':'.join(e.args)
                     else:
                         errorDict[dbName] += '\n' + ':'.join(e.args)

@@ -26,10 +26,11 @@ from os.path import expanduser
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 
 
@@ -62,7 +63,7 @@ class ValidationWorkflowCreator(QtGui.QDialog, FORM_CLASS):
         self.close()
     
     def validate(self, parameterDict):
-        if 'orderedAttributeRulesWidget' not in parameterDict.keys():
+        if 'orderedAttributeRulesWidget' not in list(parameterDict.keys()):
             return False
         return True
     
@@ -76,7 +77,7 @@ class ValidationWorkflowCreator(QtGui.QDialog, FORM_CLASS):
         self.attributeRulesWidget.populateInterface(parameterDict['orderedAttributeRulesWidget'])
     
     def validateJson(self, parameterDict):
-        if ['orderedAttributeRulesWidget'] != parameterDict.keys():
+        if ['orderedAttributeRulesWidget'] != list(parameterDict.keys()):
             return False
         return self.attributeRulesWidget.validateJson(parameterDict['orderedAttributeRulesWidget'])
 

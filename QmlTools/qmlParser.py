@@ -20,9 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtXml import QDomDocument
+from builtins import range
+from builtins import object
+from qgis.PyQt.QtXml import QDomDocument
 
-class QmlParser:
+class QmlParser(object):
     def __init__(self, fileName):
         """
         Constructor

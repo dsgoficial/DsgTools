@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, QGis
 import math
 from math import pi
@@ -50,7 +52,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         for linearRing in part.asPolygon():
             linearRing = self.geometryHandler.getClockWiseList(linearRing)
             nVertex = len(linearRing)-1
-            for i in xrange(nVertex):
+            for i in range(nVertex):
                 vertexAngle = (linearRing[i].azimuth(linearRing[(i-1)%nVertex]) - linearRing[i].azimuth(linearRing[(i+1)%nVertex]) + 360) % 360
                 if vertexAngle % 360 < angle:
                     geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
@@ -62,7 +64,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
     def getOutOfBoundsAngleInLine(self, feat, geometry_column, part, angle, outOfBoundsList):
         line = part.asPolyline()
         nVertex = len(line)-1
-        for i in xrange(1,nVertex):
+        for i in range(1,nVertex):
             vertexAngle = (line[i].azimuth(line[(i-1)%nVertex]) - line[i].azimuth(line[(i+1)%nVertex]) + 360) % 360
             if vertexAngle % 360 < angle:
                 geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}

@@ -28,11 +28,12 @@ from qgis.core import QgsMessageLog
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import Qt
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
-from PyQt4.QtGui import QApplication, QCursor
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -131,7 +132,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         if not self.widget_2.abstractDb:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter output database!'))
             return
-        if self.widget.dbVersion <> self.widget_2.dbVersion:
+        if self.widget.dbVersion != self.widget_2.dbVersion:
             QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
             return
         type = ''
@@ -147,7 +148,7 @@ class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
         converted = False
         self.logCleared()
         try:
-            if self.widget.crs <> self.widget_2.crs:
+            if self.widget.crs != self.widget_2.crs:
                 if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                     converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)

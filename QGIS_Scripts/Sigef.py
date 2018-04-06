@@ -2,6 +2,7 @@
 ##Perimetro=vector
 ##Dados_SIGEF=output table
 
+from builtins import str
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from qgis.core import *
 import csv

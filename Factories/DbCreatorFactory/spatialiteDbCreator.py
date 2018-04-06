@@ -48,7 +48,7 @@ class SpatialiteDbCreator(DbCreator):
     
     def createDb(self, dbName, srid, paramDict = dict(), parentWidget = None):
         destination = os.path.join(self.outputDir,dbName+'.sqlite')
-        if 'version' not in paramDict.keys():
+        if 'version' not in list(paramDict.keys()):
             raise Exception('Undefined database version')
         edgvPath = self.getTemplateLocation(paramDict['version'])
         f = open(edgvPath,'rb')

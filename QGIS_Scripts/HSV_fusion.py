@@ -20,18 +20,21 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
 
 ##DSG=group
 ##RGB_Layer=raster
 ##Pan_Layer=raster
 ##Pansharpened=output raster
 
+from builtins import range
+from builtins import object
 from osgeo import gdal, osr
 import sys
 import colorsys
 import numpy
 
-class RasterProcess():
+class RasterProcess(object):
     def __init__(self):
         """
         Constructor
@@ -45,9 +48,11 @@ class RasterProcess():
         """
         try:
             raster = gdal.Open(file)
-        except RuntimeError, e:
-            print 'Unable to open image'
-            print e
+        except RuntimeError as e:
+            # fix_print_with_import
+            print('Unable to open image')
+            # fix_print_with_import
+            print(e)
 
             sys.exit(1)
 
@@ -61,10 +66,12 @@ class RasterProcess():
         """
         try:
             band = raster.GetRasterBand(bandnumber)
-        except RuntimeError, e:
+        except RuntimeError as e:
             # for example, try GetRasterBand(10)
-            print 'Band ( %i ) not found' % bandnumber
-            print e
+            # fix_print_with_import
+            print('Band ( %i ) not found' % bandnumber)
+            # fix_print_with_import
+            print(e)
             sys.exit(1)
 
         return band.ReadAsArray()

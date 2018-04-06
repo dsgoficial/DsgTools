@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateTransform, QgsWKBTypes
 from PyQt4.Qt import QObject
@@ -45,7 +46,7 @@ class DsgGeometryHandler(QObject):
     
     def getClockWiseList(self, pointList):
         pointSum = 0
-        for i in xrange(len(pointList) - 1):
+        for i in range(len(pointList) - 1):
             pointSum += (pointList[i+1].x() - pointList[i].x())*(pointList[i+1].y() + pointList[i].y())
         if pointSum > 0:
             return pointList

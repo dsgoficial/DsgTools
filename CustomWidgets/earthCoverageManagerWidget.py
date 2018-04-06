@@ -23,9 +23,10 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
 from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
@@ -70,7 +71,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         if propertyName == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter an Earth Coverage Name!'))
             return
-        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
+        if propertyName in list(self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys()):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Earth Coverage Name already exists!'))
             return
         fieldSetupDict = self.populateConfigInterface(templateDb, propertyName = propertyName)
@@ -88,7 +89,7 @@ class EarthCoverageManagerWidget(GenericManagerWidget):
         lines = templateDb.getParentGeomTables(getFullName = True, primitiveFilter = ['l'])
         edgvVersion = templateDb.getDatabaseVersion()
         settings = self.genericDbManager.getSettings()
-        if edgvVersion in settings.keys():
+        if edgvVersion in list(settings.keys()):
             propertyList = settings
         else:
             propertyList = []

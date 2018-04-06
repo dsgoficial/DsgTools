@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import absolute_import
 import os                                                                         
 
-from PyQt4 import QtGui, uic 
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
+from qgis.PyQt import QtGui, uic 
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 import math
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QShortcut, QKeySequence
-from PyQt4.QtCore import QSettings
-from geometricaAquisition import GeometricaAcquisition
+from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt.QtWidgets import QShortcut
+from qgis.PyQt.QtGui import QKeySequence
+from qgis.PyQt.QtCore import QSettings
+from .geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
 from qgis.gui import QgsMapMouseEvent, QgsMapTool
 

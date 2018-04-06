@@ -20,15 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 import csv
 import shutil
 from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
-from PyQt4 import uic
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QMenu, QApplication, QCursor, QFileDialog, QMessageBox, QTreeWidgetItem, QInputDialog
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QMenu, QApplication, QFileDialog, QMessageBox, QTreeWidgetItem, QInputDialog
+from qgis.PyQt.QtGui import QCursor
 from _csv import writer
 from qgis._core import QgsAction
 
@@ -141,9 +143,9 @@ class InventoryTools(QDialog, FORM_CLASS):
         Inventory output file selection
         '''
         if self.onlyGeoCheckBox.isChecked():
-            fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='Shapefile (*.shp)')
+            fileName, __ = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='Shapefile (*.shp)')
         else:
-            fileName = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='CSV (*.csv)')
+            fileName, __ = QFileDialog.getSaveFileName(parent=self, caption=self.tr('Save Output File'), filter='CSV (*.csv)')
         self.outputFileEdit.setText(fileName)
         
     @pyqtSlot(int)

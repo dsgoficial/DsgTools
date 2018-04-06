@@ -20,9 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import sys
 
-from PyQt4.QtCore import QObject, pyqtSignal
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 from qgis.core import QGis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
 , QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint, QgsCircularStringV2, QgsSurfaceV2
@@ -33,8 +34,8 @@ from DsgTools.DsgGeometrySnapper.segmentSnapItem import SegmentSnapItem
 from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
 
 class DsgGeometrySnapper(QObject):
-    SnappedToRefNode, SnappedToRefSegment, Unsnapped = range(3)
-    PreferNodes, PreferClosest = range(2)
+    SnappedToRefNode, SnappedToRefSegment, Unsnapped = list(range(3))
+    PreferNodes, PreferClosest = list(range(2))
 
     featureSnapped = pyqtSignal()
 
@@ -141,27 +142,27 @@ class DsgGeometrySnapper(QObject):
             return [geometry]
         elif wbkType == QGis.WKBLineString:
             line = geometry.asPolyline()
-            for i in xrange(len(line) - 1):
+            for i in range(len(line) - 1):
                 segments.append(self.segmentFromPoints(line[i], line[i + 1]))
         elif wbkType == QGis.WKBMultiLineString:
             multiLine = geometry.asMultiPolyline()
-            for j in xrange(len(multiLine)):
+            for j in range(len(multiLine)):
                 line = multiLine[j]
-                for i in xrange(len(line) - 1):
+                for i in range(len(line) - 1):
                     segments.append(self.segmentFromPoints(line[i], line[i + 1]))
         elif wbkType == QGis.WKBPolygon:
             poly = geometry.asPolygon()
-            for j in xrange(len(poly)):
+            for j in range(len(poly)):
                 line = poly[j]
-                for i in xrange(len(line) - 1):
+                for i in range(len(line) - 1):
                     segments.append(self.segmentFromPoints(line[i], line[i + 1]))
         elif wbkType == QGis.WKBMultiPolygon:
             multiPoly = geometry.asMultiPolygon()
-            for k in xrange(len(multiPoly)):
+            for k in range(len(multiPoly)):
                 poly = multiPoly[k]
-                for j in xrange(len(poly)):
+                for j in range(len(poly)):
                     line = poly[j]
-                    for i in xrange(len(line) - 1):
+                    for i in range(len(line) - 1):
                         segments.append(self.segmentFromPoints(line[i], line[i + 1]))
 
         return segments
@@ -212,11 +213,11 @@ class DsgGeometrySnapper(QObject):
         subjPointFlags = []
 
         # Pass 1: snap vertices of subject geometry to reference vertices
-        for iPart in xrange(subjGeom.partCount()):
+        for iPart in range(subjGeom.partCount()):
             subjPointFlags.append([])
-            for iRing in xrange(subjGeom.ringCount(iPart)):
+            for iRing in range(subjGeom.ringCount(iPart)):
                 subjPointFlags[iPart].append([])
-                for iVert in xrange(self.polyLineSize(subjGeom, iPart, iRing)):
+                for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
                     p = QgsPointV2(subjGeom.vertexAt(vidx))
                     pF = QgsPoint(p.toQPointF())
@@ -267,9 +268,9 @@ class DsgGeometrySnapper(QObject):
         
         # Pass 2: add missing vertices to subject geometry
         for refGeom in refGeometries:
-            for iPart in xrange(refGeom.geometry().partCount()):
-                for iRing in xrange(refGeom.geometry().ringCount(iPart)):
-                    for iVert in xrange(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
+            for iPart in range(refGeom.geometry().partCount()):
+                for iRing in range(refGeom.geometry().ringCount(iPart)):
+                    for iVert in range(self.polyLineSize(refGeom.geometry(), iPart, iRing)):
                         point = refGeom.geometry().vertexAt(QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                         # QgsPoint used to calculate squared distance
                         pointF = QgsPoint(point.toQPointF())
@@ -297,8 +298,8 @@ class DsgGeometrySnapper(QObject):
                                 subjSnapIndex.addGeometry(subjGeom)
 
         # Pass 3: remove superfluous vertices: all vertices which are snapped to a segment and not preceded or succeeded by an unsnapped vertex
-        for iPart in xrange(subjGeom.partCount()):
-            for iRing in xrange(subjGeom.ringCount(iPart)):
+        for iPart in range(subjGeom.partCount()):
+            for iRing in range(subjGeom.ringCount(iPart)):
                 ringIsClosed = subjGeom.vertexAt(QgsVertexId(iPart, iRing, 0, QgsVertexId.SegmentVertex)) == subjGeom.vertexAt(QgsVertexId(iPart, iRing, subjGeom.vertexCount( iPart, iRing ) - 1, QgsVertexId.SegmentVertex))
                 nVerts = self.polyLineSize(subjGeom, iPart, iRing)
                 iVert = 0

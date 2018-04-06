@@ -23,9 +23,10 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication
+from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils

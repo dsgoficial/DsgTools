@@ -20,12 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt4.QtGui import QTreeWidgetItem
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
 from DsgTools.Utils.utils import Utils
 

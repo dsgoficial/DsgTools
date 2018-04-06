@@ -26,10 +26,11 @@ from os.path import expanduser
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validationProcessWidget.ui'))
@@ -52,7 +53,7 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
     def setInitialState(self):
         self.validationProcessComboBox.clear()
         self.validationProcessComboBox.addItem(self.tr('Select a validation process'))
-        self.validationProcessComboBox.addItems(self.validationManager.processDict.keys())
+        self.validationProcessComboBox.addItems(list(self.validationManager.processDict.keys()))
     
     @pyqtSlot(int)
     def on_validationProcessComboBox_currentIndexChanged(self):
@@ -104,7 +105,7 @@ class ValidationProcessWidget(QtGui.QWidget, FORM_CLASS):
         """
         Validates input json
         """
-        inputKeys = inputJson.keys()
+        inputKeys = list(inputJson.keys())
         inputKeys.sort()
         if self.validKeys != inputKeys:
             return False

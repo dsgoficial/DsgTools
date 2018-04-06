@@ -20,15 +20,16 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFileDialog
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QFileDialog
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -98,7 +99,7 @@ class CustomTableWidget(QtGui.QWidget, FORM_CLASS):
             self.maskList.pop(row)
     
     def clearItems(self):
-        rowList = range(self.tableWidget.rowCount())
+        rowList = list(range(self.tableWidget.rowCount()))
         rowList.sort(reverse=True)
         for row in rowList:
             self.tableWidget.removeRow(row)

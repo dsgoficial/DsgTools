@@ -20,16 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 from os.path import expanduser
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog, QProgressBar
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog, QProgressBar
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -103,7 +105,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                             lyrName = '_'.join(tableName.split('_')[1::])
                             cat = tableName.split('_')[0]
                         key = ','.join([cat, lyrName, geom, geomType, tableType])
-                        if key not in self.lyrDict.keys():
+                        if key not in list(self.lyrDict.keys()):
                             self.lyrDict[key] = dict()
                         self.lyrDict[key][dbName] = {'tableSchema':tableSchema, 'tableName':tableName, 'geom':geom, 'geomType':geomType, 'tableType':tableType, 'lyrName':lyrName, 'cat':cat}
                 except Exception as e:
@@ -113,14 +115,14 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 QApplication.restoreOverrideCursor()
                 
         elif type == 'removed':
-            for key in self.lyrDict.keys():
-                for db in self.lyrDict[key].keys():
+            for key in list(self.lyrDict.keys()):
+                for db in list(self.lyrDict[key].keys()):
                     if db in dbList:
                         self.lyrDict[key].pop(db)
                 if self.lyrDict[key] == dict():
                     self.lyrDict.pop(key)
         interfaceDictList = []
-        for key in self.lyrDict.keys():
+        for key in list(self.lyrDict.keys()):
             cat, lyrName, geom, geomType, tableType = key.split(',')
             interfaceDictList.append({self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType})
         self.layersCustomSelector.setInitialState(interfaceDictList,unique = True)
@@ -153,19 +155,19 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
             customForm = False
         #3- Build factory dict
         factoryDict = dict()
-        dbList = self.customServerConnectionWidget.selectedDbsDict.keys()
+        dbList = list(self.customServerConnectionWidget.selectedDbsDict.keys())
         for dbName in dbList:
             factoryDict[dbName] = self.layerFactory.makeLoader(self.iface, self.customServerConnectionWidget.selectedDbsDict[dbName])
         #4- load for each db
         exceptionDict = dict()
         progress = ProgressWidget(1, len(dbList), self.tr('Loading layers from selected databases... '), parent=self)
-        for dbName in factoryDict.keys():
+        for dbName in list(factoryDict.keys()):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
                 selectedClasses = []
                 for i in selectedKeys:
-                    if i in self.lyrDict.keys():
-                        if dbName in self.lyrDict[i].keys():
+                    if i in list(self.lyrDict.keys()):
+                        if dbName in list(self.lyrDict[i].keys()):
                             selectedClasses.append(self.lyrDict[i][dbName])
                 factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, customForm = customForm, parent=self)
                 progress.step()
@@ -175,7 +177,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
                 progress.step()
             QApplication.restoreOverrideCursor()
             if factoryDict[dbName].errorLog != '':
-                if dbName in exceptionDict.keys():
+                if dbName in list(exceptionDict.keys()):
                     exceptionDict[dbName] += '\n'+factoryDict[dbName].errorLog
                 else:
                     exceptionDict[dbName] = factoryDict[dbName].errorLog
@@ -188,7 +190,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         Logs internal errors during the load process in QGIS' log
         """
         msg = ''
-        errorDbList = exceptionDict.keys()
+        errorDbList = list(exceptionDict.keys())
         if len(errorDbList) > 0:
             msg += self.tr('\nDatabases with error:')
             msg += ', '.join(errorDbList)
@@ -202,7 +204,7 @@ class LoadLayersFromServer(QtGui.QDialog, FORM_CLASS):
         Loads styles saved in the database
         """
         self.styleComboBox.clear()
-        styleList = styleDict.keys()
+        styleList = list(styleDict.keys())
         numberOfStyles = len(styleList)
         if numberOfStyles > 0:
             self.styleComboBox.addItem(self.tr('Select Style'))

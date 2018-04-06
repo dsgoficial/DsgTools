@@ -21,10 +21,11 @@
  ***************************************************************************/
 """
 import os
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlDatabase
-from PyQt4.QtGui import QApplication, QCursor, QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlDatabase
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox
+from qgis.PyQt.QtGui import QCursor
 
 from qgis.core import QgsMessageLog
 
@@ -104,7 +105,7 @@ class ConnectionComboBox(QtGui.QWidget, FORM_CLASS):
             return
         elif isinstance(items[0], tuple) and len(items[0]) == 2:
             for item in items:
-                if item[1] not in self.displayDict.keys():
+                if item[1] not in list(self.displayDict.keys()):
                     version = item[1]
                 else:
                     version = self.displayDict[item[1]]

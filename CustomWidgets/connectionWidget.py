@@ -25,10 +25,11 @@ import os
 from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlDatabase
-from PyQt4.QtGui import QApplication, QCursor, QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlDatabase
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox
+from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils

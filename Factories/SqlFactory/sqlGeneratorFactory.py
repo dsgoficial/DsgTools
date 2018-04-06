@@ -20,12 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 import os
 
 from DsgTools.Factories.SqlFactory.spatialiteSqlGenerator import SpatialiteSqlGenerator
 from DsgTools.Factories.SqlFactory.postgisSqlGenerator import PostGISSqlGenerator
 
-class SqlGeneratorFactory:
+class SqlGeneratorFactory(object):
     def createSqlGenerator(self, isSpatialite):
         """
         Returns the specific sql generator

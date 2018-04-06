@@ -26,10 +26,11 @@ from os.path import expanduser
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'attributeRuleWidget.ui'))
@@ -41,7 +42,7 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.layerDict = layerDict
         self.layerComboBox.addItem(self.tr('Select a layer'))
-        layerNames = layerDict.keys()
+        layerNames = list(layerDict.keys())
         layerNames.sort()
         self.layerComboBox.addItems(layerNames)
         self.setComponentsEnabled(False)
@@ -122,7 +123,7 @@ class AttributeRuleWidget(QtGui.QWidget, FORM_CLASS):
         """
         Validates input json
         """
-        inputKeys = inputJson.keys()
+        inputKeys = list(inputJson.keys())
         inputKeys.sort()
         if self.validKeys != inputKeys:
             return False

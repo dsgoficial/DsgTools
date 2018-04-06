@@ -25,9 +25,9 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -131,7 +131,7 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
         tableName = self.tableComboBox.currentText()
         attrList = [self.addAttributeWidget.getJSONTag()]
         if not self.allTablesCheckBox.isChecked():
-            bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i <> tableName]
+            bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i != tableName]
             return [self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)]
         else:
             attrModList = []
@@ -139,7 +139,7 @@ class NewAttributeWidget(QtGui.QWidget, FORM_CLASS):
             for tupple in classTuppleList:
                 schema, tableName = tupple
                 if schema not in ('views', 'validation'):
-                    bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i <> tableName]
+                    bloodLine = [i for i in self.abstractDb.getInheritanceBloodLine(tableName) if i != tableName]
                     attrModList.append(self.jsonBuilder.buildNewAttributeElement(schema, tableName, attrList, childrenToAlter = bloodLine)) 
             return attrModList
     

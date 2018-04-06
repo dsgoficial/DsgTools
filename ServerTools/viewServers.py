@@ -20,13 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 '''
+from __future__ import absolute_import
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, QSettings, pyqtSignal
-from PyQt4.QtGui import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QCursor, QRadioButton
-from PyQt4.QtSql import QSqlDatabase
-from serverConfigurator import ServerConfigurator
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, QSettings, pyqtSignal
+from qgis.PyQt.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QRadioButton
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase
+from .serverConfigurator import ServerConfigurator
 
 from qgis.core import QgsMessageLog
 

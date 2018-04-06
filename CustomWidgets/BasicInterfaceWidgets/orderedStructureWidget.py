@@ -20,12 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os, importlib
 from collections import OrderedDict
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtGui import QTableWidgetItem, QTableWidgetSelectionRange
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QTableWidgetSelectionRange
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'orderedStructureWidget.ui'))
@@ -161,7 +162,7 @@ class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
             ]
         }
         """
-        if [self.widgetKey] != inputJson.keys():
+        if [self.widgetKey] != list(inputJson.keys()):
             return False
         for i in range(self.tableWidget.rowCount()):
             if not self.tableWidget.cellWidget(i, 0).validateJson(inputJson[self.widgetKey][i]):

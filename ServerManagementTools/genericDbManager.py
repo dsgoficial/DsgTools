@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 #General imports
+from builtins import str
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii
@@ -64,7 +65,7 @@ class GenericDbManager(QObject):
         """
         Instantiates an abstractDb.
         """
-        if dbName not in self.dbDict.keys():
+        if dbName not in list(self.dbDict.keys()):
             (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
             abstractDb = DbFactory().createDbFactory('QPSQL')
             abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
@@ -150,7 +151,7 @@ class GenericDbManager(QObject):
         successList = []
         settingType = self.getManagerType()
         propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property, versionFilter = edgvVersion)
-        if settingName in propertyDict.keys():
+        if settingName in list(propertyDict.keys()):
             rollbackList = []
             self.adminDb.db.transaction()
             try:
@@ -188,10 +189,10 @@ class GenericDbManager(QObject):
             raise Exception(self.tr("Not valid DsgTools property file!"))
         if not self.validateJsonSetting(inputJsonDict):
             raise Exception(self.tr("Not valid DsgTools property file!"))
-        if 'version' in inputJsonDict.keys():
+        if 'version' in list(inputJsonDict.keys()):
             edgvVersion = inputJsonDict['version']
         else:
-            edgvVersion = inputJsonDict.keys()[0].split('_')[-1]
+            edgvVersion = list(inputJsonDict.keys())[0].split('_')[-1]
         try:
             self.createSetting(settingName, edgvVersion, inputJson)
         except Exception as e:
@@ -227,7 +228,7 @@ class GenericDbManager(QObject):
         2. Export each using exportSetting.
         """
         settingDict = self.getSettings()
-        for edgvVersion in settingDict.keys():
+        for edgvVersion in list(settingDict.keys()):
             outputPath = os.path.join(outputDir,edgvVersion)
             if not os.path.exists(outputPath):
                 os.makedirs(outputPath)
@@ -268,7 +269,7 @@ class GenericDbManager(QObject):
         errorDict = dict()
         settingType = self.getManagerType()
         if dbNameList == []:
-            dbNameList = self.dbDict.keys()
+            dbNameList = list(self.dbDict.keys())
         successList = []
         configEdgvVersion = self.getSettingVersion(configName)
         for dbName in dbNameList:
@@ -309,7 +310,7 @@ class GenericDbManager(QObject):
         successList = []
         settingType = self.getManagerType()
         propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property)
-        if configName in propertyDict.keys():
+        if configName in list(propertyDict.keys()):
             for dbName in propertyDict[configName]:
                 if not dbName:
                     try:
@@ -347,7 +348,7 @@ class GenericDbManager(QObject):
         successList = []
         settingType = self.getManagerType()
         propertyDict = self.adminDb.getPropertyPerspectiveDict(settingType, DsgEnums.Property)
-        if configName in propertyDict.keys():
+        if configName in list(propertyDict.keys()):
             if dbNameList == []: #builds filter dbList to uninstall in all installed databases
                 dbList = propertyDict[configName]
             else: #builds filter dbList to uninstall in databases in dbNameList
@@ -390,7 +391,7 @@ class GenericDbManager(QObject):
     
     def createPropertyTable(self):
         settingType = self.getManagerType()
-        for dbName in self.dbDict.keys():
+        for dbName in list(self.dbDict.keys()):
             abstractDb = self.instantiateAbstractDb(dbName)
             if not abstractDb.checkIfExistsConfigTable(settingType):
                 abstractDb.createPropertyTable(settingType, useTransaction = True)

@@ -25,9 +25,9 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -114,11 +114,11 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
         self.referencesLineEdit.setText(domainName)
         self.defaultComboBox.clear()
         addList = ['']
-        for domain in domainDict.keys():
+        for domain in list(domainDict.keys()):
             if filterClause == dict(): 
                 if domain not in addList:
                     addList.append(domain)
-            elif domain in filterClause.keys():
+            elif domain in list(filterClause.keys()):
                 if domain not in addList:
                     addList.append(domain)
         for item in addList:
@@ -164,7 +164,7 @@ class AddAttributeWidget(QtGui.QWidget, FORM_CLASS):
             else:
                 defaultValue = self.domainSetter.domainDict[defaultComboCurrentText]
             references = self.domainSetter.domainName
-            filter = self.domainSetter.filterClause.values()
+            filter = list(self.domainSetter.filterClause.values())
             return [self.jsonBuilder.buildAttributeElement(attrName, attrType, isPk, isNullable, defaultValue, references, filter)]
         
     def getUiParameterJsonDict(self):

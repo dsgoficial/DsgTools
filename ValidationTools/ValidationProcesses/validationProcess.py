@@ -20,12 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import binascii
 from datetime import datetime
 import json
 # Qt imports
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import QVariant
 from PyQt4.Qt import QObject
 
 #QGIS imports
@@ -332,7 +334,7 @@ class ValidationProcess(QObject):
             inputDict[feature.id()] = dict()
             inputDict[feature.id()]['featList'] = []
             inputDict[feature.id()]['featWithoutGeom'] = feature
-        inputDictKeys = inputDict.keys()
+        inputDictKeys = list(inputDict.keys())
         if qgisOutputVector:
             for feat in qgisOutputVector.dataProvider().getFeatures():
                 if keyColumn == '':

@@ -25,9 +25,10 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtGui import QApplication, QCursor
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 # DSGTools imports
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 from DsgTools.Utils.utils import Utils
@@ -144,8 +145,8 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             self.attributeComboBox.setEnabled(True)
             self.attributeComboBox.clear()
             self.attributeComboBox.addItem(self.tr('Select an attribute'))
-            if tableName in self.domainDict.keys():
-                attributeList = self.domainDict[tableName]['columns'].keys()
+            if tableName in list(self.domainDict.keys()):
+                attributeList = list(self.domainDict[tableName]['columns'].keys())
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
 
@@ -153,7 +154,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int, name='on_attributeComboBox_currentIndexChanged')
     @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     def populateWidgetWithSingleValue(self):
-        if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0):
+        if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() != 0 and self.tableComboBox.currentIndex() != 0):
             self.attributeComboBox.clear()
             self.attributeComboBox.setEnabled(False)
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -162,11 +163,11 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             if self.allAttributesCheckBox.checkState() == 2:
                 tableList = [self.tableComboBox.currentText()]
             else:
-                tableList = self.domainDict.keys()
+                tableList = list(self.domainDict.keys())
             allValueList = []
             idxList = []
             for tableName in tableList:
-                for attrName in self.domainDict[tableName]['columns'].keys():
+                for attrName in list(self.domainDict[tableName]['columns'].keys()):
                     for code in self.domainDict[tableName]['columns'][attrName]['values']:
                         value = self.domainDict[tableName]['columns'][attrName]['values'][code]
                         if value not in allValueList:
@@ -174,8 +175,8 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
 
             for value in allValueList:
                 for tableName in tableList:
-                    for attrName in self.domainDict[tableName]['columns'].keys():
-                        if value not in self.domainDict[tableName]['columns'][attrName]['values'].values():
+                    for attrName in list(self.domainDict[tableName]['columns'].keys()):
+                        if value not in list(self.domainDict[tableName]['columns'][attrName]['values'].values()):
                             idx = allValueList.index(value)
                             if idx not in idxList:
                                 idxList.append(idx)
@@ -207,12 +208,12 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
         attributeName = self.attributeComboBox.currentText()
         tableFilter = []
         filterToList = []
-        if tableName in self.domainDict.keys():
-            if attributeName in self.domainDict[tableName]['columns'].keys():
+        if tableName in list(self.domainDict.keys()):
+            if attributeName in list(self.domainDict[tableName]['columns'].keys()):
                 attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
                 tableFilter = self.domainDict[tableName]['columns'][attributeName]['constraintList']
                 filterToList = [attrDomainDict[i] for i in tableFilter]
-                filterFromList = [i for i in attrDomainDict.values() if i not in filterToList]
+                filterFromList = [i for i in list(attrDomainDict.values()) if i not in filterToList]
                 self.filterCustomSelectorWidget.setFromList(filterFromList, unique=True)
                 self.filterCustomSelectorWidget.setToList(filterToList)
 
@@ -321,7 +322,7 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             schema = self.schemaComboBox.currentText()
             self.batchGetJsonTag(schema, tableName, jsonList, inhConstrDict)
         elif self.allTablesCheckBox.checkState() == 2:
-            tableList = self.inhTree['root'].keys()
+            tableList = list(self.inhTree['root'].keys())
             for tableName in tableList:
                 schema = self.abstractDb.getTableSchemaFromDb(tableName)
                 self.batchGetJsonTag(schema, tableName, jsonList, inhConstrDict)
@@ -329,22 +330,22 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
             attrName = self.attributeComboBox.currentText()
-            if tableName in self.domainDict.keys():
-                if attrName in self.domainDict[tableName]['columns'].keys():
+            if tableName in list(self.domainDict.keys()):
+                if attrName in list(self.domainDict[tableName]['columns'].keys()):
                     attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
                     isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
-            newFilter = [i for i in attrDomainDict.keys() if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
+            newFilter = [i for i in list(attrDomainDict.keys()) if attrDomainDict[i] in self.filterCustomSelectorWidget.toLs]
             self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti)
         return jsonList
 
     def batchGetJsonTag(self, schema, tableName, jsonList, inhConstrDict):
-        if tableName in self.domainDict.keys():
-            for attrName in self.domainDict[tableName]['columns'].keys():
+        if tableName in list(self.domainDict.keys()):
+            for attrName in list(self.domainDict[tableName]['columns'].keys()):
                 attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
                 isMulti = self.domainDict[tableName]['columns'][attrName]['isMulti']
                 newFilter = self.domainDict[tableName]['columns'][attrName]['constraintList']
                 valueText = self.singleValueComboBox.currentText()
-                code = [i for i in attrDomainDict.keys() if attrDomainDict[i] == valueText][0]
+                code = [i for i in list(attrDomainDict.keys()) if attrDomainDict[i] == valueText][0]
                 if self.actionDict[self.actionComboBox.currentText()] == 'add':
                     if code not in newFilter: newFilter.append(code)
                 elif self.actionDict[self.actionComboBox.currentText()] == 'addEmpty':
@@ -356,11 +357,11 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
 
     def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList, inhConstrDict, newFilter, isMulti):
         originalFilterList = []
-        if tableName in inhConstrDict.keys():
-            if attrName in inhConstrDict[tableName].keys():
+        if tableName in list(inhConstrDict.keys()):
+            if attrName in list(inhConstrDict[tableName].keys()):
                 originalFilterList = inhConstrDict[tableName][attrName]
         if originalFilterList == newFilter: return
-        elif originalFilterList <> []:
+        elif originalFilterList != []:
             for item in originalFilterList:
                 newElement = self.jsonBuilder.alterFilterElement(item['schema'], item['tableName'], attrName, item['constraintName'], item['filter'], newFilter, isMulti)
                 if newElement not in jsonList:
@@ -369,8 +370,8 @@ class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
             nodeLineage = self.utils.getNodeLineage(tableName, self.inhTree)
             firstInLineage = None
             for node in nodeLineage:
-                if node in self.domainDict.keys():
-                    if attrName in self.domainDict[node]['columns'].keys():
+                if node in list(self.domainDict.keys()):
+                    if attrName in list(self.domainDict[node]['columns'].keys()):
                         firstInLineage = node
                         break
                 else:

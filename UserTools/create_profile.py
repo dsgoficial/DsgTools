@@ -25,8 +25,8 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # DSGTools imports
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
@@ -113,10 +113,10 @@ class CreateProfile(QtGui.QDialog, FORM_CLASS):
                 
                 schema = split[0]
                 category = split[1]
-                if schema not in categories.keys():
+                if schema not in list(categories.keys()):
                     categories[schema] = dict()
                     
-                if category not in categories[schema].keys():
+                if category not in list(categories[schema].keys()):
                     categories[schema][category] = dict()
 
                 if layerName not in categories[schema][category]:

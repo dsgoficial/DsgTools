@@ -23,9 +23,10 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QPushButton, QKeySequence, QShortcut
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QPushButton, QShortcut
+from qgis.PyQt.QtGui import QKeySequence
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes
@@ -182,7 +183,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
 
         pushButton = QtGui.QPushButton(button)
-        keys = propertyDict.keys()
+        keys = list(propertyDict.keys())
         styleSheet = ''
         if 'buttonColor' in keys:
             r, g, b, a = propertyDict['buttonColor'].split(',')
@@ -231,15 +232,15 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.createWidgetWithoutTabs(formLayout)
         sortedButtonNames = []
         propertyDict = dict()
-        for category in reclassificationDict.keys():
+        for category in list(reclassificationDict.keys()):
             if category in ['version', 'uiParameterJsonDict']:
                 continue
-            for edgvClass in reclassificationDict[category].keys():
-                for button in reclassificationDict[category][edgvClass].keys():
+            for edgvClass in list(reclassificationDict[category].keys()):
+                for button in list(reclassificationDict[category][edgvClass].keys()):
                     item = reclassificationDict[category][edgvClass][button]
                     propertyDict[button] = dict()
                     if isinstance(item, dict):
-                        if 'buttonProp' in item.keys():
+                        if 'buttonProp' in list(item.keys()):
                             propertyDict[button] = item['buttonProp']
                     sortedButtonNames.append(button)
         sortedButtonNames.sort()
@@ -258,19 +259,19 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         gridLayout.addWidget(tabWidget)
         self.scrollArea.setWidget(tabWidget)
         propertyDict = dict()
-        for category in reclassificationDict.keys():
+        for category in list(reclassificationDict.keys()):
             if category in ['version', 'uiParameterJsonDict']:
                 continue
             sortedButtonNames = []
             formLayout = QtGui.QFormLayout()
             scrollArea = self.createWidgetWithTabs(formLayout)
             tabWidget.addTab(scrollArea, category)
-            for edgvClass in reclassificationDict[category].keys():
-                for button in reclassificationDict[category][edgvClass].keys():
+            for edgvClass in list(reclassificationDict[category].keys()):
+                for button in list(reclassificationDict[category][edgvClass].keys()):
                     item = reclassificationDict[category][edgvClass][button]
                     propertyDict[button] = dict()
                     if isinstance(item, dict):
-                        if 'buttonProp' in item.keys():
+                        if 'buttonProp' in list(item.keys()):
                             propertyDict[button] = item['buttonProp']
                     sortedButtonNames.append(button)
             sortedButtonNames.sort()
@@ -303,7 +304,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return False
 
-        if 'version' not in self.reclassificationDict.keys():
+        if 'version' not in list(self.reclassificationDict.keys()):
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('File not formated propperly.'))
             return False
             
@@ -337,7 +338,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             if not reclassificationLayer.isEditable():
                 reclassificationLayer.startEditing()
             lyrAttributes = [i.name() for i in reclassificationLayer.pendingFields()]
-            for attr in self.reclassificationDict[category][edgvClass][button].keys():
+            for attr in list(self.reclassificationDict[category][edgvClass][button].keys()):
                 if attr == 'buttonProp':
                     continue
                 candidateDict = self.reclassificationDict[category][edgvClass][button][attr]
@@ -372,7 +373,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             #accessing added features
             editBuffer = layer.editBuffer()
             features = editBuffer.addedFeatures()
-            for key in features.keys():
+            for key in list(features.keys()):
                 #just checking the newly added feature, the other I don't care
                 if key == featureId:
                     feature = features[key]
@@ -387,7 +388,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         editBuffer: layer edit buffer
         """
         #setting the attributes using the reclassification dictionary
-        for attribute in self.reclassificationDict[self.category][self.edgvClass][self.buttonName].keys():
+        for attribute in list(self.reclassificationDict[self.category][self.edgvClass][self.buttonName].keys()):
             if attribute == 'buttonProp':
                 continue
             idx = newFeature.fieldNameIndex(attribute)
@@ -462,7 +463,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
 
             #suppressing the form dialog
-            if 'openForm' in self.reclassificationDict[self.category][self.edgvClass][self.buttonName]['buttonProp'].keys():
+            if 'openForm' in list(self.reclassificationDict[self.category][self.edgvClass][self.buttonName]['buttonProp'].keys()):
                 reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
             else:
                 reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
@@ -558,11 +559,11 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         Finds the reclassification class according to the button
         button: Button clicked by the user to perform the reclassification
         """
-        for category in self.reclassificationDict.keys():
+        for category in list(self.reclassificationDict.keys()):
             if category == 'version' or category == 'uiParameterJsonDict':
                 continue
-            for edgvClass in self.reclassificationDict[category].keys():
-                for buttonName in self.reclassificationDict[category][edgvClass].keys():
+            for edgvClass in list(self.reclassificationDict[category].keys()):
+                for buttonName in list(self.reclassificationDict[category][edgvClass].keys()):
                     if button == buttonName:
                         #returning the desired edgvClass
                         return (category, edgvClass)
@@ -579,9 +580,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
             self.configFromDbComboBox.setEnabled(True)
             propertyDict = self.widget.abstractDb.getPropertyDict('FieldToolBoxConfig')
             dbVersion = self.widget.abstractDb.getDatabaseVersion()
-            if dbVersion in propertyDict.keys():
+            if dbVersion in list(propertyDict.keys()):
                 self.configFromDbDict = propertyDict[dbVersion]
-            nameList = self.configFromDbDict.keys()
+            nameList = list(self.configFromDbDict.keys())
             nameList.sort()
             for name in nameList:
                 self.configFromDbComboBox.addItem(name)

@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import map
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 from DsgTools.dsgEnums import DsgEnums
 
@@ -51,11 +53,11 @@ class PostGISSqlGenerator(SqlGenerator):
             sql = "SELECT DISTINCT srid from geometry_columns WHERE f_table_schema <> \'tiger\' and f_table_schema <> \'topology\' LIMIT 1"
         else:
             whereClauseList = []
-            if 'tableSchema' in parameters.keys():
+            if 'tableSchema' in list(parameters.keys()):
                 whereClauseList.append("""f_table_schema = '{0}'""".format(parameters['tableSchema']))
-            if 'tableName' in parameters.keys():
+            if 'tableName' in list(parameters.keys()):
                 whereClauseList.append("""f_table_name = '{0}'""".format(parameters['tableName']))
-            if 'geometryColumn' in parameters.keys():
+            if 'geometryColumn' in list(parameters.keys()):
                 whereClauseList.append("""f_geometry_column = '{0}'""".format(parameters['geometryColumn']))
             whereClause = ' AND '.join(whereClauseList)
             sql = """SELECT DISTINCT srid from geometry_columns WHERE {0} LIMIT 1""".format(whereClause)
@@ -123,10 +125,10 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def createRole(self, roleName, mydict):
         sql = """CREATE ROLE "{0}" with NOLOGIN REPLICATION;\n""".format(roleName)
-        for db in mydict.keys():
-            for schema in mydict[db].keys():
-                for cat in mydict[db][schema].keys():
-                    for tableName in mydict[db][schema][cat].keys():
+        for db in list(mydict.keys()):
+            for schema in list(mydict[db].keys()):
+                for cat in list(mydict[db][schema].keys()):
+                    for tableName in list(mydict[db][schema][cat].keys()):
                         table = '''"{0}"."{1}"'''.format(schema,tableName)
                         read = mydict[db][schema][cat][tableName]["read"]
                         write = mydict[db][schema][cat][tableName]["write"]
@@ -702,7 +704,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def updateOriginalTable(self, tableSchema, tableName, result, epsg):
         #TODO: Put original id
         sqls = []
-        for key in result.keys():
+        for key in list(result.keys()):
             geoms = []
             for wkb in result[key]:
                 geoms.append("ST_SetSRID(ST_Multi('{0}'), {1})".format(wkb, epsg))
@@ -1053,7 +1055,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def insertFrame(self,scale,mi,inom,frame,srid,geoSrid, paramDict = dict()):
-        paramKeys = paramDict.keys()
+        paramKeys = list(paramDict.keys())
         if 'tableSchema' not in paramKeys:
             tableSchema = 'public'
         else:
@@ -1260,7 +1262,7 @@ class PostGISSqlGenerator(SqlGenerator):
     def getGeomTables(self, schemaList, dbPrimitiveList=[], excludeViews=True, geomColumn = False):
         primitiveClause = ''
         viewClause = ''
-        if dbPrimitiveList <> []:
+        if dbPrimitiveList != []:
             primitiveClause = """and type in ('{0}')""".format("','".join(dbPrimitiveList))
         if excludeViews:
             viewClause = """and f_table_name in (select table_name from information_schema.tables where table_type <> 'VIEW')"""
@@ -1621,7 +1623,7 @@ class PostGISSqlGenerator(SqlGenerator):
             whereClause = " WHERE process_name = '{0}';".format(filteredElement)
         elif filterType == DsgEnums.ClassName:
             whereClause = " WHERE layer = '{0}';".format(filteredElement)
-        if filteredElement and filteredElement <> '':
+        if filteredElement and filteredElement != '':
             sql = sql + whereClause
         return sql
 
@@ -1644,7 +1646,7 @@ class PostGISSqlGenerator(SqlGenerator):
             whereClause = " WHERE process_name = '{0}';".format(filteredElement)
         elif filterTypeEnum == DsgEnums.ClassName:
             whereClause = " WHERE layer = '{0}';".format(filteredElement)
-        if filteredElement and filteredElement <> '':
+        if filteredElement and filteredElement != '':
             sql = sql + whereClause
         return sql
     

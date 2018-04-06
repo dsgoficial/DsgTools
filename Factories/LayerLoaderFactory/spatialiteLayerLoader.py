@@ -23,8 +23,8 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
@@ -110,14 +110,14 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         #5. load layers
         if parent:
             primNumber = 0
-            for prim in lyrDict.keys():
-                for cat in lyrDict[prim].keys():
+            for prim in list(lyrDict.keys()):
+                for cat in list(lyrDict[prim].keys()):
                     for lyr in lyrDict[prim][cat]:
                         primNumber += 1
             localProgress = ProgressWidget(1, primNumber-1, self.tr('Loading layers... '), parent=parent)
         loadedDict = dict()
-        for prim in lyrDict.keys():
-            for cat in lyrDict[prim].keys():
+        for prim in list(lyrDict.keys()):
+            for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
                         vlayer = self.loadLayer(lyr, loadedLayers, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)

@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 #Qgis imports
@@ -28,9 +29,10 @@ from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 
 #PyQt imports
-from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import Qt, pyqtSlot
-from PyQt4.QtGui import QApplication, QCursor
+from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 import qgis as qgis
 
 #DsgTools imports
@@ -177,7 +179,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
             try:
                 selectedStyle = None
                 if self.styleDict:
-                    if self.styleComboBox.currentText() in self.styleDict.keys():
+                    if self.styleComboBox.currentText() in list(self.styleDict.keys()):
                         selectedStyle = self.styleDict[self.styleComboBox.currentText()] 
                 for layer in self.selectedClasses:
                     dbName = self.widget.abstractDb.getDatabaseName()
@@ -198,7 +200,7 @@ class LoadByClass(QtGui.QDialog, FORM_CLASS):
     def populateStyleCombo(self, styleDict):
         self.styleComboBox.clear()
         self.styleDict = styleDict
-        styleList = styleDict.keys()
+        styleList = list(styleDict.keys())
         numberOfStyles = len(styleList)
         if numberOfStyles > 0:
             self.styleComboBox.addItem(self.tr('Select Style'))

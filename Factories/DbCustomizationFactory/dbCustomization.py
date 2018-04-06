@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 #Qt Imports
+from builtins import str
 from PyQt4.Qt import QObject
 
 class DbCustomization(QObject):

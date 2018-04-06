@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 #DsgTools imports
+from builtins import object
 from DsgTools.Factories.DbCustomizationFactory.attributeCustomization import AttributeCustomization
 from DsgTools.Factories.DbCustomizationFactory.classCustomization import ClassCustomization
 from DsgTools.Factories.DbCustomizationFactory.codeNameCustomization import CodeNameCustomization
@@ -31,7 +32,7 @@ from DsgTools.Factories.DbCustomizationFactory.nullityCustomization import Nulli
 from DsgTools.Factories.DbCustomizationFactory.filterCustomization import FilterCustomization
 
 
-class DbCustomizationFactory:
+class DbCustomizationFactory(object):
     def createCustomization(self, type, validatedJSONDict):
         if type == 'attribute':
             return AttributeCustomization(validatedJSONDict)

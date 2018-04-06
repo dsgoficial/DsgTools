@@ -20,10 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-class DsgEnums:
+from builtins import range
+from builtins import object
+class DsgEnums(object):
     #generic manager and database enumerate
-    Property, Database = range(2)
+    Property, Database = list(range(2))
     #generic validation property
-    ProcessName, ClassName = range(2)
+    ProcessName, ClassName = list(range(2))
     #property enum
-    PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = range(6)
+    PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = list(range(6))

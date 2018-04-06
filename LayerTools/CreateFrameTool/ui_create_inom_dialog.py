@@ -21,9 +21,12 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
+from builtins import str
+from builtins import range
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
-from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt.QtWidgets import QMessageBox
 
 import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -100,7 +103,7 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
         else:
             layerMeta = None
         layerDict = loader.load([layerMeta], uniqueLoad = True)
-        if layerMeta['lyrName'] in layerDict.keys():
+        if layerMeta['lyrName'] in list(layerDict.keys()):
             layer = layerDict[layerMeta['lyrName']]
         else:
             layer = None
@@ -282,50 +285,62 @@ class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
                 return False
             if i == 0:
                 if word[0] not in self.chars[0]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
                 if word[1] not in self.chars[1]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 1:
                 if word not in self.chars[2]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 2:
                 if word not in self.chars[3]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 3:
                 if word not in self.chars[4]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 4:
                 if word not in self.chars[5]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 5:
                 if word not in self.chars[6]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 6:
                 if word not in self.chars[7]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 7:
                 if word not in self.chars[8]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 8:
                 if word not in self.chars[9]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 9:
                 if word not in self.chars[10]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
             elif i == 10:
                 if word not in self.chars[11]:
-                    print word
+                    # fix_print_with_import
+                    print(word)
                     return False
         return True
 

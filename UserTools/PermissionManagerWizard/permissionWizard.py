@@ -23,8 +23,8 @@
 import os
 import json
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtGui import QMessageBox, QFileDialog, QWizard
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 
@@ -55,7 +55,7 @@ class PermissionWizard(QtGui.QWizard, FORM_CLASS):
 
     def nextId(self):
         if self.currentId() == 0:
-            if len(self.userCustomSelector.toLs) <> 0:
+            if len(self.userCustomSelector.toLs) != 0:
                 return self.sequenceDict['PermissionWizardProfile']
             else:
                 return -1

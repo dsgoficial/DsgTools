@@ -20,13 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os
 
 #PyQt4 imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, QObject, SIGNAL, Qt
-from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, QObject, Qt
+from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 #QGIS imports
 from qgis.core import QgsDataSourceURI, QgsCredentials, QgsMessageLog, QgsRectangle, QgsFeatureRequest, QgsMapLayer
@@ -178,7 +180,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         for layer in self.layers:
             dataSourceUri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             dbName = dataSourceUri.database()
-            if dbName not in self.databases.keys():
+            if dbName not in list(self.databases.keys()):
                 self.databases[dbName] = (dataSourceUri, self.getUserCredentials(layer))
                 #populating the combo
                 self.dbCombo.addItem(dbName)
@@ -241,7 +243,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
                     id = aggregated_item.child(j).text(0)
                     freq = QgsFeatureRequest()
                     freq.setFilterFid(int(id))
-                    feature = layer.getFeatures( freq ).next()
+                    feature = next(layer.getFeatures( freq ))
                     if j==0 and i == 0:
                         bbox=feature.geometry().boundingBox()
                     bbox.combineExtentWith(feature.geometry().boundingBox())
@@ -397,8 +399,8 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
             
-        for name in associatedDict.keys():
-            for complex_uuid in associatedDict[name].keys():
+        for name in list(associatedDict.keys()):
+            for complex_uuid in list(associatedDict[name].keys()):
                 self.addAssociatedFeature(complex, name, complex_uuid, None, None)
                 for aggregated_class in associatedDict[name][complex_uuid]:
                     for ogc_fid in associatedDict[name][complex_uuid][aggregated_class]:

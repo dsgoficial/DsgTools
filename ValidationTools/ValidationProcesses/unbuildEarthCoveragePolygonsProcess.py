@@ -23,7 +23,7 @@
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.cleanGeometriesProcess import CleanGeometriesProcess
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 import processing, binascii
 import json
 

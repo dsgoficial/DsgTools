@@ -23,7 +23,7 @@
 
 from qgis.gui import QgsMapTool, QgsMessageBar
 from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest
-from PyQt4 import QtCore, QtGui
+from qgis.PyQt import QtCore, QtGui
 
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 

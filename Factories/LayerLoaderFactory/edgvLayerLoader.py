@@ -24,8 +24,8 @@ import os
 from xml.dom.minidom import parse, parseString
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QVariant
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
 from PyQt4.Qt import QObject
 
 # QGIS imports
@@ -117,17 +117,17 @@ class EDGVLayerLoader(QObject):
                     for elem in inputList:
                         if elem['geomType'] == 'GEOMETRY':
                             continue
-                        if self.correspondenceDict[elem['geomType']] not in lyrDict.keys():
+                        if self.correspondenceDict[elem['geomType']] not in list(lyrDict.keys()):
                             lyrDict[self.correspondenceDict[elem['geomType']]] = dict()
-                        if elem['cat'] not in lyrDict[self.correspondenceDict[elem['geomType']]].keys():
+                        if elem['cat'] not in list(lyrDict[self.correspondenceDict[elem['geomType']]].keys()):
                             lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']] = []
                         lyrDict[self.correspondenceDict[elem['geomType']]][elem['cat']].append(elem)
                 else:
-                    for type in self.geomTypeDict.keys():
+                    for type in list(self.geomTypeDict.keys()):
                         # some tables are only registered as GEOMETRY and should not be considered
                         if type == 'GEOMETRY':
                             continue
-                        if self.correspondenceDict[type] not in lyrDict.keys():
+                        if self.correspondenceDict[type] not in list(lyrDict.keys()):
                             lyrDict[self.correspondenceDict[type]] = dict()
                         for lyr in self.geomTypeDict[type]:
                             if lyr in inputList:
@@ -135,10 +135,10 @@ class EDGVLayerLoader(QObject):
                                     cat = lyr.split('_')[0]
                                 else:
                                     cat = self.abstractDb.getTableSchemaFromDb(lyr)
-                                if cat not in lyrDict[self.correspondenceDict[type]].keys():
+                                if cat not in list(lyrDict[self.correspondenceDict[type]].keys()):
                                     lyrDict[self.correspondenceDict[type]][cat] = []
                                 lyrDict[self.correspondenceDict[type]][cat].append(lyr)
-                    for type in lyrDict.keys():
+                    for type in list(lyrDict.keys()):
                         if lyrDict[type] == dict():
                             lyrDict.pop(type)
         return lyrDict
@@ -146,12 +146,12 @@ class EDGVLayerLoader(QObject):
     def prepareGroups(self, groupList, parent, lyrDict):
         aux = dict()
         groupDict = dict()
-        groupNodeList = lyrDict.keys()
+        groupNodeList = list(lyrDict.keys())
         groupNodeList.sort(reverse=True)
         for geomNode in groupNodeList:
             groupDict[geomNode] = dict()
             aux = self.createGroup(groupList, geomNode, parent)
-            catList = lyrDict[geomNode].keys()
+            catList = list(lyrDict[geomNode].keys())
             catList.sort()
             for catNode in catList:
                 groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, aux)
@@ -168,17 +168,17 @@ class EDGVLayerLoader(QObject):
         domLayerDict = dict()
         qmlDict = self.abstractDb.getQmlDict(layerList)
         for lyr in layerList:
-            if lyr in qmlDict.keys():
-                for attr in qmlDict[lyr].keys():
+            if lyr in list(qmlDict.keys()):
+                for attr in list(qmlDict[lyr].keys()):
                     domain = qmlDict[lyr][attr]
                     domLyr = self.checkLoaded(domain, loadedLayers)
                     if not domLyr:
                         domLyr = self.loadDomain(domain, domainGroup)
                         loadedLayers.append(domLyr)
                         domLyrName = domLyr.name()
-                    if lyr not in domLayerDict.keys():
+                    if lyr not in list(domLayerDict.keys()):
                         domLayerDict[lyr] = dict()
-                    if attr not in domLayerDict[lyr].keys():
+                    if attr not in list(domLayerDict[lyr].keys()):
                         domLayerDict[lyr][attr] = domLyr
         return domLayerDict
 

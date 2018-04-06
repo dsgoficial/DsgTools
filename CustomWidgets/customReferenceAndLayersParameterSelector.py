@@ -24,8 +24,8 @@ import os
 from collections import OrderedDict
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -82,7 +82,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         #makes referenceTextDict
         self.referenceTextDict = OrderedDict()
         self.referenceTextDict[self.tr('Select a layer')] = None
-        sortedRefKeys = self.referenceDictList.keys()
+        sortedRefKeys = list(self.referenceDictList.keys())
         sortedRefKeys.sort()
         for key in sortedRefKeys:
             cat, lyrName, geom, geomType, tableType = key.split(',')
@@ -91,19 +91,19 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
         #makes referenceTextDict
         self.layersTextDict = OrderedDict()
         self.layersTextDict[self.tr('Select a layer')] = None
-        sortedLyrsKeys = self.layersDictList.keys()
+        sortedLyrsKeys = list(self.layersDictList.keys())
         sortedLyrsKeys.sort()
         for key in sortedLyrsKeys:
             cat, lyrName, geom, geomType, tableType = key.split(',')
             textItem = """{0}.{1} ({2}, {3}, {4})""".format(cat, lyrName, geom, geomType, tableType)
             self.layersTextDict[textItem] = self.layersDictList[key]
-        if len(self.referenceTextDict.keys()) == 1:
+        if len(list(self.referenceTextDict.keys())) == 1:
             self.unifiedList = True
-            self.referenceComboBox.addItems(self.layersTextDict.keys()) #uses all layers to populate ref combo
+            self.referenceComboBox.addItems(list(self.layersTextDict.keys())) #uses all layers to populate ref combo
         else:
             self.unifiedList = False
-            self.referenceComboBox.addItems(self.referenceTextDict.keys()) #uses only some layers to populate ref combo
-        self.customTableSelectorWidget.setInitialState(self.layersDictList.values())
+            self.referenceComboBox.addItems(list(self.referenceTextDict.keys())) #uses only some layers to populate ref combo
+        self.customTableSelectorWidget.setInitialState(list(self.layersDictList.values()))
     
     def getParameters(self):
         """
@@ -116,7 +116,7 @@ class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
             refItem = self.referenceTextDict[self.referenceLayerKey]
             originalRefDict = self.referenceDictList
         try:
-            referenceKey = [k for (k,v) in originalRefDict.iteritems() if v == refItem][0]
+            referenceKey = [k for (k,v) in originalRefDict.items() if v == refItem][0]
         except:
             referenceKey = None
         return referenceKey, self.customTableSelectorWidget.getSelectedNodes()

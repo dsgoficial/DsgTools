@@ -24,9 +24,9 @@
 import os
 from qgis.core import QgsRasterLayer, QgsRaster, QgsGeometry, QgsPoint
 from qgis.gui import QgsMapTool, QgsMapToolEmitPoint
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import QTimer
-from PyQt4.QtGui import QToolTip
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import QTimer
+from qgis.PyQt.QtWidgets import QToolTip
 
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
@@ -102,7 +102,7 @@ class BandValueTool(QgsMapTool):
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
         if i.isValid():
-            text = ", ".join(['{0:g}'.format(r) for r in i.results().values() if r is not None] )
+            text = ", ".join(['{0:g}'.format(r) for r in list(i.results().values()) if r is not None] )
         else:
             text = ""
         return text

@@ -28,9 +28,10 @@ from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 
 #PyQt imports
-from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtGui import QApplication, QCursor
+from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 import qgis as qgis
 
 #DsgTools imports
@@ -101,7 +102,7 @@ class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
                 isEdgv = True
             auxClassesDict = self.widgetConv.settingDict['earthCoverageDict']
             auxClasses = []
-            for key in auxClassesDict.keys():
+            for key in list(auxClassesDict.keys()):
                 for cl in auxClassesDict[key]:
                     if cl not in auxClasses:
                         if '.' in cl:

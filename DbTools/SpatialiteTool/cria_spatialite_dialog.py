@@ -20,10 +20,10 @@ Create spatialite database built according to Brazilian's EDGV
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4 import QtCore
+from qgis.PyQt import QtCore
 from qgis.core import QgsCoordinateReferenceSystem
 from qgis.gui import QgsGenericProjectionSelector, QgsMessageBar
-from PyQt4 import uic, QtGui
+from qgis.PyQt import uic, QtGui
 
 import sqlite3, os
 import qgis as qgis
@@ -94,7 +94,7 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         """
         fd = QtGui.QFileDialog()
         self.filepath = fd.getExistingDirectory()
-        if self.filepath <> "":
+        if self.filepath != "":
             self.carregado = True
             self.pastaDestinoCriaSpatialiteLineEdit.setText(self.filepath)
 
@@ -108,7 +108,7 @@ class CriaSpatialiteDialog(QtGui.QDialog, FORM_CLASS):
         try:
             self.epsgCriaSpatialite = int(projSelector.selectedAuthId().split(':')[-1])
             self.srsCriaSpatialite = QgsCoordinateReferenceSystem(self.epsgCriaSpatialite, QgsCoordinateReferenceSystem.EpsgCrsId)
-            if self.srsCriaSpatialite <> "":
+            if self.srsCriaSpatialite != "":
                 self.coordSysDefinido = True
                 self.coordSysCriaSpatialiteLineEdit.setText(self.srsCriaSpatialite.description())
         except:

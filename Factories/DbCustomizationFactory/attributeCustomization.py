@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 #DsgTools Imports
+from builtins import map
 from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
 class AttributeCustomization(DbCustomization):
@@ -41,7 +42,7 @@ class AttributeCustomization(DbCustomization):
                 auxSql = 'ALTER TABLE "{0}"."{1}" ADD COLUMN {2} {3}'.format(schema,table,attr['attrName'],attr['attrType'])
                 if not attr['isNullable']:
                     auxSql += ' NOT NULL '
-                if 'references' in attr.keys():
+                if 'references' in list(attr.keys()):
                     if attr['references']:
                         if attr['defaultValue']:
                             auxSql += ' REFERENCES {0} DEFAULT {1}'.format(attr['references'], attr['defaultValue'])

@@ -23,9 +23,9 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtGui import QMessageBox
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -80,15 +80,15 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         if type == 'added':
             (host, port, user, password) = self.serverWidget.abstractDb.getParamsFromConectedDb()
             for dbName in dbList:
-                if dbName not in self.selectedDbsDict.keys():
+                if dbName not in list(self.selectedDbsDict.keys()):
                     if host and port and user:
                         localDb = self.dbFactory.createDbFactory('QPSQL')
                         localDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                         self.selectedDbsDict[dbName] = localDb
                         #do get dicts
                         localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
-                        for key in localDict.keys():
-                            if key not in self.stylesDict.keys():
+                        for key in list(localDict.keys()):
+                            if key not in list(self.stylesDict.keys()):
                                 self.stylesDict[key] = dict()
                                 self.stylesDict[key]['dbList'] = []
                             self.stylesDict[key]['style'] = localDict[key]
@@ -98,11 +98,11 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.styleChanged.emit(self.stylesDict)
         #2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
         if type == 'removed':
-            for dbName in self.selectedDbsDict.keys():
+            for dbName in list(self.selectedDbsDict.keys()):
                 if dbName in dbList:
                     self.selectedDbsDict.pop(dbName)
             self.dbDictChanged.emit('removed', dbList)
-            for key in self.stylesDict.keys():
+            for key in list(self.stylesDict.keys()):
                 for db in self.stylesDict[key]['dbList']:
                     if db in dbList:
                         idx = self.stylesDict[key]['dbList'].index(db)
@@ -119,14 +119,14 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
             for dbName in dbList:
-                if dbName not in self.selectedDbsDict.keys():
+                if dbName not in list(self.selectedDbsDict.keys()):
                     localDb = self.dbFactory.createDbFactory('QSQLITE')
                     localDb.connectDatabase(conn = self.spatialiteDict[dbName])
                     self.selectedDbsDict[dbName] = localDb
                     #do get dicts
                     localDict = localDb.getStyleDict(localDb.getDatabaseVersion())
-                    for key in localDict.keys():
-                        if key not in self.stylesDict.keys():
+                    for key in list(localDict.keys()):
+                        if key not in list(self.stylesDict.keys()):
                             self.stylesDict[key] = dict()
                             self.stylesDict[key]['dbList'] = []
                         self.stylesDict[key]['style'] = localDict[key]
@@ -136,11 +136,11 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.styleChanged.emit(self.stylesDict)
         #2- Iterate over selectedDbsDict and if there is a key not in dbList, close db and pop item
         if type == 'removed':
-            for dbName in self.selectedDbsDict.keys():
+            for dbName in list(self.selectedDbsDict.keys()):
                 if dbName in dbList:
                     self.selectedDbsDict.pop(dbName)
             self.dbDictChanged.emit('removed', dbList)
-            for key in self.stylesDict.keys():
+            for key in list(self.stylesDict.keys()):
                 for db in self.stylesDict[key]['dbList']:
                     if db in dbList:
                         idx = self.stylesDict[key]['dbList'].index(db)
@@ -179,7 +179,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.clearPostgisTab()
         dbList.sort()
         for (dbname, dbversion) in dbList:
-            if dbversion in self.dbDict.keys():
+            if dbversion in list(self.dbDict.keys()):
                 self.dbDict[dbversion].append(dbname)
             else:
                 self.dbDict['Non_EDGV'].append(dbname)
@@ -207,7 +207,7 @@ class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
             self.clearSpatialiteTab()
         dbList.sort()
         for (dbname, dbversion) in dbList:
-            if dbversion in self.dbDict.keys():
+            if dbversion in list(self.dbDict.keys()):
                 self.dbDict[dbversion].append(dbname)        
 #         if len(self.dbDict['2.1.3']) == 0:
 #             self.spatialiteEdgvComboFilter.setCurrentIndex(1)

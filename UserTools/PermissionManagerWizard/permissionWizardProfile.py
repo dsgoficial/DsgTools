@@ -23,8 +23,9 @@
 import os
 import json
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtGui import QCursor
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory

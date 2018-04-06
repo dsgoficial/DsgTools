@@ -23,9 +23,9 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtSql import QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'create_user.ui'))
@@ -62,7 +62,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         user = self.userLineEdit.text()
         password = self.passwordLineEdit.text()
         password_2 = self.passwordLineEdit_2.text()
-        if password <> password_2:
+        if password != password_2:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! User not created!'))
             self.refreshScreen()
             return

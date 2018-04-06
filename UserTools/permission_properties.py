@@ -23,9 +23,9 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtGui import QAbstractItemView
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QAbstractItemView
 
 # DSGTools imports
 
@@ -77,7 +77,7 @@ class PermissionProperties(QtGui.QDialog, FORM_CLASS):
         """
         #permissions
         lista = ['read', 'write']
-        for key in mydict.keys():
+        for key in list(mydict.keys()):
             if key in lista:
                 self.setItemCheckState(parent, mydict, key)
             else:

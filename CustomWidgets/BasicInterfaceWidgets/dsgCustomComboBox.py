@@ -21,8 +21,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QCompleter, QComboBox, QSortFilterProxyModel
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QCompleter, QComboBox
+from qgis.PyQt.QtCore import QSortFilterProxyModel
 
 class DsgCustomComboBox(QComboBox):
     def __init__(self, parent=None):
@@ -43,7 +44,7 @@ class DsgCustomComboBox(QComboBox):
         self.setCompleter(self.completer)
 
         # connect signals
-        self.lineEdit().textEdited[unicode].connect(self.pFilterModel.setFilterFixedString)
+        self.lineEdit().textEdited[str].connect(self.pFilterModel.setFilterFixedString)
         self.completer.activated.connect(self.on_completer_activated)
 
 

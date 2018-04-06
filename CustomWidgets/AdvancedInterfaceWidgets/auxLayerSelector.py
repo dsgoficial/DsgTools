@@ -20,8 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QWidget, QFormLayout, QLabel
+from builtins import range
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel
 
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 
@@ -34,7 +35,7 @@ class AuxLayerSelector(QWidget):
         """
         Sets widget interface with initDict entries. Keys are labels and values are list of items for each combobox corresponding to each key.
         """
-        for key, value in initDict.items():
+        for key, value in list(initDict.items()):
             label = QLabel(key)
             widget = DsgCustomComboBox()
             widget.addItems(value)

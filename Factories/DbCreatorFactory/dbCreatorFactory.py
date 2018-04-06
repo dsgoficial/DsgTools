@@ -20,15 +20,16 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 import os
 
-from PyQt4.QtSql import QSqlDatabase
+from qgis.PyQt.QtSql import QSqlDatabase
 
 #DSG Tools imports
 from DsgTools.Factories.DbCreatorFactory.spatialiteDbCreator import SpatialiteDbCreator
 from DsgTools.Factories.DbCreatorFactory.postgisDbCreator import PostgisDbCreator
 
-class DbCreatorFactory:
+class DbCreatorFactory(object):
     def createDbCreatorFactory(self, driverName, createParam, parentWidget = None):
         #TODO Treat none return
         if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded

@@ -20,13 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
 import os
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.processParametersDialog import ProcessParametersDialog
 
-from PyQt4.QtCore import Qt
-from PyQt4 import QtGui
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QMenu
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt import QtGui
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QMenu
+from qgis.PyQt.QtGui import QCursor
 from PyQt4.Qt import QObject
 
 class ValidationManager(QObject):
@@ -255,5 +257,6 @@ if __name__ == '__main__':
     from DsgTools.Factories.DbFactory.dbFactory import DbFactory
     abstractDb = DbFactory().createDbFactory('QPSQL')
     manager = ValidationManager(abstractDb)
-    print manager
+    # fix_print_with_import
+    print(manager)
     pass

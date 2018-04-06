@@ -67,7 +67,7 @@ class PostgisDbCreator(DbCreator):
         paramDict = {'templateDb': database to be used as template. Default is edgv}
         '''
         #0. if 'templateDb' in paramDict.keys: use createFromTemplate then end createDb
-        if 'templateDb' in paramDict.keys():
+        if 'templateDb' in list(paramDict.keys()):
             self.abstractDb.createDbFromTemplate(dbName, templateName = paramDict['templateDb'], parentWidget = parentWidget)
             return self.instantiateNewDb(dbName)
         else:

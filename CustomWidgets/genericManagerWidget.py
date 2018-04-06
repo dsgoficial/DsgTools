@@ -20,12 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu, QHeaderView
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, QHeaderView
+from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
 from DsgTools.CustomWidgets.listSelector import ListSelector
@@ -39,7 +42,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericManagerWidget.ui'))
 
 class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
-    Install, Delete, Uninstall, Update, Create = range(5)
+    Install, Delete, Uninstall, Update, Create = list(range(5))
     def __init__(self, genericDbManager = None, parent = None):
         """
         Constructor
@@ -213,7 +216,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
 
     @pyqtSlot(bool)
     def on_applyPushButton_clicked(self):
-        dbList = self.genericDbManager.dbDict.keys()
+        dbList = list(self.genericDbManager.dbDict.keys())
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
         header, operation = self.getApplyHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
@@ -245,14 +248,14 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         self.treeWidget.clear()
         rootNode = self.treeWidget.invisibleRootItem()
         if viewType == DsgEnums.Database:
-            propertyList = self.genericDbManager.dbDict.keys()
+            propertyList = list(self.genericDbManager.dbDict.keys())
         else:
-            propertyList = propertyPerspectiveDict.keys()
+            propertyList = list(propertyPerspectiveDict.keys())
         for key in propertyList:
             parentCustomItem = self.utils.createWidgetItem(rootNode, key, 0)
-            if key in propertyPerspectiveDict.keys():
+            if key in list(propertyPerspectiveDict.keys()):
                 for item in propertyPerspectiveDict[key]:
-                    if item and item <> '':
+                    if item and item != '':
                         dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
@@ -266,7 +269,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         viewType = self.getViewType()
         msg = header
-        for setting in successDict.keys():
+        for setting in list(successDict.keys()):
             successList = successDict[setting]
             if len(successDict[setting]) > 0:
                 msg += self.tr('\nSuccessful ')
@@ -286,12 +289,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         exceptionDict = {configName: {dbName: errorText}}
         """
         msg = ''
-        configList = exceptionDict.keys()
+        configList = list(exceptionDict.keys())
         if len(configList) > 0:
             msg += self.tr('\nConfig with error:') + ','.join(configList)
             msg+= self.tr('\nError messages for each config and database were output in qgis log.')
             for config in configList:
-                for dbName in exceptionDict[config].keys():
+                for dbName in list(exceptionDict[config].keys()):
                     if exceptionDict[config][dbName] != dict():
                         QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return msg 
@@ -309,7 +312,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
             return self.genericDbManager.createSetting(config, parameterDict['newJsonDict'])
     
     def selectConfig(self):
-        availableConfig = self.genericDbManager.getPropertyPerspectiveDict().keys()
+        availableConfig = list(self.genericDbManager.getPropertyPerspectiveDict().keys())
         dlg = ListSelector(availableConfig,[])
         dlg.exec_()
         selectedConfig = dlg.getSelected()
@@ -389,7 +392,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         uiParameterDict = self.getParametersFromInterface()
         propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict()
-        availableConfig = [i for i in propertyPerspectiveDict.keys() if i not in uiParameterDict['parameterList']]
+        availableConfig = [i for i in list(propertyPerspectiveDict.keys()) if i not in uiParameterDict['parameterList']]
         dlg = ListSelector(availableConfig,uiParameterDict['parameterList'])
         dlg.exec_()
         fromLs, toLs = dlg.getInputAndOutputLists()
@@ -400,12 +403,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         if (installList == [] and uninstallList == []):
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration to manage!'))
             return
-        if installList <> []:
+        if installList != []:
             #install:
             successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = installList, dbList = uiParameterDict['databaseList'])
             header, operation = self.getApplyHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
-        if uninstallList <> []:
+        if uninstallList != []:
             #uninstall:
             successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uninstallList, dbList = uiParameterDict['databaseList'])
             header, operation = self.getUninstallSelectedSettingHeader()
@@ -419,7 +422,7 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         uiParameterDict = self.getParametersFromInterface()
         propertyPerspectiveDict = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Database)
-        availableDb = [i for i in propertyPerspectiveDict.keys() if i not in uiParameterDict['databaseList']]
+        availableDb = [i for i in list(propertyPerspectiveDict.keys()) if i not in uiParameterDict['databaseList']]
         dlg = ListSelector(availableDb,uiParameterDict['databaseList'])
         dlg.exec_()
         fromLs, toLs = dlg.getInputAndOutputLists()
@@ -430,12 +433,12 @@ class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
         if (installList == [] and uninstallList == []):
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration database to manage!'))
             return
-        if installList <> []:
+        if installList != []:
             #install:
             successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, selectedConfig = uiParameterDict['parameterList'], dbList = installList)
             header, operation = self.getApplyHeader()
             self.outputMessage(operation, header, successDict, exceptionDict)
-        if uninstallList <> []:
+        if uninstallList != []:
             #uninstall:
             successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, selectedConfig = uiParameterDict['parameterList'], dbList = uninstallList)
             header, operation = self.getUninstallSelectedSettingHeader()

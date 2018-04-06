@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 import time
 import csv
@@ -118,7 +119,7 @@ class InventoryThread(GenericThread):
         # creating a csv file
         try:
             csvfile = open(outputFile, 'wb')
-        except IOError, e:
+        except IOError as e:
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
 
@@ -165,11 +166,11 @@ class InventoryThread(GenericThread):
                     else:
                         QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
-        except csv.Error, e:
+        except csv.Error as e:
             csvfile.close()
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e, "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e)
-        except OSError, e:
+        except OSError as e:
             csvfile.close()
             QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
@@ -222,7 +223,7 @@ class InventoryThread(GenericThread):
                 # making tha actual copy
                 try:
                     shutil.copy2(fileName, newFileName)
-                except IOError, e:
+                except IOError as e:
                     QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
                     return (0, self.messenger.getCopyErrorMessage()+'\n'+e.strerror)
             else:

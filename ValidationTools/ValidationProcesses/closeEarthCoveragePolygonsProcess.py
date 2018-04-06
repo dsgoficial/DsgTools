@@ -20,9 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 import processing, binascii
 import json
 
@@ -67,9 +68,9 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         destIdx = areaLyr.fieldNameIndex('destid')
         for feat1 in feats:
             for feat2 in feats:
-                if feat2['destid'] <> -1000:
+                if feat2['destid'] != -1000:
                     continue 
-                if feat1.id() <> feat2.id() and not feat1.geometry().equals(feat2.geometry()):
+                if feat1.id() != feat2.id() and not feat1.geometry().equals(feat2.geometry()):
                     combine = feat1.geometry().combine(feat2.geometry())
                     if feat2.geometry().equals(combine):
                         updateDict[feat2.id()] = {destIdx:None}
@@ -130,7 +131,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         run difference to determine holes in the coverage
         """
         frame = self.loadLayerBeforeValidationProcess(self.frameLayer)
-        frameFeat = frame.getFeatures().next()
+        frameFeat = next(frame.getFeatures())
         
         #getting all geometries
         geoms = [i.geometryAndOwnership() for i in areaLyr.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression('destid >= 0')))]
@@ -207,7 +208,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         area with conflicted centroid: destid = 0
         """
         destIdx = areaLyr.fieldNameIndex('destid')
-        for id in relateDict[cl].keys():
+        for id in list(relateDict[cl].keys()):
             numberOfCentroids = len(relateDict[cl][id])
             if numberOfCentroids == 1:
                 if relateDict[cl][id][0]['cl'] == cl:
@@ -218,14 +219,14 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                 areaLyr.dataProvider().changeAttributeValues({id : {destIdx:-1000}})
             else:
                 #first sweep: identify centroids with conflicted classes
-                conflictedCentroids = [feat for feat in relateDict[cl][id] if feat['cl'] <> cl]
+                conflictedCentroids = [feat for feat in relateDict[cl][id] if feat['cl'] != cl]
                 conflictedChildCentroids = [feat['child'] for feat in relateDict[cl][id]]
                 conflictedDict = dict()
                 for conf in conflictedChildCentroids:
                     conflictedDict[conf] = 1
                 if len(conflictedCentroids) > 0:
                     areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
-                elif len(conflictedDict.keys())>1:
+                elif len(list(conflictedDict.keys()))>1:
                     areaLyr.dataProvider().changeAttributeValues({id:{destIdx:-2000}})
                 else:
                     sameClassCentroids = relateDict[cl][id]
@@ -337,7 +338,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             earthCoverageDict = settingDict['earthCoverageDict']
             self.frameLayer = settingDict['frameLayer']
             
-            coverageClassList = earthCoverageDict.keys()
+            coverageClassList = list(earthCoverageDict.keys())
             if coverageClassList.__len__() == 0:
                 self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
                 QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                

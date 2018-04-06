@@ -20,28 +20,30 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
+from builtins import object
 import json
 import os
 from xml.dom.minidom import parse, parseString
-from PyQt4.QtGui import QTreeWidgetItem
-from PyQt4 import QtGui
+from qgis.PyQt.QtWidgets import QTreeWidgetItem
+from qgis.PyQt import QtGui
 
-class Utils:
+class Utils(object):
 
     def mergeDict(self, dictionary1, dictionary2):
         """
         Merges two dictionaries
         """
         output = dict()
-        if type(dictionary1) <> dict or type(dictionary2) <> dict:
+        if type(dictionary1) != dict or type(dictionary2) != dict:
             return dictionary2
-        for item, value in dictionary1.iteritems():
-            if dictionary2.has_key(item):
+        for item, value in dictionary1.items():
+            if item in dictionary2:
                 if isinstance(dictionary2[item], dict):
                     output[item] = self.mergeDict(value, dictionary2.pop(item))
                 else:
                     if type(value) == list:
-                        if item not in output.keys():
+                        if item not in list(output.keys()):
                             output[item] = []
                         for i in value:
                             if i not in output[item]:
@@ -53,16 +55,16 @@ class Utils:
                             value, dictionary2.pop(item))
             else:
                 if type(value) == list:
-                    if item not in output.keys():
+                    if item not in list(output.keys()):
                         output[item] = []
                     for i in value:
                         if i not in output[item]:
                             output[item].append(i)
                 else:
                     output[item] = value
-        for item, value in dictionary2.iteritems():
+        for item, value in dictionary2.items():
             if type(value) == list:
-                if item not in output.keys():
+                if item not in list(output.keys()):
                     output[item] = []
                 for i in value:
                     if i not in output[item]:
@@ -76,7 +78,7 @@ class Utils:
         Builds a nested dictionary for a specific key
         """
         if len(keyList) == 1:
-            if keyList[0] not in inputDict.keys():
+            if keyList[0] not in list(inputDict.keys()):
                 inputDict[keyList[0]] = dict()
             if type(value) == list:
                 inputDict[keyList[0]] = []
@@ -87,8 +89,8 @@ class Utils:
                 inputDict[keyList[0]] = value
             return inputDict
         else:
-            if keyList[0] not in inputDict.keys():
-                if len(inputDict.values()) == 0:
+            if keyList[0] not in list(inputDict.keys()):
+                if len(list(inputDict.values())) == 0:
                     inputDict[keyList[0]] = dict()
             inputDict[keyList[0]] = self.buildOneNestedDict(
                 inputDict[keyList[0]], keyList[1::], value)
@@ -98,7 +100,7 @@ class Utils:
         """
         Builds a nested dict
         """
-        if len(inputDict.keys()) > 0:
+        if len(list(inputDict.keys())) > 0:
             tempDict = self.buildOneNestedDict(dict(), keyList, value)
             return self.mergeDict(inputDict, tempDict)
         else:
@@ -180,14 +182,14 @@ class Utils:
     def getRecursiveInheritance(self, parent, resultList, inhDict):
         if parent not in resultList:
             resultList.append(parent)
-        if parent in inhDict.keys():
+        if parent in list(inhDict.keys()):
             for child in inhDict[parent]:
                 self.getRecursiveInheritance(child, resultList, inhDict)
 
     def getRecursiveInheritanceTreeDict(self, parent, resultDict, inhDict):
-        if parent not in resultDict.keys():
+        if parent not in list(resultDict.keys()):
             resultDict[parent] = dict()
-        if parent in inhDict.keys():
+        if parent in list(inhDict.keys()):
             for child in inhDict[parent]:
                 self.getRecursiveInheritanceTreeDict(
                     child, resultDict[parent], inhDict)
@@ -196,7 +198,7 @@ class Utils:
         path = path + [start]
         if start == end:
             return [path]
-        if not graph.has_key(start):
+        if start not in graph:
             return []
         paths = []
         for node in graph[start]:
@@ -208,7 +210,7 @@ class Utils:
         return paths
 
     def getAllItemsInDict(self, inputDict, itemList):
-        for key in inputDict.keys():
+        for key in list(inputDict.keys()):
             if key not in itemList:
                 itemList.append(key)
             self.getAllItemsInDict(inputDict[key], itemList)
@@ -224,13 +226,13 @@ class Utils:
             return item
 
     def createTreeWidgetFromDict(self, parentNode, inputDict, treeWidget, column):
-        for key in inputDict.keys():
+        for key in list(inputDict.keys()):
             item = self.createWidgetItem(parentNode, key, column)
             self.createTreeWidgetFromDict(
                 item, inputDict[key], treeWidget, column)
     
     def getTreeBranchFromNode(self, startNode, inputDict):
-        if 'root' not in inputDict.keys():
+        if 'root' not in list(inputDict.keys()):
             graph = {'root':inputDict}
         else:
             graph = inputDict
