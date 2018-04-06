@@ -11,16 +11,15 @@ from qgis.gui import QgsMessageBar, QgsMapTool
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, QSize
 from qgis.PyQt.QtGui import QIcon, QCursor, QPixmap
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
-from DsgTools.ProductionTools.CopyPasteTool.multiLayerSelect import MultiLayerSelection
-from DsgTools.ProductionTools.CopyPasteTool.interface_copyPaste import CopyPaste
-from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
+from .multiLayerSelect import MultiLayerSelection
+from .interface_copyPaste import CopyPaste
 
 class CopyPasteTool(object):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool1 = MultiLayerSelection(self.iface.mapCanvas(), self.iface)
-        self.iface.actionToggleEditing().triggered.connect(self.closeCursor)
+        # self.iface.actionToggleEditing().triggered.connect(self.closeCursor)
         self.selectorAction = None
 
     def setSelectorAction(self, action):
