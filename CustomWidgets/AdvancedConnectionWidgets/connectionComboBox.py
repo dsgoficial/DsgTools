@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import os
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
@@ -36,7 +36,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionComboBox.ui'))
-class ConnectionComboBox(QtGui.QWidget, FORM_CLASS):
+class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     dbChanged = pyqtSignal(AbstractDb)
     problemOccurred = pyqtSignal(str)

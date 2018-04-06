@@ -25,7 +25,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 
@@ -35,7 +35,7 @@ from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import Cust
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'changeNullityWidget.ui'))
 
-class ChangeNullityWidget(QtGui.QWidget, FORM_CLASS):
+class ChangeNullityWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)

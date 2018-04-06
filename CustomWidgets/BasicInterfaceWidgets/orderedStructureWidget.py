@@ -24,14 +24,14 @@ from builtins import range
 import os, importlib
 from collections import OrderedDict
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QTableWidgetSelectionRange
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'orderedStructureWidget.ui'))
 
-class OrderedStructureWidget(QtGui.QWidget, FORM_CLASS):
+class OrderedStructureWidget(QtWidgets.QWidget, FORM_CLASS):
 
     def __init__(self, parent=None):
         """

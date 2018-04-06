@@ -22,7 +22,7 @@ Create spatialite database built according to Brazilian's EDGV
 """
 from qgis.PyQt import QtCore
 from qgis.core import QgsCoordinateReferenceSystem
-from qgis.gui import QgsGenericProjectionSelector, QgsMessageBar
+from qgis.gui import QgsProjectionSelectionTreeWidget, QgsMessageBar
 from qgis.PyQt import uic, QtWidgets
 
 import sqlite3, os
@@ -102,7 +102,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         Opens the CRS selector
         """
-        projSelector = QgsGenericProjectionSelector()
+        projSelector = QgsProjectionSelectionTreeWidget()
         projSelector.setMessage(theMessage=self.tr('Please, select the coordinate system'))
         projSelector.exec_()
         try:

@@ -26,7 +26,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QLineEdit, QToolTip
@@ -57,7 +57,7 @@ class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
             return editor
         return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
 
-class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
+class NewDomainWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)

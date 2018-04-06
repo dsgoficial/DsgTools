@@ -25,7 +25,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QCursor
@@ -36,7 +36,7 @@ from DsgTools.Utils.utils import Utils
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'changeFilterWidget.ui'))
 
-class ChangeFilterWidget(QtGui.QWidget, FORM_CLASS):
+class ChangeFilterWidget(QtWidgets.QWidget, FORM_CLASS):
     populateSingleValue = pyqtSignal()
     populateListValue = pyqtSignal()
     def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):

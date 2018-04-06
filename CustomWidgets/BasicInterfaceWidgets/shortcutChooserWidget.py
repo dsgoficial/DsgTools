@@ -22,14 +22,14 @@
 """
 import os
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QKeySequence
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'shortcutChooserWidget.ui'))
 
-class ShortcutChooserWidget(QtGui.QWidget, FORM_CLASS):
+class ShortcutChooserWidget(QtWidgets.QWidget, FORM_CLASS):
     keyPressed = pyqtSignal()
     def __init__(self, parent=None):
         """

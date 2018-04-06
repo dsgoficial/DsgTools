@@ -27,7 +27,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QRadioButton
@@ -36,7 +36,7 @@ from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QRadioButton
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'databaseParameterWidget.ui'))
 
-class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
+class DatabaseParameterWidget(QtWidgets.QWidget, FORM_CLASS):
     filesSelected = pyqtSignal()
     changeSize = pyqtSignal()
     def __init__(self, parent = None):

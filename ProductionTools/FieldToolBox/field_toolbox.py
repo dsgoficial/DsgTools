@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QPushButton, QShortcut
 from qgis.PyQt.QtWidgets import QKeySequence
@@ -151,7 +151,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         Adjusts the scroll area to receive the buttons directly (not grouped by category)
         formLayout: Layout used to receive all the buttons
         """
-        w = QtGui.QWidget()
+        w = QtWidgets.QWidget()
         w.setLayout(formLayout)
         self.scrollArea.setWidget(w)
 
@@ -163,7 +163,7 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         scrollArea = QtGui.QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
-        w = QtGui.QWidget()
+        w = QtWidgets.QWidget()
         w.setLayout(formLayout)
         scrollArea.setWidget(w)
         return scrollArea

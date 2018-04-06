@@ -21,11 +21,11 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction
+from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction, QWidget
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.Qt import QWidget, QObject
+from qgis.PyQt.Qt import QObject
 
 from qgis.core import QgsMapLayer, Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest
 from qgis.gui import QgsMessageBar

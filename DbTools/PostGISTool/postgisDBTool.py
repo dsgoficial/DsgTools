@@ -23,12 +23,13 @@
 import os
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.PyQt.QtWidgets import QDialog, QMessageLog
+from qgis.PyQt.QtWidgets import QDialog
 
 #QGIS Imports
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog, QgsCredentials
-from qgis.gui import QgsGenericProjectionSelector
+from qgis.gui import QgsProjectionSelectionTreeWidget
 
 #DsgTools Imports
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
@@ -105,7 +106,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         """
         Opens the CRS selector dialog
         """
-        projSelector = QgsGenericProjectionSelector()
+        projSelector = QgsProjectionSelectionTreeWidget()
         message = 'Select the Spatial Reference System!'
         projSelector.setMessage(theMessage=message)
         projSelector.exec_()

@@ -24,14 +24,14 @@ import os
 from collections import OrderedDict
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customReferenceAndLayersParameterSelector.ui'))
 
-class CustomReferenceAndLayersParameterSelector(QtGui.QWidget, FORM_CLASS):
+class CustomReferenceAndLayersParameterSelector(QtWidgets.QWidget, FORM_CLASS):
 
     def __init__(self, parent = None):
         """Constructor."""

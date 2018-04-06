@@ -26,7 +26,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFileDialog
@@ -54,7 +54,7 @@ class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
             return editor
         return super(ValidatedItemDelegate, self).createEditor(widget, option, index)
 
-class CustomTableWidget(QtGui.QWidget, FORM_CLASS):
+class CustomTableWidget(QtWidgets.QWidget, FORM_CLASS):
     filesSelected = pyqtSignal()
     def __init__(self, parent = None):
         """Constructor."""
