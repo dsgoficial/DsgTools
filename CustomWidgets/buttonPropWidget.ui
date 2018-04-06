@@ -48,7 +48,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QgsColorButtonV2" name="mColorButton">
+       <widget class="QgsColorButton" name="mColorButton">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -114,7 +114,7 @@
    <container>1</container>
   </customwidget>
   <customwidget>
-   <class>QgsColorButtonV2</class>
+   <class>QgsColorButton</class>
    <extends>QToolButton</extends>
    <header>qgis.gui</header>
   </customwidget>
