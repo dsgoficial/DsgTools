@@ -22,7 +22,7 @@
 """
 #Qt Imports
 from builtins import str
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 
 class DbCustomization(QObject):
     def __init__(self, validatedJSONDict):

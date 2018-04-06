@@ -23,7 +23,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsMapLayerRegistry
+from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsProject
 
 from qgis.PyQt.QtCore import QVariant
 
@@ -115,7 +115,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             self.logLayerTime(refcl['tableSchema']+'.'+refcl['tableName'])
 
             try:
-                QgsMapLayerRegistry.instance().removeMapLayer(filterLayer.id())
+                QgsProject.instance().removeMapLayer(filterLayer.id())
             except:
                 QgsMessageLog.logMessage(self.tr('Error while trying to remove filter layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
 

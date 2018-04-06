@@ -25,8 +25,8 @@ import zipfile, shutil, os, json
 
 from DsgTools.Utils.utils import Utils
 
-#PyQt4 imports
-from PyQt4.Qt import QObject
+#PyQt5 imports
+from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 
 class DsgToolsOpInstaller(QObject):

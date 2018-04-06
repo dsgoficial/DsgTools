@@ -29,6 +29,7 @@ from qgis.core import QgsMessageLog
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
 from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QLineEdit, QToolTip
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -36,7 +37,7 @@ from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactor
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget import AddAttributeWidget
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
-from PyQt4.Qt import QTableWidgetItem, QLineEdit, QToolTip
+
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newDomainWidget.ui'))

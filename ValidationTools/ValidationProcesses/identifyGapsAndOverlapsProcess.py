@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
@@ -101,7 +101,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
 
             #removing the coverage layer
             try:
-                QgsMapLayerRegistry.instance().removeMapLayer(coverage.id())
+                QgsProject.instance().removeMapLayer(coverage.id())
             except:
                 QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             

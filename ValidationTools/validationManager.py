@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtGui
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QMenu
 from qgis.PyQt.QtGui import QCursor
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 
 class ValidationManager(QObject):
     def __init__(self,postgisDb, iface):

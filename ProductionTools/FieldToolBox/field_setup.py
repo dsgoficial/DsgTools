@@ -35,7 +35,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QgsMessageLog
+from qgis.core import QgsMapLayer, QgsGeometry, QgsMessageLog
 from qgis.gui import QgsShortcutsManager
 
 #DsgTools imports

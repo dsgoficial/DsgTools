@@ -25,10 +25,10 @@ import os
 # Qt imports
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.utils import iface
 
 #DsgTools imports

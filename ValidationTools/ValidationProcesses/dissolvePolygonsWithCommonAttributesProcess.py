@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsDataSourceUri, QgsSpatialIndex, QgsField
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsDataSourceUri, QgsSpatialIndex, QgsField, QgsProject
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from qgis.PyQt.QtCore import QVariant
 import processing, binascii
@@ -71,7 +71,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
             raise Exception(self.tr('Problem executing qgis:dissolve. Check your installed libs.\n'))
         #updating original layer
         outputLayer = processing.getObject(ret['OUTPUT'])
-        QgsMapLayerRegistry.instance().removeMapLayer(auxLayer.id())
+        QgsProject.instance().removeMapLayer(auxLayer.id())
         self.splitUnifiedLayer(outputLayer, [layer])
         return outputLayer
     
