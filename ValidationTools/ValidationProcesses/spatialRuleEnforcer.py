@@ -26,7 +26,7 @@ import os, binascii
 from qgis.PyQt import QtGui
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
-from qgis.core import QgsMessageLog, QgsDataSourceURI, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer
+from qgis.core import QgsMessageLog, QgsDataSourceUri, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
@@ -80,7 +80,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         """
         try:
             uri = sender.dataProvider().dataSourceUri()
-            dsUri = QgsDataSourceURI(uri)
+            dsUri = QgsDataSourceUri(uri)
             name = '.'.join([dsUri.schema(), dsUri.table()])
         except:
             name = ''

@@ -5,8 +5,8 @@ import os
 
 # Qt imports
 import psycopg2
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.core import QgsPoint , QgsDataSourceURI, QgsVectorLayer, QgsMapLayerRegistry
+from qgis.PyQt import QtWidgets, uic, QtCore
+from qgis.core import QgsPoint , QgsDataSourceUri, QgsVectorLayer, QgsMapLayerRegistry
 from qgis.gui import QgsMessageBar, QgsMapTool
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, QSize
 from qgis.PyQt.QtGui import QIcon, QCursor, QPixmap
@@ -38,7 +38,7 @@ class CopyPasteTool(object):
     def copyPaste(self):
         if (self.iface.activeLayer()) and (len(self.iface.activeLayer().selectedFeatures()) == 1):
             layer = self.iface.activeLayer().selectedFeatures()[0]
-            dialog = QtGui.QDialog(self.iface.mainWindow())
+            dialog = QtWidgets.QDialog(self.iface.mainWindow())
             self.d = CopyPaste(self.iface, layer, dialog)
             self.tool1.finished.connect(self.d.setSelectedLayers)
             self.d.show()

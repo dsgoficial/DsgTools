@@ -23,14 +23,14 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'dsgToolsOpInstallerDialog.ui'))
 
-class DsgToolsOpInstallerDialog(QtGui.QDialog, FORM_CLASS):
+class DsgToolsOpInstallerDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def __init__(self, dsgToolsInstaller, parent = None):
         """Constructor."""

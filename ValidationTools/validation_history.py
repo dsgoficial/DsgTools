@@ -22,14 +22,14 @@
 """
 import os
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import QgsMessageLog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_history.ui'))
 
-class ValidationHistory(QtGui.QDialog, FORM_CLASS):
+class ValidationHistory(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, postgisDb, parent=None):
         """
         Constructor

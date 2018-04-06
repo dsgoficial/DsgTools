@@ -26,7 +26,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
 from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
@@ -39,7 +39,7 @@ from DsgTools.ServerTools.viewServers import ViewServers
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_serverDBExplorer.ui'))
 
-class ServerDBExplorer(QtGui.QDialog, FORM_CLASS):
+class ServerDBExplorer(QtWidgets.QDialog, FORM_CLASS):
     
     def __init__(self, parent = None):
         """Constructor."""

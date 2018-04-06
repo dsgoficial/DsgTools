@@ -26,7 +26,7 @@ from builtins import range
 import os, json
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem, QAction
 from qgis.PyQt.QtWidgets import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit, QShortcut
@@ -48,7 +48,7 @@ from . import acquisition_tools
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_setup.ui'))
 
-class FieldSetup(QtGui.QDialog, FORM_CLASS):
+class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, abstractDb, returnDict = False, parent = None):
         """
         Constructor

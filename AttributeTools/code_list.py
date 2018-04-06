@@ -29,7 +29,7 @@ from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QMessageBox
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
@@ -106,7 +106,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         valueColumn = valueDict['Value']
         table = valueDict['Layer'][:-17]#removing the date-time characters
         
-        uri = QgsDataSourceURI(self.currLayer.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(self.currLayer.dataProvider().dataSourceUri())
         if uri.host() == '':
             db = QSqlDatabase('QSQLITE')
             db.setDatabaseName(uri.database())

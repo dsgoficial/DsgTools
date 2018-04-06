@@ -26,7 +26,7 @@ from os.path import expanduser
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
 from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
@@ -37,7 +37,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validationWorkflowCreator.ui'))
 
-class ValidationWorkflowCreator(QtGui.QDialog, FORM_CLASS):
+class ValidationWorkflowCreator(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, validationManager, parameterDict = None, parent = None):
         """Constructor."""
         super(ValidationWorkflowCreator, self).__init__(parent)

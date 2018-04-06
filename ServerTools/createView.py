@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QAbstractItemView, QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
@@ -32,7 +32,7 @@ from qgis.PyQt.QtGui import QCursor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createView.ui'))
 
-class CreateView(QtGui.QDialog, FORM_CLASS):
+class CreateView(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, abstractDb, dbName, parent = None):
         """
         Constructor

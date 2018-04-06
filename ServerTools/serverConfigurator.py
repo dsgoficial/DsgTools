@@ -20,8 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import QSettings, pyqtSlot
+from qgis.PyQt.QtWidgets import QMessageBox, QDialog
 from qgis.PyQt import uic
 import os
 

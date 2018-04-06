@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.utils import iface
 
 #DsgTools imports
@@ -61,7 +61,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         loaded = None
         for ll in loadedLayers:
             if ll.name() == name:
-                candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+                candidateUri = QgsDataSourceUri(ll.dataProvider().dataSourceUri())
                 if self.host == candidateUri.host() and self.database == candidateUri.database() and self.port == int(candidateUri.port()):
                     return ll
         return loaded

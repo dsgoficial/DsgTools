@@ -22,7 +22,7 @@
 from builtins import str
 import sys
 from collections import deque, OrderedDict
-from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt import QtWidgets, QtCore
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QApplication, QMenu
 from qgis.PyQt.QtGui import QCursor
@@ -33,7 +33,7 @@ from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import Aux
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedRecursiveSnapWidget import OrderedRecursiveSnapWidget
 from DsgTools.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProcess import RecursiveSnapParameters
 
-class ProcessParametersDialog(QtGui.QDialog):
+class ProcessParametersDialog(QtWidgets.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
                str: QtGui.QLineEdit,
                int: QtGui.QSpinBox,
@@ -148,7 +148,7 @@ class ProcessParametersDialog(QtGui.QDialog):
         # w.setLayout(formLayout)
         # scrollArea.setWidget(w)
 
-        buttons = QtGui.QDialogButtonBox(QtGui.QDialogButtonBox.Ok | QtGui.QDialogButtonBox.Cancel)
+        buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 

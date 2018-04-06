@@ -19,12 +19,12 @@
  ***************************************************************************/
 """
 import os
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_about.ui'))
 
-class AboutDialog(QtGui.QDialog, FORM_CLASS):
+class AboutDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """
         Constructor

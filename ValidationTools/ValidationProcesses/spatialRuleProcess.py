@@ -25,7 +25,7 @@ import os
 
 from qgis.PyQt import QtGui
 
-from qgis.core import QgsMessageLog, QgsDataSourceURI
+from qgis.core import QgsMessageLog, QgsDataSourceUri
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget

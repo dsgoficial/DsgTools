@@ -25,7 +25,7 @@ from __future__ import print_function
 from builtins import str
 from builtins import range
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
-from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt import QtWidgets, QtCore, uic
 from qgis.PyQt.QtWidgets import QMessageBox
 
 import os
@@ -39,7 +39,7 @@ from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoader
 #qgis imports
 import qgis as qgis
 
-class CreateInomDialog(QtGui.QDialog, FORM_CLASS):
+class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super(CreateInomDialog, self).__init__(parent)

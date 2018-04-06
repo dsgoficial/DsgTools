@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.utils import iface
 
 #DsgTools imports
@@ -68,7 +68,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         database = self.abstractDb.db.databaseName()
         for ll in loadedLayers:
             if ll.name() == name:
-                candidateUri = QgsDataSourceURI(ll.dataProvider().dataSourceUri())
+                candidateUri = QgsDataSourceUri(ll.dataProvider().dataSourceUri())
                 if database == candidateUri.database():
                     return ll
         return loaded
@@ -191,7 +191,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         :return:
         """
         #TODO: Avaliar se o table = deve ser diferente
-        uri = QgsDataSourceURI()
+        uri = QgsDataSourceUri()
         uri.setDatabase(self.abstractDb.db.databaseName())
         uri.setDataSource('', 'dominios_'+domainTableName, None)
         #TODO Load domain layer into a group

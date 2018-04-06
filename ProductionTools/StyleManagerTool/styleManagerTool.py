@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMapLayer, QGis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
 
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -95,7 +95,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
             for lyr in lyrList:
                 try:
-                    uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                    uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                     fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
                     if fullPath:
                         lyr.applyNamedStyle(fullPath)
@@ -113,7 +113,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         lyrList = []
         for lyr in self.iface.legendInterface().layers():
             if isinstance(lyr, QgsVectorLayer):
-                candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 if candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']:
                     lyrList.append(lyr)
         return lyrList
@@ -122,7 +122,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         dbList = []
         for lyr in self.iface.legendInterface().layers():
             if isinstance(lyr, QgsVectorLayer):
-                candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 dbName = candidateUri.database()
                 if dbName not in dbList and lyr.providerType() in ['postgres', 'spatialite']:
                     dbList.append(dbName)
@@ -144,7 +144,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     def getParametersFromLyr(self, dbName):
         for lyr in self.iface.legendInterface().layers():
           if isinstance(lyr, QgsVectorLayer):
-            candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+            candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
             if candidateUri.database() == dbName:
                 currLyr = lyr
                 break

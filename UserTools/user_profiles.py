@@ -24,7 +24,7 @@ from builtins import range
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QMenu, QMessageBox
@@ -41,7 +41,7 @@ from DsgTools.UserTools.permission_properties import PermissionProperties
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_profiles.ui'))
 
-class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
+class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """
         Constructor

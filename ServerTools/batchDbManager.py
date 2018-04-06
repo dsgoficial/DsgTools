@@ -28,7 +28,7 @@ from os.path import expanduser
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings, pyqtSignal
 from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
@@ -48,7 +48,7 @@ from DsgTools.ServerTools.selectStyles import SelectStyles
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
 
-class BatchDbManager(QtGui.QDialog, FORM_CLASS):
+class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     EDGV213, EDGV_FTer_2a_Ed, Non_EDGV = list(range(3))
     def __init__(self, parent = None):
         """Constructor."""

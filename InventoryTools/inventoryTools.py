@@ -29,7 +29,7 @@ from osgeo import gdal, ogr
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QMenu, QApplication, QFileDialog, QMessageBox, QTreeWidgetItem, QInputDialog
+from qgis.PyQt.QtWidgets import QMenu, QApplication, QFileDialog, QMessageBox, QTreeWidgetItem, QInputDialog, QDialog
 from qgis.PyQt.QtGui import QCursor
 from _csv import writer
 from qgis._core import QgsAction

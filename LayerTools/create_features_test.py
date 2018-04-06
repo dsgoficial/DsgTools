@@ -25,7 +25,7 @@ from builtins import str
 from builtins import object
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
-from qgis.core import QgsDataSourceURI, QgsMessageLog, QgsGeometry
+from qgis.core import QgsDataSourceUri, QgsMessageLog, QgsGeometry
 
 import sys, os
 from uuid import uuid4
@@ -88,7 +88,7 @@ class CreateFeatureTest(object):
         #Getting all fields
         fields = provider.fields()
         #Getting layer schema
-        schema = str(QgsDataSourceURI(layer.dataProvider().dataSourceUri()).schema())
+        schema = str(QgsDataSourceUri(layer.dataProvider().dataSourceUri()).schema())
 
         #Creating the log file
         file = open(os.path.join(currentPath, 'LayerTools', 'Problemas', layer.name()+'_relatorio_banco_2016_03_29.txt'), 'w')

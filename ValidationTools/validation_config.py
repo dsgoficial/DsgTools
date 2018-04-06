@@ -23,7 +23,7 @@
 import os
 import json
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -31,7 +31,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 from qgis.core import QgsMessageLog
 
-class ValidationConfig(QtGui.QDialog, FORM_CLASS):
+class ValidationConfig(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent=None):
         """
         Constructor

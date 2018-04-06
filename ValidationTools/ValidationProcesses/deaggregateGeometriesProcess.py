@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsFeature, QgsFeatureRequest
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsFeature, QgsFeatureRequest
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
@@ -67,7 +67,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
 
                 lyr.startEditing()
                 provider = lyr.dataProvider()
-                uri = QgsDataSourceURI(provider.dataSourceUri())
+                uri = QgsDataSourceUri(provider.dataSourceUri())
                 keyColumn = uri.keyColumn()
 
                 if self.parameters['Only Selected']:

@@ -29,7 +29,7 @@ import osgeo.osr
 import numpy
 
 # Import the PyQt and QGIS libraries
-from qgis.PyQt import uic
+from qgis.PyQt import uic, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
@@ -38,7 +38,7 @@ from qgis.gui import QgsGenericProjectionSelector
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_processingTools.ui'))
 
-class ProcessingTools(QDialog, FORM_CLASS):
+class ProcessingTools(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(ProcessingTools, self).__init__()

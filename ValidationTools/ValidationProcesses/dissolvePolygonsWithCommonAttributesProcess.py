@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsDataSourceURI, QgsSpatialIndex, QgsField
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsDataSourceUri, QgsSpatialIndex, QgsField
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from qgis.PyQt.QtCore import QVariant
 import processing, binascii
@@ -60,7 +60,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         Runs the actual grass process
         """
         alg = 'qgis:dissolve'
-        uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #field.type() != 6 stands for virtual columns such as area_otf
         auxLayer = self.createUnifiedLayer([layer], attributeTupple = True, attributeBlackList = self.parameters['AttributeBlackList (comma separated)'])

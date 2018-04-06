@@ -31,7 +31,7 @@ from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 #QGIS imports
-from qgis.core import QgsDataSourceURI, QgsCredentials, QgsMessageLog, QgsRectangle, QgsFeatureRequest, QgsMapLayer
+from qgis.core import QgsDataSourceUri, QgsCredentials, QgsMessageLog, QgsRectangle, QgsFeatureRequest, QgsMapLayer
 
 #DsgTools imports
 from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
@@ -98,7 +98,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         """
         Gets user credentials to acess the database
         """
-        dataSourceUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        dataSourceUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
         if dataSourceUri.host() == '':
             return (None, None)
 
@@ -178,7 +178,7 @@ class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
         self.databases = dict()
         self.layers = self.iface.mapCanvas().layers()
         for layer in self.layers:
-            dataSourceUri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+            dataSourceUri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
             dbName = dataSourceUri.database()
             if dbName not in list(self.databases.keys()):
                 self.databases[dbName] = (dataSourceUri, self.getUserCredentials(layer))
