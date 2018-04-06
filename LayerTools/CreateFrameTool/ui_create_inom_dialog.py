@@ -27,6 +27,7 @@ from builtins import range
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
 from qgis.PyQt import QtWidgets, QtCore, uic
 from qgis.PyQt.QtWidgets import QMessageBox
+from qgis.PyQt.QtCore import pyqtSlot
 
 import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

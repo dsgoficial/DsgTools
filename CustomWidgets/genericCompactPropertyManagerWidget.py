@@ -25,7 +25,7 @@ from builtins import range
 import os, importlib
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, QHeaderView
 from qgis.PyQt.QtGui import QCursor
@@ -43,7 +43,7 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericCompactPropertyManagerWidget.ui'))
 
-class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
+class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     Add, Remove, Import, Export, Update = list(range(5))
     def __init__(self, parent = None):
         """

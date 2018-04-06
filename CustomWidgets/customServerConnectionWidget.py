@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
@@ -39,7 +39,7 @@ from DsgTools.ServerTools.selectStyles import SelectStyles
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customServerConnectionWidget.ui'))
 
-class CustomServerConnectionWidget(QtGui.QWidget, FORM_CLASS):
+class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal()
     resetAll = pyqtSignal()
     dbDictChanged = pyqtSignal(str,list)

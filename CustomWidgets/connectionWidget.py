@@ -25,7 +25,7 @@ import os
 from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
@@ -41,7 +41,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionWidget.ui'))
 
-class ConnectionWidget(QtGui.QWidget, FORM_CLASS):
+class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     problemOccurred = pyqtSignal(str)
     dbChanged = pyqtSignal(AbstractDb)

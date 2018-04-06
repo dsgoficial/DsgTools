@@ -25,7 +25,7 @@ from builtins import range
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, QHeaderView
 from qgis.PyQt.QtGui import QCursor
@@ -41,7 +41,7 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericManagerWidget.ui'))
 
-class GenericManagerWidget(QtGui.QWidget, FORM_CLASS):
+class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     Install, Delete, Uninstall, Update, Create = list(range(5))
     def __init__(self, genericDbManager = None, parent = None):
         """

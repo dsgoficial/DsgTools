@@ -24,14 +24,14 @@ from builtins import range
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customSelector.ui'))
 
-class CustomSelector(QtGui.QWidget, FORM_CLASS):
+class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal(list,str)
 
     def __init__(self, parent = None):

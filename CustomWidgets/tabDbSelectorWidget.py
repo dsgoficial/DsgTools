@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox
 
@@ -32,7 +32,7 @@ from qgis.PyQt.QtWidgets import QMessageBox
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'tabDbSelectorWidget.ui'))
 
-class TabDbSelectorWidget(QtGui.QWidget, FORM_CLASS):
+class TabDbSelectorWidget(QtWidgets.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal(list,str)
 
     def __init__(self, parent = None):

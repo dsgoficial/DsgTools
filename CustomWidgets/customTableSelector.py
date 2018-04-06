@@ -24,7 +24,7 @@ from builtins import range
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
@@ -34,7 +34,7 @@ from DsgTools.Utils.utils import Utils
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customTableSelector.ui'))
 
-class CustomTableSelector(QtGui.QWidget, FORM_CLASS):
+class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
     selectionChanged = pyqtSignal(list,str)
 
     def __init__(self, customNumber = None, parent = None):

@@ -23,7 +23,7 @@
 import os
 import json
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
 
@@ -36,7 +36,7 @@ from qgis.core import QgsMessageLog
 from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
 from DsgTools.dsgEnums import DsgEnums
 
-class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
+class EarthCoverageWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)

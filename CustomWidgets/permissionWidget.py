@@ -23,7 +23,7 @@
 from builtins import range
 import os
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
@@ -43,7 +43,7 @@ from DsgTools.UserTools.serverProfilesManager import ServerProfilesManager
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'permissionWidget.ui'))
 
-class PermissionWidget(QtGui.QWidget, FORM_CLASS):
+class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)

@@ -33,7 +33,7 @@ from qgis.PyQt import uic, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
-from qgis.gui import QgsGenericProjectionSelector
+from qgis.gui import QgsProjectionSelectionTreeWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_processingTools.ui'))
@@ -88,7 +88,7 @@ class ProcessingTools(QtWidgets.QDialog, FORM_CLASS):
         '''
         Opens the dialog to select CRS
         '''
-        projSelector = QgsGenericProjectionSelector()
+        projSelector = QgsProjectionSelectionTreeWidget()
         message = self.tr('Select the Spatial Reference System!')
         projSelector.setMessage(theMessage=message)
         if not projSelector.exec_():

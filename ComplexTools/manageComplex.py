@@ -32,7 +32,7 @@ from qgis.core import QgsMessageLog
 from qgis.PyQt import uic, QtGui, QtCore
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 #DsgTools imports
 from DsgTools.QmlTools.qmlParser import QmlParser
