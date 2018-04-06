@@ -306,7 +306,7 @@ Use esta função para adicionar lógica extra aos seus formulários.
 Entre com o nome da função no campo "Python Init function".
 Un exemplo a seguir:
 """
-a partir de qgis.PyQt.QtGui importe QWidget
+a partir de qgis.PyQt.QtWidgets importe QWidget
 
 def my_form_open(diálogo, camada, feição):
 	geom = feature.geometry()

@@ -24,7 +24,7 @@ import os
 # Qt imports
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtGui import QKeySequence
+from qgis.PyQt.QtWidgets import QKeySequence
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'shortcutChooserWidget.ui'))
