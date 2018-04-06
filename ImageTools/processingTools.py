@@ -28,8 +28,7 @@ import numpy
 
 # Import the PyQt and QGIS libraries
 from PyQt4 import uic
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QMessageBox, QFileDialog
 
 from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog
 from qgis.gui import QgsGenericProjectionSelector
