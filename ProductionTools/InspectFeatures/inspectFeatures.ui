@@ -287,17 +287,17 @@
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgsfieldexpressionwidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgsmaplayercombobox.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>QgsScaleWidget</class>
    <extends>QWidget</extends>
-   <header>qgsscalewidget.h</header>
+   <header>qgis.gui</header>
   </customwidget>
  </customwidgets>
  <resources>

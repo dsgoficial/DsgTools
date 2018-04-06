@@ -106,7 +106,7 @@
   <customwidget>
    <class>QgsDateTimeEdit</class>
    <extends>QDateTimeEdit</extends>
-   <header>qgsdatetimeedit.h</header>
+   <header>qgis.gui</header>
   </customwidget>
   <customwidget>
    <class>OrderedValidationWorkflowItemsWidget</class>

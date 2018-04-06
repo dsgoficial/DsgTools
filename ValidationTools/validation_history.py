@@ -23,6 +23,7 @@
 import os
 
 from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import QgsMessageLog
 

@@ -22,13 +22,13 @@
 """
 
 from builtins import object
-from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsGeometry
+from qgis.core import QgsAbstractGeometry, QgsVertexId, QgsGeometry
 
 class CoordIdx(object):
     def __init__(self, _geom, _vidx):
         """
         Constructor
-        :param _geom: QgsAbstractGeometryV2
+        :param _geom: QgsAbstractGeometry
         :param _vidx: QgsVertexId
         """
         self.geom = _geom
