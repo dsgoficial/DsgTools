@@ -24,9 +24,9 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from builtins import range
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import Qgis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
+from qgis.core import Qgis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsWkbTypes, QgsProject
 from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QMenu
 
@@ -51,8 +51,8 @@ class MultiLayerSelection(QgsMapTool):
         self.canvas = canvas
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)
-        self.hoverRubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
         mFillColor = QColor( 254, 178, 76, 63 )
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor( 255, 0, 0, 90 ))
@@ -69,10 +69,10 @@ class MultiLayerSelection(QgsMapTool):
         """
         if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
             self.cursorChanged = True
-            QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         else:
             self.cursorChanged = False
-            QtGui.QApplication.restoreOverrideCursor()
+            QtWidgets.QApplication.restoreOverrideCursor()
     
     def getBlackList(self):
         settings = QSettings()
@@ -90,7 +90,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(Qgis.Polygon)
+        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
     
     def keyPressEvent(self, e):
         """
@@ -98,10 +98,10 @@ class MultiLayerSelection(QgsMapTool):
         """
         if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
             self.cursorChanged = True
-            QtGui.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         else:
             self.cursorChanged = False
-            QtGui.QApplication.restoreOverrideCursor()         
+            QtWidgets.QApplication.restoreOverrideCursor()         
 
     def canvasMoveEvent(self, e):
         """
@@ -151,7 +151,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         After the rectangle is built, here features are selected.
         """
-        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+        if QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
             firstGeom = self.checkSelectedLayers()
             self.isEmittingPoint = False
             r = self.rectangle()
@@ -175,7 +175,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
         """
-        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+        if QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
             self.isEmittingPoint = True
             self.startPoint = self.toMapCoordinates(e.pos())
             self.endPoint = self.startPoint
@@ -205,15 +205,16 @@ class MultiLayerSelection(QgsMapTool):
     def getPrimitiveDict(self, e, hasControlModifyer=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are Qgis.Point (value 0), Qgis.Line (value 1) or Qgis.Polygon (value 2),
-        and values as layers from self.iface.legendInterface().layers(). When self.iface.legendInterface().layers() is called, a list of
+        and values as layers from self.iface.mapCanvas().layers(). When self.iface.mapCanvas().layers() is called, a list of
         layers ordered according to lyr order in TOC is returned.
         """
         #these layers are ordered by view order
         primitiveDict = dict()
         firstGeom = self.checkSelectedLayers()
-        for lyr in self.iface.legendInterface().layers(): #ordered layers
+        visibleLayers = QgsProject.instance().layerTreeRoot().checkedLayers()
+        for lyr in self.iface.mapCanvas().layers(): #ordered layers
             #layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
-            if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
+            if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or lyr not in visibleLayers:
                 continue
             if hasControlModifyer and (not firstGeom) and (not list(primitiveDict.keys()) or lyr.geometryType() < firstGeom):
                 firstGeom = lyr.geometryType()
@@ -244,7 +245,7 @@ class MultiLayerSelection(QgsMapTool):
             for lyr in primitiveDict[primitive]:
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
                 for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
-                    selectedIds = lyr.selectedFeaturesIds() #list of selected ids
+                    selectedIds = lyr.selectedFeatureIds() #list of selected ids
                     featGeom = feat.geometry()
                     if not featGeom:
                         continue
@@ -276,7 +277,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Deactivate tool.
         """
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
         try:
             if self.toolAction:
                 self.toolAction.setChecked(False)
@@ -305,7 +306,7 @@ class MultiLayerSelection(QgsMapTool):
         :param selectAll: boolean indicating whether or not this fuction was called from a select all command
                           so it doesn't remove selection from those that are selected already from the list
         """
-        idList = layer.selectedFeaturesIds()
+        idList = layer.selectedFeatureIds()
         self.iface.setActiveLayer(layer)
         layer.startEditing()
         featId = feature.id()
@@ -313,7 +314,7 @@ class MultiLayerSelection(QgsMapTool):
             idList.append(featId)
         elif not selectAll:
             idList.pop(idList.index(featId))
-        layer.setSelectedFeatures(idList)
+        layer.setSelectedFeature(idList)
         return 
 
     def setSelectionListFeature(self, listLayerFeature):
@@ -357,11 +358,11 @@ class MultiLayerSelection(QgsMapTool):
         :param geom: int indicating geometry type of target feature
         """
         if geom == 0:
-            self.hoverRubberBand.reset(Qgis.Point)
+            self.hoverRubberBand.reset(QgsWkbTypes.PointGeometry)
         elif geom == 1:
-            self.hoverRubberBand.reset(Qgis.Line)
+            self.hoverRubberBand.reset(QgsWkbTypes.LineGeometry)
         else:
-            self.hoverRubberBand.reset(Qgis.Polygon)
+            self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
         self.hoverRubberBand.addGeometry(feature.geometry(), layer)
         # to inform the code that menu has been hovered over
         self.menuHovered = True
@@ -373,11 +374,11 @@ class MultiLayerSelection(QgsMapTool):
         """
         geom = featureList[0][2]
         if geom == 0:
-            self.hoverRubberBand.reset(Qgis.Point)
+            self.hoverRubberBand.reset(QgsWkbTypes.PointGeometry)
         elif geom == 1:
-            self.hoverRubberBand.reset(Qgis.Line)
+            self.hoverRubberBand.reset(QgsWkbTypes.LineGeometry)
         else:
-            self.hoverRubberBand.reset(Qgis.Polygon)
+            self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
         for item in featureList:
             self.hoverRubberBand.addGeometry(item[1].geometry(), item[0])
         self.menuHovered = True
@@ -389,7 +390,7 @@ class MultiLayerSelection(QgsMapTool):
         is returned.
         """
         geom = None
-        for layer in self.iface.legendInterface().layers():
+        for layer in self.iface.mapCanvas().layers():
             if isinstance(layer, QgsVectorLayer):
                 selection = layer.selectedFeatures()
                 if len(selection):
@@ -401,7 +402,7 @@ class MultiLayerSelection(QgsMapTool):
                         continue
         return geom
     
-    def addActionToMenu(self, action, onTriggeredAction, onHoveredAction=None):
+    def addActionToMenu(self, action, onTriggeredAction=None, onHoveredAction=None):
         """
         Adds action the command to the action. If onHoveredAction is given, signal "hovered" is applied with given action.
         :param action: QAction associated with target context menu
@@ -458,7 +459,7 @@ class MultiLayerSelection(QgsMapTool):
         Creates the context menu for overlapping layers.
         :param e: mouse event caught from canvas.
         """
-        selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        selected = (QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
@@ -467,7 +468,7 @@ class MultiLayerSelection(QgsMapTool):
         for key in list(layerList.keys()):
             layers += layerList[key]
         if layers:
-            menu = QtGui.QMenu()
+            menu = QtWidgets.QMenu()
             rect = self.getCursorRect(e)
             t = []
             for layer in layers:
@@ -537,7 +538,7 @@ class MultiLayerSelection(QgsMapTool):
                 menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 t = t[0]
-                selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+                selected =  (QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
                 if e.button() == QtCore.Qt.LeftButton:
                     self.selectFeatures(e, hasControlModifyer = selected)
                 elif selected:
