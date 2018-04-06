@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.PyQt.QtWidgets import QTableView
@@ -35,7 +35,7 @@ from qgis.gui import QgsAttributeDialog, QgsAttributeTableModel, QgsAttributeTab
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'attributes_viewer.ui'))
 
-class AttributesViewer(QtGui.QDockWidget, FORM_CLASS):
+class AttributesViewer(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent = None):
         """Constructor."""
         super(AttributesViewer, self).__init__(parent)

@@ -25,7 +25,8 @@ import shutil
 
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QListWidgetItem
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QListWidgetItem, QDialog, QAbstractButton
 
 from processing.core.Processing import Processing
 from qgis.core import QgsMessageLog

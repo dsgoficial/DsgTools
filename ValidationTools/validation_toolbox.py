@@ -27,7 +27,7 @@ import os
 
 # Qt imports
 from qgis.PyQt.QtCore import Qt
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import QApplication, QMenu, QTableWidgetItem
 from qgis.PyQt.QtGui import QCursor
@@ -52,7 +52,7 @@ from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import Spa
 from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
 from DsgTools.dsgEnums import DsgEnums
 
-class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
+class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         """
         Constructor

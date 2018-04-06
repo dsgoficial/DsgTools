@@ -25,7 +25,7 @@ import os
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
-from qgis.PyQt.QtWidgets import QIntValidator
+from qgis.PyQt.QtGui import QIntValidator
 
 #DSGTools imports
 

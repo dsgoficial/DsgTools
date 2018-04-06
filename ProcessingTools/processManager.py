@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
+from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import QUrl, pyqtSlot
 from qgis.PyQt.QtWidgets import QProgressBar
 from qgis._core import QgsAction

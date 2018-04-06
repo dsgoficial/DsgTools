@@ -29,7 +29,7 @@ from qgis.PyQt.QtWidgets import QPushButton, QShortcut
 from qgis.PyQt.QtGui import QKeySequence
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes
+from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWkbTypes
 from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
@@ -41,7 +41,7 @@ from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoader
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_toolbox.ui'))
 
-class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
+class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -493,9 +493,9 @@ class FieldToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.buttonName = self.sender().text().split(' [')[0]
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
         geomType = reclassificationLayer.geometryType()
-        hasMValues =  QgsWKBTypes.hasM(int(reclassificationLayer.wkbType()))    #generic check (not every database is implemented as ours)
-        hasZValues =  QgsWKBTypes.hasZ(int(reclassificationLayer.wkbType()))    #
-        isMulti = QgsWKBTypes.isMultiType(int(reclassificationLayer.wkbType())) #
+        hasMValues =  QgsWkbTypes.hasM(int(reclassificationLayer.wkbType()))    #generic check (not every database is implemented as ours)
+        hasZValues =  QgsWkbTypes.hasZ(int(reclassificationLayer.wkbType()))    #
+        isMulti = QgsWkbTypes.isMultiType(int(reclassificationLayer.wkbType())) #
         mapLayers = self.iface.mapCanvas().layers()
         #we need to get the authid that thefines the ref system of destination layer
         crsSrc = QgsCoordinateReferenceSystem(reclassificationLayer.crs().authid())

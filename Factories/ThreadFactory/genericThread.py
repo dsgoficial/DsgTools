@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.PyQt.QtCore import QObject, pyqtSignal
+from qgis.PyQt.QtCore import QObject, pyqtSignal, QRunnable
 
 from uuid import uuid4
 
