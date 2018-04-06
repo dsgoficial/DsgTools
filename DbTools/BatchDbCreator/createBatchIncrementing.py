@@ -24,7 +24,7 @@ import os, sqlite3
 import json
 
 from qgis.core import QgsMessageLog
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
@@ -36,7 +36,7 @@ from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchIncrementing.ui'))
 
-class CreateBatchIncrementing(QtGui.QWizardPage, FORM_CLASS):
+class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
     parametersSet = pyqtSignal(dict)
     def __init__(self, parent=None):
         """Constructor."""

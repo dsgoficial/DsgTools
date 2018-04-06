@@ -107,7 +107,7 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         msg = ''
         errorDbList = list(exceptionDict.keys())
         if len(errorDbList)> 0:
-            msg += self.tr('\Users with error:')
+            msg += self.tr('\nUsers with error:')
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each user were output in qgis log.')
             for errorDb in errorDbList:
