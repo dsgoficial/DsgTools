@@ -9,7 +9,7 @@ from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 import math
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtWidgets import QShortcut
-from qgis.PyQt.QtWidgets import QKeySequence
+from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import QSettings
 from .geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, Qgis
