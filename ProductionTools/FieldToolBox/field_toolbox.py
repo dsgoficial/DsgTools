@@ -26,7 +26,7 @@ import os
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QPushButton, QShortcut
-from qgis.PyQt.QtWidgets import QKeySequence
+from qgis.PyQt.QtGui import QKeySequence
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes

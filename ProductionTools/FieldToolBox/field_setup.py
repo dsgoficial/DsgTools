@@ -30,7 +30,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem, QAction
 from qgis.PyQt.QtWidgets import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit, QShortcut
-from qgis.PyQt.QtWidgets import QKeySequence
+from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
