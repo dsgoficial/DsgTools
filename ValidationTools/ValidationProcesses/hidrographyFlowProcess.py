@@ -139,36 +139,36 @@ class HidrographyFlowProcess(ValidationProcess):
         else:
             return 6
         
-    def classifyAllNodes(self, dictNode, frameLyrContour, searchRadius, nodeList=None):
+    def classifyAllNodes(self, nodeDict, frameLyrContour, searchRadius, nodeList=None):
         """
         Classifies all nodes of features from a given layer.
-        :param dictNode: dictionaty of flow in and out for each hidrography node to be classified.
+        :param nodeDict: dictionaty of flow in and out for each hidrography node to be classified.
         :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
                          to be classified. Node MUST be in dict given, if not, it'll be ignored.
         :return: a dictionary of node and its node type (int) 
         """
         nodeTypeDict = dict()
-        nodeKeys = dictNode.keys()
+        nodeKeys = nodeDict.keys()
         if not nodeList:
             nodeList = nodeKeys
         for node in nodeList:
             if node not in nodeKeys:
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=dictNode[node], \
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=nodeDict[node], \
                                                frameLyrContour=frameLyrContour, searchRadius=searchRadius)
         return nodeTypeDict
 
-    def fillNodeTable(self, lyr, dictNode, frameLyrBoundingBox, searchRadius):
+    def fillNodeTable(self, lyr, nodeDict, frameLyrBoundingBox, searchRadius):
         """
         Method to populate validation.aux_validation_nodes_p with all nodes.
-        :param lyr: layer which dictNode is created from.
-        :param dictNode: dictionary containing info of all lines reaching from and to each node.
+        :param lyr: layer which nodeDict is created from.
+        :param nodeDict: dictionary containing info of all lines reaching from and to each node.
         """
         lyrName = lyr.name()
         crs = lyr.crs().authid().split(":")[1]
-        for node in dictNode.keys():
+        for node in nodeDict.keys():
             # classify points
-            nodeType = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=dictNode[node], \
+            nodeType = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=nodeDict[node], \
                                              frameLyrContour=frameLyrBoundingBox, searchRadius=searchRadius)
             # get node geometry as wkt for database loading
             nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
@@ -211,14 +211,14 @@ class HidrographyFlowProcess(ValidationProcess):
             return n[0][0]
         return n[0]
 
-    def selectUpDownstreamLines(self, firstNode, lyr, dictNode, direction, ignoreWrongFlow=False, flipWrongLines=False, ignoreSelection=False):
+    def selectUpDownstreamLines(self, firstNode, lyr, nodeDict, direction, ignoreWrongFlow=False, flipWrongLines=False, ignoreSelection=False):
         """
         Selects all lines that are upstream or downstream from an initial node and returns a list of
         lines with possible wrong flow direction.
         :param firstNode: initial node point target of all flow comparison.
         :param lyr: layer containing target nodes.
         :param direction: indication whether code is looking for 'downstream' or 'upstream'.
-        :param dictNode: dictionary containing info of all lines reaching from and to each node.
+        :param nodeDict: dictionary containing info of all lines reaching from and to each node.
         :param ignoreWrongFlow: if set True, code will not set selection on 'wrong flowing lines'.
         :param flipWrongLines: if set True, it'll flip all lines that may have wrong flow.
         :param ignoreSelection: if True, method will not select any lines.
@@ -239,12 +239,12 @@ class HidrographyFlowProcess(ValidationProcess):
             for node in initNode:
                 if upstream:
                     # lines that flow to a starting point are wrong
-                    wrongFlow = dictNode[node]['start']
-                    rightFlow = dictNode[node]['end']
+                    wrongFlow = nodeDict[node]['start']
+                    rightFlow = nodeDict[node]['end']
                 elif downstream:
                     # lines that flow from an ending point are wrong
-                    wrongFlow = dictNode[node]['end']
-                    rightFlow = dictNode[node]['start']
+                    wrongFlow = nodeDict[node]['end']
+                    rightFlow = nodeDict[node]['start']
                 if wrongFlow:
                     for feat in wrongFlow:
                         if feat.id() in selection:
@@ -286,7 +286,7 @@ class HidrographyFlowProcess(ValidationProcess):
         self.iface.mapCanvas().refresh()
         return flippedLines
 
-    def getBlackListFeatures(self, nodeDict, nodeDictType, nodeList=None):
+    def getBlackListFeatures(self, nodeDict, nodeTypeDict, nodeList=None):
         """
         Gets all features directly connected to "strong" nodes.
         Strong nodes are: water fountains or sinks and all nodes over frame (up or downstream).
@@ -300,34 +300,106 @@ class HidrographyFlowProcess(ValidationProcess):
         for node in nodeList:
             featureList = nodeDict[node]['start'] + nodeDict[node]['end']
             for feat in featureList:
-                if nodeDictType[node] not in nodeTypeBl:
+                if nodeTypeDict[node] not in nodeTypeBl:
                     continue
                 # if node has blacklisted type, it'll be added to the list
                 featBl.append(feat.id())
         return featBl
 
-    def getFlagsForAllFrameNodes(self, lyr, dictNode, dictNodeType, nodeList=None, blacklist=True, flipWrongLines=False, ignoreWrongFlow=False, ignoreSelection=True):
+    def checkNodeValidity(self, node, nodeType, nodePointDict, connectedValidLines, lyr, geomType=None, returnNextNodes=True):
         """
-        Get all possible wrong flow lines to be treated. If blacklist argument is given,
+        Checks if lines connected to a node have their flows compatible to node type and valid lines
+        connected to it.
+        :param node: node (QgsPoint) which lines connected to it are going to be verified.
+        :param nodeType: (int) node type of target node.
+        :param nodePointDict: dictionary for starting and ending lines into given node. ({ 'start' : [lines], 'end' : [lines] })
+        :param connectedValidLines: list of lines (QgsFeatures) connected to 'node' that are already verified.
+        :param lyr: lyr that contains analyzed node.
+        :param geomType: layer geometry type. If not given, it'll be evaluated OTF.
+        :param returnNextNodes: (bool) indicates whether method should return next nodes or not.
+        :return: if 'returnNextNodes' is given, method returns a list of nodes connected to verified node.
+        """
+        # getting flow permitions based on node type
+        # reference is node (e.g. 'in' = lines  are ENDING at analyzed node)
+        flowType = {
+                    1 : 'in', # Sumidouro
+                    2 : 'out', # Fonte D'Água
+                    3 : 'in', # Interrupção à Jusante
+                    4 : 'out', # Interrupção à Montante
+                    5 : 'in and out', # Confluência
+                    6 : 'in and out' # Ramificação
+                   }
+        flow = flowType[nodeType]
+        # getting all connected lines to node that are not validated
+        linesNotValidated = list( set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines) )
+        if not linesNotValidated:
+            # if there are no lines to be validated, method returns None
+            return
+        # if 'geomType' is not given, it must be evaluated
+        if not geomType:
+            geomType = lyr.geometryType()
+        # starting dicts of valid and invalid lines
+        validLines = invalidLines = dict()
+        # list of next nodes
+        nextNodes = []
+        for line in linesNotValidated:
+            # getting last and initial node from analyzed line
+            finalNode = self.getLineLastNode(lyr=lyr, feat=line, geomType=geomType)
+            initialNode = self.getLineInitialNode(lyr=lyr, feat=line, geomType=geomType)
+            # line ID
+            lineID = line.id()
+            # comparing extreme nodes to find out if flow is compatible to node type
+            if flow == 'in':
+                if node == finalNode:
+                    if lineID not in validLines.keys():
+                        validLines[lineID] = line
+                        nextNodes.append(initialNode)
+                elif lineID not in invalidLines.keys():
+                        invalidLines[lineID] = line
+            elif flow == 'out':
+                if node == initialNode:
+                    if lineID not in validLines.keys():
+                        validLines[lineID] = line
+                        nextNodes.append(finalNode)
+                elif lineID not in invalidLines.keys():
+                        invalidLines[lineID] = line
+            elif flow == 'in and out':
+                if node in [initialNode, finalNode]:
+                    if lineID not in validLines.keys():
+                        validLines[lineID] = line
+                        if node == initialNode:
+                            nextNodes.append(finalNode)
+                        else:
+                            nextNodes.append(initialNode)
+                elif lineID not in invalidLines.keys():
+                        invalidLines[lineID] = line
+        if returnNextNodes:
+            return validLines, invalidLines, nextNodes
+        return  validLines, invalidLines
+
+
+    def getFlagsForAllFrameNodes(self, lyr, nodeDict, nodeTypeDict, nodeList=None, blacklist=True, flipWrongLines=False, ignoreWrongFlow=False, ignoreSelection=True):
+        """
+        Gets all possible wrong flow lines to be treated. If blacklist argument is given,
         list will be filtered with blacklisted lines, according to current modelling rules.
         """
         frameNodeTypes = [3, 4]
         flagLineList = []
         if not nodeList:
-            nodeList = dictNode.keys()
-        featBlackList = self.getBlackListFeatures(nodeDict=dictNode, nodeDictType=dictNodeType,\
+            nodeList = nodeDict.keys()
+        featBlackList = self.getBlackListFeatures(nodeDict=nodeDict, nodeTypeDict=nodeTypeDict,\
                                                   nodeList=nodeList)
         for node in nodeList:
-            if dictNodeType[node] not in frameNodeTypes:
+            if nodeTypeDict[node] not in frameNodeTypes:
                 continue
             # if node is on frame, we add to flags all pointed lines to be flipped that are not blacklisted
-            elif dictNodeType[node] == 3:
+            elif nodeTypeDict[node] == 3:
                 # if waterway is 'going outside' of mapped region, we want to get all upstream lines
                 direction = 'upstream'
-            elif dictNodeType[node] == 4:
+            elif nodeTypeDict[node] == 4:
                 # if waterway is 'going inside' of mapped region, we want to get all downstream lines
                 direction = 'downstream'
-            flagCandidates = self.selectUpDownstreamLines(firstNode=node, lyr=lyr, dictNode=dictNode, \
+            flagCandidates = self.selectUpDownstreamLines(firstNode=node, lyr=lyr, nodeDict=nodeDict, \
                                                           direction=direction, ignoreWrongFlow=ignoreWrongFlow, \
                                                           flipWrongLines=flipWrongLines, ignoreSelection=ignoreSelection)
             flagLineList += flagCandidates
@@ -355,7 +427,9 @@ class HidrographyFlowProcess(ValidationProcess):
         dNodeType = self.classifyAllNodes(d, frame, searchRadius)
         crs = trecho_drenagem.crs().authid()
         for feat in pt_drenagem.selectedFeatures():
-            n = feat.geometry().asMultiPoint()
+           n = feat.geometry().asMultiPoint()
+           n = n[0] if isinstance(n, list) else n
+        geomType = trecho_drenagem.geometryType()
         # # TESTE DE SELEÇÃO DE UPSTREAM
         # print self.selectUpstreamLines(n, trecho_drenagem, d)
         # # TESTE DE SELEÇÃO DE DOWNSTREAM
@@ -365,11 +439,15 @@ class HidrographyFlowProcess(ValidationProcess):
         # print self.fillNodeTable(trecho_drenagem, d, frame, searchRadius)
         # self.iface.mapCanvas().refresh()
         # # TESTE DE CLASSIFICAÇÃO DOS NÓS
-        # dictNodeType = self.classifyAllNodes(d, frame, searchRadius)
+        # nodeTypeDict = self.classifyAllNodes(d, frame, searchRadius)
         # if self.parameters['Only Selected']:
         # # TESTE DE FLAGS DE DIRECIONAMENTO
-        flagList = self.getFlagsForAllFrameNodes(lyr=trecho_drenagem, dictNode=d, dictNodeType=dNodeType)
-        print len(flagList)
-        trecho_drenagem.removeSelection()
-        trecho_drenagem.startEditing()
-        trecho_drenagem.setSelectedFeatures(flagList)
+        # flagList = self.getFlagsForAllFrameNodes(lyr=trecho_drenagem, nodeDict=d, nodeTypeDict=dNodeType)
+        # print len(flagList)
+        # trecho_drenagem.removeSelection()
+        # trecho_drenagem.startEditing()
+        # trecho_drenagem.setSelectedFeatures(flagList)
+        # # TESTE DE CHECK POR NÓ
+        val, inval, nextNodes = self.checkNodeValidity(n, dNodeType[n], d[n], [], trecho_drenagem, geomType)
+        trecho_drenagem.setSelectedFeatures(val.keys())
+        print 'Invalids: ', inval, 'Nodes: ', nextNodes
