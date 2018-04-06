@@ -38,13 +38,42 @@ class HidrographyFlowProcess(ValidationProcess):
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.danglesClass = IdentifyDanglesProcess(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Hidrography Network Directioning')
-        self.parameters = { 'Only Selected' : False, 'Snap' : 2.0 }
+        self.parameters = { 'Only Selected' : False, 'Snap' : 2.0, 'Search Radius' : 5.0 }
         self.nodeTypeExceptionsDict = {
                                         0 : 'Flag',
                                         1 : 'Fonte d\'Água',
                                         2 : 'Sumidouro',
                                         3 : 'Moldura'
                                        }
+        self.firstExec = True # TEMPORÁRIO, SÓ PARA OS TESTES
+        # mounting node and node type dict
+        frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyLayers()
+        self.nodeDict = self.identifyAllNodes(trecho_drenagem)
+        self.nodeTypeDict = self.classifyAllNodes(self.nodeDict, frame, self.parameters['Search Radius'])
+        print 'OBJETO REINICIADO'
+
+    def getHidrographyLayers(self):
+        """
+        Read layers from canvas as returns frame contour and frame hidrography lines and 
+        hidrgrography node layers.
+        :return: frame contour, frame layer, hidrography lines layer, hidrography node layer
+        """
+        frame, frameLayer, trecho_drenagem, pt_drenagem = None, None, None, None        
+        for lyer in self.canvas.layers():
+            if lyer.name() == 'aux_moldura_a':
+                frameLayer = lyer
+                # getting frame contour (as a PolyLine feature)
+                frame = [feat for feat in lyer.getFeatures()]
+                frame = frame[0]
+                frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
+                frame = QgsGeometry().fromPolyline(frame[0][0])
+            elif lyer.name() == 'aux_hid_nodes_p':
+                pt_drenagem = lyer
+            elif lyer.name() == 'hid_trecho_drenagem_l':
+                trecho_drenagem = lyer
+            elif trecho_drenagem and pt_drenagem and frame:
+                break
+        return frame, frameLayer, trecho_drenagem, pt_drenagem
 
     def identifyAllNodes(self, lyr):
         """
@@ -91,7 +120,7 @@ class HidrographyFlowProcess(ValidationProcess):
         Identify whether or not node is over the frame. Returns True if point is over the frame and false if
         node is not on frame. If identification fails, returns 'None'.
         :param node: node (QgsPoint) to be identified as over the frame layer or not.
-        :param frameLyrContour: bounding box for the frame layer to be checked.
+        :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
         :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
         """
         qgisPoint = QgsGeometry.fromPoint(node)
@@ -105,7 +134,7 @@ class HidrographyFlowProcess(ValidationProcess):
         Sets the node type given all lines that flows from and to it.
         :param nodePoint: point to be classified.
         :param dictStartingEndingLinesEntry: dict of { 'start' : [lines], 'end' : [lines] }.
-        :param frameLyrContour: bounding box for the frame layer to be checked.
+        :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
         :return: returns the point type.
         """
         sizeFlowOut = len(dictStartingEndingLinesEntry['start'])
@@ -339,7 +368,7 @@ class HidrographyFlowProcess(ValidationProcess):
         if not geomType:
             geomType = lyr.geometryType()
         # starting dicts of valid and invalid lines
-        validLines = invalidLines = dict()
+        validLines, invalidLines = dict(), dict()
         # list of next nodes
         nextNodes = []
         for line in linesNotValidated:
@@ -408,23 +437,10 @@ class HidrographyFlowProcess(ValidationProcess):
 
     def execute(self):
         # PARÂMETROS PARA TESTE
-        frame, pt_drenagem, trecho_drenagem = None, None, None
-        searchRadius = 5.0
-        for lyer in self.canvas.layers():
-            if lyer.name() == 'aux_moldura_a':
-                frameLayer = lyer
-                frame = [feat for feat in lyer.getFeatures()]
-                frame = frame[0]
-            elif lyer.name() == 'aux_hid_nodes_p':
-                pt_drenagem = lyer
-            elif lyer.name() == 'hid_trecho_drenagem_l':
-                trecho_drenagem = lyer
-            elif trecho_drenagem and pt_drenagem and frame:
-                break
-        frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
-        frame = QgsGeometry().fromPolyline(frame[0][0])
-        d = self.identifyAllNodes(trecho_drenagem)
-        dNodeType = self.classifyAllNodes(d, frame, searchRadius)
+        searchRadius = self.parameters['Search Radius']
+        frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyLayers()        
+        d = self.nodeDict
+        dNodeType = self.nodeTypeDict
         crs = trecho_drenagem.crs().authid()
         for feat in pt_drenagem.selectedFeatures():
            n = feat.geometry().asMultiPoint()
@@ -434,7 +450,7 @@ class HidrographyFlowProcess(ValidationProcess):
         # print self.selectUpstreamLines(n, trecho_drenagem, d)
         # # TESTE DE SELEÇÃO DE DOWNSTREAM
         # print self.selectUpDownstreamLines(n, trecho_drenagem, d, 'downstream', ignoreWrongFlow=True, flipWrongLines=False)
-        # TESTE DE POPULAÇÃO DAS TABELAS
+        # # TESTE DE POPULAÇÃO DAS TABELAS
         # self.abstractDb.createHidNodeTable(crs.split(':')[1])
         # print self.fillNodeTable(trecho_drenagem, d, frame, searchRadius)
         # self.iface.mapCanvas().refresh()
