@@ -21,12 +21,13 @@
  ***************************************************************************/
 """
 
+from builtins import object
 import math
 
 # Raytrace on an integer, unit - width 2D grid
 # with floating point coordinates
 # See http://playtechs.blogspot.ch/2007/03/raytracing-on-grid.html
-class Raytracer:
+class Raytracer(object):
     def __init__(self, x0, y0, x1, y1):
         self.dx = abs(x1 - x0)
         self.dy = abs(y1 - y0)

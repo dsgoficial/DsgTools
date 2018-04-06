@@ -21,10 +21,12 @@
  ***************************************************************************/
 """
 
+from builtins import range
+from builtins import object
 from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
 from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
 
-class ContourTool():
+class ContourTool(object):
     def updateReference(self, referenceLayer):
         """
         Updates the reference layer and updates the spatial index
@@ -50,7 +52,7 @@ class ContourTool():
         ids = self.index.intersects(bbox)
         candidates = []
         for id in ids:
-            candidates.append(self.reference.getFeatures(QgsFeatureRequest().setFilterFid(id)).next())
+            candidates.append(next(self.reference.getFeatures(QgsFeatureRequest().setFilterFid(id))))
         return candidates            
             
     def getFeatures(self, geom):

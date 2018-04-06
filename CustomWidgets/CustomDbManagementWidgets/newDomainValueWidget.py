@@ -25,9 +25,9 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -142,7 +142,7 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
             invalidatedReason += self.tr('A code value must be entered.\n')
         if self.codeNameLineEdit.text() == '':
             invalidatedReason += self.tr('A code name value must be entered.\n')
-        if self.domainComboBox.currentIndex() == 0 and self.allDomainCheckBox.checkState() <> 2:
+        if self.domainComboBox.currentIndex() == 0 and self.allDomainCheckBox.checkState() != 2:
             invalidatedReason += self.tr('A domain table must be chosen.\n')
         return invalidatedReason
     
@@ -152,7 +152,7 @@ class NewDomainValueWidget(QtGui.QWidget, FORM_CLASS):
         code = self.codeLineEdit.text()
         codeName = self.codeNameLineEdit.text()
         jsonList = []
-        if self.allDomainCheckBox.checkState() <> 2:
+        if self.allDomainCheckBox.checkState() != 2:
             domainName = self.domainComboBox.currentText()
             jsonList.append(self.jsonBuilder.addDomainValueElement(domainName, code, codeName))
         else:

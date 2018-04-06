@@ -27,10 +27,10 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFileDialog, QMessageBox, QRadioButton
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QRadioButton
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -60,7 +60,7 @@ class DatabaseParameterWidget(QtGui.QWidget, FORM_CLASS):
             self.frameComboBox.clear()
             self.frameComboBox.addItem(self.tr('Select a table from database'))
             self.tableDict = dict()
-            sortedKeys = areaDict.keys()
+            sortedKeys = list(areaDict.keys())
             sortedKeys.sort()
             for key in sortedKeys:
                 tableKey = '{0}.{1}:{2}'.format(areaDict[key]['tableSchema'], areaDict[key]['tableName'], areaDict[key]['geom'])

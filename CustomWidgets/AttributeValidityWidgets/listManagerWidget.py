@@ -25,10 +25,11 @@ from os.path import expanduser
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 
 

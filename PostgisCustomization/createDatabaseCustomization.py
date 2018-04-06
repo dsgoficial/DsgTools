@@ -20,16 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os, json
 
 from qgis.core import QgsMessageLog
 from qgis.gui import QgsCollapsibleGroupBox
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFormLayout, QMessageBox, QFileDialog, QApplication, QCursor
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QFormLayout, QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
@@ -98,8 +100,8 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.customDict['nullity'] = self.tr('Attribute Nullity Customization')
         self.customDict['filter'] = self.tr('Attribute Filter Customization')
         rootNode = self.customizationTreeWidget.invisibleRootItem()
-        for type in self.customDict.keys():
-            if self.customDict[type] not in self.contentsDict.keys():
+        for type in list(self.customDict.keys()):
+            if self.customDict[type] not in list(self.contentsDict.keys()):
                 self.contentsDict[self.customDict[type]] = dict()
             self.customizationSelectionComboBox.addItem(self.customDict[type])
             self.contentsDict[self.customDict[type]]['widgetList'] = []
@@ -219,16 +221,16 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         exceptionList = []
         customJsonDict = dict()
-        for i in self.customDict.keys():
+        for i in list(self.customDict.keys()):
             customJsonDict[i] = []
-        correspondenceDict = {self.customDict[i]:i for i in self.customDict.keys()}
+        correspondenceDict = {self.customDict[i]:i for i in list(self.customDict.keys())}
         nCustom = 0
-        for key in self.contentsDict.keys():
+        for key in list(self.contentsDict.keys()):
             for widgetItem in self.contentsDict[key]['widgetList']:
                 nCustom += 1
         progress = ProgressWidget(1,nCustom,self.tr('Preparing to export customizations... '), parent = self)
         progress.initBar()
-        for key in self.contentsDict.keys():
+        for key in list(self.contentsDict.keys()):
             jsonTagList = []
             for widget in self.contentsDict[key]['widgetList']:
                 currJsonItem = {'jsonUi':None, 'dbJsonTagList':[]}
@@ -275,7 +277,7 @@ class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
         self.createWidgetsFromCustomJsonDict(customJsonDict)
     
     def createWidgetsFromCustomJsonDict(self, customJsonDict):
-        for key in customJsonDict.keys():
+        for key in list(customJsonDict.keys()):
             for jsonTag in customJsonDict[key]:
                 self.createWidgetFromKey(key, jsonTag['jsonUi'])
     

@@ -21,9 +21,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
+from builtins import range
 from qgis.core import QgsPoint, QgsGeometry, QgsFeature
 import string, os
-from PyQt4.QtCore import QObject
+from qgis.PyQt.QtCore import QObject
 
 class UtmGrid(QObject):
     def __init__(self):
@@ -249,7 +251,8 @@ class UtmGrid(QObject):
         #first run
         if (self.stepsTotal==0):
             self.stepsTotal=self.computeNumberOfSteps(self.getScaleIdFromScale(scale), self.getScaleIdFromScale(stopScale))
-            print "Total:",self.stepsTotal
+            # fix_print_with_import
+            print("Total:",self.stepsTotal)
             self.stepsDone=0
         if scale == stopScale:
             (x, y) = self.getLLCorner(iNomen)
@@ -260,7 +263,8 @@ class UtmGrid(QObject):
             self.insertFrameIntoQgsLayer(layer, poly, iNomen)
             
             self.stepsDone+=1
-            print self.stepsDone, '/', self.stepsTotal
+            # fix_print_with_import
+            print(self.stepsDone, '/', self.stepsTotal)
         else:
             scaleId = self.getScaleIdFromiNomen(iNomen)
             matrix = self.scaleText[ scaleId+1 ]
@@ -299,7 +303,7 @@ class UtmGrid(QObject):
         csvFile = open(os.path.join(os.path.dirname(__file__),file_name))
         data = csvFile.readlines()
         csvFile.close()
-        l1 = map(lambda x: (x.strip()).split(';'),data)
+        l1 = [(x.strip()).split(';') for x in data]
         dicionario = dict((a[1].lstrip('0'),a[0]) for a in l1)
         return dicionario
 
@@ -312,7 +316,7 @@ class UtmGrid(QObject):
     def getINomen(self, dict, index):
         key = index.split('-')[0]
         otherParts = index.split('-')[1:]
-        if (dict.has_key(key)):
+        if (key in dict):
             if len(otherParts)==0:
                 return dict[key]
             else:
@@ -327,7 +331,7 @@ class UtmGrid(QObject):
         parts = inom.split('-')
         hundredInom = '-'.join(parts[0:5])
         remains = parts[5::]
-        for k,v in miDict.iteritems():
+        for k,v in miDict.items():
             if v == hundredInom:
                 return '-'.join([k]+remains)
     
@@ -335,7 +339,7 @@ class UtmGrid(QObject):
         parts = inom.split('-')
         hundredInom = '-'.join(parts[0:4])
         remains = parts[4::]
-        for k,v in miDict.iteritems():
+        for k,v in miDict.items():
             if v == hundredInom:
                 return '-'.join([k]+remains)
 
@@ -349,4 +353,5 @@ if (__name__=="__main__"):
     #print 'Not working test:',inomen,'.'
     #print test.getQgsPolygonFrame(inomen).exportToWkt()
     inom = 'SA-23-Y-C-IV-4'
-    print test.getMIfromInom(inom)
+    # fix_print_with_import
+    print(test.getMIfromInom(inom))

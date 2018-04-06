@@ -23,9 +23,9 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMapLayerRegistry, QGis

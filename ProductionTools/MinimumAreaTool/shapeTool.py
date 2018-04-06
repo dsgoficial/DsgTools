@@ -21,11 +21,13 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 from qgis.gui import QgsRubberBand, QgsMapTool
 from qgis.core import QgsPoint, QGis
-from PyQt4 import QtGui, QtCore, Qt
-from PyQt4.QtGui import QColor, QCursor, QWidget
-from PyQt4.QtCore import pyqtSignal, QObject, Qt as Qt2, QPoint
+from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt.QtWidgets import QWidget
+from qgis.PyQt.QtCore import pyqtSignal, QObject, Qt as Qt2, QPoint
 from math import sqrt, cos, sin, pi, atan2
 
 class ShapeTool(QgsMapTool):

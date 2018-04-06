@@ -20,15 +20,17 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import map
 import os
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QFileDialog, QMessageBox, QRadioButton, QColor
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QRadioButton
+from qgis.PyQt.QtGui import QColor
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -93,31 +95,31 @@ class ButtonPropWidget(QtGui.QWidget, FORM_CLASS):
             'openForm':--open feature form when digitizing--
         }
         """
-        if 'buttonColor' in parameterDict.keys():
+        if 'buttonColor' in list(parameterDict.keys()):
             self.colorCheckBox.setCheckState(Qt.Checked)
-            R,G,B,A = map(int,parameterDict['buttonColor'].split(',')) #QColor only accepts int values
+            R,G,B,A = list(map(int,parameterDict['buttonColor'].split(','))) #QColor only accepts int values
             self.mColorButton.setColor(QColor(R,G,B,A))
         else:
             self.colorCheckBox.setCheckState(Qt.Unchecked) #if 'buttonColor' isn't on dict keys, set colorCheckBox as unchecked
-        if 'buttonToolTip' in parameterDict.keys():
+        if 'buttonToolTip' in list(parameterDict.keys()):
             self.tooltipCheckBox.setCheckState(Qt.Checked)
             self.toolTipLineEdit.setText(parameterDict['buttonToolTip'])
         else:
             self.tooltipCheckBox.setCheckState(Qt.Unchecked) #if 'buttonToolTip' isn't on dict keys, set tooltipCheckBox as unchecked
             self.toolTipLineEdit.setText('')
-        if 'buttonGroupTag' in parameterDict.keys():
+        if 'buttonGroupTag' in list(parameterDict.keys()):
             self.customCategoryCheckBox.setCheckState(Qt.Checked)
             self.customCategoryLineEdit.setText(parameterDict['buttonGroupTag'])
         else:
             self.customCategoryCheckBox.setCheckState(Qt.Unchecked) #if 'buttonGroupTag' isn't on dict keys, set customCategoryCheckBox as unchecked
             self.customCategoryLineEdit.setText('')
-        if 'buttonShortcut' in parameterDict.keys():
+        if 'buttonShortcut' in list(parameterDict.keys()):
             self.shortcutCheckBox.setCheckState(Qt.Checked)
             self.shortcutWidget.setShortcut(parameterDict['buttonShortcut'])
         else:
             self.shortcutCheckBox.setCheckState(Qt.Unchecked) #if 'buttonShortcut' isn't on dict keys, set shortcutCheckBox as unchecked
             self.shortcutWidget.clearAll()
-        if 'openForm' in parameterDict.keys():
+        if 'openForm' in list(parameterDict.keys()):
             self.openFormCheckBox.setCheckState(Qt.Checked)
         else:
             self.openFormCheckBox.setCheckState(Qt.Unchecked) #if 'openForm' isn't on dict keys, set openFormCheckBox as unchecked

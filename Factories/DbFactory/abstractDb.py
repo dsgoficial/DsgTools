@@ -20,6 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import map
+from builtins import str
+from builtins import range
 import os, binascii
 from uuid import uuid4, UUID
 
@@ -31,8 +34,8 @@ from DsgTools.Utils.utils import Utils
 from DsgTools.LayerTools.CreateFrameTool.map_index import UtmGrid
 
 #PyQt imports
-from PyQt4.QtSql import QSqlQuery, QSqlDatabase
-from PyQt4.QtCore import QSettings, SIGNAL, pyqtSignal, QObject
+from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, QObject
 
 #Qgis imports
 import qgis.core 
@@ -95,7 +98,7 @@ class AbstractDb(QObject):
             if layer.split('_')[-1] in ['p','l','a'] or schema == 'complexos':
                 sql = self.gen.getElementCountFromLayer(layer)
                 query = QSqlQuery(sql,self.db)
-                query.next()
+                next(query)
                 number = query.value(0)
                 if not query.exec_(sql):
                     raise Exception(self.tr("Problem counting elements: ")+query.lastError().text())
@@ -109,7 +112,7 @@ class AbstractDb(QObject):
             schema=self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayer(schema,lyr)
             query = QSqlQuery(sql,self.db)
-            query.next()
+            next(query)
             if query.value(0) > 1:
                 lyrWithElemList.appen(lyr)
         return lyrWithElemList
@@ -129,7 +132,7 @@ class AbstractDb(QObject):
                     schema = self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
             query = QSqlQuery(sql,self.db)
-            query.next()
+            next(query)
             if query.value(0) > 0:
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
@@ -144,7 +147,7 @@ class AbstractDb(QObject):
         if not query.isActive():
             raise Exception(self.tr("Problem finding EPSG: ")+query.lastError().text())
         srid = -1
-        while query.next():
+        while next(query):
             srid = query.value(0)
         return srid
 
@@ -186,7 +189,7 @@ class AbstractDb(QObject):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting aggregation attributes: ")+query.lastError().text())
-        while query.next():
+        while next(query):
             value = query.value(0)
             columns.append(value)
         return columns
@@ -226,32 +229,32 @@ class AbstractDb(QObject):
         Makes the database conversion validation summary
         '''
         hasErrors = False
-        for key in invalidatedDataDict.keys():
+        for key in list(invalidatedDataDict.keys()):
             if len(invalidatedDataDict[key]) > 0:
                 hasErrors = True
         if hasErrors:
             self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Validation Problems Summary')))
-            for key in invalidatedDataDict.keys():
+            for key in list(invalidatedDataDict.keys()):
                 
                 if key == 'nullLine' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Classes with null lines:')+'\n')
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
-                    for cl in invalidatedDataDict[key].keys():
+                    for cl in list(invalidatedDataDict[key].keys()):
                         self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'nullPk' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Classes with null primary keys:')+'\n')
                     self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
-                    for cl in invalidatedDataDict[key].keys():
+                    for cl in list(invalidatedDataDict[key].keys()):
                         self.signals.updateLog.emit('{:<50}'.format(cl)+str(invalidatedDataDict[key][cl])+'\n')
 
                 if key == 'notInDomain' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Features with attributes not in domain:')+'\n\n')
-                    for cl in invalidatedDataDict[key].keys():
+                    for cl in list(invalidatedDataDict[key].keys()):
                         self.signals.updateLog.emit('\n'+self.tr('Class: ')+cl+'\n')
-                        for id in invalidatedDataDict[key][cl].keys():
-                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
-                            at = invalidatedDataDict[key][cl][id].keys()
+                        for id in list(invalidatedDataDict[key][cl].keys()):
+                            attrCommaList = '(id,'+','.join(list(invalidatedDataDict[key][cl][id].keys()))+') = '
+                            at = list(invalidatedDataDict[key][cl][id].keys())
                             valueList = '('+str(id)
                             for i in range(len(at)):
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][at[i]])
@@ -260,24 +263,24 @@ class AbstractDb(QObject):
 
                 if key == 'nullAttribute' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Features with null attributes in a not null field:')+'\n\n')
-                    for cl in invalidatedDataDict[key].keys():
+                    for cl in list(invalidatedDataDict[key].keys()):
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
-                        for id in invalidatedDataDict[key][cl].keys():
-                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                        for id in list(invalidatedDataDict[key][cl].keys()):
+                            attrCommaList = '(id,'+','.join(list(invalidatedDataDict[key][cl][id].keys()))+') = '
                             valueList = '('+str(id)
-                            for attr in invalidatedDataDict[key][cl][id].keys():
+                            for attr in list(invalidatedDataDict[key][cl][id].keys()):
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
                             valueList += ')\n'
                             self.signals.updateLog.emit(attrCommaList+valueList)
 
                 if key == 'nullComplexFk' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Features with invalid uuid foreign key:')+'\n\n')
-                    for cl in invalidatedDataDict[key].keys():
+                    for cl in list(invalidatedDataDict[key].keys()):
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
-                        for id in invalidatedDataDict[key][cl].keys():
-                            attrCommaList = '(id,'+','.join(invalidatedDataDict[key][cl][id].keys())+') = '
+                        for id in list(invalidatedDataDict[key][cl].keys()):
+                            attrCommaList = '(id,'+','.join(list(invalidatedDataDict[key][cl][id].keys()))+') = '
                             valueList = '('+str(id)
-                            for attr in invalidatedDataDict[key][cl][id].keys():
+                            for attr in list(invalidatedDataDict[key][cl][id].keys()):
                                 valueList += ','+str(invalidatedDataDict[key][cl][id][attr])
                             valueList += ')\n'
                             self.signals.updateLog.emit(attrCommaList+valueList)
@@ -289,7 +292,7 @@ class AbstractDb(QObject):
                 
                 if key == 'attributeNotFoundInOutput' and len(invalidatedDataDict[key])>0:
                     self.signals.updateLog.emit('\n\n'+self.tr('Classes with attributes that have no output attribute equivalent:')+'\n\n')
-                    for cl in invalidatedDataDict[key].keys():
+                    for cl in list(invalidatedDataDict[key].keys()):
                         self.signals.updateLog.emit(self.tr('Class: ')+cl+'\n')
                         valueList = '('+','.join(invalidatedDataDict[key][cl])+')\n'
                         self.signals.updateLog.emit(valueList)
@@ -323,7 +326,7 @@ class AbstractDb(QObject):
         for i in range(layerDef.GetFieldCount()):
             featureDef = layerDef.GetFieldDefn(i)
             fieldName = featureDef.GetName()
-            if fieldName in layerFieldMapper.keys():
+            if fieldName in list(layerFieldMapper.keys()):
                 name = layerFieldMapper[fieldName]
                 fieldId = outLayerDef.GetFieldIndex(name)
                 panMap.append(fieldId) 
@@ -357,23 +360,23 @@ class AbstractDb(QObject):
                     auxGeom = ogr.Geometry(newFeat.geometry().GetGeometryType())
                     auxGeom.AssignSpatialReference(newFeat.geometry().GetSpatialReference())
                     auxGeom.AddGeometry(geom)
-                    if coordTrans <> None:
+                    if coordTrans != None:
                         auxGeom.Transform(coordTrans)
                     newFeat.SetGeometry(auxGeom)
                     out=outputLayer.CreateFeature(newFeat)
-                    if out <> 0:
+                    if out != 0:
                         self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
                     else:
                         count += 1
             else:
                 newFeat=ogr.Feature(outputLayer.GetLayerDefn())
                 newFeat.SetFromWithMap(feat,True,layerPanMap)
-                if coordTrans <> None:
+                if coordTrans != None:
                     geom = feat.GetGeometryRef()
                     geom.Transform(coordTrans)
                     newFeat.SetGeometry(geom)
                 out=outputLayer.CreateFeature(newFeat)
-                if out <> 0:
+                if out != 0:
                     self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
                 else:
                     count += 1
@@ -387,9 +390,9 @@ class AbstractDb(QObject):
         self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Write Summary')))
         self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Elements')+'\n\n')
         status = False
-        for inputLyr in inputLayerList.keys():
+        for inputLyr in list(inputLayerList.keys()):
             schema = self.getTableSchema(inputLyr)
-            attrList = fieldMap[inputLyr].keys()
+            attrList = list(fieldMap[inputLyr].keys())
             
             #sql = self.gen.getFeaturesWithSQL(inputLyr,attrList) #order elements here
             #inputOgrLayer = inputDS.ExecuteSQL(sql.encode('utf-8'))
@@ -405,13 +408,13 @@ class AbstractDb(QObject):
                 iter=self.translateLayer(inputOgrLayer, inputLyr, outputLayer, outputFileName, layerPanMap, errorDict)
             else:
                 needsFix = False
-                for keyDict in invalidated.values():
+                for keyDict in list(invalidated.values()):
                     if len(keyDict) > 0:
                         if type(keyDict) == list:
                             if inputLyr in keyDict:
                                 needsFix = True
                         if type(keyDict) == dict:
-                            if inputLyr in keyDict.keys():
+                            if inputLyr in list(keyDict.keys()):
                                 needsFix = True
                                 break
                 if needsFix:
@@ -478,7 +481,7 @@ class AbstractDb(QObject):
         inSpatialRef = inputLayer.GetSpatialRef()
         outSpatialRef = outputLayer.GetSpatialRef()
         coordTrans = None
-        if inSpatialRef <> outSpatialRef:
+        if inSpatialRef != outSpatialRef:
             coordTrans = osr.CoordinateTransformation(inSpatialRef, outSpatialRef)
         count = 0
         feat=inputLayer.GetNextFeature()
@@ -491,10 +494,10 @@ class AbstractDb(QObject):
                 nullLine = True
                 #Case 1: nullLine
                 for i in range(fieldCount):
-                    if feat.GetField(i) <> None:
+                    if feat.GetField(i) != None:
                         nullLine = False
                         break
-                if feat.GetFID() <> -1 or feat.geometry() <> None:
+                if feat.GetFID() != -1 or feat.geometry() != None:
                     nullLine = False
                 if not nullLine:
                     if inputLayerName not in invalidated['classNotFoundInOutput']:
@@ -506,21 +509,21 @@ class AbstractDb(QObject):
                             newFeat.SetFID(uuid4())
                         #Case 3
                         for j in range(inputLayer.GetLayerDefn().GetFieldCount()):
-                            if layerPanMap[j] <> -1:
-                                if inputLayerName in invalidated['notInDomain'].keys():
-                                    if inputId in invalidated['notInDomain'][inputLayerName].keys():
-                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['notInDomain'][inputLayerName][inputId].keys():
+                            if layerPanMap[j] != -1:
+                                if inputLayerName in list(invalidated['notInDomain'].keys()):
+                                    if inputId in list(invalidated['notInDomain'][inputLayerName].keys()):
+                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in list(invalidated['notInDomain'][inputLayerName][inputId].keys()):
                                             newFeat.UnsetField(layerPanMap[j])
-                                if inputLayerName in invalidated['nullAttribute'].keys():
-                                    if inputId in invalidated['nullAttribute'][inputLayerName].keys():
-                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['nullAttribute'][inputLayerName][inputId].keys():
+                                if inputLayerName in list(invalidated['nullAttribute'].keys()):
+                                    if inputId in list(invalidated['nullAttribute'][inputLayerName].keys()):
+                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in list(invalidated['nullAttribute'][inputLayerName][inputId].keys()):
                                             if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetTypeName() == 'String':
                                                 newFeat.SetField(layerPanMap[j],'-9999')
                                             if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetTypeName() == 'Integer':
                                                 newFeat.SetField(layerPanMap[j],-9999)
-                                if inputLayerName in invalidated['nullComplexFk'].keys():
-                                    if inputId in invalidated['nullComplexFk'][inputLayerName].keys():
-                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in invalidated['nullComplexFk'][inputLayerName][inputId].keys():
+                                if inputLayerName in list(invalidated['nullComplexFk'].keys()):
+                                    if inputId in list(invalidated['nullComplexFk'][inputLayerName].keys()):
+                                        if outputLayer.GetLayerDefn().GetFieldDefn(layerPanMap[j]).GetName() in list(invalidated['nullComplexFk'][inputLayerName][inputId].keys()):
                                             newFeat.UnsetField(layerPanMap[j])
                         if newFeat.geometry().GetGeometryCount() > 1:
                             #Deaggregator
@@ -528,21 +531,21 @@ class AbstractDb(QObject):
                                 auxGeom = ogr.Geometry(newFeat.geometry().GetGeometryType())
                                 auxGeom.AssignSpatialReference(newFeat.geometry().GetSpatialReference())
                                 auxGeom.AddGeometry(geom)
-                                if coordTrans <> None:
+                                if coordTrans != None:
                                     auxGeom.Transform(coordTrans)
                                 newFeat.SetGeometry(auxGeom)
                                 out=outputLayer.CreateFeature(newFeat)
-                                if out <> 0:
+                                if out != 0:
                                     self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
                                 else:
                                     count += 1
                         else:
-                            if coordTrans <> None:
+                            if coordTrans != None:
                                 geom = feat.GetGeometryRef()
                                 geom.Transform(coordTrans)
                                 newFeat.SetGeometry(geom)
                             out=outputLayer.CreateFeature(newFeat)
-                            if out <> 0:
+                            if out != 0:
                                 self.utils.buildNestedDict(errorDict, [inputLayerName], [inputId])
                             else:
                                 count += 1
@@ -588,7 +591,7 @@ class AbstractDb(QObject):
         '''
         Writes conversion error log
         '''
-        errorClasses = errorDict.keys()
+        errorClasses = list(errorDict.keys())
         if len(errorClasses)>0:
             self.signals.updateLog.emit('\n'+'{:-^60}'.format(self.tr('Features not converted')))
             self.signals.updateLog.emit('\n\n'+'{:<50}'.format(self.tr('Class'))+self.tr('Feature id')+'\n\n')
@@ -668,7 +671,7 @@ class AbstractDb(QObject):
         in_clause = '(%s)' % ",".join(map(str, codes))
         sql = self.gen.makeRelationDict(table, in_clause)
         query = QSqlQuery(sql, self.db)
-        while query.next():
+        while next(query):
             code = str(query.value(0))
             code_name = query.value(1)
             ret[code_name] = code
@@ -727,7 +730,7 @@ class AbstractDb(QObject):
         if not query.isActive():
             raise Exception(self.tr("Problem getting qmlRecordDict: ")+query.lastError().text())
         qmlDict = dict()
-        while query.next():
+        while next(query):
             if isinstance(inputLayer, list): 
                 qmlDict[query.value(0)] = query.value(1)
             else:

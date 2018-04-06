@@ -42,7 +42,7 @@ class CustomJSONBuilder(QObject):
         return {'domainName':domainName, 'valueDict': valueDict}
 
     def addValueToValueDict(self, valueDict, code, codeName):
-        if code not in valueDict.keys():
+        if code not in list(valueDict.keys()):
             valueDict[code] = codeName
 
     def buildCodeNameToChangeElement(self, domainTable, codeValue, oldCodeName, newCodeName):

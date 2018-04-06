@@ -20,7 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from __future__ import print_function
+from builtins import str
+from builtins import object
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 from qgis.core import QgsDataSourceURI, QgsMessageLog, QgsGeometry
 
@@ -36,7 +39,7 @@ from utils import Utils
 import unittest, itertools
 
 # class CreateFeatureTest(unittest.TestCase):
-class CreateFeatureTest(): 
+class CreateFeatureTest(object): 
     def __init__(self, layers, geomClass = True):
         '''
         Constructor
@@ -51,7 +54,8 @@ class CreateFeatureTest():
         self.db.setUserName('postgres')
         self.db.setPassword('postgres')
         if not self.db.open():
-            print self.db.lastError().text()
+            # fix_print_with_import
+            print(self.db.lastError().text())
 
         #obtaining the qml file path
         qmlVersionPath = os.path.join(currentPath, 'Qmls', 'qgis_26')
@@ -69,7 +73,8 @@ class CreateFeatureTest():
             domainDict = parser.getDomainDict()
 
             self.createFeatures(layer, domainDict)
-            print str(count),'de',size,'Camada ',layer.name()
+            # fix_print_with_import
+            print(str(count),'de',size,'Camada ',layer.name())
             count += 1
 
     def createFeatures(self, layer, domainDict):
@@ -91,14 +96,14 @@ class CreateFeatureTest():
         #Iterate on every field
         for field in fields:
             #Check if the field name is inside the qml dict
-            if field.name() in domainDict.keys():
+            if field.name() in list(domainDict.keys()):
                 #Getting a obj for the field in analysis
                 obj = domainDict[field.name()]
                 #Test if the field is a dict
                 if isinstance(obj, dict):
                     valueMap = obj
                     #Make a sql for each value in the dict
-                    for value in valueMap.values():
+                    for value in list(valueMap.values()):
                         sql = ''
                         if self.geomClass:
                             # if the class is a geometric class we must create a dummy geometry
@@ -202,7 +207,7 @@ class CreateFeatureTest():
         
         sql = 'SELECT * from public.complex_schema order by complex asc'
         query = QSqlQuery(sql, self.db)
-        while query.next():
+        while next(query):
             complex_schema = query.value(0)
             complex = query.value(1)
             aggregated_schema = query.value(2)
@@ -214,12 +219,12 @@ class CreateFeatureTest():
             
             sql = 'SELECT id from '+complex_schema+'.'+complex+' order by nome asc LIMIT 1'
             query1 = QSqlQuery(sql, self.db)
-            while query1.next():
+            while next(query1):
                 uuid = str(query1.value(0))
     
             sql = 'SELECT id from '+aggregated_schema+'.'+aggregated_class+' order by id asc LIMIT 1'
             query2 = QSqlQuery(sql, self.db)
-            while query2.next():
+            while next(query2):
                 id = str(query2.value(0))
     
             sql = 'UPDATE '+aggregated_schema+'.'+aggregated_class+' SET '+column_name+'='+'\''+uuid+'\''+' WHERE id='+id

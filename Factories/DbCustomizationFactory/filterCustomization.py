@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 #DsgTools Imports
+from builtins import map
 from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
 class FilterCustomization(DbCustomization):

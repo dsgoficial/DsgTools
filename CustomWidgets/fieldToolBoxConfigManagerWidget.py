@@ -23,9 +23,10 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
 from DsgTools.ServerManagementTools.fieldToolBoxConfigManager import FieldToolBoxConfigManager
@@ -72,7 +73,7 @@ class FieldToolBoxConfigManagerWidget(GenericManagerWidget):
         if propertyName == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a Field Toolbox Configuration Name!'))
             return
-        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
+        if propertyName in list(self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys()):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Field Toolbox Configuration Name already exists!'))
             return
         fieldSetupDict = self.populateConfigInterface(templateDb)

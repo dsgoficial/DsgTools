@@ -20,11 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, Qt
-from PyQt4.QtGui import QTreeWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
 
 from qgis.core import QgsMessageLog
 
@@ -76,9 +78,9 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.permissionTreeWidget.setHeaderLabels([self.tr('Database'), self.tr('Permission'), self.tr('User')])
         dbPerspectiveDict = self.permissionManager.getDatabasePerspectiveDict()
         rootNode = self.permissionTreeWidget.invisibleRootItem()
-        for dbName in dbPerspectiveDict.keys():
+        for dbName in list(dbPerspectiveDict.keys()):
             parentDbItem = self.createItem(rootNode, dbName, 0)
-            for permission in dbPerspectiveDict[dbName].keys():
+            for permission in list(dbPerspectiveDict[dbName].keys()):
                 dbItem = self.createItem(parentDbItem, permission, 1)
                 for user in dbPerspectiveDict[dbName][permission]:
                     userItem = self.createItem(dbItem, user, 2)
@@ -89,9 +91,9 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         self.permissionTreeWidget.setHeaderLabels([self.tr('User'), self.tr('Database'), self.tr('Permission')])
         userPerspectiveDict = self.permissionManager.getUserPerspectiveDict()
         rootNode = self.permissionTreeWidget.invisibleRootItem()
-        for userName in userPerspectiveDict.keys():
+        for userName in list(userPerspectiveDict.keys()):
             parentUserItem = self.createItem(rootNode, userName, 0)
-            for dbName in userPerspectiveDict[userName].keys():
+            for dbName in list(userPerspectiveDict[userName].keys()):
                 dbItem = self.createItem(parentUserItem, dbName, 1)
                 for permission in userPerspectiveDict[userName][dbName]:
                     permissionItem = self.createItem(dbItem, permission, 2)
@@ -149,11 +151,11 @@ class PermissionWidget(QtGui.QWidget, FORM_CLASS):
         menu = QMenu()
         item = self.permissionTreeWidget.itemAt(position)
         if item:
-            if item.text(0) <> '':
+            if item.text(0) != '':
                 menu.addAction(self.tr('Revoke all permissions'), self.revokeAll)
-            elif item.text(1) <> '':
+            elif item.text(1) != '':
                 menu.addAction(self.tr('Manage User Permissions'), self.manageUserPermissions)
-            elif item.text(2) <> '':
+            elif item.text(2) != '':
                 menu.addAction(self.tr('Revoke User'), self.revokeSelectedUser)
         menu.exec_(self.permissionTreeWidget.viewport().mapToGlobal(position))
     

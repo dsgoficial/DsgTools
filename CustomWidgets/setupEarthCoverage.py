@@ -20,12 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 import json
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QFileDialog
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 from DsgTools.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -58,7 +59,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         if QMessageBox.question(self, self.tr('Question'), self.tr('Do you want to open an earth coverage file?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
-        filename = QFileDialog.getOpenFileName(self, self.tr('Open Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
+        filename, __ = QFileDialog.getOpenFileName(self, self.tr('Open Earth Coverage Setup configuration'), '', self.tr('Earth Coverage Files (*.json)'))
         return filename
 
     def setupWizard(self, oldCoverage, enableSetupFromFile):
@@ -121,7 +122,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
                 pass
     
     def populateLists(self, setupDict):
-        areasToList = setupDict.keys()
+        areasToList = list(setupDict.keys())
         linesToList = []
         for key in areasToList:
             lines = setupDict[key]
@@ -140,7 +141,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
             areaItem = self.treeWidget.invisibleRootItem().child(i)
             for j in range(self.treeWidget.invisibleRootItem().child(i).childCount()):
                 delimiterItem = areaItem.child(j)
-                if areaItem.text(0) in setupDict.keys():
+                if areaItem.text(0) in list(setupDict.keys()):
                     if delimiterItem.text(1) not in setupDict[areaItem.text(0)]:
                         delimiterItem.setCheckState(1,Qt.Unchecked)
 
@@ -148,7 +149,7 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         """
         Loads a json file
         """
-        filename = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Earth Coverage Setup File (*.dsgearthcov)'))
+        filename, __ = QFileDialog.getOpenFileName(self, self.tr('Open Field Setup configuration'), self.folder, self.tr('Earth Coverage Setup File (*.dsgearthcov)'))
         if not filename:
             return
         return self.readJsonFile(filename)

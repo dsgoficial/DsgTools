@@ -20,11 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os, codecs
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot
 
 # DSGTools imports
 

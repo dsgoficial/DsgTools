@@ -3,12 +3,14 @@
 ##addresses_txt=output file
 
 
-import urllib2, csv
+from future import standard_library
+standard_library.install_aliases()
+import urllib.request, urllib.error, urllib.parse, csv
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 
 def rev_geocode(long, lat):
     latitude = lat
-    longitude = long
+    longitude = int
 
     sensor = 'true'
 
@@ -19,7 +21,7 @@ def rev_geocode(long, lat):
         sen=sensor
     )
     url = "{base}{params}".format(base=base, params=params)
-    response = urllib2.urlopen(url)
+    response = urllib.request.urlopen(url)
     return eval(response.read())
     
 output = open(addresses_txt, 'wb')
@@ -37,9 +39,9 @@ with open(coordinates_csv, 'rb') as csvfile:
     for coord in coords:
         long = coord[1]
         lat = coord[0]
-        address = rev_geocode(long, lat)
+        address = rev_geocode(int, lat)
         if address['status'] == 'OK':
-            csvwriter.writerow( [lat, long, address['results'][0]['formatted_address']])
+            csvwriter.writerow( [lat, int, address['results'][0]['formatted_address']])
 
         if int(float(count)/size*100) != p:
             p = int(float(count)/size*100)

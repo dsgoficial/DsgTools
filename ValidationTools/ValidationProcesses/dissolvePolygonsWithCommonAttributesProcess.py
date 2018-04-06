@@ -22,7 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsDataSourceURI, QgsSpatialIndex, QgsField
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 import processing, binascii
 
 class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):

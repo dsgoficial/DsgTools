@@ -22,14 +22,16 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceURI, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
-from PyQt4.QtCore import QSettings
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QColor, QMenu, QCursor
+from qgis.PyQt.QtCore import QSettings
+from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt.QtWidgets import QMenu
 
 import numpy as np
-from PyQt4.QtCore import Qt
+from qgis.PyQt.QtCore import Qt
 
 class MultiLayerSelection(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
@@ -213,10 +215,10 @@ class MultiLayerSelection(QgsMapTool):
             #layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
             if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
                 continue
-            if hasControlModifyer and (not firstGeom) and (not primitiveDict.keys() or lyr.geometryType() < firstGeom):
+            if hasControlModifyer and (not firstGeom) and (not list(primitiveDict.keys()) or lyr.geometryType() < firstGeom):
                 firstGeom = lyr.geometryType()
             geomType = lyr.geometryType()
-            if geomType not in primitiveDict.keys():
+            if geomType not in list(primitiveDict.keys()):
                 primitiveDict[geomType] = []
             #removes selection
             if (not hasControlModifyer and e.button() == QtCore.Qt.LeftButton) or (hasControlModifyer and e.button() == QtCore.Qt.RightButton):
@@ -236,7 +238,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         rect = self.getCursorRect(e)
         primitiveDict = self.getPrimitiveDict(e, hasControlModifyer = hasControlModifyer)
-        primitives = primitiveDict.keys()
+        primitives = list(primitiveDict.keys())
         primitives.sort() #this sort enables search to be done in the order of Point (value 0), Line (value 1) and Polygon (value 2)
         for primitive in primitives:
             for lyr in primitiveDict[primitive]:
@@ -462,7 +464,7 @@ class MultiLayerSelection(QgsMapTool):
         # setting a list of features to iterate over
         layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
         layers = []
-        for key in layerList.keys():
+        for key in list(layerList.keys()):
             layers += layerList[key]
         if layers:
             menu = QtGui.QMenu()

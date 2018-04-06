@@ -23,9 +23,9 @@
 import os
 import json
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtGui import QTreeWidgetItem, QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'earthCoverageWidget.ui'))
@@ -71,7 +71,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
         if self.abstractDb.checkIfExistsConfigTable('EarthCoverage'):
             edgvVersion = self.abstractDb.getDatabaseVersion()
             propertyDict = self.abstractDb.getAllSettingsFromAdminDb('EarthCoverage')
-            if edgvVersion in propertyDict.keys():
+            if edgvVersion in list(propertyDict.keys()):
                 propertyName = propertyDict[edgvVersion][0]
                 dbName = self.abstractDb.db.databaseName()
                 self.settingDict = json.loads(self.abstractDb.getSettingFromAdminDb('EarthCoverage', propertyName, edgvVersion))
@@ -87,7 +87,7 @@ class EarthCoverageWidget(QtGui.QWidget, FORM_CLASS):
                 self.getEarthCoverageDict()
             rootItem = self.earthCoverageTreeWidget.invisibleRootItem()
             #database item
-            for key in self.earthCoverageDict.keys():
+            for key in list(self.earthCoverageDict.keys()):
                 item = QTreeWidgetItem(rootItem)
                 item.setText(0,key)
                 item.setExpanded(True)

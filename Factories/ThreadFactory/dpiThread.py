@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import osgeo.gdal
 import osgeo.osr
 import numpy
@@ -164,7 +166,7 @@ class DpiThread(GenericThread):
 
         #if bands is empty, make a new file with the same band size
         if bands == []:
-            bands = range(0, imgIn.RasterCount)
+            bands = list(range(0, imgIn.RasterCount))
 
         #Creating a temp image, with the same input parameters, to store the converted input image to 8 bits
         imgOut = outDriver.Create(outFileTmp, imgIn.RasterXSize, imgIn.RasterYSize, len(bands), rasterType, options=createOptions)

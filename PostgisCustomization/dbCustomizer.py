@@ -36,14 +36,14 @@ class DbCustomizer(QObject):
     
     def buildCustomizationSQL(self, customJSON):
         sql = ''
-        for customizationTag in customJSON.keys():
+        for customizationTag in list(customJSON.keys()):
             customCreator = self.dbCustomizationFactory.createCustomization(customizationTag, customJSON[customizationTag])
             sql += customCreator.buildSql()
         return sql
     
     def buildUndoCustomizationSQL(self, customJSON):
         sql = ''
-        for customizationTag in customJSON.keys():
+        for customizationTag in list(customJSON.keys()):
             customCreator = self.dbCustomizationFactory.createCustomization(customizationTag, customJSON[customizationTag])
             sql += customCreator.buildUndoSql()
         return sql

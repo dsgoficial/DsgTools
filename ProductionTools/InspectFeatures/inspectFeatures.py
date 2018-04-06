@@ -21,9 +21,10 @@ Builds a temp rubberband with a given size and shape.
  ***************************************************************************/
 """
 import os
-from PyQt4.QtGui import QMessageBox, QSpinBox, QAction, QIcon
-from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
-from PyQt4 import QtGui, uic, QtCore
+from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
+from qgis.PyQt import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
 from qgis.core import QgsMapLayer, QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest
@@ -149,7 +150,7 @@ class InspectFeatures(QWidget,Ui_Form):
         else:
             currentLayer = self.getIterateLayer()
             lyrName = currentLayer.name()
-            if lyrName not in self.allLayers.keys():
+            if lyrName not in list(self.allLayers.keys()):
                 self.allLayers[lyrName] = 0
                 return
             oldIndex = self.allLayers[lyrName]
@@ -202,7 +203,7 @@ class InspectFeatures(QWidget,Ui_Form):
         if currentLayer and len(featIdList) > 0:
             #checking if this is the first time for this layer (currentLayer)
             first = False
-            if lyrName not in self.allLayers.keys():
+            if lyrName not in list(self.allLayers.keys()):
                 self.allLayers[lyrName] = 0
                 first = True
 

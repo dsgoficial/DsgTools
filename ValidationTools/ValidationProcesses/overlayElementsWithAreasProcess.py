@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from collections import deque, OrderedDict
@@ -49,7 +50,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.opTypeDict = OrderedDict([(self.tr('Overlay and Keep Elements'),-1), (self.tr('Remove outside elements'),0), (self.tr('Remove inside elements'),2)])
-            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': OrderedDict({'referenceDictList':overlayInterfaceDict, 'layersDictList':interfaceDict}), 'Overlay Type':deque(self.opTypeDict.keys()), 'Only Selected':False}
+            self.parameters = {'Snap': 1.0, 'MinArea': 0.001, 'Overlayer and Layers': OrderedDict({'referenceDictList':overlayInterfaceDict, 'layersDictList':interfaceDict}), 'Overlay Type':deque(list(self.opTypeDict.keys())), 'Only Selected':False}
 
     def execute(self):
         """
@@ -159,7 +160,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                 outputLayer.renameAttribute(idx, field.name()[2::])
         outputLayer.commitChanges()
         #getting error flags
-        if 'error' in ret.keys():
+        if 'error' in list(ret.keys()):
             errorLayer = processing.getObject(ret['error'])
             return {'error':self.getProcessingErrors(errorLayer)}
         #if there is no error flag, iterate over outputLayer

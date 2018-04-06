@@ -23,8 +23,8 @@
 import os
 import json
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtGui import QTreeWidgetItem
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_config.ui'))

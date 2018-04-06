@@ -20,7 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QObject, QRunnable, pyqtSignal
+from builtins import str
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 from uuid import uuid4
 

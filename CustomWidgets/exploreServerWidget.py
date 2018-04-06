@@ -25,10 +25,10 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -114,7 +114,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
     
                 query = QSqlQuery(db)
                 if query.exec_(gen.getEDGVVersion()):
-                    while query.next():
+                    while next(query):
                         version = query.value(0)
                         if version:
                             edvgDbList.append((database, version))
@@ -141,7 +141,7 @@ class ExploreServerWidget(QtGui.QWidget, FORM_CLASS):
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr("Problem executing query: ")+query.lastError().text())
             
         dbList = []
-        while query.next():
+        while next(query):
             dbList.append(query.value(0))
         return self.browseServer(dbList, host, port, user, password)
     

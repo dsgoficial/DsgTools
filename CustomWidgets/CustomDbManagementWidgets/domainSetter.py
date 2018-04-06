@@ -20,15 +20,16 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QListWidgetItem
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QListWidgetItem
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -120,7 +121,7 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
         if curItem:
             self.domainName = curItem.data(0)
             self.domainDict = self.abstractDb.getDomainDictV2('dominios.'+self.domainName)
-            for codeName in self.domainDict.keys():
+            for codeName in list(self.domainDict.keys()):
                 newItem = QListWidgetItem(codeName)
                 newItem.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
                 newItem.setCheckState(QtCore.Qt.Unchecked)
@@ -145,7 +146,7 @@ class DomainSetter(QtGui.QDialog, FORM_CLASS):
             item = self.filterListWidget.item(idx)
             if item.checkState() == 2:
                 codeName = item.data(0) 
-                if codeName not in self.filterClause.keys():
+                if codeName not in list(self.filterClause.keys()):
                     self.filterClause[codeName] = self.domainDict[codeName]
         self.domainChanged.emit(self.domainName, self.domainDict, self.filterClause)
     

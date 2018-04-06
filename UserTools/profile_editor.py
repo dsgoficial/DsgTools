@@ -20,11 +20,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot
 
 # DSGTools imports
 from DsgTools.UserTools.create_profile import CreateProfile
@@ -134,7 +136,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
             file = open(filename, 'r')
             data = file.read()
             profileDict = json.loads(data)
-            self.parent = profileDict.keys()[0]
+            self.parent = list(profileDict.keys())[0]
             file.close()
         except:
             return
@@ -153,7 +155,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         """
         #permissions
         lista = ['read', 'write']
-        for key in mydict.keys():
+        for key in list(mydict.keys()):
             if key in lista:
                 self.setItemCheckState(parent, mydict, key)
             else:
@@ -243,7 +245,7 @@ class ProfileEditor(QtGui.QDialog, FORM_CLASS):
         Deletes the select profile
         :return:
         """
-        if self.jsonCombo.currentIndex() <> 0:
+        if self.jsonCombo.currentIndex() != 0:
             profileName = self.jsonCombo.currentText()
             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 return

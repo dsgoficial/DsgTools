@@ -22,8 +22,8 @@
 """
 import os
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.core import QgsMessageLog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

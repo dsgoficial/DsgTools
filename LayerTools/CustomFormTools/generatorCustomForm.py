@@ -21,6 +21,8 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import object
 from qgis import core
 
 class GeneratorCustomForm(object):
@@ -337,13 +339,13 @@ class GeneratorCustomForm(object):
     def createComboBox(self, field, row):
         comboBox = self.getComboBoxTemplate()
         comboBox = comboBox.replace(u'{field}', field)
-        comboBox = comboBox.replace(u'{row}', unicode(row))
+        comboBox = comboBox.replace(u'{row}', str(row))
         return comboBox
 
     def createLineEdit(self, field, row, readOnly = False):
         lineEdit = self.getLineEditTemplate()
         lineEdit = lineEdit.replace(u'{field}', field)
-        lineEdit = lineEdit.replace(u'{row}', unicode(row))
+        lineEdit = lineEdit.replace(u'{row}', str(row))
         if readOnly:
             lineEdit = lineEdit.replace(
                 u'{readOnly}',
@@ -381,7 +383,7 @@ class GeneratorCustomForm(object):
             allWidgetsTabAttr += self.createLineEdit(u'length_otf', rowAttr)            
         elif vlayer.geometryType() == 2:
             allWidgetsTabAttr += self.createLineEdit(u'area_otf', rowAttr)   
-        dialog = dialog.replace(u'{1}', unicode(allWidgetsTabControl))
-        dialog = dialog.replace(u'{0}', unicode(allWidgetsTabAttr))
+        dialog = dialog.replace(u'{1}', str(allWidgetsTabControl))
+        dialog = dialog.replace(u'{0}', str(allWidgetsTabAttr))
         formFile.write(dialog.encode("utf-8"))
         formFile.close()

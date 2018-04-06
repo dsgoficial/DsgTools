@@ -27,7 +27,7 @@ from DsgTools.Utils.utils import Utils
 
 #PyQt4 imports
 from PyQt4.Qt import QObject
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt.QtWidgets import QMessageBox
 
 class DsgToolsOpInstaller(QObject):
     def __init__(self, iface, parent=None, parentMenu=None):

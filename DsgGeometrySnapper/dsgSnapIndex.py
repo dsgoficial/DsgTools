@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
+from builtins import object
 import sys, math
 
 from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPoint, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2, QgsMultiPolygonV2, QgsPolygonV2
@@ -31,8 +33,8 @@ from DsgTools.DsgGeometrySnapper.pointSnapItem import PointSnapItem
 from DsgTools.DsgGeometrySnapper.segmentSnapItem import SegmentSnapItem
 from DsgTools.DsgGeometrySnapper.gridRow import GridRow
 
-class DsgSnapIndex:
-    SnapPoint, SnapSegment = range(2)
+class DsgSnapIndex(object):
+    SnapPoint, SnapSegment = list(range(2))
 
     def __init__(self, origin, cellSize):
         """
@@ -74,12 +76,12 @@ class DsgSnapIndex:
         :return:
         """
         if row < self.rowsStartIdx:
-            for i in xrange(row, self.rowsStartIdx):
+            for i in range(row, self.rowsStartIdx):
                 self.gridRows.insert(0, GridRow())
             self.rowsStartIdx = row
             return self.gridRows[0].getCreateCell(col)
         elif row >= self.rowsStartIdx + len(self.gridRows):
-            for  i in xrange(self.rowsStartIdx + len(self.gridRows), row + 1):
+            for  i in range(self.rowsStartIdx + len(self.gridRows), row + 1):
                 self.gridRows.append(GridRow())
             return self.gridRows[-1].getCreateCell(col)
         else:
@@ -113,7 +115,7 @@ class DsgSnapIndex:
 
         rt = Raytracer(x0, y0, x1, y1)
         while rt.isValid():
-            rt.next()
+            next(rt)
             self.getCreateCell(rt.curCol(), rt.curRow()).append(SegmentSnapItem(idxFrom, idxTo))
 
     def addGeometry(self, geom):
@@ -122,8 +124,8 @@ class DsgSnapIndex:
         :param geom:QgsAbstractGeometryV2
         :return:
         """
-        for iPart in xrange(geom.partCount()):
-            for iRing in xrange(geom.ringCount(iPart)):
+        for iPart in range(geom.partCount()):
+            for iRing in range(geom.ringCount(iPart)):
                 nVerts = geom.vertexCount(iPart, iRing)
                 if isinstance(geom, QgsMultiPolygonV2):
                     nVerts -= 1
@@ -131,7 +133,7 @@ class DsgSnapIndex:
                     nVerts -= 1
                 elif isinstance(geom, QgsCircularStringV2):
                     nVerts -= 1
-                for iVert in xrange(nVerts):
+                for iVert in range(nVerts):
                     idx = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
                     idx1 = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert + 1, QgsVertexId.SegmentVertex))
                     self.coordIdxs.append(idx)
@@ -160,7 +162,7 @@ class DsgSnapIndex:
         dMin = sys.float_info.max
         pMin = p
         while rt.isValid():
-            rt.next()
+            next(rt)
             cell = self.getCell(rt.curCol(), rt.curRow())
             if not cell:
                 continue
@@ -195,7 +197,7 @@ class DsgSnapIndex:
         rowEnd = min(rowEnd, self.rowsStartIdx + len(self.gridRows) - 1)
 
         items = []
-        for row in xrange(rowStart, rowEnd+1):
+        for row in range(rowStart, rowEnd+1):
             items.append(self.gridRows[row - self.rowsStartIdx].getSnapItems(colStart, colEnd))    
 
         minDistSegment = sys.float_info.max

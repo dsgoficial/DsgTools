@@ -20,13 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 import os
 
 from DsgTools.Factories.LayerLoaderFactory.postgisLayerLoader import PostGISLayerLoader
 from DsgTools.Factories.LayerLoaderFactory.spatialiteLayerLoader import SpatialiteLayerLoader
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 
-class LayerLoaderFactory:
+class LayerLoaderFactory(object):
     def makeLoader(self, iface, abstractDb, loadCentroids=False):
         """
         Returns the specific layer loader

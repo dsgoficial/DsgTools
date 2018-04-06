@@ -25,9 +25,10 @@ Builds a temp rubberband with a given size and shape.
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtGui import QMessageBox, QIcon, QAction
-from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtWidgets import QMessageBox, QAction
+from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject
 from PyQt4.Qt import QWidget, QObject
 
 #qgis imports
@@ -96,7 +97,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         Sets the correct index for the shapes combo box according to the text select in the sizes combo box
         """
-        if self.sizesComboBox.currentText() in self.sizes.keys():
+        if self.sizesComboBox.currentText() in list(self.sizes.keys()):
             if self.sizes[self.sizesComboBox.currentText()]['shape'] == 'distance':
                 #In this case we should force the use of circle, due to the measurement shape = distance and set the shape combo box enabled(False)
                 self.shapesComboBox.setCurrentIndex(2)
@@ -112,7 +113,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         Slot used to check if the user selected 0.8mm (this is used for linear features).
         In this case we should force the use of circle and set the shape combo box enabled(False)
         """
-        if self.sizesComboBox.currentIndex() <> 0:
+        if self.sizesComboBox.currentIndex() != 0:
             self.shapeComboSetter()
     
     @pyqtSlot(int)
@@ -121,7 +122,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         Slot used to check if the user selected 0.8mm (this is used for linear features).
         In this case we should force the use of circle and set the shape combo box enabled(False)
         """
-        if self.shapesComboBox.currentIndex() <> 0:
+        if self.shapesComboBox.currentIndex() != 0:
             self.shapeComboSetter()
     
     @pyqtSlot(bool)
@@ -168,7 +169,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         Checks if all combos correctly selected
         """
-        if size <> 0 and shape <> 0:
+        if size != 0 and shape != 0:
             return True
         else:
             return False
@@ -237,7 +238,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         """
         Add to sizesComboBox values from customSizesDict and adds values to self.sizes 
         """
-        for size in customSizesDict.keys():
+        for size in list(customSizesDict.keys()):
             #add item to comboBox
             self.sizesComboBox.addItem(size)
 

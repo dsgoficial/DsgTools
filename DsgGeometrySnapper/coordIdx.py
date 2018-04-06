@@ -21,9 +21,10 @@
  ***************************************************************************/
 """
 
+from builtins import object
 from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsGeometry
 
-class CoordIdx:
+class CoordIdx(object):
     def __init__(self, _geom, _vidx):
         """
         Constructor

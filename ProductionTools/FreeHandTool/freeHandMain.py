@@ -17,11 +17,13 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 
-from models.acquisitionFree import AcquisitionFree
-from controllers.acquisitionFreeController import AcquisitionFreeController
+from builtins import object
+from .models.acquisitionFree import AcquisitionFree
+from .controllers.acquisitionFreeController import AcquisitionFreeController
 
-class FreeHandMain:    
+class FreeHandMain(object):    
 
     def __init__(self, iface):
         #construtor

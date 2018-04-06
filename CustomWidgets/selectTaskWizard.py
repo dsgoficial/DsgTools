@@ -22,9 +22,10 @@
 import os, json
 
 #PyQt imports
-from PyQt4 import QtGui, QtCore, uic
-from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtGui import QApplication, QCursor, QMessageBox
+from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtWidgets import QApplication, QMessageBox
+from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

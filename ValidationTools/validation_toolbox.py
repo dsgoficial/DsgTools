@@ -20,14 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import print_function
+from builtins import str
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4.QtCore import Qt
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtGui import QApplication, QCursor, QMenu, QTableWidgetItem
-from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtWidgets import QApplication, QMenu, QTableWidgetItem
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
@@ -107,19 +111,22 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         To do.
         """
-        print 'mudou'
+        # fix_print_with_import
+        print('mudou')
     
     def setFlagVisited(self):
         """
         To do
         """
-        print 'visited'
+        # fix_print_with_import
+        print('visited')
 
     def setFlagUnvisited(self): 
         """
         To do
         """
-        print 'unvisited'
+        # fix_print_with_import
+        print('unvisited')
     
     def zoomToFlag(self):
         """
@@ -322,7 +329,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Changes the current tab in the validation tool box
         """
-        if self.validationTabWidget.currentIndex() == 1 and self.connectionSelectorComboBox.abstractDb <> None:
+        if self.validationTabWidget.currentIndex() == 1 and self.connectionSelectorComboBox.abstractDb != None:
             self.projectModel.select()
         self.refreshOnChangeProcessOrClass()
 

@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QgsPoint
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
@@ -73,7 +74,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
                     featureDict = {i.id():i for i in lyr.selectedFeatures()}
                 else:
                     featureDict = {i.id():i for i in lyr.getFeatures()}
-                featureList = featureDict.values()
+                featureList = list(featureDict.values())
                 if featureList == []:
                     self.setStatus(self.tr('Empty layer or empty selection!. Nothing to be done.'), 1) #Finished
                     QgsMessageLog.logMessage(self.tr('Layer {0} is empty or there are no selected features!. Nothing to be done.').format(lyr.name()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
@@ -138,7 +139,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
                        extendLineCandidate.setGeometry(extendedLine)
                        updateDict[extendLineCandidate.id()] = extendLineCandidate
                        break
-        return updateDict.values()
+        return list(updateDict.values())
     
     def extendLine(self, geom, referencePoint, d):
         """
@@ -165,7 +166,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
     def getSegment(self, geom, referencePoint):
         if geom.isMultipart():
             multiLine = geom.asMultiPolyline()
-            for i in xrange(len(multiLine)):
+            for i in range(len(multiLine)):
                 line = multiLine[i]
                 lineSize = len(line)
                 if line[0] == referencePoint.asPoint():

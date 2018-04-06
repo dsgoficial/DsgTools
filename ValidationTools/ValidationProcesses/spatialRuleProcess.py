@@ -20,9 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 import os
 
-from PyQt4 import QtGui
+from qgis.PyQt import QtGui
 
 from qgis.core import QgsMessageLog, QgsDataSourceURI
 

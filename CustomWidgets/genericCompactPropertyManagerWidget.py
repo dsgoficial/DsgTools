@@ -20,12 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os, importlib
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog, QMenu, QHeaderView
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, QHeaderView
+from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
 from DsgTools.CustomWidgets.listSelector import ListSelector
@@ -41,7 +44,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericCompactPropertyManagerWidget.ui'))
 
 class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
-    Add, Remove, Import, Export, Update = range(5)
+    Add, Remove, Import, Export, Update = list(range(5))
     def __init__(self, parent = None):
         """
         Constructor
@@ -69,7 +72,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         self.propertyComboBox.clear()
         if self.genericDbManager:
-            propertyList = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys()
+            propertyList = list(self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys())
             propertyList.sort()
             self.propertyComboBox.addItems(propertyList)
     
@@ -152,7 +155,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         if propertyName == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Enter a {0} name!').format(self.widgetName))
             return
-        if propertyName in self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys():
+        if propertyName in list(self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property).keys()):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! {0} name already exists!').format(self.widgetName))
             return
         setupDict = self.populateConfigInterface(self.abstractDb)
@@ -227,7 +230,7 @@ class GenericCompactPropertyManagerWidget(QtGui.QWidget, FORM_CLASS):
         """
         propertyName = self.propertyComboBox.currentText()
         propertyDict = self.genericDbManager.getPropertyPerspectiveDict(viewType = DsgEnums.Property)
-        if propertyName not in propertyDict.keys():
+        if propertyName not in list(propertyDict.keys()):
             QMessageBox.critical(self, self.tr('Error!'), self.tr('Error! Problem getting {0}: Invalid property {1}').format(self.widgetName, propertyName) )
             return
         parameterDict = self.genericDbManager.getSetting(propertyName, self.genericDbManager.edgvVersion)

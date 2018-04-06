@@ -19,11 +19,13 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 import sys
 from collections import deque, OrderedDict
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QApplication, QCursor, QMenu
+from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QApplication, QMenu
+from qgis.PyQt.QtGui import QCursor
 from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
@@ -33,7 +35,7 @@ from DsgTools.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProce
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
-               unicode: QtGui.QLineEdit,
+               str: QtGui.QLineEdit,
                int: QtGui.QSpinBox,
                float: QtGui.QDoubleSpinBox,
                list: CustomTableSelector,
@@ -90,13 +92,13 @@ class ProcessParametersDialog(QtGui.QDialog):
 
         self.required = required or list()
         if len(options) == 1:
-            self.required.append(options.keys()[0])
+            self.required.append(list(options.keys())[0])
 
         _firstWidget = None
         # formLayout = QtGui.QFormLayout()
         layout = QtGui.QGridLayout()
         rowCount = 0
-        for k, v in options.iteritems():
+        for k, v in options.items():
             if isinstance(v, list):
                 if len(v)> 0 and isinstance(v[0], dict) == False:
                     v = [str(x) for x in v]
@@ -162,7 +164,7 @@ class ProcessParametersDialog(QtGui.QDialog):
         """
         Sets the parameters and closes the dialog
         """
-        for k, (label, widget) in self.widgets.iteritems():
+        for k, (label, widget) in self.widgets.items():
             value = getattr(widget, self.GETTERS[type(widget)])()
             self.__values[k] = value
 

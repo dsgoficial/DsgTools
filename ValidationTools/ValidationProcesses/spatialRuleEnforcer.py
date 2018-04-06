@@ -20,10 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 import os, binascii
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 from qgis.core import QgsMessageLog, QgsDataSourceURI, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer
 
@@ -262,7 +263,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         self.removeFeatureFlags(layername, featureId)
         # for each rule we must test what is happening
         features = layer.editBuffer().addedFeatures()
-        for key in features.keys():
+        for key in list(features.keys()):
             #just checking the newly added feature, the other were already tested
             if key != featureId:
                 continue

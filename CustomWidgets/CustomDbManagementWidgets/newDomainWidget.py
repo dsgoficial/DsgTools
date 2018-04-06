@@ -20,14 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -135,7 +136,7 @@ class NewDomainWidget(QtGui.QWidget, FORM_CLASS):
         currentValue = widgetItem.text() 
         itemList = []
         for i in range(self.tableWidget.rowCount()):
-            if i <> widgetItem.row():
+            if i != widgetItem.row():
                 curItem = self.tableWidget.item(i, 0)
                 itemList.append(curItem.text())
         if currentValue in itemList:

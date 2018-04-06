@@ -22,9 +22,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsMapLayerRegistry
 
-from PyQt4.QtCore import QVariant
+from qgis.PyQt.QtCore import QVariant
 
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.unbuildEarthCoveragePolygonsProcess import UnbuildEarthCoveragePolygonsProcess
@@ -59,7 +60,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceLineDict[key] = {self.tr('Category'):cat, self.tr('Layer Name'):lyrName, self.tr('Geometry\nColumn'):geom, self.tr('Geometry\nType'):geomType, self.tr('Layer\nType'):tableType}
             self.opTypeDict = OrderedDict([(self.tr('Consider dangle on unsegmented lines'),0), (self.tr('Ignore dangle on unsegmented lines'),1)])
-            self.parameters = {'Only Selected':False, 'Ignore search radius on inner layer search':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict}), 'Identification Type':deque(self.opTypeDict.keys())}
+            self.parameters = {'Only Selected':False, 'Ignore search radius on inner layer search':False, 'Search Radius':1.0, 'Layer and Filter Layers': OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict}), 'Identification Type':deque(list(self.opTypeDict.keys()))}
             self.unbuildProc = UnbuildEarthCoveragePolygonsProcess(postgisDb, iface, instantiating = True)
             self.unbuildProc.parameters = {'Snap': -1.0, 'MinArea': 0.001} #no snap and no small area
     
@@ -153,16 +154,16 @@ class IdentifyDanglesProcess(ValidationProcess):
             geom = feat.geometry()
             if geom.isMultipart():
                 multiLine = geom.asMultiPolyline()
-                for j in xrange(len(multiLine)):
+                for j in range(len(multiLine)):
                     line = multiLine[j]
                     startPoint = line[0]
                     endPoint = line[len(line) - 1]
                     # storing start point in the dict
-                    if startPoint not in endVerticesDict.keys():
+                    if startPoint not in list(endVerticesDict.keys()):
                         endVerticesDict[startPoint] = []
                     endVerticesDict[startPoint].append(feat.id())
                     # storing end point in the dict
-                    if endPoint not in endVerticesDict.keys():
+                    if endPoint not in list(endVerticesDict.keys()):
                         endVerticesDict[endPoint] = []
                     endVerticesDict[endPoint].append(feat.id())
             else:
@@ -170,11 +171,11 @@ class IdentifyDanglesProcess(ValidationProcess):
                 startPoint = line[0]
                 endPoint = line[len(line) - 1]
                 # storing start point in the dict
-                if startPoint not in endVerticesDict.keys():
+                if startPoint not in list(endVerticesDict.keys()):
                     endVerticesDict[startPoint] = []
                 endVerticesDict[startPoint].append(feat.id())
                 # storing end point in the dict
-                if endPoint not in endVerticesDict.keys():
+                if endPoint not in list(endVerticesDict.keys()):
                     endVerticesDict[endPoint] = []
                 endVerticesDict[endPoint].append(feat.id())
             localProgress.step()
@@ -187,8 +188,8 @@ class IdentifyDanglesProcess(ValidationProcess):
         pointList = []
         idList = []
         # actual search for dangles
-        localProgress = ProgressWidget(1, len(endVerticesDict.keys()), self.tr('Searching dangles on {0}.{1}').format(tableSchema, tableName), parent=self.iface.mapCanvas())
-        for point in endVerticesDict.keys():
+        localProgress = ProgressWidget(1, len(list(endVerticesDict.keys())), self.tr('Searching dangles on {0}.{1}').format(tableSchema, tableName), parent=self.iface.mapCanvas())
+        for point in list(endVerticesDict.keys()):
             # this means we only have one occurrence of point, therefore it is a dangle
             if len(endVerticesDict[point]) > 1:
                 localProgress.step()

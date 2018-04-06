@@ -20,16 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import map
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
-from PyQt4.QtGui import QTableWidgetItem, QMessageBox
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QMessageBox
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
@@ -59,7 +61,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         # in case reload is used or index changed and comboBox is empty, for some reason
         try:
             # gets the layer to be "translated"
-            for lyr in self.classesFieldDict.keys():
+            for lyr in list(self.classesFieldDict.keys()):
                 if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
                     self.currLayer = lyr
                     break
@@ -89,7 +91,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         if fieldIndex == -1:
             return dict(), list()
         valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
-        keys = [value for value in valueDict.keys() if not (value == 'UseHtml' or value == 'IsMultiline')]
+        keys = [value for value in list(valueDict.keys()) if not (value == 'UseHtml' or value == 'IsMultiline')]
         return valueDict, keys
     
     def makeValueRelationDict(self, valueDict):
@@ -127,7 +129,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Error!"), self.tr("Problem obtaining domain values: ")+query.lastError().text())
             return ret
         
-        while query.next():
+        while next(query):
             code = str(query.value(0))
             code_name = query.value(1)
             ret[code_name] = code
@@ -142,7 +144,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         Slot that updates the code lists when the current active layers changes.
         """
         try:
-            for lyr in self.classesFieldDict.keys():
+            for lyr in list(self.classesFieldDict.keys()):
                 if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
                     self.currLayer = lyr
             self.loadCodeList()   
@@ -162,7 +164,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         
         if 'FilterExpression' in keys:
             valueDict = self.makeValueRelationDict(valueDict)
-            keys = valueDict.keys()
+            keys = list(valueDict.keys())
         elif 'Relation' in keys:
             return
 
@@ -196,7 +198,7 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
                     fieldIndex = layer.fieldNameIndex(field.name())
                     # only classes that have value maps may be enlisted on the feature
                     if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
-                        if layer not in self.classesFieldDict.keys():
+                        if layer not in list(self.classesFieldDict.keys()):
                             self.classesFieldDict[layer] = []
                             # in case more tha a db is loaded and they have the same layer
                             # name for some class. 

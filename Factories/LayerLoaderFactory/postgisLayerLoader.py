@@ -20,11 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import map
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.Qt import QObject
 
 # QGIS imports
@@ -103,7 +106,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = []
             for key in self.correspondenceDict:
                 if self.correspondenceDict[key] in geomFilterList:
-                    if key in self.geomTypeDict.keys():
+                    if key in list(self.geomTypeDict.keys()):
                         for lyr in semifinalList:
                             if lyr in self.geomTypeDict[key] and  lyr not in finalList:
                                 finalList.append(lyr)
@@ -155,13 +158,13 @@ class PostGISLayerLoader(EDGVLayerLoader):
         loadedDict = dict()
         if parent:
             primNumber = 0
-            for prim in lyrDict.keys():
-                for cat in lyrDict[prim].keys():
+            for prim in list(lyrDict.keys()):
+                for cat in list(lyrDict[prim].keys()):
                     for lyr in lyrDict[prim][cat]:
                         primNumber += 1
             localProgress = ProgressWidget(1, primNumber-1, self.tr('Loading layers... '), parent=parent)
-        for prim in lyrDict.keys():
-            for cat in lyrDict[prim].keys():
+        for prim in list(lyrDict.keys()):
+            for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
                         vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
@@ -248,11 +251,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :return:
         """
         domainList = []
-        keys = domainDict.keys()
-        multiLayers = multiColumnsDict.keys()
+        keys = list(domainDict.keys())
+        multiLayers = list(multiColumnsDict.keys())
         for lyr in layerList:
             if lyr in keys and lyr in multiLayers:
-                for attr in domainDict[lyr]['columns'].keys():
+                for attr in list(domainDict[lyr]['columns'].keys()):
                     if attr in multiColumnsDict[lyr]:
                         dom = domainDict[lyr]['columns'][attr]['references']
                         if dom not in domainList:
@@ -297,8 +300,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
             if attrName == 'id' or 'id_' in lyrAttributes[i].name():
                 lyr.setFieldEditable(i,False)
             else:
-                if lyrName in domainDict.keys():
-                    if attrName in domainDict[lyrName]['columns'].keys():
+                if lyrName in list(domainDict.keys()):
+                    if attrName in list(domainDict[lyrName]['columns'].keys()):
                         refTable = domainDict[lyrName]['columns'][attrName]['references']
                         refPk = domainDict[lyrName]['columns'][attrName]['refPk']
                         otherKey = domainDict[lyrName]['columns'][attrName]['otherKey']
@@ -308,12 +311,12 @@ class PostGISLayerLoader(EDGVLayerLoader):
                             #Do value relation
                             lyr.setEditorWidgetV2(i,'ValueRelation')
                             #make filter
-                            if 'constraintList' in domainDict[lyrName]['columns'][attrName].keys():
+                            if 'constraintList' in list(domainDict[lyrName]['columns'][attrName].keys()):
                                 filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
                                 allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
                                 #make editDict
-                                if lyrName in domLayerDict.keys():
-                                    if attrName in domLayerDict[lyrName].keys():
+                                if lyrName in list(domLayerDict.keys()):
+                                    if attrName in list(domLayerDict[lyrName].keys()):
                                         dom = domLayerDict[lyrName][attrName]
                                         editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
                                         lyr.setEditorWidgetV2Config(i,editDict)
@@ -323,7 +326,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                             #filter value dict
                             constraintList = domainDict[lyrName]['columns'][attrName]['constraintList']
                             valueRelationDict = dict()
-                            for key in valueDict.keys():
+                            for key in list(valueDict.keys()):
                                 if len(constraintList) > 0: 
                                     if key in constraintList:
                                         valueRelationDict[valueDict[key]] = str(key)
@@ -341,7 +344,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :param multiColumnsDict:
         :return:
         """
-        if tableName in multiColumnsDict.keys():
+        if tableName in list(multiColumnsDict.keys()):
             if attrName in multiColumnsDict[tableName]:
                 return True
         return False
@@ -354,7 +357,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :return:
         """
         allowNull = True
-        if lyrName in notNullDict.keys():
+        if lyrName in list(notNullDict.keys()):
             if attrName in notNullDict[lyrName]['attributes']:
                 allowNull = False
         return allowNull
@@ -376,7 +379,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         pathUiForm = self.getPathUiForm(self.database, lyr.name())
         formFile = self.newUiForm(pathUiForm)
         #inserir flag do filtro
-        withFilter = True if lyr.name() in self.filterDict.keys() else False
+        withFilter = True if lyr.name() in list(self.filterDict.keys()) else False
         self.generatorCustomForm.create(formFile, lyr, withFilter = withFilter)
         lyr.editFormConfig().setInitCodeSource(2)
         lyr.editFormConfig().setLayout(2)
@@ -406,7 +409,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         rules = self.getRulesSelected(lyr)
         # dbData = data['userData']['dbJson'][data['dbAlias']]
         # layerData = dbData[data['nameGeom']][data['nameCatLayer']][data['layerName']]
-        if lyr.name() in self.filterDict.keys():
+        if lyr.name() in list(self.filterDict.keys()):
             initCode = self.generatorCustomInitCode.getInitCodeWithFilter(self.filterDict[lyr.name()], rules) #layerData['filter'] é o resultado da query select * from dominios.<nome do dominio do atributo com filtro>
             return initCode
         else:

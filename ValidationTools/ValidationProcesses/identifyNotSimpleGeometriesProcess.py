@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget

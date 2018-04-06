@@ -20,14 +20,16 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 import os
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtGui import QApplication, QCursor
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtGui import QCursor
 # DSGTools imports
 from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 from DsgTools.Utils.utils import Utils
@@ -113,8 +115,8 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
             self.attributeComboBox.setEnabled(True)
             self.attributeComboBox.clear()
             self.attributeComboBox.addItem(self.tr('Select an attribute'))
-            if tableName in self.domainDict.keys():
-                attributeList = self.domainDict[tableName]['columns'].keys()
+            if tableName in list(self.domainDict.keys()):
+                attributeList = list(self.domainDict[tableName]['columns'].keys())
                 for attribute in attributeList:
                     self.attributeComboBox.addItem(attribute)
             self.singleValueComboBox.clear()
@@ -123,7 +125,7 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
     @pyqtSlot(int, name='on_tableComboBox_currentIndexChanged')
     def populateOnSelectAll(self):
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() <> 0 and self.tableComboBox.currentIndex() <> 0):
+        if self.allTablesCheckBox.checkState() == 2 or (self.allAttributesCheckBox.checkState() == 2 and self.schemaComboBox.currentIndex() != 0 and self.tableComboBox.currentIndex() != 0):
             self.attributeComboBox.clear()
             self.attributeComboBox.setEnabled(False)
             self.singleValueComboBox.clear()
@@ -131,19 +133,19 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
             if self.allAttributesCheckBox.checkState() == 2:
                 tableList = [self.tableComboBox.currentText()]
             else:
-                tableList = self.domainDict.keys()
+                tableList = list(self.domainDict.keys())
             allValueList = []
             idxList = []
             for tableName in tableList:
-                for attrName in self.domainDict[tableName]['columns'].keys():
+                for attrName in list(self.domainDict[tableName]['columns'].keys()):
                     for code in self.domainDict[tableName]['columns'][attrName]['values']:
                         value = self.domainDict[tableName]['columns'][attrName]['values'][code]
                         if value not in allValueList:
                             allValueList.append(value)
             for value in allValueList:
                 for tableName in tableList:
-                    for attrName in self.domainDict[tableName]['columns'].keys():
-                        if value not in self.domainDict[tableName]['columns'][attrName]['values'].values():
+                    for attrName in list(self.domainDict[tableName]['columns'].keys()):
+                        if value not in list(self.domainDict[tableName]['columns'][attrName]['values'].values()):
                             idx = allValueList.index(value)
                             if idx not in idxList:
                                 idxList.append(idx)
@@ -168,10 +170,10 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         self.singleValueComboBox.addItem(self.tr('Select a value to alter'))
         tableName = self.tableComboBox.currentText()
         attributeName = self.attributeComboBox.currentText()
-        if tableName in self.domainDict.keys():
-            if attributeName in self.domainDict[tableName]['columns'].keys():
+        if tableName in list(self.domainDict.keys()):
+            if attributeName in list(self.domainDict[tableName]['columns'].keys()):
                 attrDomainDict = self.domainDict[tableName]['columns'][attributeName]['values']
-                for value in attrDomainDict.values():
+                for value in list(attrDomainDict.values()):
                     self.singleValueComboBox.addItem(value)
                 defaultCode = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attributeName)
                 if defaultCode:
@@ -180,7 +182,7 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                         defaultCodeInt = int(defaultCode.replace('ARRAY','').replace('(','').replace(')','').replace(']','').replace('[','').replace('@','').replace('<','').split(':')[0])
                     else:
                         defaultCodeInt = int(defaultCode)
-                    if defaultCodeInt in attrDomainDict.keys():
+                    if defaultCodeInt in list(attrDomainDict.keys()):
                         comboItem = self.singleValueComboBox.findText(attrDomainDict[defaultCodeInt], flags = Qt.MatchExactly)
                         self.singleValueComboBox.setCurrentIndex(comboItem)
         QApplication.restoreOverrideCursor()
@@ -273,13 +275,13 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         if self.allAttributesCheckBox.checkState() == 2:
             tableName = self.tableComboBox.currentText()
             schema = self.schemaComboBox.currentText()
-            if tableName in self.domainDict.keys():
-                for attrName in self.domainDict[tableName]['columns'].keys():
+            if tableName in list(self.domainDict.keys()):
+                for attrName in list(self.domainDict[tableName]['columns'].keys()):
                     self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         elif self.allTablesCheckBox.checkState() == 2:
-            for tableName in self.domainDict.keys():
+            for tableName in list(self.domainDict.keys()):
                 schema = self.abstractDb.getTableSchemaFromDb(tableName)
-                for attrName in self.domainDict[tableName]['columns'].keys():
+                for attrName in list(self.domainDict[tableName]['columns'].keys()):
                     self.getJsonTagFromOneTable(schema, tableName, attrName, jsonList)
         else:
             tableName = self.tableComboBox.currentText()
@@ -289,8 +291,8 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
         return jsonList
 
     def getJsonTagFromOneTable(self, schema, tableName, attrName, jsonList):
-        if tableName in self.domainDict.keys():
-            if attrName in self.domainDict[tableName]['columns'].keys():
+        if tableName in list(self.domainDict.keys()):
+            if attrName in list(self.domainDict[tableName]['columns'].keys()):
                 attrDomainDict = self.domainDict[tableName]['columns'][attrName]['values']
                 oldDefaultText = self.abstractDb.getDefaultFromDb(self.schemaComboBox.currentText(),tableName,attrName)
                 if oldDefaultText:
@@ -300,7 +302,7 @@ class AlterDefaultWidget(QtGui.QWidget, FORM_CLASS):
                     else:
                         oldDefaultInt = int(oldDefaultText)
                 newDefaultText = self.singleValueComboBox.currentText()
-                newDefaultInt = [i for i in attrDomainDict.keys() if attrDomainDict[i] == newDefaultText][0]
+                newDefaultInt = [i for i in list(attrDomainDict.keys()) if attrDomainDict[i] == newDefaultText][0]
                 if oldDefaultText:
                     newDefault = oldDefaultText.replace(str(oldDefaultInt),str(newDefaultInt))
                 else:

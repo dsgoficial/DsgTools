@@ -22,8 +22,8 @@
 """
 
 from qgis.gui import QgsMessageBar, QgsMessageBarItem
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QProgressBar, QSizePolicy
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QProgressBar, QSizePolicy
 import time
 
 class ProgressWidget(QgsMessageBar):

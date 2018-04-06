@@ -30,7 +30,7 @@
 import processing
 from processing.core.GeoAlgorithmExecutionException import GeoAlgorithmExecutionException
 from qgis.core import QgsVectorLayer, QgsRasterLayer, QgsSpatialIndex, QgsFeatureRequest, QgsCoordinateTransform, QgsFeature, QgsCoordinateReferenceSystem
-from PyQt4.QtCore import QSettings
+from qgis.PyQt.QtCore import QSettings
 import os
 
 #script methods

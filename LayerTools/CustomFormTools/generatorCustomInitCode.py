@@ -21,6 +21,7 @@ Builds a temp rubberband with a given size and shape.
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 import json
 import os
 

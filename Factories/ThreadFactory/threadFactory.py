@@ -20,11 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 from DsgTools.Factories.ThreadFactory.postgisDbThread import PostgisDbThread
 from DsgTools.Factories.ThreadFactory.dpiThread import DpiThread
 from DsgTools.Factories.ThreadFactory.inventoryThread import InventoryThread
 
-class ThreadFactory:
+class ThreadFactory(object):
     def makeProcess(self, name):
         """
         Returns the specific thread to be initiated

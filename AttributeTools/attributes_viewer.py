@@ -23,10 +23,10 @@
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal
-from PyQt4.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
-from PyQt4.QtGui import QTableView
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtWidgets import QTableView
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsVectorLayerCache

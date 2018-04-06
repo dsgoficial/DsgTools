@@ -25,9 +25,9 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from PyQt4.QtSql import QSqlQuery
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
+from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers
@@ -80,13 +80,13 @@ class CodeNameCustomizationWidget(QtGui.QWidget, FORM_CLASS):
     
     @pyqtSlot(int)
     def on_domainComboBox_currentIndexChanged(self, idx):
-        if idx <> 0:
+        if idx != 0:
             domainName = self.domainComboBox.currentText()
             self.oldCodeNameComboBox.setEnabled(True)
             self.oldCodeNameComboBox.clear()
             self.oldCodeNameComboBox.addItem('Choose a code name')
             self.domainDict = self.abstractDb.getDomainDictV2('dominios.'+domainName)
-            for codeName in self.domainDict.keys():
+            for codeName in list(self.domainDict.keys()):
                 self.oldCodeNameComboBox.addItem(codeName)
             self.newCodeNameLineEdit.setEnabled(True)
             self.newCodeNameLineEdit.clear()

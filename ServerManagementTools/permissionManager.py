@@ -49,12 +49,12 @@ class PermissionManager(GenericDbManager):
         '''
         dbRolesDict = self.adminDb.getRolesDict()
         rolesDict = dict()
-        for db in dbRolesDict.keys():
+        for db in list(dbRolesDict.keys()):
             for role in dbRolesDict[db]:
                 profileName = '_'.join(role.split('_')[0:-5])
-                if profileName not in rolesDict.keys():
+                if profileName not in list(rolesDict.keys()):
                     rolesDict[profileName] = dict()
-                if db not in rolesDict[profileName].keys():
+                if db not in list(rolesDict[profileName].keys()):
                     rolesDict[profileName][db] = []
                 rolesDict[profileName][db].append(role)
         return dbRolesDict, rolesDict
@@ -69,17 +69,17 @@ class PermissionManager(GenericDbManager):
         grantedRoleDict = self.adminDb.getGrantedRolesDict()
         dbPerspectiveDict = dict()
         for dbName in self.dbDict:
-            if dbName not in dbPerspectiveDict.keys():
+            if dbName not in list(dbPerspectiveDict.keys()):
                 dbPerspectiveDict[dbName] = dict()
             edgvVersion = self.dbDict[dbName].getDatabaseVersion()
-            if edgvVersion in profiles.keys():
+            if edgvVersion in list(profiles.keys()):
                 for profile in profiles[edgvVersion]:
-                    if profile not in dbPerspectiveDict[dbName].keys():
+                    if profile not in list(dbPerspectiveDict[dbName].keys()):
                         dbPerspectiveDict[dbName][profile] = []
-                    if profile in rolesDict.keys():
-                        if dbName in rolesDict[profile].keys():
+                    if profile in list(rolesDict.keys()):
+                        if dbName in list(rolesDict[profile].keys()):
                             for role in rolesDict[profile][dbName]:
-                                if role in grantedRoleDict.keys():
+                                if role in list(grantedRoleDict.keys()):
                                     for user in grantedRoleDict[role]:
                                         if user not in dbPerspectiveDict[dbName][profile]:
                                             dbPerspectiveDict[dbName][profile].append(user)
@@ -95,10 +95,10 @@ class PermissionManager(GenericDbManager):
         for user in userList:
             userPerspectiveDict[user] = dict()
         
-        for dbName in dbPerspectiveDict.keys():
+        for dbName in list(dbPerspectiveDict.keys()):
             for profile in dbPerspectiveDict[dbName]:
                 for user in dbPerspectiveDict[dbName][profile]:
-                    if dbName not in userPerspectiveDict[user].keys():
+                    if dbName not in list(userPerspectiveDict[user].keys()):
                         userPerspectiveDict[user][dbName] = []
                     if profile not in userPerspectiveDict[user][dbName]:
                         userPerspectiveDict[user][dbName].append(profile)
@@ -145,9 +145,9 @@ class PermissionManager(GenericDbManager):
         Returns True if it is installed and False otherwise.
         '''
         (dbRolesDict, rolesDict) = self.getRolesInformation()
-        if permissionName not in rolesDict.keys():
+        if permissionName not in list(rolesDict.keys()):
             return False
-        if dbName not in rolesDict[permissionName].keys():
+        if dbName not in list(rolesDict[permissionName].keys()):
             return False
         return True
     
@@ -164,10 +164,10 @@ class PermissionManager(GenericDbManager):
             self.adminDb.db.transaction() #done to rollback in case of trouble
             (dbRolesDict, rolesDict) = self.getRolesInformation()
             grantedRoleDict = self.adminDb.getGrantedRolesDict()
-            if settingName in rolesDict.keys():
-                for dbName in rolesDict[settingName].keys():
+            if settingName in list(rolesDict.keys()):
+                for dbName in list(rolesDict[settingName].keys()):
                     for roleName in rolesDict[settingName][dbName]:
-                        if dbName not in self.dbDict.keys():
+                        if dbName not in list(self.dbDict.keys()):
                             abstractDb = self.instantiateAbstractDb(dbName)
                         else:
                             abstractDb = self.dbDict[dbName]
@@ -175,7 +175,7 @@ class PermissionManager(GenericDbManager):
                         abstractDbsToRollBack.append(abstractDb)
                         abstractDb.db.transaction()
                         usersToBeGranted = []
-                        if roleName in grantedRoleDict.keys():
+                        if roleName in list(grantedRoleDict.keys()):
                             usersToBeGranted = grantedRoleDict[roleName]
                         abstractDb.dropRoleOnDatabase(roleName)
                         for userName in usersToBeGranted:
@@ -200,10 +200,10 @@ class PermissionManager(GenericDbManager):
             abstractDbsToRollBack.append(self.adminDb)
             self.adminDb.db.transaction() #done to rollback in case of trouble
             (dbRolesDict, rolesDict) = self.getRolesInformation()
-            if settingName in rolesDict.keys():
-                for dbName in rolesDict[settingName].keys():
+            if settingName in list(rolesDict.keys()):
+                for dbName in list(rolesDict[settingName].keys()):
                     for roleName in rolesDict[settingName][dbName]:
-                        if dbName not in self.dbDict.keys():
+                        if dbName not in list(self.dbDict.keys()):
                             abstractDb = self.instantiateAbstractDb(dbName)
                         else:
                             abstractDb = self.dbDict[dbName]
@@ -227,21 +227,21 @@ class PermissionManager(GenericDbManager):
         3. If one piece of json is not valid, returns False.
         This validator does not validate the name of classes or names of categories. It only checks the format of dsgtools json profile.
         '''
-        for key1 in inputJsonDict.keys():
+        for key1 in list(inputJsonDict.keys()):
             if not isinstance(inputJsonDict[key1], dict):
                 return False
             if key1 not in ['database_2.1.3', 'database_FTer_2a_Ed','database_Non_EDGV']:
                 return False
-            for key2 in inputJsonDict[key1].keys():
+            for key2 in list(inputJsonDict[key1].keys()):
                 if not isinstance(inputJsonDict[key1][key2],dict):
                     return False
-                for key3 in inputJsonDict[key1][key2].keys():
+                for key3 in list(inputJsonDict[key1][key2].keys()):
                     if not isinstance(inputJsonDict[key1][key2][key3],dict):
                         return False
-                    for key4 in inputJsonDict[key1][key2][key3].keys():
+                    for key4 in list(inputJsonDict[key1][key2][key3].keys()):
                         if not isinstance(inputJsonDict[key1][key2][key3][key4],dict):
                             return False
-                        for key5 in inputJsonDict[key1][key2][key3][key4].keys():
+                        for key5 in list(inputJsonDict[key1][key2][key3][key4].keys()):
                             if key5 not in ["read", "write"]:
                                 return False
                             if inputJsonDict[key1][key2][key3][key4][key5] not in ["0","1","2"]:

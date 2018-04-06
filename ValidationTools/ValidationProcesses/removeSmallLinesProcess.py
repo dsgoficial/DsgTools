@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
@@ -59,7 +60,7 @@ class RemoveSmallLinesProcess(ValidationProcess):
             # getting parameters after the execution of our pre process
             self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
 
-            flagsClasses = self.flagsDict.keys()
+            flagsClasses = list(self.flagsDict.keys())
             self.startTimeCount()
             if len(flagsClasses) == 0:
                 self.setStatus(self.tr('There are no small lines.'), 1) #Finished

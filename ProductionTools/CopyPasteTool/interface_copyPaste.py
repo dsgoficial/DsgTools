@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+from builtins import range
 from qgis.gui import *
 from qgis.core import *
 from PyQt4.Qt import *
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QMessageBox, QFileDialog
-from PyQt4.QtCore import pyqtSlot, QSettings, QObject
+from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
+from qgis.PyQt.QtCore import pyqtSlot, QSettings, QObject
 import psycopg2
 from time import sleep
-from PyQt4 import QtGui, uic, QtCore
+from qgis.PyQt import QtGui, uic, QtCore
 import sys, os
 
 sys.path.append(os.path.dirname(__file__))
@@ -57,8 +58,8 @@ class CopyPaste(QtGui.QDialog, FORM_CLASS):
             layers = QgsMapLayerRegistry.instance().mapLayers()    
             grupo={}
             for x in range(len(layers)):
-                if layers.keys()[x][:-17] in selectedLayers:
-                    grupo[layers.keys()[x][:-17]]=layers.get(layers.keys()[x]) 
+                if list(layers.keys())[x][:-17] in selectedLayers:
+                    grupo[list(layers.keys())[x][:-17]]=layers.get(list(layers.keys())[x]) 
             for layer in grupo:
                 self.iface.setActiveLayer(grupo[layer])
                 ids = self.iface.activeLayer().selectedFeaturesIds()

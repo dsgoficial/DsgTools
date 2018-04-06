@@ -24,11 +24,13 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
-import urllib2
+from future import standard_library
+standard_library.install_aliases()
+import urllib.request, urllib.error, urllib.parse
 from xml.dom.minidom import parseString
 
-from PyQt4.QtCore import QSettings, QObject
-from PyQt4.QtGui import QMessageBox
+from qgis.PyQt.QtCore import QSettings, QObject
+from qgis.PyQt.QtWidgets import QMessageBox
 
 
 class BDGExTools(QObject):
@@ -60,15 +62,15 @@ class BDGExTools(QObject):
         
         for address in urlsList:
             if address in url:
-                proxy = urllib2.ProxyHandler({})
-                opener = urllib2.build_opener(proxy, urllib2.HTTPHandler)
-                urllib2.install_opener(opener)
+                proxy = urllib.request.ProxyHandler({})
+                opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
+                urllib.request.install_opener(opener)
                 return
 
         proxyStr = 'http://'+user+':'+password+'@'+host+':'+port
-        proxy = urllib2.ProxyHandler({'http': proxyStr})
-        opener = urllib2.build_opener(proxy, urllib2.HTTPHandler)
-        urllib2.install_opener(opener)
+        proxy = urllib.request.ProxyHandler({'http': proxyStr})
+        opener = urllib.request.build_opener(proxy, urllib.request.HTTPHandler)
+        urllib.request.install_opener(opener)
         return          
 
     def getProxyConfiguration(self):
@@ -100,13 +102,13 @@ class BDGExTools(QObject):
         self.setUrllibProxy(url)
 
         try:
-            getCapa = urllib2.Request(url, headers={'User-Agent' : "Magic Browser"})
-            resp = urllib2.urlopen(getCapa)
+            getCapa = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"})
+            resp = urllib.request.urlopen(getCapa)
             response = resp.read()
-        except urllib2.URLError, e:
+        except urllib.error.URLError as e:
             QMessageBox.critical(None, self.tr("URL Error!"), '{0}\nReason: {1}'.format(e.args, e.reason))
             return None
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             QMessageBox.critical(None, self.tr("HTTP Error!"), '{0}\nReason: {1}'.format(e.code, e.msg))
             return None
 

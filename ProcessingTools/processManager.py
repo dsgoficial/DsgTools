@@ -20,8 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from PyQt4.QtCore import QUrl
-from PyQt4.QtGui import QProgressBar
+from builtins import str
+from qgis.PyQt.QtCore import QUrl
+from qgis.PyQt.QtWidgets import QProgressBar
 from qgis._core import QgsAction
 
 import sip
@@ -44,7 +45,7 @@ class ProcessManager(QObject):
         """
         Gets a process progress bar by its uuid
         """
-        for key in self.processDict.keys():
+        for key in list(self.processDict.keys()):
             id = key.getId()
             if id == uuid:
                 return self.processDict[key]
@@ -54,7 +55,7 @@ class ProcessManager(QObject):
         """
         Finds a process by its uuid
         """
-        for key in self.processDict.keys():
+        for key in list(self.processDict.keys()):
             id = key.getId()
             if id == uuid:
                 return key

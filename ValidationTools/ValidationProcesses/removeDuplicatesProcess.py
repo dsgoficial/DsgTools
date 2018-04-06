@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 from qgis.core import QgsMessageLog
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
@@ -56,7 +57,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
             # getting parameters after the execution of our pre process
             self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')
 
-            flagsClasses = self.flagsDict.keys()
+            flagsClasses = list(self.flagsDict.keys())
             if len(flagsClasses) == 0:
                 self.setStatus(self.tr('There are no duplicated geometries.'), 1) #Finished
                 return 1

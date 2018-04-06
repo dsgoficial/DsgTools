@@ -20,10 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
 import os
 from collections import deque
 
-from PyQt4 import QtGui
+from qgis.PyQt import QtGui
 
 from qgis.core import QgsMessageLog, QgsDataSourceURI
 
@@ -41,7 +42,7 @@ class AttributeRuleProcess(ValidationProcess):
         self.processAlias = self.tr('Attribute Rule Checker')
         if not instantiating:
             self.propertyDict = self.postgisDb.getPropertyDict('AttributeRules')
-            self.parameters = {'Rules Setting': deque(self.propertyDict.keys())}
+            self.parameters = {'Rules Setting': deque(list(self.propertyDict.keys()))}
 
     def execute(self):
         """

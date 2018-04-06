@@ -45,11 +45,11 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
             self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements = withElements, excludeValidation = True)
             # adjusting process parameters
             self.interfaceDict = dict()
-            for key in self.classesWithElemDict.keys():
+            for key in list(self.classesWithElemDict.keys()):
                 cat, lyr, geom = tuple(key.split(',')[0:3])
                 interfaceKey = '{0}.{1} ({2})'.format(cat, lyr, geom)
                 self.interfaceDict[interfaceKey] = key
-            customInterface = RecursiveSnapParameters(self.interfaceDict.keys())
+            customInterface = RecursiveSnapParameters(list(self.interfaceDict.keys()))
             # adjusting process parameters
             self.parameters = {'Ordered Layers': customInterface, 'Only Selected':False}
     

@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
+from builtins import range
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
 from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
 from qgis.gui import QgsMapMouseEvent
 import math
-from PyQt4 import QtCore, QtGui
-from PyQt4.QtGui import QShortcut, QKeySequence, QCursor, QPixmap, QColor
-from PyQt4.QtCore import QSettings
+from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt.QtWidgets import QShortcut
+from qgis.PyQt.QtGui import QKeySequence, QCursor, QPixmap, QColor
+from qgis.PyQt.QtCore import QSettings
 
 class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def __init__(self, canvas, iface, action):
@@ -202,12 +204,12 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         elif lyrType == QGis.Polygon:
             geomList = geom.asPolygon()
         newGeom = []
-        for j in xrange(len(geomList)):
+        for j in range(len(geomList)):
             if lyrType == QGis.Line:
                 newGeom.append(coordinateTransformer.transform(geomList[j]))
             elif lyrType == QGis.Polygon:
                 line = geomList[j]
-                for i in xrange(len(line)):
+                for i in range(len(line)):
                     point = line[i]
                     newGeom.append(coordinateTransformer.transform(point))
         if lyrType == QGis.Line:

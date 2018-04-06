@@ -24,8 +24,8 @@ import os
 import shutil
 
 # Import the PyQt and QGIS libraries
-from PyQt4 import uic
-from PyQt4.QtGui import QListWidgetItem
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QListWidgetItem
 
 from processing.core.Processing import Processing
 from qgis.core import QgsMessageLog
@@ -107,7 +107,7 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
                     destination = os.path.join(folder, text)
                     try:
                         shutil.copy2(file, destination)
-                    except IOError, e:
+                    except IOError as e:
                         QgsMessageLog.logMessage(self.tr('Error copying file: ')+text+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
                         continue
 

@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
 class SnapItem(object):
     def __init__(self, snapType):
         """

@@ -20,16 +20,19 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import map
+from builtins import str
+from builtins import range
 import os
 from uuid import uuid4
 
 from qgis.core import QgsMessageLog
 
 # Import the PyQt and QGIS libraries
-from PyQt4 import uic, QtGui, QtCore
-from PyQt4.QtCore import Qt, SIGNAL
-from PyQt4.QtGui import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
-from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
+from qgis.PyQt import uic, QtGui, QtCore
+from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtWidgets import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 #DsgTools imports
 from DsgTools.QmlTools.qmlParser import QmlParser
@@ -60,7 +63,7 @@ class CustomTableModel(QSqlTableModel):
             sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
 
         query = QSqlQuery(sql, self.db)
-        while query.next():
+        while next(query):
             code = str(query.value(0))
             code_name = query.value(1)
             ret[code_name] = code
@@ -84,21 +87,21 @@ class CustomTableModel(QSqlTableModel):
         """
         dbdata = QSqlTableModel.data(self, index, role)
         column = self.headerData(index.column(), Qt.Horizontal)
-        if self.dict.has_key(column):
+        if column in self.dict:
             if isinstance(self.dict[column], dict):
                 valueMap = self.dict[column]
-                if str(dbdata) in valueMap.values():
-                    id = valueMap.values().index(str(dbdata))
-                    return valueMap.keys()[id]
+                if str(dbdata) in list(valueMap.values()):
+                    id = list(valueMap.values()).index(str(dbdata))
+                    return list(valueMap.keys())[id]
             elif isinstance(self.dict[column], tuple):
                 tupla = self.dict[column]
                 valueMap = self.makeValueRelationDict(tupla[0], tupla[1])
                 codes = str(dbdata)[1:-1].split(',')
                 code_names = list()
                 for c in codes:
-                    if str(c) in valueMap.values():
-                        id = valueMap.values().index(str(c))
-                        code_name = valueMap.keys()[id]
+                    if str(c) in list(valueMap.values()):
+                        id = list(valueMap.values()).index(str(c))
+                        code_name = list(valueMap.keys())[id]
                         code_names.append(code_name)
                 if len(code_names) > 0:
                     return '{%s}' % ','.join(code_names)
@@ -114,7 +117,7 @@ class CustomTableModel(QSqlTableModel):
         """
         column = self.headerData(index.column(), Qt.Horizontal)
         newValue = value
-        if self.dict.has_key(column):
+        if column in self.dict:
             if isinstance(self.dict[column], dict):
                 valueMap = self.dict[column]
                 newValue = int(valueMap[value])
@@ -326,7 +329,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
             sql = 'select code, code_name from dominios_%s where code in %s' % (table, in_clause)
 
         query = QSqlQuery(sql, self.db)
-        while query.next():
+        while next(query):
             code = query.value(0)
             code_name = query.value(1)
             ret[code_name] = code
@@ -382,7 +385,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         record.setValue("nome", self.tr("edit this field"))
         for i in range(self.projectModel.columnCount()):
             columnName = self.projectModel.headerData(i, Qt.Horizontal)
-            if self.domainDict.has_key(columnName):
+            if columnName in self.domainDict:
                 record.setValue(columnName, self.tr("edit this field"))
         return record
 
@@ -427,11 +430,11 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
         #Now the database checks the field "nome", therefore the method checkComplexNameField() is no longer needed
 
         #emit the signal to disassocite all features from the complexes marked for removal
-        self.emit(SIGNAL("markedToRemove( PyQt_PyObject )"), self.toBeRemoved)
+        self.markedToRemove.emit(self.toBeRemoved)
         #commmiting all pending changes
         if not self.projectModel.submitAll():
             #In case something went wrong we show the message to the user
             QMessageBox.warning(self.iface.mainWindow(), self.tr("Error!"), self.projectModel.lastError().text())
 
         #Emit the signal to update the complex tree
-        self.emit( SIGNAL( "tableUpdated()" ))
+        self.tableUpdated.emit()

@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtGui import QIcon, QPixmap, QAction
+from __future__ import absolute_import
+from qgis.PyQt.QtGui import QIcon, QPixmap
+from qgis.PyQt.QtWidgets import QAction
 from PyQt4.Qt import QObject
 from qgis.gui import QgsMessageBar
 from qgis.core import QGis
-from circle import Circle
-from polygon import Polygon
+from .circle import Circle
+from .polygon import Polygon
 
 class Acquisition(QObject):
     def __init__(self, iface):

@@ -20,13 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4.QtSql import QSqlQuery
-from PyQt4.QtGui import QMenu, QMessageBox
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtSql import QSqlQuery
+from qgis.PyQt.QtWidgets import QMenu, QMessageBox
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils

@@ -25,9 +25,10 @@ import json
 
 from qgis.core import QgsMessageLog
 
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import QMessageBox, QFileDialog, QApplication, QCursor
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
+from qgis.PyQt.QtGui import QCursor
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
 from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
@@ -58,9 +59,9 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
         parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
-        if self.databaseParameterWidget.prefixLineEdit.text() <> '':
+        if self.databaseParameterWidget.prefixLineEdit.text() != '':
             parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
-        if self.databaseParameterWidget.sufixLineEdit.text() <> '':
+        if self.databaseParameterWidget.sufixLineEdit.text() != '':
             parameterDict['sufix'] = self.databaseParameterWidget.sufixLineEdit.text()
         parameterDict['miList'] = self.getMiListFromCSV() 
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
@@ -71,7 +72,7 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
     def getMiListFromCSV(self):
         f = open(self.customFileSelector.fileNameList,'r')
         miList = [i.replace('\n','').strip() for i in f.readlines()]
-        miList = [i for i in miList if i <> '']
+        miList = [i for i in miList if i != '']
         return miList
 
     def validatePage(self):
@@ -85,14 +86,14 @@ class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
         parameterDict = self.getParameters()
         dbDict, errorDict = self.createDatabases(parameterDict)
         creationMsg = ''
-        if len(dbDict.keys()) > 0:
-            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(dbDict.keys()))
+        if len(list(dbDict.keys())) > 0:
+            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(list(dbDict.keys())))
         errorFrameMsg = ''
         errorMsg = ''
-        if len(errorDict.keys()) > 0:
+        if len(list(errorDict.keys())) > 0:
             frameList = []
             errorList = []
-            for key in errorDict.keys():
+            for key in list(errorDict.keys()):
                 if self.tr('Invalid inomen parameter!') in errorDict[key]:
                     frameList.append(key)
                 else:

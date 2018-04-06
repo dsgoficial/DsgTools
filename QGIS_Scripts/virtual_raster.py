@@ -88,7 +88,7 @@ def getCandidates(idx, layer, bbox):
     ids = idx.intersects(bbox)
     candidates = []
     for id in ids:
-        candidates.append(layer.getFeatures(QgsFeatureRequest().setFilterFid(id)).next())
+        candidates.append(next(layer.getFeatures(QgsFeatureRequest().setFilterFid(id))))
     return candidates
     
 def makeVrtDict(candidates, camada):
@@ -109,10 +109,10 @@ def createVrt(vrt):
     Creates a VRT file
     """
     count = 0
-    size = len(vrt.keys())
+    size = len(list(vrt.keys()))
     p = 0
     progress.setPercentage(p)    
-    for key in vrt.keys():
+    for key in list(vrt.keys()):
         vrtfilename = os.path.join(Pasta, key, key+'.vrt')
         features = vrt[key]
         rasterList = []

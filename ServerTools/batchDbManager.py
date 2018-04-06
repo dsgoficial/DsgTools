@@ -20,16 +20,19 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os
 from os.path import expanduser
 
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSlot, Qt, QSettings, pyqtSignal
-from PyQt4.QtGui import QListWidgetItem, QMessageBox, QMenu, QApplication, QCursor, QFileDialog
-from PyQt4.QtSql import QSqlDatabase,QSqlQuery
+from qgis.PyQt import QtGui, uic
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings, pyqtSignal
+from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
 from DsgTools.Utils.utils import Utils
@@ -46,7 +49,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
 
 class BatchDbManager(QtGui.QDialog, FORM_CLASS):
-    EDGV213, EDGV_FTer_2a_Ed, Non_EDGV = range(3)
+    EDGV213, EDGV_FTer_2a_Ed, Non_EDGV = list(range(3))
     def __init__(self, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)
@@ -85,7 +88,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
 
         dbList.sort()
         for (dbname, dbversion) in dbList:
-            if dbversion not in self.dbDict.keys():
+            if dbversion not in list(self.dbDict.keys()):
                 dbversion = 'Non_EDGV'
             if dbname not in self.dbDict[dbversion]:
                 self.dbDict[dbversion].append(dbname)
@@ -126,7 +129,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
 
     def closeAbstractDbs(self, dbsDict):
         exceptionDict = dict()
-        for dbName in dbsDict.keys():
+        for dbName in list(dbsDict.keys()):
             try:
                 dbsDict[dbName].db.close()
             except Exception as e:
@@ -143,7 +146,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     
     def logInternalError(self, exceptionDict):
         msg = ''
-        errorDbList = exceptionDict.keys()
+        errorDbList = list(exceptionDict.keys())
         if len(errorDbList)> 0:
             msg += self.tr('\nDatabases with error:')
             msg+= ', '.join(errorDbList)
@@ -182,7 +185,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         successList = []
         dbsDict = self.instantiateAbstractDbs(instantiateTemplates = True)
         self.closeAbstractDbs(dbsDict)
-        for dbName in dbsDict.keys():
+        for dbName in list(dbsDict.keys()):
             try:
                 if self.serverWidget.abstractDb.checkIfTemplate(dbName):
                     self.serverWidget.abstractDb.setDbAsTemplate(dbName = dbName, setTemplate = False)
@@ -215,14 +218,14 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         exceptionDict = dict()
         versionList = []
         
-        for dbName in dbsDict.keys():
+        for dbName in list(dbsDict.keys()):
             try:
                 version = dbsDict[dbName].getDatabaseVersion()
                 if version not in versionList:
                     versionList.append(version)
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)
-        if len(exceptionDict.keys())>0:
+        if len(list(exceptionDict.keys()))>0:
             self.logInternalError(exceptionDict)
         if len(versionList) > 1:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
@@ -262,7 +265,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def batchImportStyles(self, dbsDict, styleDir, styleList, version):
         exceptionDict = dict()
         successList = []
-        for dbName in dbsDict.keys():
+        for dbName in list(dbsDict.keys()):
             for style in styleList:
                 try:
                     dbsDict[dbName].importStylesIntoDb(style)
@@ -270,7 +273,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
                 except Exception as e:
                     errors = []
                     for arg in e.args:
-                        if isinstance(arg, basestring):
+                        if isinstance(arg, str):
                             s = '{}'.format(arg.encode('utf-8'))
                         else:
                             s = str(arg)
@@ -291,13 +294,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dbsDict = self.instantiateAbstractDbs()
         allStylesDict = dict()
         exceptionDict = dict()
-        for dbName in dbsDict.keys():
+        for dbName in list(dbsDict.keys()):
             try:
                 newDict =dbsDict[dbName].getAllStylesDict(perspective)
                 allStylesDict = self.utils.mergeDict(newDict, allStylesDict)
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)
-        if len(exceptionDict.keys())>0:
+        if len(list(exceptionDict.keys()))>0:
             self.logInternalError(exceptionDict)
         return allStylesDict
 
@@ -310,13 +313,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         self.stylesTreeWidget.clear()
         allStylesDict = self.getStylesFromDbs()
         rootNode = self.stylesTreeWidget.invisibleRootItem()
-        for styleName in allStylesDict.keys():
+        for styleName in list(allStylesDict.keys()):
             parentStyleItem = self.createItem(rootNode, styleName, 0)
-            dbList = allStylesDict[styleName].keys()
+            dbList = list(allStylesDict[styleName].keys())
             parentTimeList = []
             for dbName in dbList:
                 dbItem = self.createItem(parentStyleItem, dbName, 1)
-                tableList = allStylesDict[styleName][dbName].keys()
+                tableList = list(allStylesDict[styleName][dbName].keys())
                 tableList.sort()
                 timeList = []
                 for table in tableList:
@@ -331,7 +334,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def on_deleteStyles_clicked(self):
         dbsDict = self.instantiateAbstractDbs()
         styleDict = self.getStylesFromDbs()
-        styleList = styleDict.keys()
+        styleList = list(styleDict.keys())
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
@@ -347,8 +350,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def batchDeleteStyles(self, dbsDict, styleDict):
         exceptionDict = dict()
         successList = []
-        for style in styleDict.keys():
-            for dbName in styleDict[style].keys():
+        for style in list(styleDict.keys()):
+            for dbName in list(styleDict[style].keys()):
                 try:
                     dbsDict[dbName].deleteStyle(style)
                     successList.append(dbName)
@@ -378,7 +381,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
     def batchCustomizeFromSQLFile(self, dbsDict, sqlFilePath):
         exceptionDict = dict()
         successList = []
-        for dbName in dbsDict.keys():
+        for dbName in list(dbsDict.keys()):
             try:
                 dbsDict[dbName].runSqlFromFile(sqlFilePath)
                 successList.append(dbName)

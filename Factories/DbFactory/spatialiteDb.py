@@ -20,9 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from PyQt4.QtSql import QSqlQuery, QSqlDatabase
-from PyQt4.QtGui import QFileDialog
+from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
+from qgis.PyQt.QtWidgets import QFileDialog
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from osgeo import ogr, osr
 from qgis.core import QgsCoordinateReferenceSystem 
@@ -72,7 +74,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             self.db.close()
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
-        while query.next():
+        while next(query):
             tableName = str(query.value(0))
             layerName = tableName
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
@@ -91,7 +93,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             self.db.close()
             raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
-        while query.next():
+        while next(query):
                 tableName = str(query.value(0))
                 layerName = tableName
                 tableSchema = layerName.split('_')[0]
@@ -110,11 +112,11 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             self.db.close()
             raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
-        while query.next():
+        while next(query):
             className = str(query.value(0))
             classSql = str(query.value(1))
             if className.split('_')[0] == 'complexos' or className.split('_')[-1] in ['p','l','a']:
-                if className not in classDict.keys():
+                if className not in list(classDict.keys()):
                     classDict[className]=dict()
                 classSql = classSql.split(className)[1]
                 sqlList = classSql.replace('(','').replace(')','').replace('\"','').replace('\'','').split(',')
@@ -122,11 +124,11 @@ class SpatialiteDb(AbstractDb):
                      fieldName = str(s.strip().split(' ')[0])
                      classDict[className][fieldName]=fieldName
 
-                if 'GEOMETRY' in classDict[className].keys():
+                if 'GEOMETRY' in list(classDict[className].keys()):
                     classDict[className]['GEOMETRY'] = 'geom'
-                if 'geometry' in classDict[className].keys():
+                if 'geometry' in list(classDict[className].keys()):
                     classDict[className]['geometry'] = 'geom'
-                if 'OGC_FID' in classDict[className].keys():
+                if 'OGC_FID' in list(classDict[className].keys()):
                     classDict[className]['OGC_FID'] = 'id'
 
         return classDict
@@ -151,12 +153,12 @@ class SpatialiteDb(AbstractDb):
         classes =  self.listClassesWithElementsFromDatabase()
         notNullDict = outputAbstractDb.getNotNullDict()
         
-        for inputClass in classes.keys():
+        for inputClass in list(classes.keys()):
             outputClass = self.translateAbstractDbLayerNameToOutputFormat(inputClass,outputAbstractDb)
             (schema,className) = self.getTableSchema(inputClass)
-            if outputClass in outputdbStructure.keys():
-                outputAttrList = self.reorderTupleList(outputdbStructure[outputClass].keys())
-                inputAttrList = self.reorderTupleList(inputdbStructure[inputClass].keys())
+            if outputClass in list(outputdbStructure.keys()):
+                outputAttrList = self.reorderTupleList(list(outputdbStructure[outputClass].keys()))
+                inputAttrList = self.reorderTupleList(list(inputdbStructure[inputClass].keys()))
                             
                 sql = self.gen.getFeaturesWithSQL(inputClass,inputAttrList) 
                 query = QSqlQuery(sql, self.db)
@@ -164,38 +166,38 @@ class SpatialiteDb(AbstractDb):
                     self.db.close()
                     raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
                 
-                while query.next():
+                while next(query):
                     id = query.value(0)
                     #detects null lines
                     for i in range(len(inputAttrList)):
                         nullLine = True
                         value = query.value(i)
-                        if value <> None:
+                        if value != None:
                             nullLine = False
                             break
                     if nullLine:
-                        if cl not in invalidated['nullLine'].keys():
+                        if cl not in list(invalidated['nullLine'].keys()):
                             invalidated['nullLine'][inputClass]=0
                         invalidated['nullLine'][inputClass]+=1
                     
                     #validates pks
                     if id == None and (not nullLine):
-                        if cl not in invalidated['nullPk'].keys():
+                        if cl not in list(invalidated['nullPk'].keys()):
                             invalidated['nullPk'][inputClass]=0
                         invalidated['nullPk'][inputClass]+=1
                     
                     for i in range(len(inputAttrList)):
                         value = query.value(i)
                         #validates domain
-                        if outputClass in domainDict.keys():    
-                            if inputAttrList[i] in domainDict[outputClass].keys():
+                        if outputClass in list(domainDict.keys()):    
+                            if inputAttrList[i] in list(domainDict[outputClass].keys()):
                                 if value not in domainDict[outputClass][inputAttrList[i]] and (not nullLine):
                                     invalidated = self.utils.buildNestedDict(invalidated, ['notInDomain',inputClass,id,inputAttrList[i]], value)
                         #validates not nulls
-                        if outputClass in notNullDict.keys():
-                            if outputClass in domainDict.keys():
-                                if inputAttrList[i] in notNullDict[outputClass] and inputAttrList[i] not in domainDict[outputClass].keys():
-                                    if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
+                        if outputClass in list(notNullDict.keys()):
+                            if outputClass in list(domainDict.keys()):
+                                if inputAttrList[i] in notNullDict[outputClass] and inputAttrList[i] not in list(domainDict[outputClass].keys()):
+                                    if (value == None) and (not nullLine) and (inputAttrList[i] not in list(domainDict[outputClass].keys())):
                                         invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)             
                             else:
                                 if inputAttrList[i] in notNullDict[outputClass]:
@@ -203,16 +205,16 @@ class SpatialiteDb(AbstractDb):
                                         if value.isNull():
                                             invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
                                     except:
-                                        if (value == None) and (not nullLine) and (inputAttrList[i] not in domainDict[outputClass].keys()):
+                                        if (value == None) and (not nullLine) and (inputAttrList[i] not in list(domainDict[outputClass].keys())):
                                             invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
-                        if outputClass in domainDict.keys():
-                            if (inputAttrList[i] not in ['geom','GEOMETRY','geometry','id','OGC_FID'] and schema <> 'complexos') or (schema == 'complexos' and inputAttrList[i] <> 'id'):
-                                if inputAttrList[i] not in outputdbStructure[outputClass].keys():
+                        if outputClass in list(domainDict.keys()):
+                            if (inputAttrList[i] not in ['geom','GEOMETRY','geometry','id','OGC_FID'] and schema != 'complexos') or (schema == 'complexos' and inputAttrList[i] != 'id'):
+                                if inputAttrList[i] not in list(outputdbStructure[outputClass].keys()):
                                     invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
                         #validates fk field
                         if 'id_' == inputAttrList[0:3]:
                             if not self.validateUUID(value):
-                                if inputAttrList[i] not in outputdbStructure[outputClass].keys():
+                                if inputAttrList[i] not in list(outputdbStructure[outputClass].keys()):
                                     invalidated = self.utils.buildNestedDict(invalidated, ['nullComplexFk',inputClass], [inputAttrList[i]])
             else:
                 invalidated['classNotFoundInOutput'].append(inputAttrList)
@@ -284,7 +286,7 @@ class SpatialiteDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         # if not query.isActive():
         #     raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
-        while query.next():
+        while next(query):
             version = query.value(0)
         return version
     
@@ -302,7 +304,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem obtaining link column: ")+query.lastError().text())
         column_name = ""
-        while query.next():
+        while next(query):
             column_name = query.value(0)
         return column_name
 
@@ -321,7 +323,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem loading associated features: ")+query.lastError().text())
 
-        while query.next():
+        while next(query):
             #setting the variables
             complex_schema = query.value(0)
             complex = query.value(1)
@@ -339,7 +341,7 @@ class SpatialiteDb(AbstractDb):
                 self.db.close()
                 raise Exception(self.tr("Problem executing query: ")+complexQuery.lastError().text())
 
-            while complexQuery.next():
+            while next(complexQuery):
                 complex_uuid = complexQuery.value(0)
                 name = complexQuery.value(1)
 
@@ -355,7 +357,7 @@ class SpatialiteDb(AbstractDb):
                     self.db.close()
                     raise Exception(self.tr("Problem executing query: ")+associatedQuery.lastError().text())
 
-                while associatedQuery.next():
+                while next(associatedQuery):
                     ogc_fid = associatedQuery.value(0)
                     associatedDict = self.utils.buildNestedDict(associatedDict, [name, complex_uuid, aggregated_class], [ogc_fid])
         return associatedDict
@@ -372,7 +374,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
 
-        while query.next():
+        while next(query):
             if query.value(0) == 'complexos_'+className:
                 return True
         return False
@@ -403,7 +405,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem getting tables from database: ")+query.lastError().text())
 
-        while query.next():
+        while next(query):
             #table name
             ret.append(query.value(0))
         return ret
@@ -434,14 +436,14 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
         geomDict = dict()
-        while query.next():
+        while next(query):
             if edgvVersion in ('2.1.3','FTer_2a_Ed'):
                 type = query.value(0)
             else:
                 type = self.getResolvedGeomType(query.value(0))
             tableName = query.value(1)
             layerName = '_'.join(tableName.split('_')[1::])
-            if type not in geomDict.keys():
+            if type not in list(geomDict.keys()):
                 geomDict[type] = []
             if layerName not in geomDict[type]:
                 geomDict[type].append(layerName)
@@ -462,7 +464,7 @@ class SpatialiteDb(AbstractDb):
         geomDict = dict()
         geomDict['primitivePerspective'] = self.getGeomTypeDict()
         geomDict['tablePerspective'] = dict()
-        while query.next():
+        while next(query):
             isCentroid = False
             srid = query.value(0)
             if edgvVersion in ('2.1.3','FTer_2a_Ed'):
@@ -473,7 +475,7 @@ class SpatialiteDb(AbstractDb):
             tableSchema = tableName.split('_')[0]
             geometryColumn = query.value(1)
             layerName = '_'.join(tableName.split('_')[1::])
-            if layerName not in geomDict['tablePerspective'].keys():
+            if layerName not in list(geomDict['tablePerspective'].keys()):
                 geomDict['tablePerspective'][layerName] = dict()
                 geomDict['tablePerspective'][layerName]['schema'] = tableSchema
                 geomDict['tablePerspective'][layerName]['srid'] = str(srid)
@@ -492,11 +494,11 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
         geomDict = dict()
-        while query.next():
+        while next(query):
             geomColumn = query.value(0)
             tableName = query.value(1)
             lyrName = '_'.join(tableName.split('_')[1::])
-            if geomColumn not in geomDict.keys():
+            if geomColumn not in list(geomDict.keys()):
                 geomDict[geomColumn] = []
             geomDict[geomColumn].append(lyrName)
         return geomDict
@@ -536,7 +538,7 @@ class SpatialiteDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting full table name: ")+query.lastError().text())
-        while query.next():
+        while next(query):
             return query.value(0).split('_')[0]
     
     def getGeomColumnTupleList(self, showViews = False):
@@ -551,7 +553,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
         geomList = []
-        while query.next():
+        while next(query):
             if edgvVersion in ['2.1.3','FTer_2a_Ed']:
                 geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
             else:

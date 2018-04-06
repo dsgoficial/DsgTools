@@ -20,12 +20,15 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import str
+from builtins import range
 import os
 
 # Qt imports
-from PyQt4 import QtGui, uic, QtCore
-from PyQt4.QtCore import pyqtSlot, Qt, pyqtSignal
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor, QFileDialog
+from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
+from qgis.PyQt.QtGui import QCursor
 
 from qgis.core import QgsMessageLog
 
@@ -99,7 +102,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         """
 
         profileDict = self.permissionManager.getSetting(profileName, edgvVersion)
-        self.parent = profileDict.keys()[0]
+        self.parent = list(profileDict.keys())[0]
         #invisible root item
         rootItem = self.treeWidget.invisibleRootItem()
         #database item
@@ -115,7 +118,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         """
         #permissions
         lista = ['read', 'write']
-        for key in mydict.keys():
+        for key in list(mydict.keys()):
             if key in lista:
                 self.setItemCheckState(parent, mydict, key)
             else:
@@ -166,7 +169,7 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         self.treeWidget.clear()
         self.setEnabled(False)
         profilesDict = self.permissionManager.getSettings()
-        for edgvVersion in profilesDict.keys():
+        for edgvVersion in list(profilesDict.keys()):
             self.profilesListWidget.addItems([i + ' ({0})'.format(edgvVersion) for i in profilesDict[edgvVersion]] )
         self.profilesListWidget.sortItems(order = Qt.AscendingOrder)
     
@@ -177,11 +180,11 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         """
         #use selector
         permissionDict = self.permissionManager.getSettings()
-        parameterDlg = GenericParameterSetter(nameList = permissionDict.keys())
+        parameterDlg = GenericParameterSetter(nameList = list(permissionDict.keys()))
         if not parameterDlg.exec_():
             return
         templateDb, profileName, edgvVersion = parameterDlg.getParameters()
-        if edgvVersion in permissionDict.keys():
+        if edgvVersion in list(permissionDict.keys()):
             if profileName in permissionDict[edgvVersion]:
                 QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
                 return
@@ -258,13 +261,13 @@ class ServerProfilesManager(QtGui.QDialog, FORM_CLASS):
         for jsonItem in geomList:
             layerName = jsonItem['table_name']
             schema = jsonItem['table_schema']
-            if version <> 'Non_EDGV':
+            if version != 'Non_EDGV':
                 category = layerName.split('_')[0]
             else:
                 category = schema
-            if schema not in categories.keys():
+            if schema not in list(categories.keys()):
                 categories[schema] = dict()
-            if category not in categories[schema].keys():
+            if category not in list(categories[schema].keys()):
                 categories[schema][category] = dict()
             if layerName not in categories[schema][category]:
                 categories[schema][category][layerName] = dict()

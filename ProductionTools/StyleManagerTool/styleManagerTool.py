@@ -20,10 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import range
 import os
-from PyQt4.QtGui import QMessageBox, QApplication, QCursor
-from PyQt4.QtCore import QSettings, pyqtSignal, pyqtSlot, SIGNAL, QObject, Qt
-from PyQt4 import QtGui, uic, QtCore
+from qgis.PyQt.QtWidgets import QMessageBox, QApplication
+from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
+from qgis.PyQt import QtGui, uic, QtCore
 from PyQt4.Qt import QWidget, QObject
 
 from qgis.core import QgsMapLayer, QGis, QgsDataSourceURI, QgsMessageLog, QgsVectorLayer
@@ -130,7 +132,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         dbVersion = abstractDb.getDatabaseVersion()
         styleDict = abstractDb.getStyleDict(dbVersion)
         self.styleComboBox.clear()
-        styleList = styleDict.keys()
+        styleList = list(styleDict.keys())
         numberOfStyles = len(styleList)
         if numberOfStyles > 0:
             self.styleComboBox.addItem(self.tr('Select Style'))
@@ -162,7 +164,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     def getAbstractDb(self, dbName):
         dbParameters, driverName = self.getParametersFromLyr(dbName)
         abstractDb = self.dbFactory.createDbFactory(driverName)
-        if 'host' in dbParameters.keys():
+        if 'host' in list(dbParameters.keys()):
             abstractDb.connectDatabaseWithParameters(dbParameters['host'], dbParameters['port'], dbName, dbParameters['user'], dbParameters['password'])
         else:
             abstractDb.connectDatabase(dbParameters['dbPath'])
