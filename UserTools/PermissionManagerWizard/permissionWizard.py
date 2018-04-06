@@ -24,7 +24,6 @@ import os
 import json
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
 from PyQt4.QtGui import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
 from DsgTools.Utils.utils import Utils

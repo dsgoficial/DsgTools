@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import *
+from PyQt4.QtCore import QXmlStreamWriter, QFile, QIODevice
 
 def generateQml(filename, attrs, codelists):
     xmlWriter = QXmlStreamWriter()
