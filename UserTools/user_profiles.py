@@ -271,7 +271,7 @@ class ManageUserProfiles(QtGui.QDialog, FORM_CLASS):
             try:
                 self.widget.abstractDb.revokeRole(user, role)
             except Exception as e:
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args)
+                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
                 self.getProfiles(user)
                 return
 
