@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 #Qt Imports
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 #DsgTools Imports
 from DsgTools.Utils.utils import Utils 
 from DsgTools.Factories.DbFactory.postgisDb import PostgisDb

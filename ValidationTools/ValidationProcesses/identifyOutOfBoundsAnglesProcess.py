@@ -22,7 +22,7 @@
 """
 from builtins import str
 from builtins import range
-from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, QGis
+from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, Qgis
 import math
 from math import pi
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
@@ -77,9 +77,9 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         outOfBoundsList = []
         geom = feat.geometry()
         for part in geom.asGeometryCollection():
-            if part.type() == QGis.Polygon:
+            if part.type() == Qgis.Polygon:
                 self.getOutOfBoundsAngleInPolygon(feat, geometry_column, part, angle, outOfBoundsList)
-            if part.type() == QGis.Line:
+            if part.type() == Qgis.Line:
                 self.getOutOfBoundsAngleInLine(feat, geometry_column, part, angle, outOfBoundsList)
             
         return outOfBoundsList

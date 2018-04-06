@@ -32,8 +32,8 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.Utils.utils import Utils
 from DsgTools.dsgEnums import DsgEnums
 
-#PyQt4 imports
-from PyQt4.Qt import QObject
+#qgis.PyQt imports
+from qgis.PyQt.Qt import QObject
 
 class GenericDbManager(QObject):
     """

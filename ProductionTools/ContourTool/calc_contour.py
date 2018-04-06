@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsGeometry, QGis
+from qgis.core import QgsMapLayer, QgsGeometry, Qgis, QgsProject
 from qgis.gui import QgsMessageBar
 
 #DSGTools imports
@@ -64,8 +64,8 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         self.contourTool = ContourTool()
 
         #Connecting slot to deal with adition/removal of layers
-        QgsMapLayerRegistry.instance().layersAdded.connect(self.addLayers)
-        QgsMapLayerRegistry.instance().layersRemoved.connect(self.populateLayers)
+        QgsProject.instance().layersAdded.connect(self.addLayers)
+        QgsProject.instance().layersRemoved.connect(self.populateLayers)
 
     @pyqtSlot(bool, name = 'on_reactivatePushButton_clicked')
     def activateTool(self):
@@ -95,7 +95,7 @@ class CalcContour(QtGui.QDockWidget, FORM_CLASS):
         
         layers = self.iface.mapCanvas().layers()
         for layer in layers:
-            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == QGis.Line:
+            if layer.type() == QgsMapLayer.VectorLayer and layer.geometryType() == Qgis.Line:
                 self.layerCombo.addItem(layer.name())
 
     def getLayer(self):

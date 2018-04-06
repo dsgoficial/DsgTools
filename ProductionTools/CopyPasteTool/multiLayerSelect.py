@@ -24,7 +24,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from builtins import range
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
+from qgis.core import Qgis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
@@ -51,8 +51,8 @@ class MultiLayerSelection(QgsMapTool):
         self.canvas = canvas
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
-        self.hoverRubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)
+        self.hoverRubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)
         mFillColor = QColor( 254, 178, 76, 63 )
         self.rubberBand.setColor(mFillColor)
         self.hoverRubberBand.setColor(QColor( 255, 0, 0, 90 ))
@@ -90,7 +90,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(Qgis.Polygon)
     
     def keyPressEvent(self, e):
         """
@@ -109,7 +109,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         if self.menuHovered:
             # deactivates rubberband when the context menu is "destroyed" 
-            self.hoverRubberBand.reset(QGis.Polygon)
+            self.hoverRubberBand.reset(Qgis.Polygon)
         if not self.isEmittingPoint:
             return
         self.endPoint = self.toMapCoordinates( e.pos() )
@@ -119,7 +119,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(Qgis.Polygon)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPoint(startPoint.x(), startPoint.y())
@@ -204,7 +204,7 @@ class MultiLayerSelection(QgsMapTool):
     
     def getPrimitiveDict(self, e, hasControlModifyer=False):
         """
-        Builds a dict with keys as geometryTypes of layer, which are QGis.Point (value 0), QGis.Line (value 1) or QGis.Polygon (value 2),
+        Builds a dict with keys as geometryTypes of layer, which are Qgis.Point (value 0), Qgis.Line (value 1) or Qgis.Polygon (value 2),
         and values as layers from self.iface.legendInterface().layers(). When self.iface.legendInterface().layers() is called, a list of
         layers ordered according to lyr order in TOC is returned.
         """
@@ -357,11 +357,11 @@ class MultiLayerSelection(QgsMapTool):
         :param geom: int indicating geometry type of target feature
         """
         if geom == 0:
-            self.hoverRubberBand.reset(QGis.Point)
+            self.hoverRubberBand.reset(Qgis.Point)
         elif geom == 1:
-            self.hoverRubberBand.reset(QGis.Line)
+            self.hoverRubberBand.reset(Qgis.Line)
         else:
-            self.hoverRubberBand.reset(QGis.Polygon)
+            self.hoverRubberBand.reset(Qgis.Polygon)
         self.hoverRubberBand.addGeometry(feature.geometry(), layer)
         # to inform the code that menu has been hovered over
         self.menuHovered = True
@@ -373,11 +373,11 @@ class MultiLayerSelection(QgsMapTool):
         """
         geom = featureList[0][2]
         if geom == 0:
-            self.hoverRubberBand.reset(QGis.Point)
+            self.hoverRubberBand.reset(Qgis.Point)
         elif geom == 1:
-            self.hoverRubberBand.reset(QGis.Line)
+            self.hoverRubberBand.reset(Qgis.Line)
         else:
-            self.hoverRubberBand.reset(QGis.Polygon)
+            self.hoverRubberBand.reset(Qgis.Polygon)
         for item in featureList:
             self.hoverRubberBand.addGeometry(item[1].geometry(), item[0])
         self.menuHovered = True

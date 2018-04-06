@@ -12,7 +12,7 @@ from qgis.PyQt.QtWidgets import QShortcut
 from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import QSettings
 from .geometricaAquisition import GeometricaAcquisition
-from qgis.core import QgsPoint, QGis
+from qgis.core import QgsPoint, Qgis
 from qgis.gui import QgsMapMouseEvent, QgsMapTool
 
 class Circle(GeometricaAcquisition):
@@ -59,7 +59,7 @@ class Circle(GeometricaAcquisition):
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand.reset(geometryType=Qgis.Point)
             self.snapCursorRubberBand = None
         oldPoint = QgsPoint(event.mapPoint())
         event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)

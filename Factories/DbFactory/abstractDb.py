@@ -604,7 +604,7 @@ class AbstractDb(QObject):
         Gets the QML directory
         '''
         currentPath = os.path.dirname(__file__)
-        if qgis.core.QGis.QGIS_VERSION_INT >= 20600:
+        if qgis.core.Qgis.QGIS_VERSION_INT >= 20600:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_26')
         else:
             qmlVersionPath = os.path.join(currentPath, '..', '..', 'Qmls', 'qgis_22')

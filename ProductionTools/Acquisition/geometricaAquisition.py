@@ -4,7 +4,7 @@ from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
+from qgis.core import QgsPoint, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
 from qgis.gui import QgsMapMouseEvent
 import math
 from qgis.PyQt import QtCore, QtGui
@@ -97,7 +97,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.qntPoint = 0
         self.geometry = []
         if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(geometryType=QGis.Point)
+            self.snapCursorRubberBand.reset(geometryType=Qgis.Point)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
     
@@ -133,17 +133,17 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     
     def getRubberBand(self):
         geomType = self.iface.activeLayer().geometryType()
-        if geomType == QGis.Polygon:
+        if geomType == Qgis.Polygon:
             rubberBand = QgsRubberBand(self.canvas, True)
             rubberBand.setFillColor(QColor(255, 0, 0, 40))
-        elif geomType == QGis.Line:
+        elif geomType == Qgis.Line:
             rubberBand = QgsRubberBand(self.canvas, False)
         rubberBand.setBorderColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
     
     def getSnapRubberBand(self):
-        rubberBand = QgsRubberBand(self.canvas, geometryType = QGis.Point)
+        rubberBand = QgsRubberBand(self.canvas, geometryType = Qgis.Point)
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
         rubberBand.setBorderColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
@@ -199,20 +199,20 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
         lyrType = self.iface.activeLayer().geometryType()
         # Transforming the points
-        if lyrType == QGis.Line:
+        if lyrType == Qgis.Line:
             geomList = geom.asPolyline()
-        elif lyrType == QGis.Polygon:
+        elif lyrType == Qgis.Polygon:
             geomList = geom.asPolygon()
         newGeom = []
         for j in range(len(geomList)):
-            if lyrType == QGis.Line:
+            if lyrType == Qgis.Line:
                 newGeom.append(coordinateTransformer.transform(geomList[j]))
-            elif lyrType == QGis.Polygon:
+            elif lyrType == Qgis.Polygon:
                 line = geomList[j]
                 for i in range(len(line)):
                     point = line[i]
                     newGeom.append(coordinateTransformer.transform(point))
-        if lyrType == QGis.Line:
+        if lyrType == Qgis.Line:
             return QgsGeometry.fromPolyline(newGeom + [newGeom[0]])
-        elif lyrType == QGis.Polygon:
+        elif lyrType == Qgis.Polygon:
             return QgsGeometry.fromPolygon([newGeom])                   

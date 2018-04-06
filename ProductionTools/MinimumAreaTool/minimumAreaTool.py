@@ -29,7 +29,7 @@ from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtWidgets import QMessageBox, QAction
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject
-from PyQt4.Qt import QWidget, QObject
+from qgis.PyQt.Qt import QWidget, QObject
 
 #qgis imports
 import qgis.utils

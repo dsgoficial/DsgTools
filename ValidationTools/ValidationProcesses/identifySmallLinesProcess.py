@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog, QGis
+from qgis.core import QgsMessageLog, Qgis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget

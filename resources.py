@@ -2,7 +2,7 @@
 
 # Resource object code
 #
-# Created by: The Resource Compiler for PyQt4 (Qt v4.8.7)
+# Created by: The Resource Compiler for qgis.PyQt (Qt v4.8.7)
 #
 # WARNING! All changes made in this file will be lost!
 

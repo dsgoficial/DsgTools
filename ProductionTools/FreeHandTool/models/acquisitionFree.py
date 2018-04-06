@@ -151,7 +151,7 @@ class AcquisitionFree(gui.QgsMapTool):
     def isPolygon(self):
         #Método para testar se a camada atual é polígono
         #Parâmetro de retorno: isPolygon (Boleano)
-        isPolygon = (self.getGeometryType() != core.QGis.Line)
+        isPolygon = (self.getGeometryType() != core.Qgis.Line)
         return isPolygon
         
     def keyPressEvent(self, event):
@@ -213,7 +213,7 @@ class AcquisitionFree(gui.QgsMapTool):
         else:
             rubberBand = gui.QgsRubberBand(
                 self.getCanvas(), 
-                geometryType = core.QGis.Point
+                geometryType = core.Qgis.Point
             )
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
         rubberBand.setBorderColor(QtGui.QColor(255, 0, 0, 200))
@@ -241,7 +241,7 @@ class AcquisitionFree(gui.QgsMapTool):
         event.snapPoint(gui.QgsMapMouseEvent.SnapProjectConfig)
         snapRubberBand = self.getSnapRubberBand()
         if snapRubberBand:
-            snapRubberBand.reset(geometryType=core.QGis.Point)
+            snapRubberBand.reset(geometryType=core.Qgis.Point)
             snapRubberBand.hide()
             self.setSnapRubberBand(None)
         pointMap = core.QgsPoint(event.mapPoint())
@@ -256,11 +256,11 @@ class AcquisitionFree(gui.QgsMapTool):
         if rubberBandToStopState:
             rubberBandToStopState.reset()
         if self.isPolygon():
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Polygon)
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.Qgis.Polygon)
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             rubberBand.setWidth(2)
         else:
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Line)
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.Qgis.Line)
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             rubberBand.setWidth(1)
         rubberBand.setLineStyle(QtCore.Qt.DotLine)
@@ -273,11 +273,11 @@ class AcquisitionFree(gui.QgsMapTool):
         self.setDrawingState(True)
         self.setGeometryType(layer.geometryType())
         if self.isPolygon():
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Polygon)
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.Qgis.Polygon)
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
             rubberBand.setWidth(2)
         else:
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QGis.Line)
+            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.Qgis.Line)
             rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
             rubberBand.setWidth(1)
         rubberBand.addPoint(pointMap)
@@ -292,7 +292,7 @@ class AcquisitionFree(gui.QgsMapTool):
         if not(self.getStopedState()):
             if snapRubberBand:
                 snapRubberBand.hide()
-                snapRubberBand.reset(geometryType=core.QGis.Point)
+                snapRubberBand.reset(geometryType=core.Qgis.Point)
                 self.setSnapRubberBand(None)
             oldPoint = core.QgsPoint(event.mapPoint())
             event.snapPoint(gui.QgsMapMouseEvent.SnapProjectConfig)

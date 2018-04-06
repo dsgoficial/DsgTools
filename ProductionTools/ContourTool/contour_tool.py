@@ -23,7 +23,7 @@
 
 from builtins import range
 from builtins import object
-from qgis.core import QgsFeatureRequest, QgsGeometry, QGis, QgsSpatialIndex, QgsCoordinateTransform
+from qgis.core import QgsFeatureRequest, QgsGeometry, Qgis, QgsSpatialIndex, QgsCoordinateTransform
 from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
 
 class ContourTool(object):
@@ -89,7 +89,7 @@ class ContourTool(object):
 
         for intersected in features:
             intersection = geom.intersection(intersected.geometry())
-            if intersection.type() == QGis.Point:
+            if intersection.type() == Qgis.Point:
                 distance = intersection.distance(pointGeom)
                 distances.append((distance, intersected))
         

@@ -84,7 +84,7 @@ class AcquisitionFreeController(object):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
         actionAcquisitionFree = self.getActionAcquisitionFree()
         layer = self.getIface().activeLayer()
-        if layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QGis.Line, core.QGis.Polygon]):
+        if layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.Qgis.Line, core.Qgis.Polygon]):
             actionAcquisitionFree.setEnabled(True)
         else:
             actionAcquisitionFree.setEnabled(False)
@@ -142,22 +142,22 @@ class AcquisitionFreeController(object):
             coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest)
             lyrType = iface.activeLayer().geometryType()
             # Transforming the points
-            if lyrType == core.QGis.Line:
+            if lyrType == core.Qgis.Line:
                 geomList = geom.asPolyline()
-            elif lyrType == core.QGis.Polygon:
+            elif lyrType == core.Qgis.Polygon:
                 geomList = geom.asPolygon()
             newGeom = []
             for j in range(len(geomList)):
-                if lyrType == core.QGis.Line:
+                if lyrType == core.Qgis.Line:
                     newGeom.append(coordinateTransformer.transform(geomList[j]))
-                elif lyrType == core.QGis.Polygon:
+                elif lyrType == core.Qgis.Polygon:
                     line = geomList[j]
                     for i in range(len(line)):
                         point = line[i]
                         newGeom.append(coordinateTransformer.transform(point))
-            if lyrType == core.QGis.Line:
+            if lyrType == core.Qgis.Line:
                 return core.QgsGeometry.fromPolyline(newGeom)
-            elif lyrType == core.QGis.Polygon:
+            elif lyrType == core.Qgis.Polygon:
                 return core.QgsGeometry.fromPolygon([newGeom])
         return geom        
 

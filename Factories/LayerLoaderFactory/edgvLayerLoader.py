@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, QGis
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, Qgis
 from qgis.utils import iface
 
 #DsgTools imports
@@ -91,9 +91,9 @@ class EDGVLayerLoader(QObject):
             return parentTreeNode
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == QGis.Polygon:
+        if layer.geometryType() == Qgis.Polygon:
             layer.addExpressionField('$area', QgsField(self.tr('area_otf'), QVariant.Double))
-        elif layer.geometryType() == QGis.Line:
+        elif layer.geometryType() == Qgis.Line:
             layer.addExpressionField('$length', QgsField(self.tr('lenght_otf'), QVariant.Double))
         return layer
     

@@ -24,7 +24,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from builtins import range
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
+from qgis.core import Qgis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QMenu
@@ -50,7 +50,7 @@ class MultiLayerSelection(QgsMapTool):
         self.canvas = canvas
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
-        self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)
         mFillColor = QColor( 254, 178, 76, 63 )
         self.rubberBand.setColor(mFillColor)
         self.rubberBand.setWidth(1)
@@ -67,7 +67,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(Qgis.Polygon)
     
     def keyPressEvent(self, e):
         """
@@ -93,7 +93,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(Qgis.Polygon)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPoint(startPoint.x(), startPoint.y())
@@ -174,7 +174,7 @@ class MultiLayerSelection(QgsMapTool):
     
     def getPrimitiveDict(self, e, hasControlModifyer=False):
         """
-        Builds a dict with keys as geometryTypes of layer, which are QGis.Point (value 0), QGis.Line (value 1) or QGis.Polygon (value 2),
+        Builds a dict with keys as geometryTypes of layer, which are Qgis.Point (value 0), Qgis.Line (value 1) or Qgis.Polygon (value 2),
         and values as layers from self.iface.legendInterface().layers(). When self.iface.legendInterface().layers() is called, a list of
         layers ordered according to lyr order in TOC is returned.
         """

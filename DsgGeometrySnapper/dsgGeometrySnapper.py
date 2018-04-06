@@ -25,7 +25,7 @@ import sys
 
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 
-from qgis.core import QGis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
+from qgis.core import Qgis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
 , QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint, QgsCircularStringV2, QgsSurfaceV2
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
@@ -136,27 +136,27 @@ class DsgGeometrySnapper(QObject):
         """
         segments = []
         wbkType = geometry.wkbType()
-        if wbkType == QGis.WKBPoint:
+        if wbkType == Qgis.WKBPoint:
             return [geometry]
-        elif wbkType == QGis.WKBMultiPoint:
+        elif wbkType == Qgis.WKBMultiPoint:
             return [geometry]
-        elif wbkType == QGis.WKBLineString:
+        elif wbkType == Qgis.WKBLineString:
             line = geometry.asPolyline()
             for i in range(len(line) - 1):
                 segments.append(self.segmentFromPoints(line[i], line[i + 1]))
-        elif wbkType == QGis.WKBMultiLineString:
+        elif wbkType == Qgis.WKBMultiLineString:
             multiLine = geometry.asMultiPolyline()
             for j in range(len(multiLine)):
                 line = multiLine[j]
                 for i in range(len(line) - 1):
                     segments.append(self.segmentFromPoints(line[i], line[i + 1]))
-        elif wbkType == QGis.WKBPolygon:
+        elif wbkType == Qgis.WKBPolygon:
             poly = geometry.asPolygon()
             for j in range(len(poly)):
                 line = poly[j]
                 for i in range(len(line) - 1):
                     segments.append(self.segmentFromPoints(line[i], line[i + 1]))
-        elif wbkType == QGis.WKBMultiPolygon:
+        elif wbkType == Qgis.WKBMultiPolygon:
             multiPoly = geometry.asMultiPolygon()
             for k in range(len(multiPoly)):
                 poly = multiPoly[k]

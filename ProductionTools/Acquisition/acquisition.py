@@ -2,9 +2,9 @@
 from __future__ import absolute_import
 from qgis.PyQt.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtWidgets import QAction
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 from qgis.gui import QgsMessageBar
-from qgis.core import QGis
+from qgis.core import Qgis
 from .circle import Circle
 from .polygon import Polygon
 
@@ -30,7 +30,7 @@ class Acquisition(QObject):
     def run(self, func, action):
         layer = self.canvas.currentLayer()
         if layer in self.iface.editableLayers():
-            if layer.geometryType() in [QGis.Line , QGis.Polygon]:
+            if layer.geometryType() in [Qgis.Line , Qgis.Polygon]:
                 if self.tool:
                     self.tool.deactivate()
                 self.tool = func(self.canvas, self.iface, action)

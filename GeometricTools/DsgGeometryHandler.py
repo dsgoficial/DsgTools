@@ -22,7 +22,7 @@
 """
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateTransform, QgsWKBTypes
+                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWKBTypes
 from qgis.PyQt.Qt import QObject
 
 class DsgGeometryHandler(QObject):
