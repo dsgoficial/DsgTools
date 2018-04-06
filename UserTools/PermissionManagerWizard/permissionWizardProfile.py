@@ -23,7 +23,7 @@
 import os
 import json
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
 from fileinput import filename
@@ -33,7 +33,7 @@ from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'permissionWizardProfile.ui'))
 
-class PermissionWizardProfile(QtGui.QWizardPage, FORM_CLASS):
+class PermissionWizardProfile(QtWidgets.QWizardPage, FORM_CLASS):
     def __init__(self, parent=None):
         '''Constructor.'''
         super(self.__class__, self).__init__()

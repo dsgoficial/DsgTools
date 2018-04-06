@@ -77,14 +77,14 @@ class CreateProfile(QtWidgets.QDialog, FORM_CLASS):
 
         self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
         if not self.abstractDb:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('A problem occurred! Check log for details.'))
+            QtWidgets.QMessageBox.warning(self, self.tr('Warning!'), self.tr('A problem occurred! Check log for details.'))
             return
         self.abstractDb.connectDatabase(edgvPath)
 
         try:
             self.abstractDb.checkAndOpenDb()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QtWidgets.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
 
     def populateTreeDict(self):
@@ -97,7 +97,7 @@ class CreateProfile(QtWidgets.QDialog, FORM_CLASS):
         try:
             tables = self.abstractDb.getTablesFromDatabase()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QtWidgets.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
         
         self.profile = dict()
@@ -132,7 +132,7 @@ class CreateProfile(QtWidgets.QDialog, FORM_CLASS):
         Creates the profile file
         """
         if not self.lineEdit.text():
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
+            QtWidgets.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
             return
         else:
             profileName = self.lineEdit.text()

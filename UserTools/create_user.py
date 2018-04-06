@@ -23,14 +23,14 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtSql import QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'create_user.ui'))
 
-class CreateUser(QtGui.QDialog, FORM_CLASS):
+class CreateUser(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, user = None, abstractDb = None, parent = None):
         """
         Constructor
@@ -63,7 +63,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
         password = self.passwordLineEdit.text()
         password_2 = self.passwordLineEdit_2.text()
         if password != password_2:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! User not created!'))
+            QtWidgets.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! User not created!'))
             self.refreshScreen()
             return
         
@@ -80,7 +80,7 @@ class CreateUser(QtGui.QDialog, FORM_CLASS):
             self.refreshScreen()
             return
 
-        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+self.tr(' created successfully on server ')+self.abstractDb.getHostName()+'!')
+        QtWidgets.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +user+self.tr(' created successfully on server ')+self.abstractDb.getHostName()+'!')
         self.refreshScreen()
         return
 

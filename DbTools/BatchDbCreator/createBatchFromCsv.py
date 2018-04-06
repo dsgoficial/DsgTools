@@ -25,7 +25,7 @@ import json
 
 from qgis.core import QgsMessageLog
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
@@ -36,7 +36,7 @@ from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchFromCsv.ui'))
 
-class CreateBatchFromCsv(QtGui.QWizardPage, FORM_CLASS):
+class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, parent=None):
         """Constructor."""

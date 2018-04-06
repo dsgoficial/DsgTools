@@ -23,7 +23,7 @@
 import os
 import json
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
 from DsgTools.Utils.utils import Utils
