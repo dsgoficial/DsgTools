@@ -30,7 +30,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFileDialog, QMessageBox, QRadioButton
-from qgis.PyQt.QtWidgets import QColor
+from qgis.PyQt.QtGui import QColor
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
