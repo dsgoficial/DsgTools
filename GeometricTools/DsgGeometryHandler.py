@@ -22,7 +22,7 @@
 """
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWKBTypes
+                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
 from qgis.PyQt.Qt import QObject
 
 class DsgGeometryHandler(QObject):
@@ -84,7 +84,7 @@ class DsgGeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:

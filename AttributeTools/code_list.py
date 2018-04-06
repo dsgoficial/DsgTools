@@ -25,7 +25,7 @@ from builtins import map
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # QGIS imports
@@ -36,7 +36,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
 
-class CodeList(QtGui.QDockWidget, FORM_CLASS):
+class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(CodeList, self).__init__()

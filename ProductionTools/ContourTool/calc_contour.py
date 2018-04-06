@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
@@ -38,7 +38,7 @@ from DsgTools.ProductionTools.ContourTool.contour_tool import ContourTool
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'calc_contour.ui'))
 
-class CalcContour(QtGui.QDockWidget, FORM_CLASS):
+class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent = None):
         """
         Constructor

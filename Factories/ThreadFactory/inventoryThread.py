@@ -27,12 +27,14 @@ import csv
 import shutil
 from osgeo import gdal, ogr
 
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import pyqtSlot
+
 # Import the PyQt and QGIS libraries
 from qgis.core import QgsMessageLog, QgsVectorFileWriter, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsField, QgsPoint
 from qgis._core import QgsAction, QgsPoint
 
 from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
-from exceptions import OSError
 
 class InventoryMessages(QObject):
     def __init__(self, thread):

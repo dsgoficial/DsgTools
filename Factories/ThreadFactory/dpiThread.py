@@ -27,6 +27,9 @@ import osgeo.osr
 import numpy
 import math
 
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import pyqtSlot
+
 from qgis.core import QgsMessageLog
 
 import os, codecs

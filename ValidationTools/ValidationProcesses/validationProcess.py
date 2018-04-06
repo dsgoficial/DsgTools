@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.Qt import QObject
 
 #QGIS imports
-from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
+from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -326,7 +326,7 @@ class ValidationProcess(QObject):
         idsToRemove = []
         inputDict = dict()
         #this is done to work generically with output layers that are implemented different from ours
-        isMulti = QgsWKBTypes.isMultiType(int(pgInputLayer.wkbType())) #
+        isMulti = QgsWkbTypes.isMultiType(int(pgInputLayer.wkbType())) #
         #making the changes and inserts
         #this request only takes ids to build inputDict
         request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)

@@ -21,6 +21,8 @@
  ***************************************************************************/
 """
 # Import the PyQt and QGIS libraries
+from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 
 from qgis.core import QgsMessageLog
