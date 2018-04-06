@@ -24,7 +24,7 @@ from builtins import range
 from builtins import object
 import sys, math
 
-from qgis.core import QgsAbstractGeometryV2, QgsVertexId, QgsPoint, QgsPointV2, QgsVector, QgsCurvePolygonV2, QgsCircularStringV2, QgsMultiPolygonV2, QgsPolygonV2
+from qgis.core import QgsAbstractGeometry, QgsVertexId, QgsPoint, QgsPoint, QgsVector, QgsCurvePolygon, QgsCircularString, QgsMultiPolygon, QgsPolygon
 
 from DsgTools.DsgGeometrySnapper.raytracer import Raytracer
 from DsgTools.DsgGeometrySnapper.coordIdx import CoordIdx
@@ -39,7 +39,7 @@ class DsgSnapIndex(object):
     def __init__(self, origin, cellSize):
         """
         Constructor
-        :param origin: QgsPointV2
+        :param origin: QgsPoint
         :param cellSize: double
         """
         self.origin = origin
@@ -121,17 +121,17 @@ class DsgSnapIndex(object):
     def addGeometry(self, geom):
         """
         Add geometry into the index
-        :param geom:QgsAbstractGeometryV2
+        :param geom:QgsAbstractGeometry
         :return:
         """
         for iPart in range(geom.partCount()):
             for iRing in range(geom.ringCount(iPart)):
                 nVerts = geom.vertexCount(iPart, iRing)
-                if isinstance(geom, QgsMultiPolygonV2):
+                if isinstance(geom, QgsMultiPolygon):
                     nVerts -= 1
-                elif isinstance(geom, QgsPolygonV2):
+                elif isinstance(geom, QgsPolygon):
                     nVerts -= 1
-                elif isinstance(geom, QgsCircularStringV2):
+                elif isinstance(geom, QgsCircularString):
                     nVerts -= 1
                 for iVert in range(nVerts):
                     idx = CoordIdx( geom, QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex))
@@ -145,12 +145,12 @@ class DsgSnapIndex(object):
     def getClosestSnapToPoint(self, p, q):
         """
         Get closest snap point
-        :param p: QgsPointV2
-        :param q: QgsPointV2
+        :param p: QgsPoint
+        :param q: QgsPoint
         :return:
         """
         # Look for intersections on segment from the target point to the point opposite to the point reference point
-        p2 = QgsPointV2( 2 * q.x() - p.x(), 2 * q.y() - p.y() )
+        p2 = QgsPoint( 2 * q.x() - p.x(), 2 * q.y() - p.y() )
         
         # Raytrace along the grid, get touched cells
         x0 = (p.x() - self.origin.x()) / self.cellSize
@@ -182,7 +182,7 @@ class DsgSnapIndex(object):
     def getSnapItem(self, pos, tol):
         """
         Gets snap item
-        :param pos: QgsPointV2
+        :param pos: QgsPoint
         :param tol: double
         :param pSnapPoint: PointSnapItem
         :param pSnapSegment: SegmentSnapItem

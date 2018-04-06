@@ -34,47 +34,47 @@ from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedRecursiveSnapWidget imp
 from DsgTools.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProcess import RecursiveSnapParameters
 
 class ProcessParametersDialog(QtWidgets.QDialog):
-    WIDGETS = {str: QtGui.QLineEdit,
-               str: QtGui.QLineEdit,
-               int: QtGui.QSpinBox,
-               float: QtGui.QDoubleSpinBox,
+    WIDGETS = {str: QtWidgets.QLineEdit,
+               str: QtWidgets.QLineEdit,
+               int: QtWidgets.QSpinBox,
+               float: QtWidgets.QDoubleSpinBox,
                list: CustomTableSelector,
                tuple: CustomSnaperParameterSelector,
-               deque:QtGui.QComboBox,
+               deque:QtWidgets.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
                RecursiveSnapParameters:OrderedRecursiveSnapWidget,
                dict:AuxLayerSelector,
-               bool: QtGui.QCheckBox}
-    GETTERS = {QtGui.QLineEdit: "text",
-               QtGui.QSpinBox: "value",
-               QtGui.QDoubleSpinBox: "value",
+               bool: QtWidgets.QCheckBox}
+    GETTERS = {QtWidgets.QLineEdit: "text",
+               QtWidgets.QSpinBox: "value",
+               QtWidgets.QDoubleSpinBox: "value",
                CustomSnaperParameterSelector: "getParameters",
                CustomTableSelector: "getSelectedNodes",
-               QtGui.QComboBox:"currentText",
+               QtWidgets.QComboBox:"currentText",
                CustomReferenceAndLayersParameterSelector:"getParameters",
                OrderedRecursiveSnapWidget:"getHierarchicalSnapDict",
                AuxLayerSelector:"getParameters",
-               QtGui.QCheckBox: "isChecked"}
-    SETTERS = {QtGui.QLineEdit: "setText",
-               QtGui.QSpinBox: "setValue",
-               QtGui.QDoubleSpinBox: "setValue",
+               QtWidgets.QCheckBox: "isChecked"}
+    SETTERS = {QtWidgets.QLineEdit: "setText",
+               QtWidgets.QSpinBox: "setValue",
+               QtWidgets.QDoubleSpinBox: "setValue",
                CustomSnaperParameterSelector: "setInitialState",
                CustomReferenceAndLayersParameterSelector: "setInitialState",
                OrderedRecursiveSnapWidget:"setInitialState",
                CustomTableSelector: "setInitialState",
                AuxLayerSelector: "setInitialState",
-               QtGui.QComboBox:"addItems",
-               QtGui.QCheckBox: "setChecked"}
-    VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
-                  QtGui.QSpinBox: lambda x: True,
-                  QtGui.QDoubleSpinBox: lambda x: True,
+               QtWidgets.QComboBox:"addItems",
+               QtWidgets.QCheckBox: "setChecked"}
+    VALIDATORS = {QtWidgets.QLineEdit: lambda x: bool(len(x)),
+                  QtWidgets.QSpinBox: lambda x: True,
+                  QtWidgets.QDoubleSpinBox: lambda x: True,
                   CustomSnaperParameterSelector: lambda x: True,
                   CustomReferenceAndLayersParameterSelector: lambda x: True,
                   CustomTableSelector: lambda x: True,
                   RecursiveSnapParameters: lambda x: True,
                   AuxLayerSelector: lambda x: True,
-                  QtGui.QComboBox: lambda x: True,
-                  QtGui.QCheckBox: lambda x: True}
+                  QtWidgets.QComboBox: lambda x: True,
+                  QtWidgets.QCheckBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None, restoreOverride = True, withElements = True):
         """
@@ -95,21 +95,21 @@ class ProcessParametersDialog(QtWidgets.QDialog):
             self.required.append(list(options.keys())[0])
 
         _firstWidget = None
-        # formLayout = QtGui.QFormLayout()
-        layout = QtGui.QGridLayout()
+        # formLayout = QtWidgets.QFormLayout()
+        layout = QtWidgets.QGridLayout()
         rowCount = 0
         for k, v in options.items():
             if isinstance(v, list):
                 if len(v)> 0 and isinstance(v[0], dict) == False:
                     v = [str(x) for x in v]
 
-            label = QtGui.QLabel(beautifyText(k))
+            label = QtWidgets.QLabel(beautifyText(k))
             widget = self.WIDGETS[type(v)]()
-            if self.WIDGETS[type(v)] == QtGui.QDoubleSpinBox:
+            if self.WIDGETS[type(v)] == QtWidgets.QDoubleSpinBox:
                 widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
-            if self.WIDGETS[type(v)] == QtGui.QSpinBox:
+            if self.WIDGETS[type(v)] == QtWidgets.QSpinBox:
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
             
@@ -141,10 +141,10 @@ class ProcessParametersDialog(QtWidgets.QDialog):
             if _firstWidget is None:
                 _firstWidget = widget
 
-        # scrollArea = QtGui.QScrollArea()
+        # scrollArea = QtWidgets.QScrollArea()
         # scrollArea.setWidgetResizable(True)
-        # scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
-        # w = QtGui.QWidget()
+        # scrollArea.setFrameShape(QtWidgets.QFrame.Shape(0))  # no frame
+        # w = QtWidgets.QWidget()
         # w.setLayout(formLayout)
         # scrollArea.setWidget(w)
 
@@ -152,7 +152,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
-        # layout = QtGui.QGridLayout()
+        # layout = QtWidgets.QGridLayout()
         # layout.addWidget(scrollArea)
         layout.addWidget(buttons, rowCount+1, 1)
         self.setLayout(layout)

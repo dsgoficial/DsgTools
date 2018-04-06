@@ -25,8 +25,8 @@ import sys
 
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 
-from qgis.core import Qgis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPointV2, QgsFeatureRequest, QgsFeatureIterator\
-, QgsFeature, QgsVertexId, QgsCurvePolygonV2, QgsVectorLayer, QgsMultiPolygonV2, QgsPolygonV2, QgsPoint, QgsCircularStringV2, QgsSurfaceV2
+from qgis.core import Qgis, QgsFeatureRequest, QgsSpatialIndex, QgsGeometry, QgsPoint, QgsFeatureRequest, QgsFeatureIterator\
+, QgsFeature, QgsVertexId, QgsCurvePolygon, QgsVectorLayer, QgsMultiPolygon, QgsPolygon, QgsPoint, QgsCircularString, QgsSurface
 
 from DsgTools.DsgGeometrySnapper.dsgSnapIndex import DsgSnapIndex
 from DsgTools.DsgGeometrySnapper.pointSnapItem import PointSnapItem
@@ -52,13 +52,13 @@ class DsgGeometrySnapper(QObject):
     def polyLineSize(self, geom, iPart, iRing):
         """
         Gets the number of vertexes
-        :param geom: QgsAbstractGeometryV2
+        :param geom: QgsAbstractGeometry
         :param iPart: int
         :param iRing: int
         :return:
         """
         nVerts = geom.vertexCount( iPart, iRing)
-        if isinstance(geom, QgsMultiPolygonV2) or isinstance(geom, QgsPolygonV2) or isinstance(geom, QgsCircularStringV2):
+        if isinstance(geom, QgsMultiPolygon) or isinstance(geom, QgsPolygon) or isinstance(geom, QgsCircularString):
             front = geom.vertexAt(QgsVertexId( iPart, iRing, 0, QgsVertexId.SegmentVertex))
             back = geom.vertexAt(QgsVertexId( iPart, iRing, nVerts - 1, QgsVertexId.SegmentVertex))
             if front == back:
@@ -91,9 +91,9 @@ class DsgGeometrySnapper(QObject):
     
     def projPointOnSegment(self, p, s1, s2):
         """
-        p: QgsPointV2
-        s1: QgsPointV2 of segment
-        s2: QgsPointV2 of segment
+        p: QgsPoint
+        s1: QgsPoint of segment
+        s2: QgsPoint of segment
         """
         nx = s2.y() - s1.y()
         ny = -( s2.x() - s1.x() )
@@ -107,7 +107,7 @@ class DsgGeometrySnapper(QObject):
         elif t > 1.:
             return s2
         else:
-            return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
+            return QgsPoint( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
 
     def buildReferenceIndex(self, segments):
         refDict = {}
@@ -175,7 +175,7 @@ class DsgGeometrySnapper(QObject):
         :param mode: DsgGeometrySnapper.PreferNodes or DsgGeometrySnapper.PreferClosest
         :return:
         """
-        center = QgsPointV2(geometry.boundingBox().center())
+        center = QgsPoint(geometry.boundingBox().center())
 
         # Get potential reference features and construct snap index
         refGeometries = []
@@ -219,7 +219,7 @@ class DsgGeometrySnapper(QObject):
                 subjPointFlags[iPart].append([])
                 for iVert in range(self.polyLineSize(subjGeom, iPart, iRing)):
                     vidx = QgsVertexId(iPart, iRing, iVert, QgsVertexId.SegmentVertex)
-                    p = QgsPointV2(subjGeom.vertexAt(vidx))
+                    p = QgsPoint(subjGeom.vertexAt(vidx))
                     pF = QgsPoint(p.toQPointF())
                     snapPoint, snapSegment = refSnapIndex.getSnapItem(p, snapTolerance)
                     success = snapPoint or snapSegment
@@ -255,7 +255,7 @@ class DsgGeometrySnapper(QObject):
                                 subjPointFlags[iPart][iRing].append(DsgGeometrySnapper.SnappedToRefSegment)
 
         #nothing more to do for points
-        if isinstance(subjGeom, QgsPointV2):
+        if isinstance(subjGeom, QgsPoint):
             return QgsGeometry(subjGeom)
         
         # SnapIndex for subject feature

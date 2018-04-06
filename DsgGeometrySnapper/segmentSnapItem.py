@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsVector, QgsPointV2
+from qgis.core import QgsVector, QgsPoint
 
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
 
@@ -39,17 +39,17 @@ class SegmentSnapItem(SnapItem):
 
     def getSnapPoint(self, p):
         """
-        :param p: QgsPointV2
-        :return: QgsPointV2
+        :param p: QgsPoint
+        :return: QgsPoint
         """
         return self.projPointOnSegment(p, self.idxFrom.point(), self.idxTo.point())
 
     def getIntersection(self, p1, p2):
         """
         Get intersection on segment
-        :param p1: QgsPointV2
-        :param p2: QgsPointV2
-        :param inter: QgsPointV2 reference
+        :param p1: QgsPoint
+        :param p2: QgsPoint
+        :param inter: QgsPoint reference
         :return: bool
         """
         q1 = self.idxFrom.point()
@@ -74,7 +74,7 @@ class SegmentSnapItem(SnapItem):
         dy = q1.y() - p1.y()
         k = (dy * w.x() - dx * w.y()) / d
 
-        inter = QgsPointV2(p1.x() + v.x() * k, p1.y() + v.y() * k)
+        inter = QgsPoint(p1.x() + v.x() * k, p1.y() + v.y() * k)
 
         lambdav = QgsVector(inter.x() - p1.x(), inter.y() - p1.y()) * v
         if lambdav < 0. + 1E-8 or lambdav > vl - 1E-8:
@@ -100,12 +100,12 @@ class SegmentSnapItem(SnapItem):
     def getProjection(self, p):
         """
         Get the p projection on segment
-        :param p: QgsPointV2
-        :param pProj: QgsPointV2 reference
+        :param p: QgsPoint
+        :param pProj: QgsPoint reference
         :return: bool
         """
-        s1 = QgsPointV2(self.idxFrom.point())
-        s2 = QgsPointV2(self.idxTo.point())
+        s1 = QgsPoint(self.idxFrom.point())
+        s2 = QgsPoint(self.idxTo.point())
         nx = s2.y() - s1.y()
         ny = -(s2.x() - s1.x())
         if s1 == s2:
@@ -114,14 +114,14 @@ class SegmentSnapItem(SnapItem):
         if t < 0. or t > 1.:
             return False
 
-        pProj = QgsPointV2(s1.x() + (s2.x() - s1.x()) * t, s1.y() + (s2.y() - s1.y()) * t)
+        pProj = QgsPoint(s1.x() + (s2.x() - s1.x()) * t, s1.y() + (s2.y() - s1.y()) * t)
         return pProj
 
     def projPointOnSegment(self, p, s1, s2):
         """
-        p: QgsPointV2
-        s1: QgsPointV2 of segment
-        s2: QgsPointV2 of segment
+        p: QgsPoint
+        s1: QgsPoint of segment
+        s2: QgsPoint of segment
         """
         nx = s2.y() - s1.y()
         ny = -( s2.x() - s1.x() )
@@ -133,5 +133,5 @@ class SegmentSnapItem(SnapItem):
         elif t > 1.:
             return s2
         else:
-            return QgsPointV2( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
+            return QgsPoint( s1.x() + ( s2.x() - s1.x() ) * t, s1.y() + ( s2.y() - s1.y() ) * t )
         

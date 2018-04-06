@@ -48,7 +48,7 @@ class Ui_Form(object):
         sizePolicy.setHeightForWidth(self.mMapLayerComboBox.sizePolicy().hasHeightForWidth())
         self.mMapLayerComboBox.setSizePolicy(sizePolicy)
         self.mMapLayerComboBox.setMaximumSize(QtCore.QSize(16777215, 32))
-        self.mMapLayerComboBox.setFilters(gui.QgsMapLayerProxyModel.HasGeometry|gui.QgsMapLayerProxyModel.LineLayer|gui.QgsMapLayerProxyModel.NoGeometry|gui.QgsMapLayerProxyModel.PluginLayer|gui.QgsMapLayerProxyModel.PointLayer|gui.QgsMapLayerProxyModel.PolygonLayer|gui.QgsMapLayerProxyModel.VectorLayer)
+        self.mMapLayerComboBox.setFilters(core.QgsMapLayerProxyModel.HasGeometry|core.QgsMapLayerProxyModel.LineLayer|core.QgsMapLayerProxyModel.NoGeometry|core.QgsMapLayerProxyModel.PluginLayer|core.QgsMapLayerProxyModel.PointLayer|core.QgsMapLayerProxyModel.PolygonLayer|core.QgsMapLayerProxyModel.VectorLayer)
         self.mMapLayerComboBox.setObjectName(_fromUtf8("mMapLayerComboBox"))
         self.label_zoom = QtGui.QLabel(self.splitter)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed)
@@ -148,5 +148,5 @@ class Ui_Form(object):
         self.nextInspectButton.setToolTip(_translate("Form", "<html><head/><body><p>Next inspect</p></body></html>", None))
         self.inspectPushButton.setToolTip(_translate("Form", "Inspect Features Tool", None))
 
-from qgis import gui
+from qgis import gui, core  
 import resources_rc

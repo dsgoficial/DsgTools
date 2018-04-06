@@ -24,6 +24,7 @@ import os
 import json
 
 from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

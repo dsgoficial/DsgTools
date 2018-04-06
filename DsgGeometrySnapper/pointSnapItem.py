@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsVertexId, QgsPointV2, QgsGeometry
+from qgis.core import QgsVertexId, QgsPoint, QgsGeometry
 
 from DsgTools.DsgGeometrySnapper.snapItem import SnapItem
 
