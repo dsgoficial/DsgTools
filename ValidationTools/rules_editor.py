@@ -25,7 +25,7 @@ from builtins import range
 import os, codecs
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot
 
 # DSGTools imports
@@ -35,7 +35,7 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'rules_editor.ui'))
 
-class RulesEditor(QtGui.QDialog, FORM_CLASS):
+class RulesEditor(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, postgisDb, parent = None):
         """
         Constructor

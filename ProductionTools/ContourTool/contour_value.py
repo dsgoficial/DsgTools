@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtGui import QIntValidator
 
@@ -32,7 +32,7 @@ from qgis.PyQt.QtGui import QIntValidator
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'contour_value.ui'))
 
-class ContourValue(QtGui.QDialog, FORM_CLASS):
+class ContourValue(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, contour_tool, parent=None):
         """
         Constructor

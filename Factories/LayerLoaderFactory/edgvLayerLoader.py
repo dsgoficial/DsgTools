@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
 from PyQt4.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceURI, QgsMessageLog, QgsField, QGis
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, QGis
 from qgis.utils import iface
 
 #DsgTools imports
@@ -43,7 +43,7 @@ class EDGVLayerLoader(QObject):
         super(EDGVLayerLoader, self).__init__()
         
         self.abstractDb = abstractDb
-        self.uri = QgsDataSourceURI() 
+        self.uri = QgsDataSourceUri() 
         self.iface = iface
         self.utils = Utils()
         self.logErrorDict = dict()

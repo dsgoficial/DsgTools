@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'genericParameterSetter.ui'))
 
-class GenericParameterSetter(QtGui.QDialog, FORM_CLASS):
+class GenericParameterSetter(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent = None, nameList = None, hideDbUi = False):
         """Constructor."""
         super(self.__class__, self).__init__(parent)

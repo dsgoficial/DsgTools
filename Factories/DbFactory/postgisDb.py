@@ -27,7 +27,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeature, QgsVectorLayer, QgsField
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii, re
@@ -1092,7 +1092,7 @@ class PostgisDb(AbstractDb):
         """
         Checks if a layer is in the database
         """
-        candidateUri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
         candidateHost = candidateUri.host()
         candidatePort = int(candidateUri.port())
         candidateDb = candidateUri.database()
@@ -1169,7 +1169,7 @@ class PostgisDb(AbstractDb):
         else:
             sql = self.gen.loadLayerFromDatabaseUsingInh(table)
         
-        uri = QgsDataSourceURI()
+        uri = QgsDataSourceUri()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         id = self.getPrimaryKeyColumn(table)
         uri.setDataSource(schema, layer_name, geomColumn, sql, id)
@@ -1187,7 +1187,7 @@ class PostgisDb(AbstractDb):
         user = self.db.userName()
         password = self.db.password()
 
-        uri = QgsDataSourceURI()
+        uri = QgsDataSourceUri()
         uri.setConnection(str(host),str(port), str(database), str(user), str(password))
         id = self.getPrimaryKeyColumn('{0}.{1}'.format(tableSchema, tableName))
         uri.setDataSource(tableSchema, tableName, geometryColumnm, sql, id)
@@ -3707,7 +3707,7 @@ class PostgisDb(AbstractDb):
         pass
     
     def setDataSourceUri(self, schema, tableName, geometryColumn, sql, pkColumm):
-        uri = QgsDataSourceURI() 
+        uri = QgsDataSourceUri() 
 
 
     def getLayerDict(self):

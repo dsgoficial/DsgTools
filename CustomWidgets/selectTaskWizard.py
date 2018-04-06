@@ -22,7 +22,7 @@
 import os, json
 
 #PyQt imports
-from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt import QtWidgets, QtCore, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
@@ -31,7 +31,7 @@ from qgis.PyQt.QtGui import QCursor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'selectTaskWizard.ui'))
 
-class SelectTaskWizard(QtGui.QDialog, FORM_CLASS):
+class SelectTaskWizard(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, settingList, parent=None):
         """
         Constructor

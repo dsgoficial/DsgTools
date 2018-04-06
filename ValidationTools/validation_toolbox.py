@@ -34,7 +34,7 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceURI
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri
 
 import qgis as qgis
 from qgis.core import QgsMessageLog

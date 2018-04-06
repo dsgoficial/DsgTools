@@ -23,14 +23,14 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'alter_user_password.ui'))
 
-class AlterUserPassword(QtGui.QDialog, FORM_CLASS):
+class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, user = None, abstractDb = None, userList = None, parent = None):
         """
         Constructor

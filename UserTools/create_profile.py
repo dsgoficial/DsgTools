@@ -25,7 +25,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # DSGTools imports
@@ -36,7 +36,7 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'create_profile.ui'))
 
-class CreateProfile(QtGui.QDialog, FORM_CLASS):
+class CreateProfile(QtWidgets.QDialog, FORM_CLASS):
     profileCreated = pyqtSignal(str)
     
     def __init__(self, parent = None):

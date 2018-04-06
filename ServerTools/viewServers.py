@@ -23,7 +23,7 @@
 from __future__ import absolute_import
 import os
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, QSettings, pyqtSignal
 from qgis.PyQt.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QRadioButton
 from qgis.PyQt.QtGui import QCursor
@@ -38,7 +38,7 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
 
-class ViewServers(QtGui.QDialog, FORM_CLASS):
+class ViewServers(QtWidgets.QDialog, FORM_CLASS):
     defaultChanged = pyqtSignal()
     def __init__(self, iface = None, parent=None):
         '''Constructor.'''

@@ -29,7 +29,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.PyQt.QtWidgets import QTableView
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsVectorLayerCache
+from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsVectorLayerCache
 from qgis.gui import QgsAttributeDialog, QgsAttributeTableModel, QgsAttributeTableView, QgsAttributeTableFilterModel
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

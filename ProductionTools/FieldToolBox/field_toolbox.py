@@ -29,7 +29,7 @@ from qgis.PyQt.QtWidgets import QPushButton, QShortcut
 from qgis.PyQt.QtGui import QKeySequence
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsDataSourceURI, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes
+from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsMapLayerRegistry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWKBTypes
 from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 

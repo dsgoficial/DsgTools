@@ -32,7 +32,7 @@ from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.PyQt.QtWidgets import QApplication
+from qgis.PyQt.QtWidgets import QApplication, QDialog
 from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
@@ -43,7 +43,7 @@ from DsgTools.UserTools.create_profile import CreateProfile
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'convert_database.ui'))
 
-class ConvertDatabase(QtGui.QDialog, FORM_CLASS):
+class ConvertDatabase(QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
         super(ConvertDatabase, self).__init__(parent)

@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customSizeSetter.ui'))
 
-class CustomSizeSetter(QtGui.QDialog, FORM_CLASS):
+class CustomSizeSetter(QtWidgets.QDialog, FORM_CLASS):
     sizeCreated = pyqtSignal(dict)
     def __init__(self, customDict, parent = None):
         """Constructor."""
@@ -61,7 +61,7 @@ class CustomSizeSetter(QtGui.QDialog, FORM_CLASS):
     def on_okPushButton_clicked(self):
         if not self.validateUi():
             reason = self.validateUiReason()
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), reason)
+            QtWidgets.QMessageBox.warning(self, self.tr('Warning!'), reason)
         else:
             self.done(1)
             newCustomDict = self.getCustomDictFromUi()

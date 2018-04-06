@@ -27,7 +27,7 @@ from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QCursor
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 
 # DSGTools imports
@@ -38,7 +38,7 @@ import json
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'assign_profiles.ui'))
 
-class AssignProfiles(QtGui.QDialog, FORM_CLASS):
+class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, serverIndex = None, index = None, parent = None):
         """
         Constructor

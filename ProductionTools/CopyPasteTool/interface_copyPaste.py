@@ -3,7 +3,7 @@ from builtins import range
 from qgis.gui import *
 from qgis.core import *
 from PyQt4.Qt import *
-from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt import QtCore, QtWidgets
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 from qgis.PyQt.QtCore import pyqtSlot, QSettings, QObject
 import psycopg2
@@ -14,7 +14,7 @@ import sys, os
 sys.path.append(os.path.dirname(__file__))
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'interface_copyPaste.ui'), resource_suffix='')
 
-class CopyPaste(QtGui.QDialog, FORM_CLASS):
+class CopyPaste(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, layer, parent=None):
         super(CopyPaste, self).__init__(parent)
         self.iface = iface

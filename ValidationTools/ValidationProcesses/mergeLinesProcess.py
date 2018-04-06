@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsGeometry, QgsDataSourceURI
+from qgis.core import QgsMessageLog, QgsGeometry, QgsDataSourceUri
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 import binascii
@@ -84,7 +84,7 @@ class MergeLinesProcess(ValidationProcess):
                     size = len(lyr.allFeatureIds())
 
                 # getting the key column
-                uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+                uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 keyColumn = uri.keyColumn()
 
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())

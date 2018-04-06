@@ -29,7 +29,7 @@ from qgis.core import QgsMessageLog
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
-from qgis.PyQt.QtWidgets import QListWidgetItem
+from qgis.PyQt.QtWidgets import QListWidgetItem, QDialog
 
 # DSGTools imports
 from DsgTools.ServerTools.viewServers import ViewServers

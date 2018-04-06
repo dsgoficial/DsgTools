@@ -28,7 +28,7 @@ from qgis.gui import QgsMessageBar
 from qgis.core import QgsMessageLog
 
 #PyQt imports
-from qgis.PyQt import QtGui, QtCore, uic
+from qgis.PyQt import QtWidgets, QtCore, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QApplication
 from qgis.PyQt.QtGui import QCursor
@@ -40,7 +40,7 @@ from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoader
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadAuxStruct.ui'))
 
-class LoadAuxStruct(QtGui.QDialog, FORM_CLASS):
+class LoadAuxStruct(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
         """
         Constructor

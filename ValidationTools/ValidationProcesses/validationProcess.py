@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import QVariant
 from PyQt4.Qt import QObject
 
 #QGIS imports
-from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceURI, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
+from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -229,7 +229,7 @@ class ValidationProcess(QObject):
         Gets the layer name as present in the rules
         """
         uri = lyr.dataProvider().dataSourceUri()
-        dsUri = QgsDataSourceURI(uri)
+        dsUri = QgsDataSourceUri(uri)
         name = '.'.join([dsUri.schema(), dsUri.table()])
         return name
 
@@ -259,7 +259,7 @@ class ValidationProcess(QObject):
         """
         provider = pgInputLayer.dataProvider()
         # getting keyColumn because we want to be generic
-        uri = QgsDataSourceURI(pgInputLayer.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(pgInputLayer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         # starting edition mode
         pgInputLayer.startEditing()
@@ -317,7 +317,7 @@ class ValidationProcess(QObject):
         """
         provider = pgInputLayer.dataProvider()
         # getting keyColumn because we want to be generic
-        uri = QgsDataSourceURI(pgInputLayer.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(pgInputLayer.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         # starting edition mode
         pgInputLayer.startEditing()
@@ -428,7 +428,7 @@ class ValidationProcess(QObject):
         # loading layer prior to execution
         lyr = self.loadLayerBeforeValidationProcess(cl)
         # getting keyColumn because we want to be generic
-        uri = QgsDataSourceURI(lyr.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #getting feature map including the edit buffer
         featureMap = self.mapInputLayer(lyr, selectedFeatures = selectedFeatures)
@@ -518,7 +518,7 @@ class ValidationProcess(QObject):
         for layer in layerList:
             # recording class name
             classname = layer.name()
-            uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+            uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
             keyColumn = uri.keyColumn()
             if onlySelected:
                 featureList = layer.selectedFeatures()
@@ -557,7 +557,7 @@ class ValidationProcess(QObject):
             self.updateOriginalLayerV2(layer, None, featureTupleList=tupplelist)
 
     def getGeometryColumnFromLayer(self, layer):
-        uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+        uri = QgsDataSourceUri(layer.dataProvider().dataSourceUri())
         geomColumn = uri.geometryColumn()
         return geomColumn
 

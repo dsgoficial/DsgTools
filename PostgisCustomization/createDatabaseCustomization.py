@@ -27,7 +27,7 @@ from qgis.core import QgsMessageLog
 from qgis.gui import QgsCollapsibleGroupBox
 
 # Qt imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFormLayout, QMessageBox, QFileDialog, QApplication
@@ -51,7 +51,7 @@ from DsgTools.Utils.utils import Utils
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
 
-class CreateDatabaseCustomization(QtGui.QDialog, FORM_CLASS):
+class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, customizationName, abstractDb, edgvVersion, customizationManager, customJsonDict = None, parent = None):
         """Constructor."""
         super(self.__class__, self).__init__(parent)

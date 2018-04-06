@@ -23,7 +23,7 @@
 import os
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QAbstractItemView
 
@@ -32,7 +32,7 @@ from qgis.PyQt.QtWidgets import QAbstractItemView
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'permission_properties.ui'))
 
-class PermissionProperties(QtGui.QDialog, FORM_CLASS):
+class PermissionProperties(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, permissionsDict, parent = None):
         """
         Constructor
