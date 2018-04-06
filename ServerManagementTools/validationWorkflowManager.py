@@ -31,8 +31,8 @@ from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 from DsgTools.ServerManagementTools.genericDbManager import GenericDbManager
 from DsgTools.Utils.utils import Utils
 
-#PyQt4 imports
-from PyQt4.Qt import QObject
+#qgis.PyQt imports
+from qgis.PyQt.Qt import QObject
 
 class ValidationWorkflowManager(GenericDbManager):
     """

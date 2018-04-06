@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from qgis.PyQt.QtCore import QVariant
 import processing, binascii

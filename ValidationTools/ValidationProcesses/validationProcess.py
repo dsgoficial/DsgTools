@@ -28,10 +28,10 @@ import json
 # Qt imports
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import QVariant
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 
 #QGIS imports
-from qgis.core import QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
+from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWKBTypes
 
 # DSGTools imports
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -463,17 +463,17 @@ class ValidationProcess(QObject):
         self.abstractDb.dropTempTable(processTableName)
     
     def getGeometryTypeText(self, geomtype):
-        if geomtype == QGis.WKBPoint:
+        if geomtype == Qgis.WKBPoint:
             return 'Point'
-        elif geomtype == QGis.WKBMultiPoint:
+        elif geomtype == Qgis.WKBMultiPoint:
             return 'MultiPoint'
-        elif geomtype == QGis.WKBLineString:
+        elif geomtype == Qgis.WKBLineString:
             return 'Linestring'
-        elif geomtype == QGis.WKBMultiLineString:
+        elif geomtype == Qgis.WKBMultiLineString:
             return 'MultiLinestring'
-        elif geomtype == QGis.WKBPolygon:
+        elif geomtype == Qgis.WKBPolygon:
             return 'Polygon'
-        elif geomtype == QGis.WKBMultiPolygon:
+        elif geomtype == Qgis.WKBMultiPolygon:
             return 'MultiPolygon'
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))

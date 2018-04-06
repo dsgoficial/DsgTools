@@ -23,7 +23,7 @@ Builds a temp rubberband with a given size and shape.
 """
 from builtins import range
 from qgis.gui import QgsRubberBand, QgsMapTool
-from qgis.core import QgsPoint, QGis
+from qgis.core import QgsPoint, Qgis
 from qgis.PyQt import QtGui, QtCore
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QWidget
@@ -44,7 +44,7 @@ class ShapeTool(QgsMapTool):
         self.param=param
         self.type=type       
         self.cursor=None
-        self.rubberBand = QgsRubberBand(self.canvas, QGis.Polygon)     
+        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)     
         self.setColor(color)
         self.reset()
         self.rotAngle = 0
@@ -66,7 +66,7 @@ class ShapeTool(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         try:
-            self.rubberBand.reset(QGis.Polygon)
+            self.rubberBand.reset(Qgis.Polygon)
         except:
             pass
 
@@ -122,14 +122,14 @@ class ShapeTool(QgsMapTool):
         y = startPoint.y()
         if self.type == self.tr('distance'):
             r = self.param
-            self.rubberBand.reset(QGis.Polygon)
+            self.rubberBand.reset(Qgis.Polygon)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
                 self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
         else:
             r = sqrt(self.param/pi)
-            self.rubberBand.reset(QGis.Polygon)
+            self.rubberBand.reset(Qgis.Polygon)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
                 self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
@@ -139,7 +139,7 @@ class ShapeTool(QgsMapTool):
         """
         Draws a rectangle in the canvas
         """  
-        self.rubberBand.reset(QGis.Polygon)
+        self.rubberBand.reset(Qgis.Polygon)
         x = startPoint.x() # center point x
         y = startPoint.y() # center point y
         # rotation angle is always applied in reference to center point

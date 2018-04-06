@@ -23,7 +23,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsProject
+from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsProject
 
 from qgis.PyQt.QtCore import QVariant
 
@@ -234,7 +234,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         refLyr elements are also added.
         """
         srid = refLyr.crs().authid().split(':')[-1]
-        filterLyr = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(QGis.WKBMultiLineString),srid), "filterLyr", "memory")
+        filterLyr = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(Qgis.WKBMultiLineString),srid), "filterLyr", "memory")
         provider = filterLyr.dataProvider()
         filterLayersWithElemKeys = self.parameters['Layer and Filter Layers'][1]
         filterLyr.startEditing()
@@ -246,7 +246,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             clDict = self.classesWithElemDict[key]
             #loads lyr
             inputLyr = self.loadLayerBeforeValidationProcess(clDict)
-            if inputLyr.geometryType() == QGis.Polygon:
+            if inputLyr.geometryType() == Qgis.Polygon:
                 #uses makeBoundaries method from unbuildEarthCoveragePolygonsProcess to get candidate lines layer
                 lyr = self.unbuildProc.makeBoundaries(inputLyr)
             else:

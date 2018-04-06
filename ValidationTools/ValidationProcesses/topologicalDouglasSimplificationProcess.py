@@ -47,7 +47,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
         """
         Runs the actual grass process
         """
-        qgis_version = qgis.utils.QGis.QGIS_VERSION_INT
+        qgis_version = qgis.utils.Qgis.QGIS_VERSION_INT
         if qgis_version < 21800:
             alg = 'grass7:v.generalize'
         else:

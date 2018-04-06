@@ -3,7 +3,7 @@
 # Form implementation generated from reading ui file 'inspectFeatures.ui'
 #
 # Created: Wed Jul 26 08:46:19 2017
-#      by: PyQt4 UI code generator 4.10.4
+#      by: qgis.PyQt UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
 

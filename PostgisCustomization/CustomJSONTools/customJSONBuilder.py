@@ -22,7 +22,7 @@
 """
 import json
 #Qt Imports
-from PyQt4.Qt import QObject
+from qgis.PyQt.Qt import QObject
 #DsgTools Imports
 
 class CustomJSONBuilder(QObject):

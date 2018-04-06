@@ -26,9 +26,9 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
-from PyQt4.Qt import QWidget, QObject
+from qgis.PyQt.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMapLayer, Qgis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
 
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory

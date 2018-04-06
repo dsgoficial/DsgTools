@@ -25,9 +25,9 @@ from qgis.PyQt.QtWidgets import QMessageBox, QSpinBox, QAction
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
-from PyQt4.Qt import QWidget, QObject
+from qgis.PyQt.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, QGis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest
+from qgis.core import QgsMapLayer, Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest
 from qgis.gui import QgsMessageBar
 
 from DsgTools.ProductionTools.InspectFeatures.inspectFeatures_ui import Ui_Form
@@ -102,7 +102,7 @@ class InspectFeatures(QWidget,Ui_Form):
         currentLayer = self.getIterateLayer()
         if QgsMapLayer is not None and currentLayer:
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
-                    if currentLayer.geometryType() == QGis.Point:
+                    if currentLayer.geometryType() == Qgis.Point:
                         self.mScaleWidget.setEnabled(True)
                     else:
                         self.mScaleWidget.setEnabled(False)
@@ -285,7 +285,7 @@ class InspectFeatures(QWidget,Ui_Form):
             self.zoomToLayer(layer = lyr)
             lyr.setSelectedFeatures(selectIdList)
 
-        if self.getIterateLayer().geometryType() == QGis.Point:
+        if self.getIterateLayer().geometryType() == Qgis.Point:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
     @pyqtSlot(bool, name = 'on_inspectPushButton_toggled')
