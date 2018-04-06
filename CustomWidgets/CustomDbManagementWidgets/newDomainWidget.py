@@ -42,7 +42,7 @@ from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import Cust
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newDomainWidget.ui'))
 
-class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
+class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
     def createEditor(self, widget, option, index):
         if not index.isValid():
             return 0

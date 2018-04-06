@@ -35,7 +35,7 @@ from qgis.PyQt.QtWidgets import QFileDialog
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'customTableWidget.ui'))
 
-class ValidatedItemDelegate(QtGui.QStyledItemDelegate):
+class ValidatedItemDelegate(QtWidgets.QStyledItemDelegate):
     def defineValidatorList(self, validatorList, maskList = None):
         self.validatorList = validatorList
         if not maskList:

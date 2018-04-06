@@ -25,7 +25,7 @@ from builtins import range
 import os
 
 #PyQt5 imports
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, QObject, Qt
 from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
@@ -41,7 +41,7 @@ from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
 
-class ComplexWindow(QtGui.QDockWidget, FORM_CLASS):
+class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface, parent=None):
         """Constructor."""
         super(ComplexWindow, self).__init__(parent)

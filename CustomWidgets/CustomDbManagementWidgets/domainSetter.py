@@ -26,7 +26,7 @@ import os
 from qgis.core import QgsMessageLog
 
 # Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
+from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QListWidgetItem, QDialog
@@ -40,7 +40,7 @@ from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import Cust
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'domainSetter.ui'))
 
-class DomainSetter(QtGui.QDialog, FORM_CLASS):
+class DomainSetter(QtWidgets.QDialog, FORM_CLASS):
     domainChanged = pyqtSignal(str, dict, dict)
     def __init__(self, abstractDb, uiParameterJsonDict = None, parent = None):
         """Constructor."""
