@@ -55,7 +55,7 @@
     </widget>
    </item>
    <item row="0" column="5">
-    <widget class="QgsColorButtonV2" name="mColorButton">
+    <widget class="QgsColorButton" name="mColorButton">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -80,7 +80,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QgsColorButtonV2</class>
+   <class>QgsColorButton</class>
    <extends>QToolButton</extends>
    <header>qgis.gui</header>
   </customwidget>
