@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt.QtCore import Qt, QSettings, pyqtSignal
-from qgis.PyQt.QtGui import QColor
+from qgis.PyQt.QtWidgets import QColor
 from qgis.gui import QgsMapTool, QgsRubberBand
 from qgis.core import QgsGeometry, Qgis
 
