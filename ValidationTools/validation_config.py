@@ -24,7 +24,6 @@ import os
 import json
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
 from PyQt4.QtGui import QTreeWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

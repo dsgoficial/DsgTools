@@ -27,8 +27,8 @@ from osgeo import gdal, ogr
 
 # Import the PyQt and QGIS libraries
 from PyQt4 import uic
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QMenu, QApplication, QCursor, QFileDialog, QMessageBox, QTreeWidgetItem, QInputDialog
 from _csv import writer
 from qgis._core import QgsAction
 

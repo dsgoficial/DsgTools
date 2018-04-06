@@ -23,7 +23,6 @@
 import os
 
 from PyQt4 import QtGui, uic
-from PyQt4.QtCore import *
 from PyQt4.QtSql import QSqlTableModel, QSqlDatabase, QSqlQuery
 from qgis.core import QgsMessageLog
 
