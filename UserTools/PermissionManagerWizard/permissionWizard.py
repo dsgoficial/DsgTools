@@ -33,7 +33,7 @@ from DsgTools.UserTools.PermissionManagerWizard.permissionWizardProfile import P
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'permissionWizard.ui'))
 
-class PermissionWizard(QtGui.QWizard, FORM_CLASS):
+class PermissionWizard(QtWidgets.QWizard, FORM_CLASS):
     def __init__(self, serverAbstractDb, dbsDict, parent=None):
         '''Constructor.'''
         super(self.__class__, self).__init__()

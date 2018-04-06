@@ -24,7 +24,7 @@ from builtins import range
 import os
 import json
 
-from qgis.PyQt import QtGui, uic
+from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
 from DsgTools.Utils.utils import Utils
@@ -32,7 +32,7 @@ from DsgTools.Utils.utils import Utils
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'setupEarthCoverage.ui'))
 
-class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
+class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, edgvVersion, areas, lines, oldCoverage, propertyList, enableSetupFromFile = True, onlySetup = False, propertyName = None, parent=None):
         """
@@ -48,8 +48,8 @@ class SetupEarthCoverage(QtGui.QWizard, FORM_CLASS):
         self.areasCustomSelector.setTitle(self.tr('Areas'))
         self.linesCustomSelector.setTitle(self.tr('Lines'))
         self.propertyList = propertyList
-        self.button(QtGui.QWizard.NextButton).clicked.connect(self.buildTree)
-        self.button(QtGui.QWizard.FinishButton).clicked.connect(self.buildDict)
+        self.button(QtWidgets.QWizard.NextButton).clicked.connect(self.buildTree)
+        self.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.buildDict)
         self.setupWizard(oldCoverage, enableSetupFromFile)
         self.configDict = dict()
 

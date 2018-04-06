@@ -35,7 +35,7 @@ from DsgTools.DbTools.BatchDbCreator.createBatchIncrementing import CreateBatchI
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbCreator.ui'))
 
-class BatchDbCreator(QtGui.QWizard, FORM_CLASS):
+class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
     def __init__(self, parent=None):
         """Constructor."""
