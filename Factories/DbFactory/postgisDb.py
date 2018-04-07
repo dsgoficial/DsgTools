@@ -3696,3 +3696,23 @@ class PostgisDb(AbstractDb):
         elif useTransaction:
             self.db.commit()
         return True
+
+    def getNodesGeometry(self, wktNodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the geometry of given feature from database. If feature is not found into database, returns None.
+        :param wktNodeList: a list of target node points (from WKT form).
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node type from database
+        """
+        dbNodeTypeDict = dict()
+        sql = ""
+        sql = self.gen.getNodesGeometryQuery(nodeList=wktNodeList, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs) + "\n"
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving nodes geometry from database: ")+query.lastError().text())
+            return None
+        while query.next():
+            dbNodeTypeDict[query.value(0)] = query.value(1)
+        return dbNodeTypeDict
