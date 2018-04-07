@@ -435,6 +435,25 @@ class HidrographyFlowProcess(ValidationProcess):
         flagLineList = list(set(flagLineList) - set(featBlackList))
         return flagLineList
 
+    def getNodeGeometryFromDb(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns a dictionary of node type as of database point of view.
+        :param node: a list of target node points (QgsPoint).
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node type according to database information.
+        """
+        nodeWkt, dbNTD, dbNodeTypeDict = dict(), dict(), dict()
+        for node in nodeList:
+            # mapping WKT conversions
+            nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
+        dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
+        for nWkt in dbNTD.keys():
+            if nWkt in nodeWkt.keys():
+                # if node is not in original dict, it'll be ignored 
+                dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
+        return dbNodeTypeDict
+
     def execute(self):
         # PARÂMETROS PARA TESTE
         searchRadius = self.parameters['Search Radius']
@@ -442,6 +461,7 @@ class HidrographyFlowProcess(ValidationProcess):
         d = self.nodeDict
         dNodeType = self.nodeTypeDict
         crs = trecho_drenagem.crs().authid()
+        nodeCrs = pt_drenagem.crs().authid().split(':')[1]
         for feat in pt_drenagem.selectedFeatures():
            n = feat.geometry().asMultiPoint()
            n = n[0] if isinstance(n, list) else n
@@ -464,6 +484,8 @@ class HidrographyFlowProcess(ValidationProcess):
         # trecho_drenagem.startEditing()
         # trecho_drenagem.setSelectedFeatures(flagList)
         # # TESTE DE CHECK POR NÓ
-        val, inval, nextNodes = self.checkNodeValidity(n, dNodeType[n], d[n], [], trecho_drenagem, geomType)
+        dbNodeTypeDict = self.getNodeGeometryFromDb(nodeList=d.keys(), nodeLayerName=pt_drenagem.name(),\
+                                   hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
+        val, inval, nextNodes = self.checkNodeValidity(n, dbNodeTypeDict[n], d[n], [], trecho_drenagem, geomType)
         trecho_drenagem.setSelectedFeatures(val.keys())
         print 'Invalids: ', inval, 'Nodes: ', nextNodes
