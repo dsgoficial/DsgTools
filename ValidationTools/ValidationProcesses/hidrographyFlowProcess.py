@@ -50,7 +50,6 @@ class HidrographyFlowProcess(ValidationProcess):
         frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyLayers()
         self.nodeDict = self.identifyAllNodes(trecho_drenagem)
         self.nodeTypeDict = self.classifyAllNodes(self.nodeDict, frame, self.parameters['Search Radius'])
-        print 'OBJETO REINICIADO'
 
     def getHidrographyLayers(self):
         """
@@ -122,6 +121,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :param node: node (QgsPoint) to be identified as over the frame layer or not.
         :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
         :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
+        :return: (bool) whether node is as close as searchRaius to frame contour.
         """
         qgisPoint = QgsGeometry.fromPoint(node)
         # buildgin a buffer around node with search radius for intersection with Layer Frame
@@ -393,7 +393,10 @@ class HidrographyFlowProcess(ValidationProcess):
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
             elif flow == 'in and out':
-                if node in [initialNode, finalNode]:
+                if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
+                    # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
+                    invalidLines[lineID] = line
+                elif node in [initialNode, finalNode]:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
                         if node == initialNode:
@@ -446,12 +449,15 @@ class HidrographyFlowProcess(ValidationProcess):
         nodeWkt, dbNTD, dbNodeTypeDict = dict(), dict(), dict()
         for node in nodeList:
             # mapping WKT conversions
-            nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
-        dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
-        for nWkt in dbNTD.keys():
-            if nWkt in nodeWkt.keys():
-                # if node is not in original dict, it'll be ignored 
-                dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
+            # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
+            temp = self.abstractDb.getNodesGeometry([QgsGeometry().fromMultiPoint([node]).exportToWkt()], \
+                    nodeLayerName, hidrographyLineLayerName, nodeCrs)
+            dbNodeTypeDict[node] = temp.values()[0]
+        # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
+        # for nWkt in dbNTD.keys():
+        #     if nWkt in nodeWkt.keys():
+        #         # if node is not in original dict, it'll be ignored 
+        #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
         return dbNodeTypeDict
 
     def execute(self):
