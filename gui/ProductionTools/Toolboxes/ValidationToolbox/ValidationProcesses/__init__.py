@@ -4,35 +4,32 @@
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
-                              -------------------
-        begin                : 2017-03-18
-        git sha              : $Format:%H$
-        copyright            : (C) 2017 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
+                             -------------------
+        begin                : 2014-10-09
+        copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
         email                : luiz.claudio@dsg.eb.mil.br
+        git sha              : $Format:%H$
  ***************************************************************************/
 
 /***************************************************************************
  *                                                                         *
- *   This program is free software you can redistribute it and/or modify  *
+ *   This program is free software; you can redistribute it and/or modify  *
  *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation either version 2 of the License, or     *
+ *   the Free Software Foundation; either version 2 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
  ***************************************************************************/
+ This script initializes the plugin, making it known to QGIS.
 """
 
-from builtins import object
-from qgis.core import QgsAbstractGeometry, QgsVertexId, QgsGeometry
 
-class CoordIdx(object):
-    def __init__(self, _geom, _vidx):
-        """
-        Constructor
-        :param _geom: QgsAbstractGeometry
-        :param _vidx: QgsVertexId
-        """
-        self.geom = _geom
-        self.vidx = _vidx
+# noinspection PyPep8Naming
+def classFactory(iface):  # pylint: disable=invalid-name
+    """Load DsgTools class from file DsgTools.
 
-    def point(self):
-        return self.geom.vertexAt(self.vidx)
+    :param iface: A QGIS interface instance.
+    :type iface: QgsInterface
+    """
+    #
+    from .dsg_tools import DsgTools
+    return DsgTools(iface)
