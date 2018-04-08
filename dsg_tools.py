@@ -34,6 +34,7 @@ from . import resources_rc
 
 currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
 # from DsgTools.LayerTools.LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
 # from DsgTools.LayerTools.loadAuxStruct import LoadAuxStruct
 # from DsgTools.LayerTools.CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
@@ -67,12 +68,12 @@ from .ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 # from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
 # from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
 # from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
-
 from qgis.utils import showPluginHelp
+
 try:
     import ptvsd
     ptvsd.enable_attach(secret='my_secret', address = ('localhost', 5679))
-except:
+except Exception as e:
     pass
 
 class DsgTools(object):
@@ -759,7 +760,7 @@ class DsgTools(object):
         """
         for action in self.actions:
             self.iface.removePluginMenu(
-                self.tr('&DSG Tools'),
+                '&DSG Tools',
                 action)
             self.iface.removeToolBarIcon(action)
 

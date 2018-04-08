@@ -109,7 +109,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         if self.menuHovered:
             # deactivates rubberband when the context menu is "destroyed" 
-            self.hoverRubberBand.reset(Qgis.Polygon)
+            self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
         if not self.isEmittingPoint:
             return
         self.endPoint = self.toMapCoordinates( e.pos() )
@@ -119,7 +119,7 @@ class MultiLayerSelection(QgsMapTool):
         """
         Builds rubberband rect.
         """
-        self.rubberBand.reset(Qgis.Polygon)
+        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
         point1 = QgsPoint(startPoint.x(), startPoint.y())
@@ -409,9 +409,9 @@ class MultiLayerSelection(QgsMapTool):
         :param onTriggeredAction: action to be executed when the given action is triggered
         :param onHoveredAction: action to be executed whilst the given action is hovered
         """
-        action.triggered[()].connect(onTriggeredAction)
+        action.triggered.connect(onTriggeredAction)
         if onHoveredAction:
-            action.hovered[()].connect(onHoveredAction)
+            action.hovered.connect(onHoveredAction)
 
     # def createMenuDict(self, featureList):
     #     """
@@ -482,9 +482,7 @@ class MultiLayerSelection(QgsMapTool):
                         searchRect = self.reprojectSearchArea(layer, rect)
                         if selected:
                             # if Control was held, appending behaviour is different
-                            if not firstGeom:
-                                firstGeom = layer.geometryType()
-                            elif firstGeom > layer.geometryType():
+                            if not firstGeom or firstGeom > layer.geometryType():
                                 firstGeom = layer.geometryType()
                             if geom.intersects(searchRect) and layer.geometryType() == firstGeom:
                                 # only appends features if it has the same geometry as first selected feature
@@ -509,10 +507,10 @@ class MultiLayerSelection(QgsMapTool):
                     action = menu.addAction(s) # , lambda feature=feature : self.setSelectionFeature(layer, feature))
                     # handling CTRL key and left/right click actions
                     if e.button() == QtCore.Qt.LeftButton: 
-                            # line added to make sure the action is associated with current loop value,
-                            # lambda function is used with standard parameter set to current loops value.
-                            triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
-                            hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
+                        # line added to make sure the action is associated with current loop value,
+                        # lambda function is used with standard parameter set to current loops value.
+                        triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
+                        hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     elif e.button() == QtCore.Qt.RightButton:
                         if selected:                        
                             triggeredAction = lambda layer=layer : self.iface.setActiveLayer(layer)
