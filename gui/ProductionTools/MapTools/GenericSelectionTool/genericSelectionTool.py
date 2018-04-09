@@ -33,9 +33,9 @@ from qgis.PyQt.QtWidgets import QMenu
 import numpy as np
 from qgis.PyQt.QtCore import Qt
 
-class MultiLayerSelection(QgsMapTool):
+class GenericSelectionTool(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
-    def __init__(self, canvas, iface):
+    def __init__(self, iface):
         """
         Tool Behaviours: (all behaviours start edition, except for rectangle one)
         1- Left Click: Clears previous selection, selects feature, sets feature layer as active layer. 
@@ -48,7 +48,7 @@ class MultiLayerSelection(QgsMapTool):
         5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangl'e are added to selection
         """
         self.iface = iface        
-        self.canvas = canvas
+        self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
@@ -558,3 +558,6 @@ class MultiLayerSelection(QgsMapTool):
         auxGeom = QgsGeometry.fromRect(geom)
         auxGeom.transform(coordinateTransformer)
         return auxGeom.boundingBox()
+    
+    def unload(self):
+        self.deactivate()
