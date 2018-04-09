@@ -25,12 +25,13 @@ from builtins import object
 import os.path
 import sys
 
+from qgis.PyQt.QtCore import QObject, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
 
-class GuiManager(object):
+class GuiManager(QObject):
 
     def __init__(self, iface, parentMenu = None, toolbar = None):
         """Constructor.
@@ -40,25 +41,25 @@ class GuiManager(object):
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
+        super(GuiManager, self).__init__()
         self.iface = iface
         self.menu = parentMenu
         self.iconBasePath = ':/plugins/DsgTools/icons/'
         self.actions = []
         self.managerList = []
+        self.menuList = []
         self.toolbar = toolbar
 
-    def addMenu(self, name, title, icon_file, parent = None):
+    def addMenu(self, name, title, icon_file):
         """
         Adds a QMenu
         """
-        if not parent:
-            child = QMenu(self.parentMenu)
-        else:
-            child = QMenu(parent)
+        child = QMenu(self.menu)
         child.setObjectName(name)
         child.setTitle(self.tr(title))
         child.setIcon(QIcon(self.iconBasePath+icon_file))
-        parent.addMenu(child)
+        self.menu.addMenu(child)
+        self.menuList.append(child)
         return child
 
     def createToolButton(self, parent, text):
@@ -129,7 +130,7 @@ class GuiManager(object):
             self.toolbar.addAction(action)
         if add_to_menu:
             self.iface.addPluginToMenu(
-                self.menu,
+                self.tr('&DSGTools'),
                 action)
         if withShortcut:
             self.iface.registerMainWindowAction(action, '')
@@ -141,7 +142,7 @@ class GuiManager(object):
         return action
     
     def initGui(self):
-        productionToolsGuiManager = ProductionToolsGuiManager(self.iface, self.menu, self.toolbar)
+        productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, self.menu, self.toolbar)
         productionToolsGuiManager.initGui()
         self.managerList.append(productionToolsGuiManager)
     
