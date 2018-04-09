@@ -22,24 +22,28 @@
 
 from __future__ import absolute_import
 
-from ..guiManager import GuiManager 
-# from .MapTools.mapToolsGuiManager import MapToolsGuiManager
+from qgis.PyQt.QtCore import QObject 
+from .MapTools.mapToolsGuiManager import MapToolsGuiManager
 
-class ProductionToolsGuiManager(GuiManager):
+class ProductionToolsGuiManager(QObject):
 
-    def __init__(self, iface, parentMenu = None, toolbar = None):
+    def __init__(self, manager, iface, parentMenu = None, toolbar = None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
             application at run time.
         :type iface: QgsInterface
         """
-        # Save reference to the QGIS interfa
-        super(ProductionToolsGuiManager, self).__init__(iface, parentMenu = parentMenu, toolbar = toolbar)
-        self.menu = self.addMenu(u'productiontools', self.tr('Production Tools'),'productiontools.png')
-        self.stackButton = self.createToolButton(self.toolbar, u'ProductionTools')
+        # Save reference to the QGIS interface
+        super(ProductionToolsGuiManager, self).__init__()
+        self.manager = manager
+        self.iface = iface
+        self.parentMenu = parentMenu
+        self.toolbar = toolbar
+        self.menu = self.manager.addMenu(u'productiontools', self.tr('Production Tools'),'productiontools.png')
+        self.stackButton = self.manager.createToolButton(self.toolbar, u'ProductionTools')
+        self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        pass
-        # self.mapToolsGuiManager = MapToolsGuiManager(self.iface, parentMenu=self.menu, toolbar = self.toolbar)
-        # self.mapToolsGuiManager.initGui()
+        self.mapToolsGuiManager = MapToolsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar = self.toolbar)
+        self.mapToolsGuiManager.initGui()

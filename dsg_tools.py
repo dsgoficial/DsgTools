@@ -104,7 +104,7 @@ class DsgTools(object):
         self.dsgTools.setTitle(u'DSGTools')
         self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
         #GuiManager
-        self.guiManager = GuiManager(self.dsgTools, parentMenu = self.dsgTools, toolbar = self.toolbar)
+        self.guiManager = GuiManager(self.iface, parentMenu = self.dsgTools, toolbar = self.toolbar)
         self.guiManager.initGui()
 
         #Sub menus
@@ -605,7 +605,6 @@ class DsgTools(object):
         """
         Removes the plugin menu item and icon from QGIS GUI
         """
-        super(DsgTools,self).unload()
         for action in self.actions:
             self.iface.removePluginMenu(
                 '&DSGTools',
