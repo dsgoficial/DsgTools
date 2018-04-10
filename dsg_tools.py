@@ -106,6 +106,22 @@ class DsgTools(object):
         #GuiManager
         self.guiManager = GuiManager(self.iface, parentMenu = self.dsgTools, toolbar = self.toolbar)
         self.guiManager.initGui()
+    
+    def unload(self):
+        """
+        Removes the plugin menu item and icon from QGIS GUI
+        """
+        self.guiManager.unload()
+        for action in self.actions:
+            self.iface.removePluginMenu(
+                '&DSGTools',
+                action)
+            self.iface.removeToolBarIcon(action)
+
+        if self.dsgTools is not None:
+            self.menuBar.removeAction(self.dsgTools.menuAction())
+        del self.dsgTools
+        del self.toolbar
 
         #Sub menus
         # server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
@@ -601,20 +617,7 @@ class DsgTools(object):
     #     if self.opInstaller.checkIfInstalled():
     #         self.opInstaller.loadTools()
 
-    def unload(self):
-        """
-        Removes the plugin menu item and icon from QGIS GUI
-        """
-        for action in self.actions:
-            self.iface.removePluginMenu(
-                '&DSGTools',
-                action)
-            self.iface.removeToolBarIcon(action)
-
-        if self.dsgTools is not None:
-            self.menuBar.removeAction(self.dsgTools.menuAction())
-        del self.dsgTools
-        del self.toolbar
+    
 
     # def showAbout(self):
     #     """

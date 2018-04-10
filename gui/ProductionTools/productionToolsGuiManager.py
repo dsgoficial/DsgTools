@@ -47,3 +47,6 @@ class ProductionToolsGuiManager(QObject):
     def initGui(self):
         self.mapToolsGuiManager = MapToolsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar = self.toolbar)
         self.mapToolsGuiManager.initGui()
+    
+    def unload(self):
+        self.mapToolsGuiManager.unload()

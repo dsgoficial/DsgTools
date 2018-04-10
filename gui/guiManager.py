@@ -71,6 +71,7 @@ class GuiManager(QObject):
         button.setToolButtonStyle(Qt.ToolButtonIconOnly)
         button.setPopupMode(QToolButton.MenuButtonPopup)
         parent.addWidget(button)
+        self.actions.append(button)
         return button
     
     def add_action(
