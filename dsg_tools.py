@@ -117,9 +117,11 @@ class DsgTools(object):
                 '&DSGTools',
                 action)
             self.iface.removeToolBarIcon(action)
+            self.iface.unregisterMainWindowAction(action)
 
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
+        self.iface.mainWindow().removeToolBar(self.toolbar)
         del self.dsgTools
         del self.toolbar
 
