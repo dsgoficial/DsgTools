@@ -20,24 +20,38 @@
  *                                                                         *
  ***************************************************************************/
 """
-
+from __future__ import absolute_import
 from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest
+from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest, Qgis
 from qgis.PyQt import QtCore, QtGui
 
-from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from .....core.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class FlipLine(QgsMapTool):
     """
     Tool expected behaviour:
     When (valid) line features are selected, it flips them upon tool activation.
     """
-    def __init__(self, canvas, iface):
+    def __init__(self, iface):
         self.iface = iface        
-        self.canvas = canvas
+        self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
+    
+    def addTool(self, manager, callback, parentMenu, iconBasePath):
+        icon_path = iconBasePath + '/flipLineTool.png'
+        toolTip = self.tr("DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool.")
+        manager.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Flip Line Tool'),
+            callback=callback,
+            add_to_menu=True,
+            add_to_toolbar=True,
+            withShortcut = True,
+            tooltip = toolTip,
+            parentToolbar =parentMenu
+        )
 
     def activate(self):
         """
@@ -78,7 +92,7 @@ class FlipLine(QgsMapTool):
         Gets all selected lines on canvas.
         """
         selection = []
-        for layer in self.iface.legendInterface().layers():
+        for layer in self.iface.mapCanvas().layers():
             if (not isinstance(layer, QgsVectorLayer)) or layer.geometryType() != 1:
                 continue
             for feat in layer.selectedFeatures():
@@ -98,15 +112,15 @@ class FlipLine(QgsMapTool):
                 pop += 1
         if not selectedFeatures:
             logMsg = self.getLogMessage(None, None)
-            self.iface.messageBar().pushMessage(self.tr('Error'), logMsg, level=QgsMessageBar.CRITICAL, duration=3)
+            self.iface.messageBar().pushMessage(self.tr('Error'), logMsg, level=Qgis.Critical, duration=3)
             # QtGui.QMessageBox.critical(self, self.tr('Critical!'), logMsg)
             QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return
         # call the method for flipping features from geometry module
         flippedLines, failedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures, debugging=True)
         logMsg = self.getLogMessage(flippedLines, failedLines)
-        self.iface.messageBar().pushMessage(self.tr('Success'), logMsg, level=QgsMessageBar.INFO, duration=3)
-        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.INFO)
+        self.iface.messageBar().pushMessage(self.tr('Success'), logMsg, level=Qgis.Info, duration=3)
+        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", Qgis.Info)
  
     def getLogMessage(self, flippedLines, failedLines):
         """
@@ -136,7 +150,7 @@ class FlipLine(QgsMapTool):
         if self.canvas.currentLayer() in self.iface.editableLayers():
             self.flipSelectedLines()
         else:
-            self.iface.messageBar().pushMessage(self.tr('Warning'), self.tr('Start editing in current layer!'), level=QgsMessageBar.INFO, duration=3)
+            self.iface.messageBar().pushMessage(self.tr('Warning'), self.tr('Start editing in current layer!'), level=Qgis.Info, duration=3)
 
     # def flipLine(self, layer, line):
     #     """

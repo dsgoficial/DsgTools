@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from __future__ import absolute_import
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
@@ -93,7 +94,7 @@ class DsgGeometryHandler(QObject):
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
                 # setting flipped geometry
-                flippedFeatureGeom = QgsGeometry.fromMultiPoint(nodes)                
+                flippedFeatureGeom = QgsGeometry.fromMultiPointXY(nodes)                
             else:
                 # inverting the point list
                 nodes = geom.asPoint()
@@ -104,21 +105,21 @@ class DsgGeometryHandler(QObject):
                 nodes = geom.asMultiPolyline()
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
-                flippedFeatureGeom = QgsGeometry.fromMultiPolyline(nodes)
+                flippedFeatureGeom = QgsGeometry.fromMultiPolylineXY(nodes)
             else:
                 nodes = geom.asPolyline()
                 nodes = nodes[::-1]
-                flippedFeatureGeom = QgsGeometry.fromPolyline(nodes)         
+                flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)         
         elif geomType == 2:
             if isMulti:
                 nodes = geom.asMultiPolygon()                
                 for idx, part in enumerate(nodes):
                     nodes[idx] = part[::-1]
-                flippedFeatureGeom = QgsGeometry.fromMultiPolygon(nodes)                
+                flippedFeatureGeom = QgsGeometry.fromMultiPolygonXY(nodes)                
             else:
                 nodes = geom.asPolygon()
                 nodes = nodes[::-1]
-                flippedFeatureGeom = QgsGeometry.fromPolygon(nodes)
+                flippedFeatureGeom = QgsGeometry.fromPolygonXY(nodes)
         # setting feature geometry to the flipped one
         # feature.setGeometry(flippedFeatureGeom)
         # layer.updateFeature(feature)

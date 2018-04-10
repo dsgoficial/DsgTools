@@ -64,6 +64,21 @@ class GenericSelectionTool(QgsMapTool):
         self.cursorChangingHotkey = QtCore.Qt.Key_Alt
         self.menuHovered = False # indicates hovering actions over context menu
     
+    def addTool(self, manager, callback, parentMenu, iconBasePath):
+        icon_path = iconBasePath + '/genericSelect.png'
+        toolTip = self.tr("DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband.")
+        manager.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Generic Selector'),
+            callback=callback,
+            add_to_menu=True,
+            add_to_toolbar=True,
+            withShortcut = True,
+            tooltip = toolTip,
+            parentToolbar =parentMenu,
+            isCheckable = True
+        )
+    
     def keyPressEvent(self, e):
         """
         Reimplemetation of keyPressEvent() in order to handle cursor changing hotkey (Alt).

@@ -28,7 +28,7 @@ import sys
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
 # from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
 # from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
-# from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
+from .FlipLineTool.flipLineTool import FlipLine
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
@@ -44,20 +44,12 @@ class MapToolsGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
+        #adding generic selection tool
         self.genericTool = GenericSelectionTool(self.iface)
-        icon_path = self.iconBasePath + '/genericSelect.png'
-        toolTip = self.tr("DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband.")
-        self.manager.add_action(
-            icon_path,
-            text=self.tr('DSGTools: Generic Selector'),
-            callback=self.activateGenericTool,
-            add_to_menu=True,
-            add_to_toolbar=True,
-            withShortcut = True,
-            tooltip = toolTip,
-            parentToolbar = self.parentMenu,
-            isCheckable = True
-        )
+        self.genericTool.addTool(self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath)
+        self.flipLineTool = FlipLine(self.iface)
+        self.flipLineTool.addTool(self.manager, self.flipLineTool.startFlipLineTool, self.parentMenu, self.iconBasePath)
+        
     
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
