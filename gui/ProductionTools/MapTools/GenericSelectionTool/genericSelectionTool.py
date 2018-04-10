@@ -24,7 +24,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from builtins import range
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import Qgis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsWkbTypes, QgsProject
+from qgis.core import Qgis, QgsPointXY, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsWkbTypes, QgsProject
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis.PyQt.QtGui import QColor, QCursor
@@ -32,6 +32,7 @@ from qgis.PyQt.QtWidgets import QMenu
 
 import numpy as np
 from qgis.PyQt.QtCore import Qt
+from functools import partial
 
 class GenericSelectionTool(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
@@ -122,10 +123,10 @@ class GenericSelectionTool(QgsMapTool):
         self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
         if startPoint.x() == endPoint.x() or startPoint.y() == endPoint.y():
             return
-        point1 = QgsPoint(startPoint.x(), startPoint.y())
-        point2 = QgsPoint(startPoint.x(), endPoint.y())
-        point3 = QgsPoint(endPoint.x(), endPoint.y())
-        point4 = QgsPoint(endPoint.x(), startPoint.y())
+        point1 = QgsPointXY(startPoint.x(), startPoint.y())
+        point2 = QgsPointXY(startPoint.x(), endPoint.y())
+        point3 = QgsPointXY(endPoint.x(), endPoint.y())
+        point4 = QgsPointXY(endPoint.x(), startPoint.y())
     
         self.rubberBand.addPoint(point1, False)
         self.rubberBand.addPoint(point2, False)
@@ -168,7 +169,7 @@ class GenericSelectionTool(QgsMapTool):
                     continue
                 #builds bbRect and select from layer, adding selection
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
-                layer.select(bbRect, True)
+                layer.selectByRect(bbRect, behavior = QgsVectorLayer.AddToSelection)
             self.rubberBand.hide()
 
     def canvasPressEvent(self, e):
@@ -279,6 +280,7 @@ class GenericSelectionTool(QgsMapTool):
         """
         QtWidgets.QApplication.restoreOverrideCursor()
         try:
+            self.rubberBand.reset()
             if self.toolAction:
                 self.toolAction.setChecked(False)
             if self is not None:
@@ -314,7 +316,7 @@ class GenericSelectionTool(QgsMapTool):
             idList.append(featId)
         elif not selectAll:
             idList.pop(idList.index(featId))
-        layer.setSelectedFeature(idList)
+        layer.selectByIds(idList)
         return 
 
     def setSelectionListFeature(self, listLayerFeature):
@@ -479,8 +481,7 @@ class GenericSelectionTool(QgsMapTool):
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
-                        # searchRect = self.reprojectSearchArea(layer, rect)
-                        searchRect = rect
+                        searchRect = self.reprojectSearchArea(layer, rect)
                         if selected:
                             # if Control was held, appending behaviour is different
                             if not firstGeom or firstGeom > layer.geometryType():
@@ -510,7 +511,7 @@ class GenericSelectionTool(QgsMapTool):
                     if e.button() == QtCore.Qt.LeftButton: 
                         # line added to make sure the action is associated with current loop value,
                         # lambda function is used with standard parameter set to current loops value.
-                        triggeredAction = lambda t=t[i] : self.setSelectionFeature(t[0], t[1])
+                        triggeredAction = partial(self.setSelectionFeature, t[i][0], t[i][1])
                         hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     elif e.button() == QtCore.Qt.RightButton:
                         if selected:                        
@@ -521,7 +522,7 @@ class GenericSelectionTool(QgsMapTool):
                             pop += 1
                             continue
                         else:
-                            triggeredAction = lambda t=t[i] : self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                            triggeredAction = partial(self.iface.openFeatureForm, t[i][0], t[i][1], showModal=False)
                             hoveredAction = lambda t=t[i] : self.createRubberBand(feature=t[1], layer=t[0], geom=t[2])
                     self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # setting the action for the "All" options

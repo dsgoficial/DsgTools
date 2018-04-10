@@ -55,7 +55,8 @@ class MapToolsGuiManager(QObject):
             add_to_toolbar=True,
             withShortcut = True,
             tooltip = toolTip,
-            parentToolbar = self.parentMenu
+            parentToolbar = self.parentMenu,
+            isCheckable = True
         )
     
     def activateGenericTool(self):

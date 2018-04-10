@@ -88,7 +88,8 @@ class GuiManager(QObject):
         parentMenu = None,
         withShortcut=False,
         tooltip = None,
-        parentToolbar = None):
+        parentToolbar = None,
+        isCheckable = False):
         """Add a toolbar icon to the InaSAFE toolbar.
         :param icon_path: Path to the icon for this action. Can be a resource
             path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
@@ -135,6 +136,8 @@ class GuiManager(QObject):
                 action)
         if withShortcut:
             self.iface.registerMainWindowAction(action, '')
+        if isCheckable:
+            action.setCheckable(True)
         if tooltip:
             action.setToolTip(tooltip)
         if parentToolbar:
