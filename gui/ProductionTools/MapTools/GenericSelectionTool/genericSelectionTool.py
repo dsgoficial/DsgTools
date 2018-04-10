@@ -270,7 +270,7 @@ class GenericSelectionTool(QgsMapTool):
                         else:
                             lyr.modifySelection([feat.id()],[])
                         if not hasControlModifyer:
-                            self.iface.setActiveLayer(lyr)
+                            x = self.iface.setActiveLayer(lyr)
                             return
                        
     def deactivate(self):
@@ -479,7 +479,8 @@ class GenericSelectionTool(QgsMapTool):
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
-                        searchRect = self.reprojectSearchArea(layer, rect)
+                        # searchRect = self.reprojectSearchArea(layer, rect)
+                        searchRect = rect
                         if selected:
                             # if Control was held, appending behaviour is different
                             if not firstGeom or firstGeom > layer.geometryType():
