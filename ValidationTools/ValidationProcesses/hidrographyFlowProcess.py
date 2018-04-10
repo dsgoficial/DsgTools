@@ -22,7 +22,7 @@
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsWKBTypes
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-import processing, binascii
+import processing, binascii, math
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class HidrographyFlowProcess(ValidationProcess):
@@ -30,11 +30,12 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         Constructor
         """
+        # ATENÇÃO: PASSAR OS TIPOS DE RIOS PARA UM ENUM!
         super(HidrographyFlowProcess, self).__init__(postgisDb, iface, instantiating)
         self.canvas = self.iface.mapCanvas()
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.processAlias = self.tr('Hidrography Network Directioning')
-        self.parameters = { 'Only Selected' : False, 'Snap' : 2.0, 'Search Radius' : 5.0 }
+        self.parameters = { 'Only Selected' : False, 'Search Radius' : 5.0 }
         # self.nodeTypeExceptionsDict = {
         #                                 0 : 'Flag',
         #                                 1 : 'Fonte d\'Água',
@@ -55,18 +56,18 @@ class HidrographyFlowProcess(ValidationProcess):
         :return: (QgsFeature) frame contour, frame layer, hidrography lines layer, hidrography node layer
         """
         frame, frameLayer, trecho_drenagem, pt_drenagem = None, None, None, None        
-        for lyer in self.canvas.layers():
-            if lyer.name() == 'aux_moldura_a':
-                frameLayer = lyer
+        for lyr in self.canvas.layers():
+            if lyr.name() == 'aux_moldura_a':
+                frameLayer = lyr
                 # getting frame contour (as a PolyLine feature)
-                frame = [feat for feat in lyer.getFeatures()]
+                frame = [feat for feat in lyr.getFeatures()]
                 frame = frame[0]
                 frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
                 frame = QgsGeometry().fromPolyline(frame[0][0])
-            elif lyer.name() == 'aux_hid_nodes_p':
-                pt_drenagem = lyer
-            elif lyer.name() == 'hid_trecho_drenagem_l':
-                trecho_drenagem = lyer
+            elif lyr.name() == 'aux_hid_nodes_p':
+                pt_drenagem = lyr
+            elif lyr.name() == 'hid_trecho_drenagem_l':
+                trecho_drenagem = lyr
             elif trecho_drenagem and pt_drenagem and frame:
                 break
         return frame, frameLayer, trecho_drenagem, pt_drenagem
@@ -75,7 +76,7 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
         :param lyr: target layer to which nodes identification is required.
-        :return: { node_id : { start : [feature_id_Which_Starts_with_node], end : feature_id_Which_Ends_with_node } }.
+        :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
         isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
@@ -158,12 +159,15 @@ class HidrographyFlowProcess(ValidationProcess):
             elif hasStartLine:
                 return 2
             # case 1.d: points that are not supposed to have one way flow (flags)
-            return 0
-        # case 2 "confluence"
-        elif sizeFlowIn >= sizeFlowOut:
+            return 0        
+        elif sizeFlowIn > sizeFlowOut:
+            # case 2 "confluence"
             return 5
-        # case 3 "ramification"
+        elif sizeFlowIn == sizeFlowOut:
+            # case 4 "attribute change"
+            return 7
         else:
+            # case 3 "ramification"
             return 6
         
     def classifyAllNodes(self, nodeDict, frameLyrContour, searchRadius, nodeList=None):
@@ -210,22 +214,6 @@ class HidrographyFlowProcess(ValidationProcess):
                 return False
         return True
 
-    def getLineLastNode(self, lyr, feat, geomType=None):
-        """
-        Returns the ending point of a line.
-        :param lyr: layer containing target feature.
-        :param feat: feature which last node is requested.
-        :param geomType: int regarding to layer geometry type (1 for lines).
-        :return: ending node point (QgsPoint).
-        """
-        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
-        if isMulti:
-            if len(n) > 1:
-                return
-            return n[0][-1]
-        return n[-1]
-
     def getLineInitialNode(self, lyr, feat, geomType=None):
         """
         Returns the starting point of a line.
@@ -241,6 +229,75 @@ class HidrographyFlowProcess(ValidationProcess):
                 return
             return n[0][0]
         return n[0]
+
+    def getSecondNode(self, lyr, feat, geomType=None):
+        """
+        Returns the starting point of a line.
+        :param lyr: layer containing target feature.
+        :param feat: feature which initial node is requested.
+        :param geomType: int regarding to layer geometry type (1 for lines).
+        :return: starting node point (QgsPoint).
+        """
+        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        if isMulti:
+            if len(n) > 1:
+                # process doesn't treat multipart features that does have more than 1 part
+                return
+            return n[0][1]
+        return n[1]
+
+    def getPenultNode(self, lyr, feat, geomType=None):
+        """
+        Returns the ending point of a line.
+        :param lyr: layer containing target feature.
+        :param feat: feature which last node is requested.
+        :param geomType: int regarding to layer geometry type (1 for lines).
+        :return: ending node point (QgsPoint).
+        """
+        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][-2]
+        return n[-2]
+
+    def calculateAngleDifferences(self, node, nodeList):
+        """
+        Calculates and returns all angle differences of lines flowint into and from a node (all angles are 
+        calculated with node as reference).
+        :param node: node (QgsPoint) which lines connected to it are going to be verified.
+        :return:
+        """
+        azimuthDict = dict()
+        for point in nodeList:
+            az = math.atan2(point.x() - node.x(), point.y() - node.y())
+            azimuthDict[point] = az
+        return azimuthDict
+
+    def getAngDiffPerNode(self, node, nodeDict):
+        """
+        
+        """
+        pass
+
+
+    def getLineLastNode(self, lyr, feat, geomType=None):
+        """
+        Returns the ending point of a line.
+        :param lyr: layer containing target feature.
+        :param feat: feature which last node is requested.
+        :param geomType: int regarding to layer geometry type (1 for lines).
+        :return: ending node point (QgsPoint).
+        """
+        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][-1]
+        return n[-1]
 
     # NOT USED SO FAR
     def selectUpDownstreamLines(self, firstNode, lyr, nodeDict, direction, ignoreWrongFlow=False, flipWrongLines=False, ignoreSelection=False):
@@ -361,7 +418,8 @@ class HidrographyFlowProcess(ValidationProcess):
                     3 : 'in', # Interrupção à Jusante
                     4 : 'out', # Interrupção à Montante
                     5 : 'in and out', # Confluência
-                    6 : 'in and out' # Ramificação
+                    6 : 'in and out', # Ramificação
+                    7 : 'in and out' # Mudança de Atributo
                    }
         flow = flowType[nodeType]
         if not flow:
@@ -521,6 +579,9 @@ class HidrographyFlowProcess(ValidationProcess):
         return invalidLines, validLines
 
     def executeV2(self):
+        """
+        EXEC PARA TESTES
+        """
         # PARÂMETROS PARA TESTE
         searchRadius = self.parameters['Search Radius']
         frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()        
@@ -567,6 +628,7 @@ class HidrographyFlowProcess(ValidationProcess):
     def buildFlagList(self, invalidListDict, tableSchema, tableName, geometryColumn):
         """
         Builds record list from pointList to raise flags.
+
         """
         recordList = []
         for featid, line in invalidListDict.iteritems():
@@ -576,7 +638,7 @@ class HidrographyFlowProcess(ValidationProcess):
 
     def execute(self):
         """
-        
+        REFACTOR THIS METHOD!
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
@@ -586,11 +648,12 @@ class HidrographyFlowProcess(ValidationProcess):
             frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
             crs = trecho_drenagem.crs().authid()
             nodeCrs = pt_drenagem.crs().authid().split(':')[1]
+            searchRadius = self.parameters['Search Radius']
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             try:
                 dbNodeTypeDict = self.getNodeGeometryFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
                                     hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-                if not dbNodeTypeDict:
+                if not dbNodeTypeDict.values():
                     # in case node table is readable but no contents are found
                     raise Exception
             except:
