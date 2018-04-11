@@ -337,7 +337,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             #entering in editing mode
             if not reclassificationLayer.isEditable():
                 reclassificationLayer.startEditing()
-            lyrAttributes = [i.name() for i in reclassificationLayer.pendingFields()]
+            lyrAttributes = [i.name() for i in reclassificationLayer.fields()]
             for attr in list(self.reclassificationDict[category][edgvClass][button].keys()):
                 if attr == 'buttonProp':
                     continue
@@ -532,7 +532,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                     geomList.append(geom)
                 for newGeom in geomList:
                     #creating a new feature according to the reclassification layer
-                    newFeature = QgsFeature(reclassificationLayer.pendingFields())
+                    newFeature = QgsFeature(reclassificationLayer.fields())
                     #transforming the geometry to the correct crs
                     geom.transform(coordinateTransformer)
                     #setting the geometry

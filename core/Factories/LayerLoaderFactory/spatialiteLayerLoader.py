@@ -236,7 +236,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         :return:
         """
         #sweep vlayer to find v2
-        attrList = vlayer.pendingFields()
+        attrList = vlayer.fields()
         for field in attrList:
             i = vlayer.fieldNameIndex(field.name())
             if vlayer.editorWidgetV2(i) == 'ValueRelation':

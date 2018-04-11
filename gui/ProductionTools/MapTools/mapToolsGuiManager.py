@@ -26,7 +26,7 @@ import os.path
 import sys
 
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
-# from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
+from .Acquisition.acquisition import Acquisition
 # from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
 from .FlipLineTool.flipLineTool import FlipLine
 from qgis.PyQt.QtCore import QObject
@@ -49,6 +49,8 @@ class MapToolsGuiManager(QObject):
         self.genericTool.addTool(self.manager, self.activateGenericTool, self.parentMenu, self.iconBasePath)
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(self.manager, self.flipLineTool.startFlipLineTool, self.parentMenu, self.iconBasePath)
+        self.acquisition = Acquisition(self.iface)
+        self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
         
     
     def activateGenericTool(self):

@@ -525,7 +525,7 @@ class ValidationProcess(QObject):
             else:
                 featureList = layer.getFeatures()
             for feature in featureList:
-                newfeat = QgsFeature(coverage.pendingFields())
+                newfeat = QgsFeature(coverage.fields())
                 newfeat.setGeometry(feature.geometry())
                 newfeat['featid'] = feature.id()
                 newfeat['classname'] = classname
@@ -635,7 +635,7 @@ class ValidationProcess(QObject):
         return len(featFlagList)
     
     def buildFlagFeature(self, flagLyr, processName, tableSchema, tableName, feat_id, geometry_column, geom, reason):
-        newFeat = QgsFeature(flagLyr.pendingFields())
+        newFeat = QgsFeature(flagLyr.fields())
         newFeat['process_name'] = processName
         newFeat['layer'] = '{0}.{1}'.format(tableSchema, tableName)
         newFeat['feat_id'] = feat_id

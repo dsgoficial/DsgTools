@@ -4,7 +4,7 @@ from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
-from qgis.core import QgsPoint, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
+from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject
 from qgis.gui import QgsMapMouseEvent
 import math
 from qgis.PyQt import QtCore, QtGui
@@ -85,7 +85,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         if event.key() == Qt.Key_Backspace:
             if self.geometry:
                 self.geometry.pop()
-                geom = QgsGeometry.fromPolygon([self.geometry])
+                geom = QgsGeometry.fromPolygonXY([self.geometry])
                 self.qntPoint -= 1
                 self.rubberBand.setToGeometry(geom, None)      
     
@@ -97,7 +97,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.qntPoint = 0
         self.geometry = []
         if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(geometryType=Qgis.Point)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
     
@@ -111,7 +111,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             #intersecao
             x = (a2 - a1)/(1/m2 - 1/m1) 
             y = -x/m1 + a1
-            return QgsPoint(x,y)
+            return QgsPointXY(x,y)
         return False
     
     def projectPoint(self, p1, p2, p3):        
@@ -129,23 +129,23 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         except:
             return None
 
-        return QgsPoint(x, y)
+        return QgsPointXY(x, y)
     
     def getRubberBand(self):
         geomType = self.iface.activeLayer().geometryType()
-        if geomType == Qgis.Polygon:
+        if geomType == QgsWkbTypes.PolygonGeometry:
             rubberBand = QgsRubberBand(self.canvas, True)
             rubberBand.setFillColor(QColor(255, 0, 0, 40))
-        elif geomType == Qgis.Line:
+        elif geomType == QgsWkbTypes.LineGeometry:
             rubberBand = QgsRubberBand(self.canvas, False)
-        rubberBand.setBorderColor(QColor(255, 0, 0, 200))
+        rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         return rubberBand
     
     def getSnapRubberBand(self):
-        rubberBand = QgsRubberBand(self.canvas, geometryType = Qgis.Point)
+        rubberBand = QgsRubberBand(self.canvas, geometryType = QgisWkbType.PointGeometry)
         rubberBand.setFillColor(QColor(255, 0, 0, 40))
-        rubberBand.setBorderColor(QColor(255, 0, 0, 200))
+        rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         rubberBand.setIcon(QgsRubberBand.ICON_X)
         return rubberBand        
@@ -155,7 +155,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         if geom :
             layer = self.canvas.currentLayer()
             feature = QgsFeature()
-            fields = layer.pendingFields()
+            fields = layer.fields()
             feature.setGeometry(geom)
             feature.initAttributes(fields.count())            
             provider = layer.dataProvider()              
@@ -196,23 +196,23 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         srid = layer.crs().authid()
         crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
         lyrType = self.iface.activeLayer().geometryType()
         # Transforming the points
-        if lyrType == Qgis.Line:
+        if lyrType == QgsWkbTypes.LineGeometry:
             geomList = geom.asPolyline()
-        elif lyrType == Qgis.Polygon:
+        elif lyrType == QgsWkbTypes.PolygonGeometry:
             geomList = geom.asPolygon()
         newGeom = []
         for j in range(len(geomList)):
-            if lyrType == Qgis.Line:
+            if lyrType == QgsWkbTypes.LineGeometry:
                 newGeom.append(coordinateTransformer.transform(geomList[j]))
-            elif lyrType == Qgis.Polygon:
+            elif lyrType == QgsWkbTypes.PolygonGeometry:
                 line = geomList[j]
                 for i in range(len(line)):
                     point = line[i]
                     newGeom.append(coordinateTransformer.transform(point))
-        if lyrType == Qgis.Line:
-            return QgsGeometry.fromPolyline(newGeom + [newGeom[0]])
-        elif lyrType == Qgis.Polygon:
-            return QgsGeometry.fromPolygon([newGeom])                   
+        if lyrType == QgsWkbTypes.LineGeometry:
+            return QgsGeometry.fromPolylineXY(newGeom + [newGeom[0]])
+        elif lyrType == QgsWkbTypes.PolygonGeometry:
+            return QgsGeometry.fromPolygonXY([newGeom])                   

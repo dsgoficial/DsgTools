@@ -171,7 +171,7 @@ class AcquisitionFreeController(object):
             tolerance = self.getTolerance(layer)
             geom = self.reprojectGeometry(geom)
             simplifyGeometry = self.simplifyGeometry(geom, tolerance)
-            fields = layer.pendingFields()
+            fields = layer.fields()
             feature = core.QgsFeature()
             feature.setGeometry(simplifyGeometry)
             feature.initAttributes(fields.count())            

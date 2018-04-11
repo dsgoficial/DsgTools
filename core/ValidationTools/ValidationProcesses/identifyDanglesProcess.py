@@ -216,7 +216,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         #gets lyr features and stores only geometry into filterLyr
         featList = []
         for feat in lyr.getFeatures():
-            newfeat = QgsFeature(filterLyr.pendingFields())
+            newfeat = QgsFeature(filterLyr.fields())
             newfeat['featid'] = feat.id()
             geom = feat.geometry()
             if not geom:

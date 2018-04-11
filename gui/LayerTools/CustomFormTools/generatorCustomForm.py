@@ -364,8 +364,8 @@ class GeneratorCustomForm(object):
         allWidgetsTabControl = u""
         rowAttr = 0
         rowControl = 0
-        for idx in vlayer.pendingFields().allAttributesList():
-            field = vlayer.pendingFields().field(idx).name()
+        for idx in vlayer.fields().allAttributesList():
+            field = vlayer.fields().field(idx).name()
             if field in [u'id', u'controle_id', u'ultimo_usuario', u'data_modificacao']:
                 allWidgetsTabControl += self.createLineEdit(field, rowControl, readOnly = True)
                 rowControl+=1

@@ -194,7 +194,7 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         layers = self.iface.legendInterface().layers()
         for layer in layers:
             if isinstance(layer, QgsVectorLayer):
-                for field in layer.pendingFields():
+                for field in layer.fields():
                     fieldIndex = layer.fieldNameIndex(field.name())
                     # only classes that have value maps may be enlisted on the feature
                     if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
