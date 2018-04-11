@@ -96,7 +96,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         # loading/getting the frame layer
         frame = self.loadLayerBeforeValidationProcess(self.frameLayer)
         for feat in frame.getFeatures():
-            newFeat = QgsFeature(lineLyr.pendingFields())
+            newFeat = QgsFeature(lineLyr.fields())
             newGeom = QgsGeometry.fromPolyline(feat.geometry().asMultiPolygon()[0][0])
             newFeat.setGeometry(newGeom)
             lineLyr.dataProvider().addFeatures([newFeat])
@@ -116,7 +116,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         outputLayer = processing.getObject(ret['OUTPUT'])
         addList = []
         for feat in outputLayer.getFeatures():
-            newFeat = QgsFeature(areaLyr.pendingFields())
+            newFeat = QgsFeature(areaLyr.fields())
             newFeat['cl'] = cl
             area = feat.geometry()
             area.convertToMultiType()
@@ -233,7 +233,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
                     #get original centroid layer
                     auxLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn='centroid').uri(), relateDict[cl][id][0][0], "postgres")
                     #get all field names
-                    fieldNames = [field.name() for field in auxLyr.pendingFields()]
+                    fieldNames = [field.name() for field in auxLyr.fields()]
                     #we must not consider these fields
                     notAllowedFields = [name for name in fieldNames if (name in ['id', 'geom', 'centroid'] or 'id_' in name)]
                     #check by index is easier, therefore, this step
@@ -310,7 +310,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
             auxCentroidLyr = QgsVectorLayer(self.abstractDb.getURI(cl, False, geomColumn = 'centroid').uri(), cl, "postgres")
             newFeatList = []
             for feat in auxCentroidLyr.getFeatures():
-                newFeat = QgsFeature(centroidLyr.pendingFields())
+                newFeat = QgsFeature(centroidLyr.fields())
                 newFeat['featid'] = feat.id()
                 newFeat['cl'] = cl
                 newFeat['child'] = self.abstractDb.getWhoAmI(cl,feat.id()) 

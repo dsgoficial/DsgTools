@@ -294,7 +294,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :param domLayerDict:
         :return:
         """
-        lyrAttributes = [i for i in lyr.pendingFields()]
+        lyrAttributes = [i for i in lyr.fields()]
         for i in range(len(lyrAttributes)):
             attrName = lyrAttributes[i].name()
             if attrName == 'id' or 'id_' in lyrAttributes[i].name():

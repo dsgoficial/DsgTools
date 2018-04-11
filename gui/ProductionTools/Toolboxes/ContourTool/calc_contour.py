@@ -158,7 +158,7 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         #updating the reference layer
         self.contourTool.updateReference(self.getLayer())
 
-        fields = currentLayer.pendingFields()
+        fields = currentLayer.fields()
         field_names = [field.name() for field in fields]
         self.attributeCombo.clear()
         self.attributeCombo.addItem('Select a field')

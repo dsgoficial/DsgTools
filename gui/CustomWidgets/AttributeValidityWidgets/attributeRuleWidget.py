@@ -73,7 +73,7 @@ class AttributeRuleWidget(QtWidgets.QWidget, FORM_CLASS):
             key = self.layerComboBox.currentText()
             self.attributeComboBox.addItem(self.tr('Select attribute'))
             #get attribute names
-            attrNames = [i.name() for i in self.layerDict[key].pendingFields()]
+            attrNames = [i.name() for i in self.layerDict[key].fields()]
             #add items to combo box
             self.attributeComboBox.addItems(attrNames)
             #after everything is ok, set components enabled

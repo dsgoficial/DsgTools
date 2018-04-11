@@ -154,7 +154,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         #updating original layer
         outputLayer = processing.getObject(ret['output'])
         outputLayer.startEditing()
-        for field in outputLayer.pendingFields():
+        for field in outputLayer.fields():
             if 'a_' == field.name()[0:2]:
                 idx = outputLayer.fieldNameIndex(field.name())
                 outputLayer.renameAttribute(idx, field.name()[2::])

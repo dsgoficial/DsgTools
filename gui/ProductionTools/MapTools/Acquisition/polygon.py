@@ -11,7 +11,7 @@ from qgis.PyQt.QtWidgets import QShortcut
 from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import QSettings
 from .geometricaAquisition import GeometricaAcquisition
-from qgis.core import QgsPoint, Qgis, QgsGeometry
+from qgis.core import QgsPointXY, Qgis, QgsGeometry, QgsWkbTypes
 from qgis.gui import QgsMapMouseEvent, QgsMapTool
 
 class Polygon(GeometricaAcquisition):
@@ -24,29 +24,29 @@ class Polygon(GeometricaAcquisition):
         if len(self.geometry) > 2:
             inter = self.lineIntersection(self.geometry[1],self.geometry[0],self.geometry[-2],self.geometry[-1])
             if inter:
-                if self.iface.activeLayer().geometryType() == Qgis.Polygon:
-                    geom = QgsGeometry.fromPolygon([self.geometry+[inter]])
-                elif self.iface.activeLayer().geometryType() == Qgis.Line:
-                    geom = QgsGeometry.fromPolyline(self.geometry+[inter])
+                if self.iface.activeLayer().geometryType() == QgsWkbTypes.PolygonGeometry:
+                    geom = QgsGeometry.fromPolygonXY([self.geometry+[inter]])
+                elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
+                    geom = QgsGeometry.fromPolylineXY(self.geometry+[inter])
                 self.rubberBand.setToGeometry(geom,None)
                 self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
-            if self.iface.activeLayer().geometryType() == Qgis.Polygon:
-                geom = QgsGeometry.fromPolygon([self.geometry])
-            elif self.iface.activeLayer().geometryType() == Qgis.Line:
-                geom = QgsGeometry.fromPolyline(self.geometry + [self.geometry[0]])
+            if self.iface.activeLayer().geometryType() == QgsWkbTypes.PolygonGeometry:
+                geom = QgsGeometry.fromPolygonXY([self.geometry])
+            elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
+                geom = QgsGeometry.fromPolylineXY(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, None)
             self.createGeometry(geom)
   
     def canvasReleaseEvent(self, event):
-        event.snapPoint(QgsMapMouseEvent.SnapProjectConfig) #snap!!!
+        event.snapPoint() #snap!!!
         if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(geometryType=Qgis.Point)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
-        pointMap = QgsPoint(event.mapPoint())
+        pointMap = QgsPointXY(event.mapPoint())
         # pointMap = self.snapToLayer(event) 
         if event.button() == Qt.RightButton:
             if self.free:
@@ -61,38 +61,38 @@ class Polygon(GeometricaAcquisition):
             if event.button() == Qt.LeftButton:
                 if self.qntPoint == 0:
                     self.rubberBand = self.getRubberBand()
-                    point = QgsPoint(pointMap)
+                    point = QgsPointXY(pointMap)
                     self.geometry.append(point)
                 elif self.qntPoint == 1:
-                    point = QgsPoint(pointMap)
+                    point = QgsPointXY(pointMap)
                     self.geometry.append(point)
                 else:
-                    point = QgsPoint(pointMap)
+                    point = QgsPointXY(pointMap)
                     testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if testgeom:
-                        self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
+                        self.geometry.append(QgsPointXY(testgeom.x(), testgeom.y()))        
                 self.qntPoint += 1
                
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(geometryType=Qgis.Point)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
             self.snapCursorRubberBand = None
-        oldPoint = QgsPoint(event.mapPoint())
-        event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
-        point = QgsPoint(event.mapPoint())
+        oldPoint = QgsPointXY(event.mapPoint())
+        event.snapPoint()
+        point = QgsPointXY(event.mapPoint())
         if oldPoint != point:
             self.createSnapCursor(point)
-        point = QgsPoint(event.mapPoint())   
+        point = QgsPointXY(event.mapPoint())   
         if self.qntPoint == 1:
-            geom = QgsGeometry.fromPolyline([self.geometry[0], point])
+            geom = QgsGeometry.fromPolylineXY([self.geometry[0], point])
             self.rubberBand.setToGeometry(geom, None)
         elif self.qntPoint >= 2:
             if self.free:
-                geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(point.x(), point.y())]])
+                geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(point.x(), point.y())]])
                 self.rubberBand.setToGeometry(geom, None)             
             else:        
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
-                    geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
+                    geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(testgeom.x(), testgeom.y())]])
                     self.rubberBand.setToGeometry(geom, None)
