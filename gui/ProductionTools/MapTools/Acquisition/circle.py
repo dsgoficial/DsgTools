@@ -12,7 +12,7 @@ from qgis.PyQt.QtWidgets import QShortcut
 from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import QSettings
 from .geometricaAquisition import GeometricaAcquisition
-from qgis.core import QgsPoint, Qgis
+from qgis.core import QgsPointXY, Qgis, QgsWkbTypes
 from qgis.gui import QgsMapMouseEvent, QgsMapTool
 
 class Circle(GeometricaAcquisition):
@@ -41,7 +41,7 @@ class Circle(GeometricaAcquisition):
 
         for itheta in range(nPoints+1):
             theta = itheta*(2.0*math.pi/nPoints)
-            self.rubberBand.addPoint(QgsPoint(x+r*math.cos(theta), y+r*math.sin(theta)))
+            self.rubberBand.addPoint(QgsPointXY(x+r*math.cos(theta), y+r*math.sin(theta)))
         self.rubberBand.closePoints()
 
     def endGeometry(self):
@@ -51,7 +51,7 @@ class Circle(GeometricaAcquisition):
     def canvasReleaseEvent(self, event):
         if event.button() == Qt.LeftButton:
             if not self.startPoint:
-                self.startPoint = QgsPoint(event.mapPoint())
+                self.startPoint = QgsPointXY(event.mapPoint())
                 self.rubberBand = self.getRubberBand()
         if event.button() == Qt.RightButton:
             self.endGeometry()
@@ -59,13 +59,13 @@ class Circle(GeometricaAcquisition):
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand.reset(geometryType=Qgis.Point)
+            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
             self.snapCursorRubberBand = None
-        oldPoint = QgsPoint(event.mapPoint())
-        event.snapPoint(QgsMapMouseEvent.SnapProjectConfig)
-        point = QgsPoint(event.mapPoint())
+        oldPoint = QgsPointXY(event.mapPoint())
+        event.snapPoint()
+        point = QgsPointXY(event.mapPoint())
         if oldPoint != point:
             self.createSnapCursor(point)
         if self.startPoint:
-            self.endPoint = QgsPoint(event.mapPoint())
+            self.endPoint = QgsPointXY(event.mapPoint())
             self.showCircle(self.startPoint, self.endPoint)

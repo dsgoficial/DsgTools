@@ -91,9 +91,8 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     
     def initVariable(self):
         if self.rubberBand:
-            self.rubberBand.reset(True)
+            self.rubberBand.reset(geometryType = self.iface.activeLayer().geometryType())
             self.rubberBand = None
-            self.rubberBand = self.createRubberBand()
         self.qntPoint = 0
         self.geometry = []
         if self.snapCursorRubberBand:
@@ -160,7 +159,9 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             feature.initAttributes(fields.count())            
             provider = layer.dataProvider()              
             for i in range(fields.count()):
-                feature.setAttribute(i, provider.defaultValue(i))                
+                defaultClauseCandidate = provider.defaultValueClause(i)
+                if defaultClauseCandidate:
+                    feature.setAttribute(i, defaultClauseCandidate)                
             form = QgsAttributeDialog(layer, feature, False)
             form.setMode(QgsAttributeForm.AddFeatureMode)
             formSuppress = layer.editFormConfig().suppress()
