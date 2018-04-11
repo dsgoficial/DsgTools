@@ -30,6 +30,7 @@ from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
+from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
 
 class GuiManager(QObject):
 
@@ -131,9 +132,7 @@ class GuiManager(QObject):
         if add_to_toolbar:
             self.toolbar.addAction(action)
         if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.tr('&DSGTools'),
-                action)
+            self.menu.addAction(action)
         if withShortcut:
             self.iface.registerMainWindowAction(action, '')
         if isCheckable:
@@ -149,6 +148,9 @@ class GuiManager(QObject):
         productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, self.menu, self.toolbar)
         productionToolsGuiManager.initGui()
         self.managerList.append(productionToolsGuiManager)
+        aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, self.menu, self.toolbar)
+        aboutAndFurtherGuiManager.initGui()
+        self.managerList.append(aboutAndFurtherGuiManager)
     
     def unload(self):
         for manager in self.managerList:

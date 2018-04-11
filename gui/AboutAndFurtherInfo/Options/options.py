@@ -24,25 +24,12 @@ from builtins import range
 import os
 from os.path import expanduser
 
-from qgis.core import QgsMessageLog
-
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings, pyqtSignal
-from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplication, QFileDialog
-from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
+from qgis.PyQt.QtWidgets import QMessageBox
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-
-from DsgTools.UserTools.profile_editor import ProfileEditor
-from DsgTools.ServerTools.createView import CreateView
-from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
-from DsgTools.ServerTools.selectStyles import SelectStyles
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'options.ui'))
@@ -50,7 +37,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class Options(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """Constructor."""
-        super(self.__class__, self).__init__(parent)
+        super(Options, self).__init__(parent)
         self.setupUi(self)
         self.setInterfaceWithParametersFromConfig()
     

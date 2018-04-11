@@ -46,7 +46,7 @@ class FlipLine(QgsMapTool):
             icon_path,
             text=self.tr('DSGTools: Flip Line Tool'),
             callback=callback,
-            add_to_menu=True,
+            add_to_menu=False,
             add_to_toolbar=True,
             withShortcut = True,
             tooltip = toolTip,
