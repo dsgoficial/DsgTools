@@ -168,10 +168,10 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
                 if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
                     layer.addFeature(feature, True)
                 else:
-                    if not form.dialog().exec_():
+                    if not form.exec_():
                         feature.setAttributes(form.feature().attributes())
             elif formSuppress == QgsEditFormConfig.SuppressOff:
-                if not form.dialog().exec_():
+                if not form.exec_():
                     feature.setAttributes(form.feature().attributes())
             else:
                 layer.addFeature(feature, True)
