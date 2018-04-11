@@ -22,7 +22,7 @@ class Acquisition(QObject):
             icon_path,
             text=self.tr('DSGTools: Right Degree Angle Digitizing'),
             callback=self.acquisitionNinetyDegrees,
-            add_to_menu=True,
+            add_to_menu=False,
             add_to_toolbar=True,
             withShortcut = True,
             tooltip = toolTip,
@@ -35,7 +35,7 @@ class Acquisition(QObject):
             icon_path,
             text=self.tr('DSGTools: Circle Digitizing'),
             callback=self.acquisitionCircle,
-            add_to_menu=True,
+            add_to_menu=False,
             add_to_toolbar=True,
             withShortcut = True,
             parentToolbar =parentMenu)

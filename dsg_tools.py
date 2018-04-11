@@ -619,15 +619,6 @@ class DsgTools(object):
     #     if self.opInstaller.checkIfInstalled():
     #         self.opInstaller.loadTools()
 
-    
-
-    # def showAbout(self):
-    #     """
-    #     Shows the about dialog
-    #     """
-    #     dlg = AboutDialog()
-    #     dlg.exec_()
-
     # def installDsgToolsOp(self):
     #     """
     #     Installs DsgTools Op
@@ -645,28 +636,6 @@ class DsgTools(object):
     #     self.opInstaller.uninstallDsgToolsOp()
     #     self.unload()
     #     self.initGui()
-
-    # def showOptions(self):
-    #     """
-    #     Shows the options
-    #     """
-    #     dlg = Options()
-    #     dlg.show()
-    #     result = dlg.exec_()
-    #     if result:
-    #         pass
-
-    # def showHelp(self):
-    #     """
-    #     Shows the help
-    #     """
-    #     self.iface.openURL("https://github.com/dsgoficial/DsgTools/wiki", False)
-
-    # def showBugTracker(self):
-    #     """
-    #     Shows the bug tracker
-    #     """
-    #     self.iface.openURL("https://github.com/dsgoficial/DsgTools/issues", False)
 
     # def showConvertDatabase(self):
     #     """

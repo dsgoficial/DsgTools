@@ -71,7 +71,7 @@ class GenericSelectionTool(QgsMapTool):
             icon_path,
             text=self.tr('DSGTools: Generic Selector'),
             callback=callback,
-            add_to_menu=True,
+            add_to_menu=False,
             add_to_toolbar=True,
             withShortcut = True,
             tooltip = toolTip,
