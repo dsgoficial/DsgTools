@@ -3708,7 +3708,7 @@ class PostgisDb(AbstractDb):
         dbNodeTypeDict = dict()
         sql = ""
         sql = self.gen.getNodesGeometryQuery(nodeList=wktNodeList, nodeLayerName=nodeLayerName, \
-                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs) + "\n"
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving nodes geometry from database: ")+query.lastError().text())
@@ -3716,3 +3716,22 @@ class PostgisDb(AbstractDb):
         while query.next():
             dbNodeTypeDict[query.value(0)] = query.value(1)
         return dbNodeTypeDict
+
+    def getNodeId(self, wktNode, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the ID of given nodes from database. If node is not found into database, returns None.
+        :param wktNode: a node point (QgsPoint to WKT form).
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node ID from database
+        """
+        dbNodeTypeDict = dict()
+        sql = ""
+        sql = self.gen.getNodeIdQuery(node=wktNode, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving nodes ID from database: ")+query.lastError().text())
+            return None
+        while query.next():
+            return query.value(0)
