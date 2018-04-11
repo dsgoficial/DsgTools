@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsWKBTypes
+from qgis.gui import QgsMapTool
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii, math
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
@@ -33,6 +34,7 @@ class HidrographyFlowProcess(ValidationProcess):
         # ATENÇÃO: PASSAR OS TIPOS DE RIOS PARA UM ENUM!
         super(HidrographyFlowProcess, self).__init__(postgisDb, iface, instantiating)
         self.canvas = self.iface.mapCanvas()
+        self.QgsMapTool = QgsMapTool(self.canvas)
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.processAlias = self.tr('Hidrography Network Directioning')
         self.parameters = { 'Only Selected' : False, 'Search Radius' : 5.0 }
@@ -214,7 +216,7 @@ class HidrographyFlowProcess(ValidationProcess):
                 return False
         return True
 
-    def getLineInitialNode(self, lyr, feat, geomType=None):
+    def getFirstNode(self, lyr, feat, geomType=None):
         """
         Returns the starting point of a line.
         :param lyr: layer containing target feature.
@@ -263,27 +265,123 @@ class HidrographyFlowProcess(ValidationProcess):
             return n[0][-2]
         return n[-2]
 
-    def calculateAngleDifferences(self, node, nodeList):
+    def calculateAngleDifferences(self, startNode, endNode):
         """
-        Calculates and returns all angle differences of lines flowint into and from a node (all angles are 
-        calculated with node as reference).
-        :param node: node (QgsPoint) which lines connected to it are going to be verified.
-        :return:
+        Calculates the angle formed between line direction ('startNode' -> 'endNode') and vertical passing over 
+        starting node.
+        :param startNode: node (QgsPoint) reference for line and angle calculation.
+        :param endNode: ending node (QgsPoint) for (segment of) line of which angle is required.
+        :return: angle formed between line direction ('startNode' -> 'endNode') and vertical passing over 'startNode'
         """
+        # to have coordinates always in canvas coordinates
+        canvasNode = self.canvas.mapToGlobal(self.QgsMapTool.toCanvasCoordinates(startNode))
+        canvasPoint = self.canvas.mapToGlobal(self.QgsMapTool.toCanvasCoordinates(endNode))
+        # the returned angle is measured regarding 'y-axis', with + counter clockwise and -, clockwise.
+        # Then Az is ALWAYS 180 - ang 
+        return 180 - math.degrees(math.atan2(canvasPoint.x() - canvasNode.x(), canvasPoint.y() - canvasNode.y()))
+
+    def calculateAzimuthFromNode(self, node, nodePointDict, hidLineLayer, geomType=None):
+        """
+        Computate all azimuths from (closest portion of) lines flowing in and out of a given node.
+        :param node:
+        :param nodePointDict:
+        :param hidLineLayer:
+        :param geomType:
+        :return: dict of azimuths of all lines ( { featId : azimuth } )
+        """
+        if not nodePointDict:
+            return
+        if not geomType:
+            geomType = hidLineLayer.geometryType()
         azimuthDict = dict()
-        for point in nodeList:
-            az = math.atan2(point.x() - node.x(), point.y() - node.y())
-            azimuthDict[point] = az
+        for line in nodePointDict['start']:
+            # if line starts at node, then angle calculate is already azimuth
+            endNode = self.getSecondNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+            azimuthDict[line] = self.calculateAngleDifferences(startNode=node, endNode=endNode)
+        for line in nodePointDict['end']:
+            # if line ends at node, angle must be adapted in order to get azimuth
+            endNode = self.getPenultNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+            ang = self.calculateAngleDifferences(startNode=node, endNode=endNode)
+            # adjusting calculated angle to get azimuth
+            # if ang >= 180:
+            #     azimuthDict[line] = ang - 180
+            # else:
+            #     azimuthDict[line] = ang + 180
+            # azimuth is not necessary, just the angle relative to hidrography node.
+            azimuthDict[line] = ang
         return azimuthDict
 
-    def getAngDiffPerNode(self, node, nodeDict):
+    # NÃO USADO ATÉ O MOMENTO
+    def getLinesNodeNextToHidNode(self, node, nodePointDict, hidLineLayer, geomType=None):
         """
         
+        """        
+        if not nodePointDict:
+            return
+        lineNodesNextToHidNode = dict()
+        if not geomType:
+            geomType = hidLineLayer.geometryType()
+        for line in nodePointDict['start']:
+            # if line starts at reference node, closest node is the second one
+            lineNodesNextToHidNode[line.id()] = self.getSecondNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+        for line in nodePointDict['end']:
+            # if line ends at reference node, closest node is the penult one
+            lineNodesNextToHidNode[line.id()] = self.getPenultNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+        return lineNodesNextToHidNode
+
+    def checkLineDirectionConcordance(self, line_a, line_b, hidLineLayer, geomType=None):
         """
-        pass
+        Given two lines, this method checks whether lines flow to/from the same node or not.
+        If they do not have a common node, method returns false.
+        :param line_a: (QgsFeature) line to be compared flowing to a common node.
+        :param line_b: (QgsFeature) the other line to be compared flowing to a common node.
+        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
+        :return: (bool) True if lines are flowing to/from the same.
+        """
+        if not geomType:
+            geomType = hidLineLayer.geometryType()
+        # first and last node of each line
+        fn_a = self.getFirstNode(lyr=hidLineLayer, feat=line_a, geomType=geomType)
+        ln_a = self.getLastNode(lyr=hidLineLayer, feat=line_a, geomType=geomType)
+        fn_b = self.getFirstNode(lyr=hidLineLayer, feat=line_b, geomType=geomType)
+        ln_b = self.getLastNode(lyr=hidLineLayer, feat=line_b, geomType=geomType)
+        # if lines are flowing to/from the same node (they are flowing the same way)
+        return (fn_a == fn_b or ln_a == ln_b)
 
+    def validateDeltaLinesAng(self, node, nodePointDict, hidLineLayer, geomType=None):
+        """
+        Validates a set of lines connected to a node as for the angle formed between them.
+        :param node:
+        :param nodePointDict:
+        :param hidLineLayer:
+        :return: if node is invalid, returns the reason of invalidation (str).
+        """
+        if not geomType:
+            geomType = hidLineLayer.geometryType()
+        azimuthDict = self.calculateAzimuthFromNode(node=node, nodePointDict=nodePointDict, hidLineLayer=hidLineLayer,\
+                                                    geomType=None)
+        for idx1, key1 in enumerate(azimuthDict.keys()):
+            if idx1 == len(azimuthDict.keys()):
+                # if first element is already the last feature, all differences are already computed
+                break
+            for idx2, key2 in enumerate(azimuthDict.keys()):
+                if idx1 >= idx2:
+                    # in order to calculate only f1 - f2, f1 - f3, f2 - f3 (for 3 features, for instance)
+                    continue
+                absAzimuthDifference = abs(azimuthDict[key1] - azimuthDict[key2])
+                if absAzimuthDifference < 90 or absAzimuthDifference > 270:
+                    # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
+                    if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
+                        return 'Lines {0} and {1} have conflicting directions.'.format(key1.id(), key2.id())
+                elif absAzimuthDifference != 90 and absAzimuthDifference != 270:
+                    # if it's any other disposition, lines can have the same orientation
+                    continue
+                else:
+                    # if lines touch each other at a right angle, then it is impossible to infer waterway direction
+                    return 'Cannot infer directions for lines {0} and {1} (Right Angle)'.format(key1.id(), key2.id())
+        return 
 
-    def getLineLastNode(self, lyr, feat, geomType=None):
+    def getLastNode(self, lyr, feat, geomType=None):
         """
         Returns the ending point of a line.
         :param lyr: layer containing target feature.
@@ -340,9 +438,9 @@ class HidrographyFlowProcess(ValidationProcess):
                             continue
                         # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
                         if upstream:
-                            fn = self.getLineLastNode(lyr, feat, geomType)
+                            fn = self.getLastNode(lyr, feat, geomType)
                         elif downstream:
-                            fn = self.getLineInitialNode(lyr, feat, geomType)
+                            fn = self.getFirstNode(lyr, feat, geomType)
                         # flip wrong lines
                         if flipWrongLines:
                             self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
@@ -356,9 +454,9 @@ class HidrographyFlowProcess(ValidationProcess):
                         if feat.id() in selection:
                             continue
                         if upstream:
-                            fn = self.getLineInitialNode(lyr, feat, geomType)
+                            fn = self.getFirstNode(lyr, feat, geomType)
                         elif downstream:
-                            fn = self.getLineLastNode(lyr, feat, geomType)
+                            fn = self.getLastNode(lyr, feat, geomType)
                         newInitNode.append(fn)
                         selection.append(feat.id())
             # check new starts up to no new starts are found
@@ -442,8 +540,8 @@ class HidrographyFlowProcess(ValidationProcess):
         nextNodes = []
         for line in linesNotValidated:
             # getting last and initial node from analyzed line
-            finalNode = self.getLineLastNode(lyr=lyr, feat=line, geomType=geomType)
-            initialNode = self.getLineInitialNode(lyr=lyr, feat=line, geomType=geomType)
+            finalNode = self.getLastNode(lyr=lyr, feat=line, geomType=geomType)
+            initialNode = self.getFirstNode(lyr=lyr, feat=line, geomType=geomType)
             # line ID
             lineID = line.id()
             # comparing extreme nodes to find out if flow is compatible to node type
@@ -478,7 +576,7 @@ class HidrographyFlowProcess(ValidationProcess):
             return validLines, invalidLines, nextNodes
         return  validLines, invalidLines
 
-    # NOT USED SO FAR
+    # NOT USED SO FAR - DID NOT COME UP AS A GOOD METHOD FOR VALIDATION.
     def getFlagsForAllFrameNodes(self, lyr, nodeDict, nodeTypeDict, nodeList=None, flipWrongLines=False, ignoreWrongFlow=False, ignoreSelection=True):
         """
         Gets all possible wrong flow lines to be treated. If blacklist argument is given,
@@ -530,7 +628,48 @@ class HidrographyFlowProcess(ValidationProcess):
         #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
         return dbNodeTypeDict
 
-    def checkAllNodesValidity(self, nodeDict, nodeTypeDict, hidLineLyr, nodeList=None):
+    def getNodeDbIdFromNode(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns a dictionary of node type as of database point of view.
+        :param nodeList: a list of target node points (QgsPoint).
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
+        :param nodeCrs: (int) CRS for node layer (EPSG number).
+        :return: node type according to database information.
+        """
+        nodeWkt, dbNTD, dbNodeIdDict = dict(), dict(), dict()
+        for node in nodeList:
+            # mapping WKT conversions
+            # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
+            nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
+            nodeId = self.abstractDb.getNodeId(nWkt, nodeLayerName, hidrographyLineLayerName, nodeCrs)
+            dbNodeIdDict[node] = nodeId
+        # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
+        # for nWkt in dbNTD.keys():
+        #     if nWkt in nodeWkt.keys():
+        #         # if node is not in original dict, it'll be ignored 
+        #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
+        return dbNodeIdDict
+
+    def getNextNodes(self, node, nodePointDict, hidLineLayer, geomType=None):
+        """
+        It returns a list of all other nodes for each line connected to target node.
+        :param node:
+        :param nodePointDict:
+        :return:
+        """
+        if not geomType:
+            geomType = hidLineLayer.geometryType()
+        nextNodes = []
+        for line in nodePointDict['start']:
+            # if line starts at target node, the other extremity is a final node
+            nextNodes.append(self.getLastNode(lyr=hidLineLayer, feat=line, geomType=geomType))
+        for line in nodePointDict['end']:
+            # if line ends at target node, the other extremity is a initial node
+            nextNodes.append(self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType))
+        return nextNodes
+
+    def checkAllNodesValidity(self, nodeDict, nodeTypeDict, hidLineLyr, hidNodeLyr, nodeCrs, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 
@@ -538,10 +677,13 @@ class HidrographyFlowProcess(ValidationProcess):
         :param nodeDict: dictionary containing info of all lines reaching from and to each node.
         :param nodeTypeDict: dictionary containig all nodes (QgsPoint) and its node type (int).
         :param hidLineLyr: (QgsVectorLayer) hidrography lines layer from which node are created from.
+        :param hidNodeLyr: (QgsVectorLayer) hidrography nodes layer.
+        :param nodeCrs: (str) string containing node layer EPSG code. 
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
         nodeOnFrame = [3, 4, 2] # node types that are over the frame contour and line BEGINNINGS
+        deltaLinesCheckList = [5, 6] # nodes that have an unbalaced number ratio of flow in/out
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
             nodeList = []
@@ -553,30 +695,53 @@ class HidrographyFlowProcess(ValidationProcess):
                 return None, None
         geomType = hidLineLyr.geometryType()
         # initiating the list of nodes already checked and the list of nodes to be checked next iteration
-        visitedNodes, newNextNodes = [], []
+        visitedNodes, newNextNodes, nodeFlags = [], [], []
         # starting dict of (in)valid lines to be returned by the end of method
         validLines, invalidLines = dict(), dict()
         while nodeList:
             for node in nodeList:
                 if node not in visitedNodes:
                     # set node as visited
-                    visitedNodes.append(node)
+                    visitedNodes.append(node)                    
+                # check coherence to node type and waterway flow
                 temp = self.checkNodeValidity(node=node, nodeType=nodeTypeDict[node], \
                                                             nodePointDict=nodeDict[node], \
                                                             connectedValidLines=validLines.values(), lyr=hidLineLyr,\
                                                             geomType=geomType)
-                if not temp:
-                    # if no lines are available for directioning, skip node (e.g. end of line)
-                    continue
-                validLines.update(temp[0])
-                invalidLines.update(temp[1])
-                newNextNodes += temp[2]
+                # if node type test does have valid lines to iterate over
+                if temp:
+                    validLines.update(temp[0])
+                    invalidLines.update(temp[1])
+                    newNextNodes += temp[2]
+                    if temp[1] and (node not in nodeFlags):
+                        nodeFlags.append(node)
+                # if node type is a ramification or a confluence, it checks validity by angles formed
+                if nodeTypeDict[node] in deltaLinesCheckList:
+                    invalidationReason = self.validateDeltaLinesAng(node=node,\
+                                                nodePointDict=nodeDict[node], hidLineLayer=hidLineLyr, geomType=geomType)
+                    newNextNodesFromDeltaCheck = self.getNextNodes(node=node, nodePointDict=nodeDict[node],\
+                                                        hidLineLayer=hidLineLyr, geomType=geomType)
+                    # if the line would be valid as per node type but it is invalid because of its angle, 
+                    # it should be removed from valid list and all following nodes, should be removed 
+                    # from next node sequence.
+                    if invalidationReason:
+                        for line in (nodeDict[node]['start'] + nodeDict[node]['end']):
+                            # invalidating a possible false positive
+                            validLines.pop(line.id(), None)
+                            # remove false positive next nodes from the list of actual next nodes
+                            newNextNodes = list( set(newNextNodes) - set(newNextNodesFromDeltaCheck) )
+                        if node not in nodeFlags:
+                            nodeFlags.append(node)
+                    else:
+                        newNextNodes += newNextNodesFromDeltaCheck
             # remove nodes that were already visited
             newNextNodes = list( set(newNextNodes) - set(visitedNodes) )
             # if new nodes are detected, repeat for those
             nodeList = newNextNodes
             newNextNodes = []
-        return invalidLines, validLines
+        # mounting node dict with IDs from DB
+        nodeFlagDict = self.getNodeDbIdFromNode(nodeFlags, hidNodeLyr.name(), hidLineLyr.name(), nodeCrs)
+        return nodeFlagDict, invalidLines, validLines
 
     def executeV2(self):
         """
@@ -586,7 +751,7 @@ class HidrographyFlowProcess(ValidationProcess):
         searchRadius = self.parameters['Search Radius']
         frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()        
         d = self.nodeDict
-        dNodeType = self.nodeTypeDict
+        # dNodeType = self.nodeTypeDict
         crs = trecho_drenagem.crs().authid()
         nodeCrs = pt_drenagem.crs().authid().split(':')[1]
         for feat in pt_drenagem.selectedFeatures():
@@ -615,24 +780,28 @@ class HidrographyFlowProcess(ValidationProcess):
         dbNodeTypeDict = self.getNodeGeometryFromDb(nodeList=d.keys(), nodeLayerName=pt_drenagem.name(),\
                                    hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
         # val, inval, nextNodes = self.checkNodeValidity(n, dbNodeTypeDict[n], d[n], [], trecho_drenagem, geomType)
-        inval, val = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem)
+        # inval, val = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem)
         # trecho_drenagem.setSelectedFeatures(val.keys())
         # # TESTE DE CRIAÇÃO DE FLAGS EM BANCO
-        recordList = self.buildFlagList(inval, 'validation', pt_drenagem.name(), 'geom')
-        if len(recordList) > 0:
-            numberOfProblems = self.addFlag(recordList)
-            msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(len(inval))
-        trecho_drenagem.setSelectedFeatures(inval.keys())
-        print 'Invalids ({}):\n'.format(len(inval)), inval.keys()
+        # recordList = self.buildFlagList(inval, 'validation', pt_drenagem.name(), 'geom')
+        # if len(recordList) > 0:
+        #     numberOfProblems = self.addFlag(recordList)
+        #     msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(len(inval))
+        # trecho_drenagem.setSelectedFeatures(inval.keys())
+        # print 'Invalids ({}):\n'.format(len(inval)), inval.keys()
+        # # TESTE DE CHECK POR ANGULOS
+        # self.validateDeltaLinesAng(node=n, nodePointDict=d[n], hidLineLayer=trecho_drenagem, geomType=geomType)
+        # # CHECK DO PROCESSO DE VALIDAÇÃO
+        nodeFlagDict, val, inval = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
 
-    def buildFlagList(self, invalidListDict, tableSchema, tableName, geometryColumn):
+    def buildFlagList(self, invalidNodeDict, tableSchema, tableName, geometryColumn):
         """
         Builds record list from pointList to raise flags.
 
         """
         recordList = []
-        for featid, line in invalidListDict.iteritems():
-            geometry = binascii.hexlify(line.geometry().asWkb())
+        for node, featid in invalidNodeDict.iteritems():
+            geometry = binascii.hexlify(QgsGeometry.fromMultiPoint([node]).asWkb())
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, self.tr('Possible wrong flow (check connected node)'), geometry, geometryColumn))
         return recordList
 
@@ -664,9 +833,9 @@ class HidrographyFlowProcess(ValidationProcess):
                                     hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
                 except:
                     "erro ao criar a tabela de nós de validação da hidrografia"
-            inval, val = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem)
+            nodeFlags, inval, val = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem, hidNodeLyr=pt_drenagem, nodeCrs=nodeCrs)
             # getting recordList to be loaded to validation flag table
-            recordList = self.buildFlagList(inval, 'validation', pt_drenagem.name(), 'geom')
+            recordList = self.buildFlagList(nodeFlags, 'validation', pt_drenagem.name(), 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(numberOfProblems)

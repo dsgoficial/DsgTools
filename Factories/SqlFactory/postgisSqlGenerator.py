@@ -1768,3 +1768,18 @@ class PostGISSqlGenerator(SqlGenerator):
                 WHERE geom in ({0}) AND layer = '{2}';
         """.format(nodeListString, nodeLayerName, hidrographyLineLayerName)
         return sql
+
+    def getNodeIdQuery(self, node, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the query for geometry of given feature from database. If feature is not found into database, returns None.
+        :param node: (QgsPoint) target node point.
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node geometry from database
+        :nodeCrs: CRS for node layer.
+        """
+        nodeListString = """ST_GeomFromText('{0}', {1})""".format(node, nodeCrs)
+        sql = """
+            SELECT id FROM validation.{1} WHERE geom in ({0}) AND layer = '{2}';
+        """.format(nodeListString, nodeLayerName, hidrographyLineLayerName)
+        return sql
