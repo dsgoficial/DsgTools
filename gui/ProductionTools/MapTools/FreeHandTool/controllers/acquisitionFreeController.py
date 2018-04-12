@@ -76,7 +76,7 @@ class AcquisitionFreeController(object):
         #Método para iniciar sinais do plugin 
         iface = self.getIface()
         iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
-        iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
+        iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.triggered.connect(self.activateTool)
 
@@ -84,7 +84,7 @@ class AcquisitionFreeController(object):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
         actionAcquisitionFree = self.getActionAcquisitionFree()
         layer = self.getIface().activeLayer()
-        if layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.Qgis.Line, core.Qgis.Polygon]):
+        if layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]):
             actionAcquisitionFree.setEnabled(True)
         else:
             actionAcquisitionFree.setEnabled(False)
@@ -177,10 +177,12 @@ class AcquisitionFreeController(object):
             feature.initAttributes(fields.count())            
             provider = layer.dataProvider()              
             for i in range(fields.count()):
-                feature.setAttribute(i, provider.defaultValue(i))
-            formSuppressOnLayer = layer.featureFormSuppress()
+                defaultClauseCandidate = provider.defaultValueClause(i)
+                if defaultClauseCandidate:
+                    feature.setAttribute(i, defaultClauseCandidate)
+            formSuppressOnLayer = layer.editFormConfig().suppress()
             formSuppressOnSettings = self.getFormSuppressStateSettings()
-            if formSuppressOnLayer or (formSuppressOnSettings == u"true"):
+            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or (formSuppressOnSettings == u"true"):
                 self.addFeatureWithoutForm(layer, feature)
             else:
                 self.addFeatureWithForm(layer, feature)
