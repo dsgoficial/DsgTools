@@ -115,7 +115,6 @@ class AboutAndFurtherInfoGuiManager(QObject):
         """
         Shows the about dialog
         """
-        print('lol')
-        # dlg = AboutDialog()
-        # # dlg.show()
-        # dlg.exec_()
+        dlg = AboutDialog()
+        dlg.show()
+        dlg.exec_()
