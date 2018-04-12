@@ -3649,7 +3649,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
         # table population
         for log in compactHistory:
-            sql = self.gen.populateCompactValidationHistoryQuery(log=log)
+            sql = self.gen.populateCompactValidationHistoryQuery(logList=log)
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 self.db.rollback()
