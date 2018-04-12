@@ -1712,9 +1712,14 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         sql = ""
         if isinstance(logList, list):
-            for log in logList:
+            if isinstance(logList[0], list):
+                for log in logList:
+                    sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
+                    format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
+            else:
+                log = logList
                 sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
-                format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
+                    format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
         elif logList:
             sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
                 format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
