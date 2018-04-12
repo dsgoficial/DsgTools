@@ -94,19 +94,6 @@ class DsgTools(object):
         # noinspection PyTypeChecker,PyArgumentList,PyCallByClass
         return QCoreApplication.translate('DsgTools', message)
 
-    def initGui(self):
-        """
-        Create the menu entries and toolbar icons inside the QGIS GUI
-        """
-
-        self.dsgTools = QMenu(self.iface.mainWindow())
-        self.dsgTools.setObjectName(u'DSGTools')
-        self.dsgTools.setTitle(u'DSGTools')
-        self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
-        #GuiManager
-        self.guiManager = GuiManager(self.iface, parentMenu = self.dsgTools, toolbar = self.toolbar)
-        self.guiManager.initGui()
-    
     def unload(self):
         """
         Removes the plugin menu item and icon from QGIS GUI
@@ -124,6 +111,19 @@ class DsgTools(object):
         self.iface.mainWindow().removeToolBar(self.toolbar)
         del self.dsgTools
         del self.toolbar
+
+    def initGui(self):
+        """
+        Create the menu entries and toolbar icons inside the QGIS GUI
+        """
+
+        self.dsgTools = QMenu(self.iface.mainWindow())
+        self.dsgTools.setObjectName(u'DsgTools')
+        self.dsgTools.setTitle(u'DSGTools')
+        self.menuBar.insertMenu(self.iface.firstRightStandardMenu().menuAction(), self.dsgTools)
+        #GuiManager
+        self.guiManager = GuiManager(self.iface, parentMenu = self.dsgTools, toolbar = self.toolbar)
+        self.guiManager.initGui()
 
         #Sub menus
         # server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')
