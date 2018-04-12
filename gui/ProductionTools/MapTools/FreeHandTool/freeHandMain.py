@@ -20,19 +20,34 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 from __future__ import absolute_import
 
 from builtins import object
+from qgis.PyQt.QtCore import QObject
 from .models.acquisitionFree import AcquisitionFree
 from .controllers.acquisitionFreeController import AcquisitionFreeController
 
-class FreeHandMain(object):    
+class FreeHandMain(QObject):    
 
     def __init__(self, iface):
         #construtor
+        super(FreeHandMain, self).__init__()
         self.iface = iface
         self.acquisitionFree = AcquisitionFree(iface.mapCanvas())
         self.acquisitionFreeController = AcquisitionFreeController(
             self.acquisitionFree,
             iface
         )
+
+    def addTool(self, manager, callback, parentMenu, iconBasePath):
+        icon_path = iconBasePath + 'free_hand.png'
+        action = manager.add_action(
+            icon_path,
+            text=self.tr('DSGTools: Free Hand Acquisition'),
+            callback=self.run,
+            add_to_menu=False,
+            add_to_toolbar=True,
+            withShortcut = True,
+            parentToolbar =parentMenu
+        )
+        self.setAction(action)
 
     def setAcquisitionFreeController(self, acquisitionFreeController):
         self.acquisitionFreeController = acquisitionFreeController
