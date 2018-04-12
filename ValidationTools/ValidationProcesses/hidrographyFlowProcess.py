@@ -20,74 +20,96 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsMapLayerRegistry, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsWKBTypes
+
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes
 from qgis.gui import QgsMapTool
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+
 import processing, binascii, math
+
+from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class HidrographyFlowProcess(ValidationProcess):
+    # ATENÇÃO: PASSAR OS TIPOS DE NÓS PARA UM ENUM!
     def __init__(self, postgisDb, iface, instantiating=False):
         """
-        Constructor
+        Constructor.
         """
-        # ATENÇÃO: PASSAR OS TIPOS DE RIOS PARA UM ENUM!
         super(HidrographyFlowProcess, self).__init__(postgisDb, iface, instantiating)
+        self.processAlias = self.tr('Hidrography Network Directioning')
+        
         self.canvas = self.iface.mapCanvas()
         self.QgsMapTool = QgsMapTool(self.canvas)
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
-        self.processAlias = self.tr('Hidrography Network Directioning')
-        self.parameters = { 'Only Selected' : False, 'Search Radius' : 5.0 }
-        # self.nodeTypeExceptionsDict = {
-        #                                 0 : 'Flag',
-        #                                 1 : 'Fonte d\'Água',
-        #                                 2 : 'Sumidouro',
-        #                                 3 : 'Moldura'
-        #                                }
-        # # mounting node and node type dict
-        frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
-        if not (frame and frameLayer and trecho_drenagem and pt_drenagem):
-            # INSERIR ERRO 'CARREGAR AS CAMADAS ADICIONÁ-LAS AO CANVAS'
-            print "Erro ao tentar ler camadas da moldura, trecho de drenagem e/ou ponto de drenagem." 
-        self.nodeDict = self.identifyAllNodes(trecho_drenagem)
-        # self.nodeTypeDict = self.classifyAllNodes(self.nodeDict, frame, self.parameters['Search Radius'])
+        if not self.instantiating:
+            # getting tables with elements (line primitive)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
+            # adjusting process parameters
+            interfaceDictList = []
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDictList.append( {
+                                            self.tr('Category'):cat,
+                                            self.tr('Layer Name'):lyrName,
+                                            self.tr('Geometry\nColumn'):geom,
+                                            self.tr('Geometry\nType'):geomType,
+                                            self.tr('Layer\nType'):tableType
+                                           } )
+            self.parameters = {
+                                'Only Selected' : False,
+                                'Search Radius' : 5.0,
+                                'Classes' :  interfaceDictList
+                              }
+            # PARAMETRIZAÇÃO DEVE SUMIR COM O MÉTODO getHidrographyComponents()
+            frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
+            if not (frame and frameLayer and trecho_drenagem and pt_drenagem):
+                # INSERIR ERRO 'CARREGAR AS CAMADAS ADICIONÁ-LAS AO CANVAS'
+                raise Exception(self.tr("Check if frame, hidrography node and lines layers are loaded."))
+            self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
+            self.nodeTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
+            nodeCrs = pt_drenagem.crs().authid().split(':')[1]
+            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=pt_drenagem.name(), hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
 
-    def getHidrographyComponents(self):
+    def getHidrographyComponents(self, layerNames=None):
         """
         Read frame contour, frame, hidrography lines and hidrgrography node layers.
-        :return: (QgsFeature) frame contour, frame layer, hidrography lines layer, hidrography node layer
+        :param layerNames: list with the names of frame, hidrography node and line layers, respectively.
+        :return: (QgsGeometry) frame contour, (QgsVectorLayer) frame layer, (QgsVectorLayer) hidrography lines layer,
+                 (QgsVectorLayer) hidrography node layer.
         """
+        if not layerNames:
+            frameLayerName, hidNodeLyrName, hidLineLayerName = 'aux_moldura_a', 'aux_hid_nodes_p', 'hid_trecho_drenagem_l'
         frame, frameLayer, trecho_drenagem, pt_drenagem = None, None, None, None        
         for lyr in self.canvas.layers():
-            if lyr.name() == 'aux_moldura_a':
+            if lyr.name() == frameLayerName:
                 frameLayer = lyr
                 # getting frame contour (as a PolyLine feature)
                 frame = [feat for feat in lyr.getFeatures()]
                 frame = frame[0]
                 frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
                 frame = QgsGeometry().fromPolyline(frame[0][0])
-            elif lyr.name() == 'aux_hid_nodes_p':
+            elif lyr.name() == hidNodeLyrName:
                 pt_drenagem = lyr
-            elif lyr.name() == 'hid_trecho_drenagem_l':
+            elif lyr.name() == hidLineLayerName:
                 trecho_drenagem = lyr
             elif trecho_drenagem and pt_drenagem and frame:
                 break
         return frame, frameLayer, trecho_drenagem, pt_drenagem
-
-    def identifyAllNodes(self, lyr):
+    
+    def identifyAllNodes(self, hidLineLayer):
         """
         Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
-        :param lyr: target layer to which nodes identification is required.
+        :param hidLineLayer: target layer to which nodes identification is required.
         :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWKBTypes.isMultiType(int(hidLineLayer.wkbType()))
         if self.parameters['Only Selected']:
-            features = lyr.selectedFeatures()
+            features = hidLineLayer.selectedFeatures()
         else:
-            features = [feat for feat in lyr.getFeatures()]
+            features = [feat for feat in hidLineLayer.getFeatures()]
         for feat in features:
-            nodes = self.DsgGeometryHandler.getFeatureNodes(lyr, feat)
+            nodes = self.DsgGeometryHandler.getFeatureNodes(hidLineLayer, feat)
             if nodes:
                 if isMulti:
                     if len(nodes) > 1:
@@ -124,20 +146,20 @@ class HidrographyFlowProcess(ValidationProcess):
         :return: (bool) whether node is as close as searchRaius to frame contour.
         """
         qgisPoint = QgsGeometry.fromPoint(node)
-        # buildgin a buffer around node with search radius for intersection with Layer Frame
+        # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
         buf = QgsGeometry.fromWkt(buf)
         return buf.intersects(frameLyrContour)
-        
-    def nodeType(self, nodePoint, dictStartingEndingLinesEntry, frameLyrContour, searchRadius):
+
+    def nodeType(self, nodePoint, frameLyrContour, searchRadius):
         """
-        Sets the node type given all lines that flows from and to it.
-        :param nodePoint: point to be classified.
-        :param dictStartingEndingLinesEntry: dict of { 'start' : [lines], 'end' : [lines] }.
+        Get the node type given all lines that flows from/to it.
+        :param nodePoint: (QgsPoint) point to be classified.
         :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
-        :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
-        :return: returns the point type.
+        :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :return: returns the (int) point type.
         """
+        dictStartingEndingLinesEntry = self.nodeDict[nodePoint]
         sizeFlowOut = len(dictStartingEndingLinesEntry['start'])
         sizeFlowIn = len(dictStartingEndingLinesEntry['end'])
         hasStartLine = bool(sizeFlowOut)
@@ -171,46 +193,39 @@ class HidrographyFlowProcess(ValidationProcess):
         else:
             # case 3 "ramification"
             return 6
-        
-    def classifyAllNodes(self, nodeDict, frameLyrContour, searchRadius, nodeList=None):
+
+    def classifyAllNodes(self, frameLyrContour, searchRadius, nodeList=None):
         """
-        Classifies all nodes of features from a given layer.
-        :param nodeDict: dictionaty of flow in and out for each hidrography node to be classified.
+        Classifies all identified nodes from the hidrography line layer.
         :param frameLyrContour: (QgsFeature) border line for the frame layer.
-        :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
+        :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
                          to be classified. Node MUST be in dict given, if not, it'll be ignored.
-        :return: a dictionary of node and its node type (int) 
+        :return: a (dict) dictionary of node and its node type ( { (QgsPoint)node : (int)nodeType } ). 
         """
         nodeTypeDict = dict()
-        nodeKeys = nodeDict.keys()
+        nodeKeys = self.nodeDict.keys()
         if not nodeList:
             nodeList = nodeKeys
         for node in nodeList:
             if node not in nodeKeys:
+                # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=nodeDict[node], \
-                                               frameLyrContour=frameLyrContour, searchRadius=searchRadius)
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, frameLyrContour=frameLyrContour, searchRadius=searchRadius)
         return nodeTypeDict
 
-    def fillNodeTable(self, lyr, nodeDict, frameLyrContour, searchRadius):
+    def fillNodeTable(self, hidLineLayer):
         """
-        Method to populate validation.aux_validation_nodes_p with all nodes.
-        :param lyr: layer which nodeDict is created from.
-        :param nodeDict: dictionary containing info of all lines reaching from and to each node.
-        :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
-        :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
+        Populate hidrography node layer with all nodes.
+        :param hidLineLayer: (QgsVectorLayer) hidrography lines layer.
         """
-        lyrName = lyr.name()
-        crs = lyr.crs().authid().split(":")[1]
-        for node in nodeDict.keys():
-            # classify points
-            nodeType = self.nodeType(nodePoint=node, dictStartingEndingLinesEntry=nodeDict[node], \
-                                             frameLyrContour=frameLyrContour, searchRadius=searchRadius)
+        lyrName = hidLineLayer.name()
+        crs = hidLineLayer.crs().authid().split(":")[1]
+        for node in self.nodeDict.keys():
             # get node geometry as wkt for database loading
             nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
             # if node is loaded into database, the following method returns True
-            if self.abstractDb.insertHidValNode(layerName=lyrName, node=nWkt, nodeType=nodeType, crs=crs):
+            if self.abstractDb.insertHidValNode(layerName=lyrName, node=nWkt, nodeType=self.nodeTypeDict[node], crs=crs):
                 continue
             else:
                 return False
@@ -218,10 +233,10 @@ class HidrographyFlowProcess(ValidationProcess):
 
     def getFirstNode(self, lyr, feat, geomType=None):
         """
-        Returns the starting point of a line.
+        Returns the starting node of a line.
         :param lyr: layer containing target feature.
         :param feat: feature which initial node is requested.
-        :param geomType: int regarding to layer geometry type (1 for lines).
+        :param geomType: (int) layer geometry type (1 for lines).
         :return: starting node point (QgsPoint).
         """
         n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
@@ -230,14 +245,15 @@ class HidrographyFlowProcess(ValidationProcess):
             if len(n) > 1:
                 return
             return n[0][0]
-        return n[0]
+        elif n:
+            return n[0]
 
     def getSecondNode(self, lyr, feat, geomType=None):
         """
-        Returns the starting point of a line.
+        Returns the second node of a line.
         :param lyr: layer containing target feature.
         :param feat: feature which initial node is requested.
-        :param geomType: int regarding to layer geometry type (1 for lines).
+        :param geomType: (int) layer geometry type (1 for lines).
         :return: starting node point (QgsPoint).
         """
         n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
@@ -247,14 +263,15 @@ class HidrographyFlowProcess(ValidationProcess):
                 # process doesn't treat multipart features that does have more than 1 part
                 return
             return n[0][1]
-        return n[1]
+        elif n:
+            return n[1]
 
     def getPenultNode(self, lyr, feat, geomType=None):
         """
-        Returns the ending point of a line.
+        Returns the penult node of a line.
         :param lyr: layer containing target feature.
         :param feat: feature which last node is requested.
-        :param geomType: int regarding to layer geometry type (1 for lines).
+        :param geomType: (int) layer geometry type (1 for lines).
         :return: ending node point (QgsPoint).
         """
         n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
@@ -263,36 +280,52 @@ class HidrographyFlowProcess(ValidationProcess):
             if len(n) > 1:
                 return
             return n[0][-2]
-        return n[-2]
+        elif n:
+            return n[-2]
+
+    def getLastNode(self, lyr, feat, geomType=None):
+        """
+        Returns the ending point of a line.
+        :param lyr: (QgsVectorLayer) layer containing target feature.
+        :param feat: (QgsFeature) feature which last node is requested.
+        :param geomType: (int) layer geometry type (1 for lines).
+        :return: ending node point (QgsPoint).
+        """
+        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][-1]
+        elif n:
+            return n[-1]
 
     def calculateAngleDifferences(self, startNode, endNode):
         """
-        Calculates the angle formed between line direction ('startNode' -> 'endNode') and vertical passing over 
+        Calculates the angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 
         starting node.
         :param startNode: node (QgsPoint) reference for line and angle calculation.
         :param endNode: ending node (QgsPoint) for (segment of) line of which angle is required.
-        :return: angle formed between line direction ('startNode' -> 'endNode') and vertical passing over 'startNode'
+        :return: (float) angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 'startNode'
         """
         # to have coordinates always in canvas coordinates
         canvasNode = self.canvas.mapToGlobal(self.QgsMapTool.toCanvasCoordinates(startNode))
         canvasPoint = self.canvas.mapToGlobal(self.QgsMapTool.toCanvasCoordinates(endNode))
         # the returned angle is measured regarding 'y-axis', with + counter clockwise and -, clockwise.
-        # Then Az is ALWAYS 180 - ang 
+        # Then angle is ALWAYS 180 - ang 
         return 180 - math.degrees(math.atan2(canvasPoint.x() - canvasNode.x(), canvasPoint.y() - canvasNode.y()))
 
-    def calculateAzimuthFromNode(self, node, nodePointDict, hidLineLayer, geomType=None):
+    def calculateAzimuthFromNode(self, node, hidLineLayer, geomType=None):
         """
         Computate all azimuths from (closest portion of) lines flowing in and out of a given node.
-        :param node:
-        :param nodePointDict:
-        :param hidLineLayer:
-        :param geomType:
+        :param node: (QgsPoint) hidrography node reference for line and angle calculation.
+        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
+        :param geomType: (int) layer geometry type (1 for lines).
         :return: dict of azimuths of all lines ( { featId : azimuth } )
         """
-        if not nodePointDict:
-            return
         if not geomType:
             geomType = hidLineLayer.geometryType()
+        nodePointDict = self.nodeDict[node]
         azimuthDict = dict()
         for line in nodePointDict['start']:
             # if line starts at node, then angle calculate is already azimuth
@@ -307,27 +340,9 @@ class HidrographyFlowProcess(ValidationProcess):
             #     azimuthDict[line] = ang - 180
             # else:
             #     azimuthDict[line] = ang + 180
-            # azimuth is not necessary, just the angle relative to hidrography node.
+            # azimuth is not necessary, just the angle relative to hidrography network node.
             azimuthDict[line] = ang
         return azimuthDict
-
-    # NÃO USADO ATÉ O MOMENTO
-    def getLinesNodeNextToHidNode(self, node, nodePointDict, hidLineLayer, geomType=None):
-        """
-        
-        """        
-        if not nodePointDict:
-            return
-        lineNodesNextToHidNode = dict()
-        if not geomType:
-            geomType = hidLineLayer.geometryType()
-        for line in nodePointDict['start']:
-            # if line starts at reference node, closest node is the second one
-            lineNodesNextToHidNode[line.id()] = self.getSecondNode(lyr=hidLineLayer, feat=line, geomType=geomType)
-        for line in nodePointDict['end']:
-            # if line ends at reference node, closest node is the penult one
-            lineNodesNextToHidNode[line.id()] = self.getPenultNode(lyr=hidLineLayer, feat=line, geomType=geomType)
-        return lineNodesNextToHidNode
 
     def checkLineDirectionConcordance(self, line_a, line_b, hidLineLayer, geomType=None):
         """
@@ -348,21 +363,19 @@ class HidrographyFlowProcess(ValidationProcess):
         # if lines are flowing to/from the same node (they are flowing the same way)
         return (fn_a == fn_b or ln_a == ln_b)
 
-    def validateDeltaLinesAng(self, node, nodePointDict, hidLineLayer, geomType=None):
+    def validateDeltaLinesAng(self, node, hidLineLayer, geomType=None):
         """
         Validates a set of lines connected to a node as for the angle formed between them.
-        :param node:
-        :param nodePointDict:
-        :param hidLineLayer:
+        :param node: (QgsPoint) hidrography node to be validated.
+        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
         :return: if node is invalid, returns the reason of invalidation (str).
         """
         if not geomType:
             geomType = hidLineLayer.geometryType()
-        azimuthDict = self.calculateAzimuthFromNode(node=node, nodePointDict=nodePointDict, hidLineLayer=hidLineLayer,\
-                                                    geomType=None)
+        azimuthDict = self.calculateAzimuthFromNode(node=node, hidLineLayer=hidLineLayer, geomType=None)
         for idx1, key1 in enumerate(azimuthDict.keys()):
             if idx1 == len(azimuthDict.keys()):
-                # if first element is already the last feature, all differences are already computed
+                # if first comparison element is already the last feature, all differences are already computed
                 break
             for idx2, key2 in enumerate(azimuthDict.keys()):
                 if idx1 >= idx2:
@@ -372,140 +385,24 @@ class HidrographyFlowProcess(ValidationProcess):
                 if absAzimuthDifference < 90 or absAzimuthDifference > 270:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
                     if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
-                        return 'Lines {0} and {1} have conflicting directions.'.format(key1.id(), key2.id())
+                        return self.tr('Lines {0} and {1} have conflicting directions.').format(key1.id(), key2.id())
                 elif absAzimuthDifference != 90 and absAzimuthDifference != 270:
                     # if it's any other disposition, lines can have the same orientation
                     continue
                 else:
                     # if lines touch each other at a right angle, then it is impossible to infer waterway direction
-                    return 'Cannot infer directions for lines {0} and {1} (Right Angle)'.format(key1.id(), key2.id())
-        return 
+                    return self.tr('Cannot infer directions for lines {0} and {1} (Right Angle)').format(key1.id(), key2.id())
+        return
 
-    def getLastNode(self, lyr, feat, geomType=None):
-        """
-        Returns the ending point of a line.
-        :param lyr: layer containing target feature.
-        :param feat: feature which last node is requested.
-        :param geomType: int regarding to layer geometry type (1 for lines).
-        :return: ending node point (QgsPoint).
-        """
-        n = self.DsgGeometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
-        if isMulti:
-            if len(n) > 1:
-                return
-            return n[0][-1]
-        return n[-1]
-
-    # NOT USED SO FAR
-    def selectUpDownstreamLines(self, firstNode, lyr, nodeDict, direction, ignoreWrongFlow=False, flipWrongLines=False, ignoreSelection=False):
-        """
-        Selects all lines that are upstream or downstream from an initial node and returns a list of
-        lines with possible wrong flow direction.
-        :param firstNode: initial node point target of all flow comparison.
-        :param lyr: layer containing target nodes.
-        :param direction: indication whether code is looking for 'downstream' or 'upstream'.
-        :param nodeDict: dictionary containing info of all lines reaching from and to each node.
-        :param ignoreWrongFlow: if set True, code will not set selection on 'wrong flowing lines'.
-        :param flipWrongLines: if set True, it'll flip all lines that may have wrong flow.
-        :param ignoreSelection: if True, method will not select any lines.
-        """
-        if not isinstance(firstNode, list):
-            initNode = [firstNode]
-        else:
-            initNode = firstNode
-        geomType = lyr.geometryType()
-        selection, flippedLines, newInitNode = [], [], []
-        upstream = (direction.lower() == 'upstream')
-        downstream = (direction.lower() == 'downstream')
-        if not upstream and not downstream:
-            # if no VALID direction is given, nothing is done
-            return
-        # it's an iteractive method. Each iteration, initNode resets to the ending of last lines
-        while initNode:
-            for node in initNode:
-                if upstream:
-                    # lines that flow to a starting point are wrong
-                    wrongFlow = nodeDict[node]['start']
-                    rightFlow = nodeDict[node]['end']
-                elif downstream:
-                    # lines that flow from an ending point are wrong
-                    wrongFlow = nodeDict[node]['end']
-                    rightFlow = nodeDict[node]['start']
-                if wrongFlow:
-                    for feat in wrongFlow:
-                        if feat.id() in selection:
-                            continue
-                        # ADD FILTERING CONDITIONS IN HERE! (E.G. FONTE D'ÁGUA)                        
-                        if upstream:
-                            fn = self.getLastNode(lyr, feat, geomType)
-                        elif downstream:
-                            fn = self.getFirstNode(lyr, feat, geomType)
-                        # flip wrong lines
-                        if flipWrongLines:
-                            self.DsgGeometryHandler.flipFeature(lyr, feat, geomType)
-                        newInitNode.append(fn)
-                        flippedLines.append(feat.id())
-                        selection.append(feat.id())                      
-                if rightFlow:
-                    # if lines end there, then they are connected and flowing that way
-                    # all the endings are now new starts
-                    for feat in rightFlow:
-                        if feat.id() in selection:
-                            continue
-                        if upstream:
-                            fn = self.getFirstNode(lyr, feat, geomType)
-                        elif downstream:
-                            fn = self.getLastNode(lyr, feat, geomType)
-                        newInitNode.append(fn)
-                        selection.append(feat.id())
-            # check new starts up to no new starts are found
-            initNode = newInitNode
-            newInitNode = [] # new list of initial node(s)
-        if ignoreWrongFlow:
-            # remove flagged lines from selection
-            selection = list(set(selection) - set(flippedLines))
-        if not ignoreSelection:
-            lyr.removeSelection()
-            lyr.startEditing()
-            lyr.setSelectedFeatures(selection)
-        # update flipped lines representation on canvas
-        self.iface.mapCanvas().refresh()
-        return flippedLines
-
-    # NOT USED SO FAR
-    def getBlackListFeatures(self, nodeDict, nodeTypeDict, nodeList=None):
-        """
-        Gets all features directly connected to "strong" nodes.
-        Strong nodes are: water fountains or sinks and all nodes over frame (up or downstream).
-        :return: a list of feature ids that are not supposed to have their course changed.
-        """
-        # codes for blacklisted types of nodes
-        nodeTypeBl = [1, 2, 3, 4]
-        featBl = []
-        if not nodeList:
-            nodeList = nodeDict.keys()
-        for node in nodeList:
-            featureList = nodeDict[node]['start'] + nodeDict[node]['end']
-            for feat in featureList:
-                if nodeTypeDict[node] not in nodeTypeBl:
-                    continue
-                # if node has blacklisted type, it'll be added to the list
-                featBl.append(feat.id())
-        return featBl
-
-    def checkNodeValidity(self, node, nodeType, nodePointDict, connectedValidLines, lyr, geomType=None, returnNextNodes=True):
+    def checkNodeValidity(self, node, connectedValidLines, hidLineLayer, geomType=None):
         """
         Checks if lines connected to a node have their flows compatible to node type and valid lines
         connected to it.
-        :param node: node (QgsPoint) which lines connected to it are going to be verified.
-        :param nodeType: (int) node type of target node.
-        :param nodePointDict: dictionary for starting and ending lines into given node. ({ 'start' : [lines], 'end' : [lines] })
-        :param connectedValidLines: list of lines (QgsFeatures) connected to 'node' that are already verified.
-        :param lyr: layer that contains the lines of analyzed network.
-        :param geomType: layer geometry type. If not given, it'll be evaluated OTF.
-        :param returnNextNodes: (bool) indicates whether method should return next nodes or not.
-        :return: if 'returnNextNodes' is given, method returns a list of nodes connected to verified node.
+        :param node: (QgsPoint) node which lines connected to it are going to be verified.
+        :param connectedValidLines: list of (QgsFeature) lines connected to 'node' that are already verified.
+        :param hidLineLayer: (QgsVectorLayer) layer that contains the lines of analyzed network.
+        :param geomType: (int) layer geometry type. If not given, it'll be evaluated OTF.
+        :return: (str) if node is invalid, returns the invalidation reason string.
         """
         # getting flow permitions based on node type
         # reference is node (e.g. 'in' = lines  are ENDING at analyzed node)
@@ -519,29 +416,30 @@ class HidrographyFlowProcess(ValidationProcess):
                     6 : 'in and out', # Ramificação
                     7 : 'in and out' # Mudança de Atributo
                    }
-        flow = flowType[nodeType]
-        if not flow:
-            # flags have all lines flagged
-            invalidLines = dict()
-            for line in list( set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines) ):
-                invalidLines[line.id()] = line
-            return dict(), invalidLines, []
-        # getting all connected lines to node that are not validated
+        flow = flowType[self.nodeTypeDict[node]]
+        nodePointDict = self.nodeDict[node]
+        # getting all connected lines to node that are not already validated
         linesNotValidated = list( set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines) )
-        if not linesNotValidated:
-            # if there are no lines to be validated, method returns None
-            return
-        # if 'geomType' is not given, it must be evaluated
-        if not geomType:
-            geomType = lyr.geometryType()
         # starting dicts of valid and invalid lines
         validLines, invalidLines = dict(), dict()
-        # list of next nodes
-        nextNodes = []
+        if not flow:
+            # flags have all lines flagged
+            reason = self.tr('Node was flagged upon classification.')
+            for line in linesNotValidated:
+                invalidLines[line.id()] = line
+            return validLines, invalidLines, reason
+        if not linesNotValidated:
+            # if there are no lines to be validated, method returns None
+            return validLines, invalidLines, ''
+        # if 'geomType' is not given, it must be evaluated
+        if not geomType:
+            geomType = hidLineLayer.geometryType()
+        # reason message in case of invalidity
+        reason = ''
         for line in linesNotValidated:
             # getting last and initial node from analyzed line
-            finalNode = self.getLastNode(lyr=lyr, feat=line, geomType=geomType)
-            initialNode = self.getFirstNode(lyr=lyr, feat=line, geomType=geomType)
+            finalNode = self.getLastNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+            initialNode = self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType)
             # line ID
             lineID = line.id()
             # comparing extreme nodes to find out if flow is compatible to node type
@@ -549,16 +447,16 @@ class HidrographyFlowProcess(ValidationProcess):
                 if node == finalNode:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
-                        nextNodes.append(initialNode)
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
+                        reason += self.tr('Line {0} does not end at a node with \'in\' flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
             elif flow == 'out':
                 if node == initialNode:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
-                        nextNodes.append(finalNode)
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
+                        reason += self.tr('Line {0} does not start at a node with \'out\' flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
             elif flow == 'in and out':
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
@@ -566,57 +464,27 @@ class HidrographyFlowProcess(ValidationProcess):
                 elif node in [initialNode, finalNode]:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
-                        if node == initialNode:
-                            nextNodes.append(finalNode)
-                        else:
-                            nextNodes.append(initialNode)
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
-        if returnNextNodes:
-            return validLines, invalidLines, nextNodes
-        return  validLines, invalidLines
+                        reason += self.tr('Line {0} seems to be invalid (unable to point specific reason). ').format(lineID)
+        return  validLines, invalidLines, reason
 
-    # NOT USED SO FAR - DID NOT COME UP AS A GOOD METHOD FOR VALIDATION.
-    def getFlagsForAllFrameNodes(self, lyr, nodeDict, nodeTypeDict, nodeList=None, flipWrongLines=False, ignoreWrongFlow=False, ignoreSelection=True):
-        """
-        Gets all possible wrong flow lines to be treated. If blacklist argument is given,
-        list will be filtered with blacklisted lines, according to current modelling rules.
-        """
-        frameNodeTypes = [3, 4]
-        flagLineList = []
-        if not nodeList:
-            nodeList = nodeDict.keys()
-        featBlackList = self.getBlackListFeatures(nodeDict=nodeDict, nodeTypeDict=nodeTypeDict,\
-                                                  nodeList=nodeList)
-        for node in nodeList:
-            if nodeTypeDict[node] not in frameNodeTypes:
-                continue
-            # if node is on frame, we add to flags all pointed lines to be flipped that are not blacklisted
-            elif nodeTypeDict[node] == 3:
-                # if waterway is 'going outside' of mapped region, we want to get all upstream lines
-                direction = 'upstream'
-            elif nodeTypeDict[node] == 4:
-                # if waterway is 'going inside' of mapped region, we want to get all downstream lines
-                direction = 'downstream'
-            flagCandidates = self.selectUpDownstreamLines(firstNode=node, lyr=lyr, nodeDict=nodeDict, \
-                                                          direction=direction, ignoreWrongFlow=ignoreWrongFlow, \
-                                                          flipWrongLines=flipWrongLines, ignoreSelection=ignoreSelection)
-            flagLineList += flagCandidates
-        flagLineList = list(set(flagLineList) - set(featBlackList))
-        return flagLineList
-
-    def getNodeGeometryFromDb(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+    def getNodeTypeFromDb(self, nodeLayerName, hidrographyLineLayerName, nodeCrs, nodeList=None):
         """
         Returns a dictionary of node type as of database point of view.
-        :param nodeList: a list of target node points (QgsPoint).
         :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
         :param nodeCrs: (int) CRS for node layer (EPSG number).
-        :return: node type according to database information.
+        :param nodeList: a list of target node points (QgsPoint). If not given, dictNode keys will be read as node list.
+        :return: (dict) node type according to database information.
         """
         nodeWkt, dbNTD, dbNodeTypeDict = dict(), dict(), dict()
+        if not nodeList:
+            nodeList = self.nodeDict.keys()
         for node in nodeList:
             # mapping WKT conversions
+            # nodeGeom = binascii.hexlify(QgsGeometry.fromMultiPoint([node]).asWkb())
+            # nodeWkt[nodeGeom] = node
             # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
             temp = self.abstractDb.getNodesGeometry([QgsGeometry().fromMultiPoint([node]).exportToWkt()], \
                     nodeLayerName, hidrographyLineLayerName, nodeCrs)
@@ -628,16 +496,17 @@ class HidrographyFlowProcess(ValidationProcess):
         #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
         return dbNodeTypeDict
 
-    def getNodeDbIdFromNode(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+    def getNodeDbIdFromNode(self, nodeLayerName, hidrographyLineLayerName, nodeCrs, nodeList=None):
         """
         Returns a dictionary of node type as of database point of view.
-        :param nodeList: a list of target node points (QgsPoint).
         :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
         :param nodeCrs: (int) CRS for node layer (EPSG number).
-        :return: node type according to database information.
+        :return: (dict) node ID according to database information.
         """
         nodeWkt, dbNTD, dbNodeIdDict = dict(), dict(), dict()
+        if not nodeList:
+            nodeList = self.nodeDict.keys()
         for node in nodeList:
             # mapping WKT conversions
             # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
@@ -651,16 +520,17 @@ class HidrographyFlowProcess(ValidationProcess):
         #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
         return dbNodeIdDict
 
-    def getNextNodes(self, node, nodePointDict, hidLineLayer, geomType=None):
+    def getNextNodes(self, node, hidLineLayer, geomType=None):
         """
         It returns a list of all other nodes for each line connected to target node.
-        :param node:
-        :param nodePointDict:
-        :return:
+        :param node: (QgsPoint) node based on which next nodes will be gathered from. 
+        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
+        :return: a list of (QgsPoint) the other node of lines connected to given hidrography node.
         """
         if not geomType:
             geomType = hidLineLayer.geometryType()
         nextNodes = []
+        nodePointDict = self.nodeDict[node]
         for line in nodePointDict['start']:
             # if line starts at target node, the other extremity is a final node
             nextNodes.append(self.getLastNode(lyr=hidLineLayer, feat=line, geomType=geomType))
@@ -669,33 +539,32 @@ class HidrographyFlowProcess(ValidationProcess):
             nextNodes.append(self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType))
         return nextNodes
 
-    def checkAllNodesValidity(self, nodeDict, nodeTypeDict, hidLineLyr, hidNodeLyr, nodeCrs, nodeList=None):
+    def checkAllNodesValidity(self, hidLineLyr, hidNodeLyr, nodeCrs, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 
         correctly classified. CARE: 'nodeTypeDict' MUST BE THE ONE TAKEN FROM DATABASE, NOT RETRIEVED OTF.
-        :param nodeDict: dictionary containing info of all lines reaching from and to each node.
-        :param nodeTypeDict: dictionary containig all nodes (QgsPoint) and its node type (int).
         :param hidLineLyr: (QgsVectorLayer) hidrography lines layer from which node are created from.
         :param hidNodeLyr: (QgsVectorLayer) hidrography nodes layer.
         :param nodeCrs: (str) string containing node layer EPSG code. 
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
-        :return: dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
+        :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
         nodeOnFrame = [3, 4, 2] # node types that are over the frame contour and line BEGINNINGS
         deltaLinesCheckList = [5, 6] # nodes that have an unbalaced number ratio of flow in/out
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
             nodeList = []
-            for node in nodeDict.keys():
-                if nodeTypeDict[node] in nodeOnFrame:
+            for node in self.nodeDict.keys():
+                if self.nodeTypeDict[node] in nodeOnFrame:
                     nodeList.append(node)
             # if no node on frame is found, process ends here
             if not nodeList:
                 return None, None
         geomType = hidLineLyr.geometryType()
         # initiating the list of nodes already checked and the list of nodes to be checked next iteration
-        visitedNodes, newNextNodes, nodeFlags = [], [], []
+        visitedNodes, newNextNodes = [], []
+        nodeFlags = dict()
         # starting dict of (in)valid lines to be returned by the end of method
         validLines, invalidLines = dict(), dict()
         while nodeList:
@@ -704,34 +573,43 @@ class HidrographyFlowProcess(ValidationProcess):
                     # set node as visited
                     visitedNodes.append(node)                    
                 # check coherence to node type and waterway flow
-                temp = self.checkNodeValidity(node=node, nodeType=nodeTypeDict[node], \
-                                                            nodePointDict=nodeDict[node], \
-                                                            connectedValidLines=validLines.values(), lyr=hidLineLyr,\
-                                                            geomType=geomType)
+                val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
+                                                            hidLineLayer=hidLineLyr, geomType=geomType)
                 # if node type test does have valid lines to iterate over
-                if temp:
-                    validLines.update(temp[0])
-                    invalidLines.update(temp[1])
-                    newNextNodes += temp[2]
-                    if temp[1] and (node not in nodeFlags):
-                        nodeFlags.append(node)
-                # if node type is a ramification or a confluence, it checks validity by angles formed
-                if nodeTypeDict[node] in deltaLinesCheckList:
-                    invalidationReason = self.validateDeltaLinesAng(node=node,\
-                                                nodePointDict=nodeDict[node], hidLineLayer=hidLineLyr, geomType=geomType)
-                    newNextNodesFromDeltaCheck = self.getNextNodes(node=node, nodePointDict=nodeDict[node],\
-                                                        hidLineLayer=hidLineLyr, geomType=geomType)
+                validLines.update(val)
+                invalidLines.update(inval)
+                newNextNodes += self.getNextNodes(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
+                if inval:
+                    if node not in nodeFlags.keys():
+                        # if node is invalid, add to nodeFlagList
+                        nodeFlags[node] = reason
+                    else:
+                        nodeFlags[node] += reason
+                    # and remove next nodes connected to invalid lines
+                    removeNode = []
+                    for line in inval.values():
+                        if line in self.nodeDict[node]['end']:
+                            removeNode.append(self.getFirstNode(lyr=hidLineLyr, feat=line))
+                        else:
+                            removeNode.append(self.getLastNode(lyr=hidLineLyr, feat=line))
+                    newNextNodes = list( set(newNextNodes) - set(removeNode) )
+                # if node type is a ramification or a confluence, it checks validity by angles formed by their (last part of) lines
+                if self.nodeTypeDict[node] in deltaLinesCheckList:
+                    invalidationReason = self.validateDeltaLinesAng(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
+                    newNextNodesFromDeltaCheck = self.getNextNodes(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
                     # if the line would be valid as per node type but it is invalid because of its angle, 
                     # it should be removed from valid list and all following nodes, should be removed 
                     # from next node sequence.
                     if invalidationReason:
-                        for line in (nodeDict[node]['start'] + nodeDict[node]['end']):
+                        for line in (self.nodeDict[node]['start'] + self.nodeDict[node]['end']):
                             # invalidating a possible false positive
                             validLines.pop(line.id(), None)
                             # remove false positive next nodes from the list of actual next nodes
                             newNextNodes = list( set(newNextNodes) - set(newNextNodesFromDeltaCheck) )
                         if node not in nodeFlags:
-                            nodeFlags.append(node)
+                            nodeFlags[node] = invalidationReason
+                        else:
+                            nodeFlags[node] += invalidationReason
                     else:
                         newNextNodes += newNextNodesFromDeltaCheck
             # remove nodes that were already visited
@@ -739,75 +617,23 @@ class HidrographyFlowProcess(ValidationProcess):
             # if new nodes are detected, repeat for those
             nodeList = newNextNodes
             newNextNodes = []
-        # mounting node dict with IDs from DB
-        nodeFlagDict = self.getNodeDbIdFromNode(nodeFlags, hidNodeLyr.name(), hidLineLyr.name(), nodeCrs)
-        return nodeFlagDict, invalidLines, validLines
+        return nodeFlags, invalidLines, validLines
 
-    def executeV2(self):
-        """
-        EXEC PARA TESTES
-        """
-        # PARÂMETROS PARA TESTE
-        searchRadius = self.parameters['Search Radius']
-        frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()        
-        d = self.nodeDict
-        # dNodeType = self.nodeTypeDict
-        crs = trecho_drenagem.crs().authid()
-        nodeCrs = pt_drenagem.crs().authid().split(':')[1]
-        for feat in pt_drenagem.selectedFeatures():
-           n = feat.geometry().asMultiPoint()
-           n = n[0] if isinstance(n, list) else n
-        geomType = trecho_drenagem.geometryType()
-        # # TESTE DE SELEÇÃO DE UPSTREAM
-        # print self.selectUpstreamLines(n, trecho_drenagem, d)
-        # # TESTE DE SELEÇÃO DE DOWNSTREAM
-        # print self.selectUpDownstreamLines(n, trecho_drenagem, d, 'downstream', ignoreWrongFlow=True, flipWrongLines=False)
-        # # TESTE DE POPULAÇÃO DAS TABELAS
-        # self.abstractDb.createHidNodeTable(crs.split(':')[1])
-        # print self.fillNodeTable(trecho_drenagem, d, frame, searchRadius)
-        # self.iface.mapCanvas().refresh()
-        # # TESTE DE CLASSIFICAÇÃO DOS NÓS
-        # nodeTypeDict = self.classifyAllNodes(d, frame, searchRadius)
-        # if self.parameters['Only Selected']:
-        # # TESTE DE FLAGS DE DIRECIONAMENTO
-        # flagList = self.getFlagsForAllFrameNodes(lyr=trecho_drenagem, nodeDict=d, nodeTypeDict=dNodeType)
-        # print len(flagList)
-        # trecho_drenagem.removeSelection()
-        # trecho_drenagem.startEditing()
-        # trecho_drenagem.setSelectedFeatures(flagList)
-        # # TESTE DE CHECK POR NÓ
-        # node type should not be calculated OTF for comparison (db data is the one perpetuated)
-        dbNodeTypeDict = self.getNodeGeometryFromDb(nodeList=d.keys(), nodeLayerName=pt_drenagem.name(),\
-                                   hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-        # val, inval, nextNodes = self.checkNodeValidity(n, dbNodeTypeDict[n], d[n], [], trecho_drenagem, geomType)
-        # inval, val = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem)
-        # trecho_drenagem.setSelectedFeatures(val.keys())
-        # # TESTE DE CRIAÇÃO DE FLAGS EM BANCO
-        # recordList = self.buildFlagList(inval, 'validation', pt_drenagem.name(), 'geom')
-        # if len(recordList) > 0:
-        #     numberOfProblems = self.addFlag(recordList)
-        #     msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(len(inval))
-        # trecho_drenagem.setSelectedFeatures(inval.keys())
-        # print 'Invalids ({}):\n'.format(len(inval)), inval.keys()
-        # # TESTE DE CHECK POR ANGULOS
-        # self.validateDeltaLinesAng(node=n, nodePointDict=d[n], hidLineLayer=trecho_drenagem, geomType=geomType)
-        # # CHECK DO PROCESSO DE VALIDAÇÃO
-        nodeFlagDict, val, inval = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
-
-    def buildFlagList(self, invalidNodeDict, tableSchema, tableName, geometryColumn):
+    def buildFlagList(self, nodeFlags, tableSchema, tableName, geometryColumn):
         """
         Builds record list from pointList to raise flags.
 
         """
         recordList = []
-        for node, featid in invalidNodeDict.iteritems():
+        for node, reason in nodeFlags.iteritems():
+            featid = self.nodeDbIdDict[node]
             geometry = binascii.hexlify(QgsGeometry.fromMultiPoint([node]).asWkb())
-            recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, self.tr('Possible wrong flow (check connected node)'), geometry, geometryColumn))
+            recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
         return recordList
 
     def execute(self):
         """
-        REFACTOR THIS METHOD!
+        
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
@@ -820,7 +646,7 @@ class HidrographyFlowProcess(ValidationProcess):
             searchRadius = self.parameters['Search Radius']
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             try:
-                dbNodeTypeDict = self.getNodeGeometryFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
+                dbNodeTypeDict = self.getNodeTypeFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
                                     hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
                 if not dbNodeTypeDict.values():
                     # in case node table is readable but no contents are found
@@ -829,11 +655,11 @@ class HidrographyFlowProcess(ValidationProcess):
                 try:
                     self.abstractDb.createHidNodeTable(crs.split(':')[1])
                     self.fillNodeTable(trecho_drenagem, self.nodeDict, frame, searchRadius)
-                    dbNodeTypeDict = self.getNodeGeometryFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
+                    dbNodeTypeDict = self.getNodeTypeFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
                                     hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
                 except:
                     "erro ao criar a tabela de nós de validação da hidrografia"
-            nodeFlags, inval, val = self.checkAllNodesValidity(nodeDict=self.nodeDict, nodeTypeDict=dbNodeTypeDict, hidLineLyr=trecho_drenagem, hidNodeLyr=pt_drenagem, nodeCrs=nodeCrs)
+            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, hidNodeLyr=pt_drenagem, nodeCrs=nodeCrs)
             # getting recordList to be loaded to validation flag table
             recordList = self.buildFlagList(nodeFlags, 'validation', pt_drenagem.name(), 'geom')
             if len(recordList) > 0:
