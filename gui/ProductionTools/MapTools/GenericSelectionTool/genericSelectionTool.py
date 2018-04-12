@@ -67,7 +67,7 @@ class GenericSelectionTool(QgsMapTool):
     def addTool(self, manager, callback, parentMenu, iconBasePath):
         icon_path = iconBasePath + '/genericSelect.png'
         toolTip = self.tr("DSGTools: Generic Selector\nLeft Click: select feature's layer and put it on edit mode\nRight Click: Open feature's form\nControl+Left Click: add/remove feature from selection\nShift+Left Click+drag and drop: select all features that intersects rubberband.")
-        manager.add_action(
+        action = manager.add_action(
             icon_path,
             text=self.tr('DSGTools: Generic Selector'),
             callback=callback,
@@ -78,6 +78,7 @@ class GenericSelectionTool(QgsMapTool):
             parentToolbar =parentMenu,
             isCheckable = True
         )
+        self.setAction(action)
     
     def keyPressEvent(self, e):
         """

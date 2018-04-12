@@ -22,8 +22,10 @@
 
 from __future__ import absolute_import
 
-from qgis.PyQt.QtCore import QObject 
+from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 from .Options.options import Options
+from .aboutdialog import AboutDialog
 
 class AboutAndFurtherInfoGuiManager(QObject):
 
@@ -41,6 +43,8 @@ class AboutAndFurtherInfoGuiManager(QObject):
         self.parentMenu = parentMenu
         self.toolbar = toolbar
         self.iconBasePath = ':/plugins/DsgTools/icons/'
+        self.options = Options()
+        self.options.firstTimeConfig()
     
     def initGui(self):
         icon_path = self.iconBasePath + 'custom_tools.png'
@@ -48,19 +52,12 @@ class AboutAndFurtherInfoGuiManager(QObject):
             icon_path,
             text=self.tr('Options'),
             callback=self.showOptions,
-            parent=self.parentMenu,
-            add_to_menu=True,
-            add_to_toolbar=False)
-        Options().firstTimeConfig()
-
-        icon_path = self.iconBasePath + 'dsg.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('About'),
-            callback=self.showAbout,
-            parent=self.parentMenu,
-            add_to_menu=True,
-            add_to_toolbar=False)
+            parent=self.iface.mainWindow(),
+            parentMenu = self.parentMenu,
+            add_to_menu=False,
+            add_to_toolbar=False,
+            withShortcut = True)
+        # self.parentMenu.addAction(action)
 
         icon_path = self.iconBasePath + 'bug.png'
         action = self.manager.add_action(
@@ -69,7 +66,8 @@ class AboutAndFurtherInfoGuiManager(QObject):
             callback=self.showBugTracker,
             parent=self.parentMenu,
             add_to_menu=True,
-            add_to_toolbar=False)
+            add_to_toolbar=False,
+            withShortcut = True)
 
         icon_path = self.iconBasePath + 'help.png'
         action = self.manager.add_action(
@@ -78,7 +76,18 @@ class AboutAndFurtherInfoGuiManager(QObject):
             callback=self.showHelp,
             parent=self.parentMenu,
             add_to_menu=True,
-            add_to_toolbar=False)
+            add_to_toolbar=False,
+            withShortcut = True)
+        
+        icon_path = self.iconBasePath + 'dsg.png'
+        self.manager.add_action(
+            icon_path,
+            text=self.tr('About'),
+            callback=self.showAbout,
+            parent=self.parentMenu,
+            add_to_menu=True,
+            add_to_toolbar=False,
+            withShortcut = True)
     
     def unload(self):
         pass
@@ -87,11 +96,8 @@ class AboutAndFurtherInfoGuiManager(QObject):
         """
         Shows the options
         """
-        dlg = Options()
-        dlg.show()
-        result = dlg.exec_()
-        if result:
-            pass
+        # dlg.show()
+        result = self.options.exec_()
     
     def showHelp(self):
         """
@@ -109,5 +115,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         """
         Shows the about dialog
         """
-        dlg = AboutDialog()
-        dlg.exec_()
+        print('lol')
+        # dlg = AboutDialog()
+        # # dlg.show()
+        # dlg.exec_()

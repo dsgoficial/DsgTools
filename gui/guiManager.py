@@ -133,6 +133,8 @@ class GuiManager(QObject):
             self.toolbar.addAction(action)
         if add_to_menu:
             self.menu.addAction(action)
+        if parentMenu:
+            parentMenu.addAction(action)
         if withShortcut:
             self.iface.registerMainWindowAction(action, '')
         if isCheckable:
@@ -145,12 +147,12 @@ class GuiManager(QObject):
         return action
     
     def initGui(self):
-        productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, self.menu, self.toolbar)
-        productionToolsGuiManager.initGui()
-        self.managerList.append(productionToolsGuiManager)
-        aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, self.menu, self.toolbar)
-        aboutAndFurtherGuiManager.initGui()
-        self.managerList.append(aboutAndFurtherGuiManager)
+        self.productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.productionToolsGuiManager.initGui()
+        self.managerList.append(self.productionToolsGuiManager)
+        self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.aboutAndFurtherGuiManager.initGui()
+        self.managerList.append(self.aboutAndFurtherGuiManager)
     
     def unload(self):
         for manager in self.managerList:

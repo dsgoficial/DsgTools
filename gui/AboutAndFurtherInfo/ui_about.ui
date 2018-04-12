@@ -42,7 +42,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="resources.qrc">:/plugins/DsgTools/icons/dsg.png</pixmap>
+    <pixmap resource="../../resources.qrc">:/plugins/DsgTools/icons/dsg.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -61,7 +61,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="resources.qrc">:/plugins/DsgTools/icons/eb.jpg</pixmap>
+    <pixmap resource="../../resources.qrc">:/plugins/DsgTools/icons/eb.jpg</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>
@@ -100,6 +100,7 @@ p, li { white-space: pre-wrap; }
   </widget>
  </widget>
  <resources>
+  <include location="../../resources.qrc"/>
   <include location="resources.qrc"/>
  </resources>
  <connections>
