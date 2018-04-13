@@ -25,7 +25,7 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, Qg
 from qgis.gui import QgsMapTool
 
 import processing, binascii, math
-
+from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
@@ -37,63 +37,53 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         super(HidrographyFlowProcess, self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Hidrography Network Directioning')
-        
+        self.hidNodeLayerName = 'aux_hid_nodes_p'
         self.canvas = self.iface.mapCanvas()
         self.QgsMapTool = QgsMapTool(self.canvas)
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         if not self.instantiating:
             # getting tables with elements (line primitive)
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
-            interfaceDictList = []
+            interfaceDict = dict()
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
-                interfaceDictList.append( {
-                                            self.tr('Category'):cat,
-                                            self.tr('Layer Name'):lyrName,
-                                            self.tr('Geometry\nColumn'):geom,
-                                            self.tr('Geometry\nType'):geomType,
-                                            self.tr('Layer\nType'):tableType
-                                           } )
+                interfaceDict[key] = {
+                                        self.tr('Category'):cat,
+                                        self.tr('Layer Name'):lyrName,
+                                        self.tr('Geometry\nColumn'):geom,
+                                        self.tr('Geometry\nType'):geomType,
+                                        self.tr('Layer\nType'):tableType
+                                     }
             self.parameters = {
                                 'Only Selected' : False,
                                 'Search Radius' : 5.0,
-                                'Classes' :  interfaceDictList
+                                'Reference and Layers': OrderedDict( {
+                                                                       'referenceDictList':{},
+                                                                       'layersDictList':interfaceDict
+                                                                     } )
+                                #'Classes' :  interfaceDictList
                               }
             # PARAMETRIZAÇÃO DEVE SUMIR COM O MÉTODO getHidrographyComponents()
-            frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
-            if not (frame and frameLayer and trecho_drenagem and pt_drenagem):
-                # INSERIR ERRO 'CARREGAR AS CAMADAS ADICIONÁ-LAS AO CANVAS'
-                raise Exception(self.tr("Check if frame, hidrography node and lines layers are loaded."))
-            self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
-            self.nodeTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
-            nodeCrs = pt_drenagem.crs().authid().split(':')[1]
+            # frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
+            # if not (frame and frameLayer and trecho_drenagem and pt_drenagem):
+            #     # INSERIR ERRO 'CARREGAR AS CAMADAS ADICIONÁ-LAS AO CANVAS'
+            #     raise Exception(self.tr("Check if frame, hidrography node and lines layers are loaded."))
+            self.nodeDbIdDict = None
+            self.nodeDict = None
+            self.nodeTypeDict = None
 
-    def getHidrographyComponents(self, layerNames=None):
+    def getFrameContour(self, frameLayer):
         """
         Read frame contour, frame, hidrography lines and hidrgrography node layers.
-        :param layerNames: list with the names of frame, hidrography node and line layers, respectively.
-        :return: (QgsGeometry) frame contour, (QgsVectorLayer) frame layer, (QgsVectorLayer) hidrography lines layer,
-                 (QgsVectorLayer) hidrography node layer.
+        :param frameLayer: (QgsVectorLayer) frame layer.
+        :return: (QgsGeometry) frame contour.
         """
-        if not layerNames:
-            frameLayerName, hidNodeLyrName, hidLineLayerName = 'aux_moldura_a', 'aux_hid_nodes_p', 'hid_trecho_drenagem_l'
-        frame, frameLayer, trecho_drenagem, pt_drenagem = None, None, None, None        
-        for lyr in self.canvas.layers():
-            if lyr.name() == frameLayerName:
-                frameLayer = lyr
-                # getting frame contour (as a PolyLine feature)
-                frame = [feat for feat in lyr.getFeatures()]
-                frame = frame[0]
-                frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
-                frame = QgsGeometry().fromPolyline(frame[0][0])
-            elif lyr.name() == hidNodeLyrName:
-                pt_drenagem = lyr
-            elif lyr.name() == hidLineLayerName:
-                trecho_drenagem = lyr
-            elif trecho_drenagem and pt_drenagem and frame:
-                break
-        return frame, frameLayer, trecho_drenagem, pt_drenagem
+        frame = [feat for feat in frameLayer.getFeatures()]
+        frame = frame[0]
+        frame = self.DsgGeometryHandler.getFeatureNodes(frameLayer, frame)
+        frame = QgsGeometry().fromPolyline(frame[0][0])
+        return frame
     
     def identifyAllNodes(self, hidLineLayer):
         """
@@ -450,18 +440,21 @@ class HidrographyFlowProcess(ValidationProcess):
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
-                        reason += self.tr('Line {0} does not end at a node with \'in\' flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
+                        reason += self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
             elif flow == 'out':
                 if node == initialNode:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
-                        reason += self.tr('Line {0} does not start at a node with \'out\' flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
+                        reason += self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
             elif flow == 'in and out':
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
                     invalidLines[lineID] = line
+                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'.format(self.nodeTypeDict[node]))
+                    if thisReason not in reason:
+                        reason += thisReason
                 elif node in [initialNode, finalNode]:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
@@ -489,7 +482,8 @@ class HidrographyFlowProcess(ValidationProcess):
             # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
             temp = self.abstractDb.getNodesGeometry([QgsGeometry().fromMultiPoint([node]).exportToWkt()], \
                     nodeLayerName, hidrographyLineLayerName, nodeCrs)
-            dbNodeTypeDict[node] = temp.values()[0]
+            if temp:
+                dbNodeTypeDict[node] = temp.values()[0]
         # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
         # for nWkt in dbNTD.keys():
         #     if nWkt in nodeWkt.keys():
@@ -540,13 +534,12 @@ class HidrographyFlowProcess(ValidationProcess):
             nextNodes.append(self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType))
         return nextNodes
 
-    def checkAllNodesValidity(self, hidLineLyr, hidNodeLyr, nodeCrs, nodeList=None):
+    def checkAllNodesValidity(self, hidLineLyr, nodeCrs, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 
         correctly classified. CARE: 'nodeTypeDict' MUST BE THE ONE TAKEN FROM DATABASE, NOT RETRIEVED OTF.
         :param hidLineLyr: (QgsVectorLayer) hidrography lines layer from which node are created from.
-        :param hidNodeLyr: (QgsVectorLayer) hidrography nodes layer.
         :param nodeCrs: (str) string containing node layer EPSG code. 
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
@@ -556,12 +549,12 @@ class HidrographyFlowProcess(ValidationProcess):
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
             nodeList = []
-            for node in self.nodeDict.keys():
+            for node in self.nodeTypeDict.keys():
                 if self.nodeTypeDict[node] in nodeOnFrame:
                     nodeList.append(node)
-            # if no node on frame is found, process ends here
-            if not nodeList:
-                return None, None
+        # if no node on frame is found, process ends here
+        if not nodeList:
+            return None, None
         geomType = hidLineLyr.geometryType()
         # initiating the list of nodes already checked and the list of nodes to be checked next iteration
         visitedNodes, newNextNodes = [], []
@@ -641,21 +634,50 @@ class HidrographyFlowProcess(ValidationProcess):
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
-            crs = trecho_drenagem.crs().authid()
-            nodeCrs = pt_drenagem.crs().authid().split(':')[1]
-            searchRadius = self.parameters['Search Radius']
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
+            # setting all method variables
+            refKey = self.parameters['Reference and Layers'][0]
+            classesWithElemKeys = self.parameters['Reference and Layers'][1]
+            if len(classesWithElemKeys) == 0:
+                self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
+                return 1
+            elif len(classesWithElemKeys) > 1:
+                self.setStatus(self.tr('More than one class selected. Please select only the hidrography lines layer.'), 1) #Finished
+                return 1
+            else:
+                hidLineLyrKey = classesWithElemKeys[0]
+            if not refKey:
+                self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
+                return 1
+            # preparing reference layer
+            refcl = self.classesWithElemDict[refKey]
+            frameLayer = self.loadLayerBeforeValidationProcess(refcl)
+            # preparing hidrography lines layer
+            hidcl = self.classesWithElemDict[hidLineLyrKey]
+            trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
+            # getting dictionaries of nodes information 
+            frame = self.getFrameContour(frameLayer=frameLayer)
+            self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
+            crs = trecho_drenagem.crs().authid()
+            # node layer has the same CRS as the hidrography lines layer
+            nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
+            searchRadius = self.parameters['Search Radius']
             try:
-                self.abstractDb.createHidNodeTable(crs.split(':')[1])
-                self.fillNodeTable(hidLineLayer=trecho_drenagem)
-                self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=pt_drenagem.name(), hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-                dbNodeTypeDict = self.nodeTypeDict
+                self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             except:
-                "erro ao criar a tabela de nós de validação da hidrografia"
-            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, hidNodeLyr=pt_drenagem, nodeCrs=nodeCrs)
+                pass
+            if not self.nodeTypeDict:
+                try:
+                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
+                    self.abstractDb.createHidNodeTable(crs.split(':')[1])
+                    self.fillNodeTable(hidLineLayer=trecho_drenagem)
+                except:
+                    self.setStatus(self.tr('Could not create and load hidrography nodes layer.'), 1) #Finished
+                    return 1
+            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
+            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
             # getting recordList to be loaded to validation flag table
-            recordList = self.buildFlagList(nodeFlags, 'validation', pt_drenagem.name(), 'geom')
+            recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(numberOfProblems)
