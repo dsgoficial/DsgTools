@@ -279,7 +279,7 @@ class InspectFeatures(QWidget,Ui_Form):
         else:
             id = idDict['id']
             lyr = idDict['lyr']
-            selectIdList = lyr.selectedFeaturesIds()
+            selectIdList = lyr.selectedFeatureIds()
             lyr.removeSelection()
             lyr.setSelectedFeatures([id])
             self.zoomToLayer(layer = lyr)
@@ -336,7 +336,7 @@ class InspectFeatures(QWidget,Ui_Form):
     def on_onlySelectedRadioButton_toggled(self, toggled):
         currentLayer = self.getIterateLayer()
         if toggled:
-            featIdList = currentLayer.selectedFeaturesIds()
+            featIdList = currentLayer.selectedFeatureIds()
             self.setValues(featIdList, currentLayer)
             self.idSpinBox.setEnabled(False)
         else:
