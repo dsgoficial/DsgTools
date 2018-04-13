@@ -137,7 +137,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         shape = self.shapesComboBox.currentText()
         validated = self.validateCombos(self.sizesComboBox.currentIndex(), self.shapesComboBox.currentIndex())
         if validated:
-            crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
+            crs = self.iface.mapCanvas().mapSettings().destinationCrs()
             if crs.mapUnits() == 2:
                 self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('This tool does not work with angular unit reference system!'), level=Qgis.Warning, duration=3)
             else:
