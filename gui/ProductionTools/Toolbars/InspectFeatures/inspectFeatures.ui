@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>550</width>
-    <height>39</height>
+    <width>830</width>
+    <height>47</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -41,7 +41,7 @@
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="0" column="1">
+   <item row="0" column="2">
     <widget class="QSplitter" name="splitter">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -66,7 +66,7 @@
        </size>
       </property>
       <property name="filters">
-       <set>QgsMapLayerProxyModel::HasGeometry|QgsMapLayerProxyModel::LineLayer|QgsMapLayerProxyModel::NoGeometry|QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer|QgsMapLayerProxyModel::PolygonLayer|QgsMapLayerProxyModel::VectorLayer</set>
+       <set>QgsMapLayerProxyModel::HasGeometry|QgsMapLayerProxyModel::LineLayer|QgsMapLayerProxyModel::PluginLayer|QgsMapLayerProxyModel::PointLayer|QgsMapLayerProxyModel::PolygonLayer</set>
       </property>
      </widget>
      <widget class="QLabel" name="label_zoom">
@@ -178,7 +178,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/backInspect.png</normaloff>:/plugins/DsgTools/icons/backInspect.png</iconset>
       </property>
       <property name="iconSize">
@@ -214,7 +214,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/nextInspect.png</normaloff>:/plugins/DsgTools/icons/nextInspect.png</iconset>
       </property>
       <property name="iconSize">
@@ -267,7 +267,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../resources.qrc">
+      <iconset resource="../../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/inspectFeatures.png</normaloff>:/plugins/DsgTools/icons/inspectFeatures.png</iconset>
      </property>
      <property name="iconSize">
@@ -281,27 +281,43 @@
      </property>
     </widget>
    </item>
+   <item row="0" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Fixed</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>5</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QgsFieldExpressionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsfieldexpressionwidget.h</header>
   </customwidget>
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsScaleWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsscalewidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources.qrc"/>
+  <include location="../../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
