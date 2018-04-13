@@ -281,9 +281,9 @@ class InspectFeatures(QWidget,Ui_Form):
             lyr = idDict['lyr']
             selectIdList = lyr.selectedFeatureIds()
             lyr.removeSelection()
-            lyr.setSelectedFeatures([id])
+            lyr.selectByIds([id])
             self.zoomToLayer(layer = lyr)
-            lyr.setSelectedFeatures(selectIdList)
+            lyr.selectByIds(selectIdList)
 
         if self.getIterateLayer().geometryType() == QgsWkbTypes.PointGeometry:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
