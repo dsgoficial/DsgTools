@@ -26,6 +26,7 @@ import os.path
 import sys
 
 from .MinimumAreaTool.minimumAreaTool import MinimumAreaTool
+from .InspectFeatures.inspectFeatures import InspectFeatures
 from qgis.PyQt.QtCore import QObject
 
 class ToolbarsGuiManager(QObject):
@@ -41,9 +42,12 @@ class ToolbarsGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        #adding generic selection tool
+        #adding minimum area tool
         self.minimumAreaTool = MinimumAreaTool(self.iface, parent = self.parentMenu)
         self.toolbar.addWidget(self.minimumAreaTool)
+        self.inspectFeaturesTool = InspectFeatures(self.iface, parent = self.parentMenu)
+        self.toolbar.addWidget(self.inspectFeaturesTool)
+
     
     def unload(self):
         pass
