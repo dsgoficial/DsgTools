@@ -27,10 +27,10 @@ from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.Qt import QObject
 
-from qgis.core import QgsMapLayer, Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest
+from qgis.core import QgsMapLayer, Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsFeatureRequest, QgsWkbTypes, QgsProject
 from qgis.gui import QgsMessageBar
 
-from DsgTools.ProductionTools.InspectFeatures.inspectFeatures_ui import Ui_Form
+from .inspectFeatures_ui import Ui_Form
 # FORM_CLASS, _ = uic.loadUiType(os.path.join(
 #     os.path.dirname(__file__), 'inspectFeatures.ui'))
 
@@ -102,7 +102,7 @@ class InspectFeatures(QWidget,Ui_Form):
         currentLayer = self.getIterateLayer()
         if QgsMapLayer is not None and currentLayer:
                 if currentLayer.type() == QgsMapLayer.VectorLayer:
-                    if currentLayer.geometryType() == Qgis.Point:
+                    if currentLayer.geometryType() == QgsWkbTypes.PointGeometry:
                         self.mScaleWidget.setEnabled(True)
                     else:
                         self.mScaleWidget.setEnabled(False)
@@ -161,7 +161,7 @@ class InspectFeatures(QWidget,Ui_Form):
                 oldIndex = 0
             zoom = self.mScaleWidget.scale()
             if oldIndex == newId:
-                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
+                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
                 return
             try:
                 index = featIdList.index(newId)
@@ -169,7 +169,7 @@ class InspectFeatures(QWidget,Ui_Form):
                 self.makeZoom(zoom, currentLayer, newId)
                 self.idSpinBox.setSuffix(' ({0}/{1})'.format(index+1,len(featIdList)))
             except:
-                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=QgsMessageBar.WARNING, duration=2)
+                self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Selected id does not exist in layer {0}. Returned to previous id.').format(lyrName), level=Qgis.Warning, duration=2)
                 self.idSpinBox.setValue(oldIndex)
                 self.makeZoom(zoom, currentLayer, oldIndex)
 
@@ -178,7 +178,7 @@ class InspectFeatures(QWidget,Ui_Form):
         if self.mFieldExpressionWidget.currentText() == '':
             featIdList = currentLayer.allFeatureIds()
         elif not self.mFieldExpressionWidget.isValidExpression():
-            self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Invalid attribute filter!'), level=QgsMessageBar.WARNING, duration=2)
+            self.iface.messageBar().pushMessage(self.tr('Warning!'), self.tr('Invalid attribute filter!'), level=Qgis.Warning, duration=2)
             return []
         else:
             request = QgsFeatureRequest().setFilterExpression(self.mFieldExpressionWidget.asExpression())
@@ -262,7 +262,7 @@ class InspectFeatures(QWidget,Ui_Form):
         srid = layer.crs().authid()
         crsSrc = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
         newBox = coordinateTransformer.transform(box)
 
         self.iface.mapCanvas().setExtent(newBox)
@@ -285,7 +285,7 @@ class InspectFeatures(QWidget,Ui_Form):
             self.zoomToLayer(layer = lyr)
             lyr.setSelectedFeatures(selectIdList)
 
-        if self.getIterateLayer().geometryType() == Qgis.Point:
+        if self.getIterateLayer().geometryType() == QgsWkbTypes.PointGeometry:
             self.iface.mapCanvas().zoomScale(float(1/zoom))
         
     @pyqtSlot(bool, name = 'on_inspectPushButton_toggled')
