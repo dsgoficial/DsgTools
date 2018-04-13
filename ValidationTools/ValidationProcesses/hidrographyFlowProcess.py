@@ -68,7 +68,6 @@ class HidrographyFlowProcess(ValidationProcess):
             self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
             self.nodeTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
             nodeCrs = pt_drenagem.crs().authid().split(':')[1]
-            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=pt_drenagem.name(), hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
 
     def getHidrographyComponents(self, layerNames=None):
         """
@@ -648,19 +647,12 @@ class HidrographyFlowProcess(ValidationProcess):
             searchRadius = self.parameters['Search Radius']
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             try:
-                dbNodeTypeDict = self.getNodeTypeFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
-                                    hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-                if not dbNodeTypeDict.values():
-                    # in case node table is readable but no contents are found
-                    raise Exception
+                self.abstractDb.createHidNodeTable(crs.split(':')[1])
+                self.fillNodeTable(hidLineLayer=trecho_drenagem)
+                self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=pt_drenagem.name(), hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
+                dbNodeTypeDict = self.nodeTypeDict
             except:
-                try:
-                    self.abstractDb.createHidNodeTable(crs.split(':')[1])
-                    self.fillNodeTable(trecho_drenagem, self.nodeDict, frame, searchRadius)
-                    dbNodeTypeDict = self.getNodeTypeFromDb(nodeList=self.nodeDict.keys(), nodeLayerName=pt_drenagem.name(),\
-                                    hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-                except:
-                    "erro ao criar a tabela de nós de validação da hidrografia"
+                "erro ao criar a tabela de nós de validação da hidrografia"
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, hidNodeLyr=pt_drenagem, nodeCrs=nodeCrs)
             # getting recordList to be loaded to validation flag table
             recordList = self.buildFlagList(nodeFlags, 'validation', pt_drenagem.name(), 'geom')
