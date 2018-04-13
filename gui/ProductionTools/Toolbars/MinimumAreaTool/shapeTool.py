@@ -23,7 +23,7 @@ Builds a temp rubberband with a given size and shape.
 """
 from builtins import range
 from qgis.gui import QgsRubberBand, QgsMapTool
-from qgis.core import QgsPoint, Qgis
+from qgis.core import QgsPointXY, Qgis, QgsWkbTypes, QgsProject
 from qgis.PyQt import QtGui, QtCore
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QWidget
@@ -44,7 +44,7 @@ class ShapeTool(QgsMapTool):
         self.param=param
         self.type=type       
         self.cursor=None
-        self.rubberBand = QgsRubberBand(self.canvas, Qgis.Polygon)     
+        self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)     
         self.setColor(color)
         self.reset()
         self.rotAngle = 0
@@ -66,7 +66,7 @@ class ShapeTool(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         try:
-            self.rubberBand.reset(Qgis.Polygon)
+            self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
         except:
             pass
 
@@ -122,24 +122,24 @@ class ShapeTool(QgsMapTool):
         y = startPoint.y()
         if self.type == self.tr('distance'):
             r = self.param
-            self.rubberBand.reset(Qgis.Polygon)
+            self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
-                self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
+                self.rubberBand.addPoint(QgsPointXY(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
         else:
             r = sqrt(self.param/pi)
-            self.rubberBand.reset(Qgis.Polygon)
+            self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
             for itheta in range(nPoints+1):
                 theta = itheta*(2.0*pi/nPoints)
-                self.rubberBand.addPoint(QgsPoint(x+r*cos(theta), y+r*sin(theta)))
+                self.rubberBand.addPoint(QgsPointXY(x+r*cos(theta), y+r*sin(theta)))
             self.rubberBand.show()
 
     def showRect(self, startPoint, param, rotAngle=0):
         """
         Draws a rectangle in the canvas
         """  
-        self.rubberBand.reset(Qgis.Polygon)
+        self.rubberBand.reset(QgsWkbTypes.PolygonGeometry)
         x = startPoint.x() # center point x
         y = startPoint.y() # center point y
         # rotation angle is always applied in reference to center point
@@ -147,15 +147,15 @@ class ShapeTool(QgsMapTool):
         c = cos(rotAngle)
         s = sin(rotAngle)
         # translating coordinate system to rubberband centroid
-        point1 = QgsPoint((- param), (- param))
-        point2 = QgsPoint((- param), ( param))
-        point3 = QgsPoint((param), ( param))
-        point4 = QgsPoint((param), (- param))
+        point1 = QgsPointXY((- param), (- param))
+        point2 = QgsPointXY((- param), ( param))
+        point3 = QgsPointXY((param), ( param))
+        point4 = QgsPointXY((param), (- param))
         # rotating and moving to original coord. sys.
-        point1_ = QgsPoint(point1.x()*c - point1.y()*s + x, point1.y()*c + point1.x()*s + y)
-        point2_ = QgsPoint(point2.x()*c - point2.y()*s + x, point2.y()*c + point2.x()*s + y)
-        point3_ = QgsPoint(point3.x()*c - point3.y()*s + x, point3.y()*c + point3.x()*s + y)
-        point4_ = QgsPoint(point4.x()*c - point4.y()*s + x, point4.y()*c + point4.x()*s + y)
+        point1_ = QgsPointXY(point1.x()*c - point1.y()*s + x, point1.y()*c + point1.x()*s + y)
+        point2_ = QgsPointXY(point2.x()*c - point2.y()*s + x, point2.y()*c + point2.x()*s + y)
+        point3_ = QgsPointXY(point3.x()*c - point3.y()*s + x, point3.y()*c + point3.x()*s + y)
+        point4_ = QgsPointXY(point4.x()*c - point4.y()*s + x, point4.y()*c + point4.x()*s + y)
         self.rubberBand.addPoint(point1_, False)
         self.rubberBand.addPoint(point2_, False)
         self.rubberBand.addPoint(point3_, False)
@@ -186,5 +186,5 @@ class ShapeTool(QgsMapTool):
         """
         destCrs = self.reference.crs()
         if canvasCrs.authid() != destCrs.authid():
-            coordinateTransformer = QgsCoordinateTransform(canvasCrs, destCrs)
+            coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
             geom.transform(coordinateTransformer)

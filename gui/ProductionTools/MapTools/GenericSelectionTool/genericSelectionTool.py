@@ -572,7 +572,7 @@ class GenericSelectionTool(QgsMapTool):
         crsSrc = QgsCoordinateReferenceSystem(epsg)
         crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         # Creating a transformer
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
         auxGeom = QgsGeometry.fromRect(geom)
         auxGeom.transform(coordinateTransformer)
         return auxGeom.boundingBox()

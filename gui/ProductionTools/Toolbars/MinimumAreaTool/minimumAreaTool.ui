@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>541</width>
-    <height>50</height>
+    <width>580</width>
+    <height>44</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +18,7 @@
   </property>
   <property name="maximumSize">
    <size>
-    <width>541</width>
+    <width>580</width>
     <height>50</height>
    </size>
   </property>
@@ -26,24 +26,39 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <property name="spacing">
+    <number>0</number>
+   </property>
    <item row="0" column="0">
     <widget class="QPushButton" name="showPushButton">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="toolTip">
@@ -53,13 +68,13 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../resources.qrc">
+      <iconset resource="../../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/minAreaTool.png</normaloff>:/plugins/DsgTools/icons/minAreaTool.png</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>28</width>
-       <height>28</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="checkable">
@@ -67,29 +82,77 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="2">
     <widget class="QSplitter" name="splitter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>24</height>
+      </size>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
-     <widget class="QgsScaleWidget" name="mScaleWidget">
-      <property name="showCurrentScaleButton">
+     <widget class="QgsScaleWidget" name="mScaleWidget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
+      <property name="showCurrentScaleButton" stdset="0">
        <bool>true</bool>
       </property>
      </widget>
      <widget class="QComboBox" name="sizesComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>32</height>
+        <height>64</height>
        </size>
       </property>
      </widget>
      <widget class="QComboBox" name="shapesComboBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
         <width>16777215</width>
-        <height>32</height>
+        <height>64</height>
        </size>
       </property>
       <item>
@@ -109,16 +172,28 @@
       </item>
      </widget>
      <widget class="QgsColorButton" name="mColorButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>64</width>
+        <height>64</height>
        </size>
       </property>
       <property name="toolTip">
        <string>Color Selector</string>
       </property>
-      <property name="color">
+      <property name="color" stdset="0">
        <color alpha="63">
         <red>254</red>
         <green>178</green>
@@ -127,10 +202,22 @@
       </property>
      </widget>
      <widget class="QPushButton" name="drawShape">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>24</width>
+        <height>24</height>
+       </size>
+      </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>24</width>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
@@ -140,27 +227,33 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/areaTool.png</normaloff>:/plugins/DsgTools/icons/areaTool.png</iconset>
+      </property>
+      <property name="iconSize">
+       <size>
+        <width>16</width>
+        <height>16</height>
+       </size>
       </property>
      </widget>
      <widget class="QPushButton" name="createCustomSizesPushButton">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>24</width>
+        <height>24</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>24</width>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
@@ -170,17 +263,33 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>20</width>
-        <height>20</height>
+        <width>16</width>
+        <height>16</height>
        </size>
       </property>
      </widget>
     </widget>
+   </item>
+   <item row="0" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeType">
+      <enum>QSizePolicy::Minimum</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>10</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
@@ -197,7 +306,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources.qrc"/>
+  <include location="../../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

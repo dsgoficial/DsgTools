@@ -34,9 +34,10 @@ from qgis.PyQt.Qt import QWidget, QObject
 #qgis imports
 import qgis.utils
 from qgis.gui import QgsMessageBar
+from qgis.core import Qgis
 #DsgTools Imports
-from DsgTools.ProductionTools.MinimumAreaTool.shapeTool import ShapeTool
-from DsgTools.ProductionTools.MinimumAreaTool.customSizeSetter import CustomSizeSetter
+from .shapeTool import ShapeTool
+from .customSizeSetter import CustomSizeSetter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'minimumAreaTool.ui'))
@@ -138,7 +139,7 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         if validated:
             crs = self.iface.mapCanvas().mapRenderer().destinationCrs()
             if crs.mapUnits() == 2:
-                self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('This tool does not work with angular unit reference system!'), level=QgsMessageBar.WARNING, duration=3)
+                self.iface.messageBar().pushMessage(self.tr('Critical!'), self.tr('This tool does not work with angular unit reference system!'), level=Qgis.Warning, duration=3)
             else:
                 self.run(scale, size, shape)
         else:

@@ -27,7 +27,6 @@ import sys
 
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
 from .Acquisition.acquisition import Acquisition
-# from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
 from .FlipLineTool.flipLineTool import FlipLine
 from .FreeHandTool.freeHandMain import FreeHandMain
 from qgis.PyQt.QtCore import QObject
