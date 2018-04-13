@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 from qgis.PyQt.QtCore import QObject 
 from .MapTools.mapToolsGuiManager import MapToolsGuiManager
+from .Toolbars.toolBarsGuiManager import ToolbarsGuiManager
 
 class ProductionToolsGuiManager(QObject):
 
@@ -47,6 +48,8 @@ class ProductionToolsGuiManager(QObject):
     def initGui(self):
         self.mapToolsGuiManager = MapToolsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar = self.toolbar)
         self.mapToolsGuiManager.initGui()
+        self.toolbarsGuiManager = ToolbarsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
+        self.toolbarsGuiManager.initGui()
     
     def unload(self):
         self.mapToolsGuiManager.unload()
