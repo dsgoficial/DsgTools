@@ -24,7 +24,7 @@ Builds a temp rubberband with a given size and shape.
 from builtins import range
 from qgis.gui import QgsRubberBand, QgsMapTool
 from qgis.core import QgsPointXY, Qgis, QgsWkbTypes, QgsProject
-from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt import QtGui, QtCore, QtWidgets
 from qgis.PyQt.QtGui import QColor, QCursor
 from qgis.PyQt.QtWidgets import QWidget
 from qgis.PyQt.QtCore import pyqtSignal, QObject, Qt as Qt2, QPoint
@@ -85,7 +85,7 @@ class ShapeTool(QgsMapTool):
         When the canvas is pressed the tool finishes its job
         """
         # enforce mouse restoring if clicked right after rotation 
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
         self.canvas.unsetMapTool(self)
         self.toolFinished.emit()
 
@@ -93,12 +93,12 @@ class ShapeTool(QgsMapTool):
         """
         Deals with mouse move event to update the rubber band position in the canvas
         """
-        ctrlIsHeld = QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
+        ctrlIsHeld = QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier
         if e.button() != None and not ctrlIsHeld:
             if self.rotate:
                 # change rotate status
                 self.rotate = False
-            QtGui.QApplication.restoreOverrideCursor()
+            QtWidgets.QApplication.restoreOverrideCursor()
             self.endPoint = self.toMapCoordinates( e.pos() )
         elif e.button() != None and ctrlIsHeld \
             and self.geometryType == self.tr(u"Square"):
@@ -106,7 +106,7 @@ class ShapeTool(QgsMapTool):
             self.rotAngle = self.rotateRect(self.currentCentroid, e)
             if not self.rotate:
                 # only override mouse if it is not overriden already
-                QtGui.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
+                QtWidgets.QApplication.setOverrideCursor(QCursor(Qt2.BlankCursor))
                 self.rotate = True
         if self.geometryType == self.tr(u"Circle"):
                 self.showCircle(self.endPoint)
@@ -170,7 +170,7 @@ class ShapeTool(QgsMapTool):
         self.rubberBand.hide()
         QgsMapTool.deactivate(self)
         # restore mouse in case tool is disabled right after rotation
-        QtGui.QApplication.restoreOverrideCursor()
+        QtWidgets.QApplication.restoreOverrideCursor()
         
     def activate(self):
         """
