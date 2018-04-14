@@ -29,9 +29,9 @@ from qgis.core import QgsMessageLog
 
 import os, codecs
 
-from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from .genericThread import GenericThread
+from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from ..DbFactory.dbFactory import DbFactory
 
 class PostgisDbMessages(QObject):
     def __init__(self, thread):

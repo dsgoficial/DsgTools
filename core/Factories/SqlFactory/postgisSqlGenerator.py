@@ -22,8 +22,8 @@
 """
 from builtins import str
 from builtins import map
-from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
-from DsgTools.dsgEnums import DsgEnums
+from .sqlGenerator import SqlGenerator
+from ...dsgEnums import DsgEnums
 
 DB_ENCODING = 'utf-8'
 class PostGISSqlGenerator(SqlGenerator):

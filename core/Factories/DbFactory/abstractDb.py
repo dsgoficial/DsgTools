@@ -29,9 +29,9 @@ from uuid import uuid4, UUID
 from osgeo import ogr, osr
 
 # DsgTools imports
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.Utils.utils import Utils
-from DsgTools.LayerTools.CreateFrameTool.map_index import UtmGrid
+from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from ...Utils.utils import Utils
+from ...LayerTools.CreateFrameTool.map_index import UtmGrid
 
 #PyQt imports
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase

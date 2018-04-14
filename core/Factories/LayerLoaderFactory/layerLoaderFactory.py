@@ -23,9 +23,8 @@
 from builtins import object
 import os
 
-from DsgTools.Factories.LayerLoaderFactory.postgisLayerLoader import PostGISLayerLoader
-from DsgTools.Factories.LayerLoaderFactory.spatialiteLayerLoader import SpatialiteLayerLoader
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from .postgisLayerLoader import PostGISLayerLoader
+from .spatialiteLayerLoader import SpatialiteLayerLoader
 
 class LayerLoaderFactory(object):
     def makeLoader(self, iface, abstractDb, loadCentroids=False):

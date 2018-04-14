@@ -33,8 +33,7 @@ from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, 
 from qgis.utils import iface
 
 #DsgTools imports
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.Utils.utils import Utils
+from ...Utils.utils import Utils
 
 class EDGVLayerLoader(QObject):
     

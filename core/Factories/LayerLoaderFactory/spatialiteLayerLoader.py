@@ -32,8 +32,8 @@ from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordin
 from qgis.utils import iface
 
 #DsgTools imports
-from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from .edgvLayerLoader import EDGVLayerLoader
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class SpatialiteLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):

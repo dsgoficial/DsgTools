@@ -27,6 +27,7 @@ import sys
 
 from .MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from .InspectFeatures.inspectFeatures import InspectFeatures
+from .StyleManagerTool.styleManagerTool import StyleManagerTool
 from qgis.PyQt.QtCore import QObject
 
 class ToolbarsGuiManager(QObject):
@@ -45,9 +46,12 @@ class ToolbarsGuiManager(QObject):
         #adding minimum area tool
         self.minimumAreaTool = MinimumAreaTool(self.iface, parent = self.parentMenu)
         self.toolbar.addWidget(self.minimumAreaTool)
+        #adding inspect feature tool
         self.inspectFeaturesTool = InspectFeatures(self.iface, parent = self.parentMenu)
         self.toolbar.addWidget(self.inspectFeaturesTool)
-
+        #adding style tools
+        self.styleManagerTool = StyleManagerTool(self.iface, parent = self.parentMenu)
+        self.toolbar.addWidget(self.styleManagerTool)
     
     def unload(self):
         pass

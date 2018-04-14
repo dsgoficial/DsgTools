@@ -34,7 +34,7 @@ from qgis.core import QgsMessageLog
 
 import os, codecs
 
-from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
+from .genericThread import GenericThread
 
 class DpiMessages(QObject):
     def __init__(self, thread):

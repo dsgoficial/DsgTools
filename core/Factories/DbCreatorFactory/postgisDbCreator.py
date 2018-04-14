@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 
-from DsgTools.Factories.DbCreatorFactory.dbCreator import DbCreator
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from .dbCreator import DbCreator
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class PostgisDbCreator(DbCreator):
     
