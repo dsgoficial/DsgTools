@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>858</width>
-    <height>36</height>
+    <width>857</width>
+    <height>35</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -175,7 +175,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource=".local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools/resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/backInspect.png</normaloff>:/plugins/DsgTools/icons/backInspect.png</iconset>
       </property>
       <property name="iconSize">
@@ -211,7 +211,7 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource=".local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools/resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/nextInspect.png</normaloff>:/plugins/DsgTools/icons/nextInspect.png</iconset>
       </property>
       <property name="iconSize">
@@ -264,7 +264,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource=".local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools/resources.qrc">
+      <iconset resource="../../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/inspectFeatures.png</normaloff>:/plugins/DsgTools/icons/inspectFeatures.png</iconset>
      </property>
      <property name="iconSize">
@@ -288,7 +288,7 @@
      </property>
      <property name="sizeHint" stdset="0">
       <size>
-       <width>5</width>
+       <width>10</width>
        <height>20</height>
       </size>
      </property>
@@ -314,7 +314,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location=".local/share/QGIS/QGIS3/profiles/default/python/plugins/DsgTools/resources.qrc"/>
+  <include location="../../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -31,7 +31,7 @@ from osgeo import ogr, osr
 # DsgTools imports
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ...Utils.utils import Utils
-from ...LayerTools.CreateFrameTool.map_index import UtmGrid
+from ....gui.LayerTools.CreateFrameTool.map_index import UtmGrid
 
 #PyQt imports
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase

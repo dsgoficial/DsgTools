@@ -27,7 +27,7 @@ from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
 
 from .abstractDb import AbstractDb
-from .sqlGeneratorFactory import SqlGeneratorFactory
+from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from osgeo import ogr, osr
 from qgis.core import QgsCoordinateReferenceSystem 
 
