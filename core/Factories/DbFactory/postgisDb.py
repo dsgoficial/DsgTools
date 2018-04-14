@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import QSettings
 from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeature, QgsVectorLayer, QgsField
 
 from .abstractDb import AbstractDb
-from .SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 from osgeo import ogr

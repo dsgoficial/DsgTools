@@ -111,7 +111,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     
     def getLayers(self, dbName):
         lyrList = []
-        for lyr in self.iface.legendInterface().layers():
+        for lyr in self.iface.mapCanvas().layers():
             if isinstance(lyr, QgsVectorLayer):
                 candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 if candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']:
@@ -120,7 +120,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
     
     def getDatabaseList(self):
         dbList = []
-        for lyr in self.iface.legendInterface().layers():
+        for lyr in self.iface.mapCanvas().layers():
             if isinstance(lyr, QgsVectorLayer):
                 candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 dbName = candidateUri.database()
@@ -142,7 +142,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             self.styleComboBox.addItem(self.tr('No available styles'))
     
     def getParametersFromLyr(self, dbName):
-        for lyr in self.iface.legendInterface().layers():
+        for lyr in self.iface.mapCanvas().layers():
           if isinstance(lyr, QgsVectorLayer):
             candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
             if candidateUri.database() == dbName:
@@ -172,7 +172,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_dbComboBox_currentIndexChanged(self, idx):
-        if idx <= 0:
+        if idx < 0:
             self.styleComboBox.clear()
             self.styleComboBox.addItem(self.tr('Select Style'))
             self.styleComboBox.setEnabled(False)

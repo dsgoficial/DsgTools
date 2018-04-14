@@ -124,7 +124,7 @@ class Ui_Form(object):
         self.inspectPushButton.setCheckable(True)
         self.inspectPushButton.setObjectName("inspectPushButton")
         self.gridLayout.addWidget(self.inspectPushButton, 0, 0, 1, 1)
-        spacerItem = QtWidgets.QSpacerItem(5, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
+        spacerItem = QtWidgets.QSpacerItem(10, 20, QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 0, 1, 1, 1)
 
         self.retranslateUi(Form)
