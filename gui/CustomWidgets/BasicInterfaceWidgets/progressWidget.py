@@ -22,6 +22,7 @@
 """
 
 from qgis.gui import QgsMessageBar, QgsMessageBarItem
+from qgis.core import Qgis
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QProgressBar, QSizePolicy
 import time
@@ -43,7 +44,7 @@ class ProgressWidget(QgsMessageBar):
         self.progressBar = QProgressBar()
         self.progressBar.setMinimum(min)
         self.progressBar.setMaximum(max)
-        self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=QgsMessageBar.INFO, duration=timeout)
+        self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=Qgis.Info, duration=timeout)
         self.pushWidget(self.msgBarItem)
     
     def initBar(self):

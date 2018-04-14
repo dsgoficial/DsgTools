@@ -49,7 +49,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         self.splitter.hide()
         self.refreshDb()
         self.dbFactory = DbFactory()
-        self.applyPushButton.setEnabled(False)
+        # self.applyPushButton.setEnabled(False)
         self.utils = Utils()
         
     @pyqtSlot(bool)
@@ -98,14 +98,14 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                     uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                     fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
                     if fullPath:
-                        lyr.applyNamedStyle(fullPath)
+                        lyr.loadNamedStyle(fullPath)
                 except:
                     pass
                 localProgress.step()
             self.iface.mapCanvas().refreshAllLayers()
             QApplication.restoreOverrideCursor()
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Error setting style ') + styleName + ': ' +':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Error setting style ') + styleName + ': ' +':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             QApplication.restoreOverrideCursor()
 
     
@@ -172,15 +172,16 @@ class StyleManagerTool(QWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_dbComboBox_currentIndexChanged(self, idx):
-        if idx == 0:
-            self.styleComboBox.clear()
-            self.styleComboBox.addItem(self.tr('Select Style'))
-            self.styleComboBox.setEnabled(False)
-        elif idx > 0:
-            self.styleComboBox.setEnabled(True)
-            dbName = self.dbComboBox.currentText()
-            abstractDb = self.getAbstractDb(dbName)
-            self.loadStylesCombo(abstractDb)
+        if self.sender().objectName() == 'dbComboBox':
+            if idx <= 0:
+                self.styleComboBox.clear()
+                self.styleComboBox.addItem(self.tr('Select Style'))
+                self.styleComboBox.setEnabled(False)
+            elif idx > 0:
+                self.styleComboBox.setEnabled(True)
+                dbName = self.dbComboBox.currentText()
+                abstractDb = self.getAbstractDb(dbName)
+                self.loadStylesCombo(abstractDb)
         
     def getStyle(self, abstractDb, stylePath, className):
         if 'db:' in stylePath:
@@ -189,7 +190,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             return self.getStyleFromFile(stylePath, className)
     
     def getStyleFromFile(self, stylePath, className):
-        availableStyles = os.walk(stylePath).next()[2]
+        availableStyles = next(os.walk(stylePath))[2]
         styleName = className+'.qml'
         if styleName in availableStyles:
             path = os.path.join(stylePath, styleName)
