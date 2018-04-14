@@ -202,7 +202,7 @@ class EDGVLayerLoader(QObject):
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return None
         if qmlType == 'db':
-            vlayer.applyNamedStyle(qmldir)
+            vlayer.importNamedStyle(qmldir)
         else:
             vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
             #treat case of qml with multi

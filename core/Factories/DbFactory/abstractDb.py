@@ -627,8 +627,7 @@ class AbstractDb(QObject):
     def getStyleDict(self, dbVersion):
         '''
         dbVersion: database version in the format of abstractDb.getVersion()
-        The first iteration of walk lists all dirs as the second element of the list in os.walk(styleDir).next()[1]. 
-        As only God and Mauricio were going to remember this, I wrote it down.
+        The first iteration of walk lists all dirs as the second element of the list in next(os.walk(styleDir))[1]. 
         '''
         currentPath = os.path.dirname(__file__)
         styleDir = os.path.join(currentPath, '..', '..', 'Styles')
@@ -644,7 +643,7 @@ class AbstractDb(QObject):
             styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
         else:
             styleDir = os.path.join(styleDir, 'Non_EDGV')
-        styleList = os.walk(styleDir).next()[1]
+        styleList = next(os.walk(styleDir))[1]
         styleDict = dict()
         try:
             for s in styleList:
