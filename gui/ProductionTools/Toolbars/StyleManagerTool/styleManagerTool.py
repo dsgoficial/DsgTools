@@ -30,9 +30,9 @@ from qgis.PyQt.Qt import QWidget, QObject
 
 from qgis.core import QgsMapLayer, Qgis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
 
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
-from DsgTools.Utils.utils import Utils
+from .....core.Factories.DbFactory.dbFactory import DbFactory
+from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from .....core.Utils.utils import Utils
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
