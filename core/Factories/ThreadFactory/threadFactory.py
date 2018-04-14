@@ -21,9 +21,9 @@
  ***************************************************************************/
 """
 from builtins import object
-from DsgTools.Factories.ThreadFactory.postgisDbThread import PostgisDbThread
-from DsgTools.Factories.ThreadFactory.dpiThread import DpiThread
-from DsgTools.Factories.ThreadFactory.inventoryThread import InventoryThread
+from .postgisDbThread import PostgisDbThread
+from .dpiThread import DpiThread
+from .inventoryThread import InventoryThread
 
 class ThreadFactory(object):
     def makeProcess(self, name):

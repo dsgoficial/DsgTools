@@ -34,7 +34,7 @@ from qgis.PyQt.QtCore import pyqtSlot
 from qgis.core import QgsMessageLog, QgsVectorFileWriter, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsField, QgsPoint
 from qgis._core import QgsAction, QgsPoint
 
-from DsgTools.Factories.ThreadFactory.genericThread import GenericThread
+from .genericThread import GenericThread
 
 class InventoryMessages(QObject):
     def __init__(self, thread):

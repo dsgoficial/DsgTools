@@ -22,10 +22,12 @@
 """
 from builtins import str
 from builtins import range
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+
+from .abstractDb import AbstractDb
+from .sqlGeneratorFactory import SqlGeneratorFactory
 from osgeo import ogr, osr
 from qgis.core import QgsCoordinateReferenceSystem 
 

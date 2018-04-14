@@ -35,10 +35,10 @@ from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordin
 from qgis.utils import iface
 
 #DsgTools imports
-from DsgTools.Factories.LayerLoaderFactory.edgvLayerLoader import EDGVLayerLoader
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
-from DsgTools.LayerTools.CustomFormTools.generatorCustomInitCode import GeneratorCustomInitCode
-from DsgTools.LayerTools.CustomFormTools.generatorCustomForm import GeneratorCustomForm
+from .edgvLayerLoader import EDGVLayerLoader
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from ....gui.LayerTools.CustomFormTools.generatorCustomForm import GeneratorCustomForm
+from ....gui.LayerTools.CustomFormTools.generatorCustomInitCode import GeneratorCustomInitCode
 
 class PostGISLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):

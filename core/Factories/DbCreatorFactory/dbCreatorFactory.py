@@ -24,10 +24,9 @@ from builtins import object
 import os
 
 from qgis.PyQt.QtSql import QSqlDatabase
-
 #DSG Tools imports
-from DsgTools.Factories.DbCreatorFactory.spatialiteDbCreator import SpatialiteDbCreator
-from DsgTools.Factories.DbCreatorFactory.postgisDbCreator import PostgisDbCreator
+from .spatialiteDbCreator import SpatialiteDbCreator
+from .postgisDbCreator import PostgisDbCreator
 
 class DbCreatorFactory(object):
     def createDbCreatorFactory(self, driverName, createParam, parentWidget = None):

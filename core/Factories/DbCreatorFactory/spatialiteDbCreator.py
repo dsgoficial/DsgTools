@@ -24,8 +24,8 @@
 import os, sqlite3
 from os.path import expanduser
 
-from DsgTools.Factories.DbCreatorFactory.dbCreator import DbCreator
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from ..DbFactory.dbFactory import DbFactory
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class SpatialiteDbCreator(DbCreator):
     

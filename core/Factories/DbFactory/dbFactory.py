@@ -26,8 +26,8 @@ import os
 from qgis.PyQt.QtSql import QSqlDatabase
 
 #DSG Tools imports
-from DsgTools.Factories.DbFactory.spatialiteDb import SpatialiteDb
-from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
+from .spatialiteDb import SpatialiteDb
+from .postgisDb import PostgisDb
 
 from qgis.core import QgsMessageLog
 

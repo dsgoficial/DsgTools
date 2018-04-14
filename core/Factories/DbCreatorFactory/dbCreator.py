@@ -28,9 +28,9 @@ from builtins import range
 from qgis.PyQt.QtCore import QSettings, pyqtSignal, QObject
 
 #DsgTools imports
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from ..DbFactory.dbFactory import DbFactory
+from ..DbFactory.abstractDb import AbstractDb
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class DbCreator(QObject):
     def __init__(self, createParam, parentWidget = None):

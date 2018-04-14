@@ -23,16 +23,20 @@
 from builtins import map
 from builtins import str
 from builtins import range
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtCore import QSettings
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeature, QgsVectorLayer, QgsField
+
+from .abstractDb import AbstractDb
+from .SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii, re
 import psycopg2
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+
 
 class PostgisDb(AbstractDb):
     def __init__(self):

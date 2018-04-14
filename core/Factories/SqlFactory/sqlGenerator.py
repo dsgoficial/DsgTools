@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import object
-from DsgTools.dsgEnums import DsgEnums
+from ...dsgEnums import DsgEnums
 
 class SqlGenerator(object):
     def getComplexLinks(self, complex):
