@@ -154,7 +154,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             return 'Non_EDGV'
         version = '-1'
-        while next(query):
+        while query.next():
             version = query.value(0)
         return version
 
@@ -185,7 +185,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
         localList = []
-        while next(query):
+        while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
@@ -219,7 +219,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             tableSchema = query.value(0)
             tableName = query.value(1)
             layerName = tableSchema+'.'+tableName
@@ -286,7 +286,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             className = str(query.value(0))+'.'+str(query.value(1))
             fieldName = str(query.value(2))
             if str(query.value(0)) == 'complexos' or className.split('_')[-1] in ['p','l','a']:
@@ -331,7 +331,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
         notNullDict = dict()
-        while next(query):
+        while query.next():
             schemaName = str(query.value(0))
             className = str(query.value(1))
             attName = str(query.value(2))
@@ -364,7 +364,7 @@ class PostgisDb(AbstractDb):
 
         classDict = dict()
         domainDict = dict()
-        while next(query):
+        while query.next():
             schemaName = str(query.value(0))
             className = str(query.value(1))
             attName = str(query.value(2))
@@ -434,7 +434,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem obtaining link column: ")+query.lastError().text())
         column_name = ''
-        while next(query):
+        while query.next():
             column_name = query.value(0)
         return column_name
 
@@ -452,7 +452,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem loading associated features: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             #setting the variables
             complex_schema = query.value(0)
             complex = query.value(1)
@@ -497,7 +497,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             if query.value(0) == className:
                 return True
         return False
@@ -526,7 +526,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting users: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             ret.append(query.value(0))
             
         ret.sort()
@@ -546,7 +546,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting user roles: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             rolname = query.value(0)
             usename = query.value(1)
             if not usename:
@@ -570,7 +570,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting roles: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             ret.append(query.value(0))
 
         ret.sort()
@@ -705,7 +705,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting tables from database: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             #table name
             ret.append(query.value(0))
 
@@ -725,7 +725,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting role privileges: ")+query.lastError().text())
         
-        while next(query):
+        while query.next():
             schema = query.value(3)
             table = query.value(4)
             privilege = query.value(5)
@@ -779,7 +779,7 @@ class PostgisDb(AbstractDb):
 
         dbList = []
         
-        while next(query):
+        while query.next():
             dbList.append(query.value(0))
         
         edvgDbList = []
@@ -834,7 +834,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting databases: ")+query.lastError().text())
         dbList = []
         
-        while next(query):
+        while query.next():
             dbList.append(query.value(0))
         return dbList
     
@@ -845,7 +845,7 @@ class PostgisDb(AbstractDb):
         self.checkAndOpenDb()
         query = QSqlQuery(self.db)
         if query.exec_(self.gen.isSuperUser(self.db.userName())):
-            next(query)
+            query.next()
             value = query.value(0)
             return value
         else:
@@ -876,7 +876,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting implementation version: ') + query.lastError().text()) 
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def dropDatabase(self, candidateName, dropTemplate = False):
@@ -948,7 +948,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting invalid geometries: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             featId = query.value(0)
             reason = query.value(1)
             geom = query.value(2)
@@ -1018,7 +1018,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
         created = True
-        while next(query):
+        while query.next():
             if query.value(0) == 0:
                 created = False
         if not created:
@@ -1046,7 +1046,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
-        while next(query):
+        while query.next():
             ret = query.value(0)
         return ret
 
@@ -1061,7 +1061,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem acquiring status: ') + query.lastError().text()) 
         ret = None
-        while next(query):
+        while query.next():
             ret = query.value(0)
         return ret
 
@@ -1085,7 +1085,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting running process: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             processName = query.value(0)
             status = query.value(1)
             if status == 3:
@@ -1116,7 +1116,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem testing spatial rule: ') + query.lastError().text()) 
         ret = []
         flagClass = class_a.replace('_temp', '')
-        while next(query):
+        while query.next():
             feat_id = query.value(0)
             reason = self.tr('Feature id {} from {} violates rule {} {}').format(feat_id, class_a, rule.decode('utf-8'), class_b)
             geom = query.value(1)
@@ -1135,7 +1135,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem getting dimension: ') + query.lastError().text()) 
         dimension = 0
-        while next(query):
+        while query.next():
             dimension = query.value(0)
         return dimension
     
@@ -1149,7 +1149,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem exploding candidates: ') + query.lastError().text())
         idList = []
-        while next(query):
+        while query.next():
             idList.append(query.value(0))
         return idList
 
@@ -1212,7 +1212,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting duplicated geometries: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             tupleList.append( (query.value(0),query.value(2)) )
         return tupleList
 
@@ -1230,7 +1230,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting small areas: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             smallAreasTupleList.append( (query.value(0),query.value(1)) )
         return smallAreasTupleList
 
@@ -1249,7 +1249,7 @@ class PostgisDb(AbstractDb):
             query = QSqlQuery(sql, self.db)
             if not query.isActive():
                 raise Exception(self.tr('Problem getting small lines: ') + query.lastError().text())
-            while next(query):
+            while query.next():
                 smallLinesDict = self.utils.buildNestedDict(smallLinesDict, [cl,query.value(0)], query.value(1))
         return smallLinesDict
 
@@ -1283,7 +1283,7 @@ class PostgisDb(AbstractDb):
             if useTransaction:
                 self.db.rollback()
             raise Exception(self.tr('Problem getting vertex near edges: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             id = query.value(0)
             geom = query.value(1)
             result.append((id,geom))
@@ -1327,7 +1327,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting not simple geometries: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             tupleList.append( (query.value(0), query.value(1)) )
         return tupleList
 
@@ -1346,7 +1346,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting not out of bounds angles: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             id = query.value(0)
             geom = query.value(1)
             result.append((id, geom))
@@ -1363,7 +1363,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             cl = query.value(0)
             id = query.value(1)
             geometry_column = query.value(2) 
@@ -1411,7 +1411,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Problem getting table extent: ') + query.lastError().text())
         
         extent = None
-        while next(query):
+        while query.next():
             xmin = query.value(0)
             xmax = query.value(1)
             ymin = query.value(2)
@@ -1429,7 +1429,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
-        while next(query):
+        while query.next():
             result.append(query.value(0))
         return result
 
@@ -1443,7 +1443,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem getting orphan tables: ') + query.lastError().text())
         result = []
-        while next(query):
+        while query.next():
             orphanCandidate = query.value(0)
             sql2 = self.gen.getOrphanTableElementCount(orphanCandidate)
             query2 = QSqlQuery(sql2, self.db)
@@ -1490,7 +1490,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem checking structure: ')+query.lastError().text())
-        while next(query):
+        while query.next():
             if query.value(0) == None:
                 return False
         return True
@@ -1543,7 +1543,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem getting earth coverage tables: ') + query.lastError().text())
         result = []
-        while next(query):
+        while query.next():
             result.append(query.value(0))
         return result
 
@@ -1556,7 +1556,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
 
     def setEarthCoverageDict(self, textDict, useTransaction = True):
@@ -1640,7 +1640,7 @@ class PostgisDb(AbstractDb):
         centroidList = []
         if not query.isActive():
             raise Exception(self.tr('Problem getting earth coverage structure: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             table = query.value(0).split('_')
             table[-1] = 'c'
             layerName = '_'.join(table)
@@ -1658,7 +1658,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting class name: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def getDbOID(self):
@@ -1667,7 +1667,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr('Problem getting db oid: ') + query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def snapToGrid(self, classList, tol, srid, geometryColumn, useTransaction = True):
@@ -1764,7 +1764,7 @@ class PostgisDb(AbstractDb):
         result = dict()
         key = ','.join(params)
         result[key] = []
-        while next(query):
+        while query.next():
             newElement = []
             for i in range(len(params)):
                 newElement.append(query.value(i))
@@ -1866,7 +1866,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting style table: ") + query.lastError().text())
-        next(query)
+        query.next()
         created = query.value(0)
         if not created:
             if useTransaction:
@@ -1890,7 +1890,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleList = []
-        while next(query):
+        while query.next():
             styleList.append(query.value(0))
         return styleList
     
@@ -1901,7 +1901,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleList = []
-        next(query)
+        query.next()
         qml = query.value(0)
         #TODO: post parse qml to remove possible attribute value type
         if parsing:
@@ -1988,7 +1988,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting table schema from db: ") + query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def getAllStylesDict(self, perspective = 'style'):
@@ -2003,7 +2003,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting styles from db: ") + query.lastError().text())
         styleDict = dict()
-        while next(query):
+        while query.next():
             dbName = query.value(0)
             styleName = query.value(1)
             tableName = query.value(2)
@@ -2049,7 +2049,7 @@ class PostgisDb(AbstractDb):
 
         classDict = dict()
         domainDict = dict()
-        while next(query):
+        while query.next():
             schemaName = str(query.value(0))
             className = str(query.value(1))
             attName = str(query.value(2))
@@ -2072,7 +2072,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         schemaList = []
-        while next(query):
+        while query.next():
             schemaList.append(query.value(0))
         return schemaList
     
@@ -2091,7 +2091,7 @@ class PostgisDb(AbstractDb):
         geomDict = dict()
         geomDict['primitivePerspective'] = geomTypeDict
         geomDict['tablePerspective'] = dict()
-        while next(query):
+        while query.next():
             isCentroid = False
             srid = query.value(0)
             geometryType = query.value(2)
@@ -2142,7 +2142,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             #parse done in parseFkQuery to make code cleaner.
             tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
             if tableName not in list(geomDict.keys()):
@@ -2210,7 +2210,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             #parse done in parseCheckConstraintQuery to make code cleaner.
             tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
             if tableName not in list(geomDict.keys()):
@@ -2292,7 +2292,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             #TODO: check if 2.1.3 raises problem, because of empty query
             aux = json.loads(query.value(0))
             geomDict[aux['table_name']]=aux['attributes']
@@ -2305,7 +2305,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting tables dict from db: ")+query.lastError().text())
         geomList = []
-        while next(query):
+        while query.next():
             geomList.append(json.loads(query.value(0)))
         return geomList  
     
@@ -2316,7 +2316,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             if loadCentroids and aux['geomtype'] == 'POINT':
                 classlist = []
@@ -2339,7 +2339,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             if aux['f2'] not in list(geomDict.keys()):
                 geomDict[aux['f2']] = []
@@ -2371,7 +2371,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
         localList = []
-        while next(query):
+        while query.next():
             if query.value(2) == 'centroid' and query.value(3) == 'POINT' and query.value(1) in centroidTableList:
                 continue
             else:
@@ -2434,7 +2434,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting not null dict: ")+query.lastError().text())
         notNullDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             if aux['f1'] not in list(notNullDict.keys()):
                 notNullDict[aux['f1']] = dict()
@@ -2451,7 +2451,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting domain dict from table ")+domainTable+':'+query.lastError().text())
         domainDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             domainDict[aux['f2']] = aux['f1']
         return domainDict
@@ -2464,7 +2464,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr("Problem getting layer column dict from table ")+domainTable+':'+query.lastError().text())
         domainDict = dict()
         otherKey = None
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             if not otherKey:
                 if 'code_name' in list(aux.keys()):
@@ -2486,7 +2486,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom struct dict: ")+query.lastError().text())
         geomStructDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             tableName = aux['table_name']
             if tableName not in list(geomStructDict.keys()):
@@ -2520,7 +2520,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting view definition: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def updateDbSRID(self, srid, useTransaction = True, closeAfterUse = True, parentWidget = None, threading = False):
@@ -2586,7 +2586,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem setting as template: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             if query.value(0) == dbName:
                 return True
         return False
@@ -2647,7 +2647,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem checking  template: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def getCreationSqlPath(self, version):
@@ -2732,7 +2732,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting users: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             ret.append((query.value(0), query.value(1)))
         return ret
     
@@ -2807,7 +2807,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem looking for admindb: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             if query.value(0):
                 return True
         return False
@@ -2822,7 +2822,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting roles dict: ")+query.lastError().text())
         rolesDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             if aux['dbname'] not in list(rolesDict.keys()):
                 rolesDict[aux['dbname']] = []
@@ -2861,7 +2861,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting roles from adminDb: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def getAllRolesFromAdminDb(self):
@@ -2874,7 +2874,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting all roles from adminDb: ")+query.lastError().text())
         allRolesDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             allRolesDict[aux['edgvversion']] = aux['profiles']
         return allRolesDict
@@ -2900,7 +2900,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting granted roles dict: ")+query.lastError().text())
         grantedRolesDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             if aux['profile'] not in list(grantedRolesDict.keys()):
                 grantedRolesDict[aux['profile']] = []
@@ -2929,7 +2929,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting domain tables: ")+query.lastError().text())
         domainList = []
-        while next(query):
+        while query.next():
             domainList.append(query.value(0))
         return domainList
     
@@ -2943,7 +2943,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geometric schema list: ")+query.lastError().text())
         schemaList = []
-        while next(query):
+        while query.next():
             schemaList.append(query.value(0))
         return schemaList
     
@@ -2957,7 +2957,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geometric table list: ")+query.lastError().text())
         tableList = []
-        while next(query):
+        while query.next():
             tableList.append(query.value(1))
         return tableList
     
@@ -3035,7 +3035,7 @@ class PostgisDb(AbstractDb):
         inhDict = dict()
         if not query.isActive():
             raise Exception(self.tr("Problem getting inheritance: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             inhDict[aux['parentname']] = aux['childname']
         return inhDict
@@ -3063,7 +3063,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting attribute list: ")+query.lastError().text())
         attributeList = []
-        while next(query):
+        while query.next():
             attributeList.append(query.value(0))
         return attributeList
     
@@ -3074,7 +3074,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting attribute list: ")+query.lastError().text())
         attributeJson = []
-        while next(query):
+        while query.next():
             attributeJson.append(json.loads(query.value(0)))
         return attributeJson
     
@@ -3086,7 +3086,7 @@ class PostgisDb(AbstractDb):
         for domainTable in domainTableList:
             sql = self.gen.getAllDomainValues(domainTable)
             query = QSqlQuery(sql, self.db)
-            while next(query):
+            while query.next():
                 value = query.value(0)
                 if value not in valueList:
                     valueList.append(value)
@@ -3135,7 +3135,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem constraint dict from db: ")+query.lastError().text())
         inhConstrDict = dict()
-        while next(query):
+        while query.next():
             queryResult = json.loads(query.value(0))
             tableName = queryResult['tablename']
             if tableName not in list(inhConstrDict.keys()):
@@ -3164,7 +3164,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting default from db: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
@@ -3189,7 +3189,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting setting from adminDb: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def getSettingVersion(self, settingType, settingName):
@@ -3198,7 +3198,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting setting from adminDb: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def getAllSettingsFromAdminDb(self, settingType):
@@ -3213,7 +3213,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting settings from adminDb: ")+query.lastError().text())
         allRolesDict = dict()
-        while next(query):
+        while query.next():
             aux = json.loads(query.value(0))
             allRolesDict[aux['edgvversion']] = aux['settings']
         return allRolesDict
@@ -3250,7 +3250,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting postgis version: ")+query.lastError().text())
         updateDict = dict()
-        while next(query):
+        while query.next():
             defaultVersion = query.value(1)
             installedVersion = query.value(2)
             if defaultVersion != installedVersion and installedVersion not in ['', None]:                
@@ -3264,7 +3264,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting applied customizations: ")+query.lastError().text())
         customDict = dict()
-        while next(query):
+        while query.next():
             jsonDict = json.loads(query.value(0))
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
@@ -3276,7 +3276,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting applied customizations: ")+query.lastError().text())
         customDict = dict()
-        while next(query):
+        while query.next():
             jsonDict = json.loads(query.value(0))
             customDict[jsonDict['name']] = jsonDict['array_agg']
         return customDict
@@ -3300,7 +3300,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting checking if table exists: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             if query.value(0):
                 return True
         return False
@@ -3316,7 +3316,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting getting record from adminDb: ")+query.lastError().text())
         retDict = dict()
-        while next(query):
+        while query.next():
             retDict['id'] = query.value(0)
             retDict['name'] = query.value(1)
             retDict['jsondict'] = query.value(2)
@@ -3348,7 +3348,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting getting property dict: ")+query.lastError().text())
         propertyDict = dict()
-        while next(query):
+        while query.next():
             edgvVersion = query.value(0)
             if getOnlySameVersion:
                 if myEdgvVersion != edgvVersion:
@@ -3420,7 +3420,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting primary key column: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0)
     
     def dropAllConections(self, dbName):
@@ -3444,7 +3444,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting attributes from table {0}.{1}: {2}").format(tableSchema, tableName, query.lastError().text()))
         returnStruct = []
-        while next(query):
+        while query.next():
             if returnType == 'list':
                 returnStruct.append(query.value(0))
             else:
@@ -3462,7 +3462,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem creating structure: ')+query.lastError().text())
         created = True
-        while next(query):
+        while query.next():
             if query.value(0) == 0:
                 created = False
         if not created:
@@ -3534,7 +3534,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting gaps: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             reason = self.tr('Gap between the frame layer and coverage layer')
             geom = query.value(0)
             invalidCoverageRecordsList.append( (0, reason, geom) )
@@ -3556,7 +3556,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting overlaps: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             reason = self.tr('Overlap between the features of the layer')
             geom = query.value(0)
             invalidRecordsList.append( (0, reason, geom) )
@@ -3575,7 +3575,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
         classesOrProcesses.append("")
-        while next(query):
+        while query.next():
             classesOrProcesses.append(str(query.value(0)))
         return classesOrProcesses
 
@@ -3591,7 +3591,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem filtering flags: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             outFiltered.append(str(query.value(0)))
         return outFiltered
 
@@ -3619,7 +3619,7 @@ class PostgisDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting gaps: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             reason = self.tr('Gap between the features of the layer')
             geom = query.value(0)
             invalidRecordsList.append( (0, reason, geom) )
@@ -3635,7 +3635,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr('Problem while retrieving flags dict: ') + query.lastError().text())
         nrFlags = 0
-        while next(query):
+        while query.next():
             nrFlags += 1
         return nrFlags
 
@@ -3662,7 +3662,7 @@ class PostgisDb(AbstractDb):
         idL = [] # list of ID in the same order as the logs appears
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             log.append(query.value(0).encode(self.databaseEncoding))
             idL.append(query.value(1))
         if idList:            
@@ -3683,7 +3683,7 @@ class PostgisDb(AbstractDb):
         history = [] # list of logs
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             history.append([query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)])
         return history
 
@@ -3735,7 +3735,7 @@ class PostgisDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting list of attributes with filter: ")+query.lastError().text())
         attrList = []
-        while next(query):
+        while query.next():
             attrList.append(query.value(0))
         return attrList
     
@@ -3748,7 +3748,7 @@ class PostgisDb(AbstractDb):
             localList = []
             if not query.isActive():
                 raise Exception(self.tr("Problem getting domain json list: ")+query.lastError().text())
-            while next(query):
+            while query.next():
                 localList.append(json.loads(query.value(0)))
             jsonDict[domainName] = localList
         return jsonDict
@@ -3768,7 +3768,7 @@ class PostgisDb(AbstractDb):
         filterDict = dict()
         attrList = self.getAttrListWithFilter()
         jsonDict = self.getAttrFilterDomainJsonList(attrList)
-        while next(query):
+        while query.next():
             #parse done in parseFkQuery to make code cleaner.
             tableName, fkAttribute, domainTable, domainReferencedAttribute = self.parseFkQuery(query.value(0),query.value(1))
             if domainTable.split('.')[-1] in attrList:

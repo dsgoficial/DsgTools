@@ -172,7 +172,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_dbComboBox_currentIndexChanged(self, idx):
-        if idx < 0:
+        if idx == 0:
             self.styleComboBox.clear()
             self.styleComboBox.addItem(self.tr('Select Style'))
             self.styleComboBox.setEnabled(False)
