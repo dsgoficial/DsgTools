@@ -76,7 +76,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             self.db.close()
             raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             tableName = str(query.value(0))
             layerName = tableName
             if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
@@ -95,7 +95,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             self.db.close()
             raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
-        while next(query):
+        while query.next():
                 tableName = str(query.value(0))
                 layerName = tableName
                 tableSchema = layerName.split('_')[0]
@@ -114,7 +114,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             self.db.close()
             raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             className = str(query.value(0))
             classSql = str(query.value(1))
             if className.split('_')[0] == 'complexos' or className.split('_')[-1] in ['p','l','a']:
@@ -168,7 +168,7 @@ class SpatialiteDb(AbstractDb):
                     self.db.close()
                     raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
                 
-                while next(query):
+                while query.next():
                     id = query.value(0)
                     #detects null lines
                     for i in range(len(inputAttrList)):
@@ -288,7 +288,7 @@ class SpatialiteDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         # if not query.isActive():
         #     raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             version = query.value(0)
         return version
     
@@ -306,7 +306,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem obtaining link column: ")+query.lastError().text())
         column_name = ""
-        while next(query):
+        while query.next():
             column_name = query.value(0)
         return column_name
 
@@ -325,7 +325,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem loading associated features: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             #setting the variables
             complex_schema = query.value(0)
             complex = query.value(1)
@@ -376,7 +376,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             if query.value(0) == 'complexos_'+className:
                 return True
         return False
@@ -407,7 +407,7 @@ class SpatialiteDb(AbstractDb):
             self.db.close()
             raise Exception(self.tr("Problem getting tables from database: ")+query.lastError().text())
 
-        while next(query):
+        while query.next():
             #table name
             ret.append(query.value(0))
         return ret
@@ -438,7 +438,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             if edgvVersion in ('2.1.3','FTer_2a_Ed'):
                 type = query.value(0)
             else:
@@ -466,7 +466,7 @@ class SpatialiteDb(AbstractDb):
         geomDict = dict()
         geomDict['primitivePerspective'] = self.getGeomTypeDict()
         geomDict['tablePerspective'] = dict()
-        while next(query):
+        while query.next():
             isCentroid = False
             srid = query.value(0)
             if edgvVersion in ('2.1.3','FTer_2a_Ed'):
@@ -496,7 +496,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
         geomDict = dict()
-        while next(query):
+        while query.next():
             geomColumn = query.value(0)
             tableName = query.value(1)
             lyrName = '_'.join(tableName.split('_')[1::])
@@ -540,7 +540,7 @@ class SpatialiteDb(AbstractDb):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting full table name: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             return query.value(0).split('_')[0]
     
     def getGeomColumnTupleList(self, showViews = False):
@@ -555,7 +555,7 @@ class SpatialiteDb(AbstractDb):
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
         geomList = []
-        while next(query):
+        while query.next():
             if edgvVersion in ['2.1.3','FTer_2a_Ed']:
                 geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
             else:

@@ -98,7 +98,7 @@ class AbstractDb(QObject):
             if layer.split('_')[-1] in ['p','l','a'] or schema == 'complexos':
                 sql = self.gen.getElementCountFromLayer(layer)
                 query = QSqlQuery(sql,self.db)
-                next(query)
+                query.next()
                 number = query.value(0)
                 if not query.exec_(sql):
                     raise Exception(self.tr("Problem counting elements: ")+query.lastError().text())
@@ -112,7 +112,7 @@ class AbstractDb(QObject):
             schema=self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayer(schema,lyr)
             query = QSqlQuery(sql,self.db)
-            next(query)
+            query.next()
             if query.value(0) > 1:
                 lyrWithElemList.appen(lyr)
         return lyrWithElemList
@@ -132,7 +132,7 @@ class AbstractDb(QObject):
                     schema = self.getTableSchemaFromDb(lyr)
             sql = self.gen.getElementCountFromLayerV2(schema, lyr, useInheritance)
             query = QSqlQuery(sql,self.db)
-            next(query)
+            query.next()
             if query.value(0) > 0:
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
@@ -147,7 +147,7 @@ class AbstractDb(QObject):
         if not query.isActive():
             raise Exception(self.tr("Problem finding EPSG: ")+query.lastError().text())
         srid = -1
-        while next(query):
+        while query.next():
             srid = query.value(0)
         return srid
 
@@ -189,7 +189,7 @@ class AbstractDb(QObject):
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting aggregation attributes: ")+query.lastError().text())
-        while next(query):
+        while query.next():
             value = query.value(0)
             columns.append(value)
         return columns
@@ -671,7 +671,7 @@ class AbstractDb(QObject):
         in_clause = '(%s)' % ",".join(map(str, codes))
         sql = self.gen.makeRelationDict(table, in_clause)
         query = QSqlQuery(sql, self.db)
-        while next(query):
+        while query.next():
             code = str(query.value(0))
             code_name = query.value(1)
             ret[code_name] = code
@@ -730,7 +730,7 @@ class AbstractDb(QObject):
         if not query.isActive():
             raise Exception(self.tr("Problem getting qmlRecordDict: ")+query.lastError().text())
         qmlDict = dict()
-        while next(query):
+        while query.next():
             if isinstance(inputLayer, list): 
                 qmlDict[query.value(0)] = query.value(1)
             else:
