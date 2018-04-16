@@ -25,7 +25,7 @@ from qgis.gui import QgsMapTool, QgsMessageBar
 from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest, Qgis
 from qgis.PyQt import QtCore, QtGui
 
-from .....core.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from .....core.GeometricTools.geometryHandler import GeometryHandler
 
 class FlipLine(QgsMapTool):
     """
@@ -37,7 +37,7 @@ class FlipLine(QgsMapTool):
         self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
-        self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        self.DsgGeometryHandler = GeometryHandler(iface)
     
     def addTool(self, manager, callback, parentMenu, iconBasePath):
         icon_path = iconBasePath + '/flipLineTool.png'

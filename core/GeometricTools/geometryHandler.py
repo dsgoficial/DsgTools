@@ -26,9 +26,9 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsV
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
 from qgis.PyQt.Qt import QObject
 
-class DsgGeometryHandler(QObject):
+class GeometryHandler(QObject):
     def __init__(self, iface, parent = None):
-        super(DsgGeometryHandler, self).__init__()
+        super(GeometryHandler, self).__init__()
         self.parent = parent
         self.iface = iface
         self.canvas = iface.mapCanvas()

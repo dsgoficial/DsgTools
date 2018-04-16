@@ -28,6 +28,7 @@ import sys
 from .MinimumAreaTool.minimumAreaTool import MinimumAreaTool
 from .InspectFeatures.inspectFeatures import InspectFeatures
 from .StyleManagerTool.styleManagerTool import StyleManagerTool
+from .DsgRasterInfoTool.dsgRasterInfoTool import DsgRasterInfoTool
 from qgis.PyQt.QtCore import QObject
 
 class ToolbarsGuiManager(QObject):
@@ -52,6 +53,9 @@ class ToolbarsGuiManager(QObject):
         #adding style tools
         self.styleManagerTool = StyleManagerTool(self.iface, parent = self.parentMenu)
         self.toolbar.addWidget(self.styleManagerTool)
+        #adding raster info tool
+        self.rasterInfoTool = DsgRasterInfoTool(self.iface, parent = self.parentMenu)
+        self.toolbar.addWidget(self.rasterInfoTool)
     
     def unload(self):
-        pass
+        self.rasterInfoTool.unload()
