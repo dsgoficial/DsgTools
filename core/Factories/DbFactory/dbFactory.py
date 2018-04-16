@@ -29,17 +29,15 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from .spatialiteDb import SpatialiteDb
 from .postgisDb import PostgisDb
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 class DbFactory(object):
     def createDbFactory(self,driverName):
         #TODO Treat none return
         if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
-            QgsMessageLog.logMessage('QT PSQL driver not installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-            return None
+            raise Exception('QT PSQL driver not installed!')
         if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
-            QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
-            return None        
+            raise Exception('QT QSQLITE driver not installed!')
         
         if driverName == "QSQLITE":
             return SpatialiteDb()

@@ -24,7 +24,7 @@ from __future__ import absolute_import
 import os
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, QSettings, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot, QSettings, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QHeaderView, QTableWidgetItem, QMessageBox, QApplication, QRadioButton
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase
@@ -53,7 +53,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         Initiates the dialog
         '''
         header = self.tableWidget.horizontalHeader()
-        header.setResizeMode(QHeaderView.Stretch)
+        header.setSectionResizeMode(QHeaderView.Stretch)
         self.populateTable()
         
     def populateTable(self):
