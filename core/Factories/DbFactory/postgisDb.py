@@ -373,7 +373,7 @@ class PostgisDb(AbstractDb):
             domainQuery = str(query.value(5))
             cl = schemaName+'.'+className
             query2 = QSqlQuery(domainQuery,self.db)
-            while next(query2):
+            while query2.next():
                 value = int(query2.value(0))
                 classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[value])
         return classDict
@@ -466,7 +466,7 @@ class PostgisDb(AbstractDb):
             if not complexQuery.isActive():
                 raise Exception(self.tr("Problem loading associated features: ")+complexQuery.lastError().text())
 
-            while next(complexQuery):
+            while complexQuery.next():
                 complex_uuid = complexQuery.value(0)
                 name = complexQuery.value(1)
 
@@ -481,7 +481,7 @@ class PostgisDb(AbstractDb):
                 if not associatedQuery.isActive():
                     raise Exception(self.tr("Problem loading associated features: ")+associatedQuery.lastError().text())
 
-                while next(associatedQuery):
+                while associatedQuery.next():
                     ogc_fid = associatedQuery.value(0)
                     associatedDict = self.utils.buildNestedDict(associatedDict, [name, complex_uuid, aggregated_class], [ogc_fid])
         return associatedDict
@@ -800,12 +800,12 @@ class PostgisDb(AbstractDb):
 
                 query2 = QSqlQuery(db)
                 if query2.exec_(self.gen.getGeometryTablesCount()):
-                    while next(query2):
+                    while query2.next():
                         count = query2.value(0)
                         if count > 0:
                             query3 = QSqlQuery(db)
                             if query3.exec_(self.gen.getEDGVVersion()):
-                                while next(query3):
+                                while query3.next():
                                     version = query3.value(0)
                                     if version:
                                         edvgDbList.append((database,version))
@@ -1449,7 +1449,7 @@ class PostgisDb(AbstractDb):
             query2 = QSqlQuery(sql2, self.db)
             if not query2.isActive():
                 raise Exception(self.tr('Problem counting orphan table: ') + query2.lastError().text())
-            while next(query2):
+            while query2.next():
                 if query2.value(0):
                     result.append(query.value(0))
         return result
@@ -2058,7 +2058,7 @@ class PostgisDb(AbstractDb):
             domainQuery = str(query.value(5))
             cl = schemaName+'.'+className
             query2 = QSqlQuery(domainQuery,self.db)
-            while next(query2):
+            while query2.next():
                 value = int(query2.value(0))
                 code_name = query2.value(1)
                 classDict = self.utils.buildNestedDict(classDict,[str(cl),str(attName)],[(value,code_name)])
