@@ -29,6 +29,7 @@ from qgis.PyQt.QtCore import QObject, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 
+from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
 from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
 
@@ -146,13 +147,18 @@ class GuiManager(QObject):
         self.actions.append(action)
         return action
     
-    def initGui(self):
+    def instantiateManagers(self):
+        self.layerToolsGuiManager = LayerToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.managerList.append(self.layerToolsGuiManager)
         self.productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
-        self.productionToolsGuiManager.initGui()
         self.managerList.append(self.productionToolsGuiManager)
         self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
-        self.aboutAndFurtherGuiManager.initGui()
         self.managerList.append(self.aboutAndFurtherGuiManager)
+    
+    def initGui(self):
+        self.instantiateManagers()
+        for manager in self.managerList:
+            manager.initGui()
     
     def unload(self):
         for manager in self.managerList:

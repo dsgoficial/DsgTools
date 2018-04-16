@@ -22,7 +22,7 @@
 """
 import os
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
@@ -31,11 +31,11 @@ from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QMessageBox
 
 # DSGTools imports
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from ....ServerTools.viewServers import ViewServers
+from .....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from .....core.Factories.DbFactory.abstractDb import AbstractDb
+from .....core.Factories.DbFactory.dbFactory import DbFactory
+from ....CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreServerWidget.ui'))
@@ -46,12 +46,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
     clearWidgets = pyqtSignal()
     def __init__(self, parent = None):
         """Constructor."""
-        super(self.__class__, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
+        super(ExploreServerWidget, self).__init__(parent)
         self.setupUi(self)
         self.superNeeded = False
         self.dbFactory = DbFactory()

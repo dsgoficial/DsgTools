@@ -34,15 +34,11 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
-from DsgTools.ServerTools.createView import CreateView
-from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
-from DsgTools.ServerTools.selectStyles import SelectStyles
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from ....core.Utils.utils import Utils
+from ....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from ....core.Factories.DbFactory.dbFactory import DbFactory
+from ....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from ...CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'loadLayersFromServer.ui'))

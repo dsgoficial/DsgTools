@@ -32,8 +32,7 @@ from .serverConfigurator import ServerConfigurator
 
 from qgis.core import QgsMessageLog
 
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from ...core.Factories.DbFactory.dbFactory import DbFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
@@ -43,11 +42,6 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface = None, parent=None):
         '''Constructor.'''
         super(ViewServers, self).__init__(parent)
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.abstractDbFactory = DbFactory()
         self.initGui()

@@ -27,13 +27,9 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.ServerTools.createView import CreateView
-from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
-from DsgTools.ServerTools.selectStyles import SelectStyles
+from .....core.Utils.utils import Utils
+from .....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from .....core.Factories.DbFactory.dbFactory import DbFactory
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -75,7 +71,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Selects databases from a name list and database type
         """
-        #TODO: build selectedDbsDict and emit dbDictChanged()
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
             (host, port, user, password) = self.serverWidget.abstractDb.getParamsFromConectedDb()
@@ -115,7 +110,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Selects databases from a name list and database type
         """
-        #TODO: build selectedDbsDict and emit dbDictChanged()
         #1- Iterate over dbList and check if all layers on dbList are on dict. If not, add it.
         if type == 'added':
             for dbName in dbList:
@@ -209,8 +203,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         for (dbname, dbversion) in dbList:
             if dbversion in list(self.dbDict.keys()):
                 self.dbDict[dbversion].append(dbname)        
-#         if len(self.dbDict['2.1.3']) == 0:
-#             self.spatialiteEdgvComboFilter.setCurrentIndex(1)
         comboText = self.spatialiteEdgvComboFilter.currentText()
         self.spatialiteCustomSelector.setInitialState(self.dbDict[self.comboDict[comboText]]) 
     
