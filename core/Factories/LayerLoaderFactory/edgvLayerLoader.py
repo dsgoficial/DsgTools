@@ -96,12 +96,9 @@ class EDGVLayerLoader(QObject):
             layer.addExpressionField('$length', QgsField(self.tr('lenght_otf'), QVariant.Double))
         return layer
     
-    def getDatabaseGroup(self, groupList):
+    def getDatabaseGroup(self, rootNode):
         dbName = self.abstractDb.getDatabaseName()
-        if dbName in groupList:
-            return groupList.index(dbName)
-        else:
-            return self.iface.legendInterface().addGroup(dbName, True, -1)
+        return self.createGroup(rootNode, dbName)
 
     def getLyrDict(self, inputList, isEdgv = True):
         """
@@ -142,26 +139,26 @@ class EDGVLayerLoader(QObject):
                             lyrDict.pop(type)
         return lyrDict
 
-    def prepareGroups(self, groupList, parent, lyrDict):
+    def prepareGroups(self, parent, lyrDict):
         aux = dict()
         groupDict = dict()
         groupNodeList = list(lyrDict.keys())
         groupNodeList.sort(reverse=True)
         for geomNode in groupNodeList:
             groupDict[geomNode] = dict()
-            aux = self.createGroup(groupList, geomNode, parent)
+            aux = self.createGroup(parent, geomNode)
             catList = list(lyrDict[geomNode].keys())
             catList.sort()
             for catNode in catList:
-                groupDict[geomNode][catNode] = self.createGroup(groupList, catNode, aux)
+                groupDict[geomNode][catNode] = self.createGroup(aux, catNode)
         return groupDict
     
-    def createGroup(self, groupList, groupName, parent):
-        subgroup = groupList[parent::]
-        if groupName in subgroup:
-            return parent+subgroup.index(groupName) #verificar
+    def createGroup(self, rootNode, groupName):
+        candidateNode = rootNode.findGroup(groupName)
+        if candidateNode:
+            return candidateNode
         else:
-            return self.iface.legendInterface().addGroup(groupName, True, parent)
+            return rootNode.addGroup(dbName)
         
     def loadDomains(self, layerList, loadedLayers, domainGroup):
         domLayerDict = dict()

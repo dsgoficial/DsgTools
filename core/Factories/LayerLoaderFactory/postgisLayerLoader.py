@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
 from qgis.utils import iface
 
 #DsgTools imports
@@ -123,10 +123,9 @@ class PostGISLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
-        layerList, isDictList = self.preLoadStep(inputList)
         #1. Get Loaded Layers
-        loadedLayers = self.iface.legendInterface().layers()
-        loadedGroups = self.iface.legendInterface().groups()
+        layerList, isDictList = self.preLoadStep(inputList)
+        loadedLayers = self.iface.mapCanvas().layers()
         #2. Filter Layers:
         filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements, geomFilterList)
         if isDictList:
@@ -134,11 +133,12 @@ class PostGISLayerLoader(EDGVLayerLoader):
         else:
             filteredDictList = filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
-        dbGroup = self.getDatabaseGroup(loadedGroups)
+        rootNode = QgsProject.instance().layerTreeRoot()
+        dbGroup = self.getDatabaseGroup(rootNode)
         #3. Load Domains
         #do this only if EDGV Version = FTer
         if edgvVersion in ('FTer_2a_Ed', '3.0'):
-            domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
+            domainGroup = self.createGroup(rootNode, self.tr("Domains"))
             domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
         else:
             domLayerDict = dict()
@@ -153,7 +153,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             self.rulesDict = dict()
         
         #5. Build Groups
-        groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
+        groupDict = self.prepareGroups(dbGroup, lyrDict)
         #6. load layers
         loadedDict = dict()
         if parent:
@@ -271,8 +271,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
         """
         #TODO: Avaliar se o table = deve ser diferente
         uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
-        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider)
-        self.iface.legendInterface().moveLayer(domLayer, domainGroup)
+        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider) #continuar aqui
+        domainGroup.addLayer(domLayer)
         return domLayer
 
     def getStyleFromDb(self, edgvVersion, className):
