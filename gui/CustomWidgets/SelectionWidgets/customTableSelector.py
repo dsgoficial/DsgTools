@@ -28,7 +28,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
 
-from DsgTools.Utils.utils import Utils
+from ....core.Utils.utils import Utils
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>833</width>
+    <width>836</width>
     <height>327</height>
    </rect>
   </property>
@@ -198,13 +198,13 @@
   <customwidget>
    <class>CustomServerConnectionWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.customServerConnectionWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.customServerConnectionWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CustomTableSelector</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.customTableSelector.h</header>
+   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.customTableSelector.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
