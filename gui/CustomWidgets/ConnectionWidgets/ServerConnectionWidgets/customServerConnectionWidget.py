@@ -259,3 +259,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         abstractDb.checkAndCreateStyleTable()
         styles = abstractDb.getStyleDict(dbVersion)
         self.styleChanged.emit(type, styles)
+    
+    def getDatabaseVersion(self):
+        comboText = self.spatialiteEdgvComboFilter.currentText()
+        return self.comboDict[comboText]

@@ -50,10 +50,10 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         Expands headers
         """
         self.fromTreeWidget.expandAll()
-        self.fromTreeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.fromTreeWidget.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.fromTreeWidget.header().setStretchLastSection(False)
         self.toTreeWidget.expandAll()
-        self.toTreeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.toTreeWidget.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.toTreeWidget.header().setStretchLastSection(False)
     
     def sortItems(self, treeWidget):

@@ -26,7 +26,7 @@ import json
 import os
 from xml.dom.minidom import parse, parseString
 from qgis.PyQt.QtWidgets import QTreeWidgetItem
-from qgis.PyQt import QtGui
+from qgis.PyQt import QtGui, QtWidgets
 
 class Utils(object):
 
@@ -216,7 +216,7 @@ class Utils(object):
             self.getAllItemsInDict(inputDict[key], itemList)
 
     def createWidgetItem(self, parent, text, column = None):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         if isinstance(text,list) and column == None:
             for i in range(len(text)):
                 item.setText(i, text[i])
