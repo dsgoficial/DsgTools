@@ -50,7 +50,7 @@ class AboutAndFurtherInfoGuiManager(QObject):
         icon_path = self.iconBasePath + 'custom_tools.png'
         action = self.manager.add_action(
             icon_path,
-            text=self.tr('Options'),
+            text=self.tr("DSGTools' Options"),
             callback=self.showOptions,
             parent=self.iface.mainWindow(),
             parentMenu = self.parentMenu,
@@ -77,17 +77,17 @@ class AboutAndFurtherInfoGuiManager(QObject):
             parent=self.parentMenu,
             add_to_menu=True,
             add_to_toolbar=False,
-            withShortcut = True)
+            withShortcut = False)
         
         icon_path = self.iconBasePath + 'dsg.png'
         self.manager.add_action(
             icon_path,
-            text=self.tr('About'),
+            text=self.tr('About DSGTools'),
             callback=self.showAbout,
             parent=self.parentMenu,
             add_to_menu=True,
             add_to_toolbar=False,
-            withShortcut = True)
+            withShortcut = False)
     
     def unload(self):
         pass
