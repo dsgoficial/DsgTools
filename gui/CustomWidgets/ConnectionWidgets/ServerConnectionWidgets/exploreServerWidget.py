@@ -105,7 +105,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
             for database in dbList:
                 db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
                 if not db.open():
-                    qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=QgsMessageBar.CRITICAL)
+                    qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=Qgis.Critical)
     
                 query = QSqlQuery(db)
                 if query.exec_(gen.getEDGVVersion()):
@@ -128,7 +128,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         
         db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
         if not db.open():
-            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", Qgis.Critical)
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
         
         query = QSqlQuery(gen.getDatabasesFromServer(), db)

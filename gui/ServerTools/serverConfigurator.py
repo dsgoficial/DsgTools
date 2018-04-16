@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from qgis.PyQt.QtCore import QSettings, pyqtSlot
-from qgis.PyQt.QtWidgets import QMessageBox, QDialog
+from qgis.PyQt.QtWidgets import QMessageBox, QDialog, QLineEdit
 from qgis.PyQt import uic
 import os
 
