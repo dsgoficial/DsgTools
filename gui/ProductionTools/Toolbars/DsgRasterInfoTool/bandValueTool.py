@@ -28,7 +28,7 @@ from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import QTimer
 from qgis.PyQt.QtWidgets import QToolTip
 
-from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from .....core.GeometricTools.geometryHandler import GeometryHandler
 
 class BandValueTool(QgsMapTool):
     """
@@ -50,7 +50,7 @@ class BandValueTool(QgsMapTool):
         self.iface = iface
         self.toolAction = None
         self.QgsMapToolEmitPoint = QgsMapToolEmitPoint(self.canvas)
-        self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        self.geometryHandler = GeometryHandler(iface)
         self.timerMapTips = QTimer( self.canvas )
         self.timerMapTips.timeout.connect( self.showToolTip )
         self.activated = False
@@ -97,7 +97,7 @@ class BandValueTool(QgsMapTool):
         rasterCrs = rasterLayer.crs()
         mousePos = self.QgsMapToolEmitPoint.toMapCoordinates(self.canvas.mouseLastXY())
         mousePosGeom = QgsGeometry.fromPoint(mousePos)
-        self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
+        self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )

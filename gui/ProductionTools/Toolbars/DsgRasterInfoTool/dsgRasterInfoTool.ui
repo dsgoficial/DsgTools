@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>309</width>
-    <height>49</height>
+    <height>42</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,8 +51,8 @@
      </property>
      <property name="maximumSize">
       <size>
-       <width>32</width>
-       <height>32</height>
+       <width>24</width>
+       <height>24</height>
       </size>
      </property>
      <property name="toolTip">
@@ -62,13 +62,13 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../resources.qrc">
+      <iconset resource="../../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/rasterToolTip.png</normaloff>:/plugins/DsgTools/icons/rasterToolTip.png</iconset>
      </property>
      <property name="iconSize">
       <size>
-       <width>20</width>
-       <height>28</height>
+       <width>16</width>
+       <height>16</height>
       </size>
      </property>
      <property name="checkable">
@@ -116,8 +116,8 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>24</width>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
@@ -127,13 +127,13 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/band_tooltip.png</normaloff>:/plugins/DsgTools/icons/band_tooltip.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>20</width>
-        <height>20</height>
+        <width>16</width>
+        <height>16</height>
        </size>
       </property>
       <property name="checkable">
@@ -155,8 +155,8 @@
       </property>
       <property name="maximumSize">
        <size>
-        <width>32</width>
-        <height>32</height>
+        <width>24</width>
+        <height>24</height>
        </size>
       </property>
       <property name="toolTip">
@@ -166,13 +166,13 @@
        <string/>
       </property>
       <property name="icon">
-       <iconset resource="../../resources.qrc">
+       <iconset resource="../../../../resources.qrc">
         <normaloff>:/plugins/DsgTools/icons/dynamic_histogram_viewer.png</normaloff>:/plugins/DsgTools/icons/dynamic_histogram_viewer.png</iconset>
       </property>
       <property name="iconSize">
        <size>
-        <width>20</width>
-        <height>20</height>
+        <width>16</width>
+        <height>16</height>
        </size>
       </property>
       <property name="checkable">
@@ -187,11 +187,11 @@
   <customwidget>
    <class>QgsMapLayerComboBox</class>
    <extends>QComboBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsmaplayercombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources.qrc"/>
+  <include location="../../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

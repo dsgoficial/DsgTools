@@ -30,11 +30,11 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QTimer
 from qgis.PyQt.QtWidgets import QWidget, QToolTip, QAction
 from qgis.PyQt.QtGui import QIcon
 
-from DsgTools.ProductionTools.DsgRasterInfoTool.bandValueTool import BandValueTool
-from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from .bandValueTool import BandValueTool
+from .....core.GeometricTools.geometryHandler import GeometryHandler
 
 # FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
-from DsgTools.ProductionTools.DsgRasterInfoTool.dsgRasterInfoTool_ui import Ui_DsgRasterInfoTool
+from .dsgRasterInfoTool_ui import Ui_DsgRasterInfoTool
 
 class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     """
@@ -57,7 +57,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.splitter.hide()
         self.iface = iface
         self.timerMapTips = QTimer( self.canvas )
-        self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        self.DsgGeometryHandler = GeometryHandler(iface)
         self.addShortcuts()
     
     def add_action(self, icon_path, text, callback, parent=None):
@@ -152,3 +152,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 text = self.getPixelValue(qgsPoint, raster)
                 p = self.canvas.mapToGlobal( self.canvas.mouseLastXY() )
                 QToolTip.showText( p, text, self.canvas )
+    
+    def unload(self):
+        self.iface.mapCanvas().extentsChanged.disconnect(self.stretch_raster)
+        self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
