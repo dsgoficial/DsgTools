@@ -259,7 +259,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
                         dbItem = self.utils.createWidgetItem(parentCustomItem, item, 1)
         self.treeWidget.sortItems(0, Qt.AscendingOrder)
         self.treeWidget.expandAll()
-        self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.treeWidget.header().setStretchLastSection(False)
     
     def outputMessage(self, operation, header, successDict, exceptionDict):

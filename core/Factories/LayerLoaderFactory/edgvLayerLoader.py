@@ -98,7 +98,7 @@ class EDGVLayerLoader(QObject):
     
     def getDatabaseGroup(self, rootNode):
         dbName = self.abstractDb.getDatabaseName()
-        return self.createGroup(rootNode, dbName)
+        return self.createGroup(dbName, rootNode)
 
     def getLyrDict(self, inputList, isEdgv = True):
         """
@@ -139,44 +139,52 @@ class EDGVLayerLoader(QObject):
                             lyrDict.pop(type)
         return lyrDict
 
-    def prepareGroups(self, parent, lyrDict):
+    def prepareGroups(self, rootNode, lyrDict):
         aux = dict()
         groupDict = dict()
         groupNodeList = list(lyrDict.keys())
-        groupNodeList.sort(reverse=True)
-        for geomNode in groupNodeList:
-            groupDict[geomNode] = dict()
-            aux = self.createGroup(parent, geomNode)
-            catList = list(lyrDict[geomNode].keys())
+        groupNodeList.sort(reverse=False)
+        for geomNodeName in groupNodeList:
+            groupDict[geomNodeName] = dict()
+            geomNode = self.createGroup(geomNodeName, rootNode)
+            catList = list(lyrDict[geomNodeName].keys())
             catList.sort()
-            for catNode in catList:
-                groupDict[geomNode][catNode] = self.createGroup(aux, catNode)
+            for catNodeName in catList:
+                groupDict[geomNodeName][catNodeName] = self.createGroup(catNodeName, geomNode)
         return groupDict
     
-    def createGroup(self, rootNode, groupName):
-        candidateNode = rootNode.findGroup(groupName)
-        if candidateNode:
-            return candidateNode
+    def createGroup(self, groupName, rootNode):
+        groupNode = rootNode.findGroup(groupName)
+        if groupNode:
+            return groupNode
         else:
-            return rootNode.addGroup(dbName)
+            return rootNode.addGroup(groupName)
         
-    def loadDomains(self, layerList, loadedLayers, domainGroup):
+    def loadDomains(self, layerList, dbRootNode, edgvVersion):
+        if edgvVersion not in ('FTer_2a_Ed', '3.0'):
+            return dict()
         domLayerDict = dict()
         qmlDict = self.abstractDb.getQmlDict(layerList)
+        domainNode = self.createGroup(self.tr("Domains"), dbRootNode)
+        loadedDomainsDict = {} if not domainNode.loadedLayers() else {i.layer().name() : i.layer() for i in domainNode.loadedLayers()}
         for lyr in layerList:
-            if lyr in list(qmlDict.keys()):
-                for attr in list(qmlDict[lyr].keys()):
+            if lyr in qmlDict:
+                for attr in qmlDict[lyr]:
                     domain = qmlDict[lyr][attr]
-                    domLyr = self.checkLoaded(domain, loadedLayers)
-                    if not domLyr:
-                        domLyr = self.loadDomain(domain, domainGroup)
-                        loadedLayers.append(domLyr)
-                        domLyrName = domLyr.name()
+                    domLyr = self.getDomainLyr(domain, loadedDomainsDict, domainNode)
                     if lyr not in list(domLayerDict.keys()):
                         domLayerDict[lyr] = dict()
                     if attr not in list(domLayerDict[lyr].keys()):
                         domLayerDict[lyr][attr] = domLyr
         return domLayerDict
+    
+    def getDomainLyr(self, domain, loadedDomainsDict, domainNode):
+        if domain in loadedDomainsDict:
+            return loadedDomainsDict[domain]
+        domainLyr = self.loadDomain(domain, domainNode)
+        loadedDomainsDict[domain] = domainLyr
+        return domainLyr
+        
 
     def logError(self):
         msg = ''
