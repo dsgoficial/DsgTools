@@ -210,7 +210,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.populateClasses()
         self.populateDelimiters()
         self.treeWidget.expandAll()
-        self.treeWidget.header().setResizeMode(QtGui.QHeaderView.ResizeToContents)
+        self.treeWidget.header().setSectionResizeMode(QtWidgets.QHeaderView.ResizeToContents)
         self.treeWidget.header().setStretchLastSection(False)
     
     def on_filterLineEdit_textChanged(self, text):
