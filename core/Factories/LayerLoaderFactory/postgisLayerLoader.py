@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject, QgsEditorWidgetSetup
 from qgis.utils import iface
 
 #DsgTools imports
@@ -297,7 +297,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             if attrName == 'id' or 'id_' in lyrAttributes[i].name() or i in pkIdxList:
                 lyr.editFormConfig().setReadOnly(i,True)
             else:
-                if lyrName in list(domainDict.keys()):
+                if lyrName in domainDict.keys():
                     if attrName in list(domainDict[lyrName]['columns'].keys()):
                         refTable = domainDict[lyrName]['columns'][attrName]['references']
                         refPk = domainDict[lyrName]['columns'][attrName]['refPk']
@@ -305,24 +305,18 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         valueDict = domainDict[lyrName]['columns'][attrName]['values']
                         isMulti = self.checkMulti(lyrName, attrName, multiColumnsDict)
                         if isMulti:
-                            #Do value relation
-                            lyr.editFormConfig().setWidgetType(i,'ValueRelation')
-                            editFormConfig = lyr.editFormConfig()
                             #make filter
                             if 'constraintList' in list(domainDict[lyrName]['columns'][attrName].keys()):
-                                filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
-                                allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
                                 #make editDict
-                                if lyrName in list(domLayerDict.keys()):
-                                    if attrName in list(domLayerDict[lyrName].keys()):
+                                if lyrName in domLayerDict:
+                                    if attrName in domLayerDict[lyrName]:
+                                        filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
+                                        allowNull = domainDict[lyrName]['columns'][attrName]['nullable']
                                         dom = domLayerDict[lyrName][attrName]
                                         editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
-                                        editFormConfig.setWidgetConfig(i,editDict)
-                                        lyr.setEditFormConfig(editFormConfig)
+                                        widgetSetup = QgsEditorWidgetSetup('ValueRelation', editDict)
+                                        lyr.setEditorWidgetSetup(i, widgetSetup)
                         else:
-                            #Value Map
-                            lyr.editFormConfig().setWidgetType(i,'ValueMap')
-                            editFormConfig = lyr.editFormConfig()
                             #filter value dict
                             constraintList = domainDict[lyrName]['columns'][attrName]['constraintList']
                             valueRelationDict = dict()
@@ -332,8 +326,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                                         valueRelationDict[valueDict[key]] = str(key)
                                 else:
                                     valueRelationDict[valueDict[key]] = str(key)
-                            editFormConfig.setWidgetConfig(i,valueRelationDict)
-                            lyr.setEditFormConfig(editFormConfig)
+                            widgetSetup = QgsEditorWidgetSetup('ValueMap',{'map':valueRelationDict})
+                            lyr.setEditorWidgetSetup(i, widgetSetup)
                             #setEditorWidgetV2Config is deprecated. We will change it eventually.
         return lyr
 
