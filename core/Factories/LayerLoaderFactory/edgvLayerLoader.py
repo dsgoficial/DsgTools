@@ -90,9 +90,9 @@ class EDGVLayerLoader(QObject):
             return parentTreeNode
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == Qgis.Polygon:
+        if layer.geometryType() == Qgis.PolygonGeometry:
             layer.addExpressionField('$area', QgsField(self.tr('area_otf'), QVariant.Double))
-        elif layer.geometryType() == Qgis.Line:
+        elif layer.geometryType() == Qgis.LineGeometry:
             layer.addExpressionField('$length', QgsField(self.tr('lenght_otf'), QVariant.Double))
         return layer
     
