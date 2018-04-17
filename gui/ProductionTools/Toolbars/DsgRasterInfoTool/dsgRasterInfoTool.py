@@ -128,8 +128,8 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         
         """
         rasterCrs = rasterLayer.crs()
-        mousePosGeom = QgsGeometry.fromPoint(mousePos)
-        canvasCrs = self.canvas.mapRenderer().destinationCrs()
+        mousePosGeom = QgsGeometry.fromPointXY(mousePos)
+        canvasCrs = self.canvas.mapSettings().destinationCrs()
         self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, canvasCrs)
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
