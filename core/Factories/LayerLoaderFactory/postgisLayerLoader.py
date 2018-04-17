@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, QgsProject
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject
 from qgis.utils import iface
 
 #DsgTools imports
@@ -51,7 +51,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.generatorCustomForm = GeneratorCustomForm()
         self.generatorCustomInitCode = GeneratorCustomInitCode()
 
-    def checkLoaded(self, name, loadedLayers):
+    def checkLoaded(self, name):
         """
         Checks if the layers is already loaded in the QGIS' TOC
         :param name:
@@ -59,7 +59,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :return:
         """
         loaded = None
-        for ll in loadedLayers:
+        for ll in self.iface.mapCanvas().layers():
             if ll.name() == name:
                 candidateUri = QgsDataSourceUri(ll.dataProvider().dataSourceUri())
                 if self.host == candidateUri.host() and self.database == candidateUri.database() and self.port == int(candidateUri.port()):
@@ -123,25 +123,16 @@ class PostGISLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
-        #1. Get Loaded Layers
+        self.iface.mapCanvas().freeze() #done to speedup things
         layerList, isDictList = self.preLoadStep(inputList)
-        loadedLayers = self.iface.mapCanvas().layers()
         #2. Filter Layers:
-        filteredLayerList = self.filterLayerList(layerList, useInheritance, onlyWithElements, geomFilterList)
-        if isDictList:
-            filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList]
-        else:
-            filteredDictList = filteredLayerList
+        filteredLayerList = self.filterLayerList(inputList, useInheritance, onlyWithElements, geomFilterList)
+        filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList] if isDictList else filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
         rootNode = QgsProject.instance().layerTreeRoot()
-        dbGroup = self.getDatabaseGroup(rootNode)
+        dbNode = self.getDatabaseGroup(rootNode)
         #3. Load Domains
-        #do this only if EDGV Version = FTer
-        if edgvVersion in ('FTer_2a_Ed', '3.0'):
-            domainGroup = self.createGroup(rootNode, self.tr("Domains"))
-            domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
-        else:
-            domLayerDict = dict()
+        domLayerDict = self.loadDomains(filteredLayerList, dbNode, edgvVersion)
         #4. Get Aux dicts
         domainDict = self.abstractDb.getDbDomainDict(self.geomDict)
         constraintDict = self.abstractDb.getCheckConstraintDict()
@@ -153,7 +144,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             self.rulesDict = dict()
         
         #5. Build Groups
-        groupDict = self.prepareGroups(dbGroup, lyrDict)
+        groupDict = self.prepareGroups(dbNode, lyrDict)
         #6. load layers
         loadedDict = dict()
         if parent:
@@ -167,7 +158,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
                         if vlayer:
                             loadedLayers.append(vlayer)
                             if isinstance(lyr, dict):
@@ -184,9 +175,10 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         self.logError()
                     if parent:
                         localProgress.step()
+        self.iface.mapCanvas().freeze(False) #done to speedup things
         return loadedDict
 
-    def loadLayer(self, inputParam, idSubgrupo, loadedLayers, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, customForm = False):
+    def loadLayer(self, inputParam, parentNode, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, customForm = False):
         """
         Loads a layer
         :param lyrName: Layer nmae
@@ -197,22 +189,10 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :param domLayerDict: domain dictionary
         :return:
         """
-        if isinstance(inputParam,dict):
-            lyrName = inputParam['lyrName']
-            schema = inputParam['tableSchema']
-            geomColumn = inputParam['geom']
-            tableName = inputParam['tableName']
-            srid =  self.geomDict['tablePerspective'][tableName]['srid']
-        else:
-            lyrName = inputParam
-            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
-            schema = self.geomDict['tablePerspective'][lyrName]['schema']
-            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
-            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
-        if uniqueLoad:
-            lyr = self.checkLoaded(tableName, loadedLayers)
-            if lyr:
-                return lyr
+        lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam)
+        lyr = self.checkLoaded(tableName)
+        if uniqueLoad and lyr:
+            return lyr
         fullName = '''"{0}"."{1}"'''.format(schema, tableName)
         pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
         if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_Edgv', '2.1.3 Pro', '3.0 Pro']:
@@ -221,7 +201,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
             sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
         self.setDataSource(schema, tableName, geomColumn, sql, pkColumn=pkColumn)
 
-        vlayer = iface.addVectorLayer(self.uri.uri(), tableName, self.provider)
+        vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
+        QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         if vlayer:
             vlayer.setCrs(crs)
@@ -235,11 +216,26 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     vlayer.applyNamedStyle(fullPath)
             if customForm:
                 vlayer = self.loadFormCustom(vlayer)
-            iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
+            parentNode.addLayer(vlayer)
             if not vlayer.isValid():
-                QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
+    
+    def getParams(self, inputParam):
+        if isinstance(inputParam,dict):
+            lyrName = inputParam['lyrName']
+            schema = inputParam['tableSchema']
+            geomColumn = inputParam['geom']
+            tableName = inputParam['tableName']
+            srid =  self.geomDict['tablePerspective'][tableName]['srid']
+        else:
+            lyrName = inputParam
+            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
+            schema = self.geomDict['tablePerspective'][lyrName]['schema']
+            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
+            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
+        return lyrName, schema, geomColumn, tableName, srid
 
     def getDomainsFromDb(self, layerList, loadedLayers, domainDict, multiColumnsDict):
         """
@@ -271,7 +267,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         """
         #TODO: Avaliar se o table = deve ser diferente
         uri = "dbname='%s' host=%s port=%s user='%s' password='%s' key=code table=\"dominios\".\"%s\" sql=" % (self.database, self.host, self.port, self.user, self.password, domainTableName)
-        domLayer = iface.addVectorLayer(uri, domainTableName, self.provider) #continuar aqui
+        domLayer = QgsVectorLayer(uri, domainTableName, self.provider)
         domainGroup.addLayer(domLayer)
         return domLayer
 
@@ -295,10 +291,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :return:
         """
         lyrAttributes = [i for i in lyr.fields()]
+        pkIdxList = lyr.primaryKeyAttributes()
         for i in range(len(lyrAttributes)):
             attrName = lyrAttributes[i].name()
-            if attrName == 'id' or 'id_' in lyrAttributes[i].name():
-                lyr.setFieldEditable(i,False)
+            if attrName == 'id' or 'id_' in lyrAttributes[i].name() or i in pkIdxList:
+                lyr.editFormConfig().setReadOnly(i,True)
             else:
                 if lyrName in list(domainDict.keys()):
                     if attrName in list(domainDict[lyrName]['columns'].keys()):
@@ -309,7 +306,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         isMulti = self.checkMulti(lyrName, attrName, multiColumnsDict)
                         if isMulti:
                             #Do value relation
-                            lyr.setEditorWidgetV2(i,'ValueRelation')
+                            lyr.editFormConfig().setWidgetType(i,'ValueRelation')
+                            editFormConfig = lyr.editFormConfig()
                             #make filter
                             if 'constraintList' in list(domainDict[lyrName]['columns'][attrName].keys()):
                                 filter = '{0} in ({1})'.format(refPk,','.join(map(str,domainDict[lyrName]['columns'][attrName]['constraintList'])))
@@ -319,10 +317,12 @@ class PostGISLayerLoader(EDGVLayerLoader):
                                     if attrName in list(domLayerDict[lyrName].keys()):
                                         dom = domLayerDict[lyrName][attrName]
                                         editDict = {'Layer':dom.id(),'Key':refPk,'Value':otherKey,'AllowMulti':True,'AllowNull':allowNull,'FilterExpression':filter}
-                                        lyr.setEditorWidgetV2Config(i,editDict)
+                                        editFormConfig.setWidgetConfig(i,editDict)
+                                        lyr.setEditFormConfig(editFormConfig)
                         else:
                             #Value Map
-                            lyr.setEditorWidgetV2(i,'ValueMap')
+                            lyr.editFormConfig().setWidgetType(i,'ValueMap')
+                            editFormConfig = lyr.editFormConfig()
                             #filter value dict
                             constraintList = domainDict[lyrName]['columns'][attrName]['constraintList']
                             valueRelationDict = dict()
@@ -332,7 +332,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                                         valueRelationDict[valueDict[key]] = str(key)
                                 else:
                                     valueRelationDict[valueDict[key]] = str(key)
-                            lyr.setEditorWidgetV2Config(i,valueRelationDict)
+                            editFormConfig.setWidgetConfig(i,valueRelationDict)
+                            lyr.setEditFormConfig(editFormConfig)
                             #setEditorWidgetV2Config is deprecated. We will change it eventually.
         return lyr
 

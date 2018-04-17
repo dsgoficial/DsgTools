@@ -65,7 +65,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.customFileSelector.setCaption(self.tr('Select a DSGTools Spatialite file'))
         self.customFileSelector.setFilter(self.tr('Spatialite file databases (*.sqlite)'))
         self.customFileSelector.setType('multi')
-        self.edgvType = None
+        self.edgvType = self.comboDict[self.postgisEdgvComboFilter.currentText()]
     
     def selectedDatabases(self, dbList, type):
         """

@@ -138,7 +138,8 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
-        if dbVersion == 'Non_EDGV':
+        edgvVersion = self.customServerConnectionWidget.edgvType
+        if edgvVersion == 'Non_EDGV':
             isEdgv = False
         else:
             isEdgv = True
@@ -146,7 +147,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
         onlyParents = self.onlyParentsCheckBox.isChecked()
-        if 'Pro' in dbVersion:
+        if 'Pro' in edgvVersion:
             customForm = True if not self.customFormCheckBox.isChecked() else False
         else:
             customForm = False
@@ -170,6 +171,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
                 progress.step()
             except Exception as e:
                 exceptionDict[dbName] = ':'.join(e.args)
+                self.iface.mapCanvas().freeze(False) #done to speedup things
                 QApplication.restoreOverrideCursor()
                 progress.step()
             QApplication.restoreOverrideCursor()
