@@ -26,7 +26,7 @@ import os
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
@@ -40,16 +40,24 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(CodeList, self).__init__()
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
         self.currLayer = None
         self.refreshClassesDictList() # creates and populates self.classesFieldDict
         self.setState()
+    
+    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
+        icon_path = iconBasePath + 'codelist.png'
+        text = self.tr('View Code List Codes and Values')
+        action = manager.add_action(
+            icon_path,
+            text=text,
+            callback=callback,
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parentMenu = parentMenu,
+            parentButton = parentStackButton
+            )
         
     @pyqtSlot()
     def setState(self):
@@ -87,11 +95,14 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         """
         Gets the code list dictionary
         """
-        fieldIndex = self.currLayer.fieldNameIndex(field)
+        fieldList = self.currLayer.fields()
+        fieldIndex = fieldList.lookupField(field)
         if fieldIndex == -1:
             return dict(), list()
-        valueDict = self.currLayer.editorWidgetV2Config(fieldIndex) 
-        keys = [value for value in list(valueDict.keys()) if not (value == 'UseHtml' or value == 'IsMultiline')]
+        valueDict = fieldList[fieldIndex].editorWidgetSetup().config()
+        if 'map' in valueDict:
+            valueDict = valueDict['map']
+        keys = [value for value in valueDict if not (value == 'UseHtml' or value == 'IsMultiline')]
         return valueDict, keys
     
     def makeValueRelationDict(self, valueDict):
@@ -169,13 +180,13 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
             return
 
         self.tableWidget.setRowCount(len(keys))
-        
-        for row, value in enumerate(keys):
-            code = valueDict[value]
+        row = 0
+        for code, value in valueDict.items():
             valueItem = QTableWidgetItem(value)
             codeItem = QTableWidgetItem(code)
             self.tableWidget.setItem(row, 0, valueItem)
             self.tableWidget.setItem(row, 1, codeItem)
+            row += 1
         self.tableWidget.sortItems(1)
 
     def refreshClassesDictList(self):        
@@ -191,14 +202,13 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         except:
             # this dict is composed by [ QgsLayer obj : [ 'Every attribute (QgsField obj) that has a value map of this specific layer' ] ]
             self.classesFieldDict = dict()
-        layers = self.iface.legendInterface().layers()
+        layers = self.iface.mapCanvas().layers()
         for layer in layers:
             if isinstance(layer, QgsVectorLayer):
                 for field in layer.fields():
-                    fieldIndex = layer.fieldNameIndex(field.name())
                     # only classes that have value maps may be enlisted on the feature
-                    if layer.editFormConfig().widgetType(fieldIndex) in ['ValueMap', 'ValueRelation']:
-                        if layer not in list(self.classesFieldDict.keys()):
+                    if field.editorWidgetSetup().type() in ['ValueMap', 'ValueRelation']:
+                        if layer not in self.classesFieldDict:
                             self.classesFieldDict[layer] = []
                             # in case more tha a db is loaded and they have the same layer
                             # name for some class. 
