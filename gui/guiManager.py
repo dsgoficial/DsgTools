@@ -29,6 +29,7 @@ from qgis.PyQt.QtCore import QObject, Qt
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 
+from .BDGExTools.bdgexGuiManager import BDGExGuiManager
 from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
 from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
@@ -52,7 +53,7 @@ class GuiManager(QObject):
         self.menuList = []
         self.toolbar = toolbar
 
-    def addMenu(self, name, title, icon_file):
+    def addMenu(self, name, title, icon_file, parentMenu = None):
         """
         Adds a QMenu
         """
@@ -60,7 +61,10 @@ class GuiManager(QObject):
         child.setObjectName(name)
         child.setTitle(self.tr(title))
         child.setIcon(QIcon(self.iconBasePath+icon_file))
-        self.menu.addMenu(child)
+        if parentMenu:
+            parentMenu.addMenu(child)
+        else:
+            self.menu.addMenu(child)
         self.menuList.append(child)
         return child
 
@@ -150,6 +154,8 @@ class GuiManager(QObject):
     def instantiateManagers(self):
         self.layerToolsGuiManager = LayerToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.layerToolsGuiManager)
+        self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.managerList.append(self.bdgexGuiManager)
         self.productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.productionToolsGuiManager)
         self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
