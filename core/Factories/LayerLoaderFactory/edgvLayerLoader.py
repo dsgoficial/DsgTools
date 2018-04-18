@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, Qgis
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, QgsWkbTypes
 from qgis.utils import iface
 
 #DsgTools imports
@@ -90,9 +90,9 @@ class EDGVLayerLoader(QObject):
             return parentTreeNode
 
     def createMeasureColumn(self, layer):
-        if layer.geometryType() == Qgis.PolygonGeometry:
+        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
             layer.addExpressionField('$area', QgsField(self.tr('area_otf'), QVariant.Double))
-        elif layer.geometryType() == Qgis.LineGeometry:
+        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
             layer.addExpressionField('$length', QgsField(self.tr('lenght_otf'), QVariant.Double))
         return layer
     
@@ -143,7 +143,7 @@ class EDGVLayerLoader(QObject):
         aux = dict()
         groupDict = dict()
         groupNodeList = list(lyrDict.keys())
-        groupNodeList.sort(reverse=False)
+        groupNodeList.sort(reverse=True)
         for geomNodeName in groupNodeList:
             groupDict[geomNodeName] = dict()
             geomNode = self.createGroup(geomNodeName, rootNode)
@@ -213,3 +213,12 @@ class EDGVLayerLoader(QObject):
             #treat case of qml with multi
             vlayer.loadNamedStyle(vlayerQml, False)
         return vlayer
+    
+    def removeEmptyNodes(self, dbNode):
+        for geomNode in dbNode.children():
+            if not geomNode.findLayers():
+                dbNode.removeChildNode(geomNode)
+                continue
+            for catNode in geomNode.children():
+                if not catNode.findLayers():
+                    geomNode.removeChildNode(catNode)
