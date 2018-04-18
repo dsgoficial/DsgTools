@@ -54,7 +54,7 @@ class SelectFileWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         if self.type == 'multi':
             self.fileNameList = fd.getOpenFileNames(caption=self.caption, filter=self.filter)
-            selectedFiles = ', '.join(self.fileNameList)
+            selectedFiles = ', '.join(self.fileNameList[0])
         elif self.type == 'single':
             selectedFiles = fd.getOpenFileName(caption=self.caption, filter=self.filter)
             if selectedFiles != '':

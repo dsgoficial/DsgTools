@@ -138,7 +138,7 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
-        edgvVersion = self.customServerConnectionWidget.edgvType
+        edgvVersion = self.customServerConnectionWidget.getDatabaseVersion()
         if edgvVersion == 'Non_EDGV':
             isEdgv = False
         else:

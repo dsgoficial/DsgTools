@@ -188,7 +188,8 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.spatialiteDict = dict()
         dbList = []
         try:
-            for dbPath in self.customFileSelector.fileNameList:
+            fileNameList = self.customFileSelector.fileNameList[0] if self.customFileSelector.fileNameList else []
+            for dbPath in fileNameList:
                 auxAbstractDb = self.dbFactory.createDbFactory('QSQLITE')
                 dbName = os.path.basename(dbPath).split('.')[0]
                 self.path = os.path.dirname(dbPath)
@@ -261,5 +262,6 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.styleChanged.emit(type, styles)
     
     def getDatabaseVersion(self):
-        comboText = self.spatialiteEdgvComboFilter.currentText()
+        comboBox = self.postgisEdgvComboFilter if self.serverConnectionTab.currentIndex() == 0 else self.spatialiteEdgvComboFilter
+        comboText = comboBox.currentText()
         return self.comboDict[comboText]
