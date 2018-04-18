@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>249</width>
-    <height>632</height>
+    <width>312</width>
+    <height>754</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -58,24 +58,25 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QComboBox" name="comboBox">
+     <widget class="DsgCustomComboBox" name="comboBox" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="2">
+     <widget class="QPushButton" name="refreshButton">
       <property name="minimumSize">
        <size>
         <width>170</width>
-        <height>0</height>
+        <height>34</height>
        </size>
       </property>
-      <property name="maximumSize">
-       <size>
-        <width>1000</width>
-        <height>16777215</height>
-       </size>
+      <property name="text">
+       <string>Reload</string>
       </property>
      </widget>
     </item>
@@ -93,19 +94,6 @@
       </column>
      </widget>
     </item>
-    <item row="2" column="0" colspan="2">
-     <widget class="QPushButton" name="refreshButton">
-      <property name="minimumSize">
-       <size>
-        <width>170</width>
-        <height>34</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Reload</string>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
  </widget>
@@ -113,7 +101,7 @@
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

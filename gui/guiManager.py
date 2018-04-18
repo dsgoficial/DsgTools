@@ -95,6 +95,7 @@ class GuiManager(QObject):
         withShortcut=False,
         tooltip = None,
         parentToolbar = None,
+        parentButton = None,
         isCheckable = False):
         """Add a toolbar icon to the InaSAFE toolbar.
         :param icon_path: Path to the icon for this action. Can be a resource
@@ -148,6 +149,8 @@ class GuiManager(QObject):
             action.setToolTip(tooltip)
         if parentToolbar:
             parentToolbar.addAction(action)
+        if parentButton:
+            parentButton.addAction(action)
         self.actions.append(action)
         return action
     
