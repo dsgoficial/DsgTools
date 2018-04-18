@@ -175,6 +175,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                         self.logError()
                     if parent:
                         localProgress.step()
+        self.removeEmptyNodes(dbNode)
         self.iface.mapCanvas().freeze(False) #done to speedup things
         return loadedDict
 
@@ -328,7 +329,6 @@ class PostGISLayerLoader(EDGVLayerLoader):
                                     valueRelationDict[valueDict[key]] = str(key)
                             widgetSetup = QgsEditorWidgetSetup('ValueMap',{'map':valueRelationDict})
                             lyr.setEditorWidgetSetup(i, widgetSetup)
-                            #setEditorWidgetV2Config is deprecated. We will change it eventually.
         return lyr
 
     def checkMulti(self, tableName, attrName, multiColumnsDict):
