@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject, QgsEditorWidgetSetup
 from qgis.utils import iface
 
 #DsgTools imports
@@ -57,16 +57,15 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         """
         self.uri.setDatabase(self.abstractDb.db.databaseName())
     
-    def checkLoaded(self, name, loadedLayers):
+    def checkLoaded(self, name):
         """
         Checks if the layers is already loaded in the QGIS' TOC
         :param name: 
-        :param loadedLayers: 
         :return:
         """
         loaded = None
         database = self.abstractDb.db.databaseName()
-        for ll in loadedLayers:
+        for ll in self.iface.mapCanvas().layers():
             if ll.name() == name:
                 candidateUri = QgsDataSourceUri(ll.dataProvider().dataSourceUri())
                 if database == candidateUri.database():
@@ -82,31 +81,21 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         5. Build Groups;
         6. Load Layers;
         """
+        self.iface.mapCanvas().freeze() #done to speedup things
         layerList, isDictList = self.preLoadStep(inputList)
-        #1. Get Loaded Layers
-        loadedLayers = self.iface.legendInterface().layers()
-        loadedGroups = self.iface.legendInterface().groups()
         #2. Filter Layers:
         filteredLayerList = self.filterLayerList(layerList, False, onlyWithElements, geomFilterList)
-        if isDictList:
-            filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList]
-        else:
-            filteredDictList = filteredLayerList
+        filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList] if isDictList else filteredLayerList
+        edgvVersion = self.abstractDb.getDatabaseVersion()
+        rootNode = QgsProject.instance().layerTreeRoot()
+        dbNode = self.getDatabaseGroup(rootNode)
         #3. Load Domains
         #do this only if EDGV Version = FTer
-        edgvVersion = self.abstractDb.getDatabaseVersion()
-        dbGroup = self.getDatabaseGroup(loadedGroups)
-        if edgvVersion in ('FTer_2a_Ed', '3.0'):
-            domainGroup = self.createGroup(loadedGroups, self.tr("Domains"), dbGroup)
-            domLayerDict = self.loadDomains(filteredLayerList, loadedLayers, domainGroup)
-        else:
-            domLayerDict = dict()
+        domLayerDict = self.loadDomains(filteredLayerList, dbNode, edgvVersion)
         #4. Get Aux dicts
-
         lyrDict = self.getLyrDict(filteredDictList, isEdgv = isEdgv)
-        
         #5. Build Groups
-        groupDict = self.prepareGroups(loadedGroups, dbGroup, lyrDict)
+        groupDict = self.prepareGroups(dbNode, lyrDict)
         #5. load layers
         if parent:
             primNumber = 0
@@ -120,9 +109,8 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
             for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, loadedLayers, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], uniqueLoad, stylePath, domLayerDict)
                         if vlayer:
-                            loadedLayers.append(vlayer)
                             if isinstance(lyr, dict):
                                 key = lyr['lyrName']
                             else:
@@ -137,38 +125,28 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                         self.logError()
                     if parent:
                         localProgress.step()
+        self.removeEmptyNodes(dbNode)
+        self.iface.mapCanvas().freeze(False) #done to speedup things
         return loadedDict
 
-    def loadLayer(self, inputParam, loadedLayers, idSubgrupo, uniqueLoad, stylePath, domLayerDict):
+    def loadLayer(self, inputParam, parentNode, uniqueLoad, stylePath, domLayerDict):
         """
         Loads a layer
         :param lyrName: Layer nmae
-        :param loadedLayers: list of loaded layers
         :param idSubgrupo: sub group id
         :param uniqueLoad: boolean to mark if the layer should only be loaded once
         :param stylePath: path to the styles used
         :param domLayerDict: domain dictionary
         :return:
         """
-        if isinstance(inputParam,dict):
-            lyrName = inputParam['lyrName']
-            schema = inputParam['tableSchema']
-            geomColumn = inputParam['geom']
-            tableName = inputParam['tableName']
-            srid =  self.geomDict['tablePerspective'][tableName]['srid']
-        else:
-            lyrName = inputParam
-            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
-            schema = self.geomDict['tablePerspective'][lyrName]['schema']
-            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
-            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
-        if uniqueLoad:
-            lyr = self.checkLoaded(lyrName, loadedLayers)
-            if lyr:
-                return lyr
+        lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam)
+        lyr = self.checkLoaded(tableName)
+        if uniqueLoad and lyr:
+            return lyr
         self.setDataSource('', '_'.join([schema,tableName]), geomColumn, '')
 
-        vlayer = iface.addVectorLayer(self.uri.uri(), tableName, self.provider)
+        vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
+        QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
         vlayer.setCrs(crs)
         vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)
@@ -176,10 +154,10 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         if stylePath:
             fullPath = self.getStyle(stylePath, tableName)
             if fullPath:
-                vlayer.applyNamedStyle(fullPath)
-        iface.legendInterface().moveLayer(vlayer, idSubgrupo)   
+                vlayer.importNamedStyle(fullPath)
+        parentNode.addLayer(vlayer) 
         if not vlayer.isValid():
-            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
 
@@ -238,10 +216,11 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         #sweep vlayer to find v2
         attrList = vlayer.fields()
         for field in attrList:
-            i = vlayer.fieldNameIndex(field.name())
-            if vlayer.editorWidgetV2(i) == 'ValueRelation':
-                valueRelationDict = vlayer.editorWidgetV2Config(i)
+            i = attrList.lookupField(field.name())
+            editorWidgetSetup = vlayer.editorWidgetSetup(i)
+            if editorWidgetSetup.type() == 'ValueRelation':
+                valueRelationDict = editorWidgetSetup.config()
                 domLayer = domLayerDict[vlayer.name()][field.name()]
                 valueRelationDict['Layer'] = domLayer.id()
-                vlayer.setEditorWidgetV2Config(i, valueRelationDict)
+                vlayer.setEditorWidgetSetup(i, valueRelationDict)
         return vlayer

@@ -160,7 +160,6 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     try:
                         vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
                         if vlayer:
-                            loadedLayers.append(vlayer)
                             if isinstance(lyr, dict):
                                 key = lyr['lyrName']
                             else:
@@ -182,8 +181,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
     def loadLayer(self, inputParam, parentNode, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, customForm = False):
         """
         Loads a layer
-        :param lyrName: Layer nmae
-        :param loadedLayers: list of loaded layers
+        :param lyrName: Layer name
         :param idSubgrupo: sub group id
         :param uniqueLoad: boolean to mark if the layer should only be loaded once
         :param stylePath: path to the styles used
@@ -222,42 +220,6 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
-    
-    def getParams(self, inputParam):
-        if isinstance(inputParam,dict):
-            lyrName = inputParam['lyrName']
-            schema = inputParam['tableSchema']
-            geomColumn = inputParam['geom']
-            tableName = inputParam['tableName']
-            srid =  self.geomDict['tablePerspective'][tableName]['srid']
-        else:
-            lyrName = inputParam
-            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
-            schema = self.geomDict['tablePerspective'][lyrName]['schema']
-            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
-            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
-        return lyrName, schema, geomColumn, tableName, srid
-
-    def getDomainsFromDb(self, layerList, loadedLayers, domainDict, multiColumnsDict):
-        """
-        Gets domain data for each layer to be loaded
-        :param layerList:
-        :param loadedLayers:
-        :param domainDict:
-        :param multiColumnsDict:
-        :return:
-        """
-        domainList = []
-        keys = list(domainDict.keys())
-        multiLayers = list(multiColumnsDict.keys())
-        for lyr in layerList:
-            if lyr in keys and lyr in multiLayers:
-                for attr in list(domainDict[lyr]['columns'].keys()):
-                    if attr in multiColumnsDict[lyr]:
-                        dom = domainDict[lyr]['columns'][attr]['references']
-                        if dom not in domainList:
-                            domainList.append(dom)
-        return domainList
     
     def loadDomain(self, domainTableName, domainGroup):
         """

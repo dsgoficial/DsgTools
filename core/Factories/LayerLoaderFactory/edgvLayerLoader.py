@@ -222,3 +222,18 @@ class EDGVLayerLoader(QObject):
             for catNode in geomNode.children():
                 if not catNode.findLayers():
                     geomNode.removeChildNode(catNode)
+    
+    def getParams(self, inputParam):
+        if isinstance(inputParam,dict):
+            lyrName = inputParam['lyrName']
+            schema = inputParam['tableSchema']
+            geomColumn = inputParam['geom']
+            tableName = inputParam['tableName']
+            srid =  self.geomDict['tablePerspective'][tableName]['srid']
+        else:
+            lyrName = inputParam
+            tableName = self.geomDict['tablePerspective'][lyrName]['tableName']
+            schema = self.geomDict['tablePerspective'][lyrName]['schema']
+            geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
+            srid =  self.geomDict['tablePerspective'][lyrName]['srid']
+        return lyrName, schema, geomColumn, tableName, srid
