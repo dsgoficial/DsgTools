@@ -48,7 +48,7 @@
       <string/>
      </property>
      <property name="icon">
-      <iconset resource="../../resources.qrc">
+      <iconset resource="../../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/server.png</normaloff>:/plugins/DsgTools/icons/server.png</iconset>
      </property>
     </widget>
@@ -64,7 +64,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../../resources.qrc"/>
+  <include location="../../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

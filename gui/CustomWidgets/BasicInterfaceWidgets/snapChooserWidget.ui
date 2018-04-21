@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
+    <width>393</width>
     <height>30</height>
    </rect>
   </property>
@@ -84,7 +84,7 @@
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
