@@ -356,24 +356,24 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsProjectionSelectionWidget</class>
    <extends>QWidget</extends>
-   <header>qgis.gui</header>
+   <header>qgsprojectionselectionwidget.h</header>
   </customwidget>
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ConnectionComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.AdvancedConnectionWidgets.connectionComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
