@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>229</height>
+    <height>239</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -48,7 +48,7 @@
       <string>Add</string>
      </property>
      <property name="icon">
-      <iconset resource="../resources.qrc">
+      <iconset resource="../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
      </property>
     </widget>
@@ -71,7 +71,7 @@
       <string>Remove</string>
      </property>
      <property name="icon">
-      <iconset resource="../resources.qrc">
+      <iconset resource="../../../resources.qrc">
        <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
      </property>
     </widget>
@@ -79,7 +79,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
