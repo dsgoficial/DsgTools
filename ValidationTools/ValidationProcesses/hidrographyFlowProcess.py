@@ -109,7 +109,8 @@ class HidrographyFlowProcess(ValidationProcess):
                         continue
                     else:
                         # if feat is multipart, "nodes" is a list of list
-                        nodes = nodes[0]                
+                        temp = nodes[0]
+                        nodes = temp                
                 # initial node
                 pInit, pEnd = nodes[0], nodes[-1]
                 # filling starting node information into dictionary
