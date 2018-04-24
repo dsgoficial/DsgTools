@@ -64,11 +64,6 @@ class HidrographyFlowProcess(ValidationProcess):
                                                                      } )
                                 #'Classes' :  interfaceDictList
                               }
-            # PARAMETRIZAÇÃO DEVE SUMIR COM O MÉTODO getHidrographyComponents()
-            # frame, frameLayer, trecho_drenagem, pt_drenagem = self.getHidrographyComponents()
-            # if not (frame and frameLayer and trecho_drenagem and pt_drenagem):
-            #     # INSERIR ERRO 'CARREGAR AS CAMADAS ADICIONÁ-LAS AO CANVAS'
-            #     raise Exception(self.tr("Check if frame, hidrography node and lines layers are loaded."))
             self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
@@ -160,10 +155,10 @@ class HidrographyFlowProcess(ValidationProcess):
         if startXORendLine:
             # case 1.a: point is over the frame
             if self.nodeOnFrame(node=nodePoint, frameLyrContour=frameLyrContour, searchRadius=searchRadius):
-                # case 1.a.i: waterway is flowing away from mapped area (point over the frame has on line ending line(s))
+                # case 1.a.i: waterway is flowing away from mapped area (point over the frame has one line ending line)
                 if hasEndLine:
                     return 3
-                # case 1.a.ii: waterway is flowing to mapped area (point over the frame has on line ending line(s))
+                # case 1.a.ii: waterway is flowing to mapped area (point over the frame has one line starting line)
                 elif hasStartLine:
                     return 4
             # case 1.b: point that legitimately only flows from
@@ -298,9 +293,6 @@ class HidrographyFlowProcess(ValidationProcess):
         :param endNode: ending node (QgsPoint) for (segment of) line of which angle is required.
         :return: (float) angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 'startNode'
         """
-        # to have coordinates always in canvas coordinates
-        # canvasNode = self.canvas.mapToGlobal(self.QgsMapTool.toCanvasCoordinates(startNode))
-        # canvasPoint = self.canvas.mapToGlobal(self.QgsMapTool.toCanvasCoordinates(endNode))
         # the returned angle is measured regarding 'y-axis', with + counter clockwise and -, clockwise.
         # Then angle is ALWAYS 180 - ang 
         return 180 - math.degrees(math.atan2(endNode.x() - startNode.x(), endNode.y() - startNode.y()))
@@ -321,19 +313,10 @@ class HidrographyFlowProcess(ValidationProcess):
             # if line starts at node, then angle calculate is already azimuth
             endNode = self.getSecondNode(lyr=hidLineLayer, feat=line, geomType=geomType)
             azimuthDict[line] = node.azimuth(endNode)
-            # azimuthDict[line] = self.calculateAngleDifferences(startNode=node, endNode=endNode)
         for line in nodePointDict['end']:
             # if line ends at node, angle must be adapted in order to get azimuth
             endNode = self.getPenultNode(lyr=hidLineLayer, feat=line, geomType=geomType)
             azimuthDict[line] = node.azimuth(endNode)
-            # ang = self.calculateAngleDifferences(startNode=node, endNode=endNode)
-            # # adjusting calculated angle to get azimuth
-            # # if ang >= 180:
-            # #     azimuthDict[line] = ang - 180
-            # # else:
-            # #     azimuthDict[line] = ang + 180
-            # # azimuth is not necessary, just the angle relative to hidrography network node.
-            # azimuthDict[line] = ang
         return azimuthDict
 
     def checkLineDirectionConcordance(self, line_a, line_b, hidLineLayer, geomType=None):
@@ -377,7 +360,7 @@ class HidrographyFlowProcess(ValidationProcess):
                 if absAzimuthDifference < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
                     if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
-                        return self.tr('Lines {0} and {1} have conflicting directions ({2}).').format(key1.id(), key2.id(), absAzimuthDifference)
+                        return self.tr('Lines {0} and {1} have conflicting directions ({2:.3g} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
                 elif absAzimuthDifference != 90:
                     # if it's any other disposition, lines can have the same orientation
                     continue
@@ -621,7 +604,11 @@ class HidrographyFlowProcess(ValidationProcess):
     def buildFlagList(self, nodeFlags, tableSchema, tableName, geometryColumn):
         """
         Builds record list from pointList to raise flags.
-
+        :param nodeFlags:
+        :param tableSchema:
+        :param tableName:
+        :param geometryColumn:
+        :return:
         """
         recordList = []
         for node, reason in nodeFlags.iteritems():
@@ -632,7 +619,8 @@ class HidrographyFlowProcess(ValidationProcess):
 
     def execute(self):
         """
-        
+        Structures and executes the process.
+        :return: (int) execution code.
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
