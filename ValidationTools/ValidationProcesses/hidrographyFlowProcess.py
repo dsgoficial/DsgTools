@@ -408,6 +408,10 @@ class HidrographyFlowProcess(ValidationProcess):
                     6 : 'in and out', # Ramificação
                     7 : 'in and out' # Mudança de Atributo
                    }
+        # if node is introduced by operator's modification, it won't be saved to the layer
+        if node not in self.nodeTypeDict.keys():
+            # then it'll be introduced to the node type from database
+            self.nodeTypeDict[node] = self.nodeCurrentTypeDict[node]
         flow = flowType[self.nodeTypeDict[node]]
         nodePointDict = self.nodeDict[node]
         # getting all connected lines to node that are not already validated
@@ -566,7 +570,7 @@ class HidrographyFlowProcess(ValidationProcess):
             for node in nodeList:
                 if node not in visitedNodes:
                     # set node as visited
-                    visitedNodes.append(node)                    
+                    visitedNodes.append(node)
                 # check coherence to node type and waterway flow
                 val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
                                                             hidLineLayer=hidLineLyr, geomType=geomType)
@@ -663,6 +667,8 @@ class HidrographyFlowProcess(ValidationProcess):
             # node layer has the same CRS as the hidrography lines layer
             nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
+            # getting current type for hidrography nodes as it is on screen now
+            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
             try:
                 self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             except:
