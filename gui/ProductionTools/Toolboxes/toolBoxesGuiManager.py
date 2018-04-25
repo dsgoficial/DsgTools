@@ -28,6 +28,7 @@ import sys
 from qgis.PyQt.QtCore import QObject, Qt
 
 from .AttributeTools.code_list import CodeList
+from .FieldToolBox.field_toolbox import FieldToolbox
 
 class ToolBoxesGuiManager(QObject):
 
@@ -45,6 +46,8 @@ class ToolBoxesGuiManager(QObject):
     def initGui(self):
         self.codeList = CodeList(self.iface)
         self.codeList.addTool(self.manager, self.showCodeList, self.parentMenu, self.iconBasePath, self.stackButton)
+        self.fieldToolbox = FieldToolbox(self.iface)
+        self.fieldToolbox.addTool(self.manager, self.showFieldToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
     
     def unload(self):
         pass
@@ -56,3 +59,13 @@ class ToolBoxesGuiManager(QObject):
         if self.codeList:
             self.iface.removeDockWidget(self.codeList)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
+
+    def showFieldToolbox(self):
+        """
+        Shows the reclassification tool box dock
+        """
+        if self.fieldToolbox:
+            self.iface.removeDockWidget(self.fieldToolbox)
+        else:
+            self.fieldToolbox = FieldToolbox(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
