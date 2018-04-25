@@ -39,10 +39,9 @@ from qgis.core import QgsMapLayer, QgsGeometry, QgsMessageLog
 from qgis.gui import QgsShortcutsManager
 
 #DsgTools imports
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.QmlTools.qmlParser import QmlParser
-from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from .....core.Factories.DbFactory.dbFactory import DbFactory
+from .....core.Misc.QmlTools.qmlParser import QmlParser
+from ....CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 from . import acquisition_tools
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
