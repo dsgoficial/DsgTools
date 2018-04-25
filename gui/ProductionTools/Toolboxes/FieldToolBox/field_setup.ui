@@ -249,13 +249,13 @@
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ButtonPropWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.buttonPropWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.buttonPropWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

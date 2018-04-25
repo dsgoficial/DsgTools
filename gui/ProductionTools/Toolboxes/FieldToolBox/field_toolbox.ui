@@ -12,8 +12,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>0</width>
-    <height>0</height>
+    <width>229</width>
+    <height>362</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -88,7 +88,7 @@
          <x>0</x>
          <y>0</y>
          <width>210</width>
-         <height>72</height>
+         <height>99</height>
         </rect>
        </property>
        <layout class="QGridLayout" name="gridLayout_2"/>
@@ -169,7 +169,7 @@
   <customwidget>
    <class>ConnectionWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.connectionWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.connectionWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

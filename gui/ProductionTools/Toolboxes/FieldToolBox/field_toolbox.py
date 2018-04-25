@@ -34,9 +34,9 @@ from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
 #DsgTools imports
-from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from .field_setup import FieldSetup
+from .....core.Factories.DbFactory.dbFactory import DbFactory
+from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_toolbox.ui'))
@@ -598,3 +598,6 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         if idx == 0:
             self.reclassificationDict = {}
             self.createButtonsWithTabs(self.reclassificationDict)
+    
+    def unload(self):
+        self.disconnectLayerSignals()
