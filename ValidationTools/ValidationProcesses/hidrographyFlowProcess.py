@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle
 from qgis.gui import QgsMapTool
 
 import processing, binascii, math
@@ -104,8 +104,7 @@ class HidrographyFlowProcess(ValidationProcess):
                         continue
                     else:
                         # if feat is multipart, "nodes" is a list of list
-                        temp = nodes[0]
-                        nodes = temp                
+                        nodes = nodes[0]                
                 # initial node
                 pInit, pEnd = nodes[0], nodes[-1]
                 # filling starting node information into dictionary
@@ -136,21 +135,27 @@ class HidrographyFlowProcess(ValidationProcess):
         buf = QgsGeometry.fromWkt(buf)
         return buf.intersects(frameLyrContour)
 
-    def nodeNextToWaterBodies(self, node, waterMassFeatures, searchRadius):
+    def nodeNextToWaterBodies(self, node, waterBodiesLayers, searchRadius):
         """
-        Identify whether or not node is over the frame. Returns True if point is over the frame and false if
-        node is not on frame. If identification fails, returns 'None'.
-        :param node: node (QgsPoint) to be identified as over the frame layer or not.
-        :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
-        :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
-        :return: (bool) whether node is as close as searchRaius to frame contour.
-        """
-        # insert part to request features of water bodies layers next to node.
+        Identify whether or not node is next to a water body feature.
+        :param node: (QgsPoint) node to be identified as over the frame layer or not.
+        :param waterBodiesLayers: (list-of-QgsVectorLayer) list of layers composing the water bodies on map.
+        :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :return: (bool) whether node is as close as searchRaius to a water body element.
+        """        
         qgisPoint = QgsGeometry.fromPoint(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
         buf = QgsGeometry.fromWkt(buf)
-        return buf.intersects(waterMassFeatures)
+        # building bounding box around node
+        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        # check if buffer intersects features from water bodies layers
+        for lyr in waterBodiesLayers:
+            for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
+                if buf.intersects(feat.geometry()):
+                    # if any feature component of a water body is intersected, method is OK
+                    return True
+        return False
 
     def nodeType(self, nodePoint, frameLyrContour, searchRadius):
         """
