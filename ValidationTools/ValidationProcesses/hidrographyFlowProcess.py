@@ -36,7 +36,7 @@ class HidrographyFlowParameters(list):
 
 class HidrographyFlowProcess(ValidationProcess):
     # enum for node types
-    Flag, Sink, WaterwayBegin, UpHillEndNode, DownHillEndNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody = range(9)
+    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody = range(9)
     # ATENÇÃO>>>>>>>>>>> CRIAR TABELAS DE DOMÍNIO NO BANCO!!!
     def __init__(self, postgisDb, iface, instantiating=False):
         """
@@ -221,10 +221,10 @@ class HidrographyFlowProcess(ValidationProcess):
             if self.nodeOnFrame(node=nodePoint, frameLyrContourList=frameLyrContourList, searchRadius=searchRadius):
                 # case 1.a.i: waterway is flowing away from mapped area (point over the frame has one line ending line)
                 if hasEndLine:
-                    return HidrographyFlowProcess.DownHillEndNode
+                    return HidrographyFlowProcess.DownHillNode
                 # case 1.a.ii: waterway is flowing to mapped area (point over the frame has one line starting line)
                 elif hasStartLine:
-                    return HidrographyFlowProcess.UpHillEndNode
+                    return HidrographyFlowProcess.UpHillNode
             # case 1.b: point that legitimately only flows from
             elif hasEndLine:
                 # case 1.b.i
@@ -431,11 +431,11 @@ class HidrographyFlowProcess(ValidationProcess):
                     # in order to calculate only f1 - f2, f1 - f3, f2 - f3 (for 3 features, for instance)
                     continue
                 absAzimuthDifference = math.fmod((azimuthDict[key1] - azimuthDict[key2] + 360), 360)
-                if absAzimuthDifference < 90:
+                if absAzimuthDifference < 90 or (360 - absAzimuthDifference) < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
                     if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
                         return self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
-                elif absAzimuthDifference != 90:
+                elif absAzimuthDifference != 90 or (360 - absAzimuthDifference) < 90:
                     # if it's any other disposition, lines can have the same orientation
                     continue
                 else:
@@ -459,8 +459,8 @@ class HidrographyFlowProcess(ValidationProcess):
                     HidrographyFlowProcess.Flag : None, # Flag
                     HidrographyFlowProcess.Sink : 'in', # Sumidouro
                     HidrographyFlowProcess.WaterwayBegin : 'out', # Fonte D'Água
-                    HidrographyFlowProcess.DownHillEndNode : 'in', # Interrupção à Jusante
-                    HidrographyFlowProcess.UpHillEndNode : 'out', # Interrupção à Montante
+                    HidrographyFlowProcess.DownHillNode : 'in', # Interrupção à Jusante
+                    HidrographyFlowProcess.UpHillNode : 'out', # Interrupção à Montante
                     HidrographyFlowProcess.Confluence : 'in and out', # Confluência
                     HidrographyFlowProcess.Ramification : 'in and out', # Ramificação
                     HidrographyFlowProcess.AttributeChange : 'in and out', # Mudança de Atributo
@@ -607,7 +607,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
-        nodeOnFrame = [HidrographyFlowProcess.DownHillEndNode, HidrographyFlowProcess.UpHillEndNode, HidrographyFlowProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
+        nodeOnFrame = [HidrographyFlowProcess.DownHillNode, HidrographyFlowProcess.UpHillNode, HidrographyFlowProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
         deltaLinesCheckList = [HidrographyFlowProcess.Confluence, HidrographyFlowProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
