@@ -25,11 +25,11 @@ import os
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt, pyqtSignal
-from qgis.PyQt.QtWidgets import QPushButton, QShortcut
+from qgis.PyQt.QtWidgets import QPushButton, QShortcut, QMessageBox, QScrollArea, QFrame, QFormLayout, QGridLayout, QTabWidget
 from qgis.PyQt.QtGui import QKeySequence
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWkbTypes
+from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWkbTypes, Qgis
 from qgis.gui import QgsMessageBar, QgisInterface
 import qgis as qgis
 
@@ -62,7 +62,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.configFromDbDict = dict()
 
     def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'codelist.png'
+        icon_path = iconBasePath + 'fieldToolbox.png'
         text = self.tr('Feature Classification Tool')
         action = manager.add_action(
             icon_path,
@@ -84,7 +84,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             self.populateConfigFromDb()
         except Exception as e:
-            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Error getting stored configuration.\n')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
     
     def setEditButtonEnabled(self, enabled):
         """
@@ -101,7 +101,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Creates the buttons according to the field setup
         """
         if self.widget.abstractDb == None:
-            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('First select a database!'))
             return
         if isinstance(self.sender(), QPushButton):
             sender = self.sender().text()
@@ -173,9 +173,9 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Creates a scroll area for each form layout.
         formLayout: Layout used to receive the buttons in each tab
         """
-        scrollArea = QtGui.QScrollArea()
+        scrollArea = QScrollArea()
         scrollArea.setWidgetResizable(True)
-        scrollArea.setFrameShape(QtGui.QFrame.Shape(0))  # no frame
+        scrollArea.setFrameShape(QFrame.Shape(0))  # no frame
         w = QtWidgets.QWidget()
         w.setLayout(formLayout)
         scrollArea.setWidget(w)
@@ -195,7 +195,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         propertyDict: optional dict parameters that may contain other properties to button, such as color, tooltip and custom category
         """
 
-        pushButton = QtGui.QPushButton(button)
+        pushButton = QPushButton(button)
         keys = list(propertyDict.keys())
         styleSheet = ''
         if 'buttonColor' in keys:
@@ -241,7 +241,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Specific method to create buttons without tabs
         reclassificationDict: dictionary used to create the buttons
         """
-        formLayout = QtGui.QFormLayout()
+        formLayout = QFormLayout()
         self.createWidgetWithoutTabs(formLayout)
         sortedButtonNames = []
         propertyDict = dict()
@@ -266,9 +266,9 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Specific method to create buttons with tabs
         reclassificationDict: dictionary used to create the buttons
         """
-        gridLayout = QtGui.QGridLayout()
-        tabWidget = QtGui.QTabWidget()
-        tabWidget.setTabPosition(QtGui.QTabWidget.West)
+        gridLayout = QGridLayout()
+        tabWidget = QTabWidget()
+        tabWidget.setTabPosition(QTabWidget.West)
         gridLayout.addWidget(tabWidget)
         self.scrollArea.setWidget(tabWidget)
         propertyDict = dict()
@@ -276,7 +276,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             if category in ['version', 'uiParameterJsonDict']:
                 continue
             sortedButtonNames = []
-            formLayout = QtGui.QFormLayout()
+            formLayout = QFormLayout()
             scrollArea = self.createWidgetWithTabs(formLayout)
             tabWidget.addTab(scrollArea, category)
             for edgvClass in list(reclassificationDict[category].keys()):
@@ -300,29 +300,29 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             return self.layerLoader.load([layer], uniqueLoad=True)[layer]
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the selected classes!\n')+':'.join(e.args))
             
     def checkConditions(self):
         """
         Check the conditions to see if the tool can be used
         """
         if not self.widget.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Please, select a database.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Please, select a database.'))
             return False
         
         try:
             version = self.widget.abstractDb.getDatabaseVersion()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem obtaining database version! Please, check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem obtaining database version! Please, check log for details.'))
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             return False
 
         if 'version' not in list(self.reclassificationDict.keys()):
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('File not formated propperly.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('File not formated propperly.'))
             return False
             
         if self.reclassificationDict['version'] != version:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database version does not match the field toolbox version.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database version does not match the field toolbox version.'))
             return False
         return True
     
