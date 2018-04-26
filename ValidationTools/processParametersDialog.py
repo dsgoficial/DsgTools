@@ -52,7 +52,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomReferenceAndLayersParameterSelector:"getParameters",
                AuxLayerSelector:"getParameters",
                QtGui.QCheckBox: "isChecked",
-               DsgCustomComboBox:"text"}
+               DsgCustomComboBox:"currentText"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
@@ -62,7 +62,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                AuxLayerSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
                QtGui.QCheckBox: "setChecked",
-               DsgCustomComboBox:"setText"}
+               DsgCustomComboBox:"addItems"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
@@ -72,7 +72,7 @@ class ProcessParametersDialog(QtGui.QDialog):
                   AuxLayerSelector: lambda x: True,
                   QtGui.QComboBox: lambda x: True,
                   QtGui.QCheckBox: lambda x: True,
-                  DsgCustomComboBox: lambda x:True}
+                  DsgCustomComboBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None):
         """
@@ -120,8 +120,10 @@ class ProcessParametersDialog(QtGui.QDialog):
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == HidrographyFlowParameters:
-                pass
+            if self.WIDGETS[type(v)] == DsgCustomComboBox:
+                items = ['{0}.{1} ({2}, {3}, {4})'.format(r.split(',')[0], r.split(',')[1], r.split(',')[2], r.split(',')[3], r.split(',')[4]) for r in v.values]
+                items = [self.tr('Select Layer')] + items
+                getattr(widget, self.SETTERS[type(widget)])(items)
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 

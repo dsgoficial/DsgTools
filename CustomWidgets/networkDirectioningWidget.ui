@@ -6,22 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>273</height>
+    <width>548</width>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
-    <number>0</number>
-   </property>
-   <property name="spacing">
-    <number>0</number>
-   </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="label">
+    <widget class="QLabel" name="network_label">
      <property name="text">
       <string>Network Layer</string>
      </property>
@@ -37,7 +31,24 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="0">
+    <widget class="QLabel" name="sink_label">
+     <property name="text">
+      <string>Sink Layer</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="DsgCustomComboBox" name="sinkComboBox" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="2">
     <widget class="CustomSnaperParameterSelector" name="widget" native="true"/>
    </item>
   </layout>
