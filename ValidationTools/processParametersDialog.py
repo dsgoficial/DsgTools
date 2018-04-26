@@ -29,6 +29,7 @@ from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperPar
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
@@ -40,7 +41,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                deque:QtGui.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
                dict:AuxLayerSelector,
-               bool: QtGui.QCheckBox}
+               bool: QtGui.QCheckBox,
+               HidrographyFlowParameters:DsgCustomComboBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",

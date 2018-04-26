@@ -29,6 +29,11 @@ from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
+class HidrographyFlowParameters(list):
+    def __init__(self, x):
+        super(HidrographyFlowParameters, self).__init__()
+        self.values = x
+
 class HidrographyFlowProcess(ValidationProcess):
     # ATENÇÃO: PASSAR OS TIPOS DE NÓS PARA UM ENUM!
     #          CRIAR TABELAS DE DOMÍNIO NO BANCO
@@ -57,8 +62,9 @@ class HidrographyFlowProcess(ValidationProcess):
                                         self.tr('Layer\nType'):tableType
                                      }
                 interfaceDictList.append(interfaceDict[key])
+            flowParameterList = HidrographyFlowParameters(interfaceDictList)
             self.parameters = {
-                                'Network Layer' : interfaceDictList,
+                                'Network Layer' : flowParameterList,
                                 'Only Selected' : False,
                                 'Search Radius' : 5.0,
                                 'Reference and Layers': OrderedDict( {
