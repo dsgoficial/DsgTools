@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, QgsFeatureRequest
 from qgis.gui import QgsMapTool
 
 import processing, binascii, math
@@ -31,6 +31,7 @@ from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class HidrographyFlowProcess(ValidationProcess):
     # ATENÇÃO: PASSAR OS TIPOS DE NÓS PARA UM ENUM!
+    #          CRIAR TABELAS DE DOMÍNIO NO BANCO
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Constructor.
@@ -39,13 +40,13 @@ class HidrographyFlowProcess(ValidationProcess):
         self.processAlias = self.tr('Hidrography Network Directioning')
         self.hidNodeLayerName = 'aux_hid_nodes_p'
         self.canvas = self.iface.mapCanvas()
-        self.QgsMapTool = QgsMapTool(self.canvas)
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         if not self.instantiating:
             # getting tables with elements (line primitive)
             self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
             # adjusting process parameters
             interfaceDict = dict()
+            interfaceDictList = []
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {
@@ -55,7 +56,9 @@ class HidrographyFlowProcess(ValidationProcess):
                                         self.tr('Geometry\nType'):geomType,
                                         self.tr('Layer\nType'):tableType
                                      }
+                interfaceDictList.append(interfaceDict[key])
             self.parameters = {
+                                'Network Layer' : interfaceDictList,
                                 'Only Selected' : False,
                                 'Search Radius' : 5.0,
                                 'Reference and Layers': OrderedDict( {
@@ -77,7 +80,7 @@ class HidrographyFlowProcess(ValidationProcess):
         frame = []
         isMulti = QgsWKBTypes.isMultiType(int(frameLayer.wkbType()))
         for feat in frameLayer.getFeatures():
-            frameNodes = self.DsgGeometryHandler.getFeatureNodes(frameLayer, feat)
+            frameNodes = self.DsgGeometryHandler.getFeatureNodes(frameLayer, feat)[0]
             if isMulti:
                 frameNodes = frameNodes[0]
             frame.append(QgsGeometry().fromPolyline(frameNodes))
@@ -137,7 +140,7 @@ class HidrographyFlowProcess(ValidationProcess):
         buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
         buf = QgsGeometry.fromWkt(buf)
         for frameContour in frameLyrContourList:
-            if buf.intersects(frameLyrContour):
+            if buf.intersects(frameContour):
                 # it is condition enough one of the frame contours to be next to node
                 return True
         return False
@@ -164,11 +167,11 @@ class HidrographyFlowProcess(ValidationProcess):
                     return True
         return False
 
-    def nodeType(self, nodePoint, frameLyrContour, waterBodiesLayers, searchRadius):
+    def nodeType(self, nodePoint, frameLyrContourList, waterBodiesLayers, searchRadius):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
-        :param frameLyrContour: (QgsGeometry) border line for the frame layer to be checked.
+        :param frameLyrContourList: (list-of-QgsGeometry) border line for the frame layer to be checked.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :return: returns the (int) point type.
         """
@@ -182,7 +185,7 @@ class HidrographyFlowProcess(ValidationProcess):
         # case 1: all lines either flow in or out 
         if startXORendLine:
             # case 1.a: point is over the frame
-            if self.nodeOnFrame(node=nodePoint, frameLyrContour=frameLyrContour, searchRadius=searchRadius):
+            if self.nodeOnFrame(node=nodePoint, frameLyrContourList=frameLyrContourList, searchRadius=searchRadius):
                 # case 1.a.i: waterway is flowing away from mapped area (point over the frame has one line ending line)
                 if hasEndLine:
                     return 3
@@ -192,7 +195,7 @@ class HidrographyFlowProcess(ValidationProcess):
             # case 1.b: point that legitimately only flows from
             elif hasEndLine:
                 # case 1.b.i
-                if self.nodeNextToWaterBodies(node=node, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
+                if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
                     # it is considered that every point on map is a starting node. The only exception are points that are
                     # next to water bodies
                     return 1
@@ -214,10 +217,10 @@ class HidrographyFlowProcess(ValidationProcess):
             # case 3 "ramification"
             return 6
 
-    def classifyAllNodes(self, frameLyrContour, waterBodiesLayers, searchRadius, nodeList=None):
+    def classifyAllNodes(self, frameLyrContourList, waterBodiesLayers, searchRadius, nodeList=None):
         """
         Classifies all identified nodes from the hidrography line layer.
-        :param frameLyrContour: (QgsFeature) border line for the frame layer.
+        :param frameLyrContourList: (list-of-QgsFeature) border line for the frame layer.
         :param waterBodiesLayers: (list-of-QgsVectorLayer) list of all classes with water bodies to be compared to.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
@@ -232,7 +235,7 @@ class HidrographyFlowProcess(ValidationProcess):
             if node not in nodeKeys:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, frameLyrContour=frameLyrContour, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius)
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius)
         return nodeTypeDict
 
     def fillNodeTable(self, hidLineLayer):
@@ -396,7 +399,7 @@ class HidrographyFlowProcess(ValidationProcess):
                 if absAzimuthDifference < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
                     if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
-                        return self.tr('Lines {0} and {1} have conflicting directions ({2:.3g} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
+                        return self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
                 elif absAzimuthDifference != 90:
                     # if it's any other disposition, lines can have the same orientation
                     continue
@@ -439,7 +442,7 @@ class HidrographyFlowProcess(ValidationProcess):
         validLines, invalidLines = dict(), dict()
         if not flow:
             # flags have all lines flagged
-            reason = self.tr('Node was flagged upon classification.')
+            reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             for line in linesNotValidated:
                 invalidLines[line.id()] = line
             return validLines, invalidLines, reason
@@ -653,7 +656,7 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
         return recordList
 
-    def execute(self):
+    def executeV2(self):
         """
         Structures and executes the process.
         :return: (int) execution code.
@@ -692,14 +695,14 @@ class HidrographyFlowProcess(ValidationProcess):
             nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
             # getting current type for hidrography nodes as it is on screen now
-            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
+            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=[], searchRadius=self.parameters['Search Radius'])
             try:
                 self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             except:
                 pass
             if not self.nodeTypeDict:
                 try:
-                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContour=frame, searchRadius=self.parameters['Search Radius'])
+                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=[], searchRadius=self.parameters['Search Radius'])
                     self.abstractDb.createHidNodeTable(crs.split(':')[1])
                     self.fillNodeTable(hidLineLayer=trecho_drenagem)
                 except:
@@ -722,9 +725,15 @@ class HidrographyFlowProcess(ValidationProcess):
             self.finishedWithError()
             return 0
 
-    def executeV2(self):
+    def execute(self):
         """
-        Execution method for testing purposes.
+        Execution method for testing purposes. WILL BE EXECRATED FROM CODE WHEN METHOD IS CONCLUDED.
+        Returns 0 for a successful execution.
+        Error return codes:
+        -1: Generic error for mishandling parameters
+         1: No water bodies layers selected
+         2: No reference layer selected
+         3: Unable to create/populate hidrography node table on database 
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
@@ -766,14 +775,14 @@ class HidrographyFlowProcess(ValidationProcess):
             nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
             # getting current type for hidrography nodes as it is on screen now
-            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContour=frame, waterBodiesLayers=waterBodiesLayers, searchRadius=self.parameters['Search Radius'])
+            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius)
             try:
                 self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             except:
                 pass
             if not self.nodeTypeDict:
                 try:
-                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContour=frame, waterBodiesLayers=waterBodiesLayers, searchRadius=self.parameters['Search Radius'])
+                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius)
                     self.abstractDb.createHidNodeTable(crs.split(':')[1])
                     self.fillNodeTable(hidLineLayer=trecho_drenagem)
                 except:
