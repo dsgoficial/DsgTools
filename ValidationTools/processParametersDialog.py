@@ -28,6 +28,7 @@ from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
+from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
