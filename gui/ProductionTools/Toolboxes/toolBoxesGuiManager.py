@@ -44,10 +44,10 @@ class ToolBoxesGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        self.codeList = CodeList(self.iface)
-        self.codeList.addTool(self.manager, self.showCodeList, self.parentMenu, self.iconBasePath, self.stackButton)
         self.fieldToolbox = FieldToolbox(self.iface)
         self.fieldToolbox.addTool(self.manager, self.showFieldToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
+        self.codeList = CodeList(self.iface)
+        self.codeList.addTool(self.manager, self.showCodeList, self.parentMenu, self.iconBasePath, self.stackButton)
     
     def unload(self):
         pass
