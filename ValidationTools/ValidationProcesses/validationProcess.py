@@ -194,7 +194,7 @@ class ValidationProcess(QObject):
                 if self.logMsg:
                     msg += "\n\n" + self.logMsg
                 elif not self.dbUserName:
-                    msg += self.tr("Database username: {}").format(self.abstractDb.db.userName())
+                    msg += self.tr("Database username: {}\n").format(self.abstractDb.db.userName())
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))

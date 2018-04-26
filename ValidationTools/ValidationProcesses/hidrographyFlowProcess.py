@@ -38,9 +38,13 @@ class HidrographyFlowProcess(ValidationProcess):
     # enum for node types
     Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody = range(9)
     # ATENÇÃO>>>>>>>>>>> CRIAR TABELAS DE DOMÍNIO NO BANCO!!!
+    # ATENÇÃO>>>>>>>>>>> CHECAR SE A CAMADA DE NÓS ESTÁ CARREGADA NO CANVAS E CARREGÁ-LA AUTOMATICAMENTE, CASO NEGATIVO
     def __init__(self, postgisDb, iface, instantiating=False):
         """
-        Constructor.
+        Class constructor.
+        :param postgisDb: (DsgTools.AbstractDb) postgis database connection.
+        :param iface: (QgisInterface) QGIS interface object.
+        :param instantiating: (bool) indication of whether method is being instatiated.
         """
         super(HidrographyFlowProcess, self).__init__(postgisDb, iface, instantiating)
         self.processAlias = self.tr('Hidrography Network Directioning')
@@ -170,6 +174,9 @@ class HidrographyFlowProcess(ValidationProcess):
         bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
         # check if buffer intersects features from water bodies layers
         for lyr in waterBodiesLayers:
+            if lyr.geometryType() == 0:
+                # ignore point primitive layers
+                continue
             for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
                 if buf.intersects(feat.geometry()):
                     # any feature component of a water body intersected is enough
@@ -187,14 +194,12 @@ class HidrographyFlowProcess(ValidationProcess):
         if not waterSinkLayer:
             return False
         qgisPoint = QgsGeometry.fromPoint(node)
-        # building a buffer around node with search radius for intersection with Layer Frame
-        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
-        buf = QgsGeometry.fromWkt(buf)
         # building bounding box around node for feature requesting
-        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
-        # check if buffer intersects features from water bodies layers
+        x, y = node.x(), node.y()
+        bbRect = QgsRectangle(x-searchRadius, y-searchRadius, x+searchRadius, y+searchRadius)
+        # check if qgisPoint (node geometry) is over a sink classified point
         for feat in waterSinkLayer.getFeatures(QgsFeatureRequest(bbRect)):
-            if buf.equals(feat.geometry()):
+            if qgisPoint.equals(feat.geometry()):
                 # any feature component of a water body intersected is enough
                 return True
         return False
