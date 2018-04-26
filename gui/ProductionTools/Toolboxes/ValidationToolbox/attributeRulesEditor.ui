@@ -60,13 +60,13 @@
   <customwidget>
    <class>OrderedAttributeRulesWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedAttributeRulesWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedAttributeRulesWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>AttributeRuleTypeWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.AttributeValidityWidgets.attributeRuleTypeWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.AttributeValidityWidgets.attributeRuleTypeWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

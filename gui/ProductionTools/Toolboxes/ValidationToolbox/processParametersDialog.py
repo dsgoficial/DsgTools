@@ -26,12 +26,12 @@ from qgis.PyQt import QtWidgets, QtCore
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QApplication, QMenu
 from qgis.PyQt.QtGui import QCursor
-from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
-from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
-from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
-from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
-from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedRecursiveSnapWidget import OrderedRecursiveSnapWidget
-from DsgTools.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProcess import RecursiveSnapParameters
+from DsgTools.gui.CustomWidgets.SelectionWidgets.customTableSelector import CustomTableSelector
+from DsgTools.gui.CustomWidgets.SelectionWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
+from DsgTools.gui.CustomWidgets.SelectionWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
+from DsgTools.gui.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedRecursiveSnapWidget import OrderedRecursiveSnapWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProcess import RecursiveSnapParameters
 
 class ProcessParametersDialog(QtWidgets.QDialog):
     WIDGETS = {str: QtWidgets.QLineEdit,
