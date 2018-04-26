@@ -28,8 +28,12 @@ import os, json
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, Qt
-from qgis.PyQt.QtWidgets import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem, QAction
-from qgis.PyQt.QtWidgets import QFileDialog, QTreeWidgetItem, QTableWidget, QTableWidgetItem, QStyledItemDelegate, QComboBox, QMenu, QLineEdit, QShortcut
+from qgis.PyQt.QtWidgets import QMessageBox, QCheckBox, QButtonGroup, QItemDelegate, \
+                                QDialog, QMessageBox, QListWidget, QListWidgetItem, \
+                                QAction
+from qgis.PyQt.QtWidgets import QFileDialog, QTreeWidgetItem, QTableWidget, \
+                                QTableWidgetItem, QStyledItemDelegate, QComboBox, \
+                                QMenu, QLineEdit, QShortcut
 from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
@@ -260,13 +264,13 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
         Creates a QTableWidgetItem for each attribute.
         The cell can have different types according to the data type used (i.e QCombobox, QLineEdit or QListWidget)
         """
-        if fullTableName in list(currentDict.keys()):
+        if fullTableName in currentDict:
             for attr in currentDict[fullTableName]:
                 self.attributeTableWidget.insertRow(count)
                 item = QTableWidgetItem()
                 item.setText(attr)
                 if colour:
-                    item.setBackgroundColor(colour)
+                    item.setBackground(colour)
                 self.attributeTableWidget.setItem(count, 0, item)
                 #creating the specific cell widget. It can be a QCombobox, a QLineEdit or a QListWidget
                 self.createCellWidget(qmlDict, attr, count)
@@ -276,7 +280,7 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
         """
         Creates specific widgets for each attribute, which can be a QCombobox, a QLineEdit or a QListWidget.
         """
-        if attr in list(qmlDict.keys()):
+        if attr in qmlDict:
             enableIgnoreOption = False
             #case the type is dict the cell widget must be a combobox
             if isinstance(qmlDict[attr],dict):
