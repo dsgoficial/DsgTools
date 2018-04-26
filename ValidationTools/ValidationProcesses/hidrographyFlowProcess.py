@@ -78,7 +78,8 @@ class HidrographyFlowProcess(ValidationProcess):
                                                                        'referenceDictList':{},
                                                                        'layersDictList':interfaceDict
                                                                      } ),
-                                'Classify Nodes On Database' : True
+                                'Classify Nodes On Database' : True,
+                                'Select All Valid Lines' : False
                               }
             self.nodeDbIdDict = None
             self.nodeDict = None
@@ -436,11 +437,14 @@ class HidrographyFlowProcess(ValidationProcess):
                     # in order to calculate only f1 - f2, f1 - f3, f2 - f3 (for 3 features, for instance)
                     continue
                 absAzimuthDifference = math.fmod((azimuthDict[key1] - azimuthDict[key2] + 360), 360)
-                if absAzimuthDifference < 90 or (360 - absAzimuthDifference) < 90:
+                if absAzimuthDifference > 180:
+                    # the lesser angle should always be the one to be analyzed
+                    absAzimuthDifference = (360 - absAzimuthDifference)
+                if absAzimuthDifference < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
                     if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
                         return self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
-                elif absAzimuthDifference != 90 or (360 - absAzimuthDifference) < 90:
+                elif absAzimuthDifference != 90:
                     # if it's any other disposition, lines can have the same orientation
                     continue
                 else:
@@ -860,6 +864,9 @@ class HidrographyFlowProcess(ValidationProcess):
                     return 1
             self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
+            # if user set to select valid lines
+            if self.parameters['Select All Valid Lines']:
+                trecho_drenagem.setSelectedFeatures(val.keys())
             # getting recordList to be loaded to validation flag table
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
