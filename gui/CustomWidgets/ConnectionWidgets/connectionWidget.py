@@ -32,11 +32,10 @@ from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.serverDBExplorer import ServerDBExplorer
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from ....core.Utils.utils import Utils
+from ....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionWidget.ui'))
