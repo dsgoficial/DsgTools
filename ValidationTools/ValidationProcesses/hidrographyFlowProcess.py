@@ -465,15 +465,15 @@ class HidrographyFlowProcess(ValidationProcess):
         # getting flow permitions based on node type
         # reference is node (e.g. 'in' = lines  are ENDING at analyzed node)
         flowType = {
-                    HidrographyFlowProcess.Flag : None, # Flag
-                    HidrographyFlowProcess.Sink : 'in', # Sumidouro
-                    HidrographyFlowProcess.WaterwayBegin : 'out', # Fonte D'Água
-                    HidrographyFlowProcess.DownHillNode : 'in', # Interrupção à Jusante
-                    HidrographyFlowProcess.UpHillNode : 'out', # Interrupção à Montante
-                    HidrographyFlowProcess.Confluence : 'in and out', # Confluência
-                    HidrographyFlowProcess.Ramification : 'in and out', # Ramificação
-                    HidrographyFlowProcess.AttributeChange : 'in and out', # Mudança de Atributo
-                    HidrographyFlowProcess.NodeNextToWaterBody : 'in and out' # Nó próximo a corpo d'água                
+                    HidrographyFlowProcess.Flag : None, # 0 - Flag
+                    HidrographyFlowProcess.Sink : 'in', # 1 - Sumidouro
+                    HidrographyFlowProcess.WaterwayBegin : 'out', # 2 - Fonte D'Água
+                    HidrographyFlowProcess.DownHillNode : 'in', # 3 - Interrupção à Jusante
+                    HidrographyFlowProcess.UpHillNode : 'out', # 4 - Interrupção à Montante
+                    HidrographyFlowProcess.Confluence : 'in and out', # 5 - Confluência
+                    HidrographyFlowProcess.Ramification : 'in and out', # 6 - Ramificação
+                    HidrographyFlowProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
+                    HidrographyFlowProcess.NodeNextToWaterBody : 'in and out' # 8 - Nó próximo a corpo d'água                
                    }
         # if node is introduced by operator's modification, it won't be saved to the layer
         if node not in self.nodeTypeDict.keys():
@@ -645,7 +645,8 @@ class HidrographyFlowProcess(ValidationProcess):
                 validLines.update(val)
                 invalidLines.update(inval)
                 newNextNodes += self.getNextNodes(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
-                if inval:
+                # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
+                if reason:
                     if node not in nodeFlags.keys():
                         # if node is invalid, add to nodeFlagList
                         nodeFlags[node] = reason
