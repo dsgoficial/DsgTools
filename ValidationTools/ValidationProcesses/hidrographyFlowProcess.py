@@ -872,10 +872,10 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
-                msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(numberOfProblems)
+                msg = self.tr('{0} nodes may be invalid. Check flags.').format(numberOfProblems)
                 self.setStatus(msg, 4) #Finished with flags
             else:
-                msg = self.tr('All lines are correctly directed.')
+                msg = self.tr('Network has coherent direction.')
                 self.setStatus(msg, 1) #Finished
             return 1
         except Exception as e:
