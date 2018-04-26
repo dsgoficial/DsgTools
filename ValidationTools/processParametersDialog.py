@@ -51,7 +51,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                QtGui.QComboBox:"currentText",
                CustomReferenceAndLayersParameterSelector:"getParameters",
                AuxLayerSelector:"getParameters",
-               QtGui.QCheckBox: "isChecked"}
+               QtGui.QCheckBox: "isChecked",
+               DsgCustomComboBox:"text"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
@@ -60,7 +61,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomTableSelector: "setInitialState",
                AuxLayerSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
-               QtGui.QCheckBox: "setChecked"}
+               QtGui.QCheckBox: "setChecked",
+               DsgCustomComboBox:"setText"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
@@ -69,7 +71,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                   CustomTableSelector: lambda x: True,
                   AuxLayerSelector: lambda x: True,
                   QtGui.QComboBox: lambda x: True,
-                  QtGui.QCheckBox: lambda x: True}
+                  QtGui.QCheckBox: lambda x: True,
+                  DsgCustomComboBox: lambda x:True}
 
     def __init__(self, parent, options, required=None, title=None):
         """
@@ -117,6 +120,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
+            if self.WIDGETS[type(v)] == HidrographyFlowParameters:
+                pass
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
