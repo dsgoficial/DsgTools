@@ -45,11 +45,11 @@ from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerL
 from DsgTools.core.ValidationTools.validationManager import ValidationManager
 from DsgTools.core.dsgEnums import DsgEnums
 #DsgTools gui imports
-from DsgTools.gui.ValidationToolbox.validation_config import ValidationConfig
-from DsgTools.gui.ValidationToolbox.validation_history import ValidationHistory
-from DsgTools.gui.ValidationToolbox.rules_editor import RulesEditor
-from DsgTools.gui.ValidationToolbox.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
-from DsgTools.gui.ValidationToolbox.attributeRulesEditor import AttributeRulesEditor
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.validation_config import ValidationConfig
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.validation_history import ValidationHistory
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.rules_editor import RulesEditor
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.attributeRulesEditor import AttributeRulesEditor
 
 class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface):

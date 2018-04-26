@@ -23,7 +23,7 @@
 from __future__ import print_function
 import os
 from qgis.core import QgsMessageLog
-from DsgTools.ValidationTools.processParametersDialog import ProcessParametersDialog
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.processParametersDialog import ProcessParametersDialog
 
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtGui
