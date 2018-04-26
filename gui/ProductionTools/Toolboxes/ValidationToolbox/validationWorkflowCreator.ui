@@ -111,7 +111,7 @@
   <customwidget>
    <class>OrderedValidationWorkflowItemsWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedValidationWorkflowItemsWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedValidationWorkflowItemsWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

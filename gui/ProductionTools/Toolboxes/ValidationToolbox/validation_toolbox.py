@@ -34,23 +34,22 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri
-
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, Qgis, QgsMessageLog
 import qgis as qgis
-from qgis.core import QgsMessageLog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_toolbox.ui'))
 
-#DsgTools imports
-from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
-from DsgTools.ValidationTools.validation_config import ValidationConfig
-from DsgTools.ValidationTools.validationManager import ValidationManager
-from DsgTools.ValidationTools.validation_history import ValidationHistory
-from DsgTools.ValidationTools.rules_editor import RulesEditor
-from DsgTools.ValidationTools.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
-from DsgTools.ValidationTools.attributeRulesEditor import AttributeRulesEditor
-from DsgTools.dsgEnums import DsgEnums
+#DsgTools core imports
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.ValidationTools.validationManager import ValidationManager
+from DsgTools.core.dsgEnums import DsgEnums
+#DsgTools gui imports
+from DsgTools.gui.ValidationToolbox.validation_config import ValidationConfig
+from DsgTools.gui.ValidationToolbox.validation_history import ValidationHistory
+from DsgTools.gui.ValidationToolbox.rules_editor import RulesEditor
+from DsgTools.gui.ValidationToolbox.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
+from DsgTools.gui.ValidationToolbox.attributeRulesEditor import AttributeRulesEditor
 
 class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
     def __init__(self, iface):
@@ -221,7 +220,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             self.tableView.setModel(self.projectModel)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.processTreeWidget.clear()    
 
     def on_filterLineEdit_textChanged(self, text):
@@ -252,7 +251,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                 status = self.connectionSelectorComboBox.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
             except Exception as e:
                 QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
                 status = 'Error! Check log!'
                 
             if not status:
@@ -278,7 +277,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             procReturn = self.validationManager.runLastProcess()
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
@@ -308,7 +307,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             procReturn = self.validationManager.executeProcessV2(processName)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()

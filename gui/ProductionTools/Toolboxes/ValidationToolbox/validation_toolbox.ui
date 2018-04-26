@@ -269,31 +269,31 @@
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>GenericCompactPropertyManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.genericCompactPropertyManagerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.genericCompactPropertyManagerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>AttributeRulesCompactPropertyManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.attributeRulesCompactPropertyManagerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.attributeRulesCompactPropertyManagerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ConnectionComboBox</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.AdvancedConnectionWidgets.connectionComboBox.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ValidationWorkflowCompactPropertyManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.validationWorkflowCompactPropertyManagerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.validationWorkflowCompactPropertyManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

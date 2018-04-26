@@ -25,7 +25,7 @@ import os
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'validation_history.ui'))
@@ -54,7 +54,7 @@ class ValidationHistory(QtWidgets.QDialog, FORM_CLASS):
             self.refreshViewTable(createTable=True)
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Did you select a database?)'))
-            QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)        
+            QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSG Tools Plugin", Qgis.Critical)        
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
