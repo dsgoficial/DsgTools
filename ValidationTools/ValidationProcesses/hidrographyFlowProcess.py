@@ -48,10 +48,9 @@ class HidrographyFlowProcess(ValidationProcess):
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         if not self.instantiating:
             # getting tables with elements (line primitive)
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['a', 'l'], withElements=True, excludeValidation = True)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
             # adjusting process parameters
             interfaceDict = dict()
-            interfaceDictList = []
             for key in self.classesWithElemDict:
                 cat, lyrName, geom, geomType, tableType = key.split(',')
                 interfaceDict[key] = {
@@ -61,17 +60,19 @@ class HidrographyFlowProcess(ValidationProcess):
                                         self.tr('Geometry\nType'):geomType,
                                         self.tr('Layer\nType'):tableType
                                      }
-                interfaceDictList.append(interfaceDict[key])
-            flowParameterList = HidrographyFlowParameters(interfaceDictList)
+            self.networkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
+            networkFlowParameterList = HidrographyFlowParameters(self.networkClassesWithElemDict.keys())
+            self.sinkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
+            sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())            
             self.parameters = {
-                                'Network Layer' : flowParameterList,
+                                'Network Layer' : networkFlowParameterList,
+                                'Sink Layer' : sinkFlowParameterList,
                                 'Only Selected' : False,
                                 'Search Radius' : 5.0,
                                 'Reference and Layers': OrderedDict( {
                                                                        'referenceDictList':{},
                                                                        'layersDictList':interfaceDict
                                                                      } )
-                                #'Classes' :  interfaceDictList
                               }
             self.nodeDbIdDict = None
             self.nodeDict = None
@@ -173,12 +174,36 @@ class HidrographyFlowProcess(ValidationProcess):
                     return True
         return False
 
-    def nodeType(self, nodePoint, frameLyrContourList, waterBodiesLayers, searchRadius):
+    def nodeIsWaterSink(self, node, waterSinkLayer, searchRadius):
+        """
+        Identify whether or not node is next to a water body feature. If no water sink layer is given, method returns False
+        :param node: (QgsPoint) node to be identified as over the frame layer or not.
+        :param waterSinkLayer: (QgsVectorLayer) layer containing the water sinks on map.
+        :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :return: (bool) whether node is as close as searchRaius to a water body element.
+        """
+        if not waterSinkLayer:
+            return False
+        qgisPoint = QgsGeometry.fromPoint(node)
+        # building a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
+        buf = QgsGeometry.fromWkt(buf)
+        # building bounding box around node for feature requesting
+        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        # check if buffer intersects features from water bodies layers
+        for feat in waterSinkLayer.getFeatures(QgsFeatureRequest(bbRect)):
+            if buf.equals(feat.geometry()):
+                # any feature component of a water body intersected is enough
+                return True
+        return False
+
+    def nodeType(self, nodePoint, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
         :param frameLyrContourList: (list-of-QgsGeometry) border line for the frame layer to be checked.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :param waterSinkLayer: (QgsVectorLayer) water sink layer.
         :return: returns the (int) point type.
         """
         dictStartingEndingLinesEntry = self.nodeDict[nodePoint]
@@ -204,10 +229,11 @@ class HidrographyFlowProcess(ValidationProcess):
                 if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
                     # it is considered that every point on map is a starting node. The only exception are points that are
                     # next to water bodies
+                    return 8
+                # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
+                elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
+                    # if a node is indeed a water sink (operator has set it to a sink)
                     return 1
-                # if self.nodeIsWaterSink(node=node, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius)
-                    # # if a node is indeed a water sink (operator has set it to a sink)
-                    # return 8
             # case 1.c: point that legitimately only flows out
             elif hasStartLine:
                 return 2
@@ -223,7 +249,7 @@ class HidrographyFlowProcess(ValidationProcess):
             # case 3 "ramification"
             return 6
 
-    def classifyAllNodes(self, frameLyrContourList, waterBodiesLayers, searchRadius, nodeList=None):
+    def classifyAllNodes(self, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None):
         """
         Classifies all identified nodes from the hidrography line layer.
         :param frameLyrContourList: (list-of-QgsFeature) border line for the frame layer.
@@ -231,6 +257,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
                          to be classified. Node MUST be in dict given, if not, it'll be ignored.
+        :param waterSinkLayer: (QgsVectorLayer) water sink layer.
         :return: a (dict) dictionary of node and its node type ( { (QgsPoint)node : (int)nodeType } ). 
         """
         nodeTypeDict = dict()
@@ -241,7 +268,7 @@ class HidrographyFlowProcess(ValidationProcess):
             if node not in nodeKeys:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius)
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
         return nodeTypeDict
 
     def fillNodeTable(self, hidLineLayer):
@@ -434,7 +461,8 @@ class HidrographyFlowProcess(ValidationProcess):
                     4 : 'out', # Interrupção à Montante
                     5 : 'in and out', # Confluência
                     6 : 'in and out', # Ramificação
-                    7 : 'in and out' # Mudança de Atributo
+                    7 : 'in and out', # Mudança de Atributo
+                    8 : 'in and out' # Nó próximo a corpo d'água                
                    }
         # if node is introduced by operator's modification, it won't be saved to the layer
         if node not in self.nodeTypeDict.keys():
@@ -748,9 +776,9 @@ class HidrographyFlowProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
-            hidLineLyrKey = self.parameters['Network Layer'][0]
-            refKey = self.parameters['Reference and Layers'][0]
-            classesWithElemKeys = self.parameters['Reference and Layers'][1]
+            hidLineLyrKey = self.parameters['Network Layer']
+            hidSinkLyrKey = self.parameters['Sink Layer']
+            refKey, classesWithElemKeys = self.parameters['Reference and Layers']
             if len(classesWithElemKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
@@ -766,13 +794,36 @@ class HidrographyFlowProcess(ValidationProcess):
             refcl = self.classesWithElemDict[refKey]
             frameLayer = self.loadLayerBeforeValidationProcess(refcl)
             # preparing hidrography lines layer
-            hidcl = self.classesWithElemDict[hidLineLyrKey]
+            # remake the key from standard string
+            k = ('{},{},{},{},{}').format(
+                                          hidLineLyrKey.split('.')[0],\
+                                          hidLineLyrKey.split('.')[1].split(r' (')[0],\
+                                          hidLineLyrKey.split('(')[1].split(', ')[0],\
+                                          hidLineLyrKey.split('(')[1].split(', ')[1],\
+                                          hidLineLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                         )
+            hidcl = self.networkClassesWithElemDict[k]
             trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
             # preparing the list of water bodies classes
             waterBodyClasses = []
             for key in waterBodyClassesKeys:
                 wbc = self.classesWithElemDict[key]
                 waterBodyClasses.append(self.loadLayerBeforeValidationProcess(wbc))
+            # preparing water sink layer
+            if hidSinkLyrKey and hidSinkLyrKey != self.tr('Select Layer'):
+                # remake the key from standard string
+                k = ('{},{},{},{},{}').format(
+                                          hidSinkLyrKey.split('.')[0],\
+                                          hidSinkLyrKey.split('.')[1].split(r' (')[0],\
+                                          hidSinkLyrKey.split('(')[1].split(', ')[0],\
+                                          hidSinkLyrKey.split('(')[1].split(', ')[1],\
+                                          hidSinkLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                         )
+                sinkcl = self.sinkClassesWithElemDict[k]
+                waterSinkLayer = self.loadLayerBeforeValidationProcess(sinkcl)
+            else:
+                # if no sink layer is selected, layer should be ignored
+                waterSinkLayer = None
             # getting dictionaries of nodes information 
             frame = self.getFrameContour(frameLayer=frameLayer)
             self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
@@ -781,14 +832,14 @@ class HidrographyFlowProcess(ValidationProcess):
             nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
             # getting current type for hidrography nodes as it is on screen now
-            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius)
+            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             try:
                 self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             except:
                 pass
             if not self.nodeTypeDict:
                 try:
-                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius)
+                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
                     self.abstractDb.createHidNodeTable(crs.split(':')[1])
                     self.fillNodeTable(hidLineLayer=trecho_drenagem)
                 except:
