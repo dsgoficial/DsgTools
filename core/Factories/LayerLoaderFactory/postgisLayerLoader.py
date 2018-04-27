@@ -159,7 +159,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 for lyr in lyrDict[prim][cat]:
                     try:
                         vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
-                        if vlayer:
+                        if vlayer is not None:
                             if isinstance(lyr, dict):
                                 key = lyr['lyrName']
                             else:
@@ -190,11 +190,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
         """
         lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam)
         lyr = self.checkLoaded(tableName)
-        if uniqueLoad and lyr:
+        if uniqueLoad and lyr is not None:
             return lyr
         fullName = '''"{0}"."{1}"'''.format(schema, tableName)
         pkColumn = self.abstractDb.getPrimaryKeyColumn(fullName)
-        if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_Edgv', '2.1.3 Pro', '3.0 Pro']:
+        if useInheritance or self.abstractDb.getDatabaseVersion() in ['3.0', 'Non_EDGV','Non_Edgv', '2.1.3 Pro', '3.0 Pro']:
             sql = ''
         else:
             sql = self.abstractDb.gen.loadLayerFromDatabase(fullName, pkColumn=pkColumn)            
@@ -203,7 +203,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         vlayer = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
         QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
         crs = QgsCoordinateReferenceSystem(int(srid), QgsCoordinateReferenceSystem.EpsgCrsId)
-        if vlayer:
+        if vlayer is not None:
             vlayer.setCrs(crs)
             if useQml:
                 vlayer = self.setDomainsAndRestrictionsWithQml(vlayer)

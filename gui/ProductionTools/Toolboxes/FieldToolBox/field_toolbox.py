@@ -346,7 +346,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         reclassificationLayer = self.loadLayer(reclassificationClass)
         
         if reclassificationLayer:
-            self.iface.setActiveLayer(reclassificationLayer)
+            # self.iface.setActiveLayer(reclassificationLayer)
             #entering in editing mode
             if not reclassificationLayer.isEditable():
                 reclassificationLayer.startEditing()
@@ -484,6 +484,10 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
             reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
             #triggering the add feature tool
+            if reclassificationLayer != self.iface.activeLayer():
+                self.iface.blockSignals(True)
+                self.iface.setActiveLayer(reclassificationLayer)
+                self.iface.blockSignals(False)
             self.iface.actionAddFeature().trigger()            
             #setting the previous layer             
             self.prevLayer = reclassificationLayer        
