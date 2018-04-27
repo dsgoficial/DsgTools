@@ -166,7 +166,7 @@ class EDGVLayerLoader(QObject):
         domLayerDict = dict()
         qmlDict = self.abstractDb.getQmlDict(layerList)
         domainNode = self.createGroup(self.tr("Domains"), dbRootNode)
-        loadedDomainsDict = {} if not domainNode.loadedLayers() else {i.layer().name() : i.layer() for i in domainNode.loadedLayers()}
+        loadedDomainsDict = {} if not domainNode.findLayers() else {i.layer().name() : i.layer() for i in domainNode.findLayers()}
         for lyr in layerList:
             if lyr in qmlDict:
                 for attr in qmlDict[lyr]:

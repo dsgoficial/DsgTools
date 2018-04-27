@@ -40,7 +40,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsGeometry, QgsMessageLog
-from qgis.gui import QgsShortcutsManager
+from qgis.gui import QgsGui
 
 #DsgTools imports
 from .....core.Factories.DbFactory.dbFactory import DbFactory
@@ -73,6 +73,7 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
         self.folder = os.path.join(os.path.dirname(__file__), 'FieldSetupConfigs') #re-do this
         self.optionalDict = {self.tr('Yes'):'1', self.tr('No'):'0'}
         self.buttonPropDict = dict()
+        self.shortcutsManager = QgsGui.shortcutsManager()
         self.qgisShortcutList = self.getQGISShortcutList()
     
     def getQGISShortcutList(self):
@@ -80,7 +81,7 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
         Returns all shortcuts from qgis
         """
         shortcutList = []
-        for shortcutItem in QgsShortcutsManager().instance().listAll():
+        for shortcutItem in self.shortcutsManager.listAll():
             if isinstance(shortcutItem, QAction):
                 for i in shortcutItem.shortcuts():
                     if i not in shortcutList:
