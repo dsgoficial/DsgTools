@@ -22,8 +22,10 @@
 """
 from __future__ import absolute_import
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
+                      QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
+                      QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
+                      QgsWkbTypes, QgsProject
 from qgis.PyQt.Qt import QObject
 
 class GeometryHandler(QObject):
@@ -33,18 +35,6 @@ class GeometryHandler(QObject):
         self.iface = iface
         self.canvas = iface.mapCanvas()
     
-    def getFeatures(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
-        if onlySelected:
-            featureList = lyr.selectedFeatures()
-            size = len(featureList)
-        else:
-            featureList = [i for i in lyr.getFeatures()] if not returnIterator else lyr.getFeatures()
-            size = len(lyr.allFeatureIds())
-        if returnIterator:
-            return featureList, size
-        else:
-            return featureList
-    
     def getClockWiseList(self, pointList):
         pointSum = 0
         for i in range(len(pointList) - 1):
@@ -53,6 +43,31 @@ class GeometryHandler(QObject):
             return pointList
         else:
             return pointList[::-1]
+    
+    def reprojectWithCoordinateTransformer(self, geom, coordinateTransformer):
+        if coordinateTransformer:
+            geom.transform(coordinateTransformer)
+        return geom
+    
+    def adjustGeometry(self, geom, parameterDict):
+        geomList = []
+        if 'geometry' in dir(geom):
+            if not parameterDict['hasMValues']:
+                geom.geometry().dropMValue()
+            if not parameterDict['hasZValues']:
+                geom.geometry().dropZValue()
+        if parameterDict['isMulti'] and not geom.isMultipart():
+            geom.convertToMultiType()
+            geomList.append(geom)
+        if not parameterDict['isMulti'] and geom.isMultipart():
+            #deaggregate here
+            parts = geom.asGeometryCollection()
+            for part in parts:
+                part.convertToSingleType()
+                geomList.append(part)
+        else:
+            geomList.append(geom)
+        return geomList
 
     def reprojectFeature(self, geom, referenceCrs, canvasCrs=None, coordinateTransformer=None, debugging=False):
         """

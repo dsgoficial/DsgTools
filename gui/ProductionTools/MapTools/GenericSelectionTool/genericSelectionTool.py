@@ -24,7 +24,10 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
 """
 from builtins import range
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import Qgis, QgsPointXY, QgsRectangle, QgsMapLayer, QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsWkbTypes, QgsProject
+from qgis.core import Qgis, QgsPointXY, QgsRectangle, QgsMapLayer, \
+                        QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, \
+                        QgsCoordinateReferenceSystem, QgsCoordinateTransform, \
+                        QgsGeometry, QgsWkbTypes, QgsProject
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis.PyQt.QtGui import QColor, QCursor

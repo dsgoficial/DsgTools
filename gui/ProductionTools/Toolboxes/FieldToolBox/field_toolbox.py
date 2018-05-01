@@ -37,6 +37,7 @@ import qgis as qgis
 from .field_setup import FieldSetup
 from .....core.Factories.DbFactory.dbFactory import DbFactory
 from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from .....core.GeometricTools.layerHandler import LayerHandler
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'field_toolbox.ui'))
@@ -60,6 +61,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.releaseButtonConected = False
         self.addedFeatures = []
         self.configFromDbDict = dict()
+        self.layerHandler = LayerHandler(iface)
 
     def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
         icon_path = iconBasePath + 'fieldToolbox.png'
@@ -502,73 +504,13 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         """
         if not self.checkConditions():
             return
-        
-        somethingMade = False
-        reclassifiedFeatures = 0
-        deleteList = []
         #button that sent the signal
         self.buttonName = self.sender().text().split(' [')[0]
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
-        geomType = reclassificationLayer.geometryType()
-        hasMValues =  QgsWkbTypes.hasM(int(reclassificationLayer.wkbType()))    #generic check (not every database is implemented as ours)
-        hasZValues =  QgsWkbTypes.hasZ(int(reclassificationLayer.wkbType()))    #
-        isMulti = QgsWkbTypes.isMultiType(int(reclassificationLayer.wkbType())) #
-        mapLayers = self.iface.mapCanvas().layers()
-        #we need to get the authid that thefines the ref system of destination layer
-        crsSrc = QgsCoordinateReferenceSystem(reclassificationLayer.crs().authid())
-        deleteList = []
-        for mapLayer in mapLayers:
-            if mapLayer.type() != QgsMapLayer.VectorLayer:
-                continue
-            
-            #iterating over selected features
-            featList = []
-            mapLayerCrs = mapLayer.crs()
-            #creating a coordinate transformer (mapLayerCrs to crsSrc)
-            coordinateTransformer = QgsCoordinateTransform(mapLayerCrs, crsSrc)
-            for feature in mapLayer.selectedFeatures():
-                geomList = []
-                geom = feature.geometry()
-                if geom.type() != geomType:
-                    continue
-                if 'geometry' in dir(geom):
-                    if not hasMValues:
-                        geom.geometry().dropMValue()
-                    if not hasZValues:
-                        geom.geometry().dropZValue()
-                if isMulti and not geom.isMultipart():
-                    geom.convertToMultiType()
-                    geomList.append(geom)
-                if not isMulti and geom.isMultipart():
-                    #deaggregate here
-                    parts = geom.asGeometryCollection()
-                    for part in parts:
-                        part.convertToSingleType()
-                        geomList.append(part)
-                else:
-                    geomList.append(geom)
-                for newGeom in geomList:
-                    #creating a new feature according to the reclassification layer
-                    newFeature = QgsFeature(reclassificationLayer.fields())
-                    #transforming the geometry to the correct crs
-                    geom.transform(coordinateTransformer)
-                    #setting the geometry
-                    newFeature.setGeometry(newGeom)
-                    #setting the attributes using the reclassification dictionary
-                    newFeature = self.setFeatureAttributes(newFeature, oldFeat = feature)
-                    #adding the newly created feature to the addition list
-                    featList.append(newFeature)
-                    somethingMade = True
-                    deleteList.append({'originalLyr':mapLayer,'featid':feature.id()})
-            #actual feature insertion
-            reclassificationLayer.addFeatures(featList, False)
-            reclassifiedFeatures += len(featList)
+        reclassificationDict = self.reclassificationDict[self.category][self.edgvClass][self.buttonName]
+        reclassifiedFeatures = self.layerHandler.reclassifySelectedFeatures(reclassificationLayer, reclassificationDict)
         
-        for item in deleteList:
-            item['originalLyr'].startEditing()
-            item['originalLyr'].deleteFeature(item['featid'])
-        
-        if somethingMade:
+        if reclassifiedFeatures > 0:
             self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=QgsMessageBar.INFO, duration=3)
 
     def findReclassificationClass(self, button):
