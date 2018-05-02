@@ -511,7 +511,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         reclassifiedFeatures = self.layerHandler.reclassifySelectedFeatures(reclassificationLayer, reclassificationDict)
         
         if reclassifiedFeatures > 0:
-            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=QgsMessageBar.INFO, duration=3)
+            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=Qgis.Info, duration=3)
 
     def findReclassificationClass(self, button):
         """

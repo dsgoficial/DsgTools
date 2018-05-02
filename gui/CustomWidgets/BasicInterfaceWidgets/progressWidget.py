@@ -45,7 +45,7 @@ class ProgressWidget(QgsMessageBar):
         self.progressBar.setMinimum(min)
         self.progressBar.setMaximum(max)
         self.msgBarItem = QgsMessageBarItem(self.tr("INFO: "), message, self.progressBar, level=Qgis.Info, duration=timeout, parent = parent)
-        self.pushWidget(self.msgBarItem)
+        self.pushItem(self.msgBarItem)
     
     def initBar(self):
         """
