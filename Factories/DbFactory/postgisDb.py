@@ -3743,7 +3743,6 @@ class PostgisDb(AbstractDb):
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
         :return: node ID from database
         """
-        dbNodeTypeDict = dict()
         sql = ""
         sql = self.gen.getNodeIdQuery(node=wktNode, nodeLayerName=nodeLayerName, \
                                              hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
@@ -3753,3 +3752,36 @@ class PostgisDb(AbstractDb):
             return None
         while query.next():
             return query.value(0)
+
+    def createNodeTypeDomainTable(self, useTransaction=True):
+        """
+        Creates domain table for node type.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :return: (bool) query execution status.
+        """
+        sql = self.gen.createNodeTypeDomainTableQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while creating hidrography nodes domain table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
+    def checkIfTableExists(self, schemaName, tableName):
+        """
+        Query for checking whether a table exists into DB or not.
+        :param schemaName: (str) schema name containing target table.
+        :param tableName: (str) target table name.
+        :return: (bool) table existence status.
+        """
+        sql = self.gen.checkIfTableExistsQuery(schemaName=schemaName, tableName=tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while checking {} existence status : ").format(schemaName, tableName)+query.lastError().text())
+            return False
+        while query.next():
+            if query.value(0):
+                return True

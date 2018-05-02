@@ -394,6 +394,24 @@ class PostGISSqlGenerator(SqlGenerator):
             geom geometry('MultiPoint', %s) NOT NULL,
             CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
             )#
+        CREATE TABLE dominios.node_type (
+            code smallint NOT NULL,
+            code_name text NOT NULL, CONSTRAINT
+            node_type_pk PRIMARY KEY (code)
+            )#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (0,'Flag')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (1,'Sumidouro ou Vertedouro')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (2,'Início de Trecho')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (3,'Interrupção à Montante')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (4,'Interrupção à Jusante')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (5,'Confluência')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (6,'Ramificação')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água')#
+        ALTER TABLE validation.aux_hid_nodes_p
+            ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
+            REFERENCES dominios.node_type (code) MATCH FULL
+            ON UPDATE NO ACTION ON DELETE NO ACTION#
         INSERT INTO validation.settings(earthcoverage) VALUES (NULL)#
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
         """ % (srid, srid, srid, srid)
@@ -1805,3 +1823,38 @@ class PostGISSqlGenerator(SqlGenerator):
             SELECT id FROM validation.{1} WHERE geom in ({0}) AND layer = '{2}';
         """.format(nodeListString, nodeLayerName, hidrographyLineLayerName)
         return sql
+
+    def createNodeTypeDomainTableQuery(self):
+        """
+        Creates query for node type domain creation.
+        """
+        sql = """CREATE SCHEMA IF NOT EXISTS dominios;
+            CREATE TABLE IF NOT EXISTS dominios.node_type (
+            code smallint NOT NULL,
+            code_name text NOT NULL, CONSTRAINT
+            node_type_pk PRIMARY KEY (code)
+            );
+        INSERT INTO dominios.node_type (code,code_name) VALUES (0,'Flag');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (1,'Sumidouro ou Vertedouro');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (2,'Início de Trecho');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (3,'Interrupção à Montante');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (4,'Interrupção à Jusante');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (5,'Confluência');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (6,'Ramificação');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água');
+        ALTER TABLE validation.aux_hid_nodes_p
+            ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
+            REFERENCES dominios.node_type (code) MATCH FULL
+            ON UPDATE NO ACTION ON DELETE NO ACTION;
+        INSERT INTO validation.settings(earthcoverage) VALUES (NULL);
+        """
+        return sql
+    
+    def checkIfTableExistsQuery(self, schemaName, tableName):
+        """
+        Query for checking whether a table exists into DB or not.
+        :param schemaName: (str) schema name containing target table.
+        :param tableName: (str) target table name. 
+        """
+        return "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '{0}' AND table_name = '{1}';".format(schemaName, tableName)

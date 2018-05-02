@@ -21,13 +21,15 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, QgsFeatureRequest
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, \
+                      QgsFeatureRequest, QgsMapLayerRegistry, QgsDataSourceURI
 from qgis.gui import QgsMapTool
 from PyQt4.QtGui import QMessageBox
 
 import processing, binascii, math
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class HidrographyFlowParameters(list):
@@ -703,6 +705,24 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
         return recordList
 
+    def loadLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
+        """
+        Loads the given layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
+        :param lyrSchema: (str) schema containing target table.
+        :param lyrName: (srt) name of layer to beloaded.
+        :param srid: ()
+        """
+        host, port, user, pswd = self.abstractDb.getDatabaseParameters()
+        id_field = 'id'
+        providerLib = 'postgres'
+        db = self.abstractDb.getDatabaseName()
+        uri = QgsDataSourceURI()        
+        uri.setConnection(host, str(port), db, user, pswd)
+        uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
+        uri.setSrid(srid)
+        vLyr = QgsVectorLayer(uri.uri(), lyrName, providerLib)
+        QgsMapLayerRegistry.instance().addMapLayer(vLyr)
+
     # def executeV2(self):
     #     """
     #     Structures and executes the process.
@@ -841,6 +861,13 @@ class HidrographyFlowProcess(ValidationProcess):
             # node layer has the same CRS as the hidrography lines layer
             nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
+            # check if node table and node type domain table are created on db
+            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
+                self.abstractDb.createHidNodeTable(crs.split(':')[1])
+            if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
+                self.abstractDb.createNodeTypeDomainTable()
+            # load node table into canvas
+            self.loadLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeCrs)
             # getting current type for hidrography nodes as it is on screen now
             self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             if self.parameters['Classify Nodes On Database']:
@@ -851,20 +878,19 @@ class HidrographyFlowProcess(ValidationProcess):
                 self.fillNodeTable(hidLineLayer=trecho_drenagem)
             else:
                 try:
+                    # if user doesn't set process to repopulate db, method tries to get node type already set
                     self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
                 except:
-                    pass
-            if not self.nodeTypeDict:
-                try:
-                    self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
-                    self.fillNodeTable(hidLineLayer=trecho_drenagem)
-                except:
-                    self.setStatus(self.tr('Could not load hidrography nodes layer.'), 1) #Finished
-                    return 1
+                    # if it fails, it keep populates node table 
+                    if not self.nodeTypeDict:
+                        self.nodeTypeDict = self.nodeCurrentTypeDict
+                        self.fillNodeTable(hidLineLayer=trecho_drenagem)
             self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
+            # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
-            # if there are no starting node into network, a warning is raised
+            # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
+                # in that case method checkAllNodesValidity() returns None, None, REASON
                 QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('Enter input database!'))
                 msg = val
                 self.setStatus(msg, 1) #Finished with flags
