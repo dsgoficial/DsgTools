@@ -61,5 +61,6 @@
         <file>icons/export.png</file>
         <file>icons/up.png</file>
         <file>icons/down.png</file>
+        <file>icons/info.png</file>
     </qresource>
 </RCC>
