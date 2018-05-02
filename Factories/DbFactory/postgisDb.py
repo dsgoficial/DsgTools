@@ -3676,6 +3676,24 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return True
 
+    def clearHidNodeTable(self, layerName, useTransaction=True):
+        """
+        Gives the query for clearing all entries on hidrography node table.
+        :param layerName: (str) name of hidrography nodes table.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :return: (str) query for table clearing.
+        """
+        sql = self.gen.clearHidNodeTableQuery(layerName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while clearing hidrography nodes table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
     def insertHidValNode(self, layerName, node, nodeType, crs, useTransaction=True):
         """
         Populates hidrography validation table with node information.

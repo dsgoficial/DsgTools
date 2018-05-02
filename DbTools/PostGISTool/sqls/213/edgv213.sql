@@ -5352,6 +5352,11 @@ CREATE TABLE dominios.tipopassagviad (
  code_name text NOT NULL, CONSTRAINT
  tipopassagviad_pk PRIMARY KEY (code)
 )#
+CREATE TABLE dominios.node_type (
+ code smallint NOT NULL,
+ code_name text NOT NULL, CONSTRAINT
+ node_type_pk PRIMARY KEY (code)
+)#
 INSERT INTO dominios.geracao (code,code_name) VALUES (0,'Desconhecido')#
 INSERT INTO dominios.geracao (code,code_name) VALUES (1,'Eletricidade - GER 0')#
 INSERT INTO dominios.geracao (code,code_name) VALUES (2,'CoGeração')#
@@ -6657,6 +6662,15 @@ INSERT INTO dominios.causaexposicao (code,code_name) VALUES (4,'Natural')#
 INSERT INTO dominios.causaexposicao (code,code_name) VALUES (5,'Artificial')#
 INSERT INTO dominios.tipopassagviad (code,code_name) VALUES (6,'Viaduto')#
 INSERT INTO dominios.tipopassagviad (code,code_name) VALUES (5,'Passagem elevada')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (0,'Flag')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (1,'Sumidouro ou Vertedouro')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (2,'Início de Trecho')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (3,'Interrupção à Montante')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (4,'Interrupção à Jusante')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (5,'Confluência')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (6,'Ramificação')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo')#
+INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água')#
 ALTER TABLE cb.adm_area_pub_civil_a
   ADD CONSTRAINT adm_area_pub_civil_a_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
    REFERENCES dominios.geometriaaproximada (code) MATCH FULL
@@ -11068,6 +11082,10 @@ ALTER TABLE cb.tra_passag_elevada_viaduto_p
 ALTER TABLE cb.tra_passag_elevada_viaduto_p
   ADD CONSTRAINT tra_passag_elevada_viaduto_p_tipopassagviad_fk FOREIGN KEY (tipopassagviad)
    REFERENCES dominios.tipopassagviad (code) MATCH FULL
+   ON UPDATE NO ACTION ON DELETE NO ACTION#
+ALTER TABLE validation.aux_hid_nodes_p
+  ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
+   REFERENCES dominios.node_type (code) MATCH FULL
    ON UPDATE NO ACTION ON DELETE NO ACTION#
 ALTER TABLE cb.tra_passagem_nivel_p
   ADD CONSTRAINT tra_passagem_nivel_p_geometriaaproximada_fk FOREIGN KEY (geometriaaproximada)
