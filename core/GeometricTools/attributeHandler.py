@@ -33,19 +33,6 @@ class AttributeHandler(QObject):
         super(AttributeHandler, self).__init__()
         self.parent = parent
         self.iface = iface
-    
-    def createFeaturesWithAttributeDict(self, geomList, originalFeat, attributeDict, destinationLayer):
-        """
-        Creates a newFeatureList using each geom from geomList. attributeDict is used to set attributes
-        """
-        newFeatureList = []
-        fields = destinationLayer.fields()
-        for geom in geomList:
-            newFeature = QgsFeature(fields)
-            newFeature.setGeometry(geom)
-            newFeature = self.setFeatureAttributes(newFeature, attributeDict, oldFeat = originalFeat)
-            newFeatureList.append(newFeature)
-        return newFeatureList
 
     def setFeatureAttributes(self, newFeature, attributeDict, editBuffer=None, oldFeat = None):
         """

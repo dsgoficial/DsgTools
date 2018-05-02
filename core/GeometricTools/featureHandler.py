@@ -44,6 +44,19 @@ class FeatureHandler(QObject):
         for feat in featureList:
             geom = self.geometryHandler.reprojectWithCoordinateTransformer(feat.geometry(), coordinateTransformer)
             geomList = self.geometryHandler.adjustGeometry(geom, parameterDict)
-            newFeatList += self.attributeHandler.createFeaturesWithAttributeDict(geomList, feat, reclassificationDict, destinationLayer)
+            newFeatList += self.createFeaturesWithAttributeDict(geomList, feat, reclassificationDict, destinationLayer)
             deleteList.append(feat.id())
         return newFeatList, deleteList
+    
+    def createFeaturesWithAttributeDict(self, geomList, originalFeat, attributeDict, destinationLayer):
+        """
+        Creates a newFeatureList using each geom from geomList. attributeDict is used to set attributes
+        """
+        newFeatureList = []
+        fields = destinationLayer.fields()
+        for geom in geomList:
+            newFeature = QgsFeature(fields)
+            newFeature.setGeometry(geom)
+            newFeature = self.attributeHandler.setFeatureAttributes(newFeature, attributeDict, oldFeat = originalFeat)
+            newFeatureList.append(newFeature)
+        return newFeatureList

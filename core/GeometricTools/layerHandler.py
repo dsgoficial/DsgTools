@@ -29,12 +29,11 @@ from qgis.PyQt.Qt import QObject
 from .featureHandler import FeatureHandler
 
 class LayerHandler(QObject):
-    def __init__(self, iface, abstractDb, parent = None):
+    def __init__(self, iface, parent = None):
         super(LayerHandler, self).__init__()
         self.parent = parent
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.abstractDb = abstractDb
         self.featureHandler = FeatureHandler(iface)
     
     def getFeatureList(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
@@ -58,7 +57,7 @@ class LayerHandler(QObject):
         """
         selectedDict = dict()
         for lyr in self.canvas.layers():
-            featureList = self.getFeatures(lyr, onlySelected=True, returnIterator=False)
+            featureList = self.getFeatureList(lyr, onlySelected=True, returnIterator=False)
             if featureList:
                 selectedDict[lyr] = featureList
         return selectedDict
@@ -68,13 +67,14 @@ class LayerHandler(QObject):
         Gets a destination layer and uses reclassificationDict to reclassify each selected feature
         """
         selectedDict = self.getSelectedFeaturesFromCanvasLayers()
-        parameterDict = self.getParameterDict(destinationLayer)
+        parameterDict = self.getDestinationParameters(destinationLayer)
         reclassifyCount = 0
         destinationLayer.startEditing()
         destinationLayer.beginEditCommand(self.tr('DsgTools reclassification'))
         for lyr, featureList in selectedDict.items():
-            newFeatList, deleteList = self.featureHandler.reclassifyFeatures(featureList, lyr, coordinateTransformer, parameterDict)
-            featuresAdded = destinationLayer.addFeatures(newFeatList, False)
+            coordinateTransformer = self.getCoordinateTransformer(lyr, destinationLayer)
+            newFeatList, deleteList = self.featureHandler.reclassifyFeatures(featureList, lyr, reclassificationDict, coordinateTransformer, parameterDict)
+            featuresAdded = destinationLayer.addFeatures(newFeatList)
             if featuresAdded:
                 lyr.startEditing()
                 lyr.deleteFeatures(deleteList)
