@@ -23,6 +23,7 @@
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, QgsFeatureRequest
 from qgis.gui import QgsMapTool
+from PyQt4.QtGui import QMessageBox
 
 import processing, binascii, math
 from collections import OrderedDict
@@ -626,7 +627,7 @@ class HidrographyFlowProcess(ValidationProcess):
                     nodeList.append(node)
         # if no node on frame is found, process ends here
         if not nodeList:
-            return None, None
+            return None, None, self.tr("No network starting point was found")
         geomType = hidLineLyr.geometryType()
         # initiating the list of nodes already checked and the list of nodes to be checked next iteration
         visitedNodes, newNextNodes = [], []
@@ -793,7 +794,7 @@ class HidrographyFlowProcess(ValidationProcess):
             refKey, classesWithElemKeys = self.parameters['Reference and Layers']
             if len(classesWithElemKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                return 1
+                # return 1
             else:
                 waterBodyClassesKeys = classesWithElemKeys
             if not refKey:
@@ -846,10 +847,8 @@ class HidrographyFlowProcess(ValidationProcess):
                 # as db info is updated, current node type is the same as in db
                 self.nodeTypeDict = self.nodeCurrentTypeDict
                 # if this option is selected, database info will be updated
-                self.abstractDb.createHidNodeTable(crs.split(':')[1])
+                self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
                 self.fillNodeTable(hidLineLayer=trecho_drenagem)
-                # as db info is updated, current node type is the same as in db
-                self.nodeTypeDict = self.nodeCurrentTypeDict
             else:
                 try:
                     self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
@@ -858,13 +857,18 @@ class HidrographyFlowProcess(ValidationProcess):
             if not self.nodeTypeDict:
                 try:
                     self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
-                    self.abstractDb.createHidNodeTable(crs.split(':')[1])
                     self.fillNodeTable(hidLineLayer=trecho_drenagem)
                 except:
-                    self.setStatus(self.tr('Could not create and load hidrography nodes layer.'), 1) #Finished
+                    self.setStatus(self.tr('Could not load hidrography nodes layer.'), 1) #Finished
                     return 1
             self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
+            # if there are no starting node into network, a warning is raised
+            if not isinstance(val, dict):
+                QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('Enter input database!'))
+                msg = val
+                self.setStatus(msg, 1) #Finished with flags
+                return 1
             # if user set to select valid lines
             if self.parameters['Select All Valid Lines']:
                 trecho_drenagem.setSelectedFeatures(val.keys())

@@ -385,9 +385,18 @@ class PostGISSqlGenerator(SqlGenerator):
             earthcoverage text,
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
+
+        DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
+        CREATE TABLE validation.aux_hid_nodes_p (
+            id SERIAL NOT NULL,
+            layer VARCHAR(40) NOT NULL,
+            node_type SMALLINT NOT NULL,
+            geom geometry('MultiPoint', %s) NOT NULL,
+            CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
+            )#
         INSERT INTO validation.settings(earthcoverage) VALUES (NULL)#
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
-        """ % (srid, srid, srid)
+        """ % (srid, srid, srid, srid)
         return sql
     
     def validationStatus(self, processName):
@@ -1741,6 +1750,14 @@ class PostGISSqlGenerator(SqlGenerator):
             );
         """.format(crs)
         return sql
+    
+    def clearHidNodeTableQuery(self, layerName):
+        """
+        Gives the query for clearing all entries on hidrography node table.
+        :param layerName: (str) name of hidrography nodes table.
+        :return: (str) query for table clearing.
+        """
+        return """DELETE FROM validation.{0};""".format(layerName)
 
     def fillHidNodeTableQuery(self, layerName, nodeWkt, nodeType, crs):
         """
