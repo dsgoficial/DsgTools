@@ -603,20 +603,21 @@ class ValidationProcess(QObject):
         # logging username
         logMsg = ""
         if self.dbUserName:
-            logMsg += self.tr("Database username: {0}").format(self.dbUserName)
+            logMsg += self.tr("\nDatabase username: {0}").format(self.dbUserName)
         else:
-            logMsg += self.tr("Unable to get database username.")
+            logMsg += self.tr("\nUnable to get database username.")
         # logging process parameters
         if self.parameters:
             parametersString = self.tr("\nParameters used on this execution of process {}\n").format(self.processAlias)
             parametersString += self.jsonifyParameters(self.parameters)
             logMsg += parametersString
         else:
-            logMsg += self.tr("Unable to get database parameters for process {}.").format(self.processAlias)
+            logMsg += self.tr("\nUnable to get database parameters for process {}.").format(self.processAlias)
         # logging #Flag
         logMsg += self.tr("\nNumber of flags raised by the process: {}").format(\
                         str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
         # logging total time elapsed
+        self.endTimeCount()
         if self.totalTime:
             logMsg += self.tr("\nTotal elapsed time for process {0}: {1}\n").format(self.processAlias, self.totalTime)
         else:
