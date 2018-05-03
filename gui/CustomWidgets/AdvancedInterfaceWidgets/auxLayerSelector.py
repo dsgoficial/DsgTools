@@ -24,7 +24,7 @@ from builtins import range
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget, QFormLayout, QLabel
 
-from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 
 class AuxLayerSelector(QWidget):
     def __init__(self, parent=None):

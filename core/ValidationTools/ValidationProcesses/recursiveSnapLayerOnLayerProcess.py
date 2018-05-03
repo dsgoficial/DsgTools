@@ -21,9 +21,10 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
+from qgis.analysis import QgsGeometrySnapper
+
 from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from .validationProcess import ValidationProcess
 
 from collections import OrderedDict
 
@@ -74,7 +75,7 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
                 #reference layer
                 refcl = self.classesWithElemDict[self.interfaceDict[snapItem['referenceLayer']]]
                 reflyr = self.loadLayerBeforeValidationProcess(refcl)
-                snapper = DsgGeometrySnapper(reflyr)
+                snapper = QgsGeometrySnapper(reflyr)
                 snapper.featureSnapped.connect(self.updateProgress)
                 tol = snapItem['snap']
                 msg = ''
