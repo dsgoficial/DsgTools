@@ -705,23 +705,15 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
         return recordList
 
-    def loadLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
+    def loadLayer(self, layer):
         """
-        Loads the given layer. It checks if the flag layer is already loaded, case not, it loads the flag layer into the TOC
-        :param lyrSchema: (str) schema containing target table.
-        :param lyrName: (srt) name of layer to beloaded.
-        :param srid: ()
+        Load a given layer to canvas.
+        :param layer: (str) layer name to be loaded.
         """
-        host, port, user, pswd = self.abstractDb.getDatabaseParameters()
-        id_field = 'id'
-        providerLib = 'postgres'
-        db = self.abstractDb.getDatabaseName()
-        uri = QgsDataSourceURI()        
-        uri.setConnection(host, str(port), db, user, pswd)
-        uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
-        uri.setSrid(srid)
-        vLyr = QgsVectorLayer(uri.uri(), lyrName, providerLib)
-        QgsMapLayerRegistry.instance().addMapLayer(vLyr)
+        try:
+            return self.layerLoader.load([layer], uniqueLoad=True)[layer]
+        except Exception as e:
+            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the class {0}!\n').format(layer)+':'.join(e.args))
 
     # def executeV2(self):
     #     """
@@ -866,8 +858,8 @@ class HidrographyFlowProcess(ValidationProcess):
                 self.abstractDb.createHidNodeTable(crs.split(':')[1])
             if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
                 self.abstractDb.createNodeTypeDomainTable()
-            # load node table into canvas
-            self.loadLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeCrs)
+            # # load node table into canvas
+            self.loadLayer(self.hidNodeLayerName)
             # getting current type for hidrography nodes as it is on screen now
             self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             if self.parameters['Classify Nodes On Database']:
