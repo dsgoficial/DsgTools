@@ -28,8 +28,8 @@ from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtWidgets import QTableWidgetItem
 
-from DsgTools.CustomWidgets.BasicInterfaceWidgets.orderedStructureWidget import OrderedStructureWidget
-from DsgTools.CustomWidgets.BasicInterfaceWidgets.snapChooserWidget import SnapChooserWidget
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedStructureWidget import OrderedStructureWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.snapChooserWidget import SnapChooserWidget
 
 class OrderedRecursiveSnapWidget(OrderedStructureWidget):
 

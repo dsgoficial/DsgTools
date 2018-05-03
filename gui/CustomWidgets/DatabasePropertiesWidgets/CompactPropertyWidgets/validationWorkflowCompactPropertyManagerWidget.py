@@ -29,13 +29,11 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
-from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
-from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
-from DsgTools.CustomWidgets.genericCompactPropertyManagerWidget import GenericCompactPropertyManagerWidget
-from DsgTools.ServerManagementTools.validationWorkflowManager import ValidationWorkflowManager
-from DsgTools.ValidationTools.validationWorkflowCreator import ValidationWorkflowCreator
-from DsgTools.Utils.utils import Utils
-from DsgTools.dsgEnums import DsgEnums
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.genericCompactPropertyManagerWidget import GenericCompactPropertyManagerWidget
+from DsgTools.core.ServerManagementTools.validationWorkflowManager import ValidationWorkflowManager
+from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.validationWorkflowCreator import ValidationWorkflowCreator
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
