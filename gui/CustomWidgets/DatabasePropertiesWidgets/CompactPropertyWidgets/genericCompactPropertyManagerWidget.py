@@ -34,7 +34,7 @@ from qgis.PyQt.QtGui import QCursor
 from DsgTools.gui.CustomWidgets.SelectionWidgets.listSelector import ListSelector
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.dsgEnums import DsgEnums
-from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.genericParameterSetter import GenericParameterSetter
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericParameterSetter import GenericParameterSetter
 
 from qgis.core import QgsMessageLog
 import json
