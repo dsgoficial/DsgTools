@@ -26,10 +26,9 @@ from uuid import uuid4
 import codecs, os, json, binascii
 
 #DSG Tools imports
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory 
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
-from DsgTools.ServerManagementTools.genericDbManager import GenericDbManager
-from DsgTools.Utils.utils import Utils
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory 
+from DsgTools.core.ServerManagementTools.genericDbManager import GenericDbManager
+from DsgTools.core.Utils.utils import Utils
 
 #qgis.PyQt imports
 from qgis.PyQt.Qt import QObject
