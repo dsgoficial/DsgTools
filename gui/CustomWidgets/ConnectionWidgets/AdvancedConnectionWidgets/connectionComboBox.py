@@ -29,10 +29,10 @@ from qgis.PyQt.QtGui import QCursor
 
 from qgis.core import QgsMessageLog
 
-from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionComboBox.ui'))

@@ -31,11 +31,10 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, Q
 from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
-from DsgTools.CustomWidgets.listSelector import ListSelector
-from DsgTools.Utils.utils import Utils
-from DsgTools.dsgEnums import DsgEnums
-from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
-from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
+from DsgTools.gui.CustomWidgets.SelectionWidgets.listSelector import ListSelector
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.genericParameterSetter import GenericParameterSetter
 
 from qgis.core import QgsMessageLog
 import json

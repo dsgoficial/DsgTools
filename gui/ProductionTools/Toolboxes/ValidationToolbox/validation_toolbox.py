@@ -79,6 +79,20 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.itemList = []
         self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
 
+    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
+        icon_path = iconBasePath + 'validationtools.png'
+        text = self.tr('Perform database validation (quality assurance)')
+        action = manager.add_action(
+            icon_path,
+            text=text,
+            callback=callback,
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parentMenu = parentMenu,
+            parentButton = parentStackButton
+            )
+        parentStackButton.setDefaultAction(action)
+
     def createContextMenu(self, position):
         """
         Creates the flag menu
