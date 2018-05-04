@@ -22,7 +22,7 @@
 """
 from builtins import str
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
 class TopologicalCleanProcess(ValidationProcess):

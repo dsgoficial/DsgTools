@@ -22,8 +22,8 @@
 """
 from builtins import range
 from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsFeature, QgsFeatureRequest
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class DeaggregateGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False, withElements = True):

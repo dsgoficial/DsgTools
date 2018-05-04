@@ -22,8 +22,8 @@
 """
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QgsPoint
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 from collections import deque, OrderedDict
 import processing, binascii
 

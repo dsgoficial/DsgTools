@@ -22,13 +22,13 @@
 """
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from qgis.PyQt.QtCore import QVariant
 import processing, binascii
 import json
 
 #update imports
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class CloseEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False, withElements = True):

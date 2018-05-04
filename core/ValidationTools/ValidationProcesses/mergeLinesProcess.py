@@ -21,8 +21,8 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsGeometry, QgsDataSourceUri
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 import binascii
 
 class MergeLinesProcess(ValidationProcess):
