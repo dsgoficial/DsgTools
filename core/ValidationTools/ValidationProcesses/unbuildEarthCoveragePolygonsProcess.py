@@ -21,14 +21,14 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.ValidationTools.ValidationProcesses.cleanGeometriesProcess import CleanGeometriesProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.cleanGeometriesProcess import CleanGeometriesProcess
 from qgis.PyQt.QtCore import QVariant
 import processing, binascii
 import json
 
 #update imports
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):

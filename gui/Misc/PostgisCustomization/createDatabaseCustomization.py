@@ -44,7 +44,7 @@ from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import 
 from DsgTools.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import AlterDefaultWidget
 from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.Utils.utils import Utils
 

@@ -22,9 +22,9 @@
 """
 from builtins import str
 from qgis.core import QgsMessageLog, Qgis
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 import binascii
 
 class IdentifySmallLinesProcess(ValidationProcess):

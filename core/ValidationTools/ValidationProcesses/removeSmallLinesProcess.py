@@ -22,8 +22,8 @@
 """
 from builtins import str
 from qgis.core import QgsMessageLog
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class RemoveSmallLinesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):

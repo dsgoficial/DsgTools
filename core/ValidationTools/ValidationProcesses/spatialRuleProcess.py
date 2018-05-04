@@ -27,8 +27,8 @@ from qgis.PyQt import QtGui
 
 from qgis.core import QgsMessageLog, QgsDataSourceUri
 
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class SpatialRuleProcess(ValidationProcess):
     #this relates the predicate with the PostGIS ST functions

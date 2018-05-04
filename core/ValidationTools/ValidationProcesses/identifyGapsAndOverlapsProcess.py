@@ -21,9 +21,8 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 from collections import OrderedDict
 class IdentifyGapsAndOverlapsProcess(ValidationProcess):

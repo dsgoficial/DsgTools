@@ -25,9 +25,9 @@ from builtins import range
 from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, Qgis
 import math
 from math import pi
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
-from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
@@ -36,7 +36,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         """
         super(IdentifyOutOfBoundsAnglesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
-        self.geometryHandler = DsgGeometryHandler(iface, parent = iface.mapCanvas())
+        self.geometryHandler = GeometryHandler(iface, parent = iface.mapCanvas())
         
         if not self.instantiating:
             # getting tables with elements

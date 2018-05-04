@@ -21,9 +21,10 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.DsgGeometrySnapper.dsgGeometrySnapper import DsgGeometrySnapper
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from qgis.analysis import QgsGeometrySnapper
+
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 from collections import OrderedDict
 
@@ -68,7 +69,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
             self.startTimeCount()
             refcl = self.classesWithElemDict[refKey]
             reflyr = self.loadLayerBeforeValidationProcess(refcl)
-            snapper = DsgGeometrySnapper(reflyr)
+            snapper = QgsGeometrySnapper(reflyr)
             snapper.featureSnapped.connect(self.updateProgress)
             tol = self.parameters['Snap']
             msg = ''

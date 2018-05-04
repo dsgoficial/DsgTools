@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
 from DsgTools.Utils.utils import Utils
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.CustomWidgets.tabDbSelectorWidget import TabDbSelectorWidget
 from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
