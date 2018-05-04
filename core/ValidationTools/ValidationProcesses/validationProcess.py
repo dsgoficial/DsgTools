@@ -301,7 +301,7 @@ class ValidationProcess(QObject):
             if len(outFeats) == 0:
                 idsToRemove.append(id)
         #pushing the changes into the edit buffer
-        pgInputLayer.addFeatures(addList, True)
+        pgInputLayer.addFeatures(addList)
         #removing features from the layer.
         pgInputLayer.deleteFeatures(idsToRemove)
 
@@ -389,7 +389,7 @@ class ValidationProcess(QObject):
             if len(outFeats) == 0 and deleteFeatures:
                 idsToRemove.append(id)
         #pushing the changes into the edit buffer
-        pgInputLayer.addFeatures(addList, True)
+        pgInputLayer.addFeatures(addList)
         #removing features from the layer.
         pgInputLayer.deleteFeatures(idsToRemove)
         pgInputLayer.endEditCommand()
@@ -542,7 +542,7 @@ class ValidationProcess(QObject):
                 self.localProgress.step()
         
         #inserting new features into layer
-        coverage.addFeatures(featlist, False)
+        coverage.addFeatures(featlist)
         coverage.endEditCommand()
         coverage.commitChanges()
         return coverage
@@ -629,7 +629,7 @@ class ValidationProcess(QObject):
     def raiseVectorFlags(self, flagLyr, featFlagList):
         flagLyr.startEditing()
         flagLyr.beginEditCommand('Raising flags') #speedup
-        flagLyr.addFeatures(featFlagList, False)
+        flagLyr.addFeatures(featFlagList)
         flagLyr.endEditCommand()
         flagLyr.commitChanges()
         return len(featFlagList)
