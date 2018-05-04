@@ -393,46 +393,114 @@ class MultiLayerSelection(QgsMapTool):
         if onHoveredAction:
             action.hovered[()].connect(onHoveredAction)
 
-    # def createMenuDict(self, featureList):
-    #     """
-    #     Creates a dictionary ({ (str)Layer_Name : [(int)feature_id] }) from a given list
-    #     :param featureList: a list os items as of [layer, feature[, geometry_type]]
-    #     """
-    #     menuDict = dict()
-    #     for item in featureList:
-    #         if item[0].name() not in menuDict.keys():
-    #             menuDict[item[0].name()] = [item[1].id()]
-    #         else:
-    #             menuDict[item[0].name()].append(item[1].id())
-    #     return menuDict
+    def createMenuDict(self, featureList):
+        """
+        Creates a dictionary ({ (QgsVectorLayer) layer : [ (int)feature_id ] }) from a given list.
+        :param featureList: a list os items as of [layer, feature[, geometry_type]]
+        """
+        menuDict = dict()
+        for item in featureList:
+            if item[0] not in menuDict.keys():
+                menuDict[item[0]] = [item[1].id()]
+            else:
+                menuDict[item[0]].append(item[1].id())
+        return menuDict
 
-    # def setContextMenuStyle(self, dictMenuSelected, dictMenuNotSelected):
-    #     """
-    #     Defines how many "submenus" the context menu should have.
-    #     There are 3 context menu scenarios to be handled:
-    #     1- both dicts are filled and context menu should have 2 "submenus" - DB.Classes > Selected / Not Selected > Feature IDs;
-    #     2- one of them is filled and there are more than 1 class to be enlisted (1 submenu necessary) - DB.Class > Feature IDs; and
-    #     3- one of them is filled and there is only one class with features selected - DB.Class (feat_id = NR)
-    #     """
-    #     # finding out filling conditions
-    #     selectedDict = bool(dictMenuSelected)
-    #     notSelectedDict = bool(dictMenuNotSelected)
-    #     # finding out if one of either dictionaty are filled ("Exclusive or")
-    #     selectedXORnotSelected = (selectedDict != notSelectedDict)
-    #     # finding out if there is more than one class to be listed on menu
-    #     nrClass = max(len(dictMenuSelected), len(dictMenuNotSelected))
-    #     # Case 1: 2 submenus to be filled = "3 context menus"
-    #     if selectedDict and notSelectedDict:
-    #         # setting up menus
-    #         menu = QtGui.QMenu()
-    #         selectedMenu = QtGui.QAction(self.tr('Selected Features'), menu)
-    #         notSelectedMenu = QtGui.QAction(self.tr(''), menu)
-    #         # get the list of all classes to be enlisted
-    #         classes = dictMenuSelected.keys() + dictMenuNotSelected.keys()
-    #         # getting unique classes
-    #         classes = list(set(classes))
-    #         for cl in classes:
-    #             { cl : menu.addAction(cl) }
+    def getCallback(self, e, layer, feature, geomType):
+        """
+        Sets the callback of an action.
+        :param e: (QMouseEvent) mouse event on canvas.
+        """
+        if e.button() == QtCore.Qt.LeftButton: 
+            # line added to make sure the action is associated with current loop value,
+            # lambda function is used with standard parameter set to current loops value.
+            triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1])
+            hoveredAction = lambda t=[layer, feature] : self.createRubberBand(feature=t[1], layer=t[0], geom=geomType)
+        elif e.button() == QtCore.Qt.RightButton:
+            if selected:
+                triggeredAction = lambda layer=layer : self.iface.setActiveLayer(layer)
+                hoveredAction = None
+                continue
+            else:
+                triggeredAction = lambda t=[layer, feature] : self.iface.openFeatureForm(t[0], t[1], showModal=False)
+                hoveredAction = lambda t=[layer, feature] : self.createRubberBand(feature=t[1], layer=t[0], geom=geomType)
+        return triggeredAction, hoveredAction
+
+    def getCallbackMultipleFeatures(self, e, listLayerFeature):
+        """
+        Sets the callback of an action with a list features as target.
+        :param e: (QMouseEvent) mouse event on canvas.
+        """
+        # setting the action for the "All" options
+        if e.button() == QtCore.Qt.LeftButton:
+            triggeredAction = lambda t=listLayerFeature: self.setSelectionListFeature(listLayerFeature=t)
+        else:
+            action = menu.addAction(self.tr('Open All Attribute Tables'))
+            triggeredAction = lambda t=listLayerFeature: self.openMultipleFeatureForm(listLayerFeature=t)
+        # to trigger "Hover" signal on QMenu for the multiple options
+        hoveredAction = lambda t=listLayerFeature : self.createMultipleRubberBand(featureList=t)
+        return triggeredAction, hoveredAction
+
+
+    def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected, listLayerFeature):
+        """
+        Defines how many "submenus" the context menu should have.
+        There are 3 context menu scenarios to be handled:
+        :param e: (QMouseEvent) mouse event on canvas.
+        :param dictMenuSelected: (dict) dictionary of classes and its selected features being treatead.
+        :param dictMenuNotSelected: (dict) dictionary of classes and its non selected features being treatead.
+        1- both dicts are filled and context menu should have 2 "submenus" - DB.Classes > Selected / Not Selected > Feature IDs;
+        2- one of them is filled and there are more than 1 class to be enlisted (1 submenu necessary) - DB.Class > Feature IDs; and
+        3- one of them is filled and there is only one class with features selected - DB.Class (feat_id = NR)
+        """
+        # finding out filling conditions
+        selectedDict = bool(dictMenuSelected)
+        notSelectedDict = bool(dictMenuNotSelected)
+        # finding out if one of either dictionaty are filled ("Exclusive or")
+        selectedXORnotSelected = (selectedDict != notSelectedDict)
+        # setting up menus
+        menu = QtGui.QMenu()
+        # Case 1: 2 submenus to be filled = "3 context menus"
+        if selectedXORnotSelected:
+            if selectedDict:
+                menuDict, submenu = dictMenuSelected, QtGui.QAction(self.tr('Selected Features'), menu)
+                genericAction = self.tr('Deselected All Feature')
+            else:
+                menuDict, submenu = dictMenuNotSelected, QtGui.QAction(self.tr('Not Selected Features'), menu)
+                genericAction = self.tr('Selected All Features')
+            # creating a dict to handle all "menu" for each class
+            submenuDict = dict()
+            for cl in menuDict.keys():
+                # menu for features of each class
+                submenuDict[cl] = QtGui.QAction(cl, submenu)
+                geomType = cl.geometryType()
+                className = cl.name()
+                # get layer database name
+                dsUri = self.iface.cl.dataProvider().dataSourceUri()
+                if '/' in dsUri or '\\' in dsUri:
+                    db_name = dsUri
+                else:
+                    db_name = self.iface.activeLayer().dataProvider().dataSourceUri().split("'")[1]
+                # inserting an entry for every feature of each class in its own context menu
+                for feat in menuDict[cl]:
+                    s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
+                    action = submenuDict[cl].addAction(s)
+                    triggeredAction, hoveredAction = self.getCallback(e=e, action=action, layer=cl, feature=feat, geomType=geomType)
+                    self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                # adding generic action for each class
+                action = submenuDict[cl].addAction(self.tr("{0} from Class {1}").format(genericAction, className), submenuDict[cl])
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=listLayerFeature)
+                self.addActionToMenu(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+        # if selectedDict and notSelectedDict:
+        #     selectedMenu = QtGui.QAction(self.tr('Selected Features'), menu)
+        #     notSelectedMenu = QtGui.QAction(self.tr('Not Selected Features'), menu)
+        #     # get the list of all classes to be enlisted
+        #     classes = dictMenuSelected.keys() + dictMenuNotSelected.keys()
+        #     # getting unique classes
+        #     classes = list(set(classes))
+        #     for cl in classes:
+        #         { cl : menu.addAction(cl) }
 
     def createContextMenu(self, e):
         """
