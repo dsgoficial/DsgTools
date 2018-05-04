@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMessageLog, QgsVectorLayer, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -52,7 +52,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -62,7 +62,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
             self.startTimeCount()
             if len(classesWithFlags) == 0:
                 self.setStatus(self.tr('There are no invalid geometries.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('There are no invalid geometries.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('There are no invalid geometries.'), "DSG Tools Plugin", Qgis.Critical)
                 return 1
             numberOfProblems = 0
             for cl in classesWithFlags:
@@ -81,10 +81,10 @@ class ForceValidityGeometriesProcess(ValidationProcess):
                 self.logLayerTime(cl) #check this time later (I guess time will be counted twice due to postProcess)
                 # finalization
                 self.postProcessSteps(processTableName, lyr)
-                QgsMessageLog.logMessage(self.tr('{0} features from {1} were changed.').format(problems, cl), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('{0} features from {1} were changed.').format(problems, cl), "DSG Tools Plugin", Qgis.Critical)
             self.setStatus(self.tr('{0} features were changed.').format(numberOfProblems), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0

@@ -76,7 +76,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
         Creates a postgis database
         """
         if self.databaseEdit.text() == '':
-            QgsMessageLog.logMessage('Enter database name!', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage('Enter database name!', "DSG Tools Plugin", Qgis.Critical)
         else:
             self.db = self.getDatabase()
             if self.db:
@@ -152,7 +152,7 @@ class PostgisDBTool(QDialog, FORM_CLASS):
             self.abstractDb.connectDatabaseWithParameters(host, port, database, user, password)
 
         if not self.abstractDb.db.open():
-            QgsMessageLog.logMessage(self.abstractDb.db.lastError().text(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.abstractDb.db.lastError().text(), "DSG Tools Plugin", Qgis.Critical)
 
         return self.abstractDb
 

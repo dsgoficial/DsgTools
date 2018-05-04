@@ -237,5 +237,5 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
             self.setState()
             self.loadCodeList()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Do the layers have Value Maps?)'))
-            QgsMessageLog.logMessage(self.tr('Error loading classes to Code List Viewer: ')+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Do the layers have Value Maps?)'))
+            QgsMessageLog.logMessage(self.tr('Error loading classes to Code List Viewer: ')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)

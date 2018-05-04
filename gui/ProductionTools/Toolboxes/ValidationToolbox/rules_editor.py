@@ -120,7 +120,7 @@ class RulesEditor(QtWidgets.QDialog, FORM_CLASS):
             with codecs.open(self.rulesFile, 'r', encoding='utf8') as f:
                 rules = [line.rstrip('\n') for line in f]
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file! \n'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file! \n'))
             return
         
         for line in rules:
@@ -178,7 +178,7 @@ class RulesEditor(QtWidgets.QDialog, FORM_CLASS):
                 for line in self.makeRulesList():
                     outfile.write(line + '\n')
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
             return
             
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
+        QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))

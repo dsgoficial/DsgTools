@@ -156,13 +156,13 @@ class ValidationManager(QObject):
         try:
             runningProc = self.postgisDb.getRunningProc()
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             return 0
         #if there is a running process we should stop
         QApplication.restoreOverrideCursor()
         if runningProc != None:
-            if not QtGui.QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
-                QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if not QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Ok:
+                QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", Qgis.Critical)
                 return 0
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         #get process chain
@@ -181,13 +181,13 @@ class ValidationManager(QObject):
             params = lastParameters
         #execute each process
         for process in processChain:
-            QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Process {0} Log:\n').format(process.getName()), "DSG Tools Plugin", Qgis.Critical)
             process.setParameters(params)
             process.setDbUserName(self.postgisDb.getDatabaseParameters()[2])
             process.setProcessName(self.processDict[process.processAlias])
             ret = process.execute() # run bitch run!
             #status = currProc.getStatus() #must set status
-            QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", Qgis.Critical)
             # process.logTotalTime()
             # process.logProcess()
             if ret == 0:
@@ -217,14 +217,14 @@ class ValidationManager(QObject):
         try:
             runningProc = self.postgisDb.getRunningProc()
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             return 0
             
         #if there is a running process we should stop
         QApplication.restoreOverrideCursor()
         if runningProc != None:
-            if not QtGui.QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
-                QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if not QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Ok:
+                QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", Qgis.Critical)
                 return 0
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         currProc = self.instantiateProcessByName(processName, False)
@@ -242,10 +242,10 @@ class ValidationManager(QObject):
             # adjusting the parameters in the process
             currProc.setParameters(params)
         #check status
-        QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", Qgis.Critical)
         ret = currProc.execute() #run bitch run!
         #status = currProc.getStatus() #must set status
-        QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", Qgis.Critical)
         currProc.logTotalTime()
         #checking for existing post process
         postProcessName = currProc.postProcess()

@@ -186,13 +186,13 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         templateDb, profileName, edgvVersion = parameterDlg.getParameters()
         if edgvVersion in list(permissionDict.keys()):
             if profileName in permissionDict[edgvVersion]:
-                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
+                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
                 return
         newItem = self.populateTreeDict(templateDb, edgvVersion)
         jsonDict = json.dumps(newItem, sort_keys=True, indent=4)
         self.permissionManager.createSetting(profileName, edgvVersion, jsonDict)
         self.updateInterface(profileName, edgvVersion)
-        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Profile ') + profileName + self.tr(' created successfully!'))
+        QMessageBox.warning(self, self.tr('Success!'), self.tr('Profile ') + profileName + self.tr(' created successfully!'))
     
     def setEnabled(self, enabled):
         self.treeWidget.setEnabled(enabled)
@@ -219,7 +219,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
     def on_deletePermissionPushButton_clicked(self):
         profileName, edgvVersion = self.profilesListWidget.currentItem().text().split(' (')
         edgvVersion = edgvVersion.replace(')','')
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete profile ')+profileName+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -253,8 +253,8 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
             #get a dict with all tables from database
             geomList = abstractDb.getTablesJsonList()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
             return
         profile = dict()
         categories = dict()

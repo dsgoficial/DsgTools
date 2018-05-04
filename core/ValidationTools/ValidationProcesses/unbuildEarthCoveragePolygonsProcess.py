@@ -97,7 +97,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -114,7 +114,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
             # coverageClassList = earthCoverageDict.keys()
             # if coverageClassList.__len__() == 0:
             #     self.setStatus(self.tr('Empty earth coverage!'), 1) #Finished
-            #     QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)                
+            #     QgsMessageLog.logMessage(self.tr('Empty earth coverage!'), "DSG Tools Plugin", Qgis.Critical)                
             #     return
             
             
@@ -133,6 +133,6 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
             # self.raiseFlags(areaLyr)     
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0

@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMessageLog, QgsVectorLayer, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -46,7 +46,7 @@ class SnapToGridProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -79,13 +79,13 @@ class SnapToGridProcess(ValidationProcess):
                 self.postProcessSteps(processTableName, lyr)
                 
                 #setting status
-                QgsMessageLog.logMessage(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped to grid successfully.'), "DSG Tools Plugin", Qgis.Critical)
                 self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             #returning success
             self.setStatus(self.tr('All features from ') + classAndGeom['tableName'] + self.tr(' snapped successfully.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             #returning error
             return 0

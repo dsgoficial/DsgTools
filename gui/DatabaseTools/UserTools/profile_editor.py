@@ -216,7 +216,7 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         Saves the profile file
         """
         if self.jsonCombo.currentIndex() == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile model!'))
             return
         else:
             profile = self.jsonCombo.currentText()
@@ -227,10 +227,10 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
             with open(path, 'w') as outfile:
                 json.dump(self.makeProfileDict(), outfile, sort_keys=True, indent=4)
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem saving file! \n')+':'.join(e.args))
             return
             
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
+        QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile saved successfully!'))
     
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
@@ -247,12 +247,12 @@ class ProfileEditor(QtWidgets.QDialog, FORM_CLASS):
         """
         if self.jsonCombo.currentIndex() != 0:
             profileName = self.jsonCombo.currentText()
-            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove profile ')+profileName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove profile ')+profileName+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return
             try:
                 os.remove(os.path.join(self.folder,profileName+'.json'))
             except Exception as e:
-                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+':'.join(e.args))
+                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem deleting profile! \n')+':'.join(e.args))
                 return
             self.getProfiles()
             self.setInitialState()

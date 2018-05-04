@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -47,7 +47,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -85,9 +85,9 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                         recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], tupple[0], self.tr('Vertex near edge.'), tupple[1], classAndGeom['geom']))
                         self.addClassesToBeDisplayedList(tupple[0]) 
                     numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] +self.tr(' have vertex(es) near edge(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] +self.tr(' have vertex(es) near edge(s). Check flags.'), "DSG Tools Plugin", Qgis.Critical)
                 else:
-                    QgsMessageLog.logMessage(self.tr('There are no vertexes near edges on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('There are no vertexes near edges on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", Qgis.Critical)
                 self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
             if error:
                 self.setStatus(self.tr('There are vertexes near edges. Check log.'), 4) #Finished with errors
@@ -95,6 +95,6 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
                 self.setStatus(self.tr('There are no vertexes near edges.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0

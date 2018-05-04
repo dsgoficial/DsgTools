@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QgsPoint
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, QgsPoint, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.core.ValidationTools.ValidationProcesses.identifyDanglesProcess import IdentifyDanglesProcess
 from collections import deque, OrderedDict
@@ -57,7 +57,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -77,7 +77,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
                 featureList = list(featureDict.values())
                 if featureList == []:
                     self.setStatus(self.tr('Empty layer or empty selection!. Nothing to be done.'), 1) #Finished
-                    QgsMessageLog.logMessage(self.tr('Layer {0} is empty or there are no selected features!. Nothing to be done.').format(lyr.name()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('Layer {0} is empty or there are no selected features!. Nothing to be done.').format(lyr.name()), "DSG Tools Plugin", Qgis.Critical)
                     continue
                 spatialIdx = self.buildSpatialIndex(featureList)
                 size = len(featureList)                   
@@ -93,7 +93,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
                 self.setStatus(self.tr('Line on Line Overlay process complete.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0
     

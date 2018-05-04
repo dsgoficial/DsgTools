@@ -26,7 +26,7 @@ import os, binascii
 from qgis.PyQt import QtGui
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
-from qgis.core import QgsMessageLog, QgsDataSourceUri, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer
+from qgis.core import QgsMessageLog, QgsDataSourceUri, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer, Qgis
 
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
@@ -281,7 +281,7 @@ class SpatialRuleEnforcer(ValidationProcess):
             with open(self.rulesFile, 'r') as f:
                 rules = [line.rstrip('\n') for line in f]
         except Exception as e:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Problem reading file!'))
             return
         
         ret = list()

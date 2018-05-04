@@ -179,7 +179,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         Slot to open create user dialog
         """
         if not self.widget.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         dlg = CreateUser(self.comboBox.currentText(),self.widget.abstractDb)
         dlg.exec_()
@@ -192,21 +192,21 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         """
         user = self.comboBox.currentText()
         if not self.widget.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         if self.comboBox.currentIndex() == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
             return
 
         try:
             self.widget.abstractDb.removeUser(user)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             self.getProfiles(user)
             return
 
         self.getProfiles(user)
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User removed successfully!'))
+        QMessageBox.warning(self, self.tr('Warning!'), self.tr('User removed successfully!'))
         self.populateUsers()               
 
     @pyqtSlot(bool)
@@ -216,10 +216,10 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         """
         user = self.comboBox.currentText()
         if not self.widget.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         if self.comboBox.currentIndex() == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user!'))
             return
         dlg = AlterUserPassword(user, self.widget.abstractDb)
         dlg.exec_()
@@ -264,7 +264,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             try:
                 self.widget.abstractDb.grantRole(user, role)
             except Exception as e:
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+                QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
                 self.getProfiles(user)
                 return
 
@@ -272,12 +272,12 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
             try:
                 self.widget.abstractDb.revokeRole(user, role)
             except Exception as e:
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
+                QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
                 self.getProfiles(user)
                 return
 
         self.getProfiles(user)
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('User updated successfully!'))
+        QMessageBox.warning(self, self.tr('Warning!'), self.tr('User updated successfully!'))
         
     @pyqtSlot(bool)
     def on_closeButton_clicked(self):
@@ -293,7 +293,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         """
         tam = self.installedProfiles.__len__()
         if tam == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles installed! Install at least one and try again.'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles installed! Install at least one and try again.'))
             return
         
         for i in range(tam+1,1,-1):
@@ -310,7 +310,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         """
         tam = self.assignedProfiles.__len__()
         if tam == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles assigned! Assign at least one and try again.'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('No profiles assigned! Assign at least one and try again.'))
             return
         
         for i in range(tam+1,1,-1):
@@ -327,7 +327,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         """
         listedItems = self.installedProfiles.selectedItems()
         if len(listedItems) == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
             return
         
         for i in listedItems:
@@ -344,7 +344,7 @@ class ManageUserProfiles(QtWidgets.QDialog, FORM_CLASS):
         """
         listedItems = self.assignedProfiles.selectedItems()
         if len(listedItems) == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select a profile first!'))
             return
         
         for i in listedItems:

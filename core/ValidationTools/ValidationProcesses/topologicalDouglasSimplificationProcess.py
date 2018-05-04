@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 import qgis.utils
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
@@ -81,7 +81,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -105,13 +105,13 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
             try:
                 QgsProject.instance().removeMapLayer(coverage.id())
             except:
-                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.name() for i in classlist]) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(self.tr('Simplification done on the following layers: ') + ','.join([i.name() for i in classlist]) +'.', "DSG Tools Plugin", Qgis.Critical)
             self.logLayerTime('unified layer')
             self.setStatus(self.tr('Simplification process complete.'), 1) #Finished
             self.logLayerTime('unified layer')
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0

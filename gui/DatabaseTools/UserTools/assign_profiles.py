@@ -104,7 +104,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
         try:
             ret = self.widget.abstractDb.getRoles()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         self.assignedProfiles.addItems(ret)
 
@@ -114,7 +114,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
         Installs the selected profiles into the database selected
         """
         if len(self.possibleProfiles.selectedItems()) == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
             return 
         
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -128,11 +128,11 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
                 self.widget.abstractDb.createRole(role, dict)
             except Exception as e:
                 QApplication.restoreOverrideCursor()
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
+                QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
                 return
             
         QApplication.restoreOverrideCursor()
-        QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))    
+        QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles assigned successfully!'))    
         
         self.getInstalledProfiles()
         
@@ -158,7 +158,7 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
         Removes a installed profile from the database (i.e we execute a drop role sql query)
         """
         if len(self.assignedProfiles.selectedItems()) == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
             return 
         
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -172,11 +172,11 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
             except Exception as e:
                 problem = True
                 QApplication.restoreOverrideCursor()
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
+                QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
 
         if not problem:
             QApplication.restoreOverrideCursor()
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profiles removed successfully!'))
         
         self.getInstalledProfiles()
 
@@ -186,10 +186,10 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
         Deletes a profile file
         """
         if len(self.possibleProfiles.selectedItems()) == 0:
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one profile and try again!'))
             return 
         
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove selected profile models?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove selected profile models?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         
         for item in self.possibleProfiles.selectedItems():
@@ -199,6 +199,6 @@ class AssignProfiles(QtWidgets.QDialog, FORM_CLASS):
             try:
                 os.remove(path)
             except OSError as e:
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile model: ')+json+'\n'+e.strerror)
+                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Problem removing profile model: ')+json+'\n'+e.strerror)
         
         self.getModelProfiles()

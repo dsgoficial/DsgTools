@@ -296,7 +296,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             for config in configList:
                 for dbName in list(exceptionDict[config].keys()):
                     if exceptionDict[config][dbName] != dict():
-                        QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                        QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSG Tools Plugin", Qgis.Critical)
         return msg 
 
     def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):
@@ -534,7 +534,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         edgvVersion = self.genericDbManager.edgvVersion
         uiParameterDict = self.getParametersFromInterface()
         settingTextList = ', '.join(uiParameterDict['parameterList'])
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete ')+settingTextList+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete ')+settingTextList+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete, selectedConfig = uiParameterDict['parameterList'])
         header, operation = self.getDeleteHeader()
@@ -547,7 +547,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         structuralChanges = self.genericDbManager.hasStructuralChanges(dbList)
         if structuralChanges != []:
             dbChangeList = ', '.join(structuralChanges)
-            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to apply selected operation on ')+dbChangeList+'?'+self.tr(' (Data may be lost in the process)'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to apply selected operation on ')+dbChangeList+'?'+self.tr(' (Data may be lost in the process)'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return False
             else:
                 return True

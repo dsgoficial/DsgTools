@@ -23,7 +23,7 @@
  ***************************************************************************/
 """
 from builtins import range
-from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsProject
+from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsField, QgsFeatureIterator, QgsProject, Qgis
 
 from qgis.PyQt.QtCore import QVariant
 
@@ -68,7 +68,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -77,12 +77,12 @@ class IdentifyDanglesProcess(ValidationProcess):
             classesWithElemKeys = self.parameters['Layer and Filter Layers'][1]
             if len(classesWithElemKeys) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", Qgis.Critical)
                 return 1
 
             if not refKey:
                 self.setStatus(self.tr('One layer must be selected! Stopping.'), 1) #Finished
-                QgsMessageLog.logMessage(self.tr('One layer must be selected! Stopping.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('One layer must be selected! Stopping.'), "DSG Tools Plugin", Qgis.Critical)
                 return 1
             recordList = []
             # preparation
@@ -117,7 +117,7 @@ class IdentifyDanglesProcess(ValidationProcess):
             try:
                 QgsProject.instance().removeMapLayer(filterLayer.id())
             except:
-                QgsMessageLog.logMessage(self.tr('Error while trying to remove filter layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove filter layer.'), "DSG Tools Plugin", Qgis.Critical)
 
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
@@ -128,7 +128,7 @@ class IdentifyDanglesProcess(ValidationProcess):
                 self.setStatus(msg, 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0            
     

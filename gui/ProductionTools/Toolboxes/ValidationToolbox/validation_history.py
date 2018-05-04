@@ -53,7 +53,7 @@ class ValidationHistory(QtWidgets.QDialog, FORM_CLASS):
             self.projectModel = QSqlTableModel(None,self.postgisDb.db)
             self.refreshViewTable(createTable=True)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Did you select a database?)'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Did you select a database?)'))
             QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSG Tools Plugin", Qgis.Critical)        
     
     @pyqtSlot(bool)

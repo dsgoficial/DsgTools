@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -52,7 +52,7 @@ class RemoveSmallLinesProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -83,11 +83,11 @@ class RemoveSmallLinesProcess(ValidationProcess):
                 localProgress.step()
                 numberOfProblems += problems
                 
-                QgsMessageLog.logMessage(str(problems) + self.tr(' features from ')+cl+self.tr(' were changed.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(str(problems) + self.tr(' features from ')+cl+self.tr(' were changed.'), "DSG Tools Plugin", Qgis.Critical)
                 self.logLayerTime(cl)
             self.setStatus(str(numberOfProblems) + self.tr(' features were removed.'), 1) #Finished with flags
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0

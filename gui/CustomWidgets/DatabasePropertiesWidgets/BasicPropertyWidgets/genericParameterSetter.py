@@ -73,7 +73,7 @@ class GenericParameterSetter(QtWidgets.QDialog, FORM_CLASS):
     def on_okPushButton_clicked(self):
         if not self.validateUi():
             reason = self.validateUiReason()
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), reason)
+            QMessageBox.warning(self, self.tr('Warning!'), reason)
         else:
             self.done(1)
     

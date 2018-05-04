@@ -73,7 +73,7 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
     @pyqtSlot(bool)
     def on_createUserButton_clicked(self):
         if not self.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         dlg = CreateUser(abstractDb=self.abstractDb)
         dlg.exec_()
@@ -83,13 +83,13 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
     def on_removeUserButton_clicked(self):
         selectedUsers = self.serverUserTable.selectedItems()
         if not self.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         if len(selectedUsers) == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
             return
         selectedUserNames = [i.text(0) for i in selectedUsers]
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove users: ')+', '.join(selectedUserNames), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to remove users: ')+', '.join(selectedUserNames), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         exceptionDict = dict()
         successList = []
@@ -108,10 +108,10 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
         selectedUsers = self.serverUserTable.selectedItems()
         selectedUserNames = [i.text(0) for i in selectedUsers]
         if not self.abstractDb:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a database!'))
             return
         if len(selectedUsers) == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('First select a user to remove!'))
             return
         dlg = AlterUserPassword(userList = selectedUserNames, abstractDb = self.abstractDb)
         dlg.exec_()
@@ -136,6 +136,6 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each user were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", Qgis.Critical)
         return msg 
     

@@ -159,7 +159,7 @@ class CreateFeatureTest(object):
             text += 'SQL rodada: '+sql+'\n'
             text += 'Erro obtido: '+query.lastError().text()+'\n'
             #Write log on QGIS
-            QgsMessageLog.logMessage('Deu merda: '+text, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage('Deu merda: '+text, "DSG Tools Plugin", Qgis.Critical)
             #Finish error message
             text += '-------------------------------------------\n'
         return text
@@ -233,7 +233,7 @@ class CreateFeatureTest(object):
                 filetext = 'SQL rodada: '+sql+'\n'
                 filetext += 'Erro obtido: '+query3.lastError().text()+'\n'
                 filetext += '-------------------------------------------\n'
-                QgsMessageLog.logMessage(filetext, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(filetext, "DSG Tools Plugin", Qgis.Critical)
                 file.write(filetext)
         file.close()
 

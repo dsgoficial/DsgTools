@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
@@ -48,7 +48,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         try:
             self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -102,7 +102,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
             try:
                 QgsProject.instance().removeMapLayer(coverage.id())
             except:
-                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", Qgis.Critical)
             
             # storing flags
             if len(recordFlagList) > 0:
@@ -120,7 +120,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
 
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0
 

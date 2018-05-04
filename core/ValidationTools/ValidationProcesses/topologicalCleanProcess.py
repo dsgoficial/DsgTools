@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing, binascii
 
@@ -76,7 +76,7 @@ class TopologicalCleanProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         self.startTimeCount()
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -99,7 +99,7 @@ class TopologicalCleanProcess(ValidationProcess):
             try:
                 QgsProject.instance().removeMapLayer(coverage.id())
             except:
-                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error while trying to remove coverage layer.'), "DSG Tools Plugin", Qgis.Critical)
 
             # storing flag
             if len(result) > 0:
@@ -109,10 +109,10 @@ class TopologicalCleanProcess(ValidationProcess):
                 for tupple in result:
                     recordList.append((cl, tupple[0], self.tr('Cleaning error.'), tupple[1], ''))
                 numberOfProblems = self.addFlag(recordList)
-                QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + cl + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from ') + cl + self.tr(' with cleaning errors. Check flags.'), "DSG Tools Plugin", Qgis.Critical)
             else:
                 nameList = [i.name() for i in classlist]
-                QgsMessageLog.logMessage(self.tr('There are no cleaning errors on ') + ', '.join(nameList) +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('There are no cleaning errors on ') + ', '.join(nameList) +'.', "DSG Tools Plugin", Qgis.Critical)
             self.logLayerTime('unified layer')
             if error:
                 self.setStatus(self.tr('There are cleaning errors. Check log.'), 4) #Finished with errors
@@ -121,6 +121,6 @@ class TopologicalCleanProcess(ValidationProcess):
             self.logLayerTime('unified layer')
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0
