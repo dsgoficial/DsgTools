@@ -34,8 +34,8 @@ from qgis.PyQt.Qt import QObject
 from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes
 
 # DSGTools imports
-from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class ValidationProcess(QObject):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):

@@ -30,11 +30,11 @@ from qgis.PyQt.QtWidgets import QTreeWidgetItem, QMessageBox
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'earthCoverageWidget.ui'))
 
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from qgis.core import QgsMessageLog
-from DsgTools.ServerManagementTools.earthCoverageManager import EarthCoverageManager
-from DsgTools.dsgEnums import DsgEnums
+from DsgTools.core.ServerManagementTools.earthCoverageManager import EarthCoverageManager
+from DsgTools.core.dsgEnums import DsgEnums
 
 class EarthCoverageWidget(QtWidgets.QWidget, FORM_CLASS):
     def __init__(self, parent=None):

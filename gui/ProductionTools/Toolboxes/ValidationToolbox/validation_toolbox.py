@@ -48,7 +48,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.validation_config import ValidationConfig
 from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.validation_history import ValidationHistory
 from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.rules_editor import RulesEditor
-from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
+from DsgTools.core.ValidationTools.ValidationProcesses.spatialRuleEnforcer import SpatialRuleEnforcer
 from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.attributeRulesEditor import AttributeRulesEditor
 
 class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
