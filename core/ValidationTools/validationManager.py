@@ -22,7 +22,7 @@
 """
 from __future__ import print_function
 import os
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.processParametersDialog import ProcessParametersDialog
 
 from qgis.PyQt.QtCore import Qt
@@ -51,7 +51,7 @@ class ValidationManager(QObject):
             self.setAvailableProcesses()
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             
     def setAvailableProcesses(self):
         """
@@ -88,7 +88,7 @@ class ValidationManager(QObject):
                 #making file name
                 fileBaseName = ''.join(chars)
                 #setting up the module to be imported
-                mod = __import__('DsgTools.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processClass])
+                mod = __import__('DsgTools.core.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processClass])
                 #obtaining the class name
                 klass = getattr(mod, processClass)
                 #instantiating the class

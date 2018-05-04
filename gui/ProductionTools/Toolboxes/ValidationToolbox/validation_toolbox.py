@@ -29,7 +29,7 @@ import os
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from qgis.PyQt.QtWidgets import QApplication, QMenu, QTableWidgetItem
+from qgis.PyQt.QtWidgets import QApplication, QMenu, QTableWidgetItem, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
@@ -148,7 +148,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             idx =  self.tableView.selectionModel().selection().indexes()[0].data()
         except:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
             return
         dimension = self.tableView.selectionModel().selection().indexes()[6].data()
         if dimension == 0:
@@ -264,7 +264,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             try:
                 status = self.connectionSelectorComboBox.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
             except Exception as e:
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+                QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
                 QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
                 status = 'Error! Check log!'
                 
@@ -290,20 +290,20 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             procReturn = self.validationManager.runLastProcess()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
         self.populateProcessList()
         if procReturn == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
         elif procReturn == -1:
             QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
         elif procReturn == -2:
-            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('No previous process run this session.'))
+            QMessageBox.information(self, self.tr('Information!'), self.tr('No previous process run this session.'))
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
 
     @pyqtSlot(bool)
@@ -313,25 +313,25 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         """
         selectedItems = self.processTreeWidget.selectedItems()
         if len(selectedItems) == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a process to run!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a process to run!'))
             return
         processName = selectedItems[0].text(1)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
             procReturn = self.validationManager.executeProcessV2(processName)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
         self.populateProcessList()
         if procReturn == 0:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
         elif procReturn == -1:
-            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Process successfully executed!'))
             #executou! show!
             #load flag layers
             self.loadAllFlagLayers()
@@ -356,7 +356,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             dlg = RulesEditor(self.connectionSelectorComboBox.abstractDb)
             dlg.exec_()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
 
     @pyqtSlot(int, name = 'on_customFilterComboBox_currentIndexChanged')
     def refreshFlagListOnClassProcessSelection(self):        
@@ -405,7 +405,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             dlg = AttributeRulesEditor(self.connectionSelectorComboBox.abstractDb)
             dlg.exec_()
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
 
     @pyqtSlot(bool)
     def on_clearAllPushButton_clicked(self):
@@ -415,7 +415,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         2- Delete flag
         """
         try:
-            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear all flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear all flags?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.connectionSelectorComboBox.abstractDb.deleteProcessFlags()
@@ -425,7 +425,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             self.iface.mapCanvas().refresh()
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
 
     @pyqtSlot(bool)
     def on_clearSelectedPushButton_clicked(self):
@@ -433,7 +433,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Deletes selected flags on the panel from validation.aux_flags
         """
         try:
-            if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
                 return
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
 
@@ -448,7 +448,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                 self.connectionSelectorComboBox.abstractDb.deleteProcessFlags(processName,layerName)
             else:
                 QApplication.restoreOverrideCursor()
-                QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
+                QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted as no Process nor Class was chosen.\n'))
                 return
             QApplication.restoreOverrideCursor()
             # refresh View Table with lasting flags
@@ -456,4 +456,4 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             self.iface.mapCanvas().refresh()
         except Exception as e:
             QApplication.restoreOverrideCursor()
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
