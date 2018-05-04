@@ -23,7 +23,7 @@
 from qgis.core import QgsMessageLog, QgsVectorLayer
 from qgis.analysis import QgsGeometrySnapper
 
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from .validationProcess import ValidationProcess
 
 from collections import OrderedDict

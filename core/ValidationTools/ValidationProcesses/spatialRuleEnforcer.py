@@ -28,7 +28,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 from qgis.core import QgsMessageLog, QgsDataSourceUri, QgsGeometry, QgsFeatureRequest, QgsVectorLayerEditBuffer
 
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 class SpatialRuleEnforcer(ValidationProcess):
     # signal to update flags
