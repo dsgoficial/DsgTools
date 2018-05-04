@@ -87,6 +87,12 @@ class HidrographyFlowProcess(ValidationProcess):
             self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
+        else:
+            # check if node table and node type domain table are created on db
+            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
+                self.abstractDb.createHidNodeTable(crs.split(':')[1])
+            if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
+                self.abstractDb.createNodeTypeDomainTable()
 
     def getFrameContour(self, frameLayer):
         """
@@ -705,13 +711,14 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
         return recordList
 
-    def loadLayer(self, layer):
+    def loadLayer(self, layer, uniqueLoad=True):
         """
         Load a given layer to canvas.
         :param layer: (str) layer name to be loaded.
+        :param uniqueLoad: (bool) indicates that layer will be loaded to canvas only if it is not loaded already.
         """
         try:
-            return self.layerLoader.load([layer], uniqueLoad=True)[layer]
+            return self.layerLoader.load([layer], uniqueLoad=uniqueLoad)[layer]
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the class {0}!\n').format(layer)+':'.join(e.args))
 
@@ -853,11 +860,6 @@ class HidrographyFlowProcess(ValidationProcess):
             # node layer has the same CRS as the hidrography lines layer
             nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
-            # check if node table and node type domain table are created on db
-            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
-                self.abstractDb.createHidNodeTable(crs.split(':')[1])
-            if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
-                self.abstractDb.createNodeTypeDomainTable()
             # # load node table into canvas
             self.loadLayer(self.hidNodeLayerName)
             # getting current type for hidrography nodes as it is on screen now
