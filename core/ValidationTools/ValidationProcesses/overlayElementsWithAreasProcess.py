@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from collections import deque, OrderedDict
 import processing, binascii
@@ -56,7 +56,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         """
         Reimplementation of the execute method from the parent class
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         try:
             self.startTimeCount()
             self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -86,9 +86,9 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                     for tupple in result:
                         recordList.append((cl, tupple[0], self.tr('Overlay error.'), tupple[1], cl['geom']))
                     numberOfProblems = self.addFlag(recordList)
-                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from {0}.{1}').format(cl['tableSchema'], cl['tableName']) + self.tr(' with overlay errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) from {0}.{1}').format(cl['tableSchema'], cl['tableName']) + self.tr(' with overlay errors. Check flags.'), "DSG Tools Plugin", Qgis.Critical)
                 else:
-                    QgsMessageLog.logMessage(self.tr('All features from {0}.{1} overlayed to elements from {2}.{3}.').format(cl['tableSchema'], cl['tableName'], overlayer['tableSchema'], overlayer['tableName']), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('All features from {0}.{1} overlayed to elements from {2}.{3}.').format(cl['tableSchema'], cl['tableName'], overlayer['tableSchema'], overlayer['tableName']), "DSG Tools Plugin", Qgis.Critical)
                 self.logLayerTime(cl['tableSchema'] + '.' + cl['tableName'])
             if error:
                 self.setStatus(self.tr('There are overlay errors. Check log.'), 4) #Finished with errors
@@ -96,7 +96,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
                 self.setStatus(self.tr('Overlay process complete.'), 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0
 

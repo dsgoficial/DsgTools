@@ -29,9 +29,9 @@ import os
 from qgis.PyQt.QtCore import Qt
 from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from qgis.PyQt.QtWidgets import QApplication, QMenu, QTableWidgetItem, QMessageBox
+from qgis.PyQt.QtWidgets import QApplication, QMenu, QTableWidgetItem, QMessageBox, QTreeWidgetItem
 from qgis.PyQt.QtGui import QCursor
-from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, Qgis, QgsMessageLog
@@ -114,7 +114,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             flagId = self.tableView.selectionModel().selection().indexes()[0].data()
         except:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('No flags were selected!'))
             return
         self.connectionSelectorComboBox.abstractDb.deleteProcessFlags(flagId = flagId)
         self.refreshFlags()
@@ -233,7 +233,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             self.projectModel.select()
             self.tableView.setModel(self.projectModel)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.processTreeWidget.clear()    
 
@@ -256,7 +256,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         procList = sorted(self.validationManager.processDict)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         for i in range(len(procList)):
-            item = QtGui.QTreeWidgetItem(rootItem)
+            item = QTreeWidgetItem(rootItem)
             item.setText(0, str(i+1))
             item.setText(1, procList[i])
             
@@ -284,7 +284,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Re-runs last process with the same attributes.
         """
         if not self.validationManager:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to run process!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Select a database to run process!'))
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         try:
@@ -299,7 +299,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         if procReturn == 0:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Process error. Check log for details.'))
         elif procReturn == -1:
-            QtGui.QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
+            QMessageBox.information(self, self.tr('Information!'), self.tr('Process canceled by user!'))
         elif procReturn == -2:
             QMessageBox.information(self, self.tr('Information!'), self.tr('No previous process run this session.'))
         else:

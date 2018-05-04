@@ -179,7 +179,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         currentItem = self.dbListWidget.currentItem()
         if not currentItem:
             return
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to drop database: ')+currentItem.text().split(' ')[0], QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to drop database: ')+currentItem.text().split(' ')[0], QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         localDbName = self.localDb.getDatabaseName()

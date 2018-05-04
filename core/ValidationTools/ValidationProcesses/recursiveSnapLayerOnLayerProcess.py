@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMessageLog, QgsVectorLayer, Qgis
 from qgis.analysis import QgsGeometrySnapper
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
@@ -63,7 +63,7 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
         1. load all features and build structure
         2. Perform snap on each tree step (reference and all below rank)
         """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             snapList = self.parameters['Ordered Layers']
@@ -100,12 +100,12 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
                     self.logLayerTime(clDict['lyrName'])
 
                     localMsg = self.tr('All features from ') +clDict['lyrName']+ self.tr(' snapped to reference ') +refcl['tableName']+ self.tr(' succesfully.\n')
-                    QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(localMsg, "DSG Tools Plugin", Qgis.Critical)
                     msg += localMsg
             self.setStatus(msg, 1) #Finished
             return 1
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.finishedWithError()
             return 0
 

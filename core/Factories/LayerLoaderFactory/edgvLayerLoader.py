@@ -204,7 +204,7 @@ class EDGVLayerLoader(QObject):
         try:
             qmldir, qmlType = self.abstractDb.getQml(vlayer.name())
         except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             return None
         if qmlType == 'db':
             vlayer.importNamedStyle(qmldir)

@@ -55,7 +55,7 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         newpassword = self.newPasswordLineEdit.text()
         newpassword_2 = self.newPasswordLineEdit_2.text()
         if newpassword != newpassword_2:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! Password not altered!'))
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('Password mismatch! Password not altered!'))
             return
         if self.user:
             self.alterDatabasePassword(self.user, newpassword)
@@ -70,9 +70,9 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
         try:
             self.abstractDb.alterUserPass(self.user, newpassword)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
+            QMessageBox.critical(self, self.tr('Critical!'), e.args[0])
             return
-        QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +self.user+self.tr(' password successfully updated on database ')+self.abstractDb.getDatabaseName()+'!')
+        QMessageBox.warning(self, self.tr('Success!'), self.tr('User ') +self.user+self.tr(' password successfully updated on database ')+self.abstractDb.getDatabaseName()+'!')
     
     def alterServerPassword(self, userList, newpassword):
         """
@@ -111,7 +111,7 @@ class AlterUserPassword(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each user were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error for user ')+ errorDb + ': ' +exceptionDict[errorDb], "DSG Tools Plugin", Qgis.Critical)
         return msg 
 
     @pyqtSlot(bool)

@@ -113,8 +113,8 @@ class FlipLine(QgsMapTool):
         if not selectedFeatures:
             logMsg = self.getLogMessage(None, None)
             self.iface.messageBar().pushMessage(self.tr('Error'), logMsg, level=Qgis.Critical, duration=3)
-            # QtGui.QMessageBox.critical(self, self.tr('Critical!'), logMsg)
-            QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            # QMessageBox.critical(self, self.tr('Critical!'), logMsg)
+            QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", Qgis.Critical)
             return
         # call the method for flipping features from geometry module
         flippedLines, failedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures, debugging=True)

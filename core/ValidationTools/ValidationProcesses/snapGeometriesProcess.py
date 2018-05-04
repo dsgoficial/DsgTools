@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 import processing, binascii
@@ -79,7 +79,7 @@ class SnapGeometriesProcess(ValidationProcess):
     #     Reimplementation of the execute method from the parent class
     #     """
     #     #abstract method. MUST be reimplemented.
-    #     QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    #     QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", Qgis.Critical)
     #     self.startTimeCount()
     #     try:
     #         self.setStatus(self.tr('Running'), 3) #now I'm running!
@@ -87,7 +87,7 @@ class SnapGeometriesProcess(ValidationProcess):
     #         classesWithElem = self.parameters['Classes']
     #         if len(classesWithElem) == 0:
     #             self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-    #             QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    #             QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", Qgis.Critical)
     #             return 1
     #         error = False
     #         for key in classesWithElem:
@@ -108,9 +108,9 @@ class SnapGeometriesProcess(ValidationProcess):
     #                 for tupple in result:
     #                     recordList.append((classAndGeom['tableSchema'] +'.'+classAndGeom['tableName'], tupple[0], self.tr('Snapping error.'), tupple[1], classAndGeom['geom'])) 
     #                 numberOfProblems = self.addFlag(recordList)
-    #                 QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) of layer ') + classAndGeom['tableName'] + self.tr(' with snapping errors. Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    #                 QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' feature(s) of layer ') + classAndGeom['tableName'] + self.tr(' with snapping errors. Check flags.'), "DSG Tools Plugin", Qgis.Critical)
     #             else:
-    #                 QgsMessageLog.logMessage(self.tr('There are no snapping errors on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    #                 QgsMessageLog.logMessage(self.tr('There are no snapping errors on ') + classAndGeom['tableName'] +'.', "DSG Tools Plugin", Qgis.Critical)
     #             self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
     #         if error:
     #             self.setStatus(self.tr('There are snapping errors. Check log.'), 4) #Finished with errors
@@ -118,7 +118,7 @@ class SnapGeometriesProcess(ValidationProcess):
     #             self.setStatus(self.tr('There are no snapping errors.'), 1) #Finished
     #         return 1
     #     except Exception as e:
-    #         QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+    #         QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
     #         self.finishedWithError()
     #         return 0
 
@@ -126,7 +126,7 @@ class SnapGeometriesProcess(ValidationProcess):
             """
             Reimplementation of the execute method from the parent class
             """
-            QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr('Process.\n'), "DSG Tools Plugin", Qgis.Critical)
             try:
                 self.setStatus(self.tr('Running'), 3) #now I'm running!
                 classesWithElem = self.parameters['Classes']
@@ -134,7 +134,7 @@ class SnapGeometriesProcess(ValidationProcess):
                 self.startTimeCount()
                 if len(classesWithElem) == 0:
                     self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                    QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('No classes selected! Nothing to be done.'), "DSG Tools Plugin", Qgis.Critical)
                     return 1
                 for key in classesWithElem:
                     # preparation
@@ -151,10 +151,10 @@ class SnapGeometriesProcess(ValidationProcess):
                     self.logLayerTime(key) #check this time later (I guess time will be counted twice due to postProcess)
                     # finalization
                     self.postProcessSteps(processTableName, lyr)
-                    QgsMessageLog.logMessage(self.tr('All features from {} were snapped.').format(key), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    QgsMessageLog.logMessage(self.tr('All features from {} were snapped.').format(key), "DSG Tools Plugin", Qgis.Critical)
                 self.setStatus(self.tr('All features were snapped.'), 1) #Finished
                 return 1
             except Exception as e:
-                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
                 self.finishedWithError()
                 return 0            

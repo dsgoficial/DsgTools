@@ -152,7 +152,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb].decode('utf-8'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb].decode('utf-8'), "DSG Tools Plugin", Qgis.Critical)
         return msg 
 
     @pyqtSlot(bool)
@@ -160,7 +160,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         selectedDbNameList = self.getSelectedDbList()
         if len(selectedDbNameList) == 0:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Please select one or more databases to drop!'))
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to drop databases: ')+', '.join(selectedDbNameList), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to drop databases: ')+', '.join(selectedDbNameList), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchDropDbs(selectedDbNameList)

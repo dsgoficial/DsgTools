@@ -72,8 +72,8 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
             geomTypeDict = self.abstractDb.getGeomTypeDict()
             geomDict = self.abstractDb.getGeomDict(geomTypeDict, insertCategory = True)
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
             return
         version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()
@@ -97,7 +97,7 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         Creates the profile file
         """
         if not self.lineEdit.text():
-            QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
+            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Fill the profile name!'))
             return
         else:
             profileName = self.lineEdit.text()
@@ -105,7 +105,7 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
         edgvVersion = self.versionCombo.currentText()
         if edgvVersion in list(permissionDict.keys()):
             if profileName in permissionDict[edgvVersion]:
-                QtGui.QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
+                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Profile ') + profileName + self.tr(' for EDGV ') + edgvVersion + self.tr(' already exists!'))
                 return
         jsonDict = json.dumps(self.profile, sort_keys=True, indent=4)
         self.permissionManager.createSetting(profileName, edgvVersion, jsonDict)

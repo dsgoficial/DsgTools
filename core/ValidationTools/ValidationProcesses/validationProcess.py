@@ -150,7 +150,7 @@ class ValidationProcess(QObject):
             return self.abstractDb.insertFlags(flagTupleList, self.getName())
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred inserting flags! Check log for details.'))
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", Qgis.Critical)
             
     def removeFeatureFlags(self, layer, featureId):
         """
@@ -162,7 +162,7 @@ class ValidationProcess(QObject):
             return self.abstractDb.removeFeatureFlags(layer, featureId, self.getName())
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
     
     def getStatus(self):
         """
@@ -172,7 +172,7 @@ class ValidationProcess(QObject):
             return self.abstractDb.getValidationStatus(self.getName())
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
     
     def getStatusMessage(self):
         """
@@ -182,7 +182,7 @@ class ValidationProcess(QObject):
             return self.abstractDb.getValidationStatusText(self.getName())
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
     
     def setStatus(self, msg, status):
         """
@@ -200,7 +200,7 @@ class ValidationProcess(QObject):
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
     
     def finishedWithError(self):
         """
@@ -578,11 +578,11 @@ class ValidationProcess(QObject):
     def logLayerTime(self, lyr):
         time = self.endTimeCount()
         if self.startTime != 0 and self.endTime != 0:
-            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0} on layer {1}: {2}').format(self.processAlias, lyr, str(time)), "DSG Tools Plugin", Qgis.Critical)
 
     def logTotalTime(self):
         if self.startTime != 0 and self.endTime != 0 and self.totalTime != 0:
-            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(self.tr('Elapsed time for process {0}: {1}').format(self.processAlias, str(self.totalTime)), "DSG Tools Plugin", Qgis.Critical)
     
     def jsonifyParameters(self, params):
         """
@@ -624,7 +624,7 @@ class ValidationProcess(QObject):
         else:
             logMsg += self.tr("\nUnable to get total elapsed time.")
         self.logMsg = logMsg
-        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", Qgis.Critical)
 
     def raiseVectorFlags(self, flagLyr, featFlagList):
         flagLyr.startEditing()

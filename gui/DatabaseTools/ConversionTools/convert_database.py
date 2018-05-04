@@ -127,13 +127,13 @@ class ConvertDatabase(QDialog, FORM_CLASS):
         Performs the actual conversion
         """
         if not self.widget.abstractDb:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter input database!'))
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter input database!'))
             return
         if not self.widget_2.abstractDb:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter output database!'))
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Enter output database!'))
             return
         if self.widget.dbVersion != self.widget_2.dbVersion:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Version mismatch!\nConversion must be between databases with the same version!'))
             return
         type = ''
         if self.allDataRadioButton.isChecked():
@@ -149,7 +149,7 @@ class ConvertDatabase(QDialog, FORM_CLASS):
         self.logCleared()
         try:
             if self.widget.crs != self.widget_2.crs:
-                if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Ok:
+                if QMessageBox.question(self, self.tr('Question'), self.tr('Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Ok:
                     QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
                     converted = self.widget.abstractDb.convertDatabase(self.widget_2.abstractDb,type)
                     QApplication.restoreOverrideCursor()
@@ -160,11 +160,11 @@ class ConvertDatabase(QDialog, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             converted = False
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', QgsMessageLog.CRITICAL)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
         if converted:
-            QtGui.QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion successfully completed!'))
+            QMessageBox.warning(self, self.tr('Success!'), self.tr('Conversion successfully completed!'))
         else:
-            QtGui.QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
+            QMessageBox.warning(self, self.tr('Error!'), self.tr('Conversion not performed! Check log for details.'))
     
     @pyqtSlot(str)
     def logUpdated(self,text):

@@ -81,7 +81,7 @@ class CustomizationManagerWidget(GenericManagerWidget):
         #TODO: Reimplement
         customizationName = self.customizationListWidget.currentItem().text()
         edgvVersion = self.versionSelectionComboBox.currentText()
-        if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete customization ')+customizationName+'?', QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
+        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete customization ')+customizationName+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
