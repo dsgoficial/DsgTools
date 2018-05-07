@@ -189,7 +189,7 @@ class MultiLayerSelection(QgsMapTool):
                 return True
         return False
     
-    def getPrimitiveDict(self, e, hasControlModifyer=False):
+    def getPrimitiveDict(self, e, hasControlModifier=False):
         """
         Builds a dict with keys as geometryTypes of layer, which are QGis.Point (value 0), QGis.Line (value 1) or QGis.Polygon (value 2),
         and values as layers from self.iface.legendInterface().layers(). When self.iface.legendInterface().layers() is called, a list of
@@ -202,29 +202,29 @@ class MultiLayerSelection(QgsMapTool):
             #layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
             if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or not self.iface.legendInterface().isLayerVisible(lyr):
                 continue
-            if hasControlModifyer and (not firstGeom) and (not primitiveDict.keys() or lyr.geometryType() < firstGeom):
+            if hasControlModifier and (not firstGeom) and (not primitiveDict.keys() or lyr.geometryType() < firstGeom):
                 firstGeom = lyr.geometryType()
             geomType = lyr.geometryType()
             if geomType not in primitiveDict.keys():
                 primitiveDict[geomType] = []
             #removes selection
-            if (not hasControlModifyer and e.button() == QtCore.Qt.LeftButton) or (hasControlModifyer and e.button() == QtCore.Qt.RightButton):
+            if (not hasControlModifier and e.button() == QtCore.Qt.LeftButton) or (hasControlModifier and e.button() == QtCore.Qt.RightButton):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
-        if hasControlModifyer and firstGeom in [0, 1, 2]:
+        if hasControlModifier and firstGeom in [0, 1, 2]:
             return { firstGeom : primitiveDict[firstGeom] }
         else:
             return primitiveDict
 
-    def selectFeatures(self, e, bbRect=None, hasControlModifyer=False):
+    def selectFeatures(self, e, bbRect=None, hasControlModifier=False):
         """
         Method to select features acoording to mouse event e.
         Optional parameters:
         bbRect: if supplied, other rectangle is used
-        hasControlModifyer: used to add to selection or not.
+        hasControlModifier: used to add to selection or not.
         """
         rect = self.getCursorRect(e)
-        primitiveDict = self.getPrimitiveDict(e, hasControlModifyer = hasControlModifyer)
+        primitiveDict = self.getPrimitiveDict(e, hasControlModifier = hasControlModifier)
         primitives = primitiveDict.keys()
         primitives.sort() #this sort enables search to be done in the order of Point (value 0), Line (value 1) and Polygon (value 2)
         for primitive in primitives:
@@ -239,8 +239,8 @@ class MultiLayerSelection(QgsMapTool):
                         lyr.startEditing() #starts layer editting
                         if e.button() == QtCore.Qt.RightButton:
                             #set target, start edit and stop
-                            if hasControlModifyer:
-                                #sets active layer. Since hasControlModifyer indicates to this method to clear selection, this part of
+                            if hasControlModifier:
+                                #sets active layer. Since hasControlModifier indicates to this method to clear selection, this part of
                                 #the code completes the  control + right click behaviour.
                                 self.iface.setActiveLayer(lyr)
                                 return
@@ -254,7 +254,7 @@ class MultiLayerSelection(QgsMapTool):
                             lyr.modifySelection([],[feat.id()])
                         else:
                             lyr.modifySelection([feat.id()],[])
-                        if not hasControlModifyer:
+                        if not hasControlModifier:
                             self.iface.setActiveLayer(lyr)
                             return
                        
@@ -263,6 +263,7 @@ class MultiLayerSelection(QgsMapTool):
         Deactivate tool.
         """
         QtGui.QApplication.restoreOverrideCursor()
+        self.hoverRubberBand.reset(QGis.Polygon)
         try:
             if self.toolAction:
                 self.toolAction.setChecked(False)
@@ -491,9 +492,6 @@ class MultiLayerSelection(QgsMapTool):
         :param e: (QMouseEvent) mouse event on canvas.
         :param dictMenuSelected: (dict) dictionary of classes and its selected features being treatead.
         :param dictMenuNotSelected: (dict) dictionary of classes and its non selected features being treatead.
-        1- both dicts are filled and context menu should have 2 "submenus" - DB.Classes > Selected / Not Selected > Feature IDs;
-        2- one of them is filled and there are more than 1 class to be enlisted (1 submenu necessary) - DB.Class > Feature IDs; and
-        3- one of them is filled and there is only one class with features selected - DB.Class (feat_id = NR)
         """
         # finding out filling conditions
         selectedDict = bool(dictMenuSelected)
@@ -501,59 +499,58 @@ class MultiLayerSelection(QgsMapTool):
         # finding out if one of either dictionaty are filled ("Exclusive or")
         selectedXORnotSelected = (selectedDict != notSelectedDict)
         # setting up menu
-        menu = QtGui.QMenu()
         # Case 1: 2 submenus to be filled = "3 context menus"
+        if e.button() == QtCore.Qt.RightButton:
+            genericAction = self.tr('Open All Attribute Tables')
+        else:
+            genericAction = self.tr('Selected All Features')
         if selectedXORnotSelected:
             if selectedDict:
-                menuDict, submenu = dictMenuSelected, QtGui.QMenu(title=self.tr('Selected Features'), parent=menu)
-                genericAction = self.tr('Deselected All Feature')
+                menuDict, menu = dictMenuSelected, QtGui.QMenu(title=self.tr('Selected Features'))
+                genericAction = self.tr('Deselected All Features')
             else:
-                menuDict, submenu = dictMenuSelected, QtGui.QMenu(title=self.tr('Not Selected Features'), parent=menu)
+                menuDict, menu = dictMenuNotSelected, QtGui.QMenu(title=self.tr('Not Selected Features'))
                 genericAction = self.tr('Selected All Features')
-            menu.addMenu(submenu)
-            action = submenu.addAction(genericAction)
+            if e.button() == QtCore.Qt.RightButton:
+                genericAction = self.tr('Open All Attribute Tables')
+            self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction)
+            action = menu.addAction(genericAction)
             triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=listLayerFeature)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            self.createSubmenu(e=e, parentMenu=submenu, menuDict=menuDict, genericAction=genericAction)
-            # # creating a dict to handle all "menu" for each class
-            # submenuDict = dict()
-            # for cl in menuDict.keys():
-            #     # menu for features of each class
-            #     className = cl.name()
-            #     geomType = cl.geometryType()
-            #     # get layer database name
-            #     dsUri = cl.dataProvider().dataSourceUri()
-            #     temp = []
-            #     if '/' in dsUri or '\\' in dsUri:
-            #         db_name = dsUri
-            #     else:
-            #         db_name = cl.dataProvider().dataSourceUri().split("'")[1]
-            #     submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=submenu)
-            #     submenu.addMenu(submenuDict[cl])
-            #     # inserting an entry for every feature of each class in its own context menu
-            #     for feat in menuDict[cl]:
-            #         s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
-            #         action = submenuDict[cl].addAction(s)
-            #         triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
-            #         self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            #         # set up list for the "All"-commands
-            #         temp.append([cl, feat, geomType])
-            #     # adding generic action for each class
-            #     if len(temp) > 1:
-            #         action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
-            #         triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=temp)
-            #         self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-        # if selectedDict and notSelectedDict:
-        #     selectedMenu = QtGui.QAction(self.tr('Selected Features'), menu)
-        #     notSelectedMenu = QtGui.QAction(self.tr('Not Selected Features'), menu)
-        #     # get the list of all classes to be enlisted
-        #     classes = dictMenuSelected.keys() + dictMenuNotSelected.keys()
-        #     # getting unique classes
-        #     classes = list(set(classes))
-        #     for cl in classes:
-        #         { cl : menu.addAction(cl) }
+        elif selectedDict:
+            pass
+            selectedMenu = QtGui.QMenu(title=self.tr('Selected Features'))
+            notSelectedMenu = QtGui.QMenu(title=self.tr('Not Selected Features'))
+            menu.addMenu(selectedMenu)
+            menu.addMenu(notSelectedMenu)
+            selectedGenericAction = self.tr('Deselected All Features')
+            notSelectedGenericAction = self.tr('Selected All Features')
+            self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction)
+            self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
+
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
-        # return menu
+
+    def checkSelectedFeaturesOnDict(self, menuDict):
+        """
+        Checks all selected features from a given dictionary ( { (QgsVectorLayer)layer : [ (int)feat_id ] } ).
+        :param menuDict: (dict) dictionary with layers and their features to be analyzed.
+        :return: (list-of-dict) both dictionaries of selected and non-selected features of each layer.
+        """
+        selectedFeaturesDict, notSelectedFeaturesDict = dict(), dict()
+        for cl in menuDict.keys():
+            selectedFeats = cl.selectedFeaturesIds()
+            for feat in menuDict[cl]:
+                if feat in selectedFeats:
+                    if cl not in selectedFeaturesDict.keys():
+                        selectedFeaturesDict[cl] = [feat]
+                    else:
+                        selectedFeaturesDict[cl].append([feat])
+                else:
+                    if cl not in notSelectedFeaturesDict.keys():
+                        notSelectedFeaturesDict[cl] = [feat]
+                    else:
+                        notSelectedFeaturesDict[cl].append(feat)
+        return selectedFeaturesDict, notSelectedFeaturesDict
 
     def createContextMenu(self, e):
         """
@@ -564,7 +561,7 @@ class MultiLayerSelection(QgsMapTool):
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
-        layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
+        layerList = self.getPrimitiveDict(e, hasControlModifier=selected)
         layers = []
         for key in layerList.keys():
             layers += layerList[key]
@@ -593,16 +590,15 @@ class MultiLayerSelection(QgsMapTool):
                             if geom.intersects(searchRect):
                                 t.append([layer, feature, layer.geometryType()])
             t = self.filterStrongestGeometry(t)
-            
             if len(t) > 1:
                 menuDict = self.createMenuDict(t)
-                menu = self.setContextMenuStyle(e=e, dictMenuSelected=menuDict, dictMenuNotSelected=None, listLayerFeature=t)
-                # menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+                selectedFeaturesDict, notSelectedFeaturesDict = self.checkSelectedFeaturesOnDict(menuDict=menuDict)
+                self.setContextMenuStyle(e=e, dictMenuSelected=selectedFeaturesDict, dictMenuNotSelected=notSelectedFeaturesDict, listLayerFeature=t)
             elif t:
                 t = t[0]
                 selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
                 if e.button() == QtCore.Qt.LeftButton:
-                    self.selectFeatures(e, hasControlModifyer = selected)
+                    self.selectFeatures(e, hasControlModifier = selected)
                 elif selected:
                     self.iface.setActiveLayer(t[0])
                 else:
@@ -617,7 +613,7 @@ class MultiLayerSelection(QgsMapTool):
     #     if selected:
     #         firstGeom = self.checkSelectedLayers()
     #     # setting a list of features to iterate over
-    #     layerList = self.getPrimitiveDict(e, hasControlModifyer=selected)
+    #     layerList = self.getPrimitiveDict(e, hasControlModifier=selected)
     #     layers = []
     #     for key in layerList.keys():
     #         layers += layerList[key]
@@ -694,7 +690,7 @@ class MultiLayerSelection(QgsMapTool):
     #             t = t[0]
     #             selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
     #             if e.button() == QtCore.Qt.LeftButton:
-    #                 self.selectFeatures(e, hasControlModifyer = selected)
+    #                 self.selectFeatures(e, hasControlModifier = selected)
     #             elif selected:
     #                 self.iface.setActiveLayer(t[0])
     #             else:
