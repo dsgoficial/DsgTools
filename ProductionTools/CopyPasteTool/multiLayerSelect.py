@@ -503,6 +503,7 @@ class MultiLayerSelection(QgsMapTool):
             else:
                 menuDict, submenu = dictMenuSelected, QtGui.QMenu(title=self.tr('Not Selected Features'), parent=menu)
                 genericAction = self.tr('Selected All Features')
+            menu.addMenu(submenu)
             action = QtGui.QAction(genericAction, submenu)
             triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=listLayerFeature)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
@@ -511,7 +512,6 @@ class MultiLayerSelection(QgsMapTool):
             for cl in menuDict.keys():
                 # menu for features of each class
                 className = cl.name()
-                submenuDict[cl] = QtGui.QMenu(parent=submenu)
                 geomType = cl.geometryType()
                 # get layer database name
                 dsUri = cl.dataProvider().dataSourceUri()
@@ -520,6 +520,8 @@ class MultiLayerSelection(QgsMapTool):
                     db_name = dsUri
                 else:
                     db_name = cl.dataProvider().dataSourceUri().split("'")[1]
+                submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=submenu)
+                submenu.addMenu(submenuDict[cl])
                 # inserting an entry for every feature of each class in its own context menu
                 for feat in menuDict[cl]:
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
@@ -542,7 +544,8 @@ class MultiLayerSelection(QgsMapTool):
         #     classes = list(set(classes))
         #     for cl in classes:
         #         { cl : menu.addAction(cl) }
-        return menu
+        menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+        # return menu
 
     def createContextMenu(self, e):
         """
@@ -586,7 +589,7 @@ class MultiLayerSelection(QgsMapTool):
             if len(t) > 1:
                 menuDict = self.createMenuDict(t)
                 menu = self.setContextMenuStyle(e=e, dictMenuSelected=menuDict, dictMenuNotSelected=None, listLayerFeature=t)
-                menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+                # menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
             elif t:
                 t = t[0]
                 selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
