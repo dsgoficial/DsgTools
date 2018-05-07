@@ -445,16 +445,20 @@ class MultiLayerSelection(QgsMapTool):
         hoveredAction = lambda t=listLayerFeature : self.createMultipleRubberBand(featureList=t)
         return triggeredAction, hoveredAction
 
-    def createSubmenu(self, parentMenu, menuDict):
+    def createSubmenu(self, e, parentMenu, menuDict, genericAction):
         """
-        Creates a in a 
+        Creates a submenu in a given parent context menu and populates it, with classes/feature sublevels from the menuDict. 
+        :param e: (QMouseEvent) mouse event on canvas.
+        :param parentMenu: (QMenu) menu containing the populated submenu
+        :param menuDict: (dict) dictionary containing all classes and their features to be filled into submenu.
+        :param genericAction: (str) text to be shown into generic action description on the outter level of submenu.
+        :return: (dict) mapping of classes and their own QMenu object.
         """
         # creating a dict to handle all "menu" for each class
         submenuDict = dict()
         for cl in menuDict.keys():
             # menu for features of each class
             className = cl.name()
-            submenuDict[cl] = QtGui.QMenu(parentMenu)
             geomType = cl.geometryType()
             # get layer database name
             dsUri = cl.dataProvider().dataSourceUri()
@@ -463,16 +467,19 @@ class MultiLayerSelection(QgsMapTool):
                 db_name = dsUri
             else:
                 db_name = cl.dataProvider().dataSourceUri().split("'")[1]
+            submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=parentMenu)
+            parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
             for feat in menuDict[cl]:
                 s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
-                action = QtGui.QAction(s, submenuDict[cl])
+                action = submenuDict[cl].addAction(s)
                 triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                # set up list for the "All"-commands
                 temp.append([cl, feat, geomType])
             # adding generic action for each class
             if len(temp) > 1:
-                action = QtGui.QAction(self.tr("{0} from Class {1}").format(genericAction, className), submenuDict[cl])
+                action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
                 triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=temp)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         return submenuDict
@@ -504,37 +511,38 @@ class MultiLayerSelection(QgsMapTool):
                 menuDict, submenu = dictMenuSelected, QtGui.QMenu(title=self.tr('Not Selected Features'), parent=menu)
                 genericAction = self.tr('Selected All Features')
             menu.addMenu(submenu)
-            action = QtGui.QAction(genericAction, submenu)
+            action = submenu.addAction(genericAction)
             triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=listLayerFeature)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            # creating a dict to handle all "menu" for each class
-            submenuDict = dict()
-            for cl in menuDict.keys():
-                # menu for features of each class
-                className = cl.name()
-                geomType = cl.geometryType()
-                # get layer database name
-                dsUri = cl.dataProvider().dataSourceUri()
-                temp = []
-                if '/' in dsUri or '\\' in dsUri:
-                    db_name = dsUri
-                else:
-                    db_name = cl.dataProvider().dataSourceUri().split("'")[1]
-                submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=submenu)
-                submenu.addMenu(submenuDict[cl])
-                # inserting an entry for every feature of each class in its own context menu
-                for feat in menuDict[cl]:
-                    s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
-                    action = QtGui.QAction(s, submenuDict[cl])
-                    triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
-                    self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-                    temp.append([cl, feat, geomType])
-                # adding generic action for each class
-                if len(temp) > 1:
-                    action = QtGui.QAction(self.tr("{0} From Class {1}").format(genericAction, className), submenuDict[cl])
-                    triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=temp)
-                    self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-        # menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
+            self.createSubmenu(e=e, parentMenu=submenu, menuDict=menuDict, genericAction=genericAction)
+            # # creating a dict to handle all "menu" for each class
+            # submenuDict = dict()
+            # for cl in menuDict.keys():
+            #     # menu for features of each class
+            #     className = cl.name()
+            #     geomType = cl.geometryType()
+            #     # get layer database name
+            #     dsUri = cl.dataProvider().dataSourceUri()
+            #     temp = []
+            #     if '/' in dsUri or '\\' in dsUri:
+            #         db_name = dsUri
+            #     else:
+            #         db_name = cl.dataProvider().dataSourceUri().split("'")[1]
+            #     submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=submenu)
+            #     submenu.addMenu(submenuDict[cl])
+            #     # inserting an entry for every feature of each class in its own context menu
+            #     for feat in menuDict[cl]:
+            #         s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
+            #         action = submenuDict[cl].addAction(s)
+            #         triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
+            #         self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+            #         # set up list for the "All"-commands
+            #         temp.append([cl, feat, geomType])
+            #     # adding generic action for each class
+            #     if len(temp) > 1:
+            #         action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
+            #         triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=temp)
+            #         self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         # if selectedDict and notSelectedDict:
         #     selectedMenu = QtGui.QAction(self.tr('Selected Features'), menu)
         #     notSelectedMenu = QtGui.QAction(self.tr('Not Selected Features'), menu)
