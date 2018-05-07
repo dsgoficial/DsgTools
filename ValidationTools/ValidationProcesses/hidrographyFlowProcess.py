@@ -40,8 +40,6 @@ class HidrographyFlowParameters(list):
 class HidrographyFlowProcess(ValidationProcess):
     # enum for node types
     Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody = range(9)
-    # ATENÇÃO>>>>>>>>>>> CRIAR TABELAS DE DOMÍNIO NO BANCO!!!
-    # ATENÇÃO>>>>>>>>>>> CHECAR SE A CAMADA DE NÓS ESTÁ CARREGADA NO CANVAS E CARREGÁ-LA AUTOMATICAMENTE, CASO NEGATIVO
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Class constructor.
@@ -87,6 +85,18 @@ class HidrographyFlowProcess(ValidationProcess):
             self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
+            # name for node types (check enum atop)
+            self.nodeTypeNameDict = {
+                                        0 : self.tr("Flag"),
+                                        1 : self.tr("Sink"),
+                                        2 : self.tr("Waterway Beginning"),
+                                        3 : self.tr("Up Hill Node"),
+                                        4 : self.tr("Down Hill Node"),
+                                        5 : self.tr("Confluence"),
+                                        6 : self.tr("Ramification"),
+                                        7 : self.tr("Attribute Change Node"),
+                                        8 : self.tr("Node Next to Water Body")
+                                    }
         else:
             # check if node table and node type domain table are created on db
             if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
@@ -533,7 +543,7 @@ class HidrographyFlowProcess(ValidationProcess):
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
                     invalidLines[lineID] = line
-                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'.format(self.nodeTypeDict[node]))
+                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'.format(self.nodeTypeNameDict[self.nodeTypeDict[node]]))
                     if thisReason not in reason:
                         reason += thisReason
                 elif node in [initialNode, finalNode]:
