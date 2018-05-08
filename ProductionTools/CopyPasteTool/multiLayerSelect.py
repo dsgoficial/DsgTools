@@ -298,13 +298,13 @@ class MultiLayerSelection(QgsMapTool):
         layer.setSelectedFeatures(idList)
         return 
 
-    def setSelectionListFeature(self, listLayerFeature):
+    def setSelectionListFeature(self, listLayerFeature, selectAll=True):
         """
         Selects all features in a given list on canvas.        
         :param listLayerFeature: a list os items as of [layer, feature[, geometry_type]]
         """
         for item in listLayerFeature:
-            self.setSelectionFeature(layer=item[0], feature=item[1], selectAll=True)
+            self.setSelectionFeature(layer=item[0], feature=item[1], selectAll=selectAll)
         return
 
     def openMultipleFeatureForm(self, listLayerFeature):
@@ -410,9 +410,9 @@ class MultiLayerSelection(QgsMapTool):
                 menuDict[item[0]].append(item[1])
         return menuDict
 
-    def getCallback(self, e, layer, feature, geomType=None):
+    def getCallback(self, e, layer, feature, geomType=None, selectAll=True):
         """
-        Sets the callback of an action.
+        Gets the callback for an action.
         :param e: (QMouseEvent) mouse event on canvas.
         :param layer: (QgsVectorLayer) layer to be treated.
         :param feature: (QgsFeature) feature to be treated.
@@ -424,7 +424,7 @@ class MultiLayerSelection(QgsMapTool):
         if e.button() == QtCore.Qt.LeftButton: 
             # line added to make sure the action is associated with current loop value,
             # lambda function is used with standard parameter set to current loops value.
-            triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1])
+            triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll)
             hoveredAction = lambda t=[layer, feature] : self.createRubberBand(feature=t[1], layer=t[0], geom=geomType)
         elif e.button() == QtCore.Qt.RightButton:
             selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
@@ -449,7 +449,7 @@ class MultiLayerSelection(QgsMapTool):
                 l.append([cl, feat, cl.geometryType()])
         return l
 
-    def getCallbackMultipleFeatures(self, e, dictLayerFeature):
+    def getCallbackMultipleFeatures(self, e, dictLayerFeature, selectAll=True):
         """
         Sets the callback of an action with a list features as target.
         :param e: (QMouseEvent) mouse event on canvas.
@@ -459,14 +459,14 @@ class MultiLayerSelection(QgsMapTool):
         listLayerFeature = self.listify(dictLayerFeature=dictLayerFeature)
         # setting the action for the "All" options
         if e.button() == QtCore.Qt.LeftButton:
-            triggeredAction = lambda t=listLayerFeature: self.setSelectionListFeature(listLayerFeature=t)
+            triggeredAction = lambda t=listLayerFeature: self.setSelectionListFeature(listLayerFeature=t, selectAll=selectAll)
         else:
             triggeredAction = lambda t=listLayerFeature: self.openMultipleFeatureForm(listLayerFeature=t)
         # to trigger "Hover" signal on QMenu for the multiple options
         hoveredAction = lambda t=listLayerFeature : self.createMultipleRubberBand(featureList=t)
         return triggeredAction, hoveredAction
 
-    def createSubmenu(self, e, parentMenu, menuDict, genericAction):
+    def createSubmenu(self, e, parentMenu, menuDict, genericAction, selectAll):
         """
         Creates a submenu in a given parent context menu and populates it, with classes/feature sublevels from the menuDict. 
         :param e: (QMouseEvent) mouse event on canvas. If menuDict has only 1 class in it, method will populate parent QMenu.
@@ -494,13 +494,13 @@ class MultiLayerSelection(QgsMapTool):
                     s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
-                    triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
+                    triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
                     self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # inserting generic action, if necessary
                 if len(menuDict[cl]) > 1:
                     # if there are more than 1 feature to be filled, "All"-command should be added
                     action = parentMenu.addAction(self.tr("{0} From Class {1}").format(genericAction, className))
-                    triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict)
+                    triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict, selectAll=selectAll)
                     self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
                 return dict()
@@ -518,7 +518,7 @@ class MultiLayerSelection(QgsMapTool):
             if len(menuDict[cl]) > 1:
                 # if there are more than 1 feature to be filled, "All"-command should be added
                 action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature={ cl : menuDict[cl] }, selectAll=selectAll)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         return submenuDict
 
@@ -545,15 +545,20 @@ class MultiLayerSelection(QgsMapTool):
             if selectedDict:
                 menuDict, menu = dictMenuSelected, QtGui.QMenu(title=self.tr('Selected Features'))
                 genericAction = self.tr('Deselect All Features')
+                # if the dictionary is from selected features, we want commands to be able to deselect them
+                selectAll = False
             else:
                 menuDict, menu = dictMenuNotSelected, QtGui.QMenu(title=self.tr('Not Selected Features'))
                 genericAction = self.tr('Select All Features')
+                # if the dictionary is from non-selected features, we want commands to be able to select them
+                selectAll = True
             if e.button() == QtCore.Qt.RightButton:
                 genericAction = self.tr('Open All Attribute Tables')
-            self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction)
-            if len(menuDict.values()) > 1:
+            self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction, selectAll=selectAll)
+            if len(menuDict) != 1 and len(menuDict.values()) > 1:
+                # if there's only one class, "All"-command is given by createSubmenu method
                 action = menu.addAction(genericAction)
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict, selectAll=selectAll)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         elif selectedDict:
             # if both of them is empty one more QMenu level is added
@@ -564,14 +569,19 @@ class MultiLayerSelection(QgsMapTool):
             menu.addMenu(notSelectedMenu)
             selectedGenericAction = self.tr('Deselect All Features')
             notSelectedGenericAction = self.tr('Select All Features')
-            self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction)
-            action = selectedMenu.addAction(selectedGenericAction)
-            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuSelected)
-            self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
-            action = notSelectedMenu.addAction(notSelectedGenericAction)
-            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuNotSelected)
-            self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+            # selectAll is set to True as now we want command to Deselect Features in case they are selected
+            self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction, selectAll=False)
+            if len(dictMenuSelected) != 1 and len(dictMenuSelected.values()) > 1:
+                # if there's only one class, "All"-command is given by createSubmenu method
+                action = selectedMenu.addAction(selectedGenericAction)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuSelected, selectAll=False)
+                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+            self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction, selectAll=True)
+            if len(dictMenuNotSelected) != 1 and len(dictMenuNotSelected.values()) > 1:
+                # if there's only one class, "All"-command is given by createSubmenu method
+                action = notSelectedMenu.addAction(notSelectedGenericAction)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuNotSelected, selectAll=True)
+                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
 
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
 
