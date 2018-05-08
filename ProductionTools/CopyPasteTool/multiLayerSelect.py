@@ -443,12 +443,12 @@ class MultiLayerSelection(QgsMapTool):
             for feat in dictLayerFeature[cl]:
                 l.append([cl, feat, cl.geometryType()])
         return l
-        
 
     def getCallbackMultipleFeatures(self, e, dictLayerFeature):
         """
         Sets the callback of an action with a list features as target.
         :param e: (QMouseEvent) mouse event on canvas.
+        :param dictLayerFeature: (dict) dictionary containing layers/features to be treated.
         """
         listLayerFeature = self.listify(dictLayerFeature=dictLayerFeature)
         # setting the action for the "All" options
@@ -482,6 +482,13 @@ class MultiLayerSelection(QgsMapTool):
                 db_name = dsUri
             else:
                 db_name = cl.dataProvider().dataSourceUri().split("'")[1]
+            if len(menuDict) == 1:
+                for feat in menuDict[cl]:
+                    s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
+                    action = parentMenu.addAction(s)
+                    triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
+                    self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+                return dict()
             submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
@@ -493,13 +500,13 @@ class MultiLayerSelection(QgsMapTool):
                 # set up list for the "All"-commands
                 temp.append([cl, feat, geomType])
             # adding generic action for each class
-            if len(temp) > 1:
+            if len(menuDict) > 1:
                 action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
-                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=temp)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         return submenuDict
 
-    def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected, listLayerFeature):
+    def setContextMenuStyle(self, e, dictMenuSelected, dictMenuNotSelected):
         """
         Defines how many "submenus" the context menu should have.
         There are 3 context menu scenarios to be handled:
@@ -528,9 +535,10 @@ class MultiLayerSelection(QgsMapTool):
             if e.button() == QtCore.Qt.RightButton:
                 genericAction = self.tr('Open All Attribute Tables')
             self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction)
-            action = menu.addAction(genericAction)
-            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=listLayerFeature)
-            self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
+            if len(menuDict) > 1:
+                action = menu.addAction(genericAction)
+                triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict)
+                self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         elif selectedDict:
             menu = QtGui.QMenu()
             selectedMenu = QtGui.QMenu(title=self.tr('Selected Features'))
@@ -541,9 +549,12 @@ class MultiLayerSelection(QgsMapTool):
             notSelectedGenericAction = self.tr('Select All Features')
             temp = self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction)
             action = temp.addAction(selectedGenericAction)
-            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=listLayerFeature)
+            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=selectedDict)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
+            temp = self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
+            action = temp.addAction(selectedGenericAction)
+            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=selectedDict)
+            self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
 
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
 
@@ -610,7 +621,7 @@ class MultiLayerSelection(QgsMapTool):
             if len(t) > 1:
                 menuDict = self.createMenuDict(t)
                 selectedFeaturesDict, notSelectedFeaturesDict = self.checkSelectedFeaturesOnDict(menuDict=menuDict)
-                self.setContextMenuStyle(e=e, dictMenuSelected=selectedFeaturesDict, dictMenuNotSelected=notSelectedFeaturesDict, listLayerFeature=t)
+                self.setContextMenuStyle(e=e, dictMenuSelected=selectedFeaturesDict, dictMenuNotSelected=notSelectedFeaturesDict)
             elif t:
                 t = t[0]
                 selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
