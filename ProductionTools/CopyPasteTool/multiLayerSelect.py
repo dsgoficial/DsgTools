@@ -472,7 +472,7 @@ class MultiLayerSelection(QgsMapTool):
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
             for feat in menuDict[cl]:
-                s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
+                s = 'feat_id = {0}'.format(feat.id())
                 action = submenuDict[cl].addAction(s)
                 triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
@@ -503,14 +503,14 @@ class MultiLayerSelection(QgsMapTool):
         if e.button() == QtCore.Qt.RightButton:
             genericAction = self.tr('Open All Attribute Tables')
         else:
-            genericAction = self.tr('Selected All Features')
+            genericAction = self.tr('Select All Features')
         if selectedXORnotSelected:
             if selectedDict:
                 menuDict, menu = dictMenuSelected, QtGui.QMenu(title=self.tr('Selected Features'))
-                genericAction = self.tr('Deselected All Features')
+                genericAction = self.tr('Deselect All Features')
             else:
                 menuDict, menu = dictMenuNotSelected, QtGui.QMenu(title=self.tr('Not Selected Features'))
-                genericAction = self.tr('Selected All Features')
+                genericAction = self.tr('Select All Features')
             if e.button() == QtCore.Qt.RightButton:
                 genericAction = self.tr('Open All Attribute Tables')
             self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction)
@@ -518,13 +518,13 @@ class MultiLayerSelection(QgsMapTool):
             triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, listLayerFeature=listLayerFeature)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         elif selectedDict:
-            pass
+            menu = QtGui.QMenu()
             selectedMenu = QtGui.QMenu(title=self.tr('Selected Features'))
             notSelectedMenu = QtGui.QMenu(title=self.tr('Not Selected Features'))
             menu.addMenu(selectedMenu)
             menu.addMenu(notSelectedMenu)
-            selectedGenericAction = self.tr('Deselected All Features')
-            notSelectedGenericAction = self.tr('Selected All Features')
+            selectedGenericAction = self.tr('Deselect All Features')
+            notSelectedGenericAction = self.tr('Select All Features')
             self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction)
             self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
 
@@ -532,15 +532,15 @@ class MultiLayerSelection(QgsMapTool):
 
     def checkSelectedFeaturesOnDict(self, menuDict):
         """
-        Checks all selected features from a given dictionary ( { (QgsVectorLayer)layer : [ (int)feat_id ] } ).
+        Checks all selected features from a given dictionary ( { (QgsVectorLayer)layer : [ (QgsFeature)feat ] } ).
         :param menuDict: (dict) dictionary with layers and their features to be analyzed.
         :return: (list-of-dict) both dictionaries of selected and non-selected features of each layer.
         """
         selectedFeaturesDict, notSelectedFeaturesDict = dict(), dict()
         for cl in menuDict.keys():
-            selectedFeats = cl.selectedFeaturesIds()
+            selectedFeats = [f.id() for f in cl.selectedFeatures()]
             for feat in menuDict[cl]:
-                if feat in selectedFeats:
+                if feat.id() in selectedFeats:
                     if cl not in selectedFeaturesDict.keys():
                         selectedFeaturesDict[cl] = [feat]
                     else:
