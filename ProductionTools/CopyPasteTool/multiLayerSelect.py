@@ -547,13 +547,13 @@ class MultiLayerSelection(QgsMapTool):
             menu.addMenu(notSelectedMenu)
             selectedGenericAction = self.tr('Deselect All Features')
             notSelectedGenericAction = self.tr('Select All Features')
-            temp = self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction)
-            action = temp.addAction(selectedGenericAction)
-            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=selectedDict)
+            self.createSubmenu(e=e, parentMenu=selectedMenu, menuDict=dictMenuSelected, genericAction=selectedGenericAction)
+            action = selectedMenu.addAction(selectedGenericAction)
+            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuSelected)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
-            temp = self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
-            action = temp.addAction(selectedGenericAction)
-            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=selectedDict)
+            self.createSubmenu(e=e, parentMenu=notSelectedMenu, menuDict=dictMenuNotSelected, genericAction=notSelectedGenericAction)
+            action = notSelectedMenu.addAction(selectedGenericAction)
+            triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=dictMenuNotSelected)
             self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
 
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
@@ -572,7 +572,7 @@ class MultiLayerSelection(QgsMapTool):
                     if cl not in selectedFeaturesDict.keys():
                         selectedFeaturesDict[cl] = [feat]
                     else:
-                        selectedFeaturesDict[cl].append([feat])
+                        selectedFeaturesDict[cl].append(feat)
                 else:
                     if cl not in notSelectedFeaturesDict.keys():
                         notSelectedFeaturesDict[cl] = [feat]
