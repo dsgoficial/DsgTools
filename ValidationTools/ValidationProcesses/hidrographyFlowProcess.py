@@ -715,10 +715,20 @@ class HidrographyFlowProcess(ValidationProcess):
         :return: (list-of-str) list of invalidations found.
         """
         recordList = []
+        countNodeNotInDb = 0
         for node, reason in nodeFlags.iteritems():
-            featid = self.nodeDbIdDict[node]
+            if self.nodeDbIdDict[node] is not None:
+                featid = self.nodeDbIdDict[node]
+            else:
+                # if node is not previously classified on database, but then motivates a flag, it should appear on Flags list
+                featid = -9999
+                countNodeNotInDb += 1
             geometry = binascii.hexlify(QgsGeometry.fromMultiPoint([node]).asWkb())
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
+        if countNodeNotInDb:
+            # in case there are flagged nodes that are not loaded in DB, user is notified
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), \
+                    self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.').format(countNodeNotInDb))
         return recordList
 
     def loadLayer(self, layer, uniqueLoad=True):
@@ -821,11 +831,11 @@ class HidrographyFlowProcess(ValidationProcess):
             hidLineLyrKey = self.parameters['Network Layer']
             hidSinkLyrKey = self.parameters['Sink Layer']
             refKey, classesWithElemKeys = self.parameters['Reference and Layers']
-            if len(classesWithElemKeys) == 0:
-                self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
+            # if len(classesWithElemKeys) == 0:
+            #     self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 # return 1
-            else:
-                waterBodyClassesKeys = classesWithElemKeys
+            # else:
+            waterBodyClassesKeys = classesWithElemKeys
             if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
                 return 1
