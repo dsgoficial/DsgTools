@@ -335,7 +335,7 @@ class ValidationProcess(QObject):
             inputDict[feature.id()]['featList'] = []
             inputDict[feature.id()]['featWithoutGeom'] = feature
         inputDictKeys = list(inputDict.keys())
-        if qgisOutputVector:
+        if qgisOutputVector is not None:
             for feat in qgisOutputVector.dataProvider().getFeatures():
                 if keyColumn == '':
                     featid = feat.id()
@@ -363,7 +363,7 @@ class ValidationProcess(QObject):
                 if i == 0:
                     #let's update this feature
                     newGeom = outFeats[i].geometry()
-                    if newGeom:
+                    if newGeom is not None:
                         if isMulti:
                             newGeom.convertToMultiType()
                         pgInputLayer.changeGeometry(id, newGeom) #It is faster according to the api

@@ -72,7 +72,7 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
                 self.postProcessSteps(processTableName, lyr)
                 #removes null geometries
                 for feat in lyr.getFeatures():
-                    if not feat.geometry():
+                    if feat.geometry() is None:
                         lyr.deleteFeature(feat.id())
                 localProgress.step()
                 self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
