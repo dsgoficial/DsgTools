@@ -712,7 +712,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :param tableSchema: (str) name of schema containing hidrography node table.
         :param tableName: (str) name of hidrography node table.
         :param geometryColumn: (str) name of geometric column on table.
-        :return: (list-of-str) list of invalidations found.
+        :return: ( list-of- ( (str)feature_identification, (int)feat_id, (str)invalidation_reason, (hex)geometry, (str)geom_column ) ) list of invalidations found.
         """
         recordList = []
         countNodeNotInDb = 0
@@ -728,7 +728,8 @@ class HidrographyFlowProcess(ValidationProcess):
         if countNodeNotInDb:
             # in case there are flagged nodes that are not loaded in DB, user is notified
             QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), \
-                    self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.').format(countNodeNotInDb))
+                    self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.')\
+                    .format(countNodeNotInDb))
         return recordList
 
     def loadLayer(self, layer, uniqueLoad=True):
@@ -742,84 +743,10 @@ class HidrographyFlowProcess(ValidationProcess):
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the class {0}!\n').format(layer)+':'.join(e.args))
 
-    # def executeV2(self):
-    #     """
-    #     Structures and executes the process.
-    #     :return: (int) execution code.
-    #     """
-    #     QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-    #     self.startTimeCount()
-    #     try:
-    #         self.setStatus(self.tr('Running'), 3) #now I'm running!
-    #         self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-    #         # node type should not be calculated OTF for comparison (db data is the one perpetuated)
-    #         # setting all method variables
-    #         refKey = self.parameters['Reference and Layers'][0]
-    #         classesWithElemKeys = self.parameters['Reference and Layers'][1]
-    #         if len(classesWithElemKeys) == 0:
-    #             self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-    #             return 1
-    #         elif len(classesWithElemKeys) > 1:
-    #             self.setStatus(self.tr('More than one class selected. Please select only the hidrography lines layer.'), 1) #Finished
-    #             return 1
-    #         else:
-    #             hidLineLyrKey = classesWithElemKeys[0]
-    #         if not refKey:
-    #             self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
-    #             return 1
-    #         # preparing reference layer
-    #         refcl = self.classesWithElemDict[refKey]
-    #         frameLayer = self.loadLayerBeforeValidationProcess(refcl)
-    #         # preparing hidrography lines layer
-    #         hidcl = self.classesWithElemDict[hidLineLyrKey]
-    #         trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
-    #         # getting dictionaries of nodes information 
-    #         frame = self.getFrameContour(frameLayer=frameLayer)
-    #         self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
-    #         crs = trecho_drenagem.crs().authid()
-    #         # node layer has the same CRS as the hidrography lines layer
-    #         nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
-    #         searchRadius = self.parameters['Search Radius']
-    #         # getting current type for hidrography nodes as it is on screen now
-    #         self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=[], searchRadius=self.parameters['Search Radius'])
-    #         try:
-    #             self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-    #         except:
-    #             pass
-    #         if not self.nodeTypeDict:
-    #             try:
-    #                 self.nodeTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=[], searchRadius=self.parameters['Search Radius'])
-    #                 self.abstractDb.createHidNodeTable(crs.split(':')[1])
-    #                 self.fillNodeTable(hidLineLayer=trecho_drenagem)
-    #             except:
-    #                 self.setStatus(self.tr('Could not create and load hidrography nodes layer.'), 1) #Finished
-    #                 return 1
-    #         self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
-    #         nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
-    #         # getting recordList to be loaded to validation flag table
-    #         recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
-    #         if len(recordList) > 0:
-    #             numberOfProblems = self.addFlag(recordList)
-    #             msg = self.tr('{0} lines may be incorrectly directed. Check flags.').format(numberOfProblems)
-    #             self.setStatus(msg, 4) #Finished with flags
-    #         else:
-    #             msg = self.tr('All lines are correctly directed.')
-    #             self.setStatus(msg, 1) #Finished
-    #         return 1
-    #     except Exception as e:
-    #         QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-    #         self.finishedWithError()
-    #         return 0
-
     def execute(self):
         """
-        Execution method for testing purposes. WILL BE EXECRATED FROM CODE WHEN METHOD IS CONCLUDED.
-        Returns 0 for a successful execution.
-        Sugested error return codes:
-        -1: Generic error for mishandling parameters
-         1: No water bodies layers selected
-         2: No reference layer selected
-         3: Unable to create/populate hidrography node table on database 
+        Structures and executes the process.
+        :return: (int) execution code.
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
@@ -905,10 +832,9 @@ class HidrographyFlowProcess(ValidationProcess):
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON
-                QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('Enter input database!'))
-                msg = val
-                self.setStatus(msg, 1) #Finished with flags
-                return 1
+                QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('No initial node was found!'))
+                self.finishedWithError()
+                return 0
             # if user set to select valid lines
             if self.parameters['Select All Valid Lines']:
                 trecho_drenagem.setSelectedFeatures(val.keys())
@@ -916,10 +842,12 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
-                msg = self.tr('{0} nodes may be invalid. Check flags.').format(numberOfProblems)
+                msg = self.tr('{0} nodes may be invalid ({1:.3f}% of network is well directed). Check flags.')\
+                            .format(numberOfProblems, float(len(val))*100.0/float(trecho_drenagem.featureCount()))
                 self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
             else:
-                msg = self.tr('Network has coherent direction.')
+                msg = self.tr('Network has coherent directions.')
                 self.setStatus(msg, 1) #Finished
             return 1
         except Exception as e:
