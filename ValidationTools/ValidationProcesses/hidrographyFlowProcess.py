@@ -538,12 +538,14 @@ class HidrographyFlowProcess(ValidationProcess):
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
-                        reason += self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
+                        reason += self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')\
+                        .format(lineID, self.nodeTypeNameDict[self.nodeTypeDict[node]])
             elif flow == 'in and out':
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
                     invalidLines[lineID] = line
-                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'.format(self.nodeTypeNameDict[self.nodeTypeDict[node]]))
+                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'\
+                    .format(self.nodeTypeNameDict[self.nodeTypeDict[node]]))
                     if thisReason not in reason:
                         reason += thisReason
                 elif node in [initialNode, finalNode]:
@@ -842,8 +844,12 @@ class HidrographyFlowProcess(ValidationProcess):
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
+                if self.parameters['Only Selected']:
+                    percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
+                else:
+                    percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
                 msg = self.tr('{0} nodes may be invalid ({1:.3f}% of network is well directed). Check flags.')\
-                            .format(numberOfProblems, float(len(val))*100.0/float(trecho_drenagem.featureCount()))
+                            .format(numberOfProblems, percValid)
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
             else:
