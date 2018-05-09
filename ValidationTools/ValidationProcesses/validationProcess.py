@@ -192,7 +192,7 @@ class ValidationProcess(QObject):
             if status not in [0,3]: # neither running nor instatiating status should be logged
                 self.logProcess()
                 if self.logMsg:
-                    msg += "\n\n" + self.logMsg
+                    msg += "\n" + self.logMsg
                 elif not self.dbUserName:
                     msg += self.tr("Database username: {}\n").format(self.abstractDb.db.userName())
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
