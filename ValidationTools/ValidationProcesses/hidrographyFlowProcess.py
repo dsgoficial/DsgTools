@@ -592,21 +592,9 @@ class HidrographyFlowProcess(ValidationProcess):
         :param nodeCrs: (int) CRS for node layer (EPSG number).
         :return: (dict) node ID according to database information.
         """
-        nodeWkt, dbNTD, dbNodeIdDict = dict(), dict(), dict()
         if not nodeList:
             nodeList = self.nodeDict.keys()
-        for node in nodeList:
-            # mapping WKT conversions
-            # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
-            nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
-            nodeId = self.abstractDb.getNodeId(nWkt, nodeLayerName, hidrographyLineLayerName, nodeCrs)
-            dbNodeIdDict[node] = nodeId
-        # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
-        # for nWkt in dbNTD.keys():
-        #     if nWkt in nodeWkt.keys():
-        #         # if node is not in original dict, it'll be ignored 
-        #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
-        return dbNodeIdDict
+        return self.abstractDb.getNodeId(nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs)
 
     def getNextNodes(self, node, hidLineLayer, geomType=None):
         """

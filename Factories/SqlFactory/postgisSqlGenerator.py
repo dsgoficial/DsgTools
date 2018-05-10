@@ -1790,7 +1790,7 @@ class PostGISSqlGenerator(SqlGenerator):
         .format(layerName, nodeWkt, nodeType, crs)
         return sql
     
-    def getNodesGeometryQuery(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+    def getNodesGeometryQuery(self, node, nodeLayerName, hidrographyLineLayerName, nodeCrs):
         """
         Returns the query for geometry of given feature from database. If feature is not found into database, returns None.
         :param node: (QgsPoint) target node point.
@@ -1799,13 +1799,9 @@ class PostGISSqlGenerator(SqlGenerator):
         :return: node geometry from database
         :nodeCrs: CRS for node layer.
         """
-        nodeListString = ""
-        for node in nodeList:
-            nodeListString += """ST_GeomFromText('{0}', {1}), """.format(node, nodeCrs)
-        nodeListString = (nodeListString + ')').replace(', )', '')
+        nodeListString = """ST_GeomFromText('{0}', {1})""".format(node, nodeCrs)
         sql = """
-            SELECT ST_AsText(geom), node_type FROM validation.{1}
-                WHERE geom in ({0}) AND layer = '{2}';
+            SELECT node_type FROM validation.{1} WHERE geom in ({0}) AND layer = '{2}';
         """.format(nodeListString, nodeLayerName, hidrographyLineLayerName)
         return sql
 

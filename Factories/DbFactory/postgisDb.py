@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField, QgsGeometry
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii, re
@@ -3723,34 +3723,53 @@ class PostgisDb(AbstractDb):
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
         :return: node type from database
         """
-        dbNodeTypeDict = dict()
-        sql = ""
-        sql = self.gen.getNodesGeometryQuery(nodeList=wktNodeList, nodeLayerName=nodeLayerName, \
+        nodeDict = dict()
+        if isinstance(nodeList, list):
+            for node in nodeList:
+                nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
+                sql += "\n" + self.gen.getNodeIdQuery(node=nWkt, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)        
+        else:
+            sql = self.gen.getNodesGeometryQuery(node=nodeList, nodeLayerName=nodeLayerName, \
                                              hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving nodes geometry from database: ")+query.lastError().text())
             return None
         while query.next():
-            dbNodeTypeDict[query.value(0)] = query.value(1)
-        return dbNodeTypeDict
+            if isinstance(nodeList, list):
+                nodeDict = dict()
+                for node in nodeList:
+                    nodeDict[node] = query.value(0)
+        return nodeDict
 
-    def getNodeId(self, wktNode, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+    def getNodeId(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
         """
         Returns the ID of given nodes from database. If node is not found into database, returns None.
-        :param wktNode: a node point (QgsPoint to WKT form).
+        :param nodes: a node point or a list of node points (QgsPoint).
         :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
         :return: node ID from database
         """
         sql = ""
-        sql = self.gen.getNodeIdQuery(node=wktNode, nodeLayerName=nodeLayerName, \
+        if isinstance(nodeList, list):
+            for node in nodeList:
+                nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
+                sql += "\n" + self.gen.getNodeIdQuery(node=nWkt, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)        
+        else:
+            sql = self.gen.getNodeIdQuery(node=nodeList, nodeLayerName=nodeLayerName, \
                                              hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem while retrieving nodes ID from database: ")+query.lastError().text())
             return None
         while query.next():
+            if isinstance(nodeList, list):
+                nodeDict = dict()
+                for node in nodeList:
+                    nodeDict[node] = query.value(0)
+                return nodeDict
             return query.value(0)
 
     def createNodeTypeDomainTable(self, useTransaction=True):
