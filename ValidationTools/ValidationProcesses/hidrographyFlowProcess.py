@@ -759,6 +759,7 @@ class HidrographyFlowProcess(ValidationProcess):
         """
         # IDs from features to be flipped
         lineIds = []
+        fixedFlags = dict()
         if not geomType:
             geomType = nodeLayer.geometryType()
         for node, reason in nodeFlags.iteritems():
@@ -769,27 +770,28 @@ class HidrographyFlowProcess(ValidationProcess):
             featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
             if reasonType in [1, 2]:
                 # if it's a line flowing the wrong way, they will be flipped
+                lineIds += featIdFlipCandidates
             elif reasonType == 3:
                 # in case there are conflicting lines and one of them must be flipped
                 if len(self.nodeDict[node]['start']) > len(self.nodeDict[node]['end']):
                     # the line to be flipped is in the largest dict, given that confluence/ramification points would turn
                     # into sinks/water sources
-                    checkFeatIdList = [f.id() for f in len(self.nodeDict[node]['start']]
+                    checkFeatIdList = [f.id() for f in self.nodeDict[node]['start']]
                 else:
-                    checkFeatIdList = [f.id() for f in len(self.nodeDict[node]['end']]
+                    checkFeatIdList = [f.id() for f in self.nodeDict[node]['end']]
                 if featIdFlipCandidates[0] in checkFeatIdList:
-                    lineIds += feature=featIdFlipCandidates[0]
+                    lineIds += featIdFlipCandidates[0]
                 else:
-                    lineIds += feature=featIdFlipCandidates[1]
+                    lineIds += featIdFlipCandidates[1]
+                # add them to return dict in order to not lose track of fixed problems
+                fixedFlags[node] = reason
+                # and pop it from original dict
+                nodeFlags.pop(node, None)                
         featureListIterator = layer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(','.join(lineIds)))))
         for feat in featureListIterator:
             # flip every feature indicated as a fixable flag
-            self.DsgGeometryHandler.flipFeature(layer=nodeLayer, feature=feat, geomType=geomType)
-            # and pop it from original dict
-
-            # add them to return dict in order to not lose track of fixed problems 
-
-        return notFixedFlags
+            self.DsgGeometryHandler.flipFeature(layer=nodeLayer, feature=feat, geomType=geomType)            
+        return fixedFlags
             
     # def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
     #     """
