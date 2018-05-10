@@ -22,14 +22,13 @@
 """
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, \
-                      QgsFeatureRequest, QgsMapLayerRegistry, QgsDataSourceURI
+                      QgsFeatureRequest, QgsDataSourceURI
 from qgis.gui import QgsMapTool
 from PyQt4.QtGui import QMessageBox
 
 import processing, binascii, math
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class HidrographyFlowParameters(list):
@@ -97,12 +96,6 @@ class HidrographyFlowProcess(ValidationProcess):
                                         7 : self.tr("Attribute Change Node"),
                                         8 : self.tr("Node Next to Water Body")
                                     }
-        else:
-            # check if node table and node type domain table are created on db
-            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
-                self.abstractDb.createHidNodeTable(crs.split(':')[1])
-            if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
-                self.abstractDb.createNodeTypeDomainTable()
 
     def getFrameContour(self, frameLayer):
         """
@@ -556,12 +549,12 @@ class HidrographyFlowProcess(ValidationProcess):
                         reason += self.tr('Line {0} seems to be invalid (unable to point specific reason). ').format(lineID)
         return  validLines, invalidLines, reason
 
-    def getNodeTypeFromDb(self, nodeLayerName, hidrographyLineLayerName, nodeCrs, nodeList=None):
+    def getNodeTypeFromDb(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
         """
         Returns a dictionary of node type as of database point of view.
         :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
-        :param nodeCrs: (int) CRS for node layer (EPSG number).
+        :param nodeSrid: (int) CRS for node layer (EPSG number).
         :param nodeList: a list of target node points (QgsPoint). If not given, dictNode keys will be read as node list.
         :return: (dict) node type according to database information.
         """
@@ -574,27 +567,27 @@ class HidrographyFlowProcess(ValidationProcess):
             # nodeWkt[nodeGeom] = node
             # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
             temp = self.abstractDb.getNodesGeometry([QgsGeometry().fromMultiPoint([node]).exportToWkt()], \
-                    nodeLayerName, hidrographyLineLayerName, nodeCrs)
+                    nodeLayerName, hidrographyLineLayerName, nodeSrid)
             if temp:
                 dbNodeTypeDict[node] = temp.values()[0]
-        # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeCrs)
+        # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeSrid)
         # for nWkt in dbNTD.keys():
         #     if nWkt in nodeWkt.keys():
         #         # if node is not in original dict, it'll be ignored 
         #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
         return dbNodeTypeDict
 
-    def getNodeDbIdFromNode(self, nodeLayerName, hidrographyLineLayerName, nodeCrs, nodeList=None):
+    def getNodeDbIdFromNode(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
         """
         Returns a dictionary of node type as of database point of view.
         :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
-        :param nodeCrs: (int) CRS for node layer (EPSG number).
+        :param nodeSrid: (int) CRS for node layer (EPSG number).
         :return: (dict) node ID according to database information.
         """
         if not nodeList:
             nodeList = self.nodeDict.keys()
-        return self.abstractDb.getNodeId(nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs)
+        return self.abstractDb.getNodeId(nodeList, nodeLayerName, hidrographyLineLayerName, nodeSrid)
 
     def getNextNodes(self, node, hidLineLayer, geomType=None):
         """
@@ -615,13 +608,12 @@ class HidrographyFlowProcess(ValidationProcess):
             nextNodes.append(self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType))
         return nextNodes
 
-    def checkAllNodesValidity(self, hidLineLyr, nodeCrs, nodeList=None):
+    def checkAllNodesValidity(self, hidLineLyr, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 
         correctly classified. CARE: 'nodeTypeDict' MUST BE THE ONE TAKEN FROM DATABASE, NOT RETRIEVED OTF.
         :param hidLineLyr: (QgsVectorLayer) hidrography lines layer from which node are created from.
-        :param nodeCrs: (str) string containing node layer EPSG code. 
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
@@ -722,6 +714,101 @@ class HidrographyFlowProcess(ValidationProcess):
                     .format(countNodeNotInDb))
         return recordList
 
+    def getReasonType(self, reason):
+        """
+        Gets the type of reason. 0 indicates non-fixable reason.
+        :param reason: (str) reason of node invalidation.
+        :return: (int) reason type.
+        """
+        fixableReasonExcertsDict = {
+                                    self.tr("does not end at a node with IN flow type") : 1,
+                                    self.tr("does not start at a node with OUT flow type") : 2,
+                                    self.tr("have conflicting directions") : 3
+                                   }
+        for r in fixableReasonExcertsDict.keys():
+            if r in reason:
+                return fixableReasonExcertsDict[r]
+        # if reason is not one of the fixables
+        return 0
+
+    def getLineIdFromReason(self, reason, reasonType):
+        """
+        Extracts line ID from given reason.
+        :param reason: (str) reason of node invalidation.
+        :param reasonType: (int) invalidation reason type.
+        :return: (list-of-int) line ID. If reason type is 3, returns a tuple of IDs.
+        """
+        if reasonType in [1, 2]:
+            # Lines before being built:
+            # self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ')
+            # self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
+            return [int(reason.split(self.tr(" does"))[0].split(" ")[1])]
+        elif reasonType == 3:
+            # Line before being built: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
+            lineId1 = reason.split(self.tr(" and "))[0].split(" ")[1]
+            lineId2 = reason.split(self.tr(" and "))[1].split(" ")[0]
+            return [int(lineId1), int(lineId2)]
+
+    def fixNodeFlags(self, nodeFlags, nodeLayer, geomType=None):
+        """
+        Tries to fix the flag raised.
+        :param nodeFlags: (dict) dictionary containing invalid node and its reason ( { (QgsPoint) node : (str) reason } ).
+        :param fixNodeFlags: (QgsVectorLayer) layer containing network node.
+        :param geomType: (int) geometry type of nodes layer.
+        :return: (dict) dictionary containing invalid node and its reason ( { (QgsPoint) node : (str) reason } ).
+        """
+        # IDs from features to be flipped
+        lineIds = []
+        if not geomType:
+            geomType = nodeLayer.geometryType()
+        for node, reason in nodeFlags.iteritems():
+            reasonType = self.getReasonType(reason=reason)
+            if not reasonType:
+                # skip node if it's not fixable
+                continue
+            featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
+            if reasonType in [1, 2]:
+                # if it's a line flowing the wrong way, they will be flipped
+            elif reasonType == 3:
+                # in case there are conflicting lines and one of them must be flipped
+                if len(self.nodeDict[node]['start']) > len(self.nodeDict[node]['end']):
+                    # the line to be flipped is in the largest dict, given that confluence/ramification points would turn
+                    # into sinks/water sources
+                    checkFeatIdList = [f.id() for f in len(self.nodeDict[node]['start']]
+                else:
+                    checkFeatIdList = [f.id() for f in len(self.nodeDict[node]['end']]
+                if featIdFlipCandidates[0] in checkFeatIdList:
+                    lineIds += feature=featIdFlipCandidates[0]
+                else:
+                    lineIds += feature=featIdFlipCandidates[1]
+        featureListIterator = layer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(','.join(lineIds)))))
+        for feat in featureListIterator:
+            # flip every feature indicated as a fixable flag
+            self.DsgGeometryHandler.flipFeature(layer=nodeLayer, feature=feat, geomType=geomType)
+            # and pop it from original dict
+
+            # add them to return dict in order to not lose track of fixed problems 
+
+        return notFixedFlags
+            
+    # def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
+    #     """
+    #     Returns the layer from a given table name into database.
+    #     :param lyrSchema: (str) schema containing target table.
+    #     :param lyrName: (srt) name of layer to beloaded.
+    #     :param srid: (int) SRID from given layer.
+    #     :return: (QgsVectorLayer) vector layer.
+    #     """
+    #     host, port, user, pswd = self.abstractDb.getDatabaseParameters()
+    #     id_field = 'id'
+    #     providerLib = 'postgres'
+    #     db = self.abstractDb.getDatabaseName()
+    #     uri = QgsDataSourceURI()        
+    #     uri.setConnection(host, str(port), db, user, pswd)
+    #     uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
+    #     uri.setSrid(srid)
+    #     return QgsVectorLayer(uri.uri(), lyrName, providerLib)
+
     def loadLayer(self, layer, uniqueLoad=True):
         """
         Load a given layer to canvas.
@@ -795,9 +882,14 @@ class HidrographyFlowProcess(ValidationProcess):
             self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
             crs = trecho_drenagem.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
-            nodeCrs = trecho_drenagem.crs().authid().split(':')[1]
+            nodeSrid = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
-            # # load node table into canvas
+            # check if node table and node type domain table are created on db
+            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
+                self.abstractDb.createHidNodeTable(nodeSrid)
+            if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
+                self.abstractDb.createNodeTypeDomainTable()
+            # load node table into canvas
             self.loadLayer(self.hidNodeLayerName)
             # getting current type for hidrography nodes as it is on screen now
             self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
@@ -810,15 +902,15 @@ class HidrographyFlowProcess(ValidationProcess):
             else:
                 try:
                     # if user doesn't set process to repopulate db, method tries to get node type already set
-                    self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
+                    self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
                 except:
                     # if it fails, it keep populates node table 
                     if not self.nodeTypeDict:
                         self.nodeTypeDict = self.nodeCurrentTypeDict
                         self.fillNodeTable(hidLineLayer=trecho_drenagem)
-            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeCrs=nodeCrs)
+            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
             # validation method FINALLY starts...
-            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem, nodeCrs=nodeCrs)
+            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON
