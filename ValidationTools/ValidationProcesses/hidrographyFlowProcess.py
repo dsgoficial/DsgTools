@@ -781,9 +781,9 @@ class HidrographyFlowProcess(ValidationProcess):
                 if len(self.nodeDict[node]['start']) > len(self.nodeDict[node]['end']):
                     # the line to be flipped is in the largest dict, given that confluence/ramification points would turn
                     # into sinks/water sources
-                    checkFeatIdList = [f.id() for f in self.nodeDict[node]['start']]
+                    checkFeatIdList = [str(f.id()) for f in self.nodeDict[node]['start']]
                 else:
-                    checkFeatIdList = [f.id() for f in self.nodeDict[node]['end']]
+                    checkFeatIdList = [str(f.id()) for f in self.nodeDict[node]['end']]
                 if featIdFlipCandidates[0] in checkFeatIdList:
                     lineIds += [featIdFlipCandidates[0]]
                 else:
@@ -833,8 +833,12 @@ class HidrographyFlowProcess(ValidationProcess):
             # every cycle implies in a new node reclassification as nodes have changed their types on canvas
             self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
             self.fillNodeTable(hidLineLayer=networkLayer)
-            if not newFixedFlags or newFixedFlags.keys() in fixedFlags.keys():
-                # in case
+            if newFixedFlags:
+                # in case the fixed flags are the same as before
+                if list( set(newFixedFlags.keys()) -  set(fixedFlags.keys()) ):
+                    break
+            else:
+                # in case there are no new fixed flags
                 break
             # adds newly fixed flags to dict
             fixedFlags.update(newFixedFlags)
@@ -992,7 +996,7 @@ class HidrographyFlowProcess(ValidationProcess):
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 if self.parameters['Only Selected']:
-                    percValid = float(len(val))*100.0/float(trecho_drenagem.selectedFeatures())
+                    percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
                 else:
                     percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
                 msg = self.tr('{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.')\
