@@ -666,4 +666,4 @@ class MultiLayerSelection(QgsMapTool):
                     elif selected:
                         self.iface.setActiveLayer(layer)
                     else:
-                        self.iface.openFeatureForm(layer, feature, showModal=False)
+                        self.iface.openFeatureForm(layer, feature[0], showModal=False)
