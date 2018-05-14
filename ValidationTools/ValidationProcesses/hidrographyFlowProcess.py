@@ -736,7 +736,7 @@ class HidrographyFlowProcess(ValidationProcess):
         Extracts line ID from given reason.
         :param reason: (str) reason of node invalidation.
         :param reasonType: (int) invalidation reason type.
-        :return: (list-of-int) line ID. If reason type is 3, returns a tuple of IDs.
+        :return: (list-of-int) line ID.
         """
         if reasonType in [1, 2]:
             # Lines before being built:
@@ -792,6 +792,34 @@ class HidrographyFlowProcess(ValidationProcess):
             # flip every feature indicated as a fixable flag
             self.DsgGeometryHandler.flipFeature(layer=nodeLayer, feature=feat, geomType=geomType)            
         return fixedFlags
+
+    def recursiveFixFlags(self, nodeFlags, nodeLayer, geomType=None, maximumCycles=10):
+        """
+        Runs the fixing method for as long as flags are found and being fixed.
+        :param nodeFlags: (dict) dictionary of nodes and their invalidation reasons { (QgsPoint)node : (str)reason }.
+        :param nodeLayer: (QgsVectorLayer) layer containig network nodes.
+        :param geomType: (int) nodes layer geometry type.
+        :param maximumCycles: (int) 
+        :return: (bool)
+        """
+        if not geomType:
+            geomType = nodeLayer.geometryType()
+        fixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, nodeLayer=nodeLayer, geomType=geomType)
+        if not fixedFlags:
+            # in case there are no fixed flags, method didn't fix any flags
+            return False
+        while count < maximumCycles or fixedFlags:
+            newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, nodeLayer=nodeLayer, geomType=geomType)
+            if newFixedFlags and newFixedFlags.keys() in fixedFlags.keys():
+                break
+            # adds newly fixed flags to dict
+            fixedFlags.update(newFixedFlags)
+        for node in fixedFlags.keys():
+            # remove all fixed flags from flags dict
+            if node in nodeFlags.key():
+                nodeFlags.pop(node)
+        return fixedFlags
+
             
     # def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
     #     """
@@ -811,10 +839,10 @@ class HidrographyFlowProcess(ValidationProcess):
     #     uri.setSrid(srid)
     #     return QgsVectorLayer(uri.uri(), lyrName, providerLib)
 
-    def loadLayer(self, layer, uniqueLoad=True):
+    def loadLayer(self, layerName, uniqueLoad=True):
         """
         Load a given layer to canvas.
-        :param layer: (str) layer name to be loaded.
+        :param layerName: (str) layer name to be loaded.
         :param uniqueLoad: (bool) indicates that layer will be loaded to canvas only if it is not loaded already.
         """
         try:
