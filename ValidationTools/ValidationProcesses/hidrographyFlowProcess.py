@@ -22,7 +22,7 @@
 """
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, \
-                      QgsFeatureRequest, QgsDataSourceURI
+                      QgsFeatureRequest, QgsDataSourceURI, QgsExpression
 from qgis.gui import QgsMapTool
 from PyQt4.QtGui import QMessageBox
 
@@ -485,7 +485,7 @@ class HidrographyFlowProcess(ValidationProcess):
                     HidrographyFlowProcess.Confluence : 'in and out', # 5 - Confluência
                     HidrographyFlowProcess.Ramification : 'in and out', # 6 - Ramificação
                     HidrographyFlowProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
-                    HidrographyFlowProcess.NodeNextToWaterBody : 'in and out' # 8 - Nó próximo a corpo d'água                
+                    HidrographyFlowProcess.NodeNextToWaterBody : 'in or out' # 8 - Nó próximo a corpo d'água                
                    }
         # if node is introduced by operator's modification, it won't be saved to the layer
         if node not in self.nodeTypeDict.keys():
@@ -547,6 +547,11 @@ class HidrographyFlowProcess(ValidationProcess):
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
                         reason += self.tr('Line {0} seems to be invalid (unable to point specific reason). ').format(lineID)
+            elif flow == 'in or out':
+                # these nodes can either be a waterway beginning or end
+                elif node in [initialNode, finalNode]:
+                    if lineID not in validLines.keys():
+                        validLines[lineID] = line
         return  validLines, invalidLines, reason
 
     def getNodeTypeFromDb(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
@@ -742,30 +747,30 @@ class HidrographyFlowProcess(ValidationProcess):
             # Lines before being built:
             # self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ')
             # self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
-            return [int(reason.split(self.tr(" does"))[0].split(" ")[1])]
+            return [reason.split(self.tr(" does"))[0].split(" ")[1]]
         elif reasonType == 3:
             # Line before being built: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
             lineId1 = reason.split(self.tr(" and "))[0].split(" ")[1]
             lineId2 = reason.split(self.tr(" and "))[1].split(" ")[0]
-            return [int(lineId1), int(lineId2)]
+            return [lineId1, lineId2]
 
-    def fixNodeFlags(self, nodeFlags, nodeLayer, geomType=None):
+    def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
         """
         Tries to fix the flag raised.
         :param nodeFlags: (dict) dictionary containing invalid node and its reason ( { (QgsPoint) node : (str) reason } ).
-        :param fixNodeFlags: (QgsVectorLayer) layer containing network node.
-        :param geomType: (int) geometry type of nodes layer.
+        :param networkLayer: (QgsVectorLayer) layer containing network lines.
+        :param geomType: (int) geometry type of network lines layer.
         :return: (dict) dictionary containing invalid node and its reason ( { (QgsPoint) node : (str) reason } ).
         """
         # IDs from features to be flipped
         lineIds = []
         fixedFlags = dict()
         if not geomType:
-            geomType = nodeLayer.geometryType()
+            geomType = networkLayer.geometryType()
         for node, reason in nodeFlags.iteritems():
             reasonType = self.getReasonType(reason=reason)
             if not reasonType:
-                # skip node if it's not fixable
+                # skip node if it's not fixable (reason type 0)
                 continue
             featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
             if reasonType in [1, 2]:
@@ -780,64 +785,90 @@ class HidrographyFlowProcess(ValidationProcess):
                 else:
                     checkFeatIdList = [f.id() for f in self.nodeDict[node]['end']]
                 if featIdFlipCandidates[0] in checkFeatIdList:
-                    lineIds += featIdFlipCandidates[0]
+                    lineIds += [featIdFlipCandidates[0]]
                 else:
-                    lineIds += featIdFlipCandidates[1]
+                    lineIds += [featIdFlipCandidates[1]]
                 # add them to return dict in order to not lose track of fixed problems
                 fixedFlags[node] = reason
-                # and pop it from original dict
-                nodeFlags.pop(node, None)                
-        featureListIterator = layer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(','.join(lineIds)))))
+        for node in fixedFlags.keys():
+            # pop it from original dict
+            nodeFlags.pop(node, None)
+        featureListIterator = networkLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(','.join(lineIds)))))
         for feat in featureListIterator:
             # flip every feature indicated as a fixable flag
-            self.DsgGeometryHandler.flipFeature(layer=nodeLayer, feature=feat, geomType=geomType)            
+            self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
+        if lineIds:
+            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}").format(",".join(lineIds))
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('{0}: Flippled Lines'.format(self.processAlias)), warning)
         return fixedFlags
 
-    def recursiveFixFlags(self, nodeFlags, nodeLayer, geomType=None, maximumCycles=10):
+    def recursiveFixFlags(self, nodeFlags, networkLayer, geomType=None, maximumCycles=9):
         """
-        Runs the fixing method for as long as flags are found and being fixed.
-        :param nodeFlags: (dict) dictionary of nodes and their invalidation reasons { (QgsPoint)node : (str)reason }.
-        :param nodeLayer: (QgsVectorLayer) layer containig network nodes.
-        :param geomType: (int) nodes layer geometry type.
-        :param maximumCycles: (int) 
-        :return: (bool)
+        Runs the fixing method for as long as flags are found and being fixed, or maximum cycles isn't reached.
+        :param nodeFlags: (dict) dictionary of nodes and their invalidation reasons { (QgsPoint)node : (str)reason }. MAY BE MODIFIED.
+        :param networkLayer: (QgsVectorLayer) layer containig network lines.
+        :param geomType: (int) network lines layer geometry type.
+        :param maximumCycles: (int) maximum amount of fixing cycles (-1, as first iteration is off-loop) per process execution.
+        :return: (dict) dictionary of flags that were fixed and their reasons.
         """
         if not geomType:
-            geomType = nodeLayer.geometryType()
-        fixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, nodeLayer=nodeLayer, geomType=geomType)
+            geomType = networkLayer.geometryType()
+        # get first fix
+        fixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
         if not fixedFlags:
-            # in case there are no fixed flags, method didn't fix any flags
-            return False
-        while count < maximumCycles or fixedFlags:
-            newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, nodeLayer=nodeLayer, geomType=geomType)
-            if newFixedFlags and newFixedFlags.keys() in fixedFlags.keys():
+            # in case method didn't fix any flags
+            return fixedFlags
+        newFixedFlags = fixedFlags
+        # update nodes classification if there are any fixed nodes
+        self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+        self.fillNodeTable(hidLineLayer=networkLayer)
+        count = 0
+        while count < maximumCycles or newFixedFlags:
+            newNodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=networkLayer)
+            if newNodeFlags.keys() in nodeFlags.keys():
+                # in case a subset of flags is raised again by process, fixing method is no longer effective 
+                # thus no fixing method will be applied
+                break
+            newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
+            # every cycle implies in a new node reclassification as nodes have changed their types on canvas
+            self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+            self.fillNodeTable(hidLineLayer=networkLayer)
+            if not newFixedFlags or newFixedFlags.keys() in fixedFlags.keys():
+                # in case
                 break
             # adds newly fixed flags to dict
             fixedFlags.update(newFixedFlags)
+            # in case fixing method isn't effective and fix doesn't really fix it
+            for node in newNodeFlags.keys():
+                if node in fixedFlags.keys():
+                    # remove it from fixed nodes list
+                    fixedFlags.pop(node)
+            # cycle has finished
+            count += 1
         for node in fixedFlags.keys():
             # remove all fixed flags from flags dict
-            if node in nodeFlags.key():
+            if node in nodeFlags.keys():
                 nodeFlags.pop(node)
         return fixedFlags
 
             
-    # def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
-    #     """
-    #     Returns the layer from a given table name into database.
-    #     :param lyrSchema: (str) schema containing target table.
-    #     :param lyrName: (srt) name of layer to beloaded.
-    #     :param srid: (int) SRID from given layer.
-    #     :return: (QgsVectorLayer) vector layer.
-    #     """
-    #     host, port, user, pswd = self.abstractDb.getDatabaseParameters()
-    #     id_field = 'id'
-    #     providerLib = 'postgres'
-    #     db = self.abstractDb.getDatabaseName()
-    #     uri = QgsDataSourceURI()        
-    #     uri.setConnection(host, str(port), db, user, pswd)
-    #     uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
-    #     uri.setSrid(srid)
-    #     return QgsVectorLayer(uri.uri(), lyrName, providerLib)
+    def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
+        """
+        Returns the layer from a given table name into database.
+        :param lyrSchema: (str) schema containing target table.
+        :param lyrName: (srt) name of layer to beloaded.
+        :param srid: (int) SRID from given layer.
+        :return: (QgsVectorLayer) vector layer.
+        """
+        host, port, user, pswd = self.abstractDb.getDatabaseParameters()
+        id_field = 'id'
+        providerLib = 'postgres'
+        db = self.abstractDb.getDatabaseName()
+        uri = QgsDataSourceURI()        
+        uri.setConnection(host, str(port), db, user, pswd)
+        uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
+        uri.setSrid(srid)
+        return QgsVectorLayer(uri.uri(), lyrName, providerLib)
 
     def loadLayer(self, layerName, uniqueLoad=True):
         """
@@ -846,7 +877,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :param uniqueLoad: (bool) indicates that layer will be loaded to canvas only if it is not loaded already.
         """
         try:
-            return self.layerLoader.load([layer], uniqueLoad=uniqueLoad)[layer]
+            return self.layerLoader.load([layerName], uniqueLoad=uniqueLoad)[layerName]
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the class {0}!\n').format(layer)+':'.join(e.args))
 
@@ -941,6 +972,12 @@ class HidrographyFlowProcess(ValidationProcess):
             self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
+            # start recursive method in case flags are raised
+            if self.parameters['Only Selected'] and nodeFlags:
+                # this method alters database classification, hence it can only be used with it selected
+                # retrieve network node layer but its name
+                nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
+                fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=trecho_drenagem)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON
@@ -955,10 +992,10 @@ class HidrographyFlowProcess(ValidationProcess):
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 if self.parameters['Only Selected']:
-                    percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
+                    percValid = float(len(val))*100.0/float(trecho_drenagem.selectedFeatures())
                 else:
-                    percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
-                msg = self.tr('{0} nodes may be invalid ({1:.3f}% of network is well directed). Check flags.')\
+                    percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
+                msg = self.tr('{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.')\
                             .format(numberOfProblems, percValid)
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
