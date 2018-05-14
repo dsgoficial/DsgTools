@@ -545,13 +545,13 @@ class HidrographyFlowProcess(ValidationProcess):
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
-                        invalidLines[lineID] = line
-                        reason += self.tr('Line {0} seems to be invalid (unable to point specific reason). ').format(lineID)
+                    invalidLines[lineID] = line
+                    reason += self.tr('Line {0} seems to be invalid (unable to point specific reason). ').format(lineID)
             elif flow == 'in or out':
                 # these nodes can either be a waterway beginning or end
-                elif node in [initialNode, finalNode]:
-                    if lineID not in validLines.keys():
-                        validLines[lineID] = line
+                # No invalidation reasons were thought at this point...
+                if lineID not in validLines.keys():
+                    validLines[lineID] = line
         return  validLines, invalidLines, reason
 
     def getNodeTypeFromDb(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
@@ -973,7 +973,7 @@ class HidrographyFlowProcess(ValidationProcess):
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
             # start recursive method in case flags are raised
-            if self.parameters['Only Selected'] and nodeFlags:
+            if self.parameters['Classify Nodes On Database'] and nodeFlags:
                 # this method alters database classification, hence it can only be used with it selected
                 # retrieve network node layer but its name
                 nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
