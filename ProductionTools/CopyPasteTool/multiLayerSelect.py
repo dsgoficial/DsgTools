@@ -657,7 +657,7 @@ class MultiLayerSelection(QgsMapTool):
                     # if there are overlapping features (valid candidates only)
                     selectedFeaturesDict, notSelectedFeaturesDict = self.checkSelectedFeaturesOnDict(menuDict=lyrFeatDict)
                     self.setContextMenuStyle(e=e, dictMenuSelected=selectedFeaturesDict, dictMenuNotSelected=notSelectedFeaturesDict)
-                else: lyrFeatDict:
+                else:
                     layer = lyrFeatDict.keys()[0]
                     feature = lyrFeatDict[layer]
                     selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
