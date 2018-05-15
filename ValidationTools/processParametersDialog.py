@@ -103,24 +103,24 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
-            if self.WIDGETS[type(v)] == QtGui.QSpinBox:
+            elif self.WIDGETS[type(v)] == QtGui.QSpinBox:
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
             
-            if self.WIDGETS[type(v)] == CustomTableSelector:
+            elif self.WIDGETS[type(v)] == CustomTableSelector:
                 widget.setTitle(self.tr('Select classes'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
+            elif self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
                 widget.setTitle(self.tr('Select layers to be snapped'))
-            if self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
+            elif self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
                 widget.setTitle(self.tr('Select layers'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == DsgCustomComboBox:
+            elif self.WIDGETS[type(v)] == DsgCustomComboBox:
                 items = ['{0}.{1} ({2}, {3}, {4})'.format(r.split(',')[0], r.split(',')[1], r.split(',')[2], r.split(',')[3], r.split(',')[4]) for r in v.values]
                 items = [self.tr('Select Layer')] + items
                 getattr(widget, self.SETTERS[type(widget)])(items)
