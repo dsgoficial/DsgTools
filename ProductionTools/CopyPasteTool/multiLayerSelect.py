@@ -238,13 +238,14 @@ class MultiLayerSelection(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
 
-    def setSelectionFeature(self, layer, feature, selectAll=False):
+    def setSelectionFeature(self, layer, feature, selectAll=False, setActiveLayer=False):
         """
         Selects a given feature on canvas. 
-        :param layer: layer containing the target feature
-        :param feature: taget feature to be selected
-        :param selectAll: boolean indicating whether or not this fuction was called from a select all command
-                          so it doesn't remove selection from those that are selected already from the list
+        :param layer: (QgsVectorLayer) layer containing the target feature.
+        :param feature: (QgsFeature) taget feature to be selected.
+        :param selectAll: (bool) indicates whether or not this fuction was called from a select all command.
+                          so it doesn't remove selection from those that are selected already from the list.
+        :param setActiveLayer: (bool) indicates whether method should set layer as active.
         """        
         idList = layer.selectedFeaturesIds()
         featId = feature.id()
@@ -253,6 +254,9 @@ class MultiLayerSelection(QgsMapTool):
         elif not selectAll:
             idList.pop(idList.index(featId))
         layer.setSelectedFeatures(idList)
+        if setActiveLayer:
+            layer.startEditing()
+            self.iface.setActiveLayer(layer)
         return 
 
     def setSelectionListFeature(self, dictLayerFeature, selectAll=True):
@@ -262,19 +266,22 @@ class MultiLayerSelection(QgsMapTool):
         :param selectAll: (bool) indicates if "All"-command comes from a "Select All". In that case, selected features
                           won't be deselected.
         """
-        for layer in layerFeatDict.keys():
+        for layer in dictLayerFeature.keys():
             geomType = layer.geometryType()
             # ID list of features already selected
             idList = layer.selectedFeaturesIds()
             # restart feature ID list for each layer
             featIdList = []
-            for feature in layerFeatDict[layer]:
+            for feature in dictLayerFeature[layer]:
                 featId = feature.id()
                 if featId not in idList:
                     idList.append(featId)
                 elif not selectAll:
                     idList.pop(idList.index(featId))
             layer.setSelectedFeatures(idList)
+            layer.startEditing()
+        # last layer is set active and 
+        self.iface.setActiveLayer(layer)
 
     def openMultipleFeatureForm(self, dictLayerFeature):
         """
@@ -384,9 +391,7 @@ class MultiLayerSelection(QgsMapTool):
         if e.button() == QtCore.Qt.LeftButton: 
             # line added to make sure the action is associated with current loop value,
             # lambda function is used with standard parameter set to current loops value.
-            layer.startEditing()
-            self.iface.setActiveLayer(layer)
-            triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll)
+            triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll, setActiveLayer=True)
             hoveredAction = lambda t=[layer, feature] : self.createRubberBand(feature=t[1], layer=t[0], geom=geomType)
         elif e.button() == QtCore.Qt.RightButton:
             selected = (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
@@ -632,7 +637,7 @@ class MultiLayerSelection(QgsMapTool):
                     selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
                     if e.button() == QtCore.Qt.LeftButton:
                         # if feature is selected, we want it to be de-selected
-                        self.setSelectionFeature(layer=layer, feature=feature, selectAll=False)
+                        self.setSelectionFeature(layer=layer, feature=feature, selectAll=False, setActiveLayer=True)
                     elif selected:
                         self.iface.setActiveLayer(layer)
                     else:
