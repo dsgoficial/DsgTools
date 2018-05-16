@@ -54,7 +54,6 @@ class BandValueTool(QgsMapTool):
         self.timerMapTips = QTimer( self.canvas )
         self.timerMapTips.timeout.connect( self.showToolTip )
         self.activated = False
-        self.canvasCrs = self.canvas.mapRenderer().destinationCrs()
     
     def setAction(self, action):
         """
@@ -97,7 +96,7 @@ class BandValueTool(QgsMapTool):
         rasterCrs = rasterLayer.crs()
         mousePos = self.QgsMapToolEmitPoint.toMapCoordinates(self.canvas.mouseLastXY())
         mousePosGeom = QgsGeometry.fromPoint(mousePos)
-        self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
+        self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
