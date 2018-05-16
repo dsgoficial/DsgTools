@@ -33,7 +33,7 @@ import numpy as np
 from PyQt4.QtCore import Qt
 
 class AssignBandValueTool(QgsMapTool):
-    def __init__(self, canvas, iface, rasterLayer):
+    def __init__(self, iface, rasterLayer):
         """
         Tool Behaviours: (all behaviours start edition, except for rectangle one)
         1- Left Click: Creates a new point feature with the value from raster, according to selected attribute. 
@@ -42,7 +42,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         QgsMapTool.__init__(self, self.canvas)
         self.iface = iface        
-        self.canvas = canvas
+        self.canvas = self.iface.mapCanvas()
         self.toolAction = None
         self.raster = rasterLayer
         self.setRubberbandParameters()

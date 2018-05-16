@@ -51,5 +51,6 @@
         <file>icons/rasterToolTip.png</file>
         <file>icons/band_tooltip.png</file>
         <file>icons/dynamic_histogram_viewer.png</file>
+        <file>icons/valueSetter.png</file>
     </qresource>
 </RCC>
