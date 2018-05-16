@@ -52,7 +52,6 @@ class AssignBandValueTool(QgsMapTool):
         self.setRubberbandParameters()
         self.reset()
         self.auxList = []
-        self.canvasCrs = self.canvas.mapRenderer().destinationCrs()
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
@@ -81,6 +80,17 @@ class AssignBandValueTool(QgsMapTool):
         self.startPoint = self.endPoint = None
         self.isEmittingPoint = False
         self.rubberBand.reset(QGis.Polygon)
+
+    def canvasPressEvent(self, e):
+        """
+        Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
+        """
+        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            self.isEmittingPoint = True
+            self.startPoint = self.toMapCoordinates(e.pos())
+            self.endPoint = self.startPoint
+            self.isEmittingPoint = True
+            self.showRect(self.startPoint, self.endPoint)
 
     def canvasMoveEvent(self, e):
         """
@@ -143,7 +153,7 @@ class AssignBandValueTool(QgsMapTool):
             pointDict = dict()
             for feat in layer.selectedFeatures():
                 featDict[feat.id()] = feat
-                pointDict [feat.id()] = feat.geometry()
+                pointDict[feat.id()] = feat.geometry()
             pixelValueDict = self.getPixelValueFromPointDict(pointDict, self.rasterLayer)
             for idx in pointDict:
                 self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':pixelValueDict[idx]})
@@ -164,28 +174,26 @@ class AssignBandValueTool(QgsMapTool):
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
     
     def handleFeatures(self, selectedField, layer):
-        updateList = []
-        addList = []
         layer.startEditing()
         for item in self.auxList:
             if 'featId' in item:
                 feat = item['feat']
-                feat[selectedField] = item['value']
-                updateList.append(feat)
+                idx = feat.fieldNameIndex(selectedField)
+                feat.setAttribute(idx, item['value'])
+                layer.updateFeature(feat)
             else:
                 feature = QgsFeature(layer.fields())
+                self.dsgGeometryHandler.reprojectFeature(item['geom'], layer.crs())
                 feature.setGeometry(item['geom'])
                 self.addFeature(feature, layer, selectedField, item['value'])
-        if updateList:
-            layer.updateFeatures(updateList)
+        self.auxList = []
     
-    def addFeature(self, feature, layer, field, value):
+    def addFeature(self, feature, layer, field, pointValue):
         fields = layer.fields()
         feature.initAttributes(fields.count())            
-        provider = layer.dataProvider()              
+        provider = layer.dataProvider()             
         for i in range(fields.count()):
-            if fields[i].name() != field:
-                value = provider.defaultValue(i)
+            value = provider.defaultValue(i) if fields[i].name() != field else pointValue
             if value:
                 feature.setAttribute(i, value)                
         form = QgsAttributeDialog(layer, feature, False)
@@ -203,11 +211,6 @@ class AssignBandValueTool(QgsMapTool):
         else:
             layer.addFeature(feature, True)
 
-
-        
-
-
-    
     def getCursorRect(self, e):
         """
         Calculates small cursor rectangle around mouse position. Used to facilitate operations
@@ -238,6 +241,10 @@ class AssignBandValueTool(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
         self.iface.mapCanvas().setMapTool(self)
+        if not isinstance(self.iface.mapCanvas().currentLayer(), QgsVectorLayer):
+            self.iface.messageBar().pushMessage(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"),
+                                                level=QgsMessageBar.INFO, duration=10)
+            self.deactivate()
 
 
     def reprojectSearchArea(self, layer, geom):
@@ -270,7 +277,7 @@ class AssignBandValueTool(QgsMapTool):
         
         """
         rasterCrs = rasterLayer.crs()
-        self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
+        self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
