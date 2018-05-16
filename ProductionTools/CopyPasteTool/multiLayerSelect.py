@@ -216,48 +216,6 @@ class MultiLayerSelection(QgsMapTool):
         else:
             return primitiveDict
 
-    def selectFeatures(self, e, bbRect=None, hasControlModifier=False):
-        """
-        Method to select features acoording to mouse event e.
-        Optional parameters:
-        bbRect: if supplied, other rectangle is used
-        hasControlModifier: used to add to selection or not.
-        """
-        rect = self.getCursorRect(e)
-        primitiveDict = self.getPrimitiveDict(e, hasControlModifier = hasControlModifier)
-        primitives = primitiveDict.keys()
-        primitives.sort() #this sort enables search to be done in the order of Point (value 0), Line (value 1) and Polygon (value 2)
-        for primitive in primitives:
-            for lyr in primitiveDict[primitive]:
-                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(lyr, rect)
-                for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
-                    selectedIds = lyr.selectedFeaturesIds() #list of selected ids
-                    featGeom = feat.geometry()
-                    if not featGeom:
-                        continue
-                    if featGeom.intersects(bbRect): #tests if feature intersects tool bounding box, otherwise skip it
-                        lyr.startEditing() #starts layer editting
-                        if e.button() == QtCore.Qt.RightButton:
-                            #set target, start edit and stop
-                            if hasControlModifier:
-                                #sets active layer. Since hasControlModifier indicates to this method to clear selection, this part of
-                                #the code completes the  control + right click behaviour.
-                                self.iface.setActiveLayer(lyr)
-                                return
-                            else:
-                                #opens feature form. The tag showModal is to lock qgis window or not. 
-                                #Current procedure is to imitate qgis way of doing things, so showModal = False
-                                self.iface.openFeatureForm(lyr,feat, showModal=False)
-                                return
-                        #if code reaches here, it means that it is an incremental selection.
-                        if feat.id() in selectedIds:
-                            lyr.modifySelection([],[feat.id()])
-                        else:
-                            lyr.modifySelection([feat.id()],[])
-                        if not hasControlModifier:
-                            self.iface.setActiveLayer(lyr)
-                            return
-                       
     def deactivate(self):
         """
         Deactivate tool.
@@ -287,8 +245,7 @@ class MultiLayerSelection(QgsMapTool):
         :param feature: taget feature to be selected
         :param selectAll: boolean indicating whether or not this fuction was called from a select all command
                           so it doesn't remove selection from those that are selected already from the list
-        """
-        layer.startEditing()
+        """        
         idList = layer.selectedFeaturesIds()
         featId = feature.id()
         if featId not in idList:
@@ -305,9 +262,19 @@ class MultiLayerSelection(QgsMapTool):
         :param selectAll: (bool) indicates if "All"-command comes from a "Select All". In that case, selected features
                           won't be deselected.
         """
-        for layer, features in dictLayerFeature.iteritems():
-            for feat in features:
-                self.setSelectionFeature(layer=layer, feature=feat, selectAll=selectAll)
+        for layer in layerFeatDict.keys():
+            geomType = layer.geometryType()
+            # ID list of features already selected
+            idList = layer.selectedFeaturesIds()
+            # restart feature ID list for each layer
+            featIdList = []
+            for feature in layerFeatDict[layer]:
+                featId = feature.id()
+                if featId not in idList:
+                    idList.append(featId)
+                elif not selectAll:
+                    idList.pop(idList.index(featId))
+            layer.setSelectedFeatures(idList)
 
     def openMultipleFeatureForm(self, dictLayerFeature):
         """
@@ -417,6 +384,8 @@ class MultiLayerSelection(QgsMapTool):
         if e.button() == QtCore.Qt.LeftButton: 
             # line added to make sure the action is associated with current loop value,
             # lambda function is used with standard parameter set to current loops value.
+            layer.startEditing()
+            self.iface.setActiveLayer(layer)
             triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll)
             hoveredAction = lambda t=[layer, feature] : self.createRubberBand(feature=t[1], layer=t[0], geom=geomType)
         elif e.button() == QtCore.Qt.RightButton:
@@ -659,11 +628,12 @@ class MultiLayerSelection(QgsMapTool):
                     self.setContextMenuStyle(e=e, dictMenuSelected=selectedFeaturesDict, dictMenuNotSelected=notSelectedFeaturesDict)
                 else:
                     layer = lyrFeatDict.keys()[0]
-                    feature = lyrFeatDict[layer]
+                    feature = lyrFeatDict[layer][0]
                     selected =  (QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
                     if e.button() == QtCore.Qt.LeftButton:
-                        self.selectFeatures(e, hasControlModifier = selected)
+                        # if feature is selected, we want it to be de-selected
+                        self.setSelectionFeature(layer=layer, feature=feature, selectAll=False)
                     elif selected:
                         self.iface.setActiveLayer(layer)
                     else:
-                        self.iface.openFeatureForm(layer, feature[0], showModal=False)
+                        self.iface.openFeatureForm(layer, feature, showModal=False)
