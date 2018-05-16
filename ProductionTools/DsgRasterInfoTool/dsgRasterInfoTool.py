@@ -23,7 +23,7 @@
 
 import os
 
-from qgis.core import QgsGeometry, QgsRaster, QGis
+from qgis.core import QgsGeometry, QgsRaster, QGis, QgsVectorLayer
 
 from PyQt4 import QtGui, uic
 from PyQt4.QtCore import pyqtSlot, pyqtSignal, QTimer
@@ -53,6 +53,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.canvas = iface.mapCanvas()
         super(DsgRasterInfoTool, self).__init__(parent)
         self.setupUi(self)
+        self.assignBandValueTool = None
         self.parent = parent
         self.splitter.hide()
         self.iface = iface
@@ -88,7 +89,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         # self.timerMapTips.timeout.connect( self.showToolTip )
     
     def enableAssignValue(self, layer):
-        if layer is not None and layer.geometryType() != QGis.Point:
+        if layer is not None and isinstance(layer, QgsVectorLayer) and layer.geometryType() != QGis.Point:
             self.valueSetterButtonAction.setEnabled(False)
         else:
             self.valueSetterButtonAction.setEnabled(True)
@@ -137,7 +138,8 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.assignBandValueTool.activate()
     
     def unloadTool(self):
-        self.assignBandValueTool.deactivate()
+        if self.assignBandValueTool:
+            self.assignBandValueTool.deactivate()
         self.assignBandValueTool = None
 
     def stretch_raster(self):

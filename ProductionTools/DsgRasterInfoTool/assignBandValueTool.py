@@ -21,16 +21,18 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, QgsAttributeDialog, QgsAttributeForm
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, \
                       QgsVectorLayer, QgsDataSourceURI, QgsCoordinateReferenceSystem, \
-                      QgsCoordinateTransform, QgsGeometry, QgsEditFormConfig
+                      QgsCoordinateTransform, QgsGeometry, QgsEditFormConfig, QgsRaster,\
+                      QgsFeature
 from PyQt4.QtCore import QSettings
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu, QCursor
 
-import numpy as np
 from PyQt4.QtCore import Qt
+
+from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class AssignBandValueTool(QgsMapTool):
     def __init__(self, iface, rasterLayer):
@@ -40,14 +42,17 @@ class AssignBandValueTool(QgsMapTool):
         5- Shift + drag and drop: draws a rectangle, then features that intersect this rectangle are selected 
         and their value is set according to raster value and selected attribute.
         """
-        QgsMapTool.__init__(self, self.canvas)
         self.iface = iface        
         self.canvas = self.iface.mapCanvas()
+        QgsMapTool.__init__(self, self.canvas)
         self.toolAction = None
-        self.raster = rasterLayer
+        self.qgsMapToolEmitPoint = QgsMapToolEmitPoint(self.canvas)
+        self.dsgGeometryHandler = DsgGeometryHandler(iface)
+        self.rasterLayer = rasterLayer
         self.setRubberbandParameters()
         self.reset()
         self.auxList = []
+        self.canvasCrs = self.canvas.mapRenderer().destinationCrs()
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
@@ -81,9 +86,6 @@ class AssignBandValueTool(QgsMapTool):
         """
         Used only on rectangle select.
         """
-        if self.menuHovered:
-            # deactivates rubberband when the context menu is "destroyed" 
-            self.hoverRubberBand.reset(QGis.Polygon)
         if not self.isEmittingPoint:
             return
         self.endPoint = self.toMapCoordinates( e.pos() )
@@ -125,7 +127,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         After the rectangle is built, here features are selected.
         """
-        layer = self.iface.currentLayer()
+        layer = self.iface.mapCanvas().currentLayer()
         if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
             self.isEmittingPoint = False
             r = self.rectangle()
@@ -149,7 +151,7 @@ class AssignBandValueTool(QgsMapTool):
             value, pointGeom = self.getPixelValue(self.rasterLayer)
             self.auxList.append({'geom':pointGeom, 'value':value})
         #create context menu to select attribute
-        self.createContextMenuOnPosition(self, e, layer)
+        self.createContextMenuOnPosition(e, layer)
 
     def createContextMenuOnPosition(self, e, layer):
         menu = QMenu()
@@ -183,7 +185,7 @@ class AssignBandValueTool(QgsMapTool):
         provider = layer.dataProvider()              
         for i in range(fields.count()):
             if fields[i].name() != field:
-                value = provider.defaultValueClause(i)
+                value = provider.defaultValue(i)
             if value:
                 feature.setAttribute(i, value)                
         form = QgsAttributeDialog(layer, feature, False)
@@ -235,6 +237,7 @@ class AssignBandValueTool(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
+        self.iface.mapCanvas().setMapTool(self)
 
 
     def reprojectSearchArea(self, layer, geom):
@@ -258,7 +261,7 @@ class AssignBandValueTool(QgsMapTool):
         return auxGeom.boundingBox()
 
     def getPixelValue(self, rasterLayer):
-        mousePos = self.QgsMapToolEmitPoint.toMapCoordinates(self.canvas.mouseLastXY())
+        mousePos = self.qgsMapToolEmitPoint.toMapCoordinates(self.canvas.mouseLastXY())
         mousePosGeom = QgsGeometry.fromPoint(mousePos)
         return self.getPixelValueFromPoint(mousePosGeom, rasterLayer), mousePosGeom
     
@@ -267,7 +270,7 @@ class AssignBandValueTool(QgsMapTool):
         
         """
         rasterCrs = rasterLayer.crs()
-        self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
+        self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvasCrs)
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
