@@ -217,18 +217,54 @@ class HidrographyFlowProcess(ValidationProcess):
                 return True
         return False
 
+    def getAttributesFromFeature(self, feature, layer, fieldNames=None):
+        """
+        Retrieves the attributes from a given feature, except for their geometry and ID column values. If a list of
+        attributes is given, method will return those attributes if found. In case no attribute is found, None will 
+        :param feature: (QgsFeature) feature from which attibutes will be retrieved.
+        :param layer: (QgsVectorLayer) layer containing target feature.
+        :param fieldNames: (list-of-str) list of field names to be exposed.
+        :return: (dict-of-object) attribute values for each attribute mapped.
+        """
+        # fields to be ignored
+        ignoreList = []
+        if not fieldNames:
+            # retrieving key column name
+            uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
+            keyColumn = uri.keyColumn()
+            # retrieving geometry column name
+            networLayerName = layer.name()
+            for key in self.networkClassesWithElemDict.keys():
+                if key.split(",")[1] in networLayerName:
+                    self.networkClassesWithElemDict
+                    geomColumn = key.split(",")[2]
+                    break
+            fieldNames = [f for f in layer.fields() if f.name() not in [keyColumn, geomColumn]]
+        else:
+            # check if all field names given are in fact fields for the layer
+            layerFields = layer.fields()
+            ignoreList = [field for field in fieldNames if field not in layerFields]
+        return { field.name() : feature[field.name()] for field in fieldNames if field not in ignoreList }
+
     def attributeChangeCheck(self, node, hidLineLayer):
         """
         Checks if attribute change node is in fact an attribute change.
         :param node: (QgsPoint) node to be identified as over the frame layer or not.
         :param hidLineLayer: (QgsVectorLayer) layer containing network lines.
-        """
-        pass
+        :return: (bool) if lines connected to node do change attributes.
+        """        
+        # assuming that attribute change nodes have only 1-in 1-out lines
+        lineIn = self.nodeDict[node]['end'][0]
+        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=hidLineLayer)
+        lineOut = self.nodeDict[node]['start'][0]
+        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=hidLineLayer)
+        return atrLineIn.values() != atrLineOut.values()
 
-    def nodeType(self, nodePoint, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
+    def nodeType(self, nodePoint, hidLineLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
+        :param hidLineLayer: (QgsVectorLayer) network lines layer.        
         :param frameLyrContourList: (list-of-QgsGeometry) border line for the frame layer to be checked.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :param waterSinkLayer: (QgsVectorLayer) water sink layer.
@@ -272,14 +308,18 @@ class HidrographyFlowProcess(ValidationProcess):
             return HidrographyFlowProcess.Confluence
         elif sizeFlowIn == sizeFlowOut:
             # case 4 "attribute change"
-            return HidrographyFlowProcess.AttributeChange
+            if self.attributeChangeCheck(node=nodePoint, hidLineLayer=hidLineLayer):
+                return HidrographyFlowProcess.AttributeChange
+            else:
+                return HidrographyFlowProcess.Flag
         else:
             # case 3 "ramification"
             return HidrographyFlowProcess.Ramification
 
-    def classifyAllNodes(self, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None):
+    def classifyAllNodes(self, hidLineLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None):
         """
         Classifies all identified nodes from the hidrography line layer.
+        :param hidLineLayer: (QgsVectorLayer) network lines layer.
         :param frameLyrContourList: (list-of-QgsFeature) border line for the frame layer.
         :param waterBodiesLayers: (list-of-QgsVectorLayer) list of all classes with water bodies to be compared to.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
@@ -296,7 +336,7 @@ class HidrographyFlowProcess(ValidationProcess):
             if node not in nodeKeys:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, hidLineLayer=hidLineLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
         return nodeTypeDict
 
     def fillNodeTable(self, hidLineLayer):
@@ -862,7 +902,6 @@ class HidrographyFlowProcess(ValidationProcess):
             if node in nodeFlags.keys():
                 nodeFlags.pop(node)
         return fixedFlags
-
             
     def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
         """
@@ -965,7 +1004,7 @@ class HidrographyFlowProcess(ValidationProcess):
             # load node table into canvas
             self.loadLayer(self.hidNodeLayerName)
             # getting current type for hidrography nodes as it is on screen now
-            self.nodeCurrentTypeDict = self.classifyAllNodes(frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
+            self.nodeCurrentTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             if self.parameters['Classify Nodes On Database']:
                 # as db info is updated, current node type is the same as in db
                 self.nodeTypeDict = self.nodeCurrentTypeDict
