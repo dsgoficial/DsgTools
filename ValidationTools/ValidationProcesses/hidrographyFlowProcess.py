@@ -217,6 +217,14 @@ class HidrographyFlowProcess(ValidationProcess):
                 return True
         return False
 
+    def attributeChangeCheck(self, node, hidLineLayer):
+        """
+        Checks if attribute change node is in fact an attribute change.
+        :param node: (QgsPoint) node to be identified as over the frame layer or not.
+        :param hidLineLayer: (QgsVectorLayer) layer containing network lines.
+        """
+        pass
+
     def nodeType(self, nodePoint, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
         Get the node type given all lines that flows from/to it.
