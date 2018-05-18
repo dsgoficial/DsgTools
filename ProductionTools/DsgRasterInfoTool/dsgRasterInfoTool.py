@@ -93,6 +93,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     def enableAssignValue(self, layer):
         if layer is not None and isinstance(layer, QgsVectorLayer) and layer.geometryType() != QGis.Point:
             self.valueSetterButton.setEnabled(False)
+            self.activateValueSetter(False)
         else:
             self.valueSetterButton.setEnabled(True)
 
@@ -100,6 +101,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
     def deactivate(self):
         self.activateBandValueTool(False)
         self.activateStretchTool(False)
+        self.activateValueSetter(False)
 
     @pyqtSlot(bool, name = 'on_rasterInfoPushButton_toggled')
     def toggleBar(self, toggled=None):
