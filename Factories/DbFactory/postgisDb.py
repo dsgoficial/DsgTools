@@ -3715,10 +3715,10 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return True
 
-    def getNodesGeometry(self, wktNodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+    def getNodesGeometry(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
         """
         Returns the geometry of given feature from database. If feature is not found into database, returns None.
-        :param wktNodeList: a list of target node points (from WKT form).
+        :param nodeList: a list of target node points (from WKT form).
         :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
         :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
         :return: node type from database
