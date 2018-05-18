@@ -60,7 +60,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.timerMapTips = QTimer( self.canvas )
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         self.addShortcuts()
-        self.valueSetterButtonAction.setEnabled(False)
+        self.valueSetterButton.setEnabled(False)
         self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
     
     def add_action(self, icon_path, text, callback, parent=None):
@@ -84,15 +84,17 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         text = self.tr('DSGTools: Dynamic Histogram Viewer')
         self.dynamicHistogramButtonAction = self.add_action(icon_path, text, self.dynamicHistogramButton.toggle, parent = self.parent)
         self.iface.registerMainWindowAction(self.dynamicHistogramButtonAction, '')
+        icon_path = ':/plugins/DsgTools/icons/valueSetter.png'
+        text = self.tr('DSGTools: Set Value From Point')
         self.valueSetterButtonAction = self.add_action(icon_path, text, self.valueSetterButton.toggle, parent = self.parent)
         self.iface.registerMainWindowAction(self.valueSetterButtonAction, '')
         # self.timerMapTips.timeout.connect( self.showToolTip )
     
     def enableAssignValue(self, layer):
         if layer is not None and isinstance(layer, QgsVectorLayer) and layer.geometryType() != QGis.Point:
-            self.valueSetterButtonAction.setEnabled(False)
+            self.valueSetterButton.setEnabled(False)
         else:
-            self.valueSetterButtonAction.setEnabled(True)
+            self.valueSetterButton.setEnabled(True)
 
     
     def deactivate(self):
