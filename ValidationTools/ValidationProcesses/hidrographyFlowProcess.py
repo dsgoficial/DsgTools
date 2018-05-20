@@ -899,7 +899,7 @@ class HidrographyFlowProcess(ValidationProcess):
             self.fillNodeTable(hidLineLayer=networkLayer)
             if newFixedFlags:
                 # in case the fixed flags are the same as before
-                if list( set(newFixedFlags.keys()) -  set(fixedFlags.keys()) ):
+                if not list( set(newFixedFlags.keys()) -  set(fixedFlags.keys()) ):
                     break
             else:
                 # in case there are no new fixed flags
