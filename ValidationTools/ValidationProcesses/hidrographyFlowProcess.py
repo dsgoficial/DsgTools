@@ -561,7 +561,7 @@ class HidrographyFlowProcess(ValidationProcess):
             if self.nodeTypeDict[node] == HidrographyFlowProcess.Flag:
                 reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             elif self.nodeTypeDict[node] == HidrographyFlowProcess.AttributeChangeFlag:
-                reason = self.tr('Node type is set as an attribute change node but lines connected to it share the same set of attributes.')
+                reason = self.tr('Redundant node. Connected lines share the same set of attributes.')
             elif self.nodeTypeDict[node] == HidrographyFlowProcess.NodeOverload:
                 reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
             for line in linesNotValidated:
