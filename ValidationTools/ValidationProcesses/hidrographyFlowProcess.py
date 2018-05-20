@@ -38,7 +38,7 @@ class HidrographyFlowParameters(list):
 
 class HidrographyFlowProcess(ValidationProcess):
     # enum for node types
-    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody = range(9)
+    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, NodeOverload = range(11)
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Class constructor.
@@ -86,15 +86,17 @@ class HidrographyFlowProcess(ValidationProcess):
             self.nodeTypeDict = None
             # name for node types (check enum atop)
             self.nodeTypeNameDict = {
-                                        0 : self.tr("Flag"),
-                                        1 : self.tr("Sink"),
-                                        2 : self.tr("Waterway Beginning"),
-                                        3 : self.tr("Up Hill Node"),
-                                        4 : self.tr("Down Hill Node"),
-                                        5 : self.tr("Confluence"),
-                                        6 : self.tr("Ramification"),
-                                        7 : self.tr("Attribute Change Node"),
-                                        8 : self.tr("Node Next to Water Body")
+                                        HidrographyFlowProcess.Flag : self.tr("Flag"),
+                                        HidrographyFlowProcess.Sink : self.tr("Sink"),
+                                        HidrographyFlowProcess.WaterwayBegin : self.tr("Waterway Beginning"),
+                                        HidrographyFlowProcess.UpHillNode : self.tr("Up Hill Node"),
+                                        HidrographyFlowProcess.DownHillNode : self.tr("Down Hill Node"),
+                                        HidrographyFlowProcess.Confluence : self.tr("Confluence"),
+                                        HidrographyFlowProcess.Ramification : self.tr("Ramification"),
+                                        HidrographyFlowProcess.AttributeChange : self.tr("Attribute Change Node"),
+                                        HidrographyFlowProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
+                                        HidrographyFlowProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
+                                        HidrographyFlowProcess.NodeOverload : self.tr("Overloaded Node")
                                     }
 
     def getFrameContour(self, frameLayer):
@@ -239,7 +241,8 @@ class HidrographyFlowProcess(ValidationProcess):
                     self.networkClassesWithElemDict
                     geomColumn = key.split(",")[2]
                     break
-            fieldNames = [f for f in layer.fields() if f.name() not in [keyColumn, geomColumn]]
+            # removing attributes that are calculated OTF
+            fieldNames = [f for f in layer.fields() if f.name() not in [keyColumn, geomColumn] and '_otf' not in f.name()]
         else:
             # check if all field names given are in fact fields for the layer
             layerFields = layer.fields()
@@ -258,7 +261,8 @@ class HidrographyFlowProcess(ValidationProcess):
         atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=hidLineLayer)
         lineOut = self.nodeDict[node]['start'][0]
         atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=hidLineLayer)
-        return atrLineIn.values() != atrLineOut.values()
+        # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
+        return atrLineIn != atrLineOut
 
     def nodeType(self, nodePoint, hidLineLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
@@ -277,8 +281,11 @@ class HidrographyFlowProcess(ValidationProcess):
         hasEndLine = bool(sizeFlowIn)
         # "exclusive or"
         startXORendLine = (hasStartLine != hasEndLine)
+        # case 5: more than 3 lines flowing through one network line (it is forbidden as of Brazilian mapping norm EDGV)
+        if sizeFlowIn + sizeFlowOut > 3:
+            return HidrographyFlowProcess.NodeOverload
         # case 1: all lines either flow in or out 
-        if startXORendLine:
+        elif startXORendLine:
             # case 1.a: point is over the frame
             if self.nodeOnFrame(node=nodePoint, frameLyrContourList=frameLyrContourList, searchRadius=searchRadius):
                 # case 1.a.i: waterway is flowing away from mapped area (point over the frame has one line ending line)
@@ -307,11 +314,13 @@ class HidrographyFlowProcess(ValidationProcess):
             # case 2 "confluence"
             return HidrographyFlowProcess.Confluence
         elif sizeFlowIn == sizeFlowOut:
-            # case 4 "attribute change"
             if self.attributeChangeCheck(node=nodePoint, hidLineLayer=hidLineLayer):
+                # case 4.a: lines do change their attribute set
                 return HidrographyFlowProcess.AttributeChange
             else:
-                return HidrographyFlowProcess.Flag
+                # case 4.b: nodes inside the network that are there as an attribute change node but lines connected
+                #           to it have the same set of attributes
+                return HidrographyFlowProcess.AttributeChangeFlag
         else:
             # case 3 "ramification"
             return HidrographyFlowProcess.Ramification
@@ -525,7 +534,7 @@ class HidrographyFlowProcess(ValidationProcess):
         # getting flow permitions based on node type
         # reference is node (e.g. 'in' = lines  are ENDING at analyzed node)
         flowType = {
-                    HidrographyFlowProcess.Flag : None, # 0 - Flag
+                    HidrographyFlowProcess.Flag : None, # 0 - Flag (fim de trecho sem 'justificativa espacial')
                     HidrographyFlowProcess.Sink : 'in', # 1 - Sumidouro
                     HidrographyFlowProcess.WaterwayBegin : 'out', # 2 - Fonte D'Água
                     HidrographyFlowProcess.DownHillNode : 'in', # 3 - Interrupção à Jusante
@@ -533,7 +542,9 @@ class HidrographyFlowProcess(ValidationProcess):
                     HidrographyFlowProcess.Confluence : 'in and out', # 5 - Confluência
                     HidrographyFlowProcess.Ramification : 'in and out', # 6 - Ramificação
                     HidrographyFlowProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
-                    HidrographyFlowProcess.NodeNextToWaterBody : 'in or out' # 8 - Nó próximo a corpo d'água                
+                    HidrographyFlowProcess.NodeNextToWaterBody : 'in or out', # 8 - Nó próximo a corpo d'água
+                    HidrographyFlowProcess.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
+                    HidrographyFlowProcess.NodeOverload : None # 10 - Mais 
                    }
         # if node is introduced by operator's modification, it won't be saved to the layer
         if node not in self.nodeTypeDict.keys():
@@ -547,7 +558,12 @@ class HidrographyFlowProcess(ValidationProcess):
         validLines, invalidLines = dict(), dict()
         if not flow:
             # flags have all lines flagged
-            reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
+            if self.nodeTypeDict[node] == HidrographyFlowProcess.Flag:
+                reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
+            elif self.nodeTypeDict[node] == HidrographyFlowProcess.AttributeChangeFlag:
+                reason = self.tr('Node type is set as an attribute change node but lines connected to it share the same set of attributes.')
+            elif self.nodeTypeDict[node] == HidrographyFlowProcess.NodeOverload:
+                reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
             for line in linesNotValidated:
                 invalidLines[line.id()] = line
             return validLines, invalidLines, reason
@@ -930,7 +946,8 @@ class HidrographyFlowProcess(ValidationProcess):
         try:
             return self.layerLoader.load([layerName], uniqueLoad=uniqueLoad)[layerName]
         except Exception as e:
-            QtGui.QMessageBox.critical(self, self.tr('Error!'), self.tr('Could not load the class {0}!\n').format(layer)+':'.join(e.args))
+            errorMsg = self.tr('Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.\n').format(layerName)+':'.join(e.args)
+            QMessageBox.critical(self.canvas, self.tr('Error!'), errorMsg)
 
     def execute(self):
         """
