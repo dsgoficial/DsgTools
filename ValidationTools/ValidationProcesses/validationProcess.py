@@ -519,9 +519,9 @@ class ValidationProcess(QObject):
             uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
             keyColumn = uri.keyColumn()
             if onlySelected:
-                featureList = lyr.selectedFeatures()
+                featureList = layer.selectedFeatures()
             else:
-                featureList = lyr.getFeatures()
+                featureList = layer.getFeatures()
             for feature in featureList:
                 newfeat = QgsFeature(coverage.pendingFields())
                 newfeat.setGeometry(feature.geometry())
