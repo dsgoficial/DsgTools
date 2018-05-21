@@ -74,6 +74,7 @@ class AcquisitionFreeController(object):
         #Método para iniciar sinais do plugin 
         iface = self.getIface()
         iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
+        iface.currentLayerChanged.connect(self.checkToActiveAction)
         iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.triggered.connect(self.activateTool)
@@ -82,10 +83,11 @@ class AcquisitionFreeController(object):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
         actionAcquisitionFree = self.getActionAcquisitionFree()
         layer = self.getIface().activeLayer()
-        if layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QGis.Line, core.QGis.Polygon]):
+        if core is not None and layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QGis.Line, core.QGis.Polygon]):
             actionAcquisitionFree.setEnabled(True)
         else:
             actionAcquisitionFree.setEnabled(False)
+            self.deactivateTool()
     
     def getParametersFromConfig(self):
         #Método para obter as configurações da tool do QSettings
@@ -219,6 +221,10 @@ class AcquisitionFreeController(object):
         actionAcquisitionFree.setChecked(False)
         if self.getActiveState():
             tool = self.getAcquisitionFree()
-            tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
+            try:
+                tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
+                tool.deactivate()
+            except:
+                pass
         self.setActiveState(False)
       

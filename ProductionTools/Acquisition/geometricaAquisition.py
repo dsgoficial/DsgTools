@@ -69,6 +69,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             self.toolAction.setChecked(False)
         if self is not None:
             QgsMapTool.deactivate(self)
+            self.canvas.unsetMapTool(self)
 
    
     def keyReleaseEvent(self, event):

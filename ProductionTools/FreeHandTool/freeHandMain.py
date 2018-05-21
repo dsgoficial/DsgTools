@@ -26,7 +26,7 @@ class FreeHandMain:
     def __init__(self, iface):
         #construtor
         self.iface = iface
-        self.acquisitionFree = AcquisitionFree(iface.mapCanvas())
+        self.acquisitionFree = AcquisitionFree(iface)
         self.acquisitionFreeController = AcquisitionFreeController(
             self.acquisitionFree,
             iface
