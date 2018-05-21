@@ -38,7 +38,7 @@ class HidrographyFlowParameters(list):
 
 class HidrographyFlowProcess(ValidationProcess):
     # enum for node types
-    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, NodeOverload = range(11)
+    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, ConstantFlowNode = range(11)
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Class constructor.
@@ -96,7 +96,8 @@ class HidrographyFlowProcess(ValidationProcess):
                                         HidrographyFlowProcess.AttributeChange : self.tr("Attribute Change Node"),
                                         HidrographyFlowProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
                                         HidrographyFlowProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-                                        HidrographyFlowProcess.NodeOverload : self.tr("Overloaded Node")
+                                        HidrographyFlowProcess.ConstantFlowNode : self.tr("Constant Flow Node")
+                                        # HidrographyFlowProcess.NodeOverload : self.tr("Overloaded Node")
                                     }
 
     def getFrameContour(self, frameLayer):
@@ -281,11 +282,11 @@ class HidrographyFlowProcess(ValidationProcess):
         hasEndLine = bool(sizeFlowIn)
         # "exclusive or"
         startXORendLine = (hasStartLine != hasEndLine)
-        # case 5: more than 3 lines flowing through one network line (it is forbidden as of Brazilian mapping norm EDGV)
-        if sizeFlowIn + sizeFlowOut > 3:
-            return HidrographyFlowProcess.NodeOverload
+        # # case 5: more than 3 lines flowing through one network line (it is forbidden as of Brazilian mapping norm EDGV)
+        # if sizeFlowIn + sizeFlowOut > 3:
+        #     return HidrographyFlowProcess.NodeOverload
         # case 1: all lines either flow in or out 
-        elif startXORendLine:
+        if startXORendLine:
             # case 1.a: point is over the frame
             if self.nodeOnFrame(node=nodePoint, frameLyrContourList=frameLyrContourList, searchRadius=searchRadius):
                 # case 1.a.i: waterway is flowing away from mapped area (point over the frame has one line ending line)
@@ -314,7 +315,10 @@ class HidrographyFlowProcess(ValidationProcess):
             # case 2 "confluence"
             return HidrographyFlowProcess.Confluence
         elif sizeFlowIn == sizeFlowOut:
-            if self.attributeChangeCheck(node=nodePoint, hidLineLayer=hidLineLayer):
+            if sizeFlowIn > 1:
+                # case 4.c: there's a constant flow through node, but there are more than 1 line
+                return HidrographyFlowProcess.ConstantFlowNode
+            elif self.attributeChangeCheck(node=nodePoint, hidLineLayer=hidLineLayer):
                 # case 4.a: lines do change their attribute set
                 return HidrographyFlowProcess.AttributeChange
             else:
@@ -532,7 +536,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :return: (str) if node is invalid, returns the invalidation reason string.
         """
         # getting flow permitions based on node type
-        # reference is node (e.g. 'in' = lines  are ENDING at analyzed node)
+        # reference is the node (e.g. 'in' = lines  are ENDING at analyzed node)
         flowType = {
                     HidrographyFlowProcess.Flag : None, # 0 - Flag (fim de trecho sem 'justificativa espacial')
                     HidrographyFlowProcess.Sink : 'in', # 1 - Sumidouro
@@ -544,7 +548,8 @@ class HidrographyFlowProcess(ValidationProcess):
                     HidrographyFlowProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
                     HidrographyFlowProcess.NodeNextToWaterBody : 'in or out', # 8 - Nó próximo a corpo d'água
                     HidrographyFlowProcess.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
-                    HidrographyFlowProcess.NodeOverload : None # 10 - Mais 
+                    HidrographyFlowProcess.ConstantFlowNode : 'in and out' # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
+                    # HidrographyFlowProcess.NodeOverload : None # 10 - Mais 
                    }
         # if node is introduced by operator's modification, it won't be saved to the layer
         if node not in self.nodeTypeDict.keys():
@@ -561,9 +566,10 @@ class HidrographyFlowProcess(ValidationProcess):
             if self.nodeTypeDict[node] == HidrographyFlowProcess.Flag:
                 reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             elif self.nodeTypeDict[node] == HidrographyFlowProcess.AttributeChangeFlag:
-                reason = self.tr('Redundant node. Connected lines share the same set of attributes.')
-            elif self.nodeTypeDict[node] == HidrographyFlowProcess.NodeOverload:
-                reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
+                id1, id2 = self.nodeDict[node]['start'][0].id(), self.nodeDict[node]['end'][0].id()
+                reason = self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.').format(id1, id2)
+            # elif self.nodeTypeDict[node] == HidrographyFlowProcess.NodeOverload:
+            #     reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
             for line in linesNotValidated:
                 invalidLines[line.id()] = line
             return validLines, invalidLines, reason
@@ -792,7 +798,8 @@ class HidrographyFlowProcess(ValidationProcess):
         fixableReasonExcertsDict = {
                                     self.tr("does not end at a node with IN flow type") : 1,
                                     self.tr("does not start at a node with OUT flow type") : 2,
-                                    self.tr("have conflicting directions") : 3
+                                    self.tr("have conflicting directions") : 3,
+                                    self.tr('Redundant node.') : 4
                                    }
         for r in fixableReasonExcertsDict.keys():
             if r in reason:
@@ -805,7 +812,7 @@ class HidrographyFlowProcess(ValidationProcess):
         Extracts line ID from given reason.
         :param reason: (str) reason of node invalidation.
         :param reasonType: (int) invalidation reason type.
-        :return: (list-of-int) line ID.
+        :return: (list-of-str) line ID (int as str).
         """
         if reasonType in [1, 2]:
             # Lines before being built:
@@ -817,6 +824,11 @@ class HidrographyFlowProcess(ValidationProcess):
             lineId1 = reason.split(self.tr(" and "))[0].split(" ")[1]
             lineId2 = reason.split(self.tr(" and "))[1].split(" ")[0]
             return [lineId1, lineId2]
+        elif reasonType == 4:
+            # Line before being built: self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.')
+            lineId1 = reason.split(self.tr(", "))[0].split("(")[1]
+            lineId2 = reason.split(self.tr(", "))[1].split(")")[0]
+            return [lineId1, lineId2]
 
     def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
         """
@@ -826,8 +838,8 @@ class HidrographyFlowProcess(ValidationProcess):
         :param geomType: (int) geometry type of network lines layer.
         :return: (dict) dictionary containing invalid node and its reason ( { (QgsPoint) node : (str) reason } ).
         """
-        # IDs from features to be flipped
-        lineIds = []
+        # IDs from features to be flipped and to be merged
+        lineIdsForFlipping, mergedLinesString = [], []
         fixedFlags = dict()
         if not geomType:
             geomType = networkLayer.geometryType()
@@ -839,7 +851,7 @@ class HidrographyFlowProcess(ValidationProcess):
             featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
             if reasonType in [1, 2]:
                 # if it's a line flowing the wrong way, they will be flipped
-                lineIds += featIdFlipCandidates
+                lineIdsForFlipping += featIdFlipCandidates
             elif reasonType == 3:
                 # in case there are conflicting lines and one of them must be flipped
                 if len(self.nodeDict[node]['start']) > len(self.nodeDict[node]['end']):
@@ -849,21 +861,35 @@ class HidrographyFlowProcess(ValidationProcess):
                 else:
                     checkFeatIdList = [str(f.id()) for f in self.nodeDict[node]['end']]
                 if featIdFlipCandidates[0] in checkFeatIdList:
-                    lineIds += [featIdFlipCandidates[0]]
+                    lineIdsForFlipping += [featIdFlipCandidates[0]]
                 else:
-                    lineIds += [featIdFlipCandidates[1]]
+                    lineIdsForFlipping += [featIdFlipCandidates[1]]
                 # add them to return dict in order to not lose track of fixed problems
                 fixedFlags[node] = reason
+            elif reasonType == 4:
+                # case where lines do not change attribute but there is a network node between them
+                line_b = self.nodeDict[node]['end'][0]
+                line_a = self.nodeDict[node]['start'][0]
+                self.DsgGeometryHandler.mergeLines(line_a=line_a, line_b=line_b, layer=networkLayer)
+                mergedLinesString += [self.tr('{0} to {1}').format(line_b.id(), line_a.id())]
         for node in fixedFlags.keys():
             # pop it from original dict
             nodeFlags.pop(node, None)
-        featureListIterator = networkLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(','.join(lineIds)))))
-        for feat in featureListIterator:
+        flipFeatureListIterator = networkLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(', '.join(lineIdsForFlipping)))))
+        for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
             self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
-        if lineIds:
-            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}").format(",".join(lineIds))
-            QMessageBox.warning(self.iface.mainWindow(), self.tr('{0}: Flippled Lines'.format(self.processAlias)), warning)
+        # building warning message
+        if lineIdsForFlipping and mergedLinesString:
+            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(",".join(lineIdsForFlipping))
+            warning += self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(",".join(mergedLinesString))
+        elif lineIdsForFlipping:
+            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(lineIdsForFlipping))
+        elif mergedLinesString:
+            warning = self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))
+        if fixedFlags:
+            # warning is only raised when there were flags fixed
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('{0}: Flipped/Merged Lines'.format(self.processAlias)), warning)
         return fixedFlags
 
     def recursiveFixFlags(self, nodeFlags, networkLayer, geomType=None, maximumCycles=9):
