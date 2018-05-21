@@ -95,7 +95,7 @@ class Ui_DsgRasterInfoTool(object):
         self.dynamicHistogramButton.setToolTip(_fromUtf8("Dynamic histogram view"))
         self.dynamicHistogramButton.setText(_fromUtf8(""))
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/plugins/DsgTools/icons/dynamic_histogram_viewer.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/plugins/DsgTools/icons/histogram.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.dynamicHistogramButton.setIcon(icon2)
         self.dynamicHistogramButton.setIconSize(QtCore.QSize(20, 20))
         self.dynamicHistogramButton.setCheckable(True)
