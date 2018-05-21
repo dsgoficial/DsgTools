@@ -710,6 +710,8 @@ class DsgTools:
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
 
+        self.acquisition.checkToDeactivate(self.iface.mapCanvas().currentLayer())
+
         icon_path = ':/plugins/DsgTools/icons/free_hand.png'
         action = self.add_action(
             icon_path,
