@@ -872,14 +872,19 @@ class HidrographyFlowProcess(ValidationProcess):
                 line_a = self.nodeDict[node]['start'][0]
                 self.DsgGeometryHandler.mergeLines(line_a=line_a, line_b=line_b, layer=networkLayer)
                 mergedLinesString += [self.tr('{0} to {1}').format(line_b.id(), line_a.id())]
+                fixedFlags[node] = reason
         for node in fixedFlags.keys():
             # pop it from original dict
             nodeFlags.pop(node, None)
         flipFeatureListIterator = networkLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(', '.join(lineIdsForFlipping)))))
+        networkLayer.startEditing()
+        networkLayer.beginEditCommand('Merging lines')
         for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
             self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
+        networkLayer.endEditCommand()
         # building warning message
+        warning = ''
         if lineIdsForFlipping and mergedLinesString:
             warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(",".join(lineIdsForFlipping))
             warning += self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(",".join(mergedLinesString))
@@ -887,7 +892,7 @@ class HidrographyFlowProcess(ValidationProcess):
             warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(lineIdsForFlipping))
         elif mergedLinesString:
             warning = self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))
-        if fixedFlags:
+        if warning:
             # warning is only raised when there were flags fixed
             QMessageBox.warning(self.iface.mainWindow(), self.tr('{0}: Flipped/Merged Lines'.format(self.processAlias)), warning)
         return fixedFlags
