@@ -187,4 +187,34 @@ class DsgGeometryHandler(QObject):
         if debugging:
             return reversedFeatureList, failedFeatureList
         else:
-            return reversedFeatureList
+            return reversedFeatureList    
+
+    def mergeLines(self, line_a, line_b, layer):
+        """
+        Merge 2 lines of the same layer (it is assumed that they share the same set od attributes - except for ID and geometry).
+        In case sets are different, the set of geometry of line_a will be kept. If geometries don't touch, method is not applicable.
+        :param line_a: main line of merging process.
+        :param line_b: line to be merged to line_a.
+        :param layer: (QgsVectorLayer) layer containing given lines.
+        :return: (bool) True if method runs OK or False, if lines do not touch.
+        """
+        # check if original layer is a multipart
+        isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType()))
+        # retrieve lines geometries
+        geometry_a = line_a.geometry()
+        geometry_b = line_b.geometry()
+        # checking the spatial predicate touches
+        if geometry_a.touches(geometry_b):
+            # this generates a multi geometry
+            geometry_a = geometry_a.combine(geometry_b)
+            # this make a single line string if the multi geometries are neighbors
+            geometry_a = geometry_a.mergeLines()
+            if isMulti:
+                # making a "single" multi geometry (EDGV standard)
+                geometry_a.convertToMultiType()
+            # updating feature
+            line_a.setGeometry(geometry_a)
+            # updating layer
+            layer.updateFeature(line_a)
+            return True
+        return False
