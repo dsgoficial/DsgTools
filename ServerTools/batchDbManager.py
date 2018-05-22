@@ -337,8 +337,10 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         selectedStyles = dlg.selectedStyles
         if not selectedStyles:
             return
+        else:
+            removeStyleDict = { style : styleDict[style] for style in selectedStyles }
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        successList, exceptionDict = self.batchDeleteStyles(dbsDict, styleDict)
+        successList, exceptionDict = self.batchDeleteStyles(dbsDict, removeStyleDict)
         QApplication.restoreOverrideCursor()
         header = self.tr('Delete operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)
