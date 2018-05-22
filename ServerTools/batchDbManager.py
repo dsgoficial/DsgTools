@@ -232,7 +232,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
-        if len(selectedStyles) == 0:
+        if not selectedStyles:
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
@@ -335,6 +335,8 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
+        if not selectedStyles:
+            return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchDeleteStyles(dbsDict, styleDict)
         QApplication.restoreOverrideCursor()
