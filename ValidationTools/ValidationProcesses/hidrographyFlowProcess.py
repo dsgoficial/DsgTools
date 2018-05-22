@@ -920,14 +920,14 @@ class HidrographyFlowProcess(ValidationProcess):
         count = 0
         while count < maximumCycles or newFixedFlags:
             newNodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=networkLayer)
-            if newNodeFlags.keys() in nodeFlags.keys():
-                # in case a subset of flags is raised again by process, fixing method is no longer effective 
-                # thus no fixing method will be applied
-                break
             newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
             # every cycle implies in a new node reclassification as nodes have changed their types on canvas
             self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
             self.fillNodeTable(hidLineLayer=networkLayer)
+            if newNodeFlags.keys() in nodeFlags.keys():
+                # in case a subset of flags is raised again by process, fixing method is no longer effective 
+                # thus no fixing method will be applied
+                break
             if newFixedFlags:
                 # in case the fixed flags are the same as before
                 if not list( set(newFixedFlags.keys()) -  set(fixedFlags.keys()) ):

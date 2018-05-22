@@ -214,7 +214,10 @@ class DsgGeometryHandler(QObject):
                 geometry_a.convertToMultiType()
             # updating feature
             line_a.setGeometry(geometry_a)
+            # remove the aggregated line to avoid overlapping
+            layer.deleteFeature(line_b.id())
             # updating layer
             layer.updateFeature(line_a)
             return True
+            
         return False
