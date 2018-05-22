@@ -409,7 +409,7 @@ class PostGISSqlGenerator(SqlGenerator):
         INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo')#
         INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água')#
         INSERT INTO dominios.node_type (code,code_name) VALUES (9,'Flag de Mudança de Atributo')#
-        INSERT INTO dominios.node_type (code,code_name) VALUES (10,'Nó com Mais de 3 Trechos Conectados')#        
+        INSERT INTO dominios.node_type (code,code_name) VALUES (10,'Nó com Fluxo Constante')#        
         ALTER TABLE validation.aux_hid_nodes_p
             ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
             REFERENCES dominios.node_type (code) MATCH FULL
@@ -1842,7 +1842,7 @@ class PostGISSqlGenerator(SqlGenerator):
         INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo');
         INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água');
         INSERT INTO dominios.node_type (code,code_name) VALUES (9,'Flag de Mudança de Atributo');
-        INSERT INTO dominios.node_type (code,code_name) VALUES (10,'Nó com Mais de 3 Trechos Conectados');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (10,'Nó com Fluxo Constante');
         ALTER TABLE validation.aux_hid_nodes_p
             ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
             REFERENCES dominios.node_type (code) MATCH FULL
