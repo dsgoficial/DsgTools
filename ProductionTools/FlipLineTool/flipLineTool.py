@@ -22,7 +22,7 @@
 """
 
 from qgis.gui import QgsMapTool, QgsMessageBar
-from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest
+from qgis.core import QgsMapLayer, QgsVectorLayer, QgsMessageLog, QgsFeatureRequest, QGis
 from PyQt4 import QtCore, QtGui
 
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
@@ -38,6 +38,19 @@ class FlipLine(QgsMapTool):
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        self.iface.currentLayerChanged.connect(self.setToolEnabled)
+        self.iface.actionToggleEditing().triggered.connect(self.setToolEnabled)
+
+    
+    def setToolEnabled(self, layer):
+        if isinstance(self.sender(), QtGui.QAction):
+            layer = self.iface.mapCanvas().currentLayer()
+        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() != QGis.Line or not layer.isEditable():
+            enabled = False
+        else:
+            enabled = True
+        self.toolAction.setEnabled(enabled)
+        return enabled
 
     def activate(self):
         """
@@ -45,6 +58,10 @@ class FlipLine(QgsMapTool):
         """
         if self.toolAction:
             self.toolAction.setChecked(False)
+    
+    def deactivate(self):
+        self.iface.currentLayerChanged.disconnect(self.setToolEnabled)
+        self.iface.actionToggleEditing().triggered.disconnect(self.setToolEnabled)
     
     def setAction(self, action):
         """
