@@ -155,7 +155,6 @@ class AssignBandValueTool(QgsMapTool):
                 featDict[feat.id()] = feat
                 pointDict[feat.id()] = feat.geometry()
             pixelValueDict = self.getPixelValueFromPointDict(pointDict, self.rasterLayer)
-            print featDict, pointDict, pixelValueDict
             for idx in pointDict:
                 self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':pixelValueDict[idx]})
         else:
@@ -274,12 +273,16 @@ class AssignBandValueTool(QgsMapTool):
         mousePosGeom = QgsGeometry.fromPoint(mousePos)
         return self.getPixelValueFromPoint(mousePosGeom, rasterLayer), mousePosGeom
     
-    def getPixelValueFromPoint(self, mousePosGeom, rasterLayer):
+    def getPixelValueFromPoint(self, mousePosGeom, rasterLayer, fromCanvas = True):
         """
         
         """
         rasterCrs = rasterLayer.crs()
-        # self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
+        if fromCanvas:
+            self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
+        else:
+            mousePosGeom = QgsGeometry(mousePosGeom)
+            self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
         # isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType())) # tem que ver se serve pra QgsGeometry
         mousePos = mousePosGeom.asMultiPoint()[0] if mousePosGeom.isMultipart() else mousePosGeom.asPoint()
         # identify pixel(s) information
@@ -295,4 +298,4 @@ class AssignBandValueTool(QgsMapTool):
 
         returns {'pointId': value}
         """
-        return {key:self.getPixelValueFromPoint(value, rasterLayer) for key, value in pointDict.iteritems()} #no python3 eh items()
+        return {key:self.getPixelValueFromPoint(value, rasterLayer, fromCanvas = False) for key, value in pointDict.iteritems()} #no python3 eh items()
