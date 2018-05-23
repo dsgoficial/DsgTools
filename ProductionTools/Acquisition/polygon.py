@@ -11,6 +11,7 @@ from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
 from qgis.gui import QgsMapMouseEvent, QgsMapTool
+from distanceToolTip import DistanceToolTip
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -83,9 +84,11 @@ class Polygon(GeometricaAcquisition):
             self.createSnapCursor(point)
         point = QgsPoint(event.mapPoint())   
         if self.qntPoint == 1:
+            self.distanceToolTip.canvasMoveEvent(self.geometry[0], point)
             geom = QgsGeometry.fromPolyline([self.geometry[0], point])
             self.rubberBand.setToGeometry(geom, None)
         elif self.qntPoint >= 2:
+            self.distanceToolTip.canvasMoveEvent(self.geometry[-1], point)
             if self.free:
                 geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(point.x(), point.y())]])
                 self.rubberBand.setToGeometry(geom, None)             
