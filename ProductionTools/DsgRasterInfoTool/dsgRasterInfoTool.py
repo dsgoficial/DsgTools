@@ -62,6 +62,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.addShortcuts()
         self.valueSetterButton.setEnabled(False)
         self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
+        self.iface.actionToggleEditing().triggered.connect(self.enableAssignValue)
     
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
@@ -91,7 +92,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         # self.timerMapTips.timeout.connect( self.showToolTip )
     
     def enableAssignValue(self, layer):
-        if layer is not None and isinstance(layer, QgsVectorLayer) and layer.geometryType() != QGis.Point:
+        if layer is not None and isinstance(layer, QgsVectorLayer) and layer.geometryType() != QGis.Point and not layer.isEditable():
             self.valueSetterButton.setEnabled(False)
             self.activateValueSetter(False)
         else:
