@@ -51,24 +51,25 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             linearRing = self.geometryHandler.getClockWiseList(linearRing)
             nVertex = len(linearRing)-1
             for i in xrange(nVertex):
-                vertexAngle = (linearRing[i].azimuth(linearRing[(i-1)%nVertex]) - linearRing[i].azimuth(linearRing[(i+1)%nVertex]) + 360) % 360
-                if vertexAngle % 360 < angle:
-                    geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
-                    outOfBoundsList.append(geomDict)
-                elif 360 - vertexAngle < angle:
-                    geomDict = {'angle': (360 - vertexAngle)  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
+                vertexAngle = (linearRing[i].azimuth(linearRing[i-1]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
+                vertexAngle = math.fmod(vertexAngle, 360)
+                if vertexAngle > 180:
+                    # if angle calculated is the outter one
+                    vertexAngle = 360 - vertexAngle
+                if vertexAngle < angle:
+                    geomDict = {'angle':vertexAngle,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(linearRing[i])}
                     outOfBoundsList.append(geomDict)
     
     def getOutOfBoundsAngleInLine(self, feat, geometry_column, part, angle, outOfBoundsList):
         line = part.asPolyline()
         nVertex = len(line)-1
         for i in xrange(1,nVertex):
-            vertexAngle = (line[i].azimuth(line[(i-1)%nVertex]) - line[i].azimuth(line[(i+1)%nVertex]) + 360) % 360
-            if vertexAngle % 360 < angle:
-                geomDict = {'angle':vertexAngle % 360  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
-                outOfBoundsList.append(geomDict)
-            elif 360 - vertexAngle < angle:
-                geomDict = {'angle': (360 - vertexAngle)  ,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
+            vertexAngle = (line[i].azimuth(line[i-1]) - line[i].azimuth(line[i+1]) + 360)
+            vertexAngle = math.fmod(vertexAngle, 360)
+            if vertexAngle > 180:
+                vertexAngle = 360 - vertexAngle
+            if vertexAngle < angle:
+                geomDict = {'angle':vertexAngle,'feat_id':feat.id(), 'geometry_column': geometry_column, 'geom':QgsGeometry.fromPoint(line[i])}
                 outOfBoundsList.append(geomDict)
     
     def getOutOfBoundsAngle(self, feat, angle, geometry_column):
@@ -78,8 +79,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             if part.type() == QGis.Polygon:
                 self.getOutOfBoundsAngleInPolygon(feat, geometry_column, part, angle, outOfBoundsList)
             if part.type() == QGis.Line:
-                self.getOutOfBoundsAngleInLine(feat, geometry_column, part, angle, outOfBoundsList)
-            
+                self.getOutOfBoundsAngleInLine(feat, geometry_column, part, angle, outOfBoundsList)            
         return outOfBoundsList
     
     def getOutOfBoundsAngleList(self, lyr, angle, geometry_column, onlySelected = False):
@@ -96,7 +96,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         featFlagList = []
         for geomDict in geomDictList:
             # reason = self.tr('Angle of {0} degrees is out of bound.').format(geomDict['angle'])
-            reason = '{0}'.format(geomDict['angle'])
+            reason = self.tr('Angle out of bounds ({0:.2f} deg)').format(geomDict['angle'])
             newFlag = self.buildFlagFeature(flagLyr, self.processName, tableSchema, tableName, geomDict['feat_id'], geomDict['geometry_column'], geomDict['geom'], reason)
             featFlagList.append(newFlag)
         return self.raiseVectorFlags(flagLyr, featFlagList)
