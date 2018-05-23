@@ -264,7 +264,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         successList = []
         for dbName in dbsDict.keys():
             for style in styleList:
+                currentStyleFilesDir = "{0}/{1}".format(styleDir, style.split("/")[1])
+                fileList = os.listdir(currentStyleFilesDir)
+                # iterate over the list of files and check if there are non-QML files
+                onlyQml = bool(sum([int(".qml" in file.lower()) for file in fileList]))
                 try:
+                    if not onlyQml:
+                        raise Exception(self.tr("There are non-QML files in directory {0}.").format(currentStyleFilesDir))
                     dbsDict[dbName].importStylesIntoDb(style)
                     successList.append(dbName)
                 except Exception as e:
