@@ -31,7 +31,6 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QColor, QMenu, QCursor
 
 from PyQt4.QtCore import Qt
-
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class AssignBandValueTool(QgsMapTool):
@@ -52,6 +51,16 @@ class AssignBandValueTool(QgsMapTool):
         self.setRubberbandParameters()
         self.reset()
         self.auxList = []
+        self.decimals = self.getDecimals()
+    
+    def getDecimals(self):
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        decimals = settings.value('decimals')
+        if decimals:
+            return int(decimals)
+        else:
+            return 0
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
@@ -288,7 +297,9 @@ class AssignBandValueTool(QgsMapTool):
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
         if i.isValid():
-            return i.results().values()[0]
+            value = i.results().values()[0]
+            value = int(value) if self.decimals == 0 else round(value, self.decimals)
+            return value
         else:
             return None
     

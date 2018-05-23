@@ -73,7 +73,8 @@ class Options(QtGui.QDialog, FORM_CLASS):
         algIterations = self.algIterationsQgsSpinBox.value()
         valueList = [self.blackListWidget.item(i).text() for i in range(self.blackListWidget.count())]
         undoPoints = self.undoQgsSpinBox.value()
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints)
+        decimals = self.decimalQgsSpinBox.value()
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints, decimals)
 
     def loadParametersFromConfig(self):
         settings = QSettings()
@@ -84,13 +85,14 @@ class Options(QtGui.QDialog, FORM_CLASS):
         algIterations = settings.value('algIterations')
         valueList = settings.value('valueList')
         undoPoints = settings.value('undoPoints')
+        decimals = settings.value('decimals')
         if valueList:
             valueList = valueList.split(';')
         settings.endGroup()
-        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints)
+        return (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints, decimals)
     
     def setInterfaceWithParametersFromConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints) = self.loadParametersFromConfig()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints, decimals) = self.loadParametersFromConfig()
         
         if freeHandTolerance:
             self.toleranceQgsDoubleSpinBox.setValue(float(freeHandTolerance))
@@ -106,9 +108,11 @@ class Options(QtGui.QDialog, FORM_CLASS):
             self.blackListWidget.sortItems(order = Qt.AscendingOrder)
         if undoPoints:
             self.undoQgsSpinBox.setValue(int(undoPoints))
+        if decimals:
+            self.decimalQgsSpinBox.setValue(int(decimals))
     
     def storeParametersInConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints) = self.getParameters()
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints, decimals) = self.getParameters()
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         settings.setValue('freeHandTolerance', freeHandTolerance)
@@ -117,6 +121,7 @@ class Options(QtGui.QDialog, FORM_CLASS):
         settings.setValue('algIterations', algIterations)
         settings.setValue('valueList', ';'.join(valueList))
         settings.setValue('undoPoints', undoPoints)
+        settings.setValue('decimals', decimals)
         settings.endGroup()
     
     @pyqtSlot()
@@ -136,8 +141,8 @@ class Options(QtGui.QDialog, FORM_CLASS):
             self.blackListWidget.takeItem(i)
     
     def firstTimeConfig(self):
-        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints) = self.loadParametersFromConfig()
-        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints):
+        (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, valueList, undoPoints, decimals) = self.loadParametersFromConfig()
+        if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints and decimals):
             self.storeParametersInConfig()
         
         
