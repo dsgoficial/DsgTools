@@ -9,6 +9,7 @@ import math
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence, QCursor, QPixmap, QColor
 from PyQt4.QtCore import QSettings
+from distanceToolTip import DistanceToolTip
 
 class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def __init__(self, canvas, iface, action):
@@ -19,6 +20,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.snapCursorRubberBand = None
         self.initVariable()
         self.setAction(action)
+        self.distanceToolTip = DistanceToolTip(self.iface)
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
