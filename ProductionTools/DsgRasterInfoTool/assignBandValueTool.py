@@ -22,6 +22,7 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  ***************************************************************************/
 """
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, QgsAttributeDialog, QgsAttributeForm
+from qgis import core
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, \
                       QgsVectorLayer, QgsDataSourceURI, QgsCoordinateReferenceSystem, \
                       QgsCoordinateTransform, QgsGeometry, QgsEditFormConfig, QgsRaster,\
@@ -61,7 +62,7 @@ class AssignBandValueTool(QgsMapTool):
             return int(decimals)
         else:
             return 0
-
+    
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
         qgisSettigns.beginGroup('Qgis/digitizing')
@@ -240,6 +241,7 @@ class AssignBandValueTool(QgsMapTool):
                 self.toolAction.setChecked(False)
             if self is not None:
                 QgsMapTool.deactivate(self)
+                self.canvas.unsetMapTool(self)
         except:
             pass
 
