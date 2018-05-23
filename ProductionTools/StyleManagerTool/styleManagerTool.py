@@ -69,7 +69,6 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         for dbName in self.getDatabaseList():
             self.dbComboBox.addItem(dbName)
     
-    @pyqtSlot(int, name = 'on_dbComboBox_currentIndexChanged')
     @pyqtSlot(int, name = 'on_styleComboBox_currentIndexChanged')
     def enableApply(self):
         dbIdx = self.dbComboBox.currentIndex()
@@ -179,6 +178,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbName = self.dbComboBox.currentText()
             abstractDb = self.getAbstractDb(dbName)
             self.loadStylesCombo(abstractDb)
+        self.enableApply()
         
     def getStyle(self, abstractDb, stylePath, className):
         if 'db:' in stylePath:
