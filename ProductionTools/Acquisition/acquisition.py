@@ -13,6 +13,7 @@ class Acquisition(QObject):
         self.canvas = iface.mapCanvas()
         self.tool = None
         self.iface.currentLayerChanged.connect(self.checkToDeactivate)
+        self.iface.actionToggleEditing().triggered.connect(self.setToolsEnabled)
         self.polygonAction = None
         self.circleAction = None
 
@@ -34,7 +35,9 @@ class Acquisition(QObject):
             self.tool.deactivate()
     
     def setToolsEnabled(self, layer):
-        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QGis.Point:
+        if isinstance(self.sender(), QAction):
+            layer = self.iface.mapCanvas().currentLayer()
+        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QGis.Point or not layer.isEditable():
             enabled = False
         else:
             enabled = True

@@ -677,6 +677,7 @@ class DsgTools:
         productiontools.addAction(action)
         self.toolbar.addAction(action)
         self.flipLineTool.setAction(action)
+        self.flipLineTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
         action.setToolTip(self.tr("DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool."))
