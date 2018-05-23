@@ -11,7 +11,6 @@ from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
 from qgis.gui import QgsMapMouseEvent, QgsMapTool
-from distanceToolTip import DistanceToolTip
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
