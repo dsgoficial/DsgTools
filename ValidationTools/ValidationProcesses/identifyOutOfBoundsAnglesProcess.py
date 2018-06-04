@@ -51,7 +51,10 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
             linearRing = self.geometryHandler.getClockWiseList(linearRing)
             nVertex = len(linearRing)-1
             for i in xrange(nVertex):
-                vertexAngle = (linearRing[i].azimuth(linearRing[i-1]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
+                if i == 0:
+                    vertexAngle = (linearRing[i].azimuth(linearRing[-2]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
+                else:
+                    vertexAngle = (linearRing[i].azimuth(linearRing[i-1]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
                 vertexAngle = math.fmod(vertexAngle, 360)
                 if vertexAngle > 180:
                     # if angle calculated is the outter one
