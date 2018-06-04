@@ -1933,7 +1933,7 @@ class PostgisDb(AbstractDb):
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
             #filtering and checking file names for special characters
-            if style[0] == '.':
+            if style[0] == '.' or ".qml" not in style:
                 continue
             if not re.match("^[a-zA-Z0-9_.]*$", style):
                 raise Exception(self.tr('Problem importing style ')+style)
