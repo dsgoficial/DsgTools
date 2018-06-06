@@ -20,14 +20,12 @@ class Polygon(GeometricaAcquisition):
 
     def endGeometry(self):
         if len(self.geometry) > 2:
-            inter = self.lineIntersection(self.geometry[1],self.geometry[0],self.geometry[-2],self.geometry[-1])
-            if inter:
-                if self.iface.activeLayer().geometryType() == QGis.Polygon:
-                    geom = QgsGeometry.fromPolygon([self.geometry+[inter]])
-                elif self.iface.activeLayer().geometryType() == QGis.Line:
-                    geom = QgsGeometry.fromPolyline(self.geometry+[inter])
-                self.rubberBand.setToGeometry(geom,None)
-                self.createGeometry(geom)
+            if self.iface.activeLayer().geometryType() == QGis.Polygon:
+                geom = QgsGeometry.fromPolygon([self.geometry])
+            elif self.iface.activeLayer().geometryType() == QGis.Line:
+                geom = QgsGeometry.fromPolygon([self.geometry])
+            self.rubberBand.setToGeometry(geom,None)
+            self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
@@ -51,6 +49,13 @@ class Polygon(GeometricaAcquisition):
                 self.geometry.append(pointMap)
                 self.endGeometryFree()
             else:
+                if (self.qntPoint >=2) and (self.qntPoint % 2 == 0):
+                    point = QgsPoint(pointMap)
+                    testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                    if testgeom:
+                        new_geom, pf = self.completePolygon(self.geometry, testgeom)
+                        self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
+                        self.geometry.append(pf)                    
                 self.endGeometry()        
         elif self.free:
             self.geometry.append(pointMap)
@@ -94,5 +99,5 @@ class Polygon(GeometricaAcquisition):
             else:        
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
-                    geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
+                    geom, pf = self.completePolygon(self.geometry, testgeom)
                     self.rubberBand.setToGeometry(geom, None)

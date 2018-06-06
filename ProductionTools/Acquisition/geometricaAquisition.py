@@ -101,7 +101,19 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             self.snapCursorRubberBand.reset(geometryType=QGis.Point)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
-    
+
+    def completePolygon(self,geom, p4):                
+        if len(geom) % 2 == 0:
+            p1      = geom[1]
+            p2      = geom[0]
+            p3      = geom[-1]
+            pf = self.lineIntersection(p1, p2, p3, p4)
+            new_geom = QgsGeometry.fromPolygon([self.geometry+[p4, pf]])                            
+        else:
+            new_geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(p4.x(), p4.y())]])            
+            pf = p4            
+        return new_geom, pf
+            
     def lineIntersection(self, p1, p2, p3, p4):        
         m1 = (p1.y() - p2.y())/(p1.x() - p2.x())
         a1 = p2.y() + p2.x()/m1
