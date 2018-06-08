@@ -143,7 +143,9 @@ class CodeList(QtGui.QDockWidget, FORM_CLASS):
         """
         try:
             for lyr in self.classesFieldDict.keys():
-                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
+                if self.classComboBox.currentText() == u'':
+                    break
+                elif lyr.name() == self.classComboBox.currentText().split(": ")[1]:
                     self.currLayer = lyr
             self.loadCodeList()   
         except:

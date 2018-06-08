@@ -70,6 +70,37 @@ class DsgGeometryHandler(QObject):
         if debugging:
             return [geom, canvasCrs, referenceCrs, coordinateTransformer]
 
+    def getFeatureNodes(self, layer, feature, geomType=None):
+        """
+        Inverts the flow from a given feature. THE GIVEN FEATURE IS ALTERED. Standard behaviour is to not
+        refresh canvas map.
+        :param layer: layer containing the target feature for flipping.
+        :param feature: feature to be flipped.
+        :param geomType: if layer geometry type is not given, it'll calculate it (0,1 or 2).
+        :returns: feature as of a list of points (nodes).
+        """
+        if not geomType:
+            geomType = layer.geometryType()
+        # getting whether geometry is multipart or not
+        isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType()))
+        geom = feature.geometry()
+        if geomType == 0:
+            if isMulti:
+                nodes = geom.asMultiPoint()       
+            else:
+                nodes = geom.asPoint()              
+        elif geomType == 1:
+            if isMulti:
+                nodes = geom.asMultiPolyline()
+            else:
+                nodes = geom.asPolyline()     
+        elif geomType == 2:
+            if isMulti:
+                nodes = geom.asMultiPolygon()           
+            else:
+                nodes = geom.asPolygon()
+        return nodes
+
     def flipFeature(self, layer, feature, geomType=None, refreshCanvas=False):
         """
         Inverts the flow from a given feature. THE GIVEN FEATURE IS ALTERED. Standard behaviour is to not
@@ -156,4 +187,37 @@ class DsgGeometryHandler(QObject):
         if debugging:
             return reversedFeatureList, failedFeatureList
         else:
-            return reversedFeatureList
+            return reversedFeatureList    
+
+    def mergeLines(self, line_a, line_b, layer):
+        """
+        Merge 2 lines of the same layer (it is assumed that they share the same set od attributes - except for ID and geometry).
+        In case sets are different, the set of geometry of line_a will be kept. If geometries don't touch, method is not applicable.
+        :param line_a: (QgsFeature) main line of merging process.
+        :param line_b: (QgsFeature) line to be merged to line_a.
+        :param layer: (QgsVectorLayer) layer containing given lines.
+        :return: (bool) True if method runs OK or False, if lines do not touch.
+        """
+        # check if original layer is a multipart
+        isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType()))
+        # retrieve lines geometries
+        geometry_a = line_a.geometry()
+        geometry_b = line_b.geometry()
+        # checking the spatial predicate touches
+        if geometry_a.touches(geometry_b):
+            # this generates a multi geometry
+            geometry_a = geometry_a.combine(geometry_b)
+            # this make a single line string if the multi geometries are neighbors
+            geometry_a = geometry_a.mergeLines()
+            if isMulti:
+                # making a "single" multi geometry (EDGV standard)
+                geometry_a.convertToMultiType()
+            # updating feature
+            line_a.setGeometry(geometry_a)
+            # remove the aggregated line to avoid overlapping
+            layer.deleteFeature(line_b.id())
+            # updating layer
+            layer.updateFeature(line_a)
+            return True
+            
+        return False
