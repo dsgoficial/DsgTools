@@ -385,9 +385,38 @@ class PostGISSqlGenerator(SqlGenerator):
             earthcoverage text,
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
+
+        DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
+        CREATE TABLE validation.aux_hid_nodes_p (
+            id SERIAL NOT NULL,
+            layer VARCHAR(40) NOT NULL,
+            node_type SMALLINT NOT NULL,
+            geom geometry('MultiPoint', %s) NOT NULL,
+            CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
+            )#
+        CREATE TABLE dominios.node_type (
+            code smallint NOT NULL,
+            code_name text NOT NULL, CONSTRAINT
+            node_type_pk PRIMARY KEY (code)
+            )#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (0,'Flag')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (1,'Sumidouro ou Vertedouro')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (2,'Início de Trecho')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (3,'Interrupção à Montante')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (4,'Interrupção à Jusante')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (5,'Confluência')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (6,'Ramificação')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (9,'Flag de Mudança de Atributo')#
+        INSERT INTO dominios.node_type (code,code_name) VALUES (10,'Nó com Fluxo Constante')#        
+        ALTER TABLE validation.aux_hid_nodes_p
+            ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
+            REFERENCES dominios.node_type (code) MATCH FULL
+            ON UPDATE NO ACTION ON DELETE NO ACTION#
         INSERT INTO validation.settings(earthcoverage) VALUES (NULL)#
         INSERT INTO validation.status(id,status) VALUES (0,'Not yet ran'), (1,'Finished'), (2,'Failed'), (3,'Running'), (4,'Finished with flags')   
-        """ % (srid, srid, srid)
+        """ % (srid, srid, srid, srid)
         return sql
     
     def validationStatus(self, processName):
@@ -1712,10 +1741,120 @@ class PostGISSqlGenerator(SqlGenerator):
         """
         sql = ""
         if isinstance(logList, list):
-            for log in logList:
+            if isinstance(logList[0], list):
+                for log in logList:
+                    sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
+                    format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
+            else:
+                log = logList
                 sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
-                format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
+                    format(log[0], log[1], log[2].replace(r"\n", "\n"), log[3], log[4].toPyDateTime())
         elif logList:
             sql += u"""INSERT INTO validation.compact_process_history (id, process_name, log, status, finished) VALUES ({0}, '{1}', '{2}', {3}, '{4}');\n""".\
                 format(logList[0], logList[1], logList[2].replace(r"\n", "\n"), logList[3], logList[4].toPyDateTime())
         return sql
+
+    def createHidNodeTableQuery(self, crs):
+        """
+        Creates the table for saving node information during hidrography validation process.
+        :param crs: CRS for geometry column.
+        """
+        sql = """
+        DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
+        CREATE TABLE validation.aux_hid_nodes_p (
+            id SERIAL NOT NULL,
+            layer VARCHAR(40) NOT NULL,
+            node_type SMALLINT NOT NULL,
+            geom geometry('MultiPoint', {}) NOT NULL,
+            CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
+            );
+        """.format(crs)
+        return sql
+    
+    def clearHidNodeTableQuery(self, layerName):
+        """
+        Gives the query for clearing all entries on hidrography node table.
+        :param layerName: (str) name of hidrography nodes table.
+        :return: (str) query for table clearing.
+        """
+        return """DELETE FROM validation.{0};""".format(layerName)
+
+    def fillHidNodeTableQuery(self, layerName, nodeWkt, nodeType, crs):
+        """
+        Updates table inserting info based on layer dictionary of node dictionary.
+        :param layerName: (str) layer name which feature owner of node point belongs to.
+        :param nodeWkt: (QgsMultiPoint WKT) node point to be registered.
+        :nodeType: (int) indicates the point type (confluence, water source, etc).
+        :return: return insertion query.
+        """
+        sql = ""
+        sql += """INSERT INTO validation.aux_hid_nodes_p (layer, geom, node_type) VALUES('{0}', ST_GeomFromText('{1}', {3}), {2});\n"""\
+        .format(layerName, nodeWkt, nodeType, crs)
+        return sql
+    
+    def getNodesGeometryQuery(self, node, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the query for geometry of given feature from database. If feature is not found into database, returns None.
+        :param node: (QgsPoint) target node point.
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node geometry from database
+        :nodeCrs: CRS for node layer.
+        """
+        nodeListString = """ST_GeomFromText('{0}', {1})""".format(node, nodeCrs)
+        sql = """
+            SELECT node_type FROM validation.{1} WHERE geom in ({0}) AND layer = '{2}';
+        """.format(nodeListString, nodeLayerName, hidrographyLineLayerName)
+        return sql
+
+    def getNodeIdQuery(self, node, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the query for geometry of given feature from database. If feature is not found into database, returns None.
+        :param node: (QgsPoint) target node point.
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node geometry from database
+        :nodeCrs: CRS for node layer.
+        """
+        nodeListString = """ST_GeomFromText('{0}', {1})""".format(node, nodeCrs)
+        sql = """
+            SELECT id FROM validation.{1} WHERE geom in ({0}) AND layer = '{2}';
+        """.format(nodeListString, nodeLayerName, hidrographyLineLayerName)
+        return sql
+
+    def createNodeTypeDomainTableQuery(self):
+        """
+        Creates query for node type domain creation.
+        """
+        sql = """CREATE SCHEMA IF NOT EXISTS dominios;
+            CREATE TABLE IF NOT EXISTS dominios.node_type (
+            code smallint NOT NULL,
+            code_name text NOT NULL, CONSTRAINT
+            node_type_pk PRIMARY KEY (code)
+            );
+        INSERT INTO dominios.node_type (code,code_name) VALUES (0,'Flag');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (1,'Sumidouro ou Vertedouro');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (2,'Início de Trecho');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (3,'Interrupção à Montante');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (4,'Interrupção à Jusante');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (5,'Confluência');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (6,'Ramificação');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (7,'Mudança de Atributo');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (8,'Nó Próximo a Corpo d''Água');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (9,'Flag de Mudança de Atributo');
+        INSERT INTO dominios.node_type (code,code_name) VALUES (10,'Nó com Fluxo Constante');
+        ALTER TABLE validation.aux_hid_nodes_p
+            ADD CONSTRAINT aux_hid_nodes_p_fk FOREIGN KEY (node_type)
+            REFERENCES dominios.node_type (code) MATCH FULL
+            ON UPDATE NO ACTION ON DELETE NO ACTION;
+        INSERT INTO validation.settings(earthcoverage) VALUES (NULL);
+        """
+        return sql
+    
+    def checkIfTableExistsQuery(self, schemaName, tableName):
+        """
+        Query for checking whether a table exists into DB or not.
+        :param schemaName: (str) schema name containing target table.
+        :param tableName: (str) target table name. 
+        """
+        return "SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE table_schema = '{0}' AND table_name = '{1}';".format(schemaName, tableName)
