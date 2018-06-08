@@ -43,8 +43,13 @@ class FlipLine(QgsMapTool):
 
     
     def setToolEnabled(self, layer):
-        if isinstance(self.sender(), QtGui.QAction):
-            layer = self.iface.mapCanvas().currentLayer()
+        try:
+            if isinstance(self.sender(), QtGui.QAction):
+                layer = self.iface.mapCanvas().currentLayer()
+        except:
+            from PyQt4 import QtGui
+            if isinstance(self.sender(), QtGui.QAction):
+                layer = self.iface.mapCanvas().currentLayer()
         if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() != QGis.Line or not layer.isEditable():
             enabled = False
         else:
