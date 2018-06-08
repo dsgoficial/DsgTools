@@ -70,16 +70,16 @@ class HidrographyFlowProcess(ValidationProcess):
             self.sinkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
             sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())            
             self.parameters = {
-                                'Only Selected' : False,
-                                'Network Layer' : networkFlowParameterList,
-                                'Sink Layer' : sinkFlowParameterList,
-                                'Search Radius' : 5.0,
-                                'Reference and Layers': OrderedDict( {
+                                self.tr('Only Selected') : False,
+                                self.tr('Network Layer') : networkFlowParameterList,
+                                self.tr('Sink Layer') : sinkFlowParameterList,
+                                self.tr('Search Radius') : 5.0,
+                                self.tr('Reference and Water Body Layers'): OrderedDict( {
                                                                        'referenceDictList':{},
                                                                        'layersDictList':interfaceDict
                                                                      } ),
-                                'Classify Nodes On Database' : True,
-                                'Select All Valid Lines' : False
+                                self.tr('Allow Automatic Fixes') : True,
+                                self.tr('Select All Valid Lines') : False
                               }
             self.nodeDbIdDict = None
             self.nodeDict = None
@@ -992,9 +992,9 @@ class HidrographyFlowProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
-            hidLineLyrKey = self.parameters['Network Layer']
-            hidSinkLyrKey = self.parameters['Sink Layer']
-            refKey, classesWithElemKeys = self.parameters['Reference and Layers']
+            hidLineLyrKey = self.parameters[self.tr('Network Layer')]
+            hidSinkLyrKey = self.parameters[self.tr('Sink Layer')]
+            refKey, classesWithElemKeys = self.parameters[self.tr('Reference and Water Body Layers')]
             # if len(classesWithElemKeys) == 0:
             #     self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 # return 1
@@ -1053,7 +1053,7 @@ class HidrographyFlowProcess(ValidationProcess):
             self.loadLayer(self.hidNodeLayerName)
             # getting current type for hidrography nodes as it is on screen now
             self.nodeCurrentTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
-            if self.parameters['Classify Nodes On Database']:
+            if self.parameters[self.tr('Allow Automatic Fixes')]:
                 # as db info is updated, current node type is the same as in db
                 self.nodeTypeDict = self.nodeCurrentTypeDict
                 # if this option is selected, database info will be updated
@@ -1072,7 +1072,7 @@ class HidrographyFlowProcess(ValidationProcess):
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
             # start recursive method in case flags are raised
-            if self.parameters['Classify Nodes On Database'] and nodeFlags:
+            if self.parameters[self.tr('Allow Automatic Fixes')] and nodeFlags:
                 # this method alters database classification, hence it can only be used with it selected
                 # retrieve network node layer but its name
                 nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
