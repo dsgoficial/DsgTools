@@ -103,7 +103,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             self.snapCursorRubberBand = None
 
     def completePolygon(self,geom, p4):                
-        if len(geom) % 2 == 0:
+        if (len(geom)>=2) and (len(geom) % 2 == 0):
             p1      = geom[1]
             p2      = geom[0]
             p3      = geom[-1]
