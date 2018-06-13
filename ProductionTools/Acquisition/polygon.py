@@ -23,7 +23,7 @@ class Polygon(GeometricaAcquisition):
             if self.iface.activeLayer().geometryType() == QGis.Polygon:
                 geom = QgsGeometry.fromPolygon([self.geometry])
             elif self.iface.activeLayer().geometryType() == QGis.Line:
-                geom = QgsGeometry.fromPolygon([self.geometry])
+                geom = QgsGeometry.fromPolyline(self.geometry)
             self.rubberBand.setToGeometry(geom,None)
             self.createGeometry(geom)
 
@@ -49,13 +49,19 @@ class Polygon(GeometricaAcquisition):
                 self.geometry.append(pointMap)
                 self.endGeometryFree()
             else:
-                if (self.qntPoint >=2) and (self.qntPoint % 2 == 0):
-                    point = QgsPoint(pointMap)
-                    testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                    if testgeom:
-                        new_geom, pf = self.completePolygon(self.geometry, testgeom)
-                        self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
-                        self.geometry.append(pf)                    
+                if (self.qntPoint >=2):
+                    if (self.qntPoint % 2 == 0):
+                        point = QgsPoint(pointMap)
+                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if testgeom:
+                            new_geom, pf = self.completePolygon(self.geometry, testgeom)
+                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
+                            self.geometry.append(pf)                    
+                    else:
+                        point = QgsPoint(pointMap)
+                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if testgeom:                                
+                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))                   
                 self.endGeometry()        
         elif self.free:
             self.geometry.append(pointMap)
