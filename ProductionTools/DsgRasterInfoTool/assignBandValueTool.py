@@ -95,6 +95,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
         """
+        self.auxList = []
         if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
             self.isEmittingPoint = True
             self.startPoint = self.toMapCoordinates(e.pos())
