@@ -21,7 +21,8 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, QgsAttributeDialog, QgsAttributeForm
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, \
+                     QgsAttributeDialog, QgsAttributeForm, QgsMessageBar
 from qgis import core
 from qgis.core import QGis, QgsPoint, QgsRectangle, QgsMapLayer, QgsFeatureRequest, \
                       QgsVectorLayer, QgsDataSourceURI, QgsCoordinateReferenceSystem, \

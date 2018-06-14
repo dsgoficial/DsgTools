@@ -92,12 +92,18 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         # self.timerMapTips.timeout.connect( self.showToolTip )
     
     def enableAssignValue(self, layer):
-        if layer is not None and isinstance(layer, QgsVectorLayer) and layer.geometryType() != QGis.Point and not layer.isEditable():
+        """
+        Enables tool according to current layer.
+        Case where tool is enabled: an editable point VectorLayer
+        """
+        if layer is None:
             self.valueSetterButton.setEnabled(False)
             self.activateValueSetter(False)
-        else:
+        elif isinstance(layer, QgsVectorLayer) and layer.geometryType() == QGis.Point and layer.isEditable():
             self.valueSetterButton.setEnabled(True)
-
+        else:
+            self.valueSetterButton.setEnabled(False)
+            self.activateValueSetter(False)
     
     def deactivate(self):
         self.activateBandValueTool(False)
