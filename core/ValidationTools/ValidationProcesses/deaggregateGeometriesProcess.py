@@ -85,7 +85,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                         lyr.deleteFeature(feat.id())
                         localProgress.step()
                         continue
-                    if geom.geometry().partCount() > 1:
+                    if geom.get().partCount() > 1:
                         parts = geom.asGeometryCollection()
                         for part in parts:
                             part.convertToMultiType()
@@ -99,7 +99,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
                                 addList.append(newFeat)
                         feat.setGeometry(parts[0])
                         lyr.updateFeature(feat)
-                        lyr.addFeatures(addList,True)
+                        lyr.addFeatures(addList)
                     localProgress.step()
                 self.logLayerTime(classAndGeom['lyrName'])
 
