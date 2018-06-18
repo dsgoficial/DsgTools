@@ -1773,7 +1773,7 @@ class PostgisDb(AbstractDb):
             self.db.commit()
         return result
 
-    def createAndPopulateTempTableFromMap(self, tableName, featureMap, geomColumnName, keyColumn, srid, useTransaction=True):
+    def createTempTable(self, tableName, geomColumnName, useTransaction=True):
         self.checkAndOpenDb()
         if useTransaction:
             self.db.transaction()
@@ -1782,48 +1782,6 @@ class PostgisDb(AbstractDb):
         sqls = sql.split('#')
         for s in sqls:
             if not query.exec_(s):
-                if useTransaction:
-                    self.db.rollback()
-                raise Exception(self.tr('Problem creating temp table {}: '.format(tableName)) + query.lastError().text())
-        attributes = None
-        auxAttributes = None
-        for feat in list(featureMap.values()):
-            if not attributes:
-                # getting only provider fields (we ignore expression fields - type = 6)
-                attributes = [field.name() for field in feat.fields() if field.type() != 6]
-            # getting keyColumn idx
-            keyIdx = feat.fieldNameIndex(keyColumn)
-            # getting only the needed attribute values
-            values = []
-            for field in attributes:
-                if field == keyColumn:
-                    values.append(feat.id())
-                else:
-                    values.append(feat.attribute(field))
-            if not feat.geometry():
-                continue
-            geometry = binascii.hexlify(feat.geometry().asWkb())
-            # adding the geometry column to attributes
-            if not auxAttributes:
-                auxAttributes = attributes[:] #this is done not to mess up original attributes list
-                auxAttributes.append(geomColumnName)
-            # adding the geometry value to values
-            values.append(geometry)
-            # preparing 
-            prepareValues = []
-            for attr in auxAttributes:
-                if attr == geomColumnName:
-                    prepareValues.append("""ST_SetSRID(ST_Multi(:{0}),{1})""".format(attr,str(srid)))
-                else:
-                    prepareValues.append(':'+attr)
-            #getting sql
-            insertSql = self.gen.populateTempTable(tableName, auxAttributes, prepareValues)
-            query.prepare(insertSql)
-            # binding my values to avoid injections
-            for i in range(len(auxAttributes)):
-                query.bindValue(prepareValues[i], values[i])
-            # actual query execution
-            if not query.exec_():
                 if useTransaction:
                     self.db.rollback()
                 raise Exception(self.tr('Problem creating temp table {}: '.format(tableName)) + query.lastError().text())
