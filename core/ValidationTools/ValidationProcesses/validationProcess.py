@@ -334,18 +334,17 @@ class ValidationProcess(QObject):
             inputDict[feature.id()] = dict()
             inputDict[feature.id()]['featList'] = []
             inputDict[feature.id()]['featWithoutGeom'] = feature
-        inputDictKeys = list(inputDict.keys())
         if qgisOutputVector is not None:
             for feat in qgisOutputVector.dataProvider().getFeatures():
                 if keyColumn == '':
                     featid = feat.id()
                 else:
                     featid = feat[keyColumn]
-                if featid in inputDictKeys: #verificar quando keyColumn = ''
+                if featid in inputDict: #verificar quando keyColumn = ''
                     inputDict[featid]['featList'].append(feat)
         elif featureTupleList:
             for gfid, gf in featureTupleList:
-                if gfid in inputDictKeys and gf['classname'] == pgInputLayer.name():
+                if gfid in inputDict and gf['classname'] == pgInputLayer.name():
                     inputDict[gfid]['featList'].append(gf)
         else:
             for feat in featureList:
@@ -353,10 +352,10 @@ class ValidationProcess(QObject):
                     featid = feat.id()
                 else:
                     featid = feat[keyColumn]
-                if featid in inputDictKeys:
+                if featid in inputDict:
                     inputDict[featid]['featList'].append(feat)
         #finally, do what must be done
-        for id in inputDictKeys:
+        for id in inputDict:
             outFeats = inputDict[id]['featList']
             #starting to make changes
             for i in range(len(outFeats)):
@@ -431,7 +430,7 @@ class ValidationProcess(QObject):
         uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
         keyColumn = uri.keyColumn()
         #getting feature map including the edit buffer
-        featureMap = self.mapInputLayer(lyr, selectedFeatures = selectedFeatures)
+        # featureMap = self.mapInputLayer(lyr, selectedFeatures = selectedFeatures)
         #getting table name with schema
         if isinstance(cl, dict):
             tableSchema = cl['tableSchema']
@@ -448,8 +447,37 @@ class ValidationProcess(QObject):
         parameters = {'tableSchema':tableSchema, 'tableName':tableName, 'geometryColumn':geometryColumn}
         srid = self.abstractDb.findEPSG(parameters=parameters)
         #creating temp table
-        self.abstractDb.createAndPopulateTempTableFromMap(fullTableName, featureMap, geometryColumn, keyColumn, srid)
+        self.abstractDb.createTempTable(fullTableName, geometryColumn)
+        self.populateTempTable(fullTableName, lyr, selectedFeatures = selectedFeatures)
         return processTableName, lyr, keyColumn
+    
+    def populateTempTable(self, fullTableName, inputLyr, selectedFeatures = False):
+        iterator = inputLyr.selectedFeatures() if selectedFeatures else inputLyr.getFeatures()
+        featList = []
+        idx = len(inputLyr.fields())-1
+        for feat in iterator:
+            feat.deleteAttribute(idx)
+            featList.append(feat)
+        tempLyr = self.loadTempLayer(fullTableName + '_temp')
+        self.addFeaturesToTempTable(tempLyr, featList)
+    
+    def addFeaturesToTempTable(self, tempLyr, featList):
+        tempLyr.startEditing()
+        tempLyr.beginEditCommand('Populating temp table')
+        tempLyr.addFeatures(featList)
+        tempLyr.endEditCommand()
+        tempLyr.commitChanges()
+
+    def loadTempLayer(self, tempLyrName):
+        """
+        Loads temp layer but does not load it into interface.
+        """
+        schema, tableName = tempLyrName.split('.')
+        uri = self.layerLoader.uri
+        uri.setDataSource(schema, tableName, 'geom', '', 'id')
+        tempLyr = QgsVectorLayer(uri.uri(), tempLyrName, 'postgres')
+        return tempLyr
+        
     
     def postProcessSteps(self, processTableName, lyr):
         """

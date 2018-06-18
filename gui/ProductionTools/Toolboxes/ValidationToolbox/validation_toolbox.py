@@ -158,7 +158,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         elif dimension == 2:
             layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
         flagLyr = self.loadFlagLyr(layer)
-        flagLyr.setLayerTransparency(50)
+        flagLyr.setOpacity(50)
         flagLyr.removeSelection()
         self.iface.mapCanvas().refresh()
         flagLyr.select(idx)
