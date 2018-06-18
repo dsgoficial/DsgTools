@@ -8461,7 +8461,7 @@ Camada</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="91"/>
         <source>Running process on </source>
-        <translation>Executando o processo na camada  </translation>
+        <translation>Executando o processo na camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="118"/>
@@ -11525,7 +11525,7 @@ Camada</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="155"/>
         <source>All features were snapped.</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas as feições da camada foram atraídas.</translation>
     </message>
 </context>
 <context>
