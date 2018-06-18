@@ -513,9 +513,9 @@ class ValidationProcess(QObject):
         #getting srid from something like 'EPSG:31983'
         srid = layerList[0].crs().authid().split(':')[-1] #quem disse que tudo tem que ter mesmo srid? TODO: mudar isso
         # creating the layer
-        geomtype = layerList[0].dataProvider().geometryType()
+        geomtype = layerList[0].geometryType()
         for lyr in layerList:
-            if lyr.dataProvider().geometryType() != geomtype:
+            if lyr.geometryType() != geomtype:
                 raise Exception(self.tr('Error! Different geometry primitives!'))
 
         coverage = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid), "coverage", "memory")
