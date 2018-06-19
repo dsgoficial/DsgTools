@@ -1101,13 +1101,13 @@ class HidrographyFlowProcess(ValidationProcess):
                 self.finishedWithError()
                 return 0
             # if user set to select valid lines
-            if self.parameters['Select All Valid Lines']:
+            if self.parameters[self.tr('Select All Valid Lines')]:
                 trecho_drenagem.setSelectedFeatures(val.keys())
             # getting recordList to be loaded to validation flag table
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
-                if self.parameters['Only Selected']:
+                if self.parameters[self.tr('Only Selected')]:
                     percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
                 else:
                     percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
