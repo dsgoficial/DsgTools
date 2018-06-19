@@ -6190,7 +6190,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="50"/>
         <source>Hidrography Network Directioning</source>
-        <translation>Direcionar de Rede de Drenagem</translation>
+        <translation>Direcionar Rede de Drenagem</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="62"/>
