@@ -6186,6 +6186,294 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     </message>
 </context>
 <context>
+    <name>HidrographyFlowProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="50"/>
+        <source>Hidrography Network Directioning</source>
+        <translation>Direcionar de Rede de Drenagem</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="62"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="63"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="64"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="65"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="66"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="73"/>
+        <source>Only Selected</source>
+        <translation>Somente Selecionados</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="998"/>
+        <source>Network Layer</source>
+        <translation>Camada da Rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="999"/>
+        <source>Sink Layer</source>
+        <translation>Camada de Sumidouro/Vertedouro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="76"/>
+        <source>Search Radius</source>
+        <translation>Raio de busca</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1000"/>
+        <source>Reference and Water Body Layers</source>
+        <translation>Camadas de Referência e de Corpos D&apos;Água</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1078"/>
+        <source>Allow Automatic Fixes</source>
+        <translation>Permitir ajustes automáticos</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="82"/>
+        <source>Select All Valid Lines</source>
+        <translation>Selecionar todas as linhas válidas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="89"/>
+        <source>Flag</source>
+        <translation>Erro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="90"/>
+        <source>Sink</source>
+        <translation>Sumidouro/Vertedouro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="91"/>
+        <source>Waterway Beginning</source>
+        <translation>Início de Drenagem</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="92"/>
+        <source>Up Hill Node</source>
+        <translation>Interrupção à Montante</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="93"/>
+        <source>Down Hill Node</source>
+        <translation>Interrupção à Jusante</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="94"/>
+        <source>Confluence</source>
+        <translation>Confluência</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="95"/>
+        <source>Ramification</source>
+        <translation>Ramificação</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="96"/>
+        <source>Attribute Change Node</source>
+        <translation>Nó de mudança de atributo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="97"/>
+        <source>Node Next to Water Body</source>
+        <translation>Interrupção com corpo d&apos;água</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="98"/>
+        <source>Attribute Change Flag</source>
+        <translation>Erro de mudança de atributo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="99"/>
+        <source>Constant Flow Node</source>
+        <translation>Nó de fluxo constante</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="519"/>
+        <source>Lines {0} and {1} have conflicting directions ({2:.2f} deg).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="525"/>
+        <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
+        <translation>Não foi possível inferir o direcionamento para as linhas {0} e {1} (Ângulo reto)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="567"/>
+        <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
+        <translation>Nó foi marcado como erro na classificação (provavelmente esse nó não pode ser fim de trecho).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="570"/>
+        <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
+        <translation>Nó redundante. Linhas conectadas ({0}, {1}) compartilham o mesmo conjunto de atributos.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="599"/>
+        <source>Line {0} does not end at a node with IN flow type (node type is {1}). </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="606"/>
+        <source>Line {0} does not start at a node with OUT flow type (node type is {1}). </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="612"/>
+        <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
+        <translation>Linhas estão ou saindo ou entrando no nó. A classificação do nó é {0}.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="621"/>
+        <source>Line {0} seems to be invalid (unable to point specific reason). </source>
+        <translation>Linha {0} parece estar inválida (não foi possível determinar o motivo específico).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="707"/>
+        <source>No network starting point was found</source>
+        <translation>Não foi encontrado ponto de início de rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1086"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="789"/>
+        <source>There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.</source>
+        <translation>Há {0} nós que foram inseridos na rede. É indicado que seja feito o processo de reclassificação de nós.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="801"/>
+        <source>does not end at a node with IN flow type</source>
+        <translation>não termina em um nó de fluxo para fora</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="802"/>
+        <source>does not start at a node with OUT flow type</source>
+        <translation>não inicia em um nó com tipo de fluxo para dentro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="803"/>
+        <source>have conflicting directions</source>
+        <translation>tem direções conflitantes</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="804"/>
+        <source>Redundant node.</source>
+        <translation>Nó redundante.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="823"/>
+        <source> does</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="827"/>
+        <source> and </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="832"/>
+        <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="876"/>
+        <source>{0} to {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="895"/>
+        <source>Lines that were flipped while directioning hidrography lines: {0}
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="897"/>
+        <source>Lines that were merged while directioning hidrography lines: {0}
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="900"/>
+        <source>{0}: Flipped/Merged Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="983"/>
+        <source>Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="991"/>
+        <source>Starting </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="991"/>
+        <source> Process.</source>
+        <translation type="unfinished"> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="994"/>
+        <source>Running</source>
+        <translation type="unfinished">Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1007"/>
+        <source>One reference must be selected! Stopping.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1029"/>
+        <source>Select Layer</source>
+        <translation type="unfinished">Selecione as camadas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1086"/>
+        <source>No initial node was found!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1100"/>
+        <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1105"/>
+        <source>Network has coherent directions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>IdentifyDanglesProcess</name>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="44"/>
