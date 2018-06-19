@@ -889,12 +889,7 @@ class HidrographyFlowProcess(ValidationProcess):
         for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
             if self.checkBlackListLine(layer=networkLayer, line=feat):
-<<<<<<< HEAD
                 lineIdsForFlipping.remove(str(feat.id()))
-=======
-                if feat.id() in lineIdsForFlipping:
-                    lineIdsForFlipping.remove(feat.id())
->>>>>>> 7f41f8a161399cae47ee9d2dde838081701ed755
             else:
                 self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
         networkLayer.endEditCommand()
