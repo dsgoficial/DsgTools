@@ -79,7 +79,8 @@ class HidrographyFlowProcess(ValidationProcess):
                                                                        'layersDictList':interfaceDict
                                                                      } ),
                                 self.tr('Allow Automatic Fixes') : True,
-                                self.tr('Select All Valid Lines') : False
+                                self.tr('Select All Valid Lines') : False,
+                                self.tr('Consider Dangles as Waterway Beginnings') : True
                               }
             self.nodeDbIdDict = None
             self.nodeDict = None
@@ -799,7 +800,8 @@ class HidrographyFlowProcess(ValidationProcess):
                                     self.tr("does not end at a node with IN flow type") : 1,
                                     self.tr("does not start at a node with OUT flow type") : 2,
                                     self.tr("have conflicting directions") : 3,
-                                    self.tr('Redundant node.') : 4
+                                    self.tr('Redundant node.') : 4,
+                                    self.tr('Node was flagged upon classification') : 5
                                    }
         for r in fixableReasonExcertsDict.keys():
             if r in reason:
@@ -873,6 +875,11 @@ class HidrographyFlowProcess(ValidationProcess):
                 self.DsgGeometryHandler.mergeLines(line_a=line_a, line_b=line_b, layer=networkLayer)
                 mergedLinesString += [self.tr('{0} to {1}').format(line_b.id(), line_a.id())]
                 fixedFlags[node] = reason
+            elif reasonType == 5 and self.parameters[self.tr('Consider Dangles as Waterway Beginnings')]:
+                # case where node is not a sink not a node next to water body and has an "in" flow
+                if len(self.nodeDict[node]['end']) == 1:
+                    # only dangles are considered waterway beginnings
+                    lineIdsForFlipping.append(str(self.nodeDict[node]['end'][0].id()))
         for node in fixedFlags.keys():
             # pop it from original dict
             nodeFlags.pop(node, None)
@@ -882,7 +889,7 @@ class HidrographyFlowProcess(ValidationProcess):
         for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
             if self.checkBlackListLine(layer=networkLayer, line=feat):
-                lineIdsForFlipping.remove(feat.id())
+                lineIdsForFlipping.remove(str(feat.id()))
             else:
                 self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
         networkLayer.endEditCommand()
