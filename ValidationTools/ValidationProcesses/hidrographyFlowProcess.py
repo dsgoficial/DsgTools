@@ -299,8 +299,8 @@ class HidrographyFlowProcess(ValidationProcess):
             elif hasEndLine:
                 # case 1.b.i
                 if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
-                    # it is considered that every point on map is a starting node. The only exception are points that are
-                    # next to water bodies
+                    # it is considered that every free node on map is a starting node. The only valid exceptions are nodes that are
+                    # next to water bodies and water sink holes
                     return HidrographyFlowProcess.NodeNextToWaterBody
                 # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
@@ -881,7 +881,10 @@ class HidrographyFlowProcess(ValidationProcess):
         networkLayer.beginEditCommand('Merging lines')
         for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
-            self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
+            if self.checkBlackListLine(layer=networkLayer, line=feat):
+                lineIdsForFlipping.remove(feat.id())
+            else:
+                self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
         networkLayer.endEditCommand()
         # building warning message
         warning = ''
@@ -896,6 +899,20 @@ class HidrographyFlowProcess(ValidationProcess):
             # warning is only raised when there were flags fixed
             QMessageBox.warning(self.iface.mainWindow(), self.tr('{0}: Flipped/Merged Lines'.format(self.processAlias)), warning)
         return fixedFlags
+
+    def checkBlackListLine(self, layer, line, blackList=None):
+        """
+        Checks whether line is connected to a waterway beginning.
+        :param layer: (QgsVectorLayer) layer containing target line.
+        :param line: (QgsFeature) line to be checked if is mutable or not.
+        :param blackList: (list-of-int) list of all blacklisted types
+        :return: (bool) whether or not line is considered always well directed, regardless of other lines.
+        """
+        if not blackList:
+            blackList = [HidrographyFlowProcess.WaterwayBegin, HidrographyFlowProcess.DownHillNode, HidrographyFlowProcess.UpHillNode, HidrographyFlowProcess.Sink]
+        first = self.getFirstNode(lyr=layer, feat=line, geomType=1)
+        last = self.getLastNode(lyr=layer, feat=line, geomType=1)
+        return bool((self.nodeTypeDict[first]  in blackList) or (self.nodeTypeDict[last] in blackList))
 
     def recursiveFixFlags(self, nodeFlags, networkLayer, geomType=None, maximumCycles=9):
         """
@@ -1053,21 +1070,21 @@ class HidrographyFlowProcess(ValidationProcess):
             self.loadLayer(self.hidNodeLayerName)
             # getting current type for hidrography nodes as it is on screen now
             self.nodeCurrentTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
-            if self.parameters[self.tr('Allow Automatic Fixes')]:
-                # as db info is updated, current node type is the same as in db
-                self.nodeTypeDict = self.nodeCurrentTypeDict
-                # if this option is selected, database info will be updated
-                self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-                self.fillNodeTable(hidLineLayer=trecho_drenagem)
-            else:
-                try:
-                    # if user doesn't set process to repopulate db, method tries to get node type already set
-                    self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
-                except:
-                    # if it fails, it keep populates node table 
-                    if not self.nodeTypeDict:
-                        self.nodeTypeDict = self.nodeCurrentTypeDict
-                        self.fillNodeTable(hidLineLayer=trecho_drenagem)
+            # if self.parameters[self.tr('Allow Automatic Fixes')]:
+            # as db info is updated, current node type is the same as in db
+            self.nodeTypeDict = self.nodeCurrentTypeDict
+            # if this option is selected, database info will be updated
+            self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+            self.fillNodeTable(hidLineLayer=trecho_drenagem)
+            # else:
+            #     try:
+            #         # if user doesn't set process to repopulate db, method tries to get node type already set
+            #         self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
+            #     except:
+            #         # if it fails, it keep populates node table 
+            #         if not self.nodeTypeDict:
+            #             self.nodeTypeDict = self.nodeCurrentTypeDict
+            #             self.fillNodeTable(hidLineLayer=trecho_drenagem)
             self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
