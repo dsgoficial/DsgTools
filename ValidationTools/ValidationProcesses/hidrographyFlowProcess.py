@@ -832,6 +832,31 @@ class HidrographyFlowProcess(ValidationProcess):
             lineId2 = reason.split(self.tr(", "))[1].split(")")[0]
             return [lineId1, lineId2]
 
+    def isDangle(self, node, networkLayer, searchRadius):
+        """
+        Checks whether node is a dangle into network (connected to a first order line).
+        :param node: (QgsPoint) node to be validated.
+        :param networkLayer: (QgsVectorLayer) network layer (line layer).
+        :param searchRadius: (float) limit distance to another line.
+        :return: (bool) indication whether node is a dangle.
+        """
+        qgisPoint = QgsGeometry.fromPoint(node)
+        # building a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
+        buf = QgsGeometry.fromWkt(buf)
+        # building bounding box around node for feature requesting
+        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        # check if buffer intersects features from water bodies layers
+        count = 0
+        for feat in networkLayer.getFeatures(QgsFeatureRequest(bbRect)):
+            if buf.intersects(feat.geometry()):
+                count += 1
+                res = (count > 1)
+                if res:
+                    # to avoid as many iterations as possible
+                    return res
+        return res
+
     def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
         """
         Tries to fix the flag raised.
@@ -877,7 +902,7 @@ class HidrographyFlowProcess(ValidationProcess):
                 fixedFlags[node] = reason
             elif reasonType == 5 and self.parameters[self.tr('Consider Dangles as Waterway Beginnings')]:
                 # case where node is not a sink not a node next to water body and has an "in" flow
-                if len(self.nodeDict[node]['end']) == 1:
+                if len(self.nodeDict[node]['end']) == 1 and self.isDangle(node=node, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                     # only dangles are considered waterway beginnings
                     lineIdsForFlipping.append(str(self.nodeDict[node]['end'][0].id()))
         for node in fixedFlags.keys():
@@ -916,7 +941,7 @@ class HidrographyFlowProcess(ValidationProcess):
         :return: (bool) whether or not line is considered always well directed, regardless of other lines.
         """
         if not blackList:
-            blackList = [HidrographyFlowProcess.WaterwayBegin, HidrographyFlowProcess.DownHillNode, HidrographyFlowProcess.UpHillNode, HidrographyFlowProcess.Sink]
+            blackList = [HidrographyFlowProcess.DownHillNode, HidrographyFlowProcess.UpHillNode, HidrographyFlowProcess.Sink]
         first = self.getFirstNode(lyr=layer, feat=line, geomType=1)
         last = self.getLastNode(lyr=layer, feat=line, geomType=1)
         return bool((self.nodeTypeDict[first]  in blackList) or (self.nodeTypeDict[last] in blackList))
