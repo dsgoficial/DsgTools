@@ -964,15 +964,15 @@ class HidrographyFlowProcess(ValidationProcess):
             return fixedFlags
         newFixedFlags = fixedFlags
         # update nodes classification if there are any fixed nodes
-        self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-        self.fillNodeTable(hidLineLayer=networkLayer)
+        # self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+        # self.fillNodeTable(hidLineLayer=networkLayer)
         count = 0
         while count < maximumCycles or newFixedFlags:
             newNodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=networkLayer)
             newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
             # every cycle implies in a new node reclassification as nodes have changed their types on canvas
-            self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-            self.fillNodeTable(hidLineLayer=networkLayer)
+            # self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+            # self.fillNodeTable(hidLineLayer=networkLayer)
             if newNodeFlags.keys() in nodeFlags.keys():
                 # in case a subset of flags is raised again by process, fixing method is no longer effective 
                 # thus no fixing method will be applied
@@ -1126,6 +1126,11 @@ class HidrographyFlowProcess(ValidationProcess):
                 # retrieve network node layer but its name
                 nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
                 fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=trecho_drenagem)
+                # update node info
+                self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+                self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
+                self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)            
+                self.fillNodeTable(hidLineLayer=trecho_drenagem)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON
