@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, QGis
+from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, QGis, QgsMapLayerRegistry
 import math, processing
 from math import pi
 from itertools import combinations
