@@ -221,3 +221,32 @@ class DsgGeometryHandler(QObject):
             return True
             
         return False
+
+    def getSegment(self, geom, referencePoint):
+        if geom.isMultipart():
+            multiLine = geom.asMultiPolyline()
+            for i in xrange(len(multiLine)):
+                line = multiLine[i]
+                lineReturn = self.getSegmentFromLinestring(line, referencePoint)
+                if lineReturn:
+                    return lineReturn
+        else:
+            line = geom.asPolyline()
+            lineReturn =  self.getSegmentFromLinestring(line, referencePoint)
+            if lineReturn:
+                    return lineReturn
+        return []
+    
+    def getSegmentFromLinestring(self, line, referencePoint):
+        lineSize = len(line)
+        if line[0] == referencePoint.asPoint():
+            if lineSize == 2:
+                return line
+            else:
+                return line[0::2]
+        if line[-1] == referencePoint.asPoint():
+            if lineSize == 2:
+                return line
+            else:
+                return line[-2:]
+        return None

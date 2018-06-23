@@ -103,9 +103,11 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
+                getattr(widget, self.SETTERS[type(widget)])(v)
             elif self.WIDGETS[type(v)] == QtGui.QSpinBox:
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
+                getattr(widget, self.SETTERS[type(widget)])(v)
             
             elif self.WIDGETS[type(v)] == CustomTableSelector:
                 widget.setTitle(self.tr('Select classes'))
