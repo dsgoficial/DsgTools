@@ -22,7 +22,7 @@
 """
 import binascii
 from datetime import datetime
-import json
+import json, processing
 # Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QVariant
@@ -475,6 +475,44 @@ class ValidationProcess(QObject):
             return 'MultiPolygon'
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
+    
+    def createUnifiedLineLayer(self, layerList, onlySelected = False):
+        """
+        For each layer in layerList, transforms it into lines if lyrType 
+        is polygon and adds features into layerList.
+        Duplicates can happen in this process.
+        """
+        srid = layerList[0].crs().authid().split(':')[-1]
+        coverage = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format('Linestring',srid), "coverage_lines", "memory")
+        provider = coverage.dataProvider()
+        coverage.startEditing()
+        coverage.beginEditCommand('Creating coverage lines layer')
+
+        self.localProgress = ProgressWidget(1, len(layerList) - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
+        addFeatureList = []
+        for lyr in layerList:
+            isPolygon = True if lyr.dataProvider().geometryType() in [QGis.WKBPolygon, QGis.WKBMultiPolygon] else False
+            isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+            featureIterator = lyr.getFeatures() if not onlySelected else lyr.selectedFeatures()
+            for feature in featureIterator:
+                geom = feature.geometry()
+                parts = geom.asGeometryCollection()
+                for part in parts:
+                    if isPolygon:
+                        linestrings = part.asPolygon()
+                        for line in linestrings:
+                            newfeat = QgsFeature(coverage.pendingFields())
+                            newfeat.setGeometry(QgsGeometry.fromPolyline(line))
+                            addFeatureList.append(newfeat)
+                    else:
+                        newfeat = QgsFeature(coverage.pendingFields())
+                        newfeat.setGeometry(part)
+                        addFeatureList.append(newfeat)
+            self.localProgress.step()
+        coverage.addFeatures(addFeatureList, True)
+        coverage.endEditCommand()
+        coverage.commitChanges()
+        return coverage
 
     def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False):
         """

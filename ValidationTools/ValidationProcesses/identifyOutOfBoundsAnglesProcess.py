@@ -134,6 +134,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
                 
                 # storing flags
                 if len(result) > 0:
+                    error = True
                     numberOfProblems = self.buildAndRaiseOutOfBoundsFlag(classAndGeom['tableSchema'], classAndGeom['tableName'], flagLyr, result)
                     QgsMessageLog.logMessage(str(numberOfProblems) + self.tr(' features from') + classAndGeom['tableName'] + self.tr(' have out of bounds angle(s). Check flags.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 else:
