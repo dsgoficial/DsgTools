@@ -127,7 +127,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         layerList, isDictList = self.preLoadStep(inputList)
         #2. Filter Layers:
         filteredLayerList = self.filterLayerList(inputList, useInheritance, onlyWithElements, geomFilterList)
-        filteredDictList = [i for i in inputList if i['tableName'] in layerList] if isDictList else filteredLayerList
+        filteredDictList = [i for i in inputList if i['tableName'] in filteredLayerList] if isDictList else filteredLayerList
         edgvVersion = self.abstractDb.getDatabaseVersion()
         rootNode = QgsProject.instance().layerTreeRoot()
         dbNode = self.getDatabaseGroup(rootNode)
