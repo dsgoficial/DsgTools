@@ -95,7 +95,7 @@ class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
                     features = [feature for feature in featureList]
                     self.localProgress = ProgressWidget(1, len(features) - 1, self.tr('Snapping features from {0} on {1} ').format(clDict['tableName'], refcl['tableName']), parent=self.iface.mapCanvas())
 
-                    snappedFeatures = snapper.snapFeatures(features, tol)
+                    snappedFeatures = snapper.snapFeatures(features, tol, mode = QgsGeometrySnapper.PreferClosest)
                     self.updateOriginalLayerV2(lyr, None, featureList=snappedFeatures)
                     self.logLayerTime(clDict['lyrName'])
 
