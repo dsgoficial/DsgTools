@@ -31,7 +31,9 @@ from qgis.PyQt.QtCore import QVariant
 from qgis.PyQt.Qt import QObject
 
 #QGIS imports
-from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes
+from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
+                      QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, \
+                      QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes
 
 # DSGTools imports
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
@@ -491,17 +493,17 @@ class ValidationProcess(QObject):
         self.abstractDb.dropTempTable(processTableName)
     
     def getGeometryTypeText(self, geomtype):
-        if geomtype == Qgis.WKBPoint:
+        if geomtype == QgsWkbTypes.Point:
             return 'Point'
-        elif geomtype == Qgis.WKBMultiPoint:
+        elif geomtype == QgsWkbTypes.MultiPoint:
             return 'MultiPoint'
-        elif geomtype == Qgis.WKBLineString:
+        elif geomtype == QgsWkbTypes.LineString:
             return 'Linestring'
-        elif geomtype == Qgis.WKBMultiLineString:
+        elif geomtype == QgsWkbTypes.MultiLineString:
             return 'MultiLinestring'
-        elif geomtype == Qgis.WKBPolygon:
+        elif geomtype == QgsWkbTypes.Polygon:
             return 'Polygon'
-        elif geomtype == Qgis.WKBMultiPolygon:
+        elif geomtype == QgsWkbTypes.MultiPolygon:
             return 'MultiPolygon'
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
@@ -536,7 +538,7 @@ class ValidationProcess(QObject):
             if onlySelected:
                 totalCount += layer.selectedFeatureCount()
             else:
-                totalCount += layer.pendingFeatureCount()
+                totalCount += layer.featureCount()
         self.localProgress = ProgressWidget(1, totalCount - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
         featlist = []
         if attributeBlackList != '':
