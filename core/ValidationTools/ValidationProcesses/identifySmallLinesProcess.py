@@ -62,8 +62,8 @@ class IdentifySmallLinesProcess(ValidationProcess):
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
-            classesWithGeom = []
-            recordList = []
+            featFlagList = []
+            flagLyr = self.getFlagLyr(1)
             for key in classesWithElem:
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
@@ -87,14 +87,15 @@ class IdentifySmallLinesProcess(ValidationProcess):
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     if feat.geometry().length() < tol:
-                        geometry = binascii.hexlify(feat.geometry().asWkb())
-                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], feat.id(), self.tr('Small Line.'), geometry, classAndGeom['geom']))
+                        newFlag = self.buildFlagFeature(flagLyr, self.processName, classAndGeom['tableSchema'], classAndGeom['tableName'], feat.id(), classAndGeom['geom'], feat.geometry(), self.tr('Small line. Line length smaller than {0}').format(tol))
+                        featFlagList.append(newFlag)
                     localProgress.step()
                 self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
 
-            if len(recordList) > 0:
-                numberOfProblems = self.addFlag(recordList)
-                msg =  str(numberOfProblems)+ self.tr(' features have small lines. Check flags.')
+            if len(featFlagList) > 0:
+                self.raiseVectorFlags(flagLyr, featFlagList)
+                numberOfProblems = len(featFlagList)
+                msg = self.tr('{0} features have small lines. Check flags.').format(numberOfProblems)
                 self.setStatus(msg, 4) #Finished with flags
             else:
                 msg = self.tr('There are no small lines.')
