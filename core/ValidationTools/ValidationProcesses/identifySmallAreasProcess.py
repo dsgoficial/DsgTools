@@ -59,7 +59,8 @@ class IdentifySmallAreasProcess(ValidationProcess):
             if len(classesWithElem) == 0:
                 self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
                 return 1
-            recordList = []
+            featFlagList = []
+            flagLyr = self.getFlagLyr(2)
             for key in classesWithElem:
                 # preparation
                 classAndGeom = self.classesWithElemDict[key]
@@ -78,14 +79,15 @@ class IdentifySmallAreasProcess(ValidationProcess):
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     if feat.geometry().area() < tol:
-                        geometry = binascii.hexlify(feat.geometry().asWkb())
-                        recordList.append((classAndGeom['tableSchema']+'.'+classAndGeom['tableName'], feat.id(), self.tr('Small Area.'), geometry, classAndGeom['geom']))
+                        newFlag = self.buildFlagFeature(flagLyr, self.processName, classAndGeom['tableSchema'], classAndGeom['tableName'], feat.id(), classAndGeom['geom'], feat.geometry(), self.tr('Area smaller than {0}').format(tol))
+                        featFlagList.append(newFlag)
                     localProgress.step()
                 self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
 
-            if len(recordList) > 0:
-                numberOfProblems = self.addFlag(recordList)
-                msg = str(numberOfProblems) + self.tr(' features have small areas. Check flags.')
+            if len(featFlagList) > 0:
+                self.raiseVectorFlags(flagLyr, featFlagList)
+                numberOfProblems = len(featFlagList)
+                msg = self.tr('{0} features have small areas. Check flags.').format(numberOfProblems)
                 self.setStatus(msg, 4) #Finished with flags
             else:
                 msg = self.tr('There are no small areas.')
