@@ -79,7 +79,7 @@ class IdentifySmallAreasProcess(ValidationProcess):
                 localProgress = ProgressWidget(1, size, self.tr('Running process on ') + classAndGeom['tableName'], parent=self.iface.mapCanvas())
                 for feat in featureList:
                     if feat.geometry().area() < tol:
-                        newFlag = self.buildFlagFeature(flagLyr, self.processName, classAndGeom['tableSchema'], classAndGeom['tableName'], feat.id(), classAndGeom['geom'], feat.geometry(), self.tr('Area smaller than {0}').format(tol))
+                        newFlag = self.buildFlagFeature(flagLyr, self.processName, classAndGeom['tableSchema'], classAndGeom['tableName'], feat.id(), classAndGeom['geom'], feat.geometry(), self.tr('Small area. Area smaller than {0}').format(tol))
                         featFlagList.append(newFlag)
                     localProgress.step()
                 self.logLayerTime(classAndGeom['tableSchema']+'.'+classAndGeom['tableName'])
