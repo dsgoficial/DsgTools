@@ -112,6 +112,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                                 finalList.append(lyr)
         else:
             finalList = semifinalList
+        if finalList and isinstance(finalList[0], dict):
+            finalList = [i['tableName'] for i in finalList]
         return finalList
 
     def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, customForm = False, parent = None):
