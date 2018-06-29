@@ -89,29 +89,34 @@ class PostgisDb(AbstractDb):
         user: user name
         password: user password
         """
-        self.db.setHostName(host)
-        if type(port) != 'int':
-            self.db.setPort(int(port))
-        else:
-            self.db.setPort(port)
-        self.db.setDatabaseName(database)
-        self.db.setUserName(user)
-        if not password or password == '':
-            conInfo = 'host='+host+' port='+port+' dbname='+database
-            check = False
-            while not check:
-                try:
-                    (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
-                    if not success:
-                        return
-                    self.db.setPassword(password)
-                    check = True
-                    self.checkAndOpenDb()
-                    QgsCredentials.instance().put(conInfo, user, password)
-                except:
-                    pass
-        else:
+        if not self.testCredentials(host, port, database, user, password):
+            self.getCredentials(host, port, user, database)
+        
+    def getCredentials(self, host, port, user, database):
+        conInfo = 'host='+host+' port='+port+' dbname='+database
+        check = False
+        while not check:
+            (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
+            if not success:
+                return
+            if self.testCredentials(host, port, database, user, password):
+                check = True
+                QgsCredentials.instance().put(conInfo, user, password)
+
+    def testCredentials(self, host, port, database, user, password):
+        try:
+            self.db.setHostName(host)
+            if type(port) != 'int':
+                self.db.setPort(int(port))
+            else:
+                self.db.setPort(port)
+            self.db.setDatabaseName(database)
+            self.db.setUserName(user)
             self.db.setPassword(password)
+            self.checkAndOpenDb()
+            return True
+        except:
+            return False
 
     def connectDatabaseWithQSettings(self, name):
         """

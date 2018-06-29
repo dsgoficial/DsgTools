@@ -65,7 +65,6 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             (host, port, user, password) = self.viewServers.getDefaultConnectionParameters()
             serverAbstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
             serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
-            serverAbstractDb.checkAndOpenDb()
             self.setServerDb(serverAbstractDb)
 
     
