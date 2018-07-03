@@ -30,7 +30,7 @@ import processing, binascii, math
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
-from DsgTools.ValidationTools.ValidationProcesses.CreateNetworkNodesProcess import CreateNetworkNodesProcess
+from DsgTools.ValidationTools.ValidationProcesses.createNetworkNodesProcess import CreateNetworkNodesProcess
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class VerifyNetworkDirectioningProcess(ValidationProcess):
@@ -46,28 +46,18 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         self.canvas = self.iface.mapCanvas()
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
         if not self.instantiating:
-            # checks whether node table exists and if it is filled
-            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
-                QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr('No node table was found into chosen database. (Did you run Create Network Nodes process?)'))
-                return
             # get an instance of network node creation method class object
             self.createNetworkNodesProcess = CreateNetworkNodesProcess(postgisDb=postgisDb, iface=iface, instantiating=True)
             # get standard node table name as of in the creation method class  
             self.hidNodeLayerName = self.createNetworkNodesProcess.hidNodeLayerName
+            # checks whether node table exists and if it is filled
+            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
+                QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr('No node table was found into chosen database. (Did you run Create Network Nodes process?)'))
+                return
             # adjusting process parameters
-            interfaceDict = dict()
-            for key in self.classesWithElemDict:
-                cat, lyrName, geom, geomType, tableType = key.split(',')
-                interfaceDict[key] = {
-                                        self.tr('Category'):cat,
-                                        self.tr('Layer Name'):lyrName,
-                                        self.tr('Geometry\nColumn'):geom,
-                                        self.tr('Geometry\nType'):geomType,
-                                        self.tr('Layer\nType'):tableType
-                                     }
             self.networkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
             networkFlowParameterList = HidrographyFlowParameters(self.networkClassesWithElemDict.keys())
-            self.nodeClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
+            self.nodeClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = False)
             nodeFlowParameterList = HidrographyFlowParameters(self.nodeClassesWithElemDict.keys())            
             self.parameters = {
                                 self.tr('Only Selected') : False,
@@ -84,7 +74,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.nodeDict = None
             self.nodeTypeDict = None
             # retrieving types from node creation object
-            self.nodeTypeNameDict = self.CreateNetworkNodesProcess.nodeTypeNameDict
+            self.nodeTypeNameDict = self.createNetworkNodesProcess.nodeTypeNameDict
 
     def getFirstNode(self, lyr, feat, geomType=None):
         """
@@ -717,16 +707,21 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             errorMsg = self.tr('Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.\n').format(layerName)+':'.join(e.args)
             QMessageBox.critical(self.canvas, self.tr('Error!'), errorMsg)
 
-    def getNodeInfoFromNodeLayer(networkNodeLayer):
+    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer):
         """
-        Get all node info from node layer.
+        Get all node info (dictionaries for start/end(ing) lines and node type) from node layer.
         :param networkNodeLayer: (QgsVectorLayer) network node layer.
         :return: (tuple-of-dict) node dict and node type dict, respectively
         """
         nodeDict, nodeTypeDict = dict(), dict()
+        isMulti = QgsWKBTypes.isMultiType(int(networkNodeLayer.wkbType()))
         for feat in networkNodeLayer.getFeatures():
-            pass
-        return nodeDict, nodeTypeDict
+            if isMulti:
+                node = feat.geometry().asMultiPoint()[0]
+            else:
+                node = feat.geometry().asPoint()
+            nodeTypeDict[node] = feat['node']
+        return nodeTypeDict
 
     def execute(self):
         """
@@ -754,11 +749,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             hidNodeLyrKey = self.parameters[self.tr('Node Layer')]
             # remake the key from standard string
             k = ('{},{},{},{},{}').format(
-                                        hidSinkLyrKey.split('.')[0],\
-                                        hidSinkLyrKey.split('.')[1].split(r' (')[0],\
-                                        hidSinkLyrKey.split('(')[1].split(', ')[0],\
-                                        hidSinkLyrKey.split('(')[1].split(', ')[1],\
-                                        hidSinkLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                        hidNodeLyrKey.split('.')[0],\
+                                        hidNodeLyrKey.split('.')[1].split(r' (')[0],\
+                                        hidNodeLyrKey.split('(')[1].split(', ')[0],\
+                                        hidNodeLyrKey.split('(')[1].split(', ')[1],\
+                                        hidNodeLyrKey.split('(')[1].split(', ')[2].replace(')', '')
                                         )
             nodecl = self.nodeClassesWithElemDict[k]
             # getting network lines and nodes layers
@@ -769,7 +764,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeSrid = trecho_drenagem.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
             # getting node info from network node layer
-            self.nodeDict, self.nodeTypeDict = self.getNodeInfoFromNodeLayer(networkNodeLayer=networkNodeLayer)
+            self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=trecho_drenagem)
+            self.nodeTypeDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
