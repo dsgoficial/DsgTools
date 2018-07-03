@@ -720,7 +720,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 node = feat.geometry().asMultiPoint()[0]
             else:
                 node = feat.geometry().asPoint()
-            nodeTypeDict[node] = feat['node']
+            nodeTypeDict[node] = feat['node_type']
         return nodeTypeDict
 
     def execute(self):
