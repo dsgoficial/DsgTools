@@ -54,8 +54,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.createNetworkNodesProcess = CreateNetworkNodesProcess(postgisDb=postgisDb, iface=iface, instantiating=True)
             # get standard node table name as of in the creation method class  
             self.hidNodeLayerName = self.createNetworkNodesProcess.hidNodeLayerName
-            # getting tables with elements (line primitive)
-            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
             # adjusting process parameters
             interfaceDict = dict()
             for key in self.classesWithElemDict:
@@ -69,37 +67,24 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                                      }
             self.networkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
             networkFlowParameterList = HidrographyFlowParameters(self.networkClassesWithElemDict.keys())
-            self.sinkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
-            sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())            
+            self.nodeClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
+            nodeFlowParameterList = HidrographyFlowParameters(self.nodeClassesWithElemDict.keys())            
             self.parameters = {
                                 self.tr('Only Selected') : False,
                                 self.tr('Network Layer') : networkFlowParameterList,
-                                self.tr('Sink Layer') : sinkFlowParameterList,
+                                self.tr('Node Layer') : nodeFlowParameterList,
                                 self.tr('Search Radius') : 5.0,
-                                self.tr('Reference and Water Body Layers'): OrderedDict( {
-                                                                       'referenceDictList':{},
-                                                                       'layersDictList':interfaceDict
-                                                                     } ),
                                 self.tr('Select All Valid Lines') : False,
+                                self.tr('Allow Automatic Fixes') : True,
                                 self.tr('Consider Dangles as Waterway Beginnings') : True
                               }
+            # transmit these parameters to CreateNetworkNodesProcess object
+            self.createNetworkNodesProcess.parameters = self.parameters
             self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
-            self.nodeTypeNameDict = {
-                                        CreateNetworkNodesProcess.Flag : self.tr("Flag"),
-                                        CreateNetworkNodesProcess.Sink : self.tr("Sink"),
-                                        CreateNetworkNodesProcess.WaterwayBegin : self.tr("Waterway Beginning"),
-                                        CreateNetworkNodesProcess.UpHillNode : self.tr("Up Hill Node"),
-                                        CreateNetworkNodesProcess.DownHillNode : self.tr("Down Hill Node"),
-                                        CreateNetworkNodesProcess.Confluence : self.tr("Confluence"),
-                                        CreateNetworkNodesProcess.Ramification : self.tr("Ramification"),
-                                        CreateNetworkNodesProcess.AttributeChange : self.tr("Attribute Change Node"),
-                                        CreateNetworkNodesProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
-                                        CreateNetworkNodesProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-                                        CreateNetworkNodesProcess.ConstantFlowNode : self.tr("Constant Flow Node")
-                                        # CreateNetworkNodesProcess.NodeOverload : self.tr("Overloaded Node")
-                                    }
+            # retrieving types from node creation object
+            self.nodeTypeNameDict = self.CreateNetworkNodesProcess.nodeTypeNameDict
 
     def getFirstNode(self, lyr, feat, geomType=None):
         """
@@ -355,34 +340,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if lineID not in validLines.keys():
                     validLines[lineID] = line
         return  validLines, invalidLines, reason
-
-    def getNodeTypeFromDb(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
-        """
-        Returns a dictionary of node type as of database point of view.
-        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
-        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
-        :param nodeSrid: (int) CRS for node layer (EPSG number).
-        :param nodeList: a list of target node points (QgsPoint). If not given, dictNode keys will be read as node list.
-        :return: (dict) node type according to database information.
-        """
-        nodeWkt, dbNTD, dbNodeTypeDict = dict(), dict(), dict()
-        if not nodeList:
-            nodeList = self.nodeDict.keys()
-        for node in nodeList:
-            # mapping WKT conversions
-            # nodeGeom = binascii.hexlify(QgsGeometry.fromMultiPoint([node]).asWkb())
-            # nodeWkt[nodeGeom] = node
-            # nodeWkt[QgsGeometry().fromMultiPoint([node]).exportToWkt()] = node
-            temp = self.abstractDb.getNodesGeometry([QgsGeometry().fromMultiPoint([node]).exportToWkt()], \
-                    nodeLayerName, hidrographyLineLayerName, nodeSrid)
-            if temp:
-                dbNodeTypeDict[node] = temp.values()[0]
-        # dbNTD = self.abstractDb.getNodesGeometry(nodeWkt.keys(), nodeLayerName, hidrographyLineLayerName, nodeSrid)
-        # for nWkt in dbNTD.keys():
-        #     if nWkt in nodeWkt.keys():
-        #         # if node is not in original dict, it'll be ignored 
-        #         dbNodeTypeDict[nodeWkt[nWkt]] = dbNTD[nWkt]
-        return dbNodeTypeDict
 
     def getNodeDbIdFromNode(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
         """
@@ -760,7 +717,103 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             errorMsg = self.tr('Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.\n').format(layerName)+':'.join(e.args)
             QMessageBox.critical(self.canvas, self.tr('Error!'), errorMsg)
 
+    def getNodeInfoFromNodeLayer(networkNodeLayer):
+        """
+        Get all node info from node layer.
+        :param networkNodeLayer: (QgsVectorLayer) network node layer.
+        :return: (tuple-of-dict) node dict and node type dict, respectively
+        """
+        nodeDict, nodeTypeDict = dict(), dict()
+        for feat in networkNodeLayer.getFeatures():
+            pass
+        return nodeDict, nodeTypeDict
+
     def execute(self):
+        """
+        Structures and executes the process.
+        :return: (int) execution code.
+        """
+        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+        self.startTimeCount()
+        try:
+            self.setStatus(self.tr('Running'), 3) #now I'm running!
+            self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
+            # node type should not be calculated OTF for comparison (db data is the one perpetuated)
+            # setting all method variables
+            hidLineLyrKey = self.parameters[self.tr('Network Layer')]
+            # preparing hidrography lines layer
+            # remake the key from standard string
+            k = ('{},{},{},{},{}').format(
+                                          hidLineLyrKey.split('.')[0],\
+                                          hidLineLyrKey.split('.')[1].split(r' (')[0],\
+                                          hidLineLyrKey.split('(')[1].split(', ')[0],\
+                                          hidLineLyrKey.split('(')[1].split(', ')[1],\
+                                          hidLineLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                         )
+            hidcl = self.networkClassesWithElemDict[k]
+            hidNodeLyrKey = self.parameters[self.tr('Node Layer')]
+            # remake the key from standard string
+            k = ('{},{},{},{},{}').format(
+                                        hidSinkLyrKey.split('.')[0],\
+                                        hidSinkLyrKey.split('.')[1].split(r' (')[0],\
+                                        hidSinkLyrKey.split('(')[1].split(', ')[0],\
+                                        hidSinkLyrKey.split('(')[1].split(', ')[1],\
+                                        hidSinkLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                        )
+            nodecl = self.nodeClassesWithElemDict[k]
+            # getting network lines and nodes layers
+            networkNodeLayer = self.loadLayerBeforeValidationProcess(nodecl)
+            trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
+            crs = trecho_drenagem.crs().authid()
+            # node layer has the same CRS as the hidrography lines layer
+            nodeSrid = trecho_drenagem.crs().authid().split(':')[1]
+            searchRadius = self.parameters['Search Radius']
+            # getting node info from network node layer
+            self.nodeDict, self.nodeTypeDict = self.getNodeInfoFromNodeLayer(networkNodeLayer=networkNodeLayer)
+            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
+            # validation method FINALLY starts...
+            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
+            # start recursive method in case flags are raised
+            if self.parameters[self.tr('Allow Automatic Fixes')] and nodeFlags:
+                # this method alters database classification, hence it can only be used with it selected
+                # retrieve network node layer but its name
+                nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
+                fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=trecho_drenagem)
+                # update node info
+                self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
+                self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
+                self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)            
+            # if there are no starting nodes into network, a warning is raised
+            if not isinstance(val, dict):
+                # in that case method checkAllNodesValidity() returns None, None, REASON
+                QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('No initial node was found!'))
+                self.finishedWithError()
+                return 0
+            # if user set to select valid lines
+            if self.parameters[self.tr('Select All Valid Lines')]:
+                trecho_drenagem.setSelectedFeatures(val.keys())
+            # getting recordList to be loaded to validation flag table
+            recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
+            if len(recordList) > 0:
+                numberOfProblems = self.addFlag(recordList)
+                if self.parameters[self.tr('Only Selected')]:
+                    percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
+                else:
+                    percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
+                msg = self.tr('{0} nodes may be invalid ({1:.2f} + "%" +  of network is well directed). Check flags.')\
+                            .format(numberOfProblems, percValid)
+                self.setStatus(msg, 4) #Finished with flags
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
+            else:
+                msg = self.tr('Network has coherent directions.')
+                self.setStatus(msg, 1) #Finished
+            return 1
+        except Exception as e:
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            self.finishedWithError()
+            return 0
+
+    def executeV2(self):
         """
         Structures and executes the process.
         :return: (int) execution code.
@@ -812,7 +865,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                                           hidSinkLyrKey.split('(')[1].split(', ')[1],\
                                           hidSinkLyrKey.split('(')[1].split(', ')[2].replace(')', '')
                                          )
-                sinkcl = self.sinkClassesWithElemDict[k]
+                sinkcl = self.nodeClassesWithElemDict[k]
                 waterSinkLayer = self.loadLayerBeforeValidationProcess(sinkcl)
             else:
                 # if no sink layer is selected, layer should be ignored

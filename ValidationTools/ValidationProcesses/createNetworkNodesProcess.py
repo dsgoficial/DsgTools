@@ -47,6 +47,21 @@ class CreateNetworkNodesProcess(ValidationProcess):
         self.hidNodeLayerName = 'aux_hid_nodes_p'
         self.canvas = self.iface.mapCanvas()
         self.DsgGeometryHandler = DsgGeometryHandler(iface)
+        # name for node types (check enum atop)
+        self.nodeTypeNameDict = {
+                                    CreateNetworkNodesProcess.Flag : self.tr("Flag"),
+                                    CreateNetworkNodesProcess.Sink : self.tr("Sink"),
+                                    CreateNetworkNodesProcess.WaterwayBegin : self.tr("Waterway Beginning"),
+                                    CreateNetworkNodesProcess.UpHillNode : self.tr("Up Hill Node"),
+                                    CreateNetworkNodesProcess.DownHillNode : self.tr("Down Hill Node"),
+                                    CreateNetworkNodesProcess.Confluence : self.tr("Confluence"),
+                                    CreateNetworkNodesProcess.Ramification : self.tr("Ramification"),
+                                    CreateNetworkNodesProcess.AttributeChange : self.tr("Attribute Change Node"),
+                                    CreateNetworkNodesProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
+                                    CreateNetworkNodesProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
+                                    CreateNetworkNodesProcess.ConstantFlowNode : self.tr("Constant Flow Node")
+                                    # CreateNetworkNodesProcess.NodeOverload : self.tr("Overloaded Node")
+                                }
         if not self.instantiating:
             # getting tables with elements (line primitive)
             self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
@@ -78,21 +93,6 @@ class CreateNetworkNodesProcess(ValidationProcess):
             self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
-            # name for node types (check enum atop)
-            self.nodeTypeNameDict = {
-                                        CreateNetworkNodesProcess.Flag : self.tr("Flag"),
-                                        CreateNetworkNodesProcess.Sink : self.tr("Sink"),
-                                        CreateNetworkNodesProcess.WaterwayBegin : self.tr("Waterway Beginning"),
-                                        CreateNetworkNodesProcess.UpHillNode : self.tr("Up Hill Node"),
-                                        CreateNetworkNodesProcess.DownHillNode : self.tr("Down Hill Node"),
-                                        CreateNetworkNodesProcess.Confluence : self.tr("Confluence"),
-                                        CreateNetworkNodesProcess.Ramification : self.tr("Ramification"),
-                                        CreateNetworkNodesProcess.AttributeChange : self.tr("Attribute Change Node"),
-                                        CreateNetworkNodesProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
-                                        CreateNetworkNodesProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-                                        CreateNetworkNodesProcess.ConstantFlowNode : self.tr("Constant Flow Node")
-                                        # CreateNetworkNodesProcess.NodeOverload : self.tr("Overloaded Node")
-                                    }
 
     def getFrameContour(self, frameLayer):
         """
