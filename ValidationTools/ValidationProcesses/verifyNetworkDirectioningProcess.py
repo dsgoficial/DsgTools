@@ -671,24 +671,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             if node in nodeFlags.keys():
                 nodeFlags.pop(node)
         return fixedFlags
-            
-    def getLyrFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
-        """
-        Returns the layer from a given table name into database.
-        :param lyrSchema: (str) schema containing target table.
-        :param lyrName: (srt) name of layer to beloaded.
-        :param srid: (int) SRID from given layer.
-        :return: (QgsVectorLayer) vector layer.
-        """
-        host, port, user, pswd = self.abstractDb.getDatabaseParameters()
-        id_field = 'id'
-        providerLib = 'postgres'
-        db = self.abstractDb.getDatabaseName()
-        uri = QgsDataSourceURI()        
-        uri.setConnection(host, str(port), db, user, pswd)
-        uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
-        uri.setSrid(srid)
-        return QgsVectorLayer(uri.uri(), lyrName, providerLib)
 
     def getNodeTypeDictFromNodeLayer(self, networkNodeLayer):
         """

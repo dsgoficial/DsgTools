@@ -370,7 +370,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, hidLineLayer=hidLineLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
         return nodeTypeDict
 
-    def clearHidNodeLayer(self, nodeLayer, nodeIdList=None):
+    def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=True):
         """
         Clears all (or a given list of points) hidrography nodes on layer.
         :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
@@ -379,23 +379,61 @@ class CreateNetworkNodesProcess(ValidationProcess):
         nodeLayer.startEditing()
         if not nodeIdList:
             nodeIdList = []
-            for feat in nodeLayer:
+            for feat in nodeLayer.getFeatures():
                 nodeIdList.append(feat.id())
         nodeLayer.deleteFeatures(nodeIdList)
         # commit changes to LAYER
-        nodeLayer.commitChanges()
+        if commitToLayer:
+            nodeLayer.commitChanges()
 
-    def fillNodeLayer(self, nodeLayer, hidLineLayer, nodeIdList=None):
+    def getLayerFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
+        """
+        Returns the layer from a given table name into database.
+        :param lyrSchema: (str) schema containing target table.
+        :param lyrName: (srt) name of layer to beloaded.
+        :param srid: (int) SRID from given layer.
+        :return: (QgsVectorLayer) vector layer.
+        """
+        host, port, user, pswd = self.abstractDb.getDatabaseParameters()
+        id_field = 'id'
+        providerLib = 'postgres'
+        db = self.abstractDb.getDatabaseName()
+        uri = QgsDataSourceURI()        
+        uri.setConnection(host, str(port), db, user, pswd)
+        uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
+        uri.setSrid(srid)
+        return QgsVectorLayer(uri.uri(), lyrName, providerLib)
+
+    def fillNodeLayer(self, nodeLayer, nodeIdList=None):
         """
         Populate hidrography node layer with all nodes.
         :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
-        :param hidLineLayer: (QgsVectorLayer) hidrography lines layer.
         :param nodeIdList: (list-of-int) list of node IDs to be updated into layer.
         """
         # if table is going to be filled, then it needs to be cleared first
-        self.clearHidNodeLayer(nodeLayer=nodeLayer, nodeIdList=nodeIdList)
-        #AINDA FALTA ATUALIZAR INFO DE NÓS!
-        pass
+        self.clearHidNodeLayer(nodeLayer=nodeLayer, nodeIdList=nodeIdList, commitToLayer=False)
+        # get fields from layer in order to create new feature with the same attribute map
+        fields = nodeLayer.fields()
+        # to add features into new layer
+        nodeLayer.startEditing()
+        # to avoid unnecessary calculation inside loop
+        nodeTypeKeys = self.nodeTypeDict.keys()
+        for node in self.nodeDict.keys():
+            # if a node ID list is given, then it is an update and all other features that are
+            # not in that list should be ignored
+            if nodeIdList:
+                if self.nodeDbIdDict[node] not in nodeIdList:
+                    continue
+                else:
+                    feat['id'] = self.nodeDbIdDict[node]
+            feat = QgsFeature()
+            # set attribute map
+            feat.setFields(fields)
+            # set geometry
+            feat.setGeometry(QgsGeometry.fromPoint(node))
+            feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
+            nodeLayer.addFeature(feat)
+        return nodeLayer.commitChanges()
 
     def loadLayer(self, layerName, uniqueLoad=True):
         """
@@ -441,7 +479,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                                           hidLineLyrKey.split('(')[1].split(', ')[2].replace(')', '')
                                          )
             hidcl = self.networkClassesWithElemDict[k]
-            trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
+            networkLayer = self.loadLayerBeforeValidationProcess(hidcl)
             # preparing the list of water bodies classes
             waterBodyClasses = []
             for key in waterBodyClassesKeys:
@@ -464,19 +502,20 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 waterSinkLayer = None
             # getting dictionaries of nodes information 
             frame = self.getFrameContour(frameLayer=frameLayer)
-            self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
-            crs = trecho_drenagem.crs().authid()
+            self.nodeDict = self.identifyAllNodes(hidLineLayer=networkLayer)
+            crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
-            nodeSrid = trecho_drenagem.crs().authid().split(':')[1]
+            nodeSrid = networkLayer.crs().authid().split(':')[1]
+            nodeLayer = self.getLayerFromDb('validation', self.hidNodeLayerName, srid=nodeSrid)
             searchRadius = self.parameters[self.tr('Search Radius')]
-            self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
+            self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=networkLayer, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             # check if node table and node type domain table are created on db
             if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
                 # if it does not exist, it is created
                 self.abstractDb.createHidNodeTable(nodeSrid)
-            self.fillNodeLayer(hidLineLayer=trecho_drenagem)
             # load node table into canvas
             self.loadLayer(self.hidNodeLayerName)
+            self.fillNodeLayer(nodeLayer=nodeLayer)
             msg = self.tr('Network nodes created into layer {}.').format(self.hidNodeLayerName)
             self.setStatus(msg, 1) #Finished
             return 1
