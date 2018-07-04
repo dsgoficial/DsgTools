@@ -171,7 +171,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
     def nodeNextToWaterBodies(self, node, waterBodiesLayers, searchRadius):
         """
         Identify whether or not node is next to a water body feature.
-        :param node: (QgsPoint) node to be identified as over the frame layer or not.
+        :param node: (QgsPoint) node to be identified as next to a water body feature.
         :param waterBodiesLayers: (list-of-QgsVectorLayer) list of layers composing the water bodies on map.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :return: (bool) whether node is as close as searchRaius to a water body element.
@@ -196,7 +196,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
     def nodeIsWaterSink(self, node, waterSinkLayer, searchRadius):
         """
         Identify whether or not node is next to a water body feature. If no water sink layer is given, method returns False
-        :param node: (QgsPoint) node to be identified as over the frame layer or not.
+        :param node: (QgsPoint) node to be identified as coincident with a water sink feature.
         :param waterSinkLayer: (QgsVectorLayer) layer containing the water sinks on map.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :return: (bool) whether node is as close as searchRaius to a water body element.
@@ -212,6 +212,28 @@ class CreateNetworkNodesProcess(ValidationProcess):
             if qgisPoint.equals(feat.geometry()):
                 # any feature component of a water body intersected is enough
                 return True
+        return False
+
+    def checkIfHasLineInsideWaterBody(node, waterBodiesLayers, searchRadius=1.0):
+        """
+        Checks whether one of ending lines connected to given node is inside of a water body feature.
+        :param node: (QgsPoint) node to be identified having an ending line inside of a water body.
+        :param waterBodiesLayers: (list-of-QgsVectorLayer) list of layers composing the water bodies on map.
+        :return: (bool) whether node is as close as searchRaius to a water body element.
+        """
+        qgisPoint = QgsGeometry.fromPoint(node)
+        # building a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
+        buf = QgsGeometry.fromWkt(buf)
+        # building bounding box around node for feature requesting
+        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        # check if any wb feature inside of buffer area contains any ending line
+        for line in self.nodeDict[node]['end']:
+            for lyr in waterBodiesLayers:
+                for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
+                    if feat.geometry().contains(line.geometry()):
+                        # any feature component of a water body intersected is enough
+                        return True
         return False
 
     def getAttributesFromFeature(self, feature, layer, fieldNames=None):
@@ -294,8 +316,10 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 # case 1.b.i
                 if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
                     # it is considered that every free node on map is a starting node. The only valid exceptions are nodes that are
-                    # next to water bodies and water sink holes
-                    return CreateNetworkNodesProcess.NodeNextToWaterBody
+                    # next to water bodies and water sink holes.
+                    if sizeFlowIn == 1 or (sizeFlowIn > 1 and not self.checkIfHasLineInsideWaterBody(node=nodePoint, waterBodiesLayers=waterBodiesLayers)):
+                        # a node next to water cannot have ANY of its EXCEEDING ending lines coming from inside a water body feature 
+                        return CreateNetworkNodesProcess.NodeNextToWaterBody
                 # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
                     # if a node is indeed a water sink (operator has set it to a sink)
@@ -346,22 +370,32 @@ class CreateNetworkNodesProcess(ValidationProcess):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, hidLineLayer=hidLineLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
         return nodeTypeDict
 
-    def fillNodeTable(self, hidLineLayer):
+    def clearHidNodeLayer(self, nodeLayer, nodeIdList=None):
+        """
+        Clears all (or a given list of points) hidrography nodes on layer.
+        :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
+        :param nodeIdList: (list-of-int) list of node IDs to be cleared from layer.
+        """
+        nodeLayer.startEditing()
+        if not nodeIdList:
+            nodeIdList = []
+            for feat in nodeLayer:
+                nodeIdList.append(feat.id())
+        nodeLayer.deleteFeatures(nodeIdList)
+        # commit changes to LAYER
+        nodeLayer.commitChanges()
+
+    def fillNodeLayer(self, nodeLayer, hidLineLayer, nodeIdList=None):
         """
         Populate hidrography node layer with all nodes.
+        :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
         :param hidLineLayer: (QgsVectorLayer) hidrography lines layer.
+        :param nodeIdList: (list-of-int) list of node IDs to be updated into layer.
         """
-        lyrName = hidLineLayer.name()
-        crs = hidLineLayer.crs().authid().split(":")[1]
-        for node in self.nodeDict.keys():
-            # get node geometry as wkt for database loading
-            nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
-            # if node is loaded into database, the following method returns True
-            if self.abstractDb.insertHidValNode(layerName=lyrName, node=nWkt, nodeType=self.nodeTypeDict[node], crs=crs):
-                continue
-            else:
-                return False
-        return True
+        # if table is going to be filled, then it needs to be cleared first
+        self.clearHidNodeLayer(nodeLayer=nodeLayer, nodeIdList=nodeIdList)
+        #AINDA FALTA ATUALIZAR INFO DE NÓS!
+        pass
 
     def loadLayer(self, layerName, uniqueLoad=True):
         """
@@ -440,7 +474,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
                 # if it does not exist, it is created
                 self.abstractDb.createHidNodeTable(nodeSrid)
-            self.fillNodeTable(hidLineLayer=trecho_drenagem)
+            self.fillNodeLayer(hidLineLayer=trecho_drenagem)
             # load node table into canvas
             self.loadLayer(self.hidNodeLayerName)
             msg = self.tr('Network nodes created into layer {}.').format(self.hidNodeLayerName)

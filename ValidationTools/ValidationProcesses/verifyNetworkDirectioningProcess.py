@@ -259,9 +259,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # CreateNetworkNodesProcess.NodeOverload : None # 10 - Mais 
                    }
         # if node is introduced by operator's modification, it won't be saved to the layer
-        if node not in self.nodeTypeDict.keys():
-            # then it'll be introduced to the node type from database
-            self.nodeTypeDict[node] = self.nodeCurrentTypeDict[node]
+        if node not in self.nodeTypeDict.keys() and not self.unclassifiedNodes:
+            self.unclassifiedNodes = True
+            QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('There are unclassified nodes! Node (re)creation process is recommended before this process.'))
+            return None, None, None
         flow = flowType[self.nodeTypeDict[node]]
         nodePointDict = self.nodeDict[node]
         # getting all connected lines to node that are not already validated
@@ -706,20 +707,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeIdDict[node] = feat['id']
         return nodeTypeDict, nodeIdDict
 
-    def clearHidNodeLayer(self, nodeLayer, nodeList=None):
-        """
-        Clears all hidrography nodes on layer.
-        :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
-        """
-        nodeLayer.startEditing()
-        if not nodeList:
-            nodeList = []
-            for feat in nodeLayer:
-                nodeList.append(feat.id())
-        nodeLayer.deleteFeatures(nodeList)
-        # commit changes to LAYER
-        nodeLayer.commitChanges()
-
     def execute(self):
         """
         Structures and executes the process.
@@ -770,8 +757,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # this method alters database classification, hence it can only be used with it selected
                 fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=networkLayer)
                 # update node info
-                # self.clearHidNodeLayer(nodeLayer=networkLayer, nodeList=self.nodeIdDict.values())
-                self.nodeDict = self.self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=networkLayer)
+                # self.createNetworkNodesProcess.clearHidNodeLayer(nodeLayer=networkLayer, nodeList=self.nodeIdDict.values())
+                self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=networkLayer)
                 # self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
