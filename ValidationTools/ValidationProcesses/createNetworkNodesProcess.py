@@ -370,11 +370,12 @@ class CreateNetworkNodesProcess(ValidationProcess):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, hidLineLayer=hidLineLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
         return nodeTypeDict
 
-    def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=True):
+    def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=False):
         """
         Clears all (or a given list of points) hidrography nodes on layer.
         :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
         :param nodeIdList: (list-of-int) list of node IDs to be cleared from layer.
+        :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
         nodeLayer.startEditing()
         if not nodeIdList:
@@ -386,33 +387,16 @@ class CreateNetworkNodesProcess(ValidationProcess):
         if commitToLayer:
             nodeLayer.commitChanges()
 
-    def getLayerFromDb(self, lyrSchema, lyrName, srid, geomColumn='geom'):
-        """
-        Returns the layer from a given table name into database.
-        :param lyrSchema: (str) schema containing target table.
-        :param lyrName: (srt) name of layer to beloaded.
-        :param srid: (int) SRID from given layer.
-        :return: (QgsVectorLayer) vector layer.
-        """
-        host, port, user, pswd = self.abstractDb.getDatabaseParameters()
-        id_field = 'id'
-        providerLib = 'postgres'
-        db = self.abstractDb.getDatabaseName()
-        uri = QgsDataSourceURI()        
-        uri.setConnection(host, str(port), db, user, pswd)
-        uri.setDataSource(lyrSchema, lyrName, geomColumn, "", id_field)
-        uri.setSrid(srid)
-        return QgsVectorLayer(uri.uri(), lyrName, providerLib)
-
-    def fillNodeLayer(self, nodeLayer, networkLineLayerName, nodeIdList=None):
+    def fillNodeLayer(self, nodeLayer, networkLineLayerName, nodeIdList=None, commitToLayer=False):
         """
         Populate hidrography node layer with all nodes.
         :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
         :param networkLineLayerName: (str) network line layer name.
         :param nodeIdList: (list-of-int) list of node IDs to be updated into layer.
+        :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
         # if table is going to be filled, then it needs to be cleared first
-        self.clearHidNodeLayer(nodeLayer=nodeLayer, nodeIdList=nodeIdList, commitToLayer=False)
+        self.clearHidNodeLayer(nodeLayer=nodeLayer, nodeIdList=nodeIdList, commitToLayer=commitToLayer)
         # get fields from layer in order to create new feature with the same attribute map
         fields = nodeLayer.fields()
         # to add features into new layer
@@ -435,7 +419,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             nodeLayer.addFeature(feat)
-        return nodeLayer.commitChanges()
+        if commitToLayer:
+            nodeLayer.commitChanges()
 
     def loadLayer(self, layerName, uniqueLoad=True):
         """
