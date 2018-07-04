@@ -404,10 +404,11 @@ class CreateNetworkNodesProcess(ValidationProcess):
         uri.setSrid(srid)
         return QgsVectorLayer(uri.uri(), lyrName, providerLib)
 
-    def fillNodeLayer(self, nodeLayer, nodeIdList=None):
+    def fillNodeLayer(self, nodeLayer, networkLineLayerName, nodeIdList=None):
         """
         Populate hidrography node layer with all nodes.
         :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
+        :param networkLineLayerName: (str) network line layer name.
         :param nodeIdList: (list-of-int) list of node IDs to be updated into layer.
         """
         # if table is going to be filled, then it needs to be cleared first
@@ -432,6 +433,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             # set geometry
             feat.setGeometry(QgsGeometry.fromPoint(node))
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
+            feat['layer'] = networkLineLayerName
             nodeLayer.addFeature(feat)
         return nodeLayer.commitChanges()
 
@@ -440,6 +442,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         Load a given layer to canvas.
         :param layerName: (str) layer name to be loaded.
         :param uniqueLoad: (bool) indicates that layer will be loaded to canvas only if it is not loaded already.
+        :return: (QgsVectorLayer) the loaded layer.
         """
         try:
             return self.layerLoader.load([layerName], uniqueLoad=uniqueLoad)[layerName]
@@ -506,7 +509,6 @@ class CreateNetworkNodesProcess(ValidationProcess):
             crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
             nodeSrid = networkLayer.crs().authid().split(':')[1]
-            nodeLayer = self.getLayerFromDb('validation', self.hidNodeLayerName, srid=nodeSrid)
             searchRadius = self.parameters[self.tr('Search Radius')]
             self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=networkLayer, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             # check if node table and node type domain table are created on db
@@ -514,8 +516,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 # if it does not exist, it is created
                 self.abstractDb.createHidNodeTable(nodeSrid)
             # load node table into canvas
-            self.loadLayer(self.hidNodeLayerName)
-            self.fillNodeLayer(nodeLayer=nodeLayer)
+            nodeLayer = self.loadLayer(self.hidNodeLayerName)
+            self.fillNodeLayer(nodeLayer=nodeLayer, networkLineLayerName=networkLayer.name())
             msg = self.tr('Network nodes created into layer {}.').format(self.hidNodeLayerName)
             self.setStatus(msg, 1) #Finished
             return 1
