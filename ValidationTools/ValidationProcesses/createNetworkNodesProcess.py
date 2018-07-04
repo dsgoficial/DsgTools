@@ -214,7 +214,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 return True
         return False
 
-    def checkIfHasLineInsideWaterBody(node, waterBodiesLayers, searchRadius=1.0):
+    def checkIfHasLineInsideWaterBody(self, node, waterBodiesLayers, searchRadius=1.0):
         """
         Checks whether one of ending lines connected to given node is inside of a water body feature.
         :param node: (QgsPoint) node to be identified having an ending line inside of a water body.
@@ -403,6 +403,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
         nodeLayer.startEditing()
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
+        # initiate new features list
+        featList = []
         for node in self.nodeDict.keys():
             # if a node ID list is given, then it is an update and all other features that are
             # not in that list should be ignored
@@ -418,7 +420,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
             feat.setGeometry(QgsGeometry.fromPoint(node))
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
-            nodeLayer.addFeature(feat)
+            featList.append(feat)
+        nodeLayer.addFeatures(featList)
         if commitToLayer:
             nodeLayer.commitChanges()
 
