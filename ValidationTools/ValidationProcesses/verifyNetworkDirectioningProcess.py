@@ -70,7 +70,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                               }
             # transmit these parameters to CreateNetworkNodesProcess object
             self.createNetworkNodesProcess.parameters = self.parameters
-            self.nodeDbIdDict = None
+            self.nodeIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
             # retrieving types from node creation object
@@ -232,7 +232,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     return self.tr('Cannot infer directions for lines {0} and {1} (Right Angle)').format(key1.id(), key2.id())
         return
 
-    def checkNodeValidity(self, node, connectedValidLines, hidLineLayer, geomType=None):
+    def checkNodeTypeValidity(self, node, connectedValidLines, hidLineLayer, geomType=None):
         """
         Checks if lines connected to a node have their flows compatible to node type and valid lines
         connected to it.
@@ -331,18 +331,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     validLines[lineID] = line
         return  validLines, invalidLines, reason
 
-    def getNodeDbIdFromNode(self, nodeLayerName, hidrographyLineLayerName, nodeSrid, nodeList=None):
-        """
-        Returns a dictionary of node type as of database point of view.
-        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
-        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node are created from.
-        :param nodeSrid: (int) CRS for node layer (EPSG number).
-        :return: (dict) node ID according to database information.
-        """
-        if not nodeList:
-            nodeList = self.nodeDict.keys()
-        return self.abstractDb.getNodeId(nodeList, nodeLayerName, hidrographyLineLayerName, nodeSrid)
-
     def getNextNodes(self, node, hidLineLayer, geomType=None):
         """
         It returns a list of all other nodes for each line connected to target node.
@@ -394,7 +382,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # set node as visited
                     visitedNodes.append(node)
                 # check coherence to node type and waterway flow
-                val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
+                val, inval, reason = self.checkNodeTypeValidity(node=node, connectedValidLines=validLines.values(),\
                                                             hidLineLayer=hidLineLyr, geomType=geomType)
                 # if node type test does have valid lines to iterate over
                 validLines.update(val)
@@ -453,8 +441,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         recordList = []
         countNodeNotInDb = 0
         for node, reason in nodeFlags.iteritems():
-            if self.nodeDbIdDict[node] is not None:
-                featid = self.nodeDbIdDict[node]
+            if self.nodeIdDict[node] is not None:
+                featid = self.nodeIdDict[node]
             else:
                 # if node is not previously classified on database, but then motivates a flag, it should appear on Flags list
                 featid = -9999
@@ -463,11 +451,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
         if countNodeNotInDb:
             # in case there are flagged nodes that are not loaded in DB, user is notified
-            QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), \
-                    self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.')\
-                    .format(countNodeNotInDb))
+            msg = self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.').format(countNodeNotInDb)
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return recordList
 
+    # method for automatic fix
     def getReasonType(self, reason):
         """
         Gets the type of reason. 0 indicates non-fixable reason.
@@ -487,6 +475,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # if reason is not one of the fixables
         return 0
 
+    # method for automatic fix
     def getLineIdFromReason(self, reason, reasonType):
         """
         Extracts line ID from given reason.
@@ -510,6 +499,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             lineId2 = reason.split(self.tr(", "))[1].split(")")[0]
             return [lineId1, lineId2]
 
+    # method for automatic fix
     def isDangle(self, node, networkLayer, searchRadius):
         """
         Checks whether node is a dangle into network (connected to a first order line).
@@ -535,6 +525,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     return res
         return res
 
+    # method for automatic fix
     def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
         """
         Tries to fix the flag raised.
@@ -607,9 +598,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             warning = self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))
         if warning:
             # warning is only raised when there were flags fixed
-            QMessageBox.warning(self.iface.mainWindow(), self.tr('{0}: Flipped/Merged Lines'.format(self.processAlias)), warning)
+            warning = self.tr('\n{0}: Flipped/Merged Lines\n{1}').format(self.processAlias, warning)
+            QgsMessageLog.logMessage(warning, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return fixedFlags
 
+    # method for automatic fix
     def checkBlackListLine(self, layer, line, blackList=None):
         """
         Checks whether line is connected to a waterway beginning.
@@ -624,6 +617,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         last = self.getLastNode(lyr=layer, feat=line, geomType=1)
         return bool((self.nodeTypeDict[first]  in blackList) or (self.nodeTypeDict[last] in blackList))
 
+    # method for automatic fix
     def recursiveFixFlags(self, nodeFlags, networkLayer, geomType=None, maximumCycles=9):
         """
         Runs the fixing method for as long as flags are found and being fixed, or maximum cycles isn't reached.
@@ -695,25 +689,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         uri.setSrid(srid)
         return QgsVectorLayer(uri.uri(), lyrName, providerLib)
 
-    def loadLayer(self, layerName, uniqueLoad=True):
-        """
-        Load a given layer to canvas.
-        :param layerName: (str) layer name to be loaded.
-        :param uniqueLoad: (bool) indicates that layer will be loaded to canvas only if it is not loaded already.
-        """
-        try:
-            return self.layerLoader.load([layerName], uniqueLoad=uniqueLoad)[layerName]
-        except Exception as e:
-            errorMsg = self.tr('Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.\n').format(layerName)+':'.join(e.args)
-            QMessageBox.critical(self.canvas, self.tr('Error!'), errorMsg)
-
     def getNodeTypeDictFromNodeLayer(self, networkNodeLayer):
         """
         Get all node info (dictionaries for start/end(ing) lines and node type) from node layer.
         :param networkNodeLayer: (QgsVectorLayer) network node layer.
-        :return: (tuple-of-dict) node dict and node type dict, respectively
+        :return: (tuple-of-dict) node type dict and node id dict, respectively
         """
-        nodeDict, nodeTypeDict = dict(), dict()
+        nodeTypeDict, nodeIdDict = dict(), dict()
         isMulti = QgsWKBTypes.isMultiType(int(networkNodeLayer.wkbType()))
         for feat in networkNodeLayer.getFeatures():
             if isMulti:
@@ -721,7 +703,22 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             else:
                 node = feat.geometry().asPoint()
             nodeTypeDict[node] = feat['node_type']
-        return nodeTypeDict
+            nodeIdDict[node] = feat['id']
+        return nodeTypeDict, nodeIdDict
+
+    def clearHidNodeLayer(self, nodeLayer, nodeList=None):
+        """
+        Clears all hidrography nodes on layer.
+        :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
+        """
+        nodeLayer.startEditing()
+        if not nodeList:
+            nodeList = []
+            for feat in nodeLayer:
+                nodeList.append(feat.id())
+        nodeLayer.deleteFeatures(nodeList)
+        # commit changes to LAYER
+        nodeLayer.commitChanges()
 
     def execute(self):
         """
@@ -758,27 +755,24 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodecl = self.nodeClassesWithElemDict[k]
             # getting network lines and nodes layers
             networkNodeLayer = self.loadLayerBeforeValidationProcess(nodecl)
-            trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
-            crs = trecho_drenagem.crs().authid()
+            networkLayer = self.loadLayerBeforeValidationProcess(hidcl)
+            crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
-            nodeSrid = trecho_drenagem.crs().authid().split(':')[1]
+            nodeSrid = networkLayer.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
             # getting node info from network node layer
-            self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=trecho_drenagem)
-            self.nodeTypeDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
-            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
+            self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=networkLayer)
+            self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # validation method FINALLY starts...
-            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
+            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=networkLayer)
             # start recursive method in case flags are raised
             if self.parameters[self.tr('Allow Automatic Fixes')] and nodeFlags:
                 # this method alters database classification, hence it can only be used with it selected
-                # retrieve network node layer but its name
-                nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
-                fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=trecho_drenagem)
+                fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=networkLayer)
                 # update node info
-                self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-                self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
-                self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)            
+                # self.clearHidNodeLayer(nodeLayer=networkLayer, nodeList=self.nodeIdDict.values())
+                self.nodeDict = self.self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=networkLayer)
+                # self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON
@@ -787,148 +781,16 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 return 0
             # if user set to select valid lines
             if self.parameters[self.tr('Select All Valid Lines')]:
-                trecho_drenagem.setSelectedFeatures(val.keys())
+                networkLayer.setSelectedFeatures(val.keys())
             # getting recordList to be loaded to validation flag table
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 if self.parameters[self.tr('Only Selected')]:
-                    percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
+                    percValid = float(len(val))*100.0/float(len(networkLayer.selectedFeatures()))
                 else:
-                    percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
-                msg = self.tr('{0} nodes may be invalid ({1:.2f} + "%" +  of network is well directed). Check flags.')\
-                            .format(numberOfProblems, percValid)
-                self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
-            else:
-                msg = self.tr('Network has coherent directions.')
-                self.setStatus(msg, 1) #Finished
-            return 1
-        except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-            self.finishedWithError()
-            return 0
-
-    def executeV2(self):
-        """
-        Structures and executes the process.
-        :return: (int) execution code.
-        """
-        QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        self.startTimeCount()
-        try:
-            self.setStatus(self.tr('Running'), 3) #now I'm running!
-            self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
-            # node type should not be calculated OTF for comparison (db data is the one perpetuated)
-            # setting all method variables
-            hidLineLyrKey = self.parameters[self.tr('Network Layer')]
-            hidSinkLyrKey = self.parameters[self.tr('Sink Layer')]
-            refKey, classesWithElemKeys = self.parameters[self.tr('Reference and Water Body Layers')]
-            # if len(classesWithElemKeys) == 0:
-            #     self.setStatus(self.tr('No classes selected!. Nothing to be done.'), 1) #Finished
-                # return 1
-            # else:
-            waterBodyClassesKeys = classesWithElemKeys
-            if not refKey:
-                self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
-                return 1
-            # preparing reference layer
-            refcl = self.classesWithElemDict[refKey]
-            frameLayer = self.loadLayerBeforeValidationProcess(refcl)
-            # preparing hidrography lines layer
-            # remake the key from standard string
-            k = ('{},{},{},{},{}').format(
-                                          hidLineLyrKey.split('.')[0],\
-                                          hidLineLyrKey.split('.')[1].split(r' (')[0],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[0],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[1],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[2].replace(')', '')
-                                         )
-            hidcl = self.networkClassesWithElemDict[k]
-            trecho_drenagem = self.loadLayerBeforeValidationProcess(hidcl)
-            # preparing the list of water bodies classes
-            waterBodyClasses = []
-            for key in waterBodyClassesKeys:
-                wbc = self.classesWithElemDict[key]
-                waterBodyClasses.append(self.loadLayerBeforeValidationProcess(wbc))
-            # preparing water sink layer
-            if hidSinkLyrKey and hidSinkLyrKey != self.tr('Select Layer'):
-                # remake the key from standard string
-                k = ('{},{},{},{},{}').format(
-                                          hidSinkLyrKey.split('.')[0],\
-                                          hidSinkLyrKey.split('.')[1].split(r' (')[0],\
-                                          hidSinkLyrKey.split('(')[1].split(', ')[0],\
-                                          hidSinkLyrKey.split('(')[1].split(', ')[1],\
-                                          hidSinkLyrKey.split('(')[1].split(', ')[2].replace(')', '')
-                                         )
-                sinkcl = self.nodeClassesWithElemDict[k]
-                waterSinkLayer = self.loadLayerBeforeValidationProcess(sinkcl)
-            else:
-                # if no sink layer is selected, layer should be ignored
-                waterSinkLayer = None
-            # getting dictionaries of nodes information 
-            frame = self.getFrameContour(frameLayer=frameLayer)
-            self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
-            crs = trecho_drenagem.crs().authid()
-            # node layer has the same CRS as the hidrography lines layer
-            nodeSrid = trecho_drenagem.crs().authid().split(':')[1]
-            searchRadius = self.parameters['Search Radius']
-            # check if node table and node type domain table are created on db
-            if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
-                self.abstractDb.createHidNodeTable(nodeSrid)
-            if not self.abstractDb.checkIfTableExists('dominios', 'node_type'):
-                self.abstractDb.createNodeTypeDomainTable()
-            # load node table into canvas
-            self.loadLayer(self.hidNodeLayerName)
-            # getting current type for hidrography nodes as it is on screen now
-            self.nodeCurrentTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
-            # if self.parameters[self.tr('Allow Automatic Fixes')]:
-            # as db info is updated, current node type is the same as in db
-            self.nodeTypeDict = self.nodeCurrentTypeDict
-            # if this option is selected, database info will be updated
-            self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-            self.fillNodeTable(hidLineLayer=trecho_drenagem)
-            # else:
-            #     try:
-            #         # if user doesn't set process to repopulate db, method tries to get node type already set
-            #         self.nodeTypeDict = self.getNodeTypeFromDb(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
-            #     except:
-            #         # if it fails, it keep populates node table 
-            #         if not self.nodeTypeDict:
-            #             self.nodeTypeDict = self.nodeCurrentTypeDict
-            #             self.fillNodeTable(hidLineLayer=trecho_drenagem)
-            self.nodeDbIdDict = self.getNodeDbIdFromNode(nodeLayerName=self.hidNodeLayerName, hidrographyLineLayerName=trecho_drenagem.name(), nodeSrid=nodeSrid)
-            # validation method FINALLY starts...
-            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=trecho_drenagem)
-            # start recursive method in case flags are raised
-            if self.parameters[self.tr('Allow Automatic Fixes')] and nodeFlags:
-                # this method alters database classification, hence it can only be used with it selected
-                # retrieve network node layer but its name
-                nodeLayer = self.getLyrFromDb(lyrSchema='validation', lyrName=self.hidNodeLayerName, srid=nodeSrid)
-                fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=trecho_drenagem)
-                # update node info
-                self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-                self.nodeDict = self.identifyAllNodes(hidLineLayer=trecho_drenagem)
-                self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=trecho_drenagem, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)            
-                self.fillNodeTable(hidLineLayer=trecho_drenagem)
-            # if there are no starting nodes into network, a warning is raised
-            if not isinstance(val, dict):
-                # in that case method checkAllNodesValidity() returns None, None, REASON
-                QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('No initial node was found!'))
-                self.finishedWithError()
-                return 0
-            # if user set to select valid lines
-            if self.parameters[self.tr('Select All Valid Lines')]:
-                trecho_drenagem.setSelectedFeatures(val.keys())
-            # getting recordList to be loaded to validation flag table
-            recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
-            if len(recordList) > 0:
-                numberOfProblems = self.addFlag(recordList)
-                if self.parameters[self.tr('Only Selected')]:
-                    percValid = float(len(val))*100.0/float(len(trecho_drenagem.selectedFeatures()))
-                else:
-                    percValid = float(len(val))*100.0/float(trecho_drenagem.featureCount())
-                msg = self.tr('{0} nodes may be invalid ({1:.2f} + "%" +  of network is well directed). Check flags.')\
+                    percValid = float(len(val))*100.0/float(networkLayer.featureCount())
+                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  'of network is well directed). Check flags.')\
                             .format(numberOfProblems, percValid)
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)

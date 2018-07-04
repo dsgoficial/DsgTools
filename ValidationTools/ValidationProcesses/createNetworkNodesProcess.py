@@ -363,6 +363,18 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 return False
         return True
 
+    def loadLayer(self, layerName, uniqueLoad=True):
+        """
+        Load a given layer to canvas.
+        :param layerName: (str) layer name to be loaded.
+        :param uniqueLoad: (bool) indicates that layer will be loaded to canvas only if it is not loaded already.
+        """
+        try:
+            return self.layerLoader.load([layerName], uniqueLoad=uniqueLoad)[layerName]
+        except Exception as e:
+            errorMsg = self.tr('Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.\n').format(layerName)+':'.join(e.args)
+            QMessageBox.critical(self.canvas, self.tr('Error!'), errorMsg)
+
     def execute(self):
         """
         Structures and executes the process.
@@ -429,6 +441,10 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 # if it does not exist, it is created
                 self.abstractDb.createHidNodeTable(nodeSrid)
             self.fillNodeTable(hidLineLayer=trecho_drenagem)
+            # load node table into canvas
+            self.loadLayer(self.hidNodeLayerName)
+            msg = self.tr('Network nodes created into layer {}.').format(self.hidNodeLayerName)
+            self.setStatus(msg, 1) #Finished
             return 1
         except Exception as e:
             QgsMessageLog.logMessage(': '.join(e.args), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
