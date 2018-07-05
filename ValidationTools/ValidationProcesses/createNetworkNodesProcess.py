@@ -379,9 +379,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """
         nodeLayer.startEditing()
         if not nodeIdList:
-            nodeIdList = []
-            for feat in nodeLayer.getFeatures():
-                nodeIdList.append(feat.id())
+            nodeIdList = [feat.id() for feat in nodeLayer.getFeatures()]
         nodeLayer.deleteFeatures(nodeIdList)
         # commit changes to LAYER
         if commitToLayer:

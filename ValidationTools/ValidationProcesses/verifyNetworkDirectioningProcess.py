@@ -157,57 +157,57 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # Then angle is ALWAYS 180 - ang 
         return 180 - math.degrees(math.atan2(endNode.x() - startNode.x(), endNode.y() - startNode.y()))
 
-    def calculateAzimuthFromNode(self, node, hidLineLayer, geomType=None):
+    def calculateAzimuthFromNode(self, node, networkLayer, geomType=None):
         """
         Computate all azimuths from (closest portion of) lines flowing in and out of a given node.
         :param node: (QgsPoint) hidrography node reference for line and angle calculation.
-        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
+        :param networkLayer: (QgsVectorLayer) hidrography line layer.
         :param geomType: (int) layer geometry type (1 for lines).
         :return: dict of azimuths of all lines ( { featId : azimuth } )
         """
         if not geomType:
-            geomType = hidLineLayer.geometryType()
+            geomType = networkLayer.geometryType()
         nodePointDict = self.nodeDict[node]
         azimuthDict = dict()
         for line in nodePointDict['start']:
             # if line starts at node, then angle calculate is already azimuth
-            endNode = self.getSecondNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+            endNode = self.getSecondNode(lyr=networkLayer, feat=line, geomType=geomType)
             azimuthDict[line] = node.azimuth(endNode)
         for line in nodePointDict['end']:
             # if line ends at node, angle must be adapted in order to get azimuth
-            endNode = self.getPenultNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+            endNode = self.getPenultNode(lyr=networkLayer, feat=line, geomType=geomType)
             azimuthDict[line] = node.azimuth(endNode)
         return azimuthDict
 
-    def checkLineDirectionConcordance(self, line_a, line_b, hidLineLayer, geomType=None):
+    def checkLineDirectionConcordance(self, line_a, line_b, networkLayer, geomType=None):
         """
         Given two lines, this method checks whether lines flow to/from the same node or not.
         If they do not have a common node, method returns false.
         :param line_a: (QgsFeature) line to be compared flowing to a common node.
         :param line_b: (QgsFeature) the other line to be compared flowing to a common node.
-        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
+        :param networkLayer: (QgsVectorLayer) hidrography line layer.
         :return: (bool) True if lines are flowing to/from the same.
         """
         if not geomType:
-            geomType = hidLineLayer.geometryType()
+            geomType = networkLayer.geometryType()
         # first and last node of each line
-        fn_a = self.getFirstNode(lyr=hidLineLayer, feat=line_a, geomType=geomType)
-        ln_a = self.getLastNode(lyr=hidLineLayer, feat=line_a, geomType=geomType)
-        fn_b = self.getFirstNode(lyr=hidLineLayer, feat=line_b, geomType=geomType)
-        ln_b = self.getLastNode(lyr=hidLineLayer, feat=line_b, geomType=geomType)
+        fn_a = self.getFirstNode(lyr=networkLayer, feat=line_a, geomType=geomType)
+        ln_a = self.getLastNode(lyr=networkLayer, feat=line_a, geomType=geomType)
+        fn_b = self.getFirstNode(lyr=networkLayer, feat=line_b, geomType=geomType)
+        ln_b = self.getLastNode(lyr=networkLayer, feat=line_b, geomType=geomType)
         # if lines are flowing to/from the same node (they are flowing the same way)
         return (fn_a == fn_b or ln_a == ln_b)
 
-    def validateDeltaLinesAng(self, node, hidLineLayer, geomType=None):
+    def validateDeltaLinesAng(self, node, networkLayer, geomType=None):
         """
         Validates a set of lines connected to a node as for the angle formed between them.
         :param node: (QgsPoint) hidrography node to be validated.
-        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
-        :return: if node is invalid, returns the reason of invalidation (str).
+        :param networkLayer: (QgsVectorLayer) hidrography line layer.
+        :return: (str) if node is invalid, returns the reason of invalidation .
         """
         if not geomType:
-            geomType = hidLineLayer.geometryType()
-        azimuthDict = self.calculateAzimuthFromNode(node=node, hidLineLayer=hidLineLayer, geomType=None)
+            geomType = networkLayer.geometryType()
+        azimuthDict = self.calculateAzimuthFromNode(node=node, networkLayer=networkLayer, geomType=None)
         for idx1, key1 in enumerate(azimuthDict.keys()):
             if idx1 == len(azimuthDict.keys()):
                 # if first comparison element is already the last feature, all differences are already computed
@@ -222,7 +222,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     absAzimuthDifference = (360 - absAzimuthDifference)
                 if absAzimuthDifference < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
-                    if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, hidLineLayer=hidLineLayer, geomType=geomType):
+                    if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, networkLayer=networkLayer, geomType=geomType):
                         return self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
                 elif absAzimuthDifference != 90:
                     # if it's any other disposition, lines can have the same orientation
@@ -232,15 +232,68 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     return self.tr('Cannot infer directions for lines {0} and {1} (Right Angle)').format(key1.id(), key2.id())
         return
 
-    def checkNodeTypeValidity(self, node, connectedValidLines, hidLineLayer, geomType=None):
+    def validateDeltaLinesAngV2(self, node, networkLayer, connectedValidLines, geomType=None):
+        """
+        Validates a set of lines connected to a node as for the angle formed between them.
+        :param node: (QgsPoint) hidrography node to be validated.
+        :param networkLayer: (QgsVectorLayer) hidrography line layer.
+        :param connectedValidLines: list of (QgsFeature) lines connected to 'node' that are already verified.
+        :param geomType: (int) layer geometry type. If not given, it'll be evaluated OTF.
+        :return: (list-of-obj [dict, dict, str]) returns the dict. of valid lines, dict of inval. lines and
+                 invalidation reason, if any, respectively.
+        """
+        val, inval, reason = dict(), dict(), ""
+        if not geomType:
+            geomType = networkLayer.geometryType()
+        azimuthDict = self.calculateAzimuthFromNode(node=node, networkLayer=networkLayer, geomType=None)
+        lines = azimuthDict.keys()
+        for idx1, key1 in enumerate(lines):
+            if idx1 == len(lines):
+                # if first comparison element is already the last feature, all differences are already computed
+                break
+            for idx2, key2 in enumerate(lines):
+                if idx1 >= idx2:
+                    # in order to calculate only f1 - f2, f1 - f3, f2 - f3 (for 3 features, for instance)
+                    continue
+                absAzimuthDifference = math.fmod((azimuthDict[key1] - azimuthDict[key2] + 360), 360)
+                if absAzimuthDifference > 180:
+                    # the lesser angle should always be the one to be analyzed
+                    absAzimuthDifference = (360 - absAzimuthDifference)
+                if absAzimuthDifference < 90:
+                    # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
+                    if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, networkLayer=networkLayer, geomType=geomType):
+                        reason = self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
+                        # checks if any of connected lines are already validated by any previous iteration
+                        if key1 not in connectedValidLines:
+                            inval[key1.id()] = key1
+                        if key2 not in connectedValidLines:
+                            inval[key2.id()] = key2
+                        return val, inval, reason
+                elif absAzimuthDifference != 90:
+                    # if it's any other disposition, lines can have the same orientation
+                    continue
+                else:
+                    # if lines touch each other at a right angle, then it is impossible to infer waterway direction
+                    reason = self.tr('Cannot infer directions for lines {0} and {1} (Right Angle)').format(key1.id(), key2.id())
+                    if key1 not in connectedValidLines:
+                            inval[key1.id()] = key1
+                    if key2 not in connectedValidLines:
+                        inval[key2.id()] = key2
+                    return val, inval, reason
+        if not inval:
+            val = {k.id() : k for k in lines}
+        return val, inval, reason
+
+    def checkNodeTypeValidity(self, node, connectedValidLines, networkLayer, geomType=None):
         """
         Checks if lines connected to a node have their flows compatible to node type and valid lines
         connected to it.
         :param node: (QgsPoint) node which lines connected to it are going to be verified.
         :param connectedValidLines: list of (QgsFeature) lines connected to 'node' that are already verified.
-        :param hidLineLayer: (QgsVectorLayer) layer that contains the lines of analyzed network.
+        :param networkLayer: (QgsVectorLayer) layer that contains the lines of analyzed network.
         :param geomType: (int) layer geometry type. If not given, it'll be evaluated OTF.
-        :return: (str) if node is invalid, returns the invalidation reason string.
+        :return: (list-of-obj [dict, dict, str]) returns the dict. of valid lines, dict of inval. lines and
+                 invalidation reason, if any, respectively.
         """
         # getting flow permitions based on node type
         # reference is the node (e.g. 'in' = lines  are ENDING at analyzed node)
@@ -286,13 +339,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             return validLines, invalidLines, ''
         # if 'geomType' is not given, it must be evaluated
         if not geomType:
-            geomType = hidLineLayer.geometryType()
+            geomType = networkLayer.geometryType()
         # reason message in case of invalidity
         reason = ''
         for line in linesNotValidated:
             # getting last and initial node from analyzed line
-            finalNode = self.getLastNode(lyr=hidLineLayer, feat=line, geomType=geomType)
-            initialNode = self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType)
+            finalNode = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
+            initialNode = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
             # line ID
             lineID = line.id()
             # comparing extreme nodes to find out if flow is compatible to node type
@@ -332,46 +385,76 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     validLines[lineID] = line
         return  validLines, invalidLines, reason
 
-    def getNextNodes(self, node, hidLineLayer, geomType=None):
+    def checkNodeValidity(self, node, connectedValidLines, networkLayer, geomType=None, deltaLinesCheckList=None):
+        """
+        Checks whether a node is valid or not.
+        :param node: (QgsPoint) node which lines connected to it are going to be verified.
+        :param connectedValidLines: list of (QgsFeature) lines connected to 'node' that are already verified.
+        :param networkLayer: (QgsVectorLayer) layer that contains the lines of analyzed network.
+        :param geomType: (int) layer geometry type. If not given, it'll be evaluated OTF.
+        :param deltaLinesCheckList: (list-of-int) node types that must be checked for their connected lines angles.
+        :return: (str) if node is invalid, returns the invalidation reason string.
+        """
+        
+        if not deltaLinesCheckList:
+            deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
+        # check coherence to node type and waterway flow
+        val, inval, reason = self.checkNodeTypeValidity(node=node, connectedValidLines=connectedValidLines,\
+                                                    networkLayer=networkLayer, geomType=geomType)
+        # checking angle validity
+        if self.nodeTypeDict[node] in deltaLinesCheckList:
+            # check for connected lines angles coherence
+            val2, inval2, reason2 = self.validateDeltaLinesAngV2(node=node, networkLayer=networkLayer, connectedValidLines=connectedValidLines, geomType=geomType)
+            # if any invalid line was validated on because of node type, it shall be moved to invalid dict
+            if inval2:
+                # remove any validated line in this iteration
+                for lineId, line in inval2.iteritems():
+                    val.pop(lineId, None)
+                # insert into invalidated dict
+                inval.update(inval2)
+                # updates reason
+                reason = ". ".join(reason, reason2)
+        return val, inval, reason
+
+    def getNextNodes(self, node, networkLayer, geomType=None):
         """
         It returns a list of all other nodes for each line connected to target node.
         :param node: (QgsPoint) node based on which next nodes will be gathered from. 
-        :param hidLineLayer: (QgsVectorLayer) hidrography line layer.
+        :param networkLayer: (QgsVectorLayer) hidrography line layer.
         :return: (list-of-QgsPoint) a list of the other node of lines connected to given hidrography node.
         """
         if not geomType:
-            geomType = hidLineLayer.geometryType()
+            geomType = networkLayer.geometryType()
         nextNodes = []
         nodePointDict = self.nodeDict[node]
         for line in nodePointDict['start']:
             # if line starts at target node, the other extremity is a final node
-            nextNodes.append(self.getLastNode(lyr=hidLineLayer, feat=line, geomType=geomType))
+            nextNodes.append(self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType))
         for line in nodePointDict['end']:
             # if line ends at target node, the other extremity is a initial node
-            nextNodes.append(self.getFirstNode(lyr=hidLineLayer, feat=line, geomType=geomType))
+            nextNodes.append(self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType))
         return nextNodes
 
-    def checkAllNodesValidity(self, hidLineLyr, nodeList=None):
+    def checkAllNodesValidity(self, networkLayer, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 
         correctly classified. CARE: 'nodeTypeDict' MUST BE THE ONE TAKEN FROM DATABASE, NOT RETRIEVED OTF.
-        :param hidLineLyr: (QgsVectorLayer) hidrography lines layer from which node are created from.
+        :param networkLayer: (QgsVectorLayer) hidrography lines layer from which node are created from.
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
-        nodeOnFrame = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
-        deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
+        startingNodeTypes = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
             nodeList = []
             for node in self.nodeTypeDict.keys():
-                if self.nodeTypeDict[node] in nodeOnFrame:
+                if self.nodeTypeDict[node] in startingNodeTypes:
                     nodeList.append(node)
-        # if no node on frame is found, process ends here
+        # if no node to start the process is found, process ends here
         if not nodeList:
             return None, None, self.tr("No network starting point was found")
-        geomType = hidLineLyr.geometryType()
+        geomType = networkLayer.geometryType()
         # initiating the list of nodes already checked and the list of nodes to be checked next iteration
         visitedNodes, newNextNodes = [], []
         nodeFlags = dict()
@@ -384,11 +467,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     visitedNodes.append(node)
                 # check coherence to node type and waterway flow
                 val, inval, reason = self.checkNodeTypeValidity(node=node, connectedValidLines=validLines.values(),\
-                                                            hidLineLayer=hidLineLyr, geomType=geomType)
+                                                            networkLayer=networkLayer, geomType=geomType)
                 # if node type test does have valid lines to iterate over
                 validLines.update(val)
                 invalidLines.update(inval)
-                newNextNodes += self.getNextNodes(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
+                newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
                 # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
                 if reason:
                     if node not in nodeFlags.keys():
@@ -400,14 +483,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     removeNode = []
                     for line in inval.values():
                         if line in self.nodeDict[node]['end']:
-                            removeNode.append(self.getFirstNode(lyr=hidLineLyr, feat=line))
+                            removeNode.append(self.getFirstNode(lyr=networkLayer, feat=line))
                         else:
-                            removeNode.append(self.getLastNode(lyr=hidLineLyr, feat=line))
+                            removeNode.append(self.getLastNode(lyr=networkLayer, feat=line))
                     newNextNodes = list( set(newNextNodes) - set(removeNode) )
                 # if node type is a ramification or a confluence, it checks validity by angles formed by their (last part of) lines
                 if self.nodeTypeDict[node] in deltaLinesCheckList:
-                    invalidationReason = self.validateDeltaLinesAng(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
-                    newNextNodesFromDeltaCheck = self.getNextNodes(node=node, hidLineLayer=hidLineLyr, geomType=geomType)
+                    invalidationReason = self.validateDeltaLinesAng(node=node, networkLayer=networkLayer, geomType=geomType)
+                    newNextNodesFromDeltaCheck = self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
                     # if the line would be valid as per node type but it is invalid because of its angle, 
                     # it should be removed from valid list and all following nodes, should be removed 
                     # from next node sequence.
@@ -638,14 +721,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         newFixedFlags = fixedFlags
         # update nodes classification if there are any fixed nodes
         # self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-        # self.fillNodeTable(hidLineLayer=networkLayer)
+        # self.fillNodeTable(networkLayer=networkLayer)
         count = 0
         while count < maximumCycles or newFixedFlags:
-            newNodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=networkLayer)
+            newNodeFlags, inval, val = self.checkAllNodesValidity(networkLayer=networkLayer)
             newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
             # every cycle implies in a new node reclassification as nodes have changed their types on canvas
             # self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-            # self.fillNodeTable(hidLineLayer=networkLayer)
+            # self.fillNodeTable(networkLayer=networkLayer)
             if newNodeFlags.keys() in nodeFlags.keys():
                 # in case a subset of flags is raised again by process, fixing method is no longer effective 
                 # thus no fixing method will be applied
@@ -701,15 +784,15 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
-            hidLineLyrKey = self.parameters[self.tr('Network Layer')]
+            networkLayerKey = self.parameters[self.tr('Network Layer')]
             # preparing hidrography lines layer
             # remake the key from standard string
             k = ('{},{},{},{},{}').format(
-                                          hidLineLyrKey.split('.')[0],\
-                                          hidLineLyrKey.split('.')[1].split(r' (')[0],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[0],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[1],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                          networkLayerKey.split('.')[0],\
+                                          networkLayerKey.split('.')[1].split(r' (')[0],\
+                                          networkLayerKey.split('(')[1].split(', ')[0],\
+                                          networkLayerKey.split('(')[1].split(', ')[1],\
+                                          networkLayerKey.split('(')[1].split(', ')[2].replace(')', '')
                                          )
             hidcl = self.networkClassesWithElemDict[k]
             hidNodeLyrKey = self.parameters[self.tr('Node Layer')]
@@ -730,17 +813,17 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeSrid = networkLayer.crs().authid().split(':')[1]
             searchRadius = self.parameters['Search Radius']
             # getting node info from network node layer
-            self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=networkLayer)
+            self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(networkLayer=networkLayer)
             self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # validation method FINALLY starts...
-            nodeFlags, inval, val = self.checkAllNodesValidity(hidLineLyr=networkLayer)
+            nodeFlags, inval, val = self.checkAllNodesValidity(networkLayer=networkLayer)
             # start recursive method in case flags are raised
             if self.parameters[self.tr('Allow Automatic Fixes')] and nodeFlags:
                 # this method alters database classification, hence it can only be used with it selected
                 fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=networkLayer)
                 # update node info
                 # self.createNetworkNodesProcess.clearHidNodeLayer(nodeLayer=networkLayer, nodeList=self.nodeIdDict.values())
-                self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(hidLineLayer=networkLayer)
+                self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(networkLayer=networkLayer)
                 # self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
