@@ -281,6 +281,31 @@ class CreateNetworkNodesProcess(ValidationProcess):
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
+    def isDangle(self, node, networkLayer, searchRadius):
+        """
+        Checks whether node is a dangle into network (connected to a first order line).
+        :param node: (QgsPoint) node to be validated.
+        :param networkLayer: (QgsVectorLayer) network layer (line layer).
+        :param searchRadius: (float) limit distance to another line.
+        :return: (bool) indication whether node is a dangle.
+        """
+        qgisPoint = QgsGeometry.fromPoint(node)
+        # building a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
+        buf = QgsGeometry.fromWkt(buf)
+        # building bounding box around node for feature requesting
+        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        # check if buffer intersects features from water bodies layers
+        count = 0
+        for feat in networkLayer.getFeatures(QgsFeatureRequest(bbRect)):
+            if buf.intersects(feat.geometry()):
+                count += 1
+                res = (count > 1)
+                if res:
+                    # to avoid as many iterations as possible
+                    return res
+        return res
+
     def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
         Get the node type given all lines that flows from/to it.
@@ -324,6 +349,9 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
                     # if a node is indeed a water sink (operator has set it to a sink)
                     return CreateNetworkNodesProcess.Sink
+                # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
+                elif not self.isDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                    return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.c: point that legitimately only flows out
             elif hasStartLine:
                 return CreateNetworkNodesProcess.WaterwayBegin

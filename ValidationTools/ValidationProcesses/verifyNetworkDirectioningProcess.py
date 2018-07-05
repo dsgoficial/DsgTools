@@ -465,6 +465,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         nodeFlags = dict()
         # starting dict of (in)valid lines to be returned by the end of method
         validLines, invalidLines = dict(), dict()
+        # initiate relation of modified features
+        flippedLinesIds, mergedLinesString = [], "" 
         while nodeList:
             for node in nodeList:
                 if node not in visitedNodes:
@@ -473,28 +475,45 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # check coherence to node type and waterway flow
                 val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
                                                             networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
-                # if node type test does have valid lines to iterate over
-                validLines.update(val)
-                invalidLines.update(inval)
-                newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
                 # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
                 if reason:
                     # try to fix node issues
-                    self.fixNodeFlags(node=node, valDict=val, invalidDict=inval, reason=reason, \
-                                connectedValidLines=validLines.values(), networkLayer=networkLayer, geomType=geomType)
+                    # note that val, inval and reason MAY BE MODIFIED - and there is no problem...
+                    flippedLinesIds_, mergedLinesString_ = self.fixNodeFlagsNew(node=node, valDict=val, invalidDict=inval, reason=reason, \
+                                                                            connectedValidLines=validLines.values(), networkLayer=networkLayer, \
+                                                                            geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
+                    # keep track of all modifications made
+                    if flippedLinesIds_:
+                        # IDs not registered yet will be added to final list
+                        addIds = set(flippedLinesIds_) - set(flippedLinesIds)
+                        # IDs that are registered will be removed (flipping a flipped line returns to original state)
+                        removeIds = set(flippedLinesIds_) - addIds
+                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds) + addIds  )
+                    if mergedLinesString_:
+                        if not mergedLinesString:
+                            mergedLinesString = mergedLinesString_
+                        else:
+                            ", ".join([mergedLinesString, mergedLinesString_])
                     # if node is still invalid, add to nodeFlagList and add/update its reason
-                    if node not in nodeFlags.keys():
-                        nodeFlags[node] = reason
-                    else:
-                        nodeFlags[node] += ". " + reason
-                    # and remove next nodes connected to invalid lines
+                    if reason:
+                        if node not in nodeFlags.keys():
+                            nodeFlags[node] = reason
+                        else:
+                            nodeFlags[node] += "; " + reason
+                    # get next nodes connected to invalid lines
                     removeNode = []
                     for line in inval.values():
                         if line in self.nodeDict[node]['end']:
                             removeNode.append(self.getFirstNode(lyr=networkLayer, feat=line))
                         else:
                             removeNode.append(self.getLastNode(lyr=networkLayer, feat=line))
-                    newNextNodes = list( set(newNextNodes) - set(removeNode) )
+                # update general dictionaries with final values
+                validLines.update(val)
+                invalidLines.update(inval)
+                # get next iteration nodes
+                newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
+                # remove next nodes connected to invalid lines
+                newNextNodes = list( set(newNextNodes) - set(removeNode) )
             # remove nodes that were already visited
             newNextNodes = list( set(newNextNodes) - set(visitedNodes) )
             # if new nodes are detected, repeat for those
@@ -676,11 +695,49 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     return res
         return res
 
-    def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None):
+    def flipSingleLine(self, line, layer, geomType=None):
+        """
+        Flips a given single line.
+        :param line: (QgsFeature) line to be flipped.
+        :param layer: (QgsVectorLayer) layer containing target feature.
+        :param geomType: (int) layer geometry type code.
+        """
+        self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
+
+    def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None, deltaLinesCheckList=None):
         """
         Tries to fix issues flagged on node
         """
-        pass
+        # initiate lists of lines that were flipped/merged
+        flippedLinesIds, mergedLinesString = [], ""
+        # get reason type
+        reasonType = self.getReasonType(reason=reason)
+        if not reasonType:
+            # if node invalidation reason is not among the fixable ones, method stops here.
+            return flippedLinesIds, mergedLinesString
+        ## try to fix node issues
+        featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
+        if reasonType in [1, 2]:
+            # original message: self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ')
+            # original message: self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
+            self.getLineIdFromReason()
+            for lineId in featIdFlipCandidates:
+                line = invalidDict[int(lineId)]
+                self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
+                flippedLinesIds.append(lineId)
+        elif reasonType == 3:
+            pass
+        elif reasonType == 4:
+            pass
+        elif reasonType == 5:
+            pass
+        else:
+            # in case, for some reason, an strange value is given to reasonType
+            return False
+        # check if node is fixed and update its dictionaries and invalidation reason
+        valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
+                                        networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
+        return lineIdsForFlipping, mergedLinesString
         
     # method for automatic fix
     def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
@@ -728,7 +785,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 fixedFlags[node] = reason
             elif reasonType == 5 and self.parameters[self.tr('Consider Dangles as Waterway Beginnings')]:
                 # case where node is not a sink not a node next to water body and has an "in" flow
-                if len(self.nodeDict[node]['end']) == 1 and self.isDangle(node=node, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                if len(self.nodeDict[node]['end']) == 1 and self.createNetworkNodesProcess.isDangle(node=node, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                     # only dangles are considered waterway beginnings
                     lineIdsForFlipping.append(str(self.nodeDict[node]['end'][0].id()))
         for node in fixedFlags.keys():
