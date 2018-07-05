@@ -479,7 +479,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
                 # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
                 if reason:
-                    # if node is invalid, add to nodeFlagList and add/update its reason
+                    # try to fix node issues
+                    self.fixNodeFlags(node=node, valDict=val, invalidDict=inval, reason=reason, \
+                                connectedValidLines=validLines.values(), networkLayer=networkLayer, geomType=geomType)
+                    # if node is still invalid, add to nodeFlagList and add/update its reason
                     if node not in nodeFlags.keys():
                         nodeFlags[node] = reason
                     else:
@@ -673,6 +676,12 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     return res
         return res
 
+    def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None):
+        """
+        Tries to fix issues flagged on node
+        """
+        pass
+        
     # method for automatic fix
     def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
         """
