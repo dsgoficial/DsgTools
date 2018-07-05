@@ -377,49 +377,41 @@ class CreateNetworkNodesProcess(ValidationProcess):
         :param nodeIdList: (list-of-int) list of node IDs to be cleared from layer.
         :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
-        nodeLayer.startEditing()
+        nodeLayer.beginEditCommand('Clear Nodes')
         if not nodeIdList:
             nodeIdList = [feat.id() for feat in nodeLayer.getFeatures()]
         nodeLayer.deleteFeatures(nodeIdList)
+        nodeLayer.endEditCommand()
         # commit changes to LAYER
         if commitToLayer:
             nodeLayer.commitChanges()
 
-    def fillNodeLayer(self, nodeLayer, networkLineLayerName, nodeIdList=None, commitToLayer=False):
+    def fillNodeLayer(self, nodeLayer, networkLineLayerName, commitToLayer=False):
         """
         Populate hidrography node layer with all nodes.
         :param nodeLayer: (QgsVectorLayer) hidrography nodes layer.
         :param networkLineLayerName: (str) network line layer name.
-        :param nodeIdList: (list-of-int) list of node IDs to be updated into layer.
         :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
         # if table is going to be filled, then it needs to be cleared first
-        self.clearHidNodeLayer(nodeLayer=nodeLayer, nodeIdList=nodeIdList, commitToLayer=commitToLayer)
+        self.clearHidNodeLayer(nodeLayer=nodeLayer, commitToLayer=commitToLayer)
         # get fields from layer in order to create new feature with the same attribute map
         fields = nodeLayer.fields()
-        # to add features into new layer
-        nodeLayer.startEditing()
+        nodeLayer.beginEditCommand('Create Nodes')
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
         # initiate new features list
         featList = []
-        for node in self.nodeDict.keys():
-            # if a node ID list is given, then it is an update and all other features that are
-            # not in that list should be ignored
-            if nodeIdList:
-                if self.nodeDbIdDict[node] not in nodeIdList:
-                    continue
-                else:
-                    feat['id'] = self.nodeDbIdDict[node]
-            feat = QgsFeature()
+        for node in self.nodeDict:
             # set attribute map
-            feat.setFields(fields)
+            feat = QgsFeature(fields)
             # set geometry
             feat.setGeometry(QgsGeometry.fromPoint(node))
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             featList.append(feat)
         nodeLayer.addFeatures(featList)
+        nodeLayer.endEditCommand()
         if commitToLayer:
             nodeLayer.commitChanges()
 
@@ -503,6 +495,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 self.abstractDb.createHidNodeTable(nodeSrid)
             # load node table into canvas
             nodeLayer = self.loadLayer(self.hidNodeLayerName)
+            # to be able to update features into new layer
+            nodeLayer.startEditing()
             self.fillNodeLayer(nodeLayer=nodeLayer, networkLineLayerName=networkLayer.name())
             msg = self.tr('Network nodes created into layer {}.').format(self.hidNodeLayerName)
             self.setStatus(msg, 1) #Finished
