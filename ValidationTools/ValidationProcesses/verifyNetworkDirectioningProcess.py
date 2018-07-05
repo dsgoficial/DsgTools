@@ -413,7 +413,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # insert into invalidated dict
                 inval.update(inval2)
                 # updates reason
-                reason = ". ".join(reason, reason2)
+                if reason:
+                    reason = ". ".join([reason, reason2])
+                else:
+                    reason = reason2
         return val, inval, reason
 
     def getNextNodes(self, node, networkLayer, geomType=None):
@@ -436,6 +439,67 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         return nextNodes
 
     def checkAllNodesValidity(self, networkLayer, nodeList=None):
+        """
+        For every node over the frame [or set as a line beginning], checks for network coherence regarding
+        to previous node classification and its current direction. Method takes that bordering points are 
+        correctly classified. CARE: 'nodeTypeDict' MUST BE THE ONE TAKEN FROM DATABASE, NOT RETRIEVED OTF.
+        :param networkLayer: (QgsVectorLayer) hidrography lines layer from which node are created from.
+        :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
+        :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
+        """
+        startingNodeTypes = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
+        deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
+        if not nodeList:
+            # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
+            nodeList = []
+            for node in self.nodeTypeDict.keys():
+                if self.nodeTypeDict[node] in startingNodeTypes:
+                    nodeList.append(node)
+            # if no node to start the process is found, process ends here
+            if not nodeList:
+                return None, None, self.tr("No network starting point was found")
+        # to avoid unnecessary calculations
+        geomType = networkLayer.geometryType()
+        # initiating the list of nodes already checked and the list of nodes to be checked next iteration
+        visitedNodes, newNextNodes = [], []
+        nodeFlags = dict()
+        # starting dict of (in)valid lines to be returned by the end of method
+        validLines, invalidLines = dict(), dict()
+        while nodeList:
+            for node in nodeList:
+                if node not in visitedNodes:
+                    # set node as visited
+                    visitedNodes.append(node)
+                # check coherence to node type and waterway flow
+                val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
+                                                            networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
+                # if node type test does have valid lines to iterate over
+                validLines.update(val)
+                invalidLines.update(inval)
+                newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
+                # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
+                if reason:
+                    # if node is invalid, add to nodeFlagList and add/update its reason
+                    if node not in nodeFlags.keys():
+                        nodeFlags[node] = reason
+                    else:
+                        nodeFlags[node] += ". " + reason
+                    # and remove next nodes connected to invalid lines
+                    removeNode = []
+                    for line in inval.values():
+                        if line in self.nodeDict[node]['end']:
+                            removeNode.append(self.getFirstNode(lyr=networkLayer, feat=line))
+                        else:
+                            removeNode.append(self.getLastNode(lyr=networkLayer, feat=line))
+                    newNextNodes = list( set(newNextNodes) - set(removeNode) )
+            # remove nodes that were already visited
+            newNextNodes = list( set(newNextNodes) - set(visitedNodes) )
+            # if new nodes are detected, repeat for those
+            nodeList = newNextNodes
+            newNextNodes = []
+        return nodeFlags, invalidLines, validLines
+
+    def checkAllNodesValidityOld(self, networkLayer, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 

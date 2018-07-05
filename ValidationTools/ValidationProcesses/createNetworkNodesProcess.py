@@ -109,20 +109,20 @@ class CreateNetworkNodesProcess(ValidationProcess):
             frame.append(QgsGeometry().fromPolyline(frameNodes))
         return frame
     
-    def identifyAllNodes(self, hidLineLayer):
+    def identifyAllNodes(self, networkLayer):
         """
         Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
-        :param hidLineLayer: target layer to which nodes identification is required.
+        :param networkLayer: target layer to which nodes identification is required.
         :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
-        isMulti = QgsWKBTypes.isMultiType(int(hidLineLayer.wkbType()))
+        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
         if self.parameters['Only Selected']:
-            features = hidLineLayer.selectedFeatures()
+            features = networkLayer.selectedFeatures()
         else:
-            features = [feat for feat in hidLineLayer.getFeatures()]
+            features = [feat for feat in networkLayer.getFeatures()]
         for feat in features:
-            nodes = self.DsgGeometryHandler.getFeatureNodes(hidLineLayer, feat)
+            nodes = self.DsgGeometryHandler.getFeatureNodes(networkLayer, feat)
             if nodes:
                 if isMulti:
                     if len(nodes) > 1:
@@ -266,26 +266,26 @@ class CreateNetworkNodesProcess(ValidationProcess):
             ignoreList = [field for field in fieldNames if field not in layerFields]
         return { field.name() : feature[field.name()] for field in fieldNames if field not in ignoreList }
 
-    def attributeChangeCheck(self, node, hidLineLayer):
+    def attributeChangeCheck(self, node, networkLayer):
         """
         Checks if attribute change node is in fact an attribute change.
         :param node: (QgsPoint) node to be identified as over the frame layer or not.
-        :param hidLineLayer: (QgsVectorLayer) layer containing network lines.
+        :param networkLayer: (QgsVectorLayer) layer containing network lines.
         :return: (bool) if lines connected to node do change attributes.
         """        
         # assuming that attribute change nodes have only 1-in 1-out lines
         lineIn = self.nodeDict[node]['end'][0]
-        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=hidLineLayer)
+        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer)
         lineOut = self.nodeDict[node]['start'][0]
-        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=hidLineLayer)
+        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer)
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
-    def nodeType(self, nodePoint, hidLineLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
-        :param hidLineLayer: (QgsVectorLayer) network lines layer.        
+        :param networkLayer: (QgsVectorLayer) network lines layer.        
         :param frameLyrContourList: (list-of-QgsGeometry) border line for the frame layer to be checked.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :param waterSinkLayer: (QgsVectorLayer) water sink layer.
@@ -336,7 +336,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             if sizeFlowIn > 1:
                 # case 4.c: there's a constant flow through node, but there are more than 1 line
                 return CreateNetworkNodesProcess.ConstantFlowNode
-            elif self.attributeChangeCheck(node=nodePoint, hidLineLayer=hidLineLayer):
+            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer):
                 # case 4.a: lines do change their attribute set
                 return CreateNetworkNodesProcess.AttributeChange
             else:
@@ -347,10 +347,10 @@ class CreateNetworkNodesProcess(ValidationProcess):
             # case 3 "ramification"
             return CreateNetworkNodesProcess.Ramification
 
-    def classifyAllNodes(self, hidLineLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None):
+    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None):
         """
         Classifies all identified nodes from the hidrography line layer.
-        :param hidLineLayer: (QgsVectorLayer) network lines layer.
+        :param networkLayer: (QgsVectorLayer) network lines layer.
         :param frameLyrContourList: (list-of-QgsFeature) border line for the frame layer.
         :param waterBodiesLayers: (list-of-QgsVectorLayer) list of all classes with water bodies to be compared to.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
@@ -367,7 +367,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             if node not in nodeKeys:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, hidLineLayer=hidLineLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
         return nodeTypeDict
 
     def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=False):
@@ -448,7 +448,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
-            hidLineLyrKey = self.parameters[self.tr('Network Layer')]
+            networkLayerKey = self.parameters[self.tr('Network Layer')]
             hidSinkLyrKey = self.parameters[self.tr('Sink Layer')]
             refKey, classesWithElemKeys = self.parameters[self.tr('Reference and Water Body Layers')]
             waterBodyClassesKeys = classesWithElemKeys
@@ -461,11 +461,11 @@ class CreateNetworkNodesProcess(ValidationProcess):
             # preparing hidrography lines layer
             # remake the key from standard string
             k = ('{},{},{},{},{}').format(
-                                          hidLineLyrKey.split('.')[0],\
-                                          hidLineLyrKey.split('.')[1].split(r' (')[0],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[0],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[1],\
-                                          hidLineLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                          networkLayerKey.split('.')[0],\
+                                          networkLayerKey.split('.')[1].split(r' (')[0],\
+                                          networkLayerKey.split('(')[1].split(', ')[0],\
+                                          networkLayerKey.split('(')[1].split(', ')[1],\
+                                          networkLayerKey.split('(')[1].split(', ')[2].replace(')', '')
                                          )
             hidcl = self.networkClassesWithElemDict[k]
             networkLayer = self.loadLayerBeforeValidationProcess(hidcl)
@@ -491,12 +491,12 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 waterSinkLayer = None
             # getting dictionaries of nodes information 
             frame = self.getFrameContour(frameLayer=frameLayer)
-            self.nodeDict = self.identifyAllNodes(hidLineLayer=networkLayer)
+            self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
             crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
             nodeSrid = networkLayer.crs().authid().split(':')[1]
             searchRadius = self.parameters[self.tr('Search Radius')]
-            self.nodeTypeDict = self.classifyAllNodes(hidLineLayer=networkLayer, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
+            self.nodeTypeDict = self.classifyAllNodes(networkLayer=networkLayer, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             # check if node table and node type domain table are created on db
             if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
                 # if it does not exist, it is created
