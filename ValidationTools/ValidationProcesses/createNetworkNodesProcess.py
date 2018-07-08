@@ -149,6 +149,30 @@ class CreateNetworkNodesProcess(ValidationProcess):
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
 
+    def changeLineDict(self, nodeList, line):
+        """
+        Changes a line from a dict to another (start/end). Useful when network lines are flipped and another node
+        identification is too costy.
+        :param nodeList: (list-of-QgsPoint) the list of nodes connected to have given line relation dictionary changed.
+        :param line: (QgsFeature) line to be flipped.
+        :return: whether changing was successful for each node 
+        """
+        for node in nodeList:
+            # node's dicts
+            startDict = self.nodeDict[node]['start']
+            endDict = self.nodeDict[node]['end']
+            if line in startDict:
+                startDict.remove(line)
+                endDict.append(line)
+            elif line in endDict:
+                startDict.append(line)
+                endDict.remove(line)
+            else:
+                # if line is not found for some reason
+                return False
+        # if a nodeList is not found, method doesn't change anything
+        return bool(nodeList)
+
     def nodeOnFrame(self, node, frameLyrContourList, searchRadius):
         """
         Identify whether or not node is over the frame. Returns True if point is over the frame and false if
@@ -434,7 +458,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             # set attribute map
             feat = QgsFeature(fields)
             # set geometry
-            feat.setGeometry(QgsGeometry.fromPoint(node))
+            feat.setGeometry(QgsGeometry.fromMultiPoint([node]))
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             featList.append(feat)
