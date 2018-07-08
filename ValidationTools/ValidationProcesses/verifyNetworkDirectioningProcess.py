@@ -725,8 +725,17 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # original message: self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
             for lineId in featIdFlipCandidates:
                 line = invalidDict[int(lineId)]
-                self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
-                flippedLinesIds.append(lineId)
+                if line not in connectedValidLines:
+                    # only non-valid lines may be modified
+                    self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
+                    # if a line is flipped it must be changed in self.nodeDict
+                    # getting first and last nodes
+                    first = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
+                    last = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
+                    self.createNetworkNodesProcess.changeLineDict(nodeList=[first, last], line=line)
+                    # update this nodeDict with the one from createNetworkNodesProcess object
+                    self.nodeDict[node] = self.createNetworkNodesProcess.nodeDict[node]
+                    flippedLinesIds.append(lineId)
         elif reasonType == 3:
             pass
         elif reasonType == 4:
@@ -920,10 +929,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         isMulti = QgsWKBTypes.isMultiType(int(networkNodeLayer.wkbType()))
         for feat in networkNodeLayer.getFeatures():
             if isMulti:
-                try:
-                    node = feat.geometry().asMultiPoint()[0]
-                except:
-                    node = feat.geometry().asPoint()                    
+                node = feat.geometry().asMultiPoint()[0]                    
             else:
                 node = feat.geometry().asPoint()
             nodeTypeDict[node] = feat['node_type']
@@ -972,6 +978,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             searchRadius = self.parameters['Search Radius']
             # getting node info from network node layer
             self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(networkLayer=networkLayer)
+            # update createNetworkNodesProcess object node dictionary
+            self.createNetworkNodesProcess.nodeDict = self.nodeDict
             self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(networkLayer=networkLayer)
