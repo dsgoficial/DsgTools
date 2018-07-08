@@ -22,11 +22,10 @@
 """
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, \
-                      QgsFeatureRequest, QgsDataSourceURI, QgsExpression
-from qgis.gui import QgsMapTool
+                      QgsFeatureRequest, QgsExpression
 from PyQt4.QtGui import QMessageBox
 
-import processing, binascii, math
+import binascii, math
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
@@ -475,6 +474,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # check coherence to node type and waterway flow
                 val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
                                                             networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
+                # nodes to be removed from next nodes
+                removeNode = []
                 # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
                 if reason:
                     # try to fix node issues
@@ -488,7 +489,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         addIds = set(flippedLinesIds_) - set(flippedLinesIds)
                         # IDs that are registered will be removed (flipping a flipped line returns to original state)
                         removeIds = set(flippedLinesIds_) - addIds
-                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds) + addIds  )
+                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds) ) + list( addIds  )
                     if mergedLinesString_:
                         if not mergedLinesString:
                             mergedLinesString = mergedLinesString_
@@ -501,7 +502,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         else:
                             nodeFlags[node] += "; " + reason
                     # get next nodes connected to invalid lines
-                    removeNode = []
                     for line in inval.values():
                         if line in self.nodeDict[node]['end']:
                             removeNode.append(self.getFirstNode(lyr=networkLayer, feat=line))
@@ -513,12 +513,15 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # get next iteration nodes
                 newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
                 # remove next nodes connected to invalid lines
-                newNextNodes = list( set(newNextNodes) - set(removeNode) )
+                if removeNode:
+                    newNextNodes = list( set(newNextNodes) - set(removeNode) )
             # remove nodes that were already visited
             newNextNodes = list( set(newNextNodes) - set(visitedNodes) )
             # if new nodes are detected, repeat for those
             nodeList = newNextNodes
             newNextNodes = []
+        # log all features that were merged and/or flipped
+        self.logAlteredFeatures(flippedLines=flippedLinesIds, mergedLinesString=mergedLinesString)
         return nodeFlags, invalidLines, validLines
 
     def checkAllNodesValidityOld(self, networkLayer, nodeList=None):
@@ -702,7 +705,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         :param layer: (QgsVectorLayer) layer containing target feature.
         :param geomType: (int) layer geometry type code.
         """
-        self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
+        self.DsgGeometryHandler.flipFeature(layer=layer, feature=line, geomType=geomType)
 
     def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None, deltaLinesCheckList=None):
         """
@@ -720,7 +723,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         if reasonType in [1, 2]:
             # original message: self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ')
             # original message: self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
-            self.getLineIdFromReason()
             for lineId in featIdFlipCandidates:
                 line = invalidDict[int(lineId)]
                 self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
@@ -737,8 +739,31 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # check if node is fixed and update its dictionaries and invalidation reason
         valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
                                         networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
-        return lineIdsForFlipping, mergedLinesString
-        
+        return flippedLinesIds, mergedLinesString
+
+    def logAlteredFeatures(self, flippedLines, mergedLinesString):
+        """
+        Logs the list of flipped/merged lines, if any.
+        :param flippedLines: (list-of-int) list of flipped lines.
+        :param mergedLinesString: (str) text containing all merged lines (in the form of 'ID1 to ID2, ID3, to ID4')
+        :return: (bool) whether or not a message was shown.
+        """
+        # building warning message
+        warning = ''
+        if flippedLines and mergedLinesString:
+            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(",".join(flippedLines))
+            warning += self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(",".join(mergedLinesString))
+        elif flippedLines:
+            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(flippedLines))
+        elif mergedLinesString:
+            warning = self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))
+        if warning:
+            # warning is only raised when there were flags fixed
+            warning = self.tr('\n{0}: Flipped/Merged Lines\n{1}').format(self.processAlias, warning)
+            QgsMessageLog.logMessage(warning, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            return True
+        return False
+
     # method for automatic fix
     def fixNodeFlags(self, nodeFlags, networkLayer, geomType=None):
         """
@@ -895,7 +920,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         isMulti = QgsWKBTypes.isMultiType(int(networkNodeLayer.wkbType()))
         for feat in networkNodeLayer.getFeatures():
             if isMulti:
-                node = feat.geometry().asMultiPoint()[0]
+                try:
+                    node = feat.geometry().asMultiPoint()[0]
+                except:
+                    node = feat.geometry().asPoint()                    
             else:
                 node = feat.geometry().asPoint()
             nodeTypeDict[node] = feat['node_type']
