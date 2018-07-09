@@ -21,9 +21,11 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, QgsFeature, Qgis
+from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, \
+                      QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
+                      QgsFeature, Qgis, QgsProcessingUtils
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-import processing, binascii
+import processing
 
 class CleanGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating=False, withElements = True):
@@ -47,7 +49,7 @@ class CleanGeometriesProcess(ValidationProcess):
         """
         Runs the actual grass process
         """
-        alg = 'grass7:v.clean.advanced'
+        alg = 'grass7:v.clean' #api changed, used to be v.clean.advanced
 
         #setting tools
         tools = 'rmsa,break,rmdupl,rmdangle'
