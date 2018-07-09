@@ -64,7 +64,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                                 self.tr('Node Layer') : nodeFlowParameterList,
                                 self.tr('Search Radius') : 5.0,
                                 self.tr('Select All Valid Lines') : False,
-                                self.tr('Allow Automatic Fixes') : True,
                                 self.tr('Consider Dangles as Waterway Beginnings') : True
                               }
             # transmit these parameters to CreateNetworkNodesProcess object
@@ -465,7 +464,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # starting dict of (in)valid lines to be returned by the end of method
         validLines, invalidLines = dict(), dict()
         # initiate relation of modified features
-        flippedLinesIds, mergedLinesString = [], "" 
+        flippedLinesIds, mergedLinesString = [], ""
         while nodeList:
             for node in nodeList:
                 if node not in visitedNodes:
@@ -671,32 +670,9 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             lineId1 = reason.split(self.tr(", "))[0].split("(")[1]
             lineId2 = reason.split(self.tr(", "))[1].split(")")[0]
             return [lineId1, lineId2]
-
-    # method for automatic fix
-    def isDangle(self, node, networkLayer, searchRadius):
-        """
-        Checks whether node is a dangle into network (connected to a first order line).
-        :param node: (QgsPoint) node to be validated.
-        :param networkLayer: (QgsVectorLayer) network layer (line layer).
-        :param searchRadius: (float) limit distance to another line.
-        :return: (bool) indication whether node is a dangle.
-        """
-        qgisPoint = QgsGeometry.fromPoint(node)
-        # building a buffer around node with search radius for intersection with Layer Frame
-        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
-        buf = QgsGeometry.fromWkt(buf)
-        # building bounding box around node for feature requesting
-        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
-        # check if buffer intersects features from water bodies layers
-        count = 0
-        for feat in networkLayer.getFeatures(QgsFeatureRequest(bbRect)):
-            if buf.intersects(feat.geometry()):
-                count += 1
-                res = (count > 1)
-                if res:
-                    # to avoid as many iterations as possible
-                    return res
-        return res
+        else:
+            # all other reasons can't have their ID extracted
+            return []
 
     def flipSingleLine(self, line, layer, geomType=None):
         """
@@ -706,6 +682,67 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         :param geomType: (int) layer geometry type code.
         """
         self.DsgGeometryHandler.flipFeature(layer=layer, feature=line, geomType=geomType)
+
+    def fixOneWayFlowNode(self, node, networkLayer, validLines, geomType=None):
+        """
+        Fixes lines connected to nodes flagged as one way flowing node where it cannot be.
+        :param node: (QgsPoint) invalid node to have its lines flipped.
+        :param networkLayer: (QgsVectorLayer) layer containing target feature.
+        :param validLines: (list-of-QgsFeature) list of all validated lines.
+        :param geomType: (int) layer geometry type code.
+        :return: (list-of-QgsFeature) list of lines that were flipped.
+        """
+        # list of lines that were flipped in this execution
+        flippedLines = []
+        # get dictionaries for speed-up
+        endDict = self.nodeDict[node]['end']
+        startDict = self.nodeDict[node]['start']
+        # in case there are conflicting lines and one of them must be flipped
+        if len(endDict):
+            # get all invalid lines connected to node
+            invalidLines = set(endDict) - set(validLines)
+            # get all valid lines connected to node
+            valLines = set(endDict) - invalidLines
+        else:
+            # get all invalid lines connected to node
+            invalidLines = set(startDict) - set(validLines)
+            # get all valid lines connected to node
+            valLines = set(startDict) - invalidLines
+        # if no invalid lines are identified, something else is wrong and flipping won't be the solution
+        if not invalidLines:
+            return []
+        elif len(invalidLines)==1:
+            # if only one line is not yet validated, then it'll be flipped
+            line = list(invalidLines)[0]
+            self.flipSingleLine(line=line, layer=networkLayer)
+            # if a line is flipped it must be changed in self.nodeDict
+            self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
+            flippedLines.append(str(line.id()))
+        elif valLines:
+            # if there are more invalid lines and there are valid lines, a delta check should be executed
+            val, inval, reason = self.validateDeltaLinesAngV2(node=node, networkLayer=networkLayer, connectedValidLines=valLines, geomType=geomType)
+            if inval:
+                # delta-invalid lines are flipping candidates
+                for line in inval.values():
+                    if line not in validLines:
+                        # if line is not validated, it'll be flipped
+                        self.flipSingleLine(line=line, layer=networkLayer)
+                        # if a line is flipped it must be changed in self.nodeDict
+                        self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
+                        flippedLines.append(str(line.id()))
+        return flippedLines
+
+    def updateNodeDict(self, node, line, networkLayer, geomType=None):
+        """
+        Updates node dictionary. Useful when direction of a (set of) line is changed.
+        """
+        # getting first and last nodes
+        first = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
+        last = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
+        changed = self.createNetworkNodesProcess.changeLineDict(nodeList=[first, last], line=line)
+        # update this nodeDict with the one from createNetworkNodesProcess object
+        self.nodeDict[node] = self.createNetworkNodesProcess.nodeDict[node]
+        return changed
 
     def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None, deltaLinesCheckList=None):
         """
@@ -729,22 +766,19 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # only non-valid lines may be modified
                     self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
                     # if a line is flipped it must be changed in self.nodeDict
-                    # getting first and last nodes
-                    first = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
-                    last = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
-                    self.createNetworkNodesProcess.changeLineDict(nodeList=[first, last], line=line)
-                    # update this nodeDict with the one from createNetworkNodesProcess object
-                    self.nodeDict[node] = self.createNetworkNodesProcess.nodeDict[node]
+                    self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
                     flippedLinesIds.append(lineId)
         elif reasonType == 3:
+            # original message: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
             pass
         elif reasonType == 4:
             pass
         elif reasonType == 5:
-            pass
+            # original message: self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
+            flippedLinesIds += self.fixOneWayFlowNode(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
         else:
             # in case, for some reason, an strange value is given to reasonType
-            return False
+            return [], ''
         # check if node is fixed and update its dictionaries and invalidation reason
         valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
                                         networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
@@ -819,14 +853,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 fixedFlags[node] = reason
             elif reasonType == 5 and self.parameters[self.tr('Consider Dangles as Waterway Beginnings')]:
                 # case where node is not a sink not a node next to water body and has an "in" flow
-                if len(self.nodeDict[node]['end']) == 1 and self.createNetworkNodesProcess.isDangle(node=node, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                if len(self.nodeDict[node]['end']) == 1 and not self.createNetworkNodesProcess.isFirstOrderDangle(node=node, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                     # only dangles are considered waterway beginnings
                     lineIdsForFlipping.append(str(self.nodeDict[node]['end'][0].id()))
         for node in fixedFlags.keys():
             # pop it from original dict
             nodeFlags.pop(node, None)
         flipFeatureListIterator = networkLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(', '.join(lineIdsForFlipping)))))
-        networkLayer.startEditing()
         networkLayer.beginEditCommand('Merging lines')
         for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
@@ -864,60 +897,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         first = self.getFirstNode(lyr=layer, feat=line, geomType=1)
         last = self.getLastNode(lyr=layer, feat=line, geomType=1)
         return bool((self.nodeTypeDict[first]  in blackList) or (self.nodeTypeDict[last] in blackList))
-
-    # method for automatic fix
-    def recursiveFixFlags(self, nodeFlags, networkLayer, geomType=None, maximumCycles=9):
-        """
-        Runs the fixing method for as long as flags are found and being fixed, or maximum cycles isn't reached.
-        :param nodeFlags: (dict) dictionary of nodes and their invalidation reasons { (QgsPoint)node : (str)reason }. MAY BE MODIFIED.
-        :param networkLayer: (QgsVectorLayer) layer containig network lines.
-        :param geomType: (int) network lines layer geometry type.
-        :param maximumCycles: (int) maximum amount of fixing cycles (-1, as first iteration is off-loop) per process execution.
-        :return: (dict) dictionary of flags that were fixed and their reasons.
-        """
-        if not geomType:
-            geomType = networkLayer.geometryType()
-        # get first fix
-        fixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
-        if not fixedFlags:
-            # in case method didn't fix any flags
-            return fixedFlags
-        newFixedFlags = fixedFlags
-        # update nodes classification if there are any fixed nodes
-        # self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-        # self.fillNodeTable(networkLayer=networkLayer)
-        count = 0
-        while count < maximumCycles or newFixedFlags:
-            newNodeFlags, inval, val = self.checkAllNodesValidity(networkLayer=networkLayer)
-            newFixedFlags = self.fixNodeFlags(nodeFlags=nodeFlags, networkLayer=networkLayer, geomType=geomType)
-            # every cycle implies in a new node reclassification as nodes have changed their types on canvas
-            # self.abstractDb.clearHidNodeTable(self.hidNodeLayerName)
-            # self.fillNodeTable(networkLayer=networkLayer)
-            if newNodeFlags.keys() in nodeFlags.keys():
-                # in case a subset of flags is raised again by process, fixing method is no longer effective 
-                # thus no fixing method will be applied
-                break
-            if newFixedFlags:
-                # in case the fixed flags are the same as before
-                if not list( set(newFixedFlags.keys()) -  set(fixedFlags.keys()) ):
-                    break
-            else:
-                # in case there are no new fixed flags
-                break
-            # adds newly fixed flags to dict
-            fixedFlags.update(newFixedFlags)
-            # in case fixing method isn't effective and fix doesn't really fix it
-            for node in newNodeFlags.keys():
-                if node in fixedFlags.keys():
-                    # remove it from fixed nodes list
-                    fixedFlags.pop(node)
-            # cycle has finished
-            count += 1
-        for node in fixedFlags.keys():
-            # remove all fixed flags from flags dict
-            if node in nodeFlags.keys():
-                nodeFlags.pop(node)
-        return fixedFlags
 
     def getNodeTypeDictFromNodeLayer(self, networkNodeLayer):
         """
@@ -972,6 +951,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # getting network lines and nodes layers
             networkNodeLayer = self.loadLayerBeforeValidationProcess(nodecl)
             networkLayer = self.loadLayerBeforeValidationProcess(hidcl)
+            # start editting network layer in order to be able to flip/merge features from it
+            networkLayer.startEditing()
             crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
             nodeSrid = networkLayer.crs().authid().split(':')[1]
@@ -983,14 +964,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # validation method FINALLY starts...
             nodeFlags, inval, val = self.checkAllNodesValidity(networkLayer=networkLayer)
-            # start recursive method in case flags are raised
-            if self.parameters[self.tr('Allow Automatic Fixes')] and nodeFlags:
-                # this method alters database classification, hence it can only be used with it selected
-                fixedFlags = self.recursiveFixFlags(nodeFlags=nodeFlags, networkLayer=networkLayer)
-                # update node info
-                # self.createNetworkNodesProcess.clearHidNodeLayer(nodeLayer=networkLayer, nodeList=self.nodeIdDict.values())
-                self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(networkLayer=networkLayer)
-                # self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON

@@ -321,7 +321,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
-    def isDangle(self, node, networkLayer, searchRadius):
+    def isFirstOrderDangle(self, node, networkLayer, searchRadius):
         """
         Checks whether node is a dangle into network (connected to a first order line).
         :param node: (QgsPoint) node to be validated.
@@ -331,10 +331,9 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """
         qgisPoint = QgsGeometry.fromPoint(node)
         # building a buffer around node with search radius for intersection with Layer Frame
-        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
-        buf = QgsGeometry.fromWkt(buf)
+        buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
-        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        bbRect = buf.boundingBox()
         # check if buffer intersects features from water bodies layers
         count = 0
         for feat in networkLayer.getFeatures(QgsFeatureRequest(bbRect)):
@@ -343,8 +342,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 res = (count > 1)
                 if res:
                     # to avoid as many iterations as possible
-                    return res
-        return res
+                    return False
+        return True
 
     def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
         """
@@ -390,10 +389,10 @@ class CreateNetworkNodesProcess(ValidationProcess):
                     # if a node is indeed a water sink (operator has set it to a sink)
                     return CreateNetworkNodesProcess.Sink
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
-                elif not self.isDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                     return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.c: point that legitimately only flows out
-            elif hasStartLine:
+            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                 return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.d: points that are not supposed to have one way flow (flags)
             return CreateNetworkNodesProcess.Flag
