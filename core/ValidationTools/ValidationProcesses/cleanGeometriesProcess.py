@@ -21,9 +21,7 @@
  ***************************************************************************/
 """
 from builtins import str
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, \
-                      QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
-                      QgsFeature, Qgis, QgsProcessingUtils
+from qgis.core import QgsMessageLog, Qgis, QgsProcessingUtils
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 import processing
 
