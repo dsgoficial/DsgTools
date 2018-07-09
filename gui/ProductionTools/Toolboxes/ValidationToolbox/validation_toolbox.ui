@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>383</width>
-    <height>398</height>
+    <width>437</width>
+    <height>815</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DSGTools: Validation Toolbox</string>
+   <string>&amp;DSGTools: Validation Toolbox</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_15">
     <item row="0" column="0">
      <widget class="QTabWidget" name="validationTabWidget">
       <property name="toolTip">
@@ -27,39 +27,166 @@
        <attribute name="title">
         <string>Processes</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_2">
+       <layout class="QGridLayout" name="gridLayout_14">
         <item row="0" column="0" colspan="2">
          <widget class="ConnectionComboBox" name="connectionSelectorComboBox" native="true"/>
         </item>
-        <item row="2" column="0" colspan="2">
-         <widget class="QTreeWidget" name="processTreeWidget">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
+        <item row="1" column="0" colspan="2">
+         <widget class="QgsCollapsibleGroupBox" name="ProcessesGroupBox">
+          <property name="title">
+           <string>Validation Processes</string>
           </property>
-          <attribute name="headerMinimumSectionSize">
-           <number>5</number>
-          </attribute>
-          <attribute name="headerStretchLastSection">
+          <property name="saveCollapsedState">
            <bool>false</bool>
-          </attribute>
-          <column>
-           <property name="text">
-            <string>#</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Process</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Status</string>
-           </property>
-          </column>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLineEdit" name="filterLineEdit">
+             <property name="placeholderText">
+              <string>Filter by process name</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTreeWidget" name="treeWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="dragEnabled">
+              <bool>false</bool>
+             </property>
+             <property name="dragDropMode">
+              <enum>QAbstractItemView::NoDragDrop</enum>
+             </property>
+             <column>
+              <property name="text">
+               <string>Available Processes</string>
+              </property>
+             </column>
+             <item>
+              <property name="text">
+               <string>Identification Processes</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Identify Invalid Geometries</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Identify Small Areas</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Identify Small Lines</string>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Correction Processes</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Force Geometries Validity</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Remove Small Areas</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Remove Small Lines</string>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Manipulation Processes</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Clean Geometries</string>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>Topological Processes</string>
+              </property>
+              <item>
+               <property name="text">
+                <string>Topological Clean</string>
+               </property>
+              </item>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0" colspan="2">
+         <widget class="QGroupBox" name="groupBox_7">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Validation Workflow</string>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_13">
+           <item row="0" column="0">
+            <widget class="ValidationWorkflowCompactPropertyManagerWidget" name="validationWorkflowPropertyManagerWidget" native="true"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QTreeWidget" name="processTreeWidget">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <attribute name="headerCascadingSectionResizes">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="headerMinimumSectionSize">
+              <number>1</number>
+             </attribute>
+             <attribute name="headerStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>#</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Workflow Item</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Status</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item row="3" column="0">
@@ -68,10 +195,10 @@
            <string>Re-Run Last Process</string>
           </property>
           <property name="text">
-           <string>Re-Run Last Process</string>
+           <string>Re-Run Workflow</string>
           </property>
           <property name="icon">
-           <iconset resource="../resources.qrc">
+           <iconset resource="../../../../resources.qrc">
             <normaloff>:/plugins/DsgTools/icons/re-run.png</normaloff>:/plugins/DsgTools/icons/re-run.png</iconset>
           </property>
          </widget>
@@ -88,18 +215,11 @@
            <string>Run Process</string>
           </property>
           <property name="text">
-           <string>Run Process</string>
+           <string>Run Process Workflow</string>
           </property>
           <property name="icon">
-           <iconset resource="../resources.qrc">
+           <iconset resource="../../../../resources.qrc">
             <normaloff>:/plugins/DsgTools/icons/run.png</normaloff>:/plugins/DsgTools/icons/run.png</iconset>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QLineEdit" name="filterLineEdit">
-          <property name="placeholderText">
-           <string>Filter by process name</string>
           </property>
          </widget>
         </item>
@@ -155,7 +275,7 @@
            <string>Clear Filtered Flags</string>
           </property>
           <property name="icon">
-           <iconset resource="../resources.qrc">
+           <iconset resource="../../../../resources.qrc">
             <normaloff>:/plugins/DsgTools/icons/flags.png</normaloff>:/plugins/DsgTools/icons/flags.png</iconset>
           </property>
          </widget>
@@ -166,7 +286,7 @@
            <string>Clear All Flags</string>
           </property>
           <property name="icon">
-           <iconset resource="../resources.qrc">
+           <iconset resource="../../../../resources.qrc">
             <normaloff>:/plugins/DsgTools/icons/flags_all.png</normaloff>:/plugins/DsgTools/icons/flags_all.png</iconset>
           </property>
          </widget>
@@ -177,7 +297,7 @@
            <string>Open History</string>
           </property>
           <property name="icon">
-           <iconset resource="../resources.qrc">
+           <iconset resource="../../../../resources.qrc">
             <normaloff>:/plugins/DsgTools/icons/history.png</normaloff>:/plugins/DsgTools/icons/history.png</iconset>
           </property>
          </widget>
@@ -220,7 +340,7 @@
            <item row="0" column="0">
             <widget class="QRadioButton" name="attributeRuleEnforcerRadio">
              <property name="text">
-              <string>Start/Stop Attribute Rule Enforcer</string>
+              <string>Start/Stop Attrib&amp;ute Rule Enforcer</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
@@ -238,11 +358,7 @@
           <property name="title">
            <string>Validation Workflows</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0">
-            <widget class="ValidationWorkflowCompactPropertyManagerWidget" name="validationWorkflowPropertyManagerWidget" native="true"/>
-           </item>
-          </layout>
+          <layout class="QGridLayout" name="gridLayout_6"/>
          </widget>
         </item>
         <item row="3" column="0">
@@ -266,6 +382,12 @@
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>QgsCollapsibleGroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>qgscollapsiblegroupbox.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
@@ -298,7 +420,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="../resources.qrc"/>
+  <include location="../../../../resources.qrc"/>
  </resources>
  <connections/>
 </ui>
