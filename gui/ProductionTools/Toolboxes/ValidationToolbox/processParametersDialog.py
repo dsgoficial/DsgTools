@@ -31,7 +31,7 @@ from DsgTools.gui.CustomWidgets.SelectionWidgets.customSnaperParameterSelector i
 from DsgTools.gui.CustomWidgets.SelectionWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 from DsgTools.gui.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedRecursiveSnapWidget import OrderedRecursiveSnapWidget
-from DsgTools.core.ValidationTools.ValidationProcesses.recursiveSnapLayerOnLayerProcess import RecursiveSnapParameters
+from DsgTools.core.ValidationTools.ValidationProcesses.hierarchicalSnapLayerOnLayerProcess import HierarchicalSnapParameters
 
 class ProcessParametersDialog(QtWidgets.QDialog):
     WIDGETS = {str: QtWidgets.QLineEdit,
@@ -42,7 +42,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                tuple: CustomSnaperParameterSelector,
                deque:QtWidgets.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
-               RecursiveSnapParameters:OrderedRecursiveSnapWidget,
+               HierarchicalSnapParameters:OrderedRecursiveSnapWidget,
                dict:AuxLayerSelector,
                bool: QtWidgets.QCheckBox}
     GETTERS = {QtWidgets.QLineEdit: "text",
@@ -71,7 +71,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                   CustomSnaperParameterSelector: lambda x: True,
                   CustomReferenceAndLayersParameterSelector: lambda x: True,
                   CustomTableSelector: lambda x: True,
-                  RecursiveSnapParameters: lambda x: True,
+                  HierarchicalSnapParameters: lambda x: True,
                   AuxLayerSelector: lambda x: True,
                   QtWidgets.QComboBox: lambda x: True,
                   QtWidgets.QCheckBox: lambda x: True}

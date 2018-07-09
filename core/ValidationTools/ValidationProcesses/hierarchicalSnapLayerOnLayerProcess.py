@@ -28,17 +28,17 @@ from .validationProcess import ValidationProcess
 
 from collections import OrderedDict
 
-class RecursiveSnapParameters(list):
+class HierarchicalSnapParameters(list):
     def __init__(self, x):
         super(RecursiveSnapParameters, self).__init__()
         self.values = x
 
-class RecursiveSnapLayerOnLayerProcess(ValidationProcess):
+class HierarchicalSnapLayerOnLayerProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
         Constructor
         """
-        super(RecursiveSnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        super(HierarchicalSnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         self.processAlias = self.tr('Recursive Snap Layer on Layer')
         
         if not self.instantiating:
