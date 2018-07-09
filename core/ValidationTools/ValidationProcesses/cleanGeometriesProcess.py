@@ -47,26 +47,31 @@ class CleanGeometriesProcess(ValidationProcess):
         """
         Runs the actual grass process
         """
-        alg = 'grass7:v.clean' #api changed, used to be v.clean.advanced
-
-        #setting tools
-        tools = 'rmsa,break,rmdupl,rmdangle'
-        threshold = -1
-
-        #getting table extent (bounding box)
-        extent = layer.extent()
-        (xmin, xmax, ymin, ymax) = extent.xMinimum(), extent.xMaximum(), extent.yMinimum(), extent.yMaximum()
-        extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
+        output = QgsProcessingUtils.generateTempFilename('output.shp')
+        error = QgsProcessingUtils.generateTempFilename('error.shp')
+        processingParameterDict = {
+            'input': layer,
+            'type': [0,1,2,3,4,5,6],
+            'tool': [12, 0, 6, 2],  #'rmsa,break,rmdupl,rmdangle'
+            'threshold':'-1',
+            '-b':False, 
+            '-c':True, 
+            'output':output, 
+            'error': error, 
+            'GRASS_REGION_PARAMETER':None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER': self.parameters['Snap'],
+            'GRASS_MIN_AREA_PARAMETER': self.parameters['MinArea'],
+            'GRASS_OUTPUT_TYPE_PARAMETER':0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''
+        }
         
-        snap = self.parameters['Snap']
-        minArea = self.parameters['MinArea']
-        
-        ret = processing.runalg(alg, layer, tools, threshold, extent, snap, minArea, None, None)
+        ret = processing.run('grass7:v.clean', processingParameterDict) #api changed, used to be v.clean.advanced
         if not ret:
-            raise Exception(self.tr('Problem executing grass7:v.clean.advanced. Check your installed libs.\n'))
+            raise Exception(self.tr('Problem executing grass7:v.clean. Check your installed libs.\n'))
         
         #updating original layer
-        outputLayer = processing.getObject(ret['output'])
+        outputLayer = QgsProcessingUtils.mapLayerFromString(ret['output'], context)
         #self.updateOriginalLayerV2(layer, outputLayer)
 
         #getting error flags
