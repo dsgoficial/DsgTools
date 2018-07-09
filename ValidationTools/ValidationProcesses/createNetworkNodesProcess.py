@@ -22,11 +22,10 @@
 """
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsFeature, QgsWKBTypes, QgsRectangle, \
-                      QgsFeatureRequest, QgsDataSourceURI, QgsExpression
-from qgis.gui import QgsMapTool
+                      QgsFeatureRequest, QgsDataSourceURI
 from PyQt4.QtGui import QMessageBox
 
-import processing, binascii, math
+import processing, binascii
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
@@ -93,22 +92,39 @@ class CreateNetworkNodesProcess(ValidationProcess):
             self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
-
-    def getFrameContour(self, frameLayer):
-        """
-        Read frame contour, frame, hidrography lines and hidrgrography node layers.
-        :param frameLayer: (QgsVectorLayer) frame layer.
-        :return: (list-of-QgsGeometry) frame contour for every feature in frame layer.
-        """
-        frame = []
-        isMulti = QgsWKBTypes.isMultiType(int(frameLayer.wkbType()))
-        for feat in frameLayer.getFeatures():
-            frameNodes = self.DsgGeometryHandler.getFeatureNodes(frameLayer, feat)[0]
-            if isMulti:
-                frameNodes = frameNodes[0]
-            frame.append(QgsGeometry().fromPolyline(frameNodes))
-        return frame
     
+    def getFrameOutterBounds(self, frameLayer):
+        """
+        Gets the outter bounds of all frame features composing frame layer.
+        :param frameLayer: (QgsVectorLayer) frame layer.
+        :return: (list-of-QgsGeometry) list of all disjuncts outter bounds of features in frame layer.
+        """
+        frameGeomList = []
+        # dissolve every feature into a single one
+        result = processing.runalg('qgis:dissolve', frameLayer, True, None, None)
+        # get the layer from processing result
+        outputLayer = processing.getObject(result['OUTPUT'])
+        # clean possible missinformation from resulting layer
+        # setting clean parameters
+        tools = 'rmsa,break,rmdupl,rmdangle'
+        threshold = -1
+        extent = outputLayer.extent()
+        (xmin, xmax, ymin, ymax) = extent.xMinimum(), extent.xMaximum(), extent.yMinimum(), extent.yMaximum()
+        extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
+        snap = self.parameters[self.tr('Search Radius')]
+        minArea = 0.0001
+        result = processing.runalg('grass7:v.clean.advanced', outputLayer, tools, threshold, extent, snap, minArea, None, None)
+        # get resulting layer
+        outputLayer = processing.getObject(result['output'])
+        # get all frame outter layer found
+        for feat in outputLayer.getFeatures():
+            geom = feat.geometry()
+            # deaggregate geometry, if necessary
+            geomList = self.DsgGeometryHandler.deaggregateGeometry(multiGeom=geom, layer=outputLayer)
+            # for every deaggregated node, get only the outter bound as a polyline (for intersection purposes)
+            frameGeomList += [QgsGeometry().fromPolyline(g.asPolygon()[0]) for g in geomList]
+        return frameGeomList
+
     def identifyAllNodes(self, networkLayer):
         """
         Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
@@ -534,7 +550,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 # if no sink layer is selected, layer should be ignored
                 waterSinkLayer = None
             # getting dictionaries of nodes information 
-            frame = self.getFrameContour(frameLayer=frameLayer)
+            frame = self.getFrameOutterBounds(frameLayer=frameLayer)
             self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
             crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
