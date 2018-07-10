@@ -63,8 +63,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                                 self.tr('Network Layer') : networkFlowParameterList,
                                 self.tr('Node Layer') : nodeFlowParameterList,
                                 self.tr('Search Radius') : 5.0,
-                                self.tr('Select All Valid Lines') : False,
-                                self.tr('Consider Dangles as Waterway Beginnings') : True
+                                self.tr('Select All Valid Lines') : False
                               }
             # transmit these parameters to CreateNetworkNodesProcess object
             self.createNetworkNodesProcess.parameters = self.parameters
@@ -334,7 +333,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # get line connected to node
                 lines = nodePointDict['start'] + nodePointDict['end']
                 # just in case there's a node wrong manual reclassification so code doesn't raise an error
-                ids = [line.id() for line in lines]
+                ids = [str(line.id()) for line in lines]
                 reason = self.tr('Line {0} disconnected from network.').format(", ".join(ids))
             # elif nodeType == CreateNetworkNodesProcess.NodeOverload:
             #     reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
@@ -361,16 +360,16 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
-                        invalidLines[lineID] = line
-                        reason += self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, nodeType)
+                    invalidLines[lineID] = line
+                    reason = "".join([reason, self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, nodeType)])
             elif flow == 'out':
                 if node == initialNode:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
-                        invalidLines[lineID] = line
-                        reason += self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')\
-                        .format(lineID, self.nodeTypeNameDict[nodeType])
+                    invalidLines[lineID] = line
+                    reason = "".join([reason, self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')\
+                    .format(lineID, self.nodeTypeNameDict[nodeType])])
             elif flow == 'in and out':
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
@@ -378,17 +377,17 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'\
                     .format(self.nodeTypeNameDict[nodeType]))
                     if thisReason not in reason:
-                        reason += thisReason
+                        reason = "".join([reason, thisReason])
                 elif node in [initialNode, finalNode]:
-                    if lineID not in validLines.keys():
+                    if lineID not in validLines:
                         validLines[lineID] = line
-                elif lineID not in invalidLines.keys():
+                elif lineID not in invalidLines:
                     invalidLines[lineID] = line
-                    reason += self.tr('Line {0} seems to be invalid (unable to point specific reason). ').format(lineID)
+                    reason = "".join([reason, self.tr('Line {0} seems to be invalid (unable to point specific reason).').format(lineID)])
             elif flow == 'in or out':
                 # these nodes can either be a waterway beginning or end
                 # No invalidation reasons were thought at this point...
-                if lineID not in validLines.keys():
+                if lineID not in validLines:
                     validLines[lineID] = line
         return  validLines, invalidLines, reason
 
@@ -454,7 +453,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
-        startingNodeTypes = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
+        startingNodeTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
         deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
@@ -508,7 +507,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         if node not in nodeFlags.keys():
                             nodeFlags[node] = reason
                         else:
-                            nodeFlags[node] += "; " + reason
+                            nodeFlags[node] = "".join([nodeFlags[node], "; ", reason])
                     # get next nodes connected to invalid lines
                     for line in inval.values():
                         if line in self.nodeDict[node]['end']:
@@ -803,15 +802,15 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # building warning message
         warning = ''
         if flippedLines and mergedLinesString:
-            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(",".join(flippedLines))
-            warning += self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(",".join(mergedLinesString))
-        elif flippedLines:
             warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(flippedLines))
+            warning = "".join([warning, self.tr("\nLines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))])
+        elif flippedLines:
+            warning = "".join([warning, self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(flippedLines))])
         elif mergedLinesString:
-            warning = self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))
+            warning = "".join([warning, self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))])
         if warning:
             # warning is only raised when there were flags fixed
-            warning = self.tr('\n{0}: Flipped/Merged Lines\n{1}').format(self.processAlias, warning)
+            warning = "".join([self.tr('\n{0}: Flipped/Merged Lines\n').format(self.processAlias), warning])
             QgsMessageLog.logMessage(warning, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             return True
         return False
@@ -830,6 +829,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         fixedFlags = dict()
         if not geomType:
             geomType = networkLayer.geometryType()
+        # for speed-up
+        append = lineIdsForFlipping.append
         for node, reason in nodeFlags.iteritems():
             reasonType = self.getReasonType(reason=reason)
             if not reasonType:
@@ -844,9 +845,9 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if len(self.nodeDict[node]['start']) > len(self.nodeDict[node]['end']):
                     # the line to be flipped is in the largest dict, given that confluence/ramification points would turn
                     # into sinks/water sources
-                    checkFeatIdList = [str(f.id()) for f in self.nodeDict[node]['start']]
+                    checkFeatIdList = map(str, map(id, self.nodeDict[node]['start']))
                 else:
-                    checkFeatIdList = [str(f.id()) for f in self.nodeDict[node]['end']]
+                    checkFeatIdList = map(str, map(id, self.nodeDict[node]['end']))
                 if featIdFlipCandidates[0] in checkFeatIdList:
                     lineIdsForFlipping += [featIdFlipCandidates[0]]
                 else:
@@ -860,35 +861,40 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 self.DsgGeometryHandler.mergeLines(line_a=line_a, line_b=line_b, layer=networkLayer)
                 mergedLinesString += [self.tr('{0} to {1}').format(line_b.id(), line_a.id())]
                 fixedFlags[node] = reason
-            elif reasonType == 5 and self.parameters[self.tr('Consider Dangles as Waterway Beginnings')]:
+            elif reasonType == 5:
                 # case where node is not a sink not a node next to water body and has an "in" flow
                 if len(self.nodeDict[node]['end']) == 1 and not self.createNetworkNodesProcess.isFirstOrderDangle(node=node, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                     # only dangles are considered waterway beginnings
-                    lineIdsForFlipping.append(str(self.nodeDict[node]['end'][0].id()))
+                    append(str(self.nodeDict[node]['end'][0].id()))
+        # for speed-up
+        pop = nodeFlags.pop
         for node in fixedFlags.keys():
             # pop it from original dict
-            nodeFlags.pop(node, None)
+            pop(node, None)
         flipFeatureListIterator = networkLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(', '.join(lineIdsForFlipping)))))
+        # for speed-up
+        remove = lineIdsForFlipping.remove
+        flipFeature = self.DsgGeometryHandler.flipFeature
         networkLayer.beginEditCommand('Merging lines')
         for feat in flipFeatureListIterator:
             # flip every feature indicated as a fixable flag
             if self.checkBlackListLine(layer=networkLayer, line=feat):
-                lineIdsForFlipping.remove(str(feat.id()))
+                remove(str(feat.id()))
             else:
-                self.DsgGeometryHandler.flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
+                flipFeature(layer=networkLayer, feature=feat, geomType=geomType)
         networkLayer.endEditCommand()
         # building warning message
         warning = ''
         if lineIdsForFlipping and mergedLinesString:
             warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(",".join(lineIdsForFlipping))
-            warning += self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(",".join(mergedLinesString))
+            "".join([warning, self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(",".join(mergedLinesString))])
         elif lineIdsForFlipping:
-            warning = self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(lineIdsForFlipping))
+            "".join([warning, self.tr("Lines that were flipped while directioning hidrography lines: {0}\n").format(", ".join(lineIdsForFlipping))])
         elif mergedLinesString:
-            warning = self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))
+            "".join([warning, self.tr("Lines that were merged while directioning hidrography lines: {0}\n").format(", ".join(mergedLinesString))])
         if warning:
             # warning is only raised when there were flags fixed
-            warning = self.tr('\n{0}: Flipped/Merged Lines\n{1}').format(self.processAlias, warning)
+            "".join([self.tr('\n{0}: Flipped/Merged Lines\n').format(self.processAlias), warning])
             QgsMessageLog.logMessage(warning, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         return fixedFlags
 
