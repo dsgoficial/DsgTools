@@ -33,7 +33,7 @@ from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class CreateNetworkNodesProcess(ValidationProcess):
     # enum for node types
-    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, ConstantFlowNode = range(11)
+    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, ConstantFlowNode, DisconnectedLine = range(12)
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Class constructor.
@@ -58,7 +58,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
                                     CreateNetworkNodesProcess.AttributeChange : self.tr("Attribute Change Node"),
                                     CreateNetworkNodesProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
                                     CreateNetworkNodesProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-                                    CreateNetworkNodesProcess.ConstantFlowNode : self.tr("Constant Flow Node")
+                                    CreateNetworkNodesProcess.ConstantFlowNode : self.tr("Constant Flow Node"),
+                                    CreateNetworkNodesProcess.DisconnectedLine : self.tr("Disconnected From Network")
                                     # CreateNetworkNodesProcess.NodeOverload : self.tr("Overloaded Node")
                                 }
         if not self.instantiating:
@@ -153,13 +154,13 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 # initial node
                 pInit, pEnd = nodes[0], nodes[-1]
                 # filling starting node information into dictionary
-                if pInit not in nodeDict.keys():
+                if pInit not in nodeDict:
                     # if the point is not already started into dictionary, it creates a new item
                     nodeDict[pInit] = { 'start' : [], 'end' : [] }
                 if feat not in nodeDict[pInit]['start']:
                     nodeDict[pInit]['start'].append(feat)                            
                 # filling ending node information into dictionary
-                if pEnd not in nodeDict.keys():
+                if pEnd not in nodeDict:
                     nodeDict[pEnd] = { 'start' : [], 'end' : [] }
                 if feat not in nodeDict[pEnd]['end']:
                     nodeDict[pEnd]['end'].append(feat)
@@ -200,8 +201,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """
         qgisPoint = QgsGeometry.fromPoint(node)
         # building a buffer around node with search radius for intersection with Layer Frame
-        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
-        buf = QgsGeometry.fromWkt(buf)
+        buf = qgisPoint.buffer(searchRadius, -1)
         for frameContour in frameLyrContourList:
             if buf.intersects(frameContour):
                 # it is condition enough one of the frame contours to be next to node
@@ -218,10 +218,9 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """        
         qgisPoint = QgsGeometry.fromPoint(node)
         # building a buffer around node with search radius for intersection with Layer Frame
-        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
-        buf = QgsGeometry.fromWkt(buf)
+        buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
-        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        bbRect = buf.boundingBox()
         # check if buffer intersects features from water bodies layers
         for lyr in waterBodiesLayers:
             if lyr.geometryType() == 0:
@@ -263,10 +262,9 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """
         qgisPoint = QgsGeometry.fromPoint(node)
         # building a buffer around node with search radius for intersection with Layer Frame
-        buf = qgisPoint.buffer(searchRadius, -1).boundingBox().asWktPolygon()
-        buf = QgsGeometry.fromWkt(buf)
+        buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
-        bbRect = QgsRectangle(node.x()-searchRadius, node.y()-searchRadius, node.x()+searchRadius, node.y()+searchRadius)
+        bbRect = buf.boundingBox()
         # check if any wb feature inside of buffer area contains any ending line
         for line in self.nodeDict[node]['end']:
             for lyr in waterBodiesLayers:
@@ -295,7 +293,6 @@ class CreateNetworkNodesProcess(ValidationProcess):
             networLayerName = layer.name()
             for key in self.networkClassesWithElemDict.keys():
                 if key.split(",")[1] in networLayerName:
-                    self.networkClassesWithElemDict
                     geomColumn = key.split(",")[2]
                     break
             # removing attributes that are calculated OTF
@@ -345,21 +342,80 @@ class CreateNetworkNodesProcess(ValidationProcess):
                     return False
         return True
 
-    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None):
+    def checkIfLineIsDisconnected(self, node, networkLayer, nodeTypeDict, geomType=None):
+        """
+        Checks whether a waterway beginning node connected to a line disconnected from network.
+        :param node: (QgsPoint) point to be classified.
+        :param networkLayer: (QgsVectorLayer) network lines layer.
+        :param nodeTypeDict: (dict) all current classified nodes and theirs types.
+        :param geomType: (int) network layer geometry type code.
+        :return: (bool) whether node is connected to a disconnected line 
+        """
+        if not nodeTypeDict:
+            # if there are no classified nodes, method is ineffective
+            return False
+        # if a line is disconnected from network, then the other end of the line would have to be classified as a waterway beginning as well
+        if not geomType:
+            geomType = networkLayer.geometryType()
+        nextNodes = []
+        # to reduce calculation time
+        nodePointDict = self.nodeDict[node]
+        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
+        # get all other nodes connected to lines connected to "node"
+        lines = nodePointDict['start'] + nodePointDict['end']
+        if len(lines) > 1:
+            # if there is at least one more line connected to node, line is not disconnected
+            return False
+        # get line nodes
+        n = self.DsgGeometryHandler.getFeatureNodes(layer=networkLayer, feature=lines[0], geomType=geomType)
+        if nodePointDict['start']:            
+            # if line starts at target node, the other extremity is a final node
+            if isMulti:
+                if n:
+                    n = n[0][-1]
+            elif n:
+                n = n[-1]
+        elif nodePointDict['end']:
+            # if line starts at target node, the other extremity is a initial node
+            if isMulti:
+                if n:
+                    n = n[0][0]
+            elif n:
+                n = n[0]
+        # if next node is not among the valid ending lines, it may still be connected to a disconnected line if it is a dangle
+        # validEnds = [CreateNetworkNodesProcess.Sink, CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.NodeNextToWaterBody]
+        if n in nodeTypeDict:
+            # if both ends are classified as waterway beginning, then both ends are 1st order dangles and line is disconnected.
+            return nodeTypeDict[n] == CreateNetworkNodesProcess.WaterwayBegin
+            # if nodeTypeDict[n] not in validEnds:
+            #     if self.isFirstOrderDangle(node=n, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+            #         # if next node is not a valid network ending node and is a dangle, line is disconnected from network 
+            #         return False
+            #     return True
+        # in case next node is not yet classified, method is ineffective
+        return False
+
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
-        :param networkLayer: (QgsVectorLayer) network lines layer.        
+        :param networkLayer: (QgsVectorLayer) network lines layer.
         :param frameLyrContourList: (list-of-QgsGeometry) border line for the frame layer to be checked.
+        :param waterBodiesLayers: (list-of-QgsVectorLayer) list of all waterbodies layer.
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :param nodeTypeDict: (dict) dict with all currently classified nodes and their types.
         :param waterSinkLayer: (QgsVectorLayer) water sink layer.
+        :param networkLayerGeomType: (int) network layer geometry type code.
         :return: returns the (int) point type.
         """
-        dictStartingEndingLinesEntry = self.nodeDict[nodePoint]
-        sizeFlowOut = len(dictStartingEndingLinesEntry['start'])
-        sizeFlowIn = len(dictStartingEndingLinesEntry['end'])
+        # to reduce calculation time in expense of memory, which is cheap
+        nodePointDict = self.nodeDict[nodePoint]
+        sizeFlowOut = len(nodePointDict['start'])
+        sizeFlowIn = len(nodePointDict['end'])
         hasStartLine = bool(sizeFlowOut)
         hasEndLine = bool(sizeFlowIn)
+        if not networkLayerGeomType:
+            networkLayerGeomType = networkLayer.geometryType()
         # "exclusive or"
         startXORendLine = (hasStartLine != hasEndLine)
         # # case 5: more than 3 lines flowing through one network line (it is forbidden as of Brazilian mapping norm EDGV)
@@ -390,9 +446,14 @@ class CreateNetworkNodesProcess(ValidationProcess):
                     return CreateNetworkNodesProcess.Sink
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
                 elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                    # check if node is connected to a disconnected line
+                    if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
+                        return CreateNetworkNodesProcess.DisconnectedLine
                     return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.c: point that legitimately only flows out
             elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
+                    return CreateNetworkNodesProcess.DisconnectedLine
                 return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.d: points that are not supposed to have one way flow (flags)
             return CreateNetworkNodesProcess.Flag
@@ -426,6 +487,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         :param waterSinkLayer: (QgsVectorLayer) water sink layer.
         :return: a (dict) dictionary of node and its node type ( { (QgsPoint)node : (int)nodeType } ). 
         """
+        networkLayerGeomType = networkLayer.geometryType()
         nodeTypeDict = dict()
         nodeKeys = self.nodeDict.keys()
         if not nodeList:
@@ -434,7 +496,9 @@ class CreateNetworkNodesProcess(ValidationProcess):
             if node not in nodeKeys:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
+            nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
+                                    waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
+                                    nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType)
         return nodeTypeDict
 
     def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=False):
