@@ -306,15 +306,18 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     CreateNetworkNodesProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
                     CreateNetworkNodesProcess.NodeNextToWaterBody : 'in or out', # 8 - Nó próximo a corpo d'água
                     CreateNetworkNodesProcess.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
-                    CreateNetworkNodesProcess.ConstantFlowNode : 'in and out' # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
+                    CreateNetworkNodesProcess.ConstantFlowNode : 'in and out', # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
+                    CreateNetworkNodesProcess.DisconnectedLine : None, # 11 - Nó conectado a uma linha perdida na rede (teria dois inícios de rede)
                     # CreateNetworkNodesProcess.NodeOverload : None # 10 - Mais 
                    }
+        # to avoid calculations in expense of memory
+        nodeType = self.nodeTypeDict[node]
         # if node is introduced by operator's modification, it won't be saved to the layer
         if node not in self.nodeTypeDict.keys() and not self.unclassifiedNodes:
             self.unclassifiedNodes = True
             QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('There are unclassified nodes! Node (re)creation process is recommended before this process.'))
             return None, None, None
-        flow = flowType[self.nodeTypeDict[node]]
+        flow = flowType[nodeType]
         nodePointDict = self.nodeDict[node]
         # getting all connected lines to node that are not already validated
         linesNotValidated = list( set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines) )
@@ -322,12 +325,18 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         validLines, invalidLines = dict(), dict()
         if not flow:
             # flags have all lines flagged
-            if self.nodeTypeDict[node] == CreateNetworkNodesProcess.Flag:
+            if nodeType == CreateNetworkNodesProcess.Flag:
                 reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
-            elif self.nodeTypeDict[node] == CreateNetworkNodesProcess.AttributeChangeFlag:
-                id1, id2 = self.nodeDict[node]['start'][0].id(), self.nodeDict[node]['end'][0].id()
+            elif nodeType == CreateNetworkNodesProcess.AttributeChangeFlag:
+                id1, id2 = nodePointDict['start'][0].id(), nodePointDict['end'][0].id()
                 reason = self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.').format(id1, id2)
-            # elif self.nodeTypeDict[node] == CreateNetworkNodesProcess.NodeOverload:
+            elif nodeType == CreateNetworkNodesProcess.DisconnectedLine:
+                # get line connected to node
+                lines = nodePointDict['start'] + nodePointDict['end']
+                # just in case there's a node wrong manual reclassification so code doesn't raise an error
+                ids = [line.id() for line in lines]
+                reason = self.tr('Line {0} disconnected from network.').format(", ".join(ids))
+            # elif nodeType == CreateNetworkNodesProcess.NodeOverload:
             #     reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
             for line in linesNotValidated:
                 invalidLines[line.id()] = line
@@ -353,7 +362,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
-                        reason += self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, self.nodeTypeDict[node])
+                        reason += self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, nodeType)
             elif flow == 'out':
                 if node == initialNode:
                     if lineID not in validLines.keys():
@@ -361,13 +370,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 elif lineID not in invalidLines.keys():
                         invalidLines[lineID] = line
                         reason += self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')\
-                        .format(lineID, self.nodeTypeNameDict[self.nodeTypeDict[node]])
+                        .format(lineID, self.nodeTypeNameDict[nodeType])
             elif flow == 'in and out':
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
                     invalidLines[lineID] = line
                     thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'\
-                    .format(self.nodeTypeNameDict[self.nodeTypeDict[node]]))
+                    .format(self.nodeTypeNameDict[nodeType]))
                     if thisReason not in reason:
                         reason += thisReason
                 elif node in [initialNode, finalNode]:
