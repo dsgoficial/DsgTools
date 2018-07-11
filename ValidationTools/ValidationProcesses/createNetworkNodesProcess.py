@@ -90,7 +90,6 @@ class CreateNetworkNodesProcess(ValidationProcess):
                                                                        'layersDictList':interfaceDict
                                                                      } ),
                               }
-            self.nodeDbIdDict = None
             self.nodeDict = None
             self.nodeTypeDict = None
     
@@ -121,7 +120,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         for feat in outputLayer.getFeatures():
             geom = feat.geometry()
             # deaggregate geometry, if necessary
-            geomList = self.DsgGeometryHandler.deaggregateGeometry(multiGeom=geom, layer=outputLayer)
+            geomList = self.DsgGeometryHandler.deaggregateGeometry(multiGeom=geom)
             # for every deaggregated node, get only the outter bound as a polyline (for intersection purposes)
             frameGeomList += [QgsGeometry().fromPolyline(g.asPolygon()[0]) for g in geomList]
         return frameGeomList
@@ -244,11 +243,10 @@ class CreateNetworkNodesProcess(ValidationProcess):
             return False
         qgisPoint = QgsGeometry.fromPoint(node)
         # building bounding box around node for feature requesting
-        x, y = node.x(), node.y()
-        bbRect = QgsRectangle(x-searchRadius, y-searchRadius, x+searchRadius, y+searchRadius)
+        bbRect = qgisPoint.buffer(searchRadius, -1).boundingBox()
         # check if qgisPoint (node geometry) is over a sink classified point
         for feat in waterSinkLayer.getFeatures(QgsFeatureRequest(bbRect)):
-            if qgisPoint.equals(feat.geometry()):
+            if qgisPoint.distance(feat.geometry()) <= searchRadius:
                 # any feature component of a water body intersected is enough
                 return True
         return False
@@ -430,7 +428,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                     return CreateNetworkNodesProcess.DownHillNode
                 # case 1.a.ii: waterway is flowing to mapped area (point over the frame has one line starting line)
                 elif hasStartLine:
-                    return CreateNetworkNodesProcess.UpHillNode
+                    return CreateNetworkNodesProcess.UpHillNode                
             # case 1.b: point that legitimately only flows from
             elif hasEndLine:
                 # case 1.b.i
@@ -440,20 +438,23 @@ class CreateNetworkNodesProcess(ValidationProcess):
                     if sizeFlowIn == 1 or (sizeFlowIn > 1 and not self.checkIfHasLineInsideWaterBody(node=nodePoint, waterBodiesLayers=waterBodiesLayers)):
                         # a node next to water cannot have ANY of its EXCEEDING ending lines coming from inside a water body feature 
                         return CreateNetworkNodesProcess.NodeNextToWaterBody
-                # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
-                elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
-                    # if a node is indeed a water sink (operator has set it to a sink)
-                    return CreateNetworkNodesProcess.Sink
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
                 elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                     # check if node is connected to a disconnected line
                     if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                         return CreateNetworkNodesProcess.DisconnectedLine
+                    # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
+                    elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
+                        # if a node is indeed a water sink (operator has set it to a sink)
+                        return CreateNetworkNodesProcess.Sink
                     return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.c: point that legitimately only flows out
             elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
                 if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                     return CreateNetworkNodesProcess.DisconnectedLine
+                elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
+                    # in case there's a wrongly acquired line connected to a water sink
+                    return CreateNetworkNodesProcess.Sink
                 return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.d: points that are not supposed to have one way flow (flags)
             return CreateNetworkNodesProcess.Flag

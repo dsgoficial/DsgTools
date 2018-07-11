@@ -221,11 +221,12 @@ class DsgGeometryHandler(QObject):
             return True
         return False
 
-    def deaggregateGeometry(self, multiGeom, layer):
+    def deaggregateGeometry(self, multiGeom):
         """
         Deaggregates a multi-part geometry into a its parts and returns all found parts. If no part is found,
         method returns original geometry.
-        :param multiPartFeat: (QgsFeature) multi part feature to be deaggregated
+        :param multiPartFeat: (QgsGeometry) multi part geometry to be deaggregated.
+        :return: (list-of-QgsGeometry) list of deaggregated geometries
         """
         if not multiGeom or not multiGeom.geometry().partCount() > 1:
             return [multiGeom]
