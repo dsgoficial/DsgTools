@@ -444,6 +444,47 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nextNodes.append(self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType))
         return nextNodes
 
+    def checkForStartConditions(self, node, validLines, networkLayer, geomType=None):
+        """
+        Checks if any of next nodes is a contour condition to directioning process.
+        :param node: (QgsPoint) node which needs to have its next nodes checked.
+        :param validLines: (list-of-QgsFeature) lines that were alredy checked and validated.
+        :param networkLayer: (QgsVectorLayer) network lines layer.
+        :param geomType: (int) network lines layer geometry type code.
+        :return:
+        """
+        # node type granted as right as start conditions
+        inContourConditionTypes = [CreateNetworkNodesProcess.DownHillNode]
+        # outContourConditionTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin]
+        nodes = self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
+        # for faster calculation
+        nodeTypeDictAlias = self.nodeTypeDict
+        nodeDictAlias = self.nodeDict
+        # list of flipped features, if any
+        flippedLines = []
+        # at first, we assume there are no start conditions on next nodes
+        hasStartCondition = False
+        for nn in nodes:
+            nodeType = nodeTypeDictAlias[nn]
+            if nodeType in inContourConditionTypes:
+                # if next node is an "in" flow type, check if line is that way and flip it, if necessary
+                if nodeDictAlias[nn]['end']:
+                    # if this list is populated, then next node is indeed an "in" flow type node and line should be added to validLines
+                    validLines.append(nodeDictAlias[nn]['end'][0])
+                else:
+                    # if line is in start dict, it has the wrong flow, then it should be flipped
+                    line = nodeDictAlias[nn]['start'][0]
+                    self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
+                    # if a line is flipped it must be changed in self.nodeDict
+                    self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
+                    flippedLines.append(str(line.id()))
+                    validLines.append(nodeDictAlias[nn]['end'][0])
+                hasStartCondition = True
+        if flippedLines:
+            # if lines are flipped, node has its type changed
+            self.reclassifyNode(node=node)
+        return hasStartCondition, flippedLines
+
     def directNetwork(self, networkLayer, nodeList=None):
         """
         Directs network lines.
@@ -491,12 +532,12 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         addIds = set(flippedLinesIds_) - set(flippedLinesIds)
                         # IDs that are registered will be removed (flipping a flipped line returns to original state)
                         removeIds = set(flippedLinesIds_) - addIds
-                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds) ) + list( addIds  )
+                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds)  & addIds  )
                     if mergedLinesString_:
                         if not mergedLinesString:
                             mergedLinesString = mergedLinesString_
                         else:
-                            ", ".join([mergedLinesString, mergedLinesString_])
+                            mergedLinesString.append(mergedLinesString_)
                     # if node is still invalid, add to nodeFlagList and add/update its reason
                     if reason:
                         if node not in nodeFlags.keys():
@@ -525,7 +566,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # log all features that were merged and/or flipped
         self.logAlteredFeatures(flippedLines=flippedLinesIds, mergedLinesString=mergedLinesString)
         return nodeFlags, invalidLines, validLines
-
 
     def checkAllNodesValidity(self, networkLayer, nodeList=None):
         """
@@ -558,11 +598,22 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         flippedLinesIds, mergedLinesString = [], ""
         while nodeList:
             for node in nodeList:
+                # first thing to be done: check if there are more than one non-validated line (hence, enough information for a decision)
+                startLines = self.nodeDict[node]['start']
+                endLines = self.nodeDict[node]['end']
+                validLinesList = validLines.values()
+                if len(set(startLines + endLines) - set(validLinesList)) > 1:
+                    # if there are more than 1 lines not validated yet, node will neither be checked not marked as visited
+                    hasStartCondition, flippedLines = self.checkForStartConditions(node=node, validLines=validLinesList, networkLayer=networkLayer, geomType=geomType)
+                    if hasStartCondition:
+                        flippedLinesIds += flippedLines
+                    else:
+                        continue
                 if node not in visitedNodes:
                     # set node as visited
                     visitedNodes.append(node)
                 # check coherence to node type and waterway flow
-                val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
+                val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLinesList,\
                                                             networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
                 # nodes to be removed from next nodes
                 removeNode = []
@@ -571,7 +622,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # try to fix node issues
                     # note that val, inval and reason MAY BE MODIFIED - and there is no problem...
                     flippedLinesIds_, mergedLinesString_ = self.fixNodeFlagsNew(node=node, valDict=val, invalidDict=inval, reason=reason, \
-                                                                            connectedValidLines=validLines.values(), networkLayer=networkLayer, \
+                                                                            connectedValidLines=validLinesList, networkLayer=networkLayer, \
                                                                             geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
                     # keep track of all modifications made
                     if flippedLinesIds_:
@@ -838,8 +889,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
     def reclassifyNode(self, node):
         """
         Reclassifies node.
+        :param node: (QgsPoint) node to be reclassified.
+        :return: (bool) whether point was modified.
         """
-        pass
+        # node type changed to ramification in order to not have flow issues
+        before = self.nodeTypeDict[node] == CreateNetworkNodesProcess.Confluence
+        self.nodeTypeDict[node] = CreateNetworkNodesProcess.Confluence
+        return before != (self.nodeTypeDict[node] == CreateNetworkNodesProcess.Confluence)
 
     def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None, deltaLinesCheckList=None):
         """
