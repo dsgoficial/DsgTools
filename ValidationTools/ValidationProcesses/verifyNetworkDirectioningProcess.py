@@ -825,54 +825,36 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         """
         self.DsgGeometryHandler.flipFeature(layer=layer, feature=line, geomType=geomType)
 
-    def fixOneWayFlowNode(self, node, networkLayer, validLines, geomType=None):
+    def flipInvalidLine(self, node, networkLayer, validLines, geomType=None):
         """
         Fixes lines connected to nodes flagged as one way flowing node where it cannot be.
         :param node: (QgsPoint) invalid node to have its lines flipped.
         :param networkLayer: (QgsVectorLayer) layer containing target feature.
         :param validLines: (list-of-QgsFeature) list of all validated lines.
         :param geomType: (int) layer geometry type code.
-        :return: (list-of-QgsFeature) list of lines that were flipped.
+        :return: (str) list of line ID as str that was flipped.
         """
-        # list of lines that were flipped in this execution
-        flippedLines = []
         # get dictionaries for speed-up
         endDict = self.nodeDict[node]['end']
         startDict = self.nodeDict[node]['start']
-        # in case there are conflicting lines and one of them must be flipped
-        if len(endDict):
-            # get all invalid lines connected to node
-            invalidLines = set(endDict) - set(validLines)
-            # get all valid lines connected to node
-            valLines = set(endDict) - invalidLines
+        amountLines = len(endDict + startDict)
+        # it is considered that 
+        if endDict:
+            # get invalid line connected to node
+            invalidLine = list(set(endDict) - set(validLines))
+            if invalidLine:
+                invalidLine = invalidLine[0]
         else:
-            # get all invalid lines connected to node
-            invalidLines = set(startDict) - set(validLines)
-            # get all valid lines connected to node
-            valLines = set(startDict) - invalidLines
+            # get invalid line connected to node
+            invalidLine = list(set(startDict) - set(validLines))
+            if invalidLine:
+                invalidLine = invalidLine[0]
         # if no invalid lines are identified, something else is wrong and flipping won't be the solution
-        if not invalidLines:
+        if not invalidLine:
             return []
-        elif len(invalidLines)==1:
-            # if only one line is not yet validated, then it'll be flipped
-            line = list(invalidLines)[0]
-            self.flipSingleLine(line=line, layer=networkLayer)
-            # if a line is flipped it must be changed in self.nodeDict
-            self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
-            flippedLines.append(str(line.id()))
-        elif valLines:
-            # if there are more invalid lines and there are valid lines, a delta check should be executed
-            val, inval, reason = self.validateDeltaLinesAngV2(node=node, networkLayer=networkLayer, connectedValidLines=valLines, geomType=geomType)
-            if inval:
-                # delta-invalid lines are flipping candidates
-                for line in inval.values():
-                    if line not in validLines:
-                        # if line is not validated, it'll be flipped
-                        self.flipSingleLine(line=line, layer=networkLayer)
-                        # if a line is flipped it must be changed in self.nodeDict
-                        self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
-                        flippedLines.append(str(line.id()))
-        return flippedLines
+        # flipping invalid line
+        self.flipSingleLine(line=invalidLine, layer=networkLayer)
+        return [str(invalidLine.id())]
 
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
         """
@@ -918,25 +900,27 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if line not in connectedValidLines:
                     # only non-valid lines may be modified
                     self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
-                    # if a line is flipped it must be changed in self.nodeDict
-                    self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
                     flippedLinesIds.append(lineId)
         elif reasonType == 3:
             # original message: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
-            pass
+            flippedLinesIds.append(self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType))
         elif reasonType == 4:
             pass
         elif reasonType == 5:
             # original message: self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
-            flippedLinesIds += self.fixOneWayFlowNode(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
+            flippedLinesIds.append(self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType))
         else:
             # in case, for some reason, an strange value is given to reasonType
             return [], ''
-        # re-classify node before re-checking
-        self.reclassifyNode(node) 
-        # check if node is fixed and update its dictionaries and invalidation reason
-        valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
-                                        networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
+        # reclassification re-evalution is only needed if lines were flipped
+        if flippedLinesIds:
+            # if a line is flipped it must be changed in self.nodeDict
+            [self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType) for line in flippedLinesIds]
+            # re-classify node before re-checking
+            self.reclassifyNode(node) 
+            # check if node is fixed and update its dictionaries and invalidation reason
+            valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
+                                            networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
         return flippedLinesIds, mergedLinesString
 
     def logAlteredFeatures(self, flippedLines, mergedLinesString):
