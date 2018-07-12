@@ -435,8 +435,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
                 if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
                     # it is considered that every free node on map is a starting node. The only valid exceptions are nodes that are
                     # next to water bodies and water sink holes.
-                    if sizeFlowIn == 1 or (sizeFlowIn > 1 and not self.checkIfHasLineInsideWaterBody(node=nodePoint, waterBodiesLayers=waterBodiesLayers)):
-                        # a node next to water cannot have ANY of its EXCEEDING ending lines coming from inside a water body feature 
+                    if sizeFlowIn == 1:
+                        # a node next to water has to be a lose end
                         return CreateNetworkNodesProcess.NodeNextToWaterBody
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
                 elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
