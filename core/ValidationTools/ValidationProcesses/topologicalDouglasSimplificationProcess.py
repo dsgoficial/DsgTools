@@ -31,6 +31,7 @@ class TopologicalDouglasSimplificationProcess(ValidationProcess):
         Constructor
         """
         super(TopologicalDouglasSimplificationProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'topological'
         self.processAlias = self.tr('Topological Douglas Peucker Simplification')
         
         if not self.instantiating:

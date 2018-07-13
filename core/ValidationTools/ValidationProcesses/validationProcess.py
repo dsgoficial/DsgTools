@@ -45,6 +45,7 @@ class ValidationProcess(QObject):
         Constructor
         """
         super(ValidationProcess, self).__init__()
+        self.processCategory = None
         self.abstractDb = postgisDb
         if self.getStatus() == None:
             self.setStatus(self.tr('Instantianting process'), 0)

@@ -31,6 +31,7 @@ class IdentifyVertexNearEdgeProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyVertexNearEdgeProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Vertex Near Edge')
         
         if not self.instantiating:

@@ -54,6 +54,7 @@ class SpatialRuleProcess(ValidationProcess):
         super(SpatialRuleProcess, self).__init__(postgisDb, iface, instantiating, withElements)
         
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Spatial Rule Checker')
         
     def getRules(self):

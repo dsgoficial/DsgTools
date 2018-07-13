@@ -31,6 +31,7 @@ class DissolvePolygonsWithCommonAttributesProcess(ValidationProcess):
         Constructor
         """
         super(DissolvePolygonsWithCommonAttributesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Dissolve polygons with common attributes')
         
         if not self.instantiating:

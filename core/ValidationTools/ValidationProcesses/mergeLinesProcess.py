@@ -31,6 +31,7 @@ class MergeLinesProcess(ValidationProcess):
         Constructor
         """
         super(MergeLinesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Merge lines with common attributes')
         
         if not self.instantiating:

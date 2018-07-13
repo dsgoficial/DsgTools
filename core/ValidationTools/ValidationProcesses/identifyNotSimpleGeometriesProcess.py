@@ -31,6 +31,7 @@ class IdentifyNotSimpleGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyNotSimpleGeometriesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Not Simple Geometries')
 
         if not self.instantiating:

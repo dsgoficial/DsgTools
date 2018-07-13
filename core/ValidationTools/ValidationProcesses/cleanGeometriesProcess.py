@@ -31,6 +31,7 @@ class CleanGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(CleanGeometriesProcess,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Clean Geometries')
         
         if not self.instantiating:

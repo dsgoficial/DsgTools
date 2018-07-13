@@ -36,6 +36,7 @@ class CloseEarthCoveragePolygonsProcess(ValidationProcess):
         Constructor
         """
         super(CloseEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Close Earth Coverage Polygons')
         
     def preProcess(self):

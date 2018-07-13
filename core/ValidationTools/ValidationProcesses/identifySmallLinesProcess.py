@@ -33,6 +33,7 @@ class IdentifySmallLinesProcess(ValidationProcess):
         Constructor
         """
         super(IdentifySmallLinesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Small Lines')
         
         if not self.instantiating:

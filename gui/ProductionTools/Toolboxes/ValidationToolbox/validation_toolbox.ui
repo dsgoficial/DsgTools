@@ -36,7 +36,7 @@
           <property name="title">
            <string>Validation Processes</string>
           </property>
-          <property name="saveCollapsedState">
+          <property name="saveCollapsedState" stdset="0">
            <bool>false</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -48,7 +48,7 @@
             </widget>
            </item>
            <item row="1" column="0">
-            <widget class="QTreeWidget" name="treeWidget">
+            <widget class="QTreeWidget" name="processTreeWidget">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                <horstretch>0</horstretch>
@@ -66,66 +66,6 @@
                <string>Available Processes</string>
               </property>
              </column>
-             <item>
-              <property name="text">
-               <string>Identification Processes</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Identify Invalid Geometries</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Identify Small Areas</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Identify Small Lines</string>
-               </property>
-              </item>
-             </item>
-             <item>
-              <property name="text">
-               <string>Correction Processes</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Force Geometries Validity</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Remove Small Areas</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>Remove Small Lines</string>
-               </property>
-              </item>
-             </item>
-             <item>
-              <property name="text">
-               <string>Manipulation Processes</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Clean Geometries</string>
-               </property>
-              </item>
-             </item>
-             <item>
-              <property name="text">
-               <string>Topological Processes</string>
-              </property>
-              <item>
-               <property name="text">
-                <string>Topological Clean</string>
-               </property>
-              </item>
-             </item>
             </widget>
            </item>
           </layout>
@@ -147,7 +87,7 @@
             <widget class="ValidationWorkflowCompactPropertyManagerWidget" name="validationWorkflowPropertyManagerWidget" native="true"/>
            </item>
            <item row="1" column="0">
-            <widget class="QTreeWidget" name="processTreeWidget">
+            <widget class="QTreeWidget" name="workflowTreeWidget">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                <horstretch>0</horstretch>

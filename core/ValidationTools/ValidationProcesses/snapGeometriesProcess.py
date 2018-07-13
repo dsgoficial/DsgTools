@@ -31,6 +31,7 @@ class SnapGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(SnapGeometriesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Snap Geometries')
         
         if not self.instantiating:

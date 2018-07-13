@@ -45,6 +45,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyDanglesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Dangles')
         
         if not self.instantiating:

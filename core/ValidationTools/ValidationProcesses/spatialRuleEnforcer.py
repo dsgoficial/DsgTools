@@ -55,6 +55,7 @@ class SpatialRuleEnforcer(ValidationProcess):
         super(SpatialRuleEnforcer, self).__init__(postgisDb, iface, instantiating, withElements)
         self.iface = iface
         self.rulesFile = os.path.join(os.path.dirname(__file__), '..', 'ValidationRules', 'ruleLibrary.rul')
+        self.processCategory = None
         self.processAlias = self.tr('Spatial Rule Enforcer')
         
     def connectEditingSignals(self):

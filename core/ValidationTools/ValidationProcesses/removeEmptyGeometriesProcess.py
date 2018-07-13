@@ -30,6 +30,7 @@ class RemoveEmptyGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(RemoveEmptyGeometriesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'correction'
         self.processAlias = self.tr('Remove Empty Geometries')
     
         if not self.instantiating:

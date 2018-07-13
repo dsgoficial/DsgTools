@@ -39,7 +39,8 @@ class HierarchicalSnapLayerOnLayerProcess(ValidationProcess):
         Constructor
         """
         super(HierarchicalSnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating, withElements)
-        self.processAlias = self.tr('Recursive Snap Layer on Layer')
+        self.processCategory = 'manipulation'
+        self.processAlias = self.tr('Hierarchical Snap Layer on Layer')
         
         if not self.instantiating:
             # getting tables with elements

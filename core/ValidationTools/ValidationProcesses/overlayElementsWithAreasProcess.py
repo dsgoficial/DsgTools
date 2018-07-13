@@ -32,6 +32,7 @@ class OverlayElementsWithAreasProcess(ValidationProcess):
         Constructor
         """
         super(OverlayElementsWithAreasProcess,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Overlay Elements with Areas')
         
         if not self.instantiating:

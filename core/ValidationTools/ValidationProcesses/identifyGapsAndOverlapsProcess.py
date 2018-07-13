@@ -31,6 +31,7 @@ class IdentifyGapsAndOverlapsProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyGapsAndOverlapsProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Earth Coverage Gaps and Overlaps')
 
         if not self.instantiating:

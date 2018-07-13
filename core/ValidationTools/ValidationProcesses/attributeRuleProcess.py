@@ -38,7 +38,7 @@ class AttributeRuleProcess(ValidationProcess):
         Constructor
         """
         super(AttributeRuleProcess, self).__init__(postgisDb, iface, instantiating, withElements)
-        
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Attribute Rule Checker')
         if not instantiating:
             self.propertyDict = self.postgisDb.getPropertyDict('AttributeRules')

@@ -31,6 +31,7 @@ class IdentifyGapsProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyGapsProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Layer Gaps')
         
         if not self.instantiating:

@@ -31,6 +31,7 @@ class RemoveSmallLinesProcess(ValidationProcess):
         Constructor
         """
         super(RemoveSmallLinesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'correction'
         self.processAlias = self.tr('Remove Small Lines')
         
         #self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifySmallLinesProcess')
