@@ -34,6 +34,7 @@ class SnapLayerOnLayerProcess(ValidationProcess):
         Constructor
         """
         super(SnapLayerOnLayerProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Snap Layer on Layer')
         
         if not self.instantiating:

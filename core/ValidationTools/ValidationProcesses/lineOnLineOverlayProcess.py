@@ -33,6 +33,7 @@ class LineOnLineOverlayProcess(ValidationProcess):
         Constructor
         """
         super(LineOnLineOverlayProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Overlay Lines with Lines')
         
         if not self.instantiating:

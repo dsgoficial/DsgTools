@@ -31,6 +31,7 @@ class RemoveDuplicatesProcess(ValidationProcess):
         Constructor
         """
         super(RemoveDuplicatesProcess,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'correction'
         self.processAlias = self.tr('Remove Duplicated Elements')
         
         #self.flagsDict = self.abstractDb.getFlagsDictByProcess('IdentifyDuplicatedGeometriesProcess')

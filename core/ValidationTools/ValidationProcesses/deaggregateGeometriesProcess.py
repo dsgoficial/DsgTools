@@ -31,6 +31,7 @@ class DeaggregateGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(DeaggregateGeometriesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Deaggregate Geometries')
         
         if not self.instantiating:

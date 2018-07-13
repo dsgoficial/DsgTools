@@ -31,6 +31,7 @@ class TopologicalCleanProcess(ValidationProcess):
         Constructor
         """
         super(TopologicalCleanProcess, self).__init__(postgisDb, iface, instantiating)
+        self.processCategory = 'topological'
         self.processAlias = self.tr('Topological Clean')
         
         if not self.instantiating:

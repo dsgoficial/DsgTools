@@ -35,6 +35,7 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyOutOfBoundsAnglesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Out Of Bounds Angles')
         self.geometryHandler = GeometryHandler(iface, parent = iface.mapCanvas())
         

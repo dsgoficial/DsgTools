@@ -31,6 +31,7 @@ class IdentifyOverlapsProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyOverlapsProcess,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Layer Overlaps')
         
         if not self.instantiating:

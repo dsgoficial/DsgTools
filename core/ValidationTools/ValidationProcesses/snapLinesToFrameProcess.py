@@ -32,6 +32,7 @@ class SnapLinesToFrameProcess(ValidationProcess):
         Constructor
         """
         super(SnapLinesToFrameProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Snap Lines to Frame')
         
         if not self.instantiating:

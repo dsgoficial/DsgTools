@@ -31,6 +31,7 @@ class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(IdentifyDuplicatedGeometriesProcess ,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'identification'
         self.processAlias = self.tr('Identify Duplicated Geometries')
         
         if not self.instantiating:

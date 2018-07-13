@@ -30,6 +30,7 @@ class SnapToGridProcess(ValidationProcess):
         Constructor
         """
         super(SnapToGridProcess, self).__init__(postgisDb, iface, instantiating)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Snap to Grid (adjust coordinates precision)')
         
         if not self.instantiating:

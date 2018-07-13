@@ -24,6 +24,8 @@ from __future__ import print_function
 from builtins import str
 from builtins import range
 import os
+from collections import OrderedDict
+from operator import itemgetter
 
 # Qt imports
 from qgis.PyQt.QtCore import Qt
@@ -63,14 +65,12 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
-        self.edgvLayer = None
-        self.flagLyr = None
         self.iface = iface
         # self.databaseLineEdit.setReadOnly(True)
-        self.configWindow = ValidationConfig()
+        # self.configWindow = ValidationConfig()
         self.connectionSelectorComboBox.connectionChanged.connect(self.updateDbLineEdit)
-        self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
-        self.connectionSelectorComboBox.dbChanged.connect(self.validationWorkflowPropertyManagerWidget.setParameters)
+        # self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
+        # self.connectionSelectorComboBox.dbChanged.connect(self.validationWorkflowPropertyManagerWidget.setParameters)
         self.validationWorkflowPropertyManagerWidget.parent = self
         self.validationManager = None
         self.tableView.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -78,6 +78,27 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.ruleEnforcer = None
         self.itemList = []
         self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
+        self.categoriesDict = OrderedDict({'identification':{
+            'categoryAlias' : self.tr('Identification Processes'),
+            'processList' : [],
+            'categoryNode' : None
+        },
+        'correction':{
+            'categoryAlias' : self.tr('Correction Processes'),
+            'processList' : [],
+            'categoryNode' : None
+        },
+        'topological':{
+            'categoryAlias' : self.tr('Topological Processes'),
+            'processList' : [],
+            'categoryNode' : None
+        },
+        'manipulation':{
+            'categoryAlias' : self.tr('Manipulation Processes'),
+            'processList' : [],
+            'categoryNode' : None
+        }
+        })
 
     def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
         icon_path = iconBasePath + 'validationtools.png'
@@ -102,8 +123,6 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         if item:
             menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
             menu.addAction(self.tr('Remove flag'), self.removeCurrentFlag)
-#             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
-#             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
         
     
@@ -118,28 +137,6 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             return
         self.connectionSelectorComboBox.abstractDb.deleteProcessFlags(flagId = flagId)
         self.refreshFlags()
-
-    @pyqtSlot()
-    def on_theSelectionModel_selectionChanged(self):
-        """
-        To do.
-        """
-        # fix_print_with_import
-        print('mudou')
-    
-    def setFlagVisited(self):
-        """
-        To do
-        """
-        # fix_print_with_import
-        print('visited')
-
-    def setFlagUnvisited(self): 
-        """
-        To do
-        """
-        # fix_print_with_import
-        print('unvisited')
     
     def zoomToFlag(self):
         """
@@ -203,13 +200,6 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         return False
 
     @pyqtSlot(bool)
-    def on_openDbPushButton_clicked(self):
-        """
-        Opend dialog for database connection
-        """
-        self.configWindow.show()
-
-    @pyqtSlot(bool)
     def on_historyButton_clicked(self):
         """
         Shows the validation history
@@ -226,7 +216,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         try:
             self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
             self.validationManager = ValidationManager(self.connectionSelectorComboBox.abstractDb, self.iface)
-            self.populateProcessList()
+            self.populateProcessTreeList()
             # adjusting flags table model
             self.projectModel = QSqlTableModel(None,self.connectionSelectorComboBox.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
@@ -239,42 +229,33 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
 
     def on_filterLineEdit_textChanged(self, text):
         for i in self.itemList:
-            if text.lower() in i.text(1).lower():
+            if text.lower() in i.text(0).lower():
                 i.setHidden(False)
             else:
                 i.setHidden(True)
-
-    def populateProcessList(self):
+    
+    def addCategories(self, rootItem):
+        for key, value in self.categoriesDict.items():
+            item = QTreeWidgetItem(rootItem)
+            item.setText(0, value['categoryAlias'])
+            value['categoryNode'] = item
+    
+    def populateProcessTreeList(self):
         """
-        Populates the process list. It also checks the status of each available process
+        Populates process tree list, according to the category of the process
         """
         self.processTreeWidget.clear()
-        self.edgvLayer = None
-        self.flagLyr = None
-        self.itemList = []
         rootItem = self.processTreeWidget.invisibleRootItem()
-        procList = sorted(self.validationManager.processDict)
+        self.addCategories(rootItem)
+        self.itemList = []
+        
+        procList = sorted(self.validationManager.processList, key=itemgetter('alias'))
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        for i in range(len(procList)):
-            item = QTreeWidgetItem(rootItem)
-            item.setText(0, str(i+1))
-            item.setText(1, procList[i])
-            
-            status = None
-            try:
-                status = self.connectionSelectorComboBox.abstractDb.getValidationStatusText(self.validationManager.processDict[procList[i]])
-            except Exception as e:
-                QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-                QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-                status = 'Error! Check log!'
-                
-            if not status:
-                item.setText(2, 'Not yet ran')
-            else:
-                item.setText(2, status)
+        for procItem in procList:
+            item = QTreeWidgetItem(self.categoriesDict[procItem['category']]['categoryNode'])
+            item.setText(0, procItem['alias'])
+            self.categoriesDict[procItem['category']]['processList'].append(procItem)
             self.itemList.append(item)
-        for i in range(3):
-            self.processTreeWidget.resizeColumnToContents(i)
         self.filterLineEdit.clear()
         QApplication.restoreOverrideCursor()
 

@@ -69,8 +69,10 @@ class ValidationManager(QObject):
                 chars = list(fileBaseName)
                 chars[0] = chars[0].upper()
                 processClass = ''.join(chars)
-                self.processList.append(processClass)
-                self.processDict[self.instantiateProcessByName(processClass, True).processAlias] = processClass 
+                processInstance = self.instantiateProcessByName(processClass, True)
+                if processInstance:
+                    self.processList.append({'category':processInstance.processCategory, 'alias':processInstance.processAlias, 'className':processClass })
+                    self.processDict[processInstance.processAlias] = processClass 
         
     def instantiateProcessByName(self, processName, instantiating, withElements = True):
         """
@@ -80,20 +82,21 @@ class ValidationManager(QObject):
         The class instance is made using: klass(self.postgisDb, self.iface)
         """
         currProc = None
-        for processClass in self.processList:
-            if processClass == processName:
-                chars = list(processClass)
-                #adjusting first character case
-                chars[0] = chars[0].lower()
-                #making file name
-                fileBaseName = ''.join(chars)
-                #setting up the module to be imported
-                mod = __import__('DsgTools.core.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processClass])
-                #obtaining the class name
-                klass = getattr(mod, processClass)
-                #instantiating the class
-                currProc = klass(self.postgisDb, self.iface, instantiating, withElements = withElements)
-                return currProc
+        try:
+            chars = list(processName)
+            #adjusting first character case
+            chars[0] = chars[0].lower()
+            #making file name
+            fileBaseName = ''.join(chars)
+            #setting up the module to be imported
+            mod = __import__('DsgTools.core.ValidationTools.ValidationProcesses.'+fileBaseName, fromlist=[processName])
+            #obtaining the class name
+            klass = getattr(mod, processName)
+            #instantiating the class
+            currProc = klass(self.postgisDb, self.iface, instantiating, withElements = withElements)
+            return currProc
+        except:
+            return None
                
     def getProcessChain(self, processAlias, withElements = True):
         """

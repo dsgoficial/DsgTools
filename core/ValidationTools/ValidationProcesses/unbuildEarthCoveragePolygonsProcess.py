@@ -36,6 +36,7 @@ class UnbuildEarthCoveragePolygonsProcess(ValidationProcess):
         Constructor
         """
         super(UnbuildEarthCoveragePolygonsProcess,self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'manipulation'
         self.processAlias = self.tr('Unbuild Earth Coverage Polygons')
         self.instantiating = instantiating
         if not self.instantiating:

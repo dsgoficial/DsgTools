@@ -30,6 +30,7 @@ class ForceValidityGeometriesProcess(ValidationProcess):
         Constructor
         """
         super(ForceValidityGeometriesProcess, self).__init__(postgisDb, iface, instantiating, withElements)
+        self.processCategory = 'correction'
         self.processAlias = self.tr('Force Geometries Validity')
         
         # we should use this code here when the pre Process is used
