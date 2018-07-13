@@ -214,6 +214,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         """
         database = ''
         try:
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
             self.validationManager = ValidationManager(self.connectionSelectorComboBox.abstractDb, self.iface)
             self.populateProcessTreeList()
@@ -222,7 +223,9 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             self.projectModel.setTable('validation.aux_flags_validacao')
             self.projectModel.select()
             self.tableView.setModel(self.projectModel)
+            QApplication.restoreOverrideCursor()
         except Exception as e:
+            QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
             self.processTreeWidget.clear()    
@@ -250,14 +253,12 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.itemList = []
         
         procList = sorted(self.validationManager.processList, key=itemgetter('alias'))
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         for procItem in procList:
             item = QTreeWidgetItem(self.categoriesDict[procItem['category']]['categoryNode'])
             item.setText(0, procItem['alias'])
             self.categoriesDict[procItem['category']]['processList'].append(procItem)
             self.itemList.append(item)
         self.filterLineEdit.clear()
-        QApplication.restoreOverrideCursor()
 
     @pyqtSlot(bool)
     def on_reRunButton_clicked(self):
@@ -438,3 +439,8 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('Flags not deleted.\n')+':'.join(e.args))
+    
+    @pyqtSlot(QTreeWidgetItem, int)
+    def on_processTreeWidget_itemDoubleClicked(self, item, column):
+        if item.parent():
+            print(item.text(0))
