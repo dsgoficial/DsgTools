@@ -79,7 +79,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             self.networkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
             networkFlowParameterList = HidrographyFlowParameters(self.networkClassesWithElemDict.keys())
             self.sinkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
-            sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())            
+            sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())
             self.parameters = {
                                 self.tr('Only Selected') : False,
                                 self.tr('Network Layer') : networkFlowParameterList,
@@ -88,7 +88,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                                 self.tr('Reference and Water Body Layers'): OrderedDict( {
                                                                        'referenceDictList':{},
                                                                        'layersDictList':interfaceDict
-                                                                     } ),
+                                                                     } )
                               }
             self.nodeDict = None
             self.nodeTypeDict = None
