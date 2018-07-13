@@ -384,7 +384,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         # validEnds = [CreateNetworkNodesProcess.Sink, CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.NodeNextToWaterBody]
         if n in nodeTypeDict:
             # if both ends are classified as waterway beginning, then both ends are 1st order dangles and line is disconnected.
-            return nodeTypeDict[n] == CreateNetworkNodesProcess.WaterwayBegin
+            return nodeTypeDict[n] in [CreateNetworkNodesProcess.WaterwayBegin, CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.NodeNextToWaterBody]
             # if nodeTypeDict[n] not in validEnds:
             #     if self.isFirstOrderDangle(node=n, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
             #         # if next node is not a valid network ending node and is a dangle, line is disconnected from network 
