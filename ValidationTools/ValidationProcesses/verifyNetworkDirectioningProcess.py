@@ -454,7 +454,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         :return:
         """
         # node type granted as right as start conditions
-        inContourConditionTypes = [CreateNetworkNodesProcess.DownHillNode]
+        inContourConditionTypes = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.Sink]
         # outContourConditionTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin]
         nodes = self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
         # for faster calculation
@@ -599,8 +599,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         while nodeList:
             for node in nodeList:
                 # first thing to be done: check if there are more than one non-validated line (hence, enough information for a decision)
-                startLines = self.nodeDict[node]['start']
-                endLines = self.nodeDict[node]['end']
+                if node in self.nodeDict:
+                    startLines = self.nodeDict[node]['start']
+                    endLines = self.nodeDict[node]['end']
+                else:
+                    # ignore node for possible next iterations by adding it no visited nodes
+                    visitedNodes.append(node)
+                    continue
                 validLinesList = validLines.values()
                 if len(set(startLines + endLines) - set(validLinesList)) > 1:
                     # if there are more than 1 lines not validated yet, node will neither be checked not marked as visited
@@ -832,7 +837,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         :param networkLayer: (QgsVectorLayer) layer containing target feature.
         :param validLines: (list-of-QgsFeature) list of all validated lines.
         :param geomType: (int) layer geometry type code.
-        :return: (str) list of line ID as str that was flipped.
+        :return: (QgsFeature) flipped line.
         """
         # get dictionaries for speed-up
         endDict = self.nodeDict[node]['end']
@@ -851,10 +856,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 invalidLine = invalidLine[0]
         # if no invalid lines are identified, something else is wrong and flipping won't be the solution
         if not invalidLine:
-            return []
+            return None
         # flipping invalid line
         self.flipSingleLine(line=invalidLine, layer=networkLayer)
-        return [str(invalidLine.id())]
+        return invalidLine
 
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
         """
@@ -885,6 +890,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         """
         # initiate lists of lines that were flipped/merged
         flippedLinesIds, mergedLinesString = [], ""
+        # support list of flipped lines
+        flippedLines = []
         # get reason type
         reasonType = self.getReasonType(reason=reason)
         if not reasonType:
@@ -901,23 +908,32 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # only non-valid lines may be modified
                     self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
                     flippedLinesIds.append(lineId)
+                    flippedLines.append(line)
         elif reasonType == 3:
             # original message: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
-            flippedLinesIds.append(self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType))
+            line = self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
+            if line:
+                flippedLinesIds.append(str(line.id()))
+                flippedLines.append(line)
+                # if a line is flipped it must be changed in self.nodeDict
+                self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
         elif reasonType == 4:
             pass
         elif reasonType == 5:
             # original message: self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
-            flippedLinesIds.append(self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType))
+            line = self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
+            if line:
+                flippedLinesIds.append(str(line.id()))
+                flippedLines.append(line)
+                # if a line is flipped it must be changed in self.nodeDict
+                self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
         else:
             # in case, for some reason, an strange value is given to reasonType
             return [], ''
         # reclassification re-evalution is only needed if lines were flipped
         if flippedLinesIds:
-            # if a line is flipped it must be changed in self.nodeDict
-            [self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType) for line in flippedLinesIds]
             # re-classify node before re-checking
-            self.reclassifyNode(node) 
+            self.reclassifyNode(node)
             # check if node is fixed and update its dictionaries and invalidation reason
             valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
                                             networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
@@ -1108,14 +1124,31 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # update createNetworkNodesProcess object node dictionary
             self.createNetworkNodesProcess.nodeDict = self.nodeDict
             self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
+            # initiate nodes, invalid/valid lines dictionaries
+            nodeFlags, inval, val = dict(), dict(), dict()
+            # cycle count start
+            cycleCount = 0
+            MAX_AMOUNT_CYCLES = 5
             # validation method FINALLY starts...
-            nodeFlags, inval, val = self.checkAllNodesValidity(networkLayer=networkLayer)
+            while True:
+                # make it recursive in order to not get stuck after all possible initial fixes
+                nodeFlags_, inval_, val_ = self.checkAllNodesValidity(networkLayer=networkLayer)
+                cycleCount += 1
+                # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues)
+                if (cycleCount == MAX_AMOUNT_CYCLES) or (set(nodeFlags_.keys()) == set(nodeFlags_.keys())):
+                    # copy values to final dict
+                    nodeFlags, inval, val = nodeFlags_, inval_, val_
+                    break
+                # for the next iterations
+                nodeFlags, inval, val = nodeFlags_, inval_, val_
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method checkAllNodesValidity() returns None, None, REASON
                 QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('No initial node was found!'))
                 self.finishedWithError()
                 return 0
+            # get number of selected features
+            selectedFeatures = len(networkLayer.selectedFeatures())
             # if user set to select valid lines
             if self.parameters[self.tr('Select All Valid Lines')]:
                 networkLayer.setSelectedFeatures(val.keys())
@@ -1124,7 +1157,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             if len(recordList) > 0:
                 numberOfProblems = self.addFlag(recordList)
                 if self.parameters[self.tr('Only Selected')]:
-                    percValid = float(len(val))*100.0/float(len(networkLayer.selectedFeatures()))
+                    percValid = float(len(val))*100.0/float(selectedFeatures)
                 else:
                     percValid = float(len(val))*100.0/float(networkLayer.featureCount())
                 msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  'of network is well directed). Check flags.')\
