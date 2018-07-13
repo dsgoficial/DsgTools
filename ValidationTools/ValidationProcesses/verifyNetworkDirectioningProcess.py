@@ -54,14 +54,33 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 QMessageBox.warning(self.iface.mainWindow(), self.tr("Warning!"), self.tr('No node table was found into chosen database. (Did you run Create Network Nodes process?)'))
                 return
             # adjusting process parameters
+            # getting tables with elements (line primitive)
+            self.classesWithElemDict = self.abstractDb.getGeomColumnDictV2(withElements=True, excludeValidation = True)
+            interfaceDict = dict()
+            for key in self.classesWithElemDict:
+                cat, lyrName, geom, geomType, tableType = key.split(',')
+                interfaceDict[key] = {
+                                        self.tr('Category'):cat,
+                                        self.tr('Layer Name'):lyrName,
+                                        self.tr('Geometry\nColumn'):geom,
+                                        self.tr('Geometry\nType'):geomType,
+                                        self.tr('Layer\nType'):tableType
+                                     }
             self.networkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=True, excludeValidation = True)
             networkFlowParameterList = HidrographyFlowParameters(self.networkClassesWithElemDict.keys())
             self.nodeClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = False)
-            nodeFlowParameterList = HidrographyFlowParameters(self.nodeClassesWithElemDict.keys())            
+            nodeFlowParameterList = HidrographyFlowParameters(self.nodeClassesWithElemDict.keys())
+            self.sinkClassesWithElemDict = self.nodeClassesWithElemDict
+            sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())
             self.parameters = {
                                 self.tr('Only Selected') : False,
                                 self.tr('Network Layer') : networkFlowParameterList,
                                 self.tr('Node Layer') : nodeFlowParameterList,
+                                self.tr('Sink Layer') : sinkFlowParameterList,
+                                self.tr('Reference and Water Body Layers'): OrderedDict( {
+                                                                       'referenceDictList':{},
+                                                                       'layersDictList':interfaceDict
+                                                                     } ),
                                 self.tr('Search Radius') : 5.0,
                                 self.tr('Select All Valid Lines') : False
                               }
@@ -72,6 +91,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.nodeTypeDict = None
             # retrieving types from node creation object
             self.nodeTypeNameDict = self.createNetworkNodesProcess.nodeTypeNameDict
+            self.reclassifyNodeType = dict()
 
     def getFirstNode(self, lyr, feat, geomType=None):
         """
@@ -327,8 +347,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             if nodeType == CreateNetworkNodesProcess.Flag:
                 reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             elif nodeType == CreateNetworkNodesProcess.AttributeChangeFlag:
-                id1, id2 = nodePointDict['start'][0].id(), nodePointDict['end'][0].id()
-                reason = self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.').format(id1, id2)
+                try:
+                    # in case manual error is inserted, this would raise an exception
+                    id1, id2 = nodePointDict['start'][0].id(), nodePointDict['end'][0].id()
+                    reason = self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.').format(id1, id2)
+                except:
+                    # problem is then, reclassified as a flag
+                    self.nodeTypeDict[node] = CreateNetworkNodesProcess.Flag
+                    reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             elif nodeType == CreateNetworkNodesProcess.DisconnectedLine:
                 # get line connected to node
                 lines = nodePointDict['start'] + nodePointDict['end']
@@ -465,6 +491,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # at first, we assume there are no start conditions on next nodes
         hasStartCondition = False
         for nn in nodes:
+            if nn not in nodeTypeDictAlias:
+                ERRO
             nodeType = nodeTypeDictAlias[nn]
             if nodeType in inContourConditionTypes:
                 # if next node is an "in" flow type, check if line is that way and flip it, if necessary
@@ -480,94 +508,15 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     flippedLines.append(str(line.id()))
                     validLines.append(nodeDictAlias[nn]['end'][0])
                 hasStartCondition = True
+        # for speed-up
+        initialNode = lambda x : self.getFirstNode(lyr=networkLayer, feat=x, geomType=geomType)
+        lastNode = lambda x : self.getLastNode(lyr=networkLayer, feat=x, geomType=geomType)
         if flippedLines:
-            # if lines are flipped, node has its type changed
-            self.reclassifyNode(node=node)
+            # map is a for-loop in C
+            map(self.reclassifyNode, map(initialNode, flippedLines) + map(lastNode, flippedLines))
         return hasStartCondition, flippedLines
 
-    def directNetwork(self, networkLayer, nodeList=None):
-        """
-        Directs network lines.
-        :param networkLayer: (QgsVectorLayer) hidrography lines layer from which node are created from.
-        :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
-        :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
-        """
-        startingNodeTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
-        deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
-        if not nodeList:
-            # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
-            nodeList = []
-            for node in self.nodeTypeDict.keys():
-                if self.nodeTypeDict[node] in startingNodeTypes:
-                    nodeList.append(node)
-            # if no node to start the process is found, process ends here
-            if not nodeList:
-                return None, None, self.tr("No network starting point was found")
-        while nodeList:
-            for node in nodeList:
-                # first thing to be done: check if there are more than one non-validated line (hence, enough information for a decision)
-                startLines = self.nodeDict[node]['start']
-                endLines = self.nodeDict[node]['end']
-                if len(set(startLines + endLines) - set(connectedValidLines)) > 1:
-                    # if there are more than 1 lines not validated yet, node will neither be checked not marked as visited
-                    continue
-                if node not in visitedNodes:
-                    # set node as visited
-                    visitedNodes.append(node)
-                # check coherence to node type and waterway flow
-                val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLines.values(),\
-                                                            networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
-                # nodes to be removed from next nodes in case of invalidation
-                removeNode = []
-                # if a reason is given, then node is invalid (even if there are no invalid lines connected to it).
-                if reason:
-                    # try to fix node issues
-                    # note that val, inval and reason MAY BE MODIFIED - and there is no problem...
-                    flippedLinesIds_, mergedLinesString_ = self.fixNodeFlagsNew(node=node, valDict=val, invalidDict=inval, reason=reason, \
-                                                                            connectedValidLines=validLines.values(), networkLayer=networkLayer, \
-                                                                            geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
-                    # keep track of all modifications made
-                    if flippedLinesIds_:
-                        # IDs not registered yet will be added to final list
-                        addIds = set(flippedLinesIds_) - set(flippedLinesIds)
-                        # IDs that are registered will be removed (flipping a flipped line returns to original state)
-                        removeIds = set(flippedLinesIds_) - addIds
-                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds)  & addIds  )
-                    if mergedLinesString_:
-                        if not mergedLinesString:
-                            mergedLinesString = mergedLinesString_
-                        else:
-                            mergedLinesString.append(mergedLinesString_)
-                    # if node is still invalid, add to nodeFlagList and add/update its reason
-                    if reason:
-                        if node not in nodeFlags.keys():
-                            nodeFlags[node] = reason
-                        else:
-                            nodeFlags[node] = "".join([nodeFlags[node], "; ", reason])
-                    # get next nodes connected to invalid lines
-                    for line in inval.values():
-                        if line in self.nodeDict[node]['end']:
-                            removeNode.append(self.getFirstNode(lyr=networkLayer, feat=line))
-                        else:
-                            removeNode.append(self.getLastNode(lyr=networkLayer, feat=line))
-                # update general dictionaries with final values
-                validLines.update(val)
-                invalidLines.update(inval)
-                # get next iteration nodes
-                newNextNodes += self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
-                # remove next nodes connected to invalid lines
-                if removeNode:
-                    newNextNodes = list( set(newNextNodes) - set(removeNode) )
-            # remove nodes that were already visited
-            newNextNodes = list( set(newNextNodes) - set(visitedNodes) )
-            # if new nodes are detected, repeat for those
-            nodeList = newNextNodes
-            newNextNodes = []
-        # log all features that were merged and/or flipped
-        self.logAlteredFeatures(flippedLines=flippedLinesIds, mergedLinesString=mergedLinesString)
-        return nodeFlags, invalidLines, validLines
-
-    def checkAllNodesValidity(self, networkLayer, nodeList=None):
+    def checkAllNodesValidity(self, networkLayer, nodeLayer, nodeList=None):
         """
         For every node over the frame [or set as a line beginning], checks for network coherence regarding
         to previous node classification and its current direction. Method takes that bordering points are 
@@ -628,7 +577,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # note that val, inval and reason MAY BE MODIFIED - and there is no problem...
                     flippedLinesIds_, mergedLinesString_ = self.fixNodeFlagsNew(node=node, valDict=val, invalidDict=inval, reason=reason, \
                                                                             connectedValidLines=validLinesList, networkLayer=networkLayer, \
-                                                                            geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
+                                                                            nodeLayer=nodeLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
                     # keep track of all modifications made
                     if flippedLinesIds_:
                         # IDs not registered yet will be added to final list
@@ -873,18 +822,28 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         self.nodeDict[node] = self.createNetworkNodesProcess.nodeDict[node]
         return changed
 
-    def reclassifyNode(self, node):
+    def reclassifyNode(self, node, nodeLayer):
         """
         Reclassifies node.
         :param node: (QgsPoint) node to be reclassified.
         :return: (bool) whether point was modified.
         """
-        # node type changed to ramification in order to not have flow issues
-        before = self.nodeTypeDict[node] == CreateNetworkNodesProcess.Confluence
-        self.nodeTypeDict[node] = CreateNetworkNodesProcess.Confluence
-        return before != (self.nodeTypeDict[node] == CreateNetworkNodesProcess.Confluence)
+        immutableTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.WaterwayBegin]
+        if self.nodeTypeDict[node] not in immutableTypes:
+            # if node type is immutable, reclassification is not possible
+            return False
+        # get new type
+        newType = self.classifyNode([node, self.nodeTypeDict])
+        if self.nodeTypeDict[node] == newType:
+            # if new node type is the same as new, method won't do anything
+            return False
+        # alter it in feature
+        self.nodeTypeDict[node] = newType
+        id_ = self.nodeIdDict[node]
+        self.reclassifyNodeType[node] = str(newType)
+        return self.nodeTypeDict[node] == newType
 
-    def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, geomType=None, deltaLinesCheckList=None):
+    def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, nodeLayer, geomType=None, deltaLinesCheckList=None):
         """
         Tries to fix issues flagged on node
         """
@@ -930,10 +889,15 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         else:
             # in case, for some reason, an strange value is given to reasonType
             return [], ''
+        # for speed-up
+        initialNode = lambda x : self.getFirstNode(lyr=networkLayer, feat=x, geomType=geomType)
+        lastNode = lambda x : self.getLastNode(lyr=networkLayer, feat=x, geomType=geomType)
         # reclassification re-evalution is only needed if lines were flipped
         if flippedLinesIds:
-            # re-classify node before re-checking
-            self.reclassifyNode(node)
+            # re-classify nodes connected to flipped lines before re-checking
+            # map is a for-loop in C
+            reclassifyNodeAlias = lambda x : self.reclassifyNode(node=x, nodeLayer=nodeLayer)
+            map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
             # check if node is fixed and update its dictionaries and invalidation reason
             valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
                                             networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
@@ -1089,7 +1053,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
+            hidSinkLyrKey = self.parameters[self.tr('Sink Layer')]
             networkLayerKey = self.parameters[self.tr('Network Layer')]
+            refKey, classesWithElemKeys = self.parameters[self.tr('Reference and Water Body Layers')]
+            waterBodyClassesKeys = classesWithElemKeys
             # preparing hidrography lines layer
             # remake the key from standard string
             k = ('{},{},{},{},{}').format(
@@ -1110,15 +1077,44 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                                         hidNodeLyrKey.split('(')[1].split(', ')[2].replace(')', '')
                                         )
             nodecl = self.nodeClassesWithElemDict[k]
+            # preparing the list of water bodies classes
+            waterBodyClasses = []
+            for key in waterBodyClassesKeys:
+                wbc = self.classesWithElemDict[key]
+                waterBodyClasses.append(self.loadLayerBeforeValidationProcess(wbc))
+            # preparing water sink layer
+            if hidSinkLyrKey and hidSinkLyrKey != self.tr('Select Layer'):
+                # remake the key from standard string
+                k = ('{},{},{},{},{}').format(
+                                          hidSinkLyrKey.split('.')[0],\
+                                          hidSinkLyrKey.split('.')[1].split(r' (')[0],\
+                                          hidSinkLyrKey.split('(')[1].split(', ')[0],\
+                                          hidSinkLyrKey.split('(')[1].split(', ')[1],\
+                                          hidSinkLyrKey.split('(')[1].split(', ')[2].replace(')', '')
+                                         )
+                sinkcl = self.sinkClassesWithElemDict[k]
+                waterSinkLayer = self.loadLayerBeforeValidationProcess(sinkcl)
+            else:
+                # if no sink layer is selected, layer should be ignored
+                waterSinkLayer = None
+            # preparing reference layer
+            refcl = self.classesWithElemDict[refKey]
+            frameLayer = self.loadLayerBeforeValidationProcess(refcl)
+            # getting dictionaries of nodes information 
+            frame = self.createNetworkNodesProcess.getFrameOutterBounds(frameLayer=frameLayer)
             # getting network lines and nodes layers
             networkNodeLayer = self.loadLayerBeforeValidationProcess(nodecl)
             networkLayer = self.loadLayerBeforeValidationProcess(hidcl)
             # start editting network layer in order to be able to flip/merge features from it
             networkLayer.startEditing()
-            crs = networkLayer.crs().authid()
-            # node layer has the same CRS as the hidrography lines layer
-            nodeSrid = networkLayer.crs().authid().split(':')[1]
+            # start editting node layer in order to be able to reclassify nodes
+            networkNodeLayer.startEditing()
             searchRadius = self.parameters['Search Radius']
+            networkLayerGeomType = networkLayer.geometryType()
+            # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
+            self.classifyNode = lambda x : self.createNetworkNodesProcess.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
+                                    waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
+                                    nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
             # getting node info from network node layer
             self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(networkLayer=networkLayer)
             # update createNetworkNodesProcess object node dictionary
@@ -1132,10 +1128,16 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # validation method FINALLY starts...
             while True:
                 # make it recursive in order to not get stuck after all possible initial fixes
-                nodeFlags_, inval_, val_ = self.checkAllNodesValidity(networkLayer=networkLayer)
+                nodeFlags_, inval_, val_ = self.checkAllNodesValidity(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
                 cycleCount += 1
+                # update reclassified nodes into node layer
+                # create a func for feature reclassifying speed up by using map instead of for-loop
+                featureReclassifyFunc = lambda x : self.reclassifyNodeType[str(x.id())]
+                for feat in networkNodeLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(",".join(self.reclassifyNodeType.keys()))))):
+                    feat['node_type'] = self.reclassifyNodeType[str(x.id())]
+                    nodeLayer.updateFeature(feat)
                 # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues)
-                if (cycleCount == MAX_AMOUNT_CYCLES) or (set(nodeFlags_.keys()) == set(nodeFlags_.keys())):
+                if (cycleCount == MAX_AMOUNT_CYCLES) or (set(nodeFlags.keys()) == set(nodeFlags_.keys())):
                     # copy values to final dict
                     nodeFlags, inval, val = nodeFlags_, inval_, val_
                     break
