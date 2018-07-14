@@ -907,7 +907,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
         elif reasonType == 4:
             # original message: self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.')
-            mergedLinesString.append(self.fixAttributeChangeFlag(node))
+            mergedLinesString.append(self.fixAttributeChangeFlag(node=node, networkLayer=networkLayer))
         elif reasonType == 5:
             # original message: self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             line = self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
@@ -1154,13 +1154,16 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeFlags, inval, val = dict(), dict(), dict()
             # cycle count start
             cycleCount = 0
-            MAX_AMOUNT_CYCLES = 5
+            MAX_AMOUNT_CYCLES = 1
             # field index for node type intiated
             for f in networkNodeLayer.getFeatures():
                 # just to get field index
                 fieldIndex = f.fieldNameIndex('node_type')
                 break
             # validation method FINALLY starts...
+            # to speed up modifications made to layers
+            networkNodeLayer.beginEditCommand('Reclassify Nodes')
+            networkLayer.beginEditCommand('Flip/Merge Lines')
             while True:
                 # make it recursive in order to not get stuck after all possible initial fixes
                 nodeFlags_, inval_, val_ = self.checkAllNodesValidity(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
@@ -1178,6 +1181,9 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if (cycleCount == MAX_AMOUNT_CYCLES) or (set(nodeFlags.keys()) == set(nodeFlags_.keys())):
                     # copy values to final dict
                     nodeFlags, inval, val = nodeFlags_, inval_, val_
+                    # no more modifications to those layers will be done
+                    networkLayer.endEditCommand()
+                    networkNodesLayer.endEditCommand()
                     break
                 # for the next iterations
                 nodeFlags, inval, val = nodeFlags_, inval_, val_
@@ -1200,7 +1206,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     percValid = float(len(val))*100.0/float(selectedFeatures)
                 else:
                     percValid = float(len(val))*100.0/float(networkLayer.featureCount())
-                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  'of network is well directed). Check flags.')\
+                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  ' of network is well directed). Check flags.')\
                             .format(numberOfProblems, percValid)
                 self.setStatus(msg, 4) #Finished with flags
                 QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)

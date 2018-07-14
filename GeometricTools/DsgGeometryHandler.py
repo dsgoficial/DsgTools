@@ -192,7 +192,7 @@ class DsgGeometryHandler(QObject):
     def mergeLines(self, line_a, line_b, layer):
         """
         Merge 2 lines of the same layer (it is assumed that they share the same set od attributes - except for ID and geometry).
-        In case sets are different, the set of geometry of line_a will be kept. If geometries don't touch, method is not applicable.
+        In case sets are different, the set of attributes from line_a will be kept. If geometries don't touch, method is not applicable.
         :param line_a: (QgsFeature) main line of merging process.
         :param line_b: (QgsFeature) line to be merged to line_a.
         :param layer: (QgsVectorLayer) layer containing given lines.
