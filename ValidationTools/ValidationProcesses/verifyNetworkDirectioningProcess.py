@@ -826,7 +826,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         self.flipSingleLine(line=invalidLine, layer=networkLayer)
         return invalidLine
 
-    def fixAttributeChangeFlag(self, node, networkLayer=networkLayer):
+    def fixAttributeChangeFlag(self, node, networkLayer):
         """
         Merges the given 2 lines marked as sharing the same set of attributes.
         :param node: (QgsPoint) flagged node.
@@ -885,10 +885,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # if node invalidation reason is not among the fixable ones, method stops here.
             return flippedLinesIds, mergedLinesString
         ## try to fix node issues
-        featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
         if reasonType in [1, 2]:
             # original message: self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ')
             # original message: self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
+            # get flipping candidates
+            featIdFlipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
             for lineId in featIdFlipCandidates:
                 line = invalidDict[int(lineId)]
                 if line not in connectedValidLines:
@@ -1153,7 +1154,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeFlags, inval, val = dict(), dict(), dict()
             # cycle count start
             cycleCount = 0
-            MAX_AMOUNT_CYCLES = 5
+            MAX_AMOUNT_CYCLES = 1
             # field index for node type intiated
             for f in networkNodeLayer.getFeatures():
                 # just to get field index
