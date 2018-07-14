@@ -1154,7 +1154,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeFlags, inval, val = dict(), dict(), dict()
             # cycle count start
             cycleCount = 0
-            MAX_AMOUNT_CYCLES = 1
+            MAX_AMOUNT_CYCLES = 5
             # field index for node type intiated
             for f in networkNodeLayer.getFeatures():
                 # just to get field index
