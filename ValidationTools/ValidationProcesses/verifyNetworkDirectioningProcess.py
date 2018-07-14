@@ -504,7 +504,12 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         for nn in nodes:
             # initiate/clear line variable
             line = None
-            nodeType = nodeTypeDictAlias[nn]
+            if nn in nodeTypeDictAlias:
+                nodeType = nodeTypeDictAlias[nn]
+            else:
+                nodeType = self.classifyNode([nn, nodeTypeDictAlias])
+                nodeTypeDictAlias[nn] = nodeType
+                self.reclassifyNodeType[nn] = nodeType
             if nodeType in inContourConditionTypes:
                 # if next node is a confirmed IN-flowing lines, no lines should start on it
                 line = nodeDictAlias[nn]['start'][0] if nodeDictAlias[nn]['start'] else None
