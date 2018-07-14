@@ -1095,16 +1095,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # make it recursive in order to not get stuck after all possible initial fixes
                 nodeFlags_, inval_, val_ = self.checkAllNodesValidity(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
                 cycleCount += 1
-                # update reclassified nodes into node layer
-                # create a func for feature reclassifying speed up by using map instead of for-loop
-                # for node, newNodeType in self.reclassifyNodeType.iteritems():
-                #     fid = self.nodeIdDict[node]
-                #     # field index is assumed to be 2 (standard for expected node table)
-                #     networkNodeLayer.changeAttributeValue(fid, fieldIndex, newNodeType)
-                    # networkNodeLayer.updateFeature(feat)
-                # after nodes have been reclassified on layer, reclassifying node dict is emptied
+                # Log amount of cycles completed
+                cycleCountLog = self.tr("Cycle {0} completed (maximum of {1}).").format(cycleCount, MAX_AMOUNT_CYCLES)
+                QgsMessageLog.logMessage(cycleCountLog, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                 self.reclassifyNodeType = dict()
-                # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues)
+                # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues) or no flags found.
                 if (cycleCount == MAX_AMOUNT_CYCLES) or (not nodeFlags_) or (set(nodeFlags.keys()) == set(nodeFlags_.keys())):
                     # copy values to final dict
                     nodeFlags_, inval, val = nodeFlags_, inval_, val_
