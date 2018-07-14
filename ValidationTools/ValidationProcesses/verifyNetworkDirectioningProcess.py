@@ -826,6 +826,18 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         self.flipSingleLine(line=invalidLine, layer=networkLayer)
         return invalidLine
 
+    def fixAttributeChangeFlag(self, node, networkLayer=networkLayer):
+        """
+        Merges the given 2 lines marked as sharing the same set of attributes.
+        :param node: (QgsPoint) flagged node.
+        :param networkLayer: (QgsVectorLayer) network lines layer.
+        :return: (str) string containing which line was line the other.
+        """
+        line_a = self.nodeDict[node]['end'][0]
+        line_b = self.nodeDict[node]['start'][0]
+        self.DsgGeometryHandler.mergeLines(line_a=line_a, line_b=line_b, layer=networkLayer)
+        return self.tr('{0} to {1}').format(line_b.id(), line_a.id())
+
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
         """
         Updates node dictionary. Useful when direction of a (set of) line is changed.
@@ -864,7 +876,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         Tries to fix issues flagged on node
         """
         # initiate lists of lines that were flipped/merged
-        flippedLinesIds, mergedLinesString = [], ""
+        flippedLinesIds, mergedLinesString = [], []
         # support list of flipped lines
         flippedLines = []
         # get reason type
@@ -893,7 +905,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # if a line is flipped it must be changed in self.nodeDict
                 self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
         elif reasonType == 4:
-            pass
+            # original message: self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.')
+            mergedLinesString.append(self.fixAttributeChangeFlag(node))
         elif reasonType == 5:
             # original message: self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
             line = self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
