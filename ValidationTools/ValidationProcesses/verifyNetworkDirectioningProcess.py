@@ -520,13 +520,15 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
                 flippedLines.append(line)
                 flippedLinesIds.append(str(line.id()))
-                validLines.append(line)
+                # validLines.append(line)
         # for speed-up
         initialNode = lambda x : self.getFirstNode(lyr=networkLayer, feat=x, geomType=geomType)
         lastNode = lambda x : self.getLastNode(lyr=networkLayer, feat=x, geomType=geomType)
         if flippedLines:
             # map is a for-loop in C
-            reclassifyNodeAlias = lambda n : self.reclassifyNode(node=n, nodeLayer=nodeLayer)
+            reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, self.reclassifyNodeType[x]) \
+                                                if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
+                                                else False
             map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
         return hasStartCondition, flippedLinesIds
 
@@ -873,6 +875,27 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         self.reclassifyNodeType[node] = newType
         return True
 
+    def fixDeltaFlag(self, node, networkLayer, validLines, reason, reasonType=3, geomType=None):
+        """
+        Tries to fix nodes flagged because of their delta angles.
+        :param node: (QgsPoint) invalid node.
+        :param network: (QgsVectorLayer) contains network lines.
+        :param validLines: (list-of-QgsFeature) lines already validated.
+        :param reason: (str) reason of node invalidation.
+        :param reasonType: (int) code for invalidation reason.
+        :param geomType: (int) code for the layer that contains the network lines.
+        :return: (QgsFeature) line to be flipped. If no line is identified as flippable, None is returned.
+        """
+        flipCandidates = self.getLineIdFromReason(reason=reason, reasonType=reasonType)
+        for line in self.nodeDict[node]['start'] + self.nodeDict[node]['end']:
+            lineId = str(line.id())
+            if lineId in flipCandidates and line not in validLines:
+                # flip line that is exposed in invalidation reason and is not previously validated
+                self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
+                return line
+        # if no line attend necessary requirements for flipping
+        return None
+
     def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, nodeLayer, geomType=None, deltaLinesCheckList=None):
         """
         Tries to fix issues flagged on node
@@ -901,10 +924,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     flippedLines.append(line)
         elif reasonType == 3:
             # original message: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
-            line = self.flipInvalidLine(node=node, networkLayer=networkLayer, validLines=connectedValidLines, geomType=geomType)
+            line = self.fixDeltaFlag(node=node, networkLayer=networkLayer, reason=reason, validLines=connectedValidLines, reasonType=reasonType)
             if line:
-                flippedLinesIds.append(str(line.id()))
-                flippedLines.append(line)
                 # if a line is flipped it must be changed in self.nodeDict
                 self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
         elif reasonType == 4:
@@ -928,7 +949,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         if flippedLinesIds:
             # re-classify nodes connected to flipped lines before re-checking
             # map is a for-loop in C
-            reclassifyNodeAlias = lambda x : self.reclassifyNode(node=x, nodeLayer=nodeLayer)
+            reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, self.reclassifyNodeType[x]) \
+                                                if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
+                                                else False                                            
+            fid = self.nodeIdDict[node]
             map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
             # check if node is fixed and update its dictionaries and invalidation reason
             valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
@@ -969,7 +993,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             else:
                 node = feat.geometry().asPoint()
             nodeTypeDict[node] = feat['node_type']
-            nodeIdDict[node] = feat['id']
+            nodeIdDict[node] = feat.id()
         return nodeTypeDict, nodeIdDict
 
     def execute(self):
@@ -1073,10 +1097,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 cycleCount += 1
                 # update reclassified nodes into node layer
                 # create a func for feature reclassifying speed up by using map instead of for-loop
-                for node, newNodeType in self.reclassifyNodeType.iteritems():
-                    fid = self.nodeIdDict[node]
-                    # field index is assumed to be 2 (standard for expected node table)
-                    networkNodeLayer.changeAttributeValue(fid, fieldIndex, newNodeType)
+                # for node, newNodeType in self.reclassifyNodeType.iteritems():
+                #     fid = self.nodeIdDict[node]
+                #     # field index is assumed to be 2 (standard for expected node table)
+                #     networkNodeLayer.changeAttributeValue(fid, fieldIndex, newNodeType)
                     # networkNodeLayer.updateFeature(feat)
                 # after nodes have been reclassified on layer, reclassifying node dict is emptied
                 self.reclassifyNodeType = dict()
