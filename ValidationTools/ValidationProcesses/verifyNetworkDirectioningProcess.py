@@ -339,7 +339,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.unclassifiedNodes = True
             QMessageBox.warning(self.iface.mainWindow(), self.tr('Error!'), self.tr('There are unclassified nodes! Node (re)creation process is recommended before this process.'))
             return None, None, None
-        flow = flowType[nodeType]
+        flow = flowType[int(nodeType)]
         nodePointDict = self.nodeDict[node]
         # getting all connected lines to node that are not already validated
         linesNotValidated = list( set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines) )
@@ -526,7 +526,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         lastNode = lambda x : self.getLastNode(lyr=networkLayer, feat=x, geomType=geomType)
         if flippedLines:
             # map is a for-loop in C
-            reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, self.reclassifyNodeType[x]) \
+            reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else False
             map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
@@ -949,7 +949,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         if flippedLinesIds:
             # re-classify nodes connected to flipped lines before re-checking
             # map is a for-loop in C
-            reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, self.reclassifyNodeType[x]) \
+            reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else False                                            
             fid = self.nodeIdDict[node]
@@ -995,6 +995,55 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeTypeDict[node] = feat['node_type']
             nodeIdDict[node] = feat.id()
         return nodeTypeDict, nodeIdDict
+
+    def clearAuxiliaryLinesLayer(self, invalidLinesLayer, lineIdList=None, commitToLayer=False):
+        """
+        Clears all (or a given list of points) invalid lines from auxiliary lines layer.
+        :param invalidLinesLayer: (QgsVectorLayer) invalid lines layer.
+        :param lineIdList: (list-of-int) list of lines IDs to be cleared from layer.
+        :param commitToLayer: (bool) indicates whether changes should be commited to layer.
+        """
+        invalidLinesLayer.beginEditCommand('Clear Invalid Lines')
+        if lineIdList is None:
+            # define a function to get only feature ids for invalid lines registered in invalidLinesLayer and use it in map, for speed-up
+            getInvalidLineFunc = lambda feat : feat.id() if self.tr(" - Invalid Line (line ID: ") in feat['classe'] else -9999
+            # list/set combination to remove possible duplicates of -9999 and avoid unnecessary calculation
+            lineIdList = list(set(map(getInvalidLineFunc, invalidLinesLayer.getFeatures())))
+            if -9999 in lineIdList:
+                lineIdList.remove(-9999)
+        invalidLinesLayer.deleteFeatures(lineIdList)
+        invalidLinesLayer.endEditCommand()
+        # commit changes to LAYER
+        if commitToLayer:
+            invalidLinesLayer.commitChanges()
+
+    def fillAuxiliaryLinesLayer(self, invalidLinesLayer, invalidLinesDict, commitToLayer=False):
+        """
+        Populate from auxiliary lines layer with all invalid lines.
+        :param invalidLinesLayer: (QgsVectorLayer) hidrography nodes layer.
+        :param invalidLinesDict: (dict) dictionary containing all invalid lines to be displayed.
+        :param commitToLayer: (bool) indicates whether changes should be commited to layer.
+        """
+        # if table is going to be filled, then it needs to be cleared first
+        self.clearAuxiliaryLinesLayer(invalidLinesLayer=invalidLinesLayer, commitToLayer=commitToLayer)
+        # get fields from layer in order to create new feature with the same attribute map
+        fields = invalidLinesLayer.fields()
+        invalidLinesLayer.beginEditCommand('Add invalid lines')
+        # to avoid unnecessary calculation inside loop
+        nodeTypeKeys = self.nodeTypeDict.keys()
+        # initiate new features list
+        featList = []
+        for lineId, line in invalidLinesDict.iteritems():
+            # set attribute map and create new feture
+            feat = QgsFeature(fields)
+            # set geometry
+            feat.setGeometry(line.geometry())
+            feat['classe'] = self.tr("{0} - Invalid Line (line ID: {1}).").format(self.processAlias, lineId)
+            featList.append(feat)
+        invalidLinesLayer.addFeatures(featList)
+        invalidLinesLayer.endEditCommand()
+        if commitToLayer:
+            invalidLinesLayer.commitChanges()
 
     def execute(self):
         """
@@ -1082,6 +1131,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # MAX_AMOUNT_CYCLES = 1
             # get max amount of orientation cycles
             MAX_AMOUNT_CYCLES = self.parameters[self.tr('Max. Directioning Cycles')]
+            MAX_AMOUNT_CYCLES = MAX_AMOUNT_CYCLES if MAX_AMOUNT_CYCLES > 0 else 1
             # field index for node type intiated
             for f in networkNodeLayer.getFeatures():
                 # just to get field index
@@ -1106,6 +1156,21 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     # no more modifications to those layers will be done
                     networkLayer.endEditCommand()
                     networkNodeLayer.endEditCommand()
+                    # try to load auxiliary line layer to fill it with invalid lines
+                    try:
+                        # try loading it
+                        auxLinKey = 'aux,linha_l,geom,MULTILINESTRING,BASE TABLE'
+                        lineClassesAuxDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=False, excludeValidation = False)
+                        auxLinCl = lineClassesAuxDict[auxLinKey]
+                        invalidLinesLayer = self.loadLayerBeforeValidationProcess(auxLinCl)
+                        # free unnecessary memory usage
+                        del lineClassesAuxDict, auxLinKey, auxLinCl
+                        invalidLinesLayer.startEditing()
+                        self.fillAuxiliaryLinesLayer(invalidLinesLayer=invalidLinesLayer, invalidLinesDict=inval)
+                        invalidLinesLog = self.tr("Invalid lines were exposed in layer {0}).").format(invalidLinesLayer.name())
+                        QgsMessageLog.logMessage(invalidLinesLog, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+                    except:
+                        pass
                     break
                 # for the next iterations
                 nodeFlags, inval, val = nodeFlags_, inval_, val_
