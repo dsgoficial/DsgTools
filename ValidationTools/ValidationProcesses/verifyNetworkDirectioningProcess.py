@@ -470,51 +470,63 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nextNodes.append(self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType))
         return nextNodes
 
-    def checkForStartConditions(self, node, validLines, networkLayer, geomType=None):
+    def checkForStartConditions(self, node, validLines, networkLayer, nodeLayer, geomType=None):
         """
         Checks if any of next nodes is a contour condition to directioning process.
         :param node: (QgsPoint) node which needs to have its next nodes checked.
         :param validLines: (list-of-QgsFeature) lines that were alredy checked and validated.
         :param networkLayer: (QgsVectorLayer) network lines layer.
+        :param nodeLayer: (QgsVectorLayer) network nodes layer.
         :param geomType: (int) network lines layer geometry type code.
         :return:
         """
         # node type granted as right as start conditions
         inContourConditionTypes = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.Sink]
-        # outContourConditionTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin]
+        outContourConditionTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin]
         nodes = self.getNextNodes(node=node, networkLayer=networkLayer, geomType=geomType)
         # for faster calculation
         nodeTypeDictAlias = self.nodeTypeDict
         nodeDictAlias = self.nodeDict
         # list of flipped features, if any
-        flippedLines = []
+        flippedLines, flippedLinesIds = [], []
+        # dict indicating whether lines may be flipped or not
+        nonFlippableDict, flippableDict = dict(), dict()
         # at first, we assume there are no start conditions on next nodes
         hasStartCondition = False
         for nn in nodes:
-            if nn not in nodeTypeDictAlias:
-                ERRO
+            # initiate/clear line variable
+            line = None
             nodeType = nodeTypeDictAlias[nn]
             if nodeType in inContourConditionTypes:
-                # if next node is an "in" flow type, check if line is that way and flip it, if necessary
-                if nodeDictAlias[nn]['end']:
-                    # if this list is populated, then next node is indeed an "in" flow type node and line should be added to validLines
-                    validLines.append(nodeDictAlias[nn]['end'][0])
-                else:
-                    # if line is in start dict, it has the wrong flow, then it should be flipped
-                    line = nodeDictAlias[nn]['start'][0]
-                    self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
-                    # if a line is flipped it must be changed in self.nodeDict
-                    self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
-                    flippedLines.append(str(line.id()))
-                    validLines.append(nodeDictAlias[nn]['end'][0])
+                nonFlippableDict = nodeDictAlias[nn]['end']
+                flippableDict = nodeDictAlias[nn]['start']
                 hasStartCondition = True
+            elif nodeType in outContourConditionTypes:
+                nonFlippableDict = nodeDictAlias[nn]['end']
+                flippableDict = nodeDictAlias[nn]['start']
+                hasStartCondition = True
+                # if next node is an "in" flow type, check if line is that way and flip it, if necessary
+            if nonFlippableDict:
+                # if this list is populated, then next node is indeed an "in" flow type node and line should be added to validLines
+                line = nonFlippableDict[0]
+            elif flippableDict:
+                # if line is in start dict, it has the wrong flow, then it should be flipped
+                line = flippableDict[0]
+                self.flipSingleLine(line=line, layer=networkLayer, geomType=geomType)
+                # if a line is flipped it must be changed in self.nodeDict
+                self.updateNodeDict(node=node, line=line, networkLayer=networkLayer, geomType=geomType)
+                flippedLines.append(line)
+            if line:
+                flippedLinesIds.append(str(line.id()))
+                validLines.append(line)
         # for speed-up
         initialNode = lambda x : self.getFirstNode(lyr=networkLayer, feat=x, geomType=geomType)
         lastNode = lambda x : self.getLastNode(lyr=networkLayer, feat=x, geomType=geomType)
         if flippedLines:
             # map is a for-loop in C
-            map(self.reclassifyNode, map(initialNode, flippedLines) + map(lastNode, flippedLines))
-        return hasStartCondition, flippedLines
+            reclassifyNodeAlias = lambda n : self.reclassifyNode(node=n, nodeLayer=nodeLayer)
+            map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
+        return hasStartCondition, flippedLinesIds
 
     def checkAllNodesValidity(self, networkLayer, nodeLayer, nodeList=None):
         """
@@ -551,6 +563,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if node in self.nodeDict:
                     startLines = self.nodeDict[node]['start']
                     endLines = self.nodeDict[node]['end']
+                    if node not in self.nodeTypeDict:
+                        # in case node is not classified
+                        self.nodeTypeDict[node] = self.classifyNode([node, nodeLayer])
+                        self.reclassifyNodeType[node] = self.nodeTypeDict[node]
                 else:
                     # ignore node for possible next iterations by adding it no visited nodes
                     visitedNodes.append(node)
@@ -558,7 +574,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 validLinesList = validLines.values()
                 if len(set(startLines + endLines) - set(validLinesList)) > 1:
                     # if there are more than 1 lines not validated yet, node will neither be checked not marked as visited
-                    hasStartCondition, flippedLines = self.checkForStartConditions(node=node, validLines=validLinesList, networkLayer=networkLayer, geomType=geomType)
+                    hasStartCondition, flippedLines = self.checkForStartConditions(node=node, validLines=validLinesList, networkLayer=networkLayer, nodeLayer=nodeLayer, geomType=geomType)
                     if hasStartCondition:
                         flippedLinesIds += flippedLines
                     else:
@@ -840,8 +856,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # alter it in feature
         self.nodeTypeDict[node] = newType
         id_ = self.nodeIdDict[node]
-        self.reclassifyNodeType[node] = str(newType)
-        return self.nodeTypeDict[node] == newType
+        self.reclassifyNodeType[node] = newType
+        return True
 
     def fixNodeFlagsNew(self, node, valDict, invalidDict, reason, connectedValidLines, networkLayer, nodeLayer, geomType=None, deltaLinesCheckList=None):
         """
@@ -1125,6 +1141,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # cycle count start
             cycleCount = 0
             MAX_AMOUNT_CYCLES = 5
+            # field index for node type intiated
+            for f in networkNodeLayer.getFeatures():
+                # just to get field index
+                fieldIndex = f.fieldNameIndex('node_type')
+                break
             # validation method FINALLY starts...
             while True:
                 # make it recursive in order to not get stuck after all possible initial fixes
@@ -1132,10 +1153,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 cycleCount += 1
                 # update reclassified nodes into node layer
                 # create a func for feature reclassifying speed up by using map instead of for-loop
-                featureReclassifyFunc = lambda x : self.reclassifyNodeType[str(x.id())]
-                for feat in networkNodeLayer.getFeatures(QgsFeatureRequest(QgsExpression('id in ({0})'.format(",".join(self.reclassifyNodeType.keys()))))):
-                    feat['node_type'] = self.reclassifyNodeType[str(x.id())]
-                    nodeLayer.updateFeature(feat)
+                for node, newNodeType in self.reclassifyNodeType.iteritems():
+                    fid = self.nodeIdDict[node]
+                    # field index is assumed to be 2 (standard for expected node table)
+                    networkNodeLayer.changeAttributeValue(fid, fieldIndex, newNodeType)
+                    # networkNodeLayer.updateFeature(feat)
+                # after nodes have been reclassified on layer, reclassifying node dict is emptied
+                self.reclassifyNodeType = dict()
                 # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues)
                 if (cycleCount == MAX_AMOUNT_CYCLES) or (set(nodeFlags.keys()) == set(nodeFlags_.keys())):
                     # copy values to final dict
