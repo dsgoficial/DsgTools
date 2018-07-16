@@ -33,73 +33,34 @@ from qgis.PyQt.Qt import QObject
 #QGIS imports
 from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
                       QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, \
-                      QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes
+                      QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes, \
+                      QgsTask
 
 # DSGTools imports
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
-class ValidationProcess(QObject):
-    def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
+class ValidationProcess(QgsTask):
+    def __init__(self, params, description = '', flags = QgsTask.CanCancel):
         """
         Constructor
         """
-        super(ValidationProcess, self).__init__()
+        super(ValidationProcess, self).__init__(description, flags)
         self.processCategory = None
-        self.abstractDb = postgisDb
-        if self.getStatus() == None:
-            self.setStatus(self.tr('Instantianting process'), 0)
-        self.classesToBeDisplayedAfterProcess = []
-        self.parameters = None
-        self.iface = iface
-        self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, self.abstractDb)
+        self.parameters = params
         self.processAlias = self.tr('Validation Process')
-        self.instantiating = instantiating
         self.totalTime = 0
         self.startTime = 0
         self.endTime = 0
         self.dbUserName = None
         self.logMsg = None
         self.processName = None
-    
-    def getFlagLyr(self, dimension):
-        if dimension == 0:
-            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
-        elif dimension == 1:
-            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
-        elif dimension == 2:
-            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
-        return self.loadLayerBeforeValidationProcess(layer)
-
-    def setProcessName(self, processName):
-        """
-        Identifies the process name as it is.
-        """
-        self.processName = processName
 
     def setDbUserName(self, userName):
         """
         Identifies the database username.
         """
         self.dbUserName = userName
-
-    def setParameters(self, params):
-        """
-        Define the process parameteres
-        """
-        self.parameters = params
-
-    def execute(self):
-        """
-        Abstract method. MUST be reimplemented.
-        """
-        pass
-    
-    def shouldBeRunAgain(self):
-        """
-        Defines if the method should run again later
-        """
-        return False
     
     def getName(self):
         """
@@ -107,30 +68,6 @@ class ValidationProcess(QObject):
         """
         return str(self.__class__).split('.')[-1].replace('\'>', '')
     
-    def getProcessGroup(self):
-        """
-        Returns the process group
-        """
-        return 'Ungrouped'
-    
-    def getClassesToBeDisplayedAfterProcess(self):
-        """
-        Returns classes to be loaded to TOC after executing this process.
-        """
-        return self.classesToBeDisplayedAfterProcess
-    
-    def addClassesToBeDisplayedList(self,className):
-        """
-        Add a class into the class list that will be displayed after the process
-        """
-        if className not in self.classesToBeDisplayedAfterProcess:
-            self.classesToBeDisplayedAfterProcess.append(className)
-    
-    def clearClassesToBeDisplayedAfterProcess(self):
-        """
-        Clears the class list to be displayed
-        """
-        self.classesToBeDisplayedAfterProcess = []
     
     def preProcess(self):
         """
@@ -143,17 +80,6 @@ class ValidationProcess(QObject):
         Returns the name of the post process that must run after, must be reimplemented in each process
         """        
         return None
-    
-    def addFlag(self, flagTupleList):
-        """
-        Adds flags
-        flagTUpleList: list of tuples to be added as flag
-        """
-        try:
-            return self.abstractDb.insertFlags(flagTupleList, self.getName())
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred inserting flags! Check log for details.'))
-            QgsMessageLog.logMessage(str(e.args[0]), "DSG Tools Plugin", Qgis.Critical)
             
     def removeFeatureFlags(self, layer, featureId):
         """
@@ -161,49 +87,8 @@ class ValidationProcess(QObject):
         layer: Name of the layer that should be remove from the flags
         featureId: Feature id from layer name that must be removed
         """
-        try:
-            return self.abstractDb.removeFeatureFlags(layer, featureId, self.getName())
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-    
-    def getStatus(self):
-        """
-        Gets the process status
-        """
-        try:
-            return self.abstractDb.getValidationStatus(self.getName())
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-    
-    def getStatusMessage(self):
-        """
-        Gets the status message text
-        """
-        try:
-            return self.abstractDb.getValidationStatusText(self.getName())
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-    
-    def setStatus(self, msg, status):
-        """
-        Sets the status message
-        status: Status number
-        msg: Status text message
-        """
-        try:
-            if status not in [0,3]: # neither running nor instatiating status should be logged
-                self.logProcess()
-                if self.logMsg:
-                    msg += "\n\n" + self.logMsg
-                elif not self.dbUserName:
-                    msg += self.tr("Database username: {}").format(self.abstractDb.db.userName())
-            self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
-        except Exception as e:
-            QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+        #REDO
+        pass
     
     def finishedWithError(self):
         """
@@ -220,12 +105,6 @@ class ValidationProcess(QObject):
         except:
             pass
         self.clearClassesToBeDisplayedAfterProcess()
-    
-    def inputData(self):
-        """
-        Returns current active layers
-        """
-        return self.iface.mapCanvas().layers()
 
     def getTableNameFromLayer(self, lyr):
         """
@@ -252,61 +131,6 @@ class ValidationProcess(QObject):
             for feat in inputLyr.getFeatures():
                 featureMap[feat.id()] = feat
         return featureMap
-    
-    def updateOriginalLayer(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None):
-        """
-        Updates the original layer using the grass output layer
-        pgInputLyr: postgis input layer
-        qgisOutputVector: qgis output layer
-        Speed up tips: http://nyalldawson.net/2016/10/speeding-up-your-pyqgis-scripts/
-        """
-        provider = pgInputLayer.dataProvider()
-        # getting keyColumn because we want to be generic
-        uri = QgsDataSourceUri(pgInputLayer.dataProvider().dataSourceUri())
-        keyColumn = uri.keyColumn()
-        # starting edition mode
-        pgInputLayer.startEditing()
-        addList = []
-        idsToRemove = []
-        #making the changes and inserts
-        for feature in pgInputLayer.getFeatures():
-            id = feature.id()
-            outFeats = []
-            #getting the output features with the specific id
-            if qgisOutputVector:
-                for gf in qgisOutputVector.dataProvider().getFeatures(QgsFeatureRequest(QgsExpression("{0}={1}".format(keyColumn, id)))):
-                    outFeats.append(gf)
-            elif featureTupleList:
-                for gfid, gf in featureTupleList:
-                    if gfid == id and gf['classname'] == pgInputLayer.name():
-                        outFeats.append(gf)
-            else:
-                for gf in [gf for gf in featureList if gf.id() == id]:
-                    outFeats.append(gf)
-            #starting to make changes
-            for i in range(len(outFeats)):
-                if i == 0:
-                    #let's update this feature
-                    newGeom = outFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    feature.setGeometry(newGeom)
-                    pgInputLayer.updateFeature(feature)
-                else:
-                    #for the rest, let's add them
-                    newFeat = QgsFeature(feature)
-                    newGeom = outFeats[i].geometry()
-                    newGeom.convertToMultiType()
-                    newFeat.setGeometry(newGeom)
-                    idx = newFeat.fieldNameIndex(keyColumn)
-                    newFeat.setAttribute(idx, provider.defaultValue(idx))
-                    addList.append(newFeat)
-            #in the case we don't find features in the output we should mark them to be removed
-            if len(outFeats) == 0:
-                idsToRemove.append(id)
-        #pushing the changes into the edit buffer
-        pgInputLayer.addFeatures(addList)
-        #removing features from the layer.
-        pgInputLayer.deleteFeatures(idsToRemove)
 
     def updateOriginalLayerV2(self, pgInputLayer, qgisOutputVector, featureList=None, featureTupleList=None, deleteFeatures = True):
         """
@@ -405,22 +229,6 @@ class ValidationProcess(QObject):
         for feature in layer.getFeatures():
             recordList.append((feature.id(), binascii.hexlify(feature.geometry().asWkb())))
         return recordList
-    
-    def loadLayerBeforeValidationProcess(self, cl):
-        """
-        Loads all layers to QGIS' TOC prior the validation process
-        """
-        #creating vector layer
-        if self.abstractDb.getDatabaseVersion() == 'Non_EDGV':
-            isEdgv = False
-        else:
-            isEdgv = True
-        if isinstance(cl, dict):
-            lyr = self.layerLoader.load([cl], uniqueLoad=True, isEdgv=isEdgv)[cl['lyrName']]
-        else:
-            schema, layer_name = self.abstractDb.getTableSchema(cl)
-            lyr = self.layerLoader.load([layer_name], uniqueLoad=True, isEdgv=isEdgv)[layer_name]
-        return lyr
     
     def prepareExecution(self, cl, geometryColumn='geom', selectedFeatures = False):
         """

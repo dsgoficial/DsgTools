@@ -41,7 +41,7 @@ class ValidationWorkflow(QgsTask):
         return True
 
 class ValidationManager(QObject):
-    def __init__(self,postgisDb, iface, application = None):
+    def __init__(self, postgisDb, iface, application = None):
         """
         Constructor
         """
@@ -199,7 +199,7 @@ class ValidationManager(QObject):
             process.setParameters(params)
             process.setDbUserName(self.postgisDb.getDatabaseParameters()[2])
             process.setProcessName(self.processDict[process.processAlias])
-            ret = process.execute() # run bitch run!
+            ret = process.execute()
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", Qgis.Critical)
             # process.logTotalTime()
@@ -208,68 +208,8 @@ class ValidationManager(QObject):
                 return 0
         return 1
     
-    def getParametersWithUi(self, processChain, parameterDict, restoreOverride = True, withElements = True):
-        """
-        Builds interface
-        """
-        processText = ', '.join([process.processAlias for process in processChain])
-        dlg = ProcessParametersDialog(None, parameterDict, None, self.tr('Process parameters setter for process(es) {0}').format(processText), restoreOverride = restoreOverride, withElements = withElements)
-        if dlg.exec_() == 0:
-            return -1
-        # get parameters
-        params = dlg.values
-        return params
-
-    def executeProcess(self, process):
-        """
-        Executes a process by its name
-        processName: process name
-        """
-        #checking for running processes
-        processName = self.processDict[process]
-        runningProc = None
-        try:
-            runningProc = self.postgisDb.getRunningProc()
-        except Exception as e:
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-            return 0
-            
-        #if there is a running process we should stop
-        QApplication.restoreOverrideCursor()
-        if runningProc != None:
-            if not QMessageBox.question(self.iface.mainWindow(), self.tr('Question'),  self.tr('It seems that process {0} is already running. Would you like to ignore it and start another process?').format(process), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Ok:
-                QgsMessageLog.logMessage(self.tr('Unable to run process {0}. Process {1} is already running.\n').format(process, runningProc), "DSG Tools Plugin", Qgis.Critical)
-                return 0
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        currProc = self.instantiateProcessByName(processName, False)
-        #checking for existing pre process
-        preProcessName = currProc.preProcess()
-        if preProcessName:
-            self.executeProcess(preProcessName)
-        # setting parameters
-        if currProc.parameters:
-            dlg = ProcessParametersDialog(None, currProc.parameters, None, self.tr('Process parameters setter for process {0}').format(process))
-            if dlg.exec_() == 0:
-                return -1
-            # get parameters
-            params = dlg.values
-            # adjusting the parameters in the process
-            currProc.setParameters(params)
-        #check status
-        QgsMessageLog.logMessage('Process %s Log:\n' % currProc.getName(), "DSG Tools Plugin", Qgis.Critical)
-        ret = currProc.execute() #run bitch run!
-        #status = currProc.getStatus() #must set status
-        QgsMessageLog.logMessage('Process ran with status %s\n' % currProc.getStatusMessage(), "DSG Tools Plugin", Qgis.Critical)
-        currProc.logTotalTime()
-        #checking for existing post process
-        postProcessName = currProc.postProcess()
-        if postProcessName:
-            self.executeProcess(postProcessName)
-        return ret
-    
-    def addTaskToQeue(self, task, parameters = None):
-        if parameters:
-
+    def addTaskToQeue(self, task, parameters):
+        task.parameters = parameters
         self.workflowQueue.append(task)
 
     def runWorkflow(self):
