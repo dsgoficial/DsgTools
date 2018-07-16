@@ -35,7 +35,6 @@ from DsgTools.core.ValidationTools.ValidationProcesses.hierarchicalSnapLayerOnLa
 
 class ProcessParametersDialog(QtWidgets.QDialog):
     WIDGETS = {str: QtWidgets.QLineEdit,
-               str: QtWidgets.QLineEdit,
                int: QtWidgets.QSpinBox,
                float: QtWidgets.QDoubleSpinBox,
                list: CustomTableSelector,
@@ -76,7 +75,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                   QtWidgets.QComboBox: lambda x: True,
                   QtWidgets.QCheckBox: lambda x: True}
 
-    def __init__(self, parent, options, required=None, title=None, restoreOverride = True, withElements = True):
+    def __init__(self, parent, options, required=None, title=None, restoreOverride = True):
         """
         Constructor
         """
