@@ -22,7 +22,7 @@
 """
 from __future__ import print_function
 import os
-from qgis.core import QgsMessageLog, Qgis
+from qgis.core import QgsMessageLog, Qgis, QgsTask, QgsApplication
 from DsgTools.gui.ProductionTools.Toolboxes.ValidationToolbox.processParametersDialog import ProcessParametersDialog
 
 from qgis.PyQt.QtCore import Qt
@@ -31,8 +31,17 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QMenu
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.Qt import QObject
 
+
+class ValidationWorkflow(QgsTask):
+    def __init__(self, description, flags):
+        super(ValidationWorkflow, self).__init__(description, flags)
+
+    def run(self):
+        QgsMessageLog.logMessage(self.tr('Started task {}').format(self.description()))
+        return True
+
 class ValidationManager(QObject):
-    def __init__(self,postgisDb, iface):
+    def __init__(self,postgisDb, iface, application = None):
         """
         Constructor
         """
@@ -43,6 +52,8 @@ class ValidationManager(QObject):
         self.processDict = dict()
         self.lastProcess = None
         self.lastParameters = None
+        self.taskManager = QgsApplication.taskManager() if not application else application.taskManager()
+        self.workflowQueue = []
         try:
             #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
@@ -256,10 +267,26 @@ class ValidationManager(QObject):
             self.executeProcess(postProcessName)
         return ret
     
-if __name__ == '__main__':
-    from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-    abstractDb = DbFactory().createDbFactory('QPSQL')
-    manager = ValidationManager(abstractDb)
-    # fix_print_with_import
-    print(manager)
-    pass
+    def addTaskToQeue(self, task, parameters = None):
+        if parameters:
+
+        self.workflowQueue.append(task)
+
+    def runWorkflow(self):
+        """
+        Workflow is a set of dependent and serial tasks, each with its own parameters. 
+        A workflowQueue is built and when this method is called, a QgsTask is built
+        with dependencies, as follows:
+            1 - The first task deppends on no other task;
+            2 - When a taks is added to the workflow, it is added to the dependencies list;
+            3 - For each task other than the first, it will depend on the task list;
+        After the workflow is built, it is added to the taskManager
+
+        """
+        workflow = ValidationWorkflow(description = self.tr('Validation Workflow'))
+        dependenciesList = []
+        for task in self.workflowQueue:
+            workflow.addSubTask(task, dependencies = dependenciesList, subTaskDependency = QgsTask.ParentDependsOnSubTask)
+            if task not in dependenciesList:
+                dependenciesList.append(task)
+        self.taskManager.addTask(workflow)
