@@ -116,7 +116,7 @@
              </column>
              <column>
               <property name="text">
-               <string>Workflow Item</string>
+               <string>Task</string>
               </property>
              </column>
              <column>
