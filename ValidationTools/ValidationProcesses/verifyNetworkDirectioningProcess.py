@@ -218,40 +218,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         # if lines are flowing to/from the same node (they are flowing the same way)
         return (fn_a == fn_b or ln_a == ln_b)
 
-    def validateDeltaLinesAng(self, node, networkLayer, geomType=None):
-        """
-        Validates a set of lines connected to a node as for the angle formed between them.
-        :param node: (QgsPoint) hidrography node to be validated.
-        :param networkLayer: (QgsVectorLayer) hidrography line layer.
-        :return: (str) if node is invalid, returns the reason of invalidation .
-        """
-        if not geomType:
-            geomType = networkLayer.geometryType()
-        azimuthDict = self.calculateAzimuthFromNode(node=node, networkLayer=networkLayer, geomType=None)
-        for idx1, key1 in enumerate(azimuthDict.keys()):
-            if idx1 == len(azimuthDict.keys()):
-                # if first comparison element is already the last feature, all differences are already computed
-                break
-            for idx2, key2 in enumerate(azimuthDict.keys()):
-                if idx1 >= idx2:
-                    # in order to calculate only f1 - f2, f1 - f3, f2 - f3 (for 3 features, for instance)
-                    continue
-                absAzimuthDifference = math.fmod((azimuthDict[key1] - azimuthDict[key2] + 360), 360)
-                if absAzimuthDifference > 180:
-                    # the lesser angle should always be the one to be analyzed
-                    absAzimuthDifference = (360 - absAzimuthDifference)
-                if absAzimuthDifference < 90:
-                    # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
-                    if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, networkLayer=networkLayer, geomType=geomType):
-                        return self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
-                elif absAzimuthDifference != 90:
-                    # if it's any other disposition, lines can have the same orientation
-                    continue
-                else:
-                    # if lines touch each other at a right angle, then it is impossible to infer waterway direction
-                    return self.tr('Cannot infer directions for lines {0} and {1} (Right Angle)').format(key1.id(), key2.id())
-        return
-
     def validateDeltaLinesAngV2(self, node, networkLayer, connectedValidLines, geomType=None):
         """
         Validates a set of lines connected to a node as for the angle formed between them.
@@ -328,7 +294,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     CreateNetworkNodesProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
                     CreateNetworkNodesProcess.NodeNextToWaterBody : 'in or out', # 8 - Nó próximo a corpo d'água
                     CreateNetworkNodesProcess.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
-                    CreateNetworkNodesProcess.ConstantFlowNode : 'in and out', # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
+                    CreateNetworkNodesProcess.NodeOverload : None, # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
                     CreateNetworkNodesProcess.DisconnectedLine : None, # 11 - Nó conectado a uma linha perdida na rede (teria dois inícios de rede)
                     # CreateNetworkNodesProcess.NodeOverload : None # 10 - Mais 
                    }
@@ -349,11 +315,18 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # flags have all lines flagged
             if nodeType == CreateNetworkNodesProcess.Flag:
                 reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
+                invalidLines = { line.id() : line for line in linesNotValidated }
             elif nodeType == CreateNetworkNodesProcess.AttributeChangeFlag:
                 if nodePointDict['start'] and nodePointDict['end']:
                     # in case manual error is inserted, this would raise an exception
-                    id1, id2 = nodePointDict['start'][0].id(), nodePointDict['end'][0].id()
+                    line1, line2 = nodePointDict['start'][0], nodePointDict['end'][0]
+                    id1, id2 = line1.id(), line2.id()
                     reason = self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.').format(id1, id2)
+                    if line1 in linesNotValidated:
+                        il = line1
+                    else:
+                        il = line2
+                    invalidLines[il.id()] = il
                 else:
                     # problem is then, reclassified as a flag
                     self.nodeTypeDict[node] = CreateNetworkNodesProcess.Flag
@@ -365,11 +338,11 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 lines = nodePointDict['start'] + nodePointDict['end']
                 # just in case there's a node wrong manual reclassification so code doesn't raise an error
                 ids = [str(line.id()) for line in lines]
+                invalidLines = { line.id() : line for line in lines }
                 reason = self.tr('Line {0} disconnected from network.').format(", ".join(ids))
-            # elif nodeType == CreateNetworkNodesProcess.NodeOverload:
-            #     reason = self.tr('Node is overloaded. Check acquisition norms. If more than 3 lines is valid for your project, ignore flag.')
-            for line in linesNotValidated:
-                invalidLines[line.id()] = line
+            elif nodeType == CreateNetworkNodesProcess.NodeOverload:
+                reason = self.tr('Node is overloaded - 4 or more lines are flowing in (>= 2 lines) and out (>= 2 lines).')
+                invalidLines = { line.id() : line for line in linesNotValidated }
             return validLines, invalidLines, reason
         if not linesNotValidated:
             # if there are no lines to be validated, method returns None
@@ -443,17 +416,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # check for connected lines angles coherence
             val2, inval2, reason2 = self.validateDeltaLinesAngV2(node=node, networkLayer=networkLayer, connectedValidLines=connectedValidLines, geomType=geomType)
             # if any invalid line was validated on because of node type, it shall be moved to invalid dict
-            if inval2:
+            if reason2:
+                # updates reason
+                reason = "; ".join([reason, reason2])
                 # remove any validated line in this iteration
-                for lineId, line in inval2.iteritems():
+                for lineId in inval2:
                     val.pop(lineId, None)
                 # insert into invalidated dict
                 inval.update(inval2)
-                # updates reason
-                if reason:
-                    reason = "; ".join([reason, reason2])
-                else:
-                    reason = reason2
         return val, inval, reason
 
     def getNextNodes(self, node, networkLayer, geomType=None):
@@ -577,21 +547,27 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         self.nodeTypeDict[node] = self.classifyNode([node, nodeLayer])
                         self.reclassifyNodeType[node] = self.nodeTypeDict[node]
                 else:
-                    # ignore node for possible next iterations by adding it no visited nodes
+                    # ignore node for possible next iterations by adding it to visited nodes
                     visitedNodes.append(node)
                     continue
                 nodeLines = startLines + endLines
                 validLinesList = validLines.values()
                 if len(set(nodeLines) - set(validLinesList)) > 1:
-                    # if there are more than 1 lines not validated yet, node will neither be checked not marked as visited
                     hasStartCondition, flippedLines = self.checkForStartConditions(node=node, validLines=validLinesList, networkLayer=networkLayer, nodeLayer=nodeLayer, geomType=geomType)
                     if hasStartCondition:
                         flippedLinesIds += flippedLines
                     else:
-                        continue
-                if node not in visitedNodes:
-                    # set node as visited
-                    visitedNodes.append(node)
+                        # if it is not connected to a start condition, check if node has a valid line connected to it
+                        if (set(nodeLines) & set(validLinesList)):
+                            # if it does and, check if it is a valid node
+                            val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLinesList,\
+                                                                        networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
+                            # if node has a valid line connected to it and it is valid, then non-validated lines are proven to be in conformity to
+                            # start conditions, then they should be validated and node should be set as visited
+                            if reason:
+                            # if there are more than 1 lines not validated yet and no start conditions around it, 
+                            # node will neither be checked nor marked as visited
+                                continue
                 # check coherence to node type and waterway flow
                 val, inval, reason = self.checkNodeValidity(node=node, connectedValidLines=validLinesList,\
                                                             networkLayer=networkLayer, deltaLinesCheckList=deltaLinesCheckList, geomType=geomType)
@@ -618,22 +594,16 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                             ", ".join([mergedLinesString,  mergedLinesString_])
                     # if node is still invalid, add to nodeFlagList and add/update its reason
                     if reason:
-                        if node not in nodeFlags.keys():
-                            nodeFlags[node] = reason
-                        else:
-                            nodeFlags[node] = "".join([nodeFlags[node], "; ", reason])
+                        nodeFlags[node] = reason
                     # get next nodes connected to invalid lines
                     for line in inval.values():
                         if line in endLines:
                             removeNode.append(self.getFirstNode(lyr=networkLayer, feat=line))
                         else:
                             removeNode.append(self.getLastNode(lyr=networkLayer, feat=line))
-                if not reason:
-                    # in case node is valid and there are lines previously validated connected to it, all lines connected to it will 
-                    # be considered valids if they are not invalidated previously
-                    validPerContamination = list(set(nodeLines) - set(validLines.values() + invalidLines.values()))
-                    if validPerContamination:
-                        val.update({l.id() : l for l in validPerContamination})
+                # set node as visited
+                if node not in visitedNodes:
+                    visitedNodes.append(node)
                 # update general dictionaries with final values
                 validLines.update(val)
                 invalidLines.update(inval)
@@ -885,8 +855,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # map is a for-loop in C
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
-                                                else False                                            
-            fid = self.nodeIdDict[node]
+                                                else None
             map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
             # check if node is fixed and update its dictionaries and invalidation reason
             valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
@@ -972,7 +941,12 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             feat = QgsFeature(fields)
             # set geometry
             feat.setGeometry(line.geometry())
-            feat['classe'] = self.tr("{0} - Invalid Line (line ID: {1}).").format(self.processAlias, lineId)
+            feat['layer'] = self.hidNodeLayerName
+            feat['process_name'] = self.processAlias
+            feat['feat_id'] = int(lineId)
+            feat['reason'] = self.tr('Connected to invalid hidrography node.')
+            feat['dimension'] = 1
+            feat['geometry_column'] = 'geom'
             featList.append(feat)
         invalidLinesLayer.addFeatures(featList)
         invalidLinesLayer.endEditCommand()
@@ -1062,7 +1036,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             nodeFlags, inval, val = dict(), dict(), dict()
             # cycle count start
             cycleCount = 0
-            # MAX_AMOUNT_CYCLES = 1
             # get max amount of orientation cycles
             MAX_AMOUNT_CYCLES = self.parameters[self.tr('Max. Directioning Cycles')]
             MAX_AMOUNT_CYCLES = MAX_AMOUNT_CYCLES if MAX_AMOUNT_CYCLES > 0 else 1
@@ -1076,6 +1049,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             networkNodeLayer.beginEditCommand('Reclassify Nodes')
             networkLayer.beginEditCommand('Flip/Merge Lines')
             while True:
+                if self.parameters[self.tr('Only Selected')]:
+                    # in case directioning is to be executed over selected lines
+                    nodeListSelectedLines = None
+                    pass
                 # make it recursive in order to not get stuck after all possible initial fixes
                 nodeFlags_, inval_, val_ = self.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
                 cycleCount += 1
@@ -1087,14 +1064,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 # change to valid lines list was made (meaning that the algorithm did not change network state) or no flags found
                 if (cycleCount == MAX_AMOUNT_CYCLES) or (not nodeFlags_) or (set(nodeFlags.keys()) == set(nodeFlags_.keys()) and val == val_):
                     # copy values to final dict
-                    nodeFlags_, inval, val = nodeFlags_, inval_, val_
+                    nodeFlags, inval, val = nodeFlags_, inval_, val_
                     # no more modifications to those layers will be done
                     networkLayer.endEditCommand()
                     networkNodeLayer.endEditCommand()
                     # try to load auxiliary line layer to fill it with invalid lines
                     try:
                         # try loading it
-                        auxLinKey = 'aux,linha_l,geom,MULTILINESTRING,BASE TABLE'
+                        auxLinKey = 'aux,flags_validacao_l,geom,MULTILINESTRING,BASE TABLE'
                         lineClassesAuxDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['l'], withElements=False, excludeValidation = False)
                         auxLinCl = lineClassesAuxDict[auxLinKey]
                         invalidLinesLayer = self.loadLayerBeforeValidationProcess(auxLinCl)
@@ -1106,6 +1083,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         QgsMessageLog.logMessage(invalidLinesLog, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     except:
                         pass
+                    # check if there are any lines in both valid and invalid dicts and remove it from valid dict
+                    vLines = val.keys()
+                    iLines = inval.keys()
+                    intersection = set(vLines) & set(iLines)
+                    if intersection:
+                        map(val.pop, intersection)
+                        # remove unnecessary variables
+                        del vLines, iLines, intersection
                     break
                 # for the next iterations
                 nodeFlags, inval, val = nodeFlags_, inval_, val_

@@ -33,7 +33,7 @@ from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class CreateNetworkNodesProcess(ValidationProcess):
     # enum for node types
-    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, ConstantFlowNode, DisconnectedLine = range(12)
+    Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, NodeOverload, DisconnectedLine = range(12)
     def __init__(self, postgisDb, iface, instantiating=False):
         """
         Class constructor.
@@ -58,9 +58,8 @@ class CreateNetworkNodesProcess(ValidationProcess):
                                     CreateNetworkNodesProcess.AttributeChange : self.tr("Attribute Change Node"),
                                     CreateNetworkNodesProcess.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
                                     CreateNetworkNodesProcess.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-                                    CreateNetworkNodesProcess.ConstantFlowNode : self.tr("Constant Flow Node"),
+                                    CreateNetworkNodesProcess.NodeOverload : self.tr("Overloaded Node"),
                                     CreateNetworkNodesProcess.DisconnectedLine : self.tr("Disconnected From Network")
-                                    # CreateNetworkNodesProcess.NodeOverload : self.tr("Overloaded Node")
                                 }
         if not self.instantiating:
             # getting tables with elements (line primitive)
@@ -464,7 +463,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         elif sizeFlowIn == sizeFlowOut:
             if sizeFlowIn > 1:
                 # case 4.c: there's a constant flow through node, but there are more than 1 line
-                return CreateNetworkNodesProcess.ConstantFlowNode
+                return CreateNetworkNodesProcess.NodeOverload
             elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer):
                 # case 4.a: lines do change their attribute set
                 return CreateNetworkNodesProcess.AttributeChange
