@@ -75,7 +75,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                   QtWidgets.QComboBox: lambda x: True,
                   QtWidgets.QCheckBox: lambda x: True}
 
-    def __init__(self, parent, options, required=None, title=None, restoreOverride = True):
+    def __init__(self, parent, options, required=None, title=None, restoreOverride = True, assignedParameters = {}):
         """
         Constructor
         """
@@ -108,25 +108,38 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                 widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
-            if self.WIDGETS[type(v)] == QtWidgets.QSpinBox:
+                if k in selectedDictList:
+                    getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
+                else:
+                    getattr(widget, self.SETTERS[type(widget)])(v)
+            elif self.WIDGETS[type(v)] == QtWidgets.QSpinBox:
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
+                if k in selectedDictList:
+                    getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
+                else:
+                    getattr(widget, self.SETTERS[type(widget)])(v)
             
-            if self.WIDGETS[type(v)] == CustomTableSelector:
+            elif self.WIDGETS[type(v)] == CustomTableSelector:
                 widget.setTitle(self.tr('Select classes'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.setHeaders(headerList)
-                getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
+                selectedList = assignedParameters[k] if k in assignedParameters else []
+                getattr(widget, self.SETTERS[type(widget)])(v, unique=True, selectedDictList = selectedList)
+
+            elif self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
                 widget.setTitle(self.tr('Select layers to be snapped'))
-            if self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
+
+            elif self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
                 widget.setTitle(self.tr('Select layers'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
+                
+            elif self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
                 getattr(widget, self.SETTERS[type(widget)])([v.values])
+
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
@@ -140,19 +153,19 @@ class ProcessParametersDialog(QtWidgets.QDialog):
             if _firstWidget is None:
                 _firstWidget = widget
 
-        # scrollArea = QtWidgets.QScrollArea()
-        # scrollArea.setWidgetResizable(True)
-        # scrollArea.setFrameShape(QtWidgets.QFrame.Shape(0))  # no frame
-        # w = QtWidgets.QWidget()
-        # w.setLayout(formLayout)
-        # scrollArea.setWidget(w)
+        scrollArea = QtWidgets.QScrollArea()
+        scrollArea.setWidgetResizable(True)
+        scrollArea.setFrameShape(QtWidgets.QFrame.Shape(0))  # no frame
+        w = QtWidgets.QWidget()
+        w.setLayout(formLayout)
+        scrollArea.setWidget(w)
 
         buttons = QtWidgets.QDialogButtonBox(QtWidgets.QDialogButtonBox.Ok | QtWidgets.QDialogButtonBox.Cancel)
         buttons.accepted.connect(self.accept)
         buttons.rejected.connect(self.reject)
 
-        # layout = QtWidgets.QGridLayout()
-        # layout.addWidget(scrollArea)
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(scrollArea)
         layout.addWidget(buttons, rowCount+1, 1)
         self.setLayout(layout)
 
