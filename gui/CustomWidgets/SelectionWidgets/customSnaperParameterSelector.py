@@ -59,7 +59,7 @@ class CustomSnaperParameterSelector(QtWidgets.QWidget, FORM_CLASS):
             if self.unifiedList:
                 self.customSelectorWidget.removeItem(self.referenceLayer)
     
-    def setInitialState(self, referenceList, originalList, unique=False):
+    def setInitialState(self, referenceList, originalList, unique=False, parameterDict = {}):
         """
         Sets the initial state
         """
