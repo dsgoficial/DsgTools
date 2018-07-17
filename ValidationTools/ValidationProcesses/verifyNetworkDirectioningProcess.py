@@ -418,7 +418,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # if any invalid line was validated on because of node type, it shall be moved to invalid dict
             if reason2:
                 # updates reason
-                reason = "; ".join([reason, reason2])
+                if reason:
+                    reason = "; ".join([reason, reason2])
+                else:
+                    reason  = reason2
                 # remove any validated line in this iteration
                 for lineId in inval2:
                     val.pop(lineId, None)
@@ -565,7 +568,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                             # if node has a valid line connected to it and it is valid, then non-validated lines are proven to be in conformity to
                             # start conditions, then they should be validated and node should be set as visited
                             if reason:
-                            # if there are more than 1 lines not validated yet and no start conditions around it, 
+                            # if there are more than 1 line not validated yet and no start conditions around it, 
                             # node will neither be checked nor marked as visited
                                 continue
                 # check coherence to node type and waterway flow
