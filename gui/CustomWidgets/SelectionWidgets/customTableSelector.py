@@ -97,7 +97,7 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         self.toTreeWidget.setHeaderLabels(headerList)
         self.setFilterColumn(customNumber = customNumber)
     
-    def setInitialState(self, fromDictList, unique=False):
+    def setInitialState(self, fromDictList, unique=False, selectedDictList = []):
         """
         Sets the initial state
         """
@@ -106,7 +106,9 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
         self.fromTreeWidget.clear()
         self.fromTreeWidget.clear()
         if not isinstance(fromDictList, int):
-            self.addItemsToTree(self.fromTreeWidget, fromDictList, self.fromLs, unique = unique)
+            self.addItemsToTree(self.fromTreeWidget, fromDictList, self.fromLs, unique = unique, selectedDictList = selectedDictList)
+            if selectedDictList:
+                self.pushButtonSelectOne.clicked.emit()
     
     def getChildNode(self, parentNode, textList):
         """
@@ -123,7 +125,7 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
                 return childNode
         return None
 
-    def addItemsToTree(self, treeWidget, addItemDictList, controlList, unique = False):
+    def addItemsToTree(self, treeWidget, addItemDictList, controlList, unique = False, selectedDictList = []):
         """
         Adds items from addItemDictList in treeWidget.
         addItemDictList = [-list of dicts with keys corresponding to header list texts-]
@@ -139,6 +141,8 @@ class CustomTableSelector(QtWidgets.QWidget, FORM_CLASS):
                 childNode = self.getChildNode(firstColumnChild, textList)
                 if not childNode:
                     item = self.utils.createWidgetItem(firstColumnChild,textList)
+                    if selectedDictList:
+                        item.setSelected(True)
                     itemList = self.getItemList(item)
                     if itemList not in controlList:
                         controlList.append(itemList)
