@@ -636,8 +636,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         recordList = []
         countNodeNotInDb = 0
         for node, reason in nodeFlags.iteritems():
-            if self.nodeIdDict[node] is not None:
-                featid = self.nodeIdDict[node]
+            if node in self.nodeIdDict:
+                featid = self.nodeIdDict[node] if self.nodeIdDict[node] is not None else -9999
             else:
                 # if node is not previously classified on database, but then motivates a flag, it should appear on Flags list
                 featid = -9999
