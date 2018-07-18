@@ -1586,6 +1586,8 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """
         select (ST_Dump(foo.geom)).geom as geom from (
         select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S3')).geom
+        UNION
+        select (ST_GeoTableSummary('{0}', '{1}', '{2}', '{3}', 10, 'S2')).geom
         ) as foo 
         where ST_IsEmpty(foo.geom) = 'f'
         """.format(tableSchema, tableName, geomColumn, keyColumn)
