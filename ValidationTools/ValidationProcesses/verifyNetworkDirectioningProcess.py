@@ -909,10 +909,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         :param lineIdList: (list-of-int) list of lines IDs to be cleared from layer.
         :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
+        # invalid reason texts
+        invalidReason = self.tr('Connected to invalid hidrography node.')
+        nonVisitedReason = self.tr('Line not yet visited.')
         invalidLinesLayer.beginEditCommand('Clear Invalid Lines')
         if lineIdList is None:
             # define a function to get only feature ids for invalid lines registered in invalidLinesLayer and use it in map, for speed-up
-            getInvalidLineFunc = lambda feat : feat.id() if self.tr(" - Invalid Line (line ID: ") in feat['classe'] else -9999
+            getInvalidLineFunc = lambda feat : feat.id() if feat['reason'] in [invalidReason, nonVisitedReason] else -9999
             # list/set combination to remove possible duplicates of -9999 and avoid unnecessary calculation
             lineIdList = list(set(map(getInvalidLineFunc, invalidLinesLayer.getFeatures())))
             if -9999 in lineIdList:
@@ -923,33 +926,68 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         if commitToLayer:
             invalidLinesLayer.commitChanges()
 
-    def fillAuxiliaryLinesLayer(self, invalidLinesLayer, invalidLinesDict, commitToLayer=False):
+    def createNewInvalidLineFeature(self, feat_geom, networkLayerName, fid, reason, fields, dimension=1, user_fixed='f', geometry_column='geom'):
+        """
+        Creates a new feature to be added to invalid lines layer.
+        :param feat_geom: (QgsGeometry) 
+        :param networkLayerName: (str) network layer name.
+        :param fid: (int) invalid line ID.
+        :param reason: (str) reason of line invalidation.
+        :param fields: (QgsFields) object containing all fields from layer.
+        :param dimension: (int) invalidation geometry type code.
+        :param user_fixed: (str) 't' or 'f' indicating whether user has fixed issue.
+        :param geometry_column: (str) name for geometry column persisted in database.
+        :return: (QgsFeature) new feature.
+        """
+        # set attribute map and create new feture
+        feat = QgsFeature(fields)
+        # set geometry
+        feat.setGeometry(feat_geom)
+        feat['layer'] = networkLayerName
+        feat['process_name'] = self.processAlias
+        feat['feat_id'] = fid
+        feat['reason'] = reason
+        feat['dimension'] = dimension
+        feat['user_fixed'] = user_fixed
+        feat['geometry_column'] = geometry_column
+        return feat
+
+    def fillAuxiliaryLinesLayer(self, invalidLinesLayer, invalidLinesDict, nonValidatedLines, networkLayerName, commitToLayer=False):
         """
         Populate from auxiliary lines layer with all invalid lines.
         :param invalidLinesLayer: (QgsVectorLayer) hidrography nodes layer.
         :param invalidLinesDict: (dict) dictionary containing all invalid lines to be displayed.
+        :param nonValidatedLines: (set) set of all non-validated network lines.
         :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
         # if table is going to be filled, then it needs to be cleared first
         self.clearAuxiliaryLinesLayer(invalidLinesLayer=invalidLinesLayer, commitToLayer=commitToLayer)
         # get fields from layer in order to create new feature with the same attribute map
         fields = invalidLinesLayer.fields()
+        # prepare generic variables that will be reused
+        invalidReason = self.tr('Connected to invalid hidrography node.')
+        nonVisitedReason = self.tr('Line not yet visited.')
         invalidLinesLayer.beginEditCommand('Add invalid lines')
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
         # initiate new features list
         featList = []
-        for lineId, line in invalidLinesDict.iteritems():
-            # set attribute map and create new feture
-            feat = QgsFeature(fields)
-            # set geometry
-            feat.setGeometry(line.geometry())
-            feat['layer'] = self.hidNodeLayerName
-            feat['process_name'] = self.processAlias
-            feat['feat_id'] = int(lineId)
-            feat['reason'] = self.tr('Connected to invalid hidrography node.')
-            feat['dimension'] = 1
-            feat['geometry_column'] = 'geom'
+        # pre-declaring method to make it faster
+        newInvalidFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], networkLayerName=networkLayerName, \
+                                            fid=x[1], reason=invalidReason, fields=fields)
+        newNonVisitedFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], networkLayerName=networkLayerName, \
+                                            fid=x[1], reason=nonVisitedReason, fields=fields)
+        # add all non-validated features
+        for line in nonValidatedLines:
+            # create new feture
+            feat = newNonVisitedFeatFunc([line.geometry(), line.id()])
+            # add it to new features list
+            featList.append(feat)
+        # add invalid lines
+        for lineId, line in invalidLinesDict.iteritems(): 
+            # create new feture
+            feat = newInvalidFeatFunc([line.geometry(), lineId])
+            # add it to new features list
             featList.append(feat)
         invalidLinesLayer.addFeatures(featList)
         invalidLinesLayer.endEditCommand()
@@ -1081,7 +1119,16 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         # free unnecessary memory usage
                         del lineClassesAuxDict, auxLinKey, auxLinCl
                         invalidLinesLayer.startEditing()
-                        self.fillAuxiliaryLinesLayer(invalidLinesLayer=invalidLinesLayer, invalidLinesDict=inval)
+                        # get non-validated lines and add it to invalid lines layer as well
+                        nonValidatedLines = set()
+                        for line in networkLayer.getFeatures():
+                            lineId = line.id()
+                            if lineId in val or lineId in inval:
+                                # ignore if line are validated
+                                continue
+                            nonValidatedLines.add(line)
+                        self.fillAuxiliaryLinesLayer(invalidLinesLayer=invalidLinesLayer, invalidLinesDict=inval,\
+                                                     nonValidatedLines=nonValidatedLines, networkLayerName=networkLayer.name())
                         invalidLinesLog = self.tr("Invalid lines were exposed in layer {0}).").format(invalidLinesLayer.name())
                         QgsMessageLog.logMessage(invalidLinesLog, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
                     except:
