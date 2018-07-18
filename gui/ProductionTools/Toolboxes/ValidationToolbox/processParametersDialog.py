@@ -136,7 +136,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-                
+
             elif self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
                 getattr(widget, self.SETTERS[type(widget)])([v.values])
 
@@ -152,7 +152,9 @@ class ProcessParametersDialog(QtWidgets.QDialog):
             rowCount += 1
             if _firstWidget is None:
                 _firstWidget = widget
+        self.setGuiLayout()
 
+    def setGuiLayout(self):
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollArea.setFrameShape(QtWidgets.QFrame.Shape(0))  # no frame

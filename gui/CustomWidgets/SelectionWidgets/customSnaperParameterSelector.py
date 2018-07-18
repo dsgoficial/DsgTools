@@ -73,9 +73,20 @@ class CustomSnaperParameterSelector(QtWidgets.QWidget, FORM_CLASS):
         else:
             self.unifiedList = False
             self.referenceComboBox.addItems(referenceList)
+        if parameterDict:
+            self.populateInterface(parameterDict)
     
     def getParameters(self):
         """
         Gets parameters
         """
         return self.referenceLayer, self.customSelectorWidget.toLs
+
+    def getParameterDict(self):
+        return OrderedDict({'referenceDictList':interfaceLineDict, 'layersDictList':interfaceDict})
+    
+    def populateInterface(self, parameterDict):
+        """
+        Sets saved state
+        """
+        pass
