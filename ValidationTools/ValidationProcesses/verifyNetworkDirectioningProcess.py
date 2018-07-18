@@ -1155,18 +1155,23 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # if user set to select valid lines
             if self.parameters[self.tr('Select All Valid Lines')]:
                 networkLayer.setSelectedFeatures(val.keys())
+            # log percentage of network directed
+            if self.parameters[self.tr('Only Selected')]:
+                percValid = float(len(val))*100.0/float(selectedFeatures)
+            else:
+                percValid = float(len(val))*100.0/float(networkLayer.featureCount())
+            if nodeFlags:
+                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  ' of network is well directed). Check flags.')\
+                            .format(len(nodeFlags), percValid)
+            else:
+                msg = self.tr('{1:.2f}' + '%' +  ' of network is well directed.')\
+                            .format(len(nodeFlags), percValid)
+            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
             # getting recordList to be loaded to validation flag table
             recordList = self.buildFlagList(nodeFlags, 'validation', self.hidNodeLayerName, 'geom')
-            if len(recordList) > 0:
+            if len(recordList) > 0 or inval:
                 numberOfProblems = self.addFlag(recordList)
-                if self.parameters[self.tr('Only Selected')]:
-                    percValid = float(len(val))*100.0/float(selectedFeatures)
-                else:
-                    percValid = float(len(val))*100.0/float(networkLayer.featureCount())
-                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  ' of network is well directed). Check flags.')\
-                            .format(numberOfProblems, percValid)
                 self.setStatus(msg, 4) #Finished with flags
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.INFO)
             else:
                 msg = self.tr('Network has coherent directions.')
                 self.setStatus(msg, 1) #Finished
