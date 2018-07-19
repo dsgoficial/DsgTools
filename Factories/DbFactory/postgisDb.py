@@ -2181,10 +2181,13 @@ class PostgisDb(AbstractDb):
         geomDict = dict()
         while query.next():
             #parse done in parseCheckConstraintQuery to make code cleaner.
-            tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
-            if tableName not in geomDict.keys():
-                geomDict[tableName] = dict()
-            geomDict[tableName][attribute] = checkList
+            try:
+                tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
+                if tableName not in geomDict.keys():
+                    geomDict[tableName] = dict()
+                geomDict[tableName][attribute] = checkList
+            except:
+                pass
         return geomDict
     
     def parseFkQuery(self, queryValue0, queryValue1):
