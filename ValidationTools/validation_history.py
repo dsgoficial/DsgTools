@@ -117,7 +117,7 @@ class ValidationHistory(QtGui.QDialog, FORM_CLASS):
         # present in the database. 
         for l in log:
             for line in l.split("\n"):
-                if self.tr("Database username:").decode(self.dbEncoding) in line.decode(self.dbEncoding):
+                if self.tr("Database username:") in line.decode(self.dbEncoding):
                     # treating the log string as a list of strings (lines) 
                     users.append(line.split(": ")[1])                    
         # in order to "Select a username..." always be first and the list to only have unique names
