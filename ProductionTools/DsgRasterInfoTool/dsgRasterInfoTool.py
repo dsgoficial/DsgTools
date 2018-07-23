@@ -63,7 +63,33 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.valueSetterButton.setEnabled(False)
         self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
         self.iface.actionToggleEditing().triggered.connect(self.enableAssignValue)
-    
+        # start currentLayer selection
+        self.currentLayer = None
+
+    def resetEditingSignals(self, currentLayer):
+        """
+        Disconnects editing signal from previously selected layer and connects it to newly selected layer.
+        Method is called whenever currentlLayerChanged signal is emitted.
+        """
+        # get previous selected layer
+        prevLayer = self.currentLayer
+        # update current selected layer
+        self.currentLayer = currentLayer
+        activateAlias = lambda : self.activateValueSetter(True)
+        deactivateAlias = lambda : self.activateValueSetter(False)
+        if prevLayer:
+            try:
+                # if there was a previous selection, signals must be disconnected from it before connecting to the new layer
+                prevLayer.editingStarted.disconnect(activateAlias)
+                prevLayer.editingStopped.disconnect(deactivateAlias)
+            except:
+                # in case signal is not yet connected, somehow
+                pass
+        # connecting signals to new layer
+        if isinstance(self.currentLayer, QgsVectorLayer):
+            self.currentLayer.editingStarted.connect(activateAlias)
+            self.currentLayer.editingStopped.connect(deactivateAlias)
+
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -90,21 +116,21 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.valueSetterButtonAction = self.add_action(icon_path, text, self.valueSetterButton.toggle, parent = self.parent)
         self.iface.registerMainWindowAction(self.valueSetterButtonAction, '')
         # self.timerMapTips.timeout.connect( self.showToolTip )
-    
-    def enableAssignValue(self, layer):
-        """
-        Enables tool according to current layer.
-        Case where tool is enabled: an editable point VectorLayer
-        """
-        if layer is None:
-            self.valueSetterButton.setEnabled(False)
-            self.activateValueSetter(False)
-        elif isinstance(layer, QgsVectorLayer) and layer.geometryType() == QGis.Point and layer.isEditable():
-            self.valueSetterButton.setEnabled(True)
+
+    def enableAssignValue(self):
+        layer = self.iface.mapCanvas().currentLayer()
+        if layer and isinstance(layer, QgsVectorLayer):
+            if layer.geometryType() == QGis.Point and layer.isEditable():
+                self.valueSetterButton.setEnabled(True)
+                # reset editing signals
+                self.resetEditingSignals(currentLayer=layer)
+            else:
+                self.valueSetterButton.setEnabled(False)
+                self.activateValueSetter(False)
         else:
             self.valueSetterButton.setEnabled(False)
             self.activateValueSetter(False)
-    
+
     def deactivate(self):
         self.activateBandValueTool(False)
         self.activateStretchTool(False)
