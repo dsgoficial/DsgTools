@@ -83,78 +83,80 @@ class ProcessParametersDialog(QtWidgets.QDialog):
         self.restoreOverride = restoreOverride
         if self.restoreOverride:
             QApplication.restoreOverrideCursor()
-        self.__widgets = dict()
-        self.__values = dict()
-
+        self.__widgets, self.__values = dict(), dict()
         if title:
             self.setWindowTitle(title)
-
         self.required = required or list()
         if len(options) == 1:
             self.required.append(list(options.keys())[0])
-
+        self.setItems(options) 
+        
+    def setItems(self, options):
         _firstWidget = None
-        # formLayout = QtWidgets.QFormLayout()
         layout = QtWidgets.QGridLayout()
         rowCount = 0
         for k, v in options.items():
             if isinstance(v, list):
                 if len(v)> 0 and isinstance(v[0], dict) == False:
                     v = [str(x) for x in v]
-
             label = QtWidgets.QLabel(beautifyText(k))
             widget = self.WIDGETS[type(v)]()
-            if self.WIDGETS[type(v)] == QtWidgets.QDoubleSpinBox:
-                widget.setDecimals(20)
-                widget.setMaximum(sys.float_info.max)
-                widget.setMinimum(sys.float_info.min)
-                if k in selectedDictList:
-                    getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
-                else:
-                    getattr(widget, self.SETTERS[type(widget)])(v)
-            elif self.WIDGETS[type(v)] == QtWidgets.QSpinBox:
-                widget.setMaximum(1000000)
-                widget.setMinimum(-1000000)
-                if k in selectedDictList:
-                    getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
-                else:
-                    getattr(widget, self.SETTERS[type(widget)])(v)
-            
-            elif self.WIDGETS[type(v)] == CustomTableSelector:
-                widget.setTitle(self.tr('Select classes'))
-                headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
-                widget.setHeaders(headerList)
-                selectedList = assignedParameters[k] if k in assignedParameters else []
-                getattr(widget, self.SETTERS[type(widget)])(v, unique=True, selectedDictList = selectedList)
-
-            elif self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
-                getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
-                widget.setTitle(self.tr('Select layers to be snapped'))
-
-            elif self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
-                widget.setTitle(self.tr('Select layers'))
-                headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
-                widget.customTableSelectorWidget.setHeaders(headerList)
-                getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-
-            elif self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
-                getattr(widget, self.SETTERS[type(widget)])([v.values])
-
+            self.setWidgetParameters(widget, v, selectedDictList)
+            _firstWidget = self.addToLayout(k, label, layout, widget, rowCount, _firstWidget)
+            rowCount += 1
+        self.setGuiLayout(_firstWidget, rowCount)
+    
+    def setWidgetParameters(self, widget, v, selectedDictList)
+        if self.WIDGETS[type(v)] == QtWidgets.QDoubleSpinBox:
+            widget.setDecimals(20)
+            widget.setMaximum(sys.float_info.max)
+            widget.setMinimum(sys.float_info.min)
+            if k in selectedDictList:
+                getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
+        elif self.WIDGETS[type(v)] == QtWidgets.QSpinBox:
+            widget.setMaximum(1000000)
+            widget.setMinimum(-1000000)
+            if k in selectedDictList:
+                getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
+            else:
+                getattr(widget, self.SETTERS[type(widget)])(v)
+        
+        elif self.WIDGETS[type(v)] == CustomTableSelector:
+            widget.setTitle(self.tr('Select classes'))
+            headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
+            widget.setHeaders(headerList)
+            selectedList = assignedParameters[k] if k in assignedParameters else []
+            getattr(widget, self.SETTERS[type(widget)])(v, unique=True, selectedDictList = selectedList)
 
-            if k in self.required:
-                label.setStyleSheet("color: red;")
+        elif self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
+            getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
+            widget.setTitle(self.tr('Select layers to be snapped'))
 
-            self.__widgets[k] = (label, widget)
-            layout.addWidget(label, rowCount, 0)
-            layout.addWidget(widget, rowCount, 1)
-            rowCount += 1
-            if _firstWidget is None:
-                _firstWidget = widget
-        self.setGuiLayout()
+        elif self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
+            widget.setTitle(self.tr('Select layers'))
+            headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
+            widget.customTableSelectorWidget.setHeaders(headerList)
+            getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
 
-    def setGuiLayout(self):
+        elif self.WIDGETS[type(v)] == OrderedRecursiveSnapWidget:
+            getattr(widget, self.SETTERS[type(widget)])([v.values])
+
+        else:
+            getattr(widget, self.SETTERS[type(widget)])(v)
+    
+    def addToLayout(self, k, label, layout, widget, rowCount, _firstWidget):
+        if k in self.required:
+            label.setStyleSheet("color: red;")
+        self.__widgets[k] = (label, widget)
+        layout.addWidget(label, rowCount, 0)
+        layout.addWidget(widget, rowCount, 1)
+        if _firstWidget is None:
+            _firstWidget = widget
+        return _firstWidget
+
+    def setGuiLayout(self, _firstWidget, rowCount):
         scrollArea = QtWidgets.QScrollArea()
         scrollArea.setWidgetResizable(True)
         scrollArea.setFrameShape(QtWidgets.QFrame.Shape(0))  # no frame
