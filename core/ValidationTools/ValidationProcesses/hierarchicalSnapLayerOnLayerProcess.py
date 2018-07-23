@@ -30,7 +30,7 @@ from collections import OrderedDict
 
 class HierarchicalSnapParameters(list):
     def __init__(self, x):
-        super(RecursiveSnapParameters, self).__init__()
+        super(HierarchicalSnapParameters, self).__init__()
         self.values = x
 
 class HierarchicalSnapLayerOnLayerProcess(ValidationProcess):
@@ -51,7 +51,7 @@ class HierarchicalSnapLayerOnLayerProcess(ValidationProcess):
                 cat, lyr, geom = tuple(key.split(',')[0:3])
                 interfaceKey = '{0}.{1} ({2})'.format(cat, lyr, geom)
                 self.interfaceDict[interfaceKey] = key
-            customInterface = RecursiveSnapParameters(list(self.interfaceDict.keys()))
+            customInterface = HierarchicalSnapParameters(list(self.interfaceDict.keys()))
             # adjusting process parameters
             self.parameters = {'Ordered Layers': customInterface, 'Only Selected':False}
     
