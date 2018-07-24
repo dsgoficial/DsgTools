@@ -126,9 +126,11 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 self.resetEditingSignals(currentLayer=layer)
             else:
                 self.valueSetterButton.setEnabled(False)
+                self.valueSetterButton.setChecked(False)
                 self.activateValueSetter(False)
         else:
             self.valueSetterButton.setEnabled(False)
+            self.valueSetterButton.setChecked(False)
             self.activateValueSetter(False)
 
     def deactivate(self):
