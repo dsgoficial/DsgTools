@@ -171,10 +171,13 @@ class AssignBandValueTool(QgsMapTool):
                     pointDict[feat.id()] = feat.geometry()
                 pixelValueDict = self.getPixelValueFromPointDict(pointDict, self.rasterLayer)
                 for idx in pointDict:
-                    self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':pixelValueDict[idx]})
+                    value = pixelValueDict[idx]
+                    if value:
+                        self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':value})
             else:
                 value, pointGeom = self.getPixelValue(self.rasterLayer)
-                self.auxList.append({'geom':pointGeom, 'value':value})
+                if value:
+                    self.auxList.append({'geom':pointGeom, 'value':value})
             #create context menu to select attribute
             if self.auxList:
                 self.createContextMenuOnPosition(e, layer)
@@ -306,7 +309,8 @@ class AssignBandValueTool(QgsMapTool):
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
         if i.isValid():
             value = i.results().values()[0]
-            value = int(value) if self.decimals == 0 else round(value, self.decimals)
+            if value:
+                value = int(value) if self.decimals == 0 else round(value, self.decimals)
             return value
         else:
             return None
