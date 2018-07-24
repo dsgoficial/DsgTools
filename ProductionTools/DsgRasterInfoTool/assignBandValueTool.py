@@ -176,7 +176,8 @@ class AssignBandValueTool(QgsMapTool):
                 value, pointGeom = self.getPixelValue(self.rasterLayer)
                 self.auxList.append({'geom':pointGeom, 'value':value})
             #create context menu to select attribute
-            self.createContextMenuOnPosition(e, layer)
+            if self.auxList:
+                self.createContextMenuOnPosition(e, layer)
 
     def createContextMenuOnPosition(self, e, layer):
         menu = QMenu()
