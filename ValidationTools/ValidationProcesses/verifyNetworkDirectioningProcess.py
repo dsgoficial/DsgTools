@@ -72,17 +72,17 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.sinkClassesWithElemDict = self.nodeClassesWithElemDict
             sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())
             self.parameters = {
-                                self.tr('Only Selected') : False,
-                                self.tr('Network Layer') : networkFlowParameterList,
-                                self.tr('Node Layer') : nodeFlowParameterList,
-                                self.tr('Sink Layer') : sinkFlowParameterList,
-                                self.tr('Reference and Water Body Layers'): OrderedDict( {
+                                'Only Selected' : False,
+                                'Network Layer' : networkFlowParameterList,
+                                'Node Layer' : nodeFlowParameterList,
+                                'Sink Layer' : sinkFlowParameterList,
+                                'Reference and Water Body Layers': OrderedDict( {
                                                                        'referenceDictList':{},
                                                                        'layersDictList':interfaceDict
                                                                      } ),
-                                self.tr('Search Radius') : 5.0,
-                                self.tr('Max. Directioning Cycles') : 5,
-                                self.tr('Select All Valid Lines') : False
+                                'Search Radius' : 5.0,
+                                'Max. Directioning Cycles' : 5,
+                                'Select All Valid Lines' : False
                               }
             # transmit these parameters to CreateNetworkNodesProcess object
             self.createNetworkNodesProcess.parameters = self.parameters
@@ -377,8 +377,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
                     # if it's an 'in and out' flow and only one of dicts is filled, then there's an inconsistency
                     invalidLines[lineID] = line
-                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.'\
-                    .format(self.nodeTypeNameDict[nodeType]))
+                    thisReason = self.tr('Lines are either flowing only in or out of node. Node classification is {0}.')\
+                    .format(self.nodeTypeNameDict[nodeType])
                     if thisReason not in reason:
                         reason = "".join([reason, thisReason])
                 elif node in [initialNode, finalNode]:
@@ -1005,9 +1005,9 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
-            hidSinkLyrKey = self.parameters[self.tr('Sink Layer')]
-            networkLayerKey = self.parameters[self.tr('Network Layer')]
-            refKey, classesWithElemKeys = self.parameters[self.tr('Reference and Water Body Layers')]
+            hidSinkLyrKey = self.parameters['Sink Layer']
+            networkLayerKey = self.parameters['Network Layer']
+            refKey, classesWithElemKeys = self.parameters['Reference and Water Body Layers']
             waterBodyClassesKeys = classesWithElemKeys
             # preparing hidrography lines layer
             # remake the key from standard string
@@ -1019,7 +1019,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                                           networkLayerKey.split('(')[1].split(', ')[2].replace(')', '')
                                          )
             hidcl = self.networkClassesWithElemDict[k]
-            hidNodeLyrKey = self.parameters[self.tr('Node Layer')]
+            hidNodeLyrKey = self.parameters['Node Layer']
             # remake the key from standard string
             k = ('{},{},{},{},{}').format(
                                         hidNodeLyrKey.split('.')[0],\
@@ -1077,7 +1077,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # cycle count start
             cycleCount = 0
             # get max amount of orientation cycles
-            MAX_AMOUNT_CYCLES = self.parameters[self.tr('Max. Directioning Cycles')]
+            MAX_AMOUNT_CYCLES = self.parameters['Max. Directioning Cycles']
             MAX_AMOUNT_CYCLES = MAX_AMOUNT_CYCLES if MAX_AMOUNT_CYCLES > 0 else 1
             # field index for node type intiated
             for f in networkNodeLayer.getFeatures():
@@ -1089,7 +1089,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             networkNodeLayer.beginEditCommand('Reclassify Nodes')
             networkLayer.beginEditCommand('Flip/Merge Lines')
             while True:
-                if self.parameters[self.tr('Only Selected')]:
+                if self.parameters['Only Selected']:
                     # in case directioning is to be executed over selected lines
                     nodeListSelectedLines = None
                     pass
@@ -1152,10 +1152,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # get number of selected features
             selectedFeatures = len(networkLayer.selectedFeatures())
             # if user set to select valid lines
-            if self.parameters[self.tr('Select All Valid Lines')]:
+            if self.parameters['Select All Valid Lines']:
                 networkLayer.setSelectedFeatures(val.keys())
             # log percentage of network directed
-            if self.parameters[self.tr('Only Selected')]:
+            if self.parameters['Only Selected']:
                 percValid = float(len(val))*100.0/float(selectedFeatures)
             else:
                 percValid = float(len(val))*100.0/float(networkLayer.featureCount())

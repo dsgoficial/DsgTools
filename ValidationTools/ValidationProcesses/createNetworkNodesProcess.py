@@ -84,11 +84,11 @@ class CreateNetworkNodesProcess(ValidationProcess):
             self.sinkClassesWithElemDict = self.abstractDb.getGeomColumnDictV2(primitiveFilter=['p'], withElements=True, excludeValidation = True)
             sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())
             self.parameters = {
-                                self.tr('Only Selected') : False,
-                                self.tr('Network Layer') : networkFlowParameterList,
-                                self.tr('Sink Layer') : sinkFlowParameterList,
-                                self.tr('Search Radius') : 5.0,
-                                self.tr('Reference and Water Body Layers'): OrderedDict( {
+                                'Only Selected' : False,
+                                'Network Layer' : networkFlowParameterList,
+                                'Sink Layer' : sinkFlowParameterList,
+                                'Search Radius' : 5.0,
+                                'Reference and Water Body Layers': OrderedDict( {
                                                                        'referenceDictList':{},
                                                                        'layersDictList':interfaceDict
                                                                      } )
@@ -114,7 +114,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         extent = outputLayer.extent()
         (xmin, xmax, ymin, ymax) = extent.xMinimum(), extent.xMaximum(), extent.yMinimum(), extent.yMaximum()
         extent = '{0},{1},{2},{3}'.format(xmin, xmax, ymin, ymax)
-        snap = self.parameters[self.tr('Search Radius')]
+        snap = self.parameters['Search Radius']
         minArea = 0.0001
         result = processing.runalg('grass7:v.clean.advanced', outputLayer, tools, threshold, extent, snap, minArea, None, None)
         # get resulting layer
@@ -136,7 +136,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """
         nodeDict = dict()
         isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
-        if self.parameters[self.tr('Only Selected')]:
+        if self.parameters['Only Selected']:
             features = networkLayer.selectedFeatures()
         else:
             features = [feat for feat in networkLayer.getFeatures()]
@@ -442,7 +442,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                         # a node next to water has to be a lose end
                         return CreateNetworkNodesProcess.NodeNextToWaterBody
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
-                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters['Search Radius']):
                     # check if node is connected to a disconnected line
                     if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                         return CreateNetworkNodesProcess.DisconnectedLine
@@ -452,7 +452,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
                         return CreateNetworkNodesProcess.Sink
                     return CreateNetworkNodesProcess.WaterwayBegin
             # case 1.c: point that legitimately only flows out
-            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters[self.tr('Search Radius')]):
+            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters['Search Radius']):
                 if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                     return CreateNetworkNodesProcess.DisconnectedLine
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
@@ -575,9 +575,9 @@ class CreateNetworkNodesProcess(ValidationProcess):
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
             # node type should not be calculated OTF for comparison (db data is the one perpetuated)
             # setting all method variables
-            networkLayerKey = self.parameters[self.tr('Network Layer')]
-            hidSinkLyrKey = self.parameters[self.tr('Sink Layer')]
-            refKey, classesWithElemKeys = self.parameters[self.tr('Reference and Water Body Layers')]
+            networkLayerKey = self.parameters['Network Layer']
+            hidSinkLyrKey = self.parameters['Sink Layer']
+            refKey, classesWithElemKeys = self.parameters['Reference and Water Body Layers']
             waterBodyClassesKeys = classesWithElemKeys
             if not refKey:
                 self.setStatus(self.tr('One reference must be selected! Stopping.'), 1) #Finished
@@ -622,7 +622,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
             crs = networkLayer.crs().authid()
             # node layer has the same CRS as the hidrography lines layer
             nodeSrid = networkLayer.crs().authid().split(':')[1]
-            searchRadius = self.parameters[self.tr('Search Radius')]
+            searchRadius = self.parameters['Search Radius']
             self.nodeTypeDict = self.classifyAllNodes(networkLayer=networkLayer, frameLyrContourList=frame, waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer)
             # check if node table and node type domain table are created on db
             if not self.abstractDb.checkIfTableExists('validation', self.hidNodeLayerName):
