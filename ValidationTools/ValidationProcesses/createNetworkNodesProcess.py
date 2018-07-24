@@ -28,8 +28,12 @@ from PyQt4.QtGui import QMessageBox
 import processing, binascii
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+
+class HidrographyFlowParameters(list):
+    def __init__(self, x):
+        super(HidrographyFlowParameters, self).__init__()
+        self.values = x
 
 class CreateNetworkNodesProcess(ValidationProcess):
     # enum for node types
@@ -132,7 +136,7 @@ class CreateNetworkNodesProcess(ValidationProcess):
         """
         nodeDict = dict()
         isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
-        if self.parameters['Only Selected']:
+        if self.parameters[self.tr('Only Selected')]:
             features = networkLayer.selectedFeatures()
         else:
             features = [feat for feat in networkLayer.getFeatures()]

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
 <context>
     <name>@default</name>
     <message>
@@ -2221,6 +2220,173 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
 </context>
 <context>
+    <name>CreateNetworkNodesProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="45"/>
+        <source>Create Network Nodes</source>
+        <translation>Criar Nós da Rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="51"/>
+        <source>Flag</source>
+        <translation>Início ou Fim de Trecho Incorreto</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="52"/>
+        <source>Sink</source>
+        <translation>Sumidouro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="53"/>
+        <source>Waterway Beginning</source>
+        <translation>Início de Drenagem</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="54"/>
+        <source>Up Hill Node</source>
+        <translation>Interrupção à Montante</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="55"/>
+        <source>Down Hill Node</source>
+        <translation>Interrupção à Jusante</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="56"/>
+        <source>Confluence</source>
+        <translation>Confluência</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="57"/>
+        <source>Ramification</source>
+        <translation>Ramificação</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="58"/>
+        <source>Attribute Change Node</source>
+        <translation>Nó de Mudança de Atributo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="59"/>
+        <source>Node Next to Water Body</source>
+        <translation>Nó Próximo a Corpo d&apos;Água</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="60"/>
+        <source>Attribute Change Flag</source>
+        <translation>Erro de mudança de atributo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="61"/>
+        <source>Overloaded Node</source>
+        <translation>Nó com Sobrecarga de Fluxo</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="62"/>
+        <source>Disconnected From Network</source>
+        <translation>Nó Desconectado da Rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="72"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="73"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="74"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="75"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="76"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="135"/>
+        <source>Only Selected</source>
+        <translation>Somente Selecionados</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="574"/>
+        <source>Network Layer</source>
+        <translation>Camada da Rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="575"/>
+        <source>Sink Layer</source>
+        <translation>Camada de Sumidouro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="621"/>
+        <source>Search Radius</source>
+        <translation>Raio de Busca</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="576"/>
+        <source>Reference and Water Body Layers</source>
+        <translation>Camadas de Referência
+ e de Corpos d&apos;Água</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="559"/>
+        <source>Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.
+</source>
+        <translation>Falha ao carregar a camada {0}! (Caso tenha manualmente alterado o banco de dados e trabalho, tente reiniciar o QGIS)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="560"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="567"/>
+        <source>Starting </source>
+        <translation>Iniciando o processo </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="567"/>
+        <source> Process.</source>
+        <translation>.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="570"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="579"/>
+        <source>One reference must be selected! Stopping.</source>
+        <translation>Uma camada de referência deve ser selecionada! Parando o processo.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="601"/>
+        <source>Select Layer</source>
+        <translation>Selecione uma camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/createNetworkNodesProcess.py" line="632"/>
+        <source>Network nodes created into layer {}.</source>
+        <translation>Nó da rede criados na camada {}.</translation>
+    </message>
+</context>
+<context>
     <name>CreateProfile</name>
     <message>
         <location filename="../UserTools/create_profile.py" line="135"/>
@@ -2551,8 +2717,8 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../CustomWidgets/customReferenceAndLayersParameterSelector.ui" line="26"/>
         <source>Select Reference Layer</source>
-        <translation>Selecione uma camada de referência
-</translation>
+        <translation>Selecione uma camada
+ de referência</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/customReferenceAndLayersParameterSelector.py" line="93"/>
@@ -4766,13 +4932,13 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../dsg_tools.py" line="670"/>
         <source>DSGTools: Flip Line Tool</source>
-        <translation>DSGTools: Ferramenta de inversão de linhas</translation>
+        <translation>DSGTools: Ferramenta de Inversão de Linhas</translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="683"/>
         <source>DSGTools: Flip Line Tool
 Insert tool tip for Flip Line Tool.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">DSGTools: </translation>
     </message>
     <message>
         <location filename="../dsg_tools.py" line="698"/>
@@ -4784,7 +4950,14 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../dsg_tools.py" line="717"/>
         <source>DSGTools: Free Hand Acquisition</source>
-        <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
+        <translation>DSGTools: Ferramenta de Aquisição a Mão Livre</translation>
+    </message>
+    <message>
+        <location filename="../dsg_tools.py" line="683"/>
+        <source>DSGTools: Flip Line Tool
+Tool to invert selected lines acquisition diretioning.</source>
+        <translation>DSGTools: Ferramenta de Iversão de Linhas
+Ferramenta utilizada para inverter o sentido de aquisição de linhas.</translation>
     </message>
 </context>
 <context>
@@ -6190,287 +6363,204 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="50"/>
         <source>Hidrography Network Directioning</source>
-        <translation>Direcionar Rede de Drenagem</translation>
+        <translation type="obsolete">Direcionar Rede de Drenagem</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="62"/>
         <source>Category</source>
-        <translation>Categoria</translation>
+        <translation type="obsolete">Categoria</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="63"/>
         <source>Layer Name</source>
-        <translation>Nome da 
+        <translation type="obsolete">Nome da 
 Camada</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="64"/>
         <source>Geometry
 Column</source>
-        <translation>Coluna 
+        <translation type="obsolete">Coluna 
 Geométrica</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="65"/>
         <source>Geometry
 Type</source>
-        <translation>Tipo 
+        <translation type="obsolete">Tipo 
 Geométrico</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="66"/>
         <source>Layer
 Type</source>
-        <translation>Tipo da 
+        <translation type="obsolete">Tipo da 
 Camada</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="73"/>
         <source>Only Selected</source>
-        <translation>Somente Selecionados</translation>
+        <translation type="obsolete">Somente Selecionados</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="998"/>
         <source>Network Layer</source>
-        <translation>Camada da Rede</translation>
+        <translation type="obsolete">Camada da Rede</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="999"/>
         <source>Sink Layer</source>
-        <translation>Camada de Sumidouro/Vertedouro</translation>
+        <translation type="obsolete">Camada de Sumidouro/Vertedouro</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="76"/>
         <source>Search Radius</source>
-        <translation>Raio de busca</translation>
+        <translation type="obsolete">Raio de busca</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1000"/>
         <source>Reference and Water Body Layers</source>
-        <translation>Camadas de Referência e de Corpos D&apos;Água</translation>
+        <translation type="obsolete">Camadas de Referência e de Corpos D&apos;Água</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1078"/>
         <source>Allow Automatic Fixes</source>
-        <translation>Permitir ajustes automáticos</translation>
+        <translation type="obsolete">Permitir ajustes automáticos</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="82"/>
         <source>Select All Valid Lines</source>
-        <translation>Selecionar todas as linhas válidas</translation>
+        <translation type="obsolete">Selecionar todas as linhas válidas</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="89"/>
         <source>Flag</source>
-        <translation>Erro</translation>
+        <translation type="obsolete">Erro</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="90"/>
         <source>Sink</source>
-        <translation>Sumidouro/Vertedouro</translation>
+        <translation type="obsolete">Sumidouro/Vertedouro</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="91"/>
         <source>Waterway Beginning</source>
-        <translation>Início de Drenagem</translation>
+        <translation type="obsolete">Início de Drenagem</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="92"/>
         <source>Up Hill Node</source>
-        <translation>Interrupção à Montante</translation>
+        <translation type="obsolete">Interrupção à Montante</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="93"/>
         <source>Down Hill Node</source>
-        <translation>Interrupção à Jusante</translation>
+        <translation type="obsolete">Interrupção à Jusante</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="94"/>
         <source>Confluence</source>
-        <translation>Confluência</translation>
+        <translation type="obsolete">Confluência</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="95"/>
         <source>Ramification</source>
-        <translation>Ramificação</translation>
+        <translation type="obsolete">Ramificação</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="96"/>
         <source>Attribute Change Node</source>
-        <translation>Nó de mudança de atributo</translation>
+        <translation type="obsolete">Nó de mudança de atributo</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="97"/>
         <source>Node Next to Water Body</source>
-        <translation>Interrupção com corpo d&apos;água</translation>
+        <translation type="obsolete">Interrupção com corpo d&apos;água</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="98"/>
         <source>Attribute Change Flag</source>
-        <translation>Erro de mudança de atributo</translation>
+        <translation type="obsolete">Erro de mudança de atributo</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="99"/>
         <source>Constant Flow Node</source>
-        <translation>Nó de fluxo constante</translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="519"/>
-        <source>Lines {0} and {1} have conflicting directions ({2:.2f} deg).</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nó de fluxo constante</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="525"/>
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
-        <translation>Não foi possível inferir o direcionamento para as linhas {0} e {1} (Ângulo reto)</translation>
+        <translation type="obsolete">Não foi possível inferir o direcionamento para as linhas {0} e {1} (Ângulo reto)</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="567"/>
         <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
-        <translation>Nó foi marcado como erro na classificação (provavelmente esse nó não pode ser fim de trecho).</translation>
+        <translation type="obsolete">Nó foi marcado como erro na classificação (provavelmente esse nó não pode ser fim de trecho).</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="570"/>
         <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
-        <translation>Nó redundante. Linhas conectadas ({0}, {1}) compartilham o mesmo conjunto de atributos.</translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="599"/>
-        <source>Line {0} does not end at a node with IN flow type (node type is {1}). </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="606"/>
-        <source>Line {0} does not start at a node with OUT flow type (node type is {1}). </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nó redundante. Linhas conectadas ({0}, {1}) compartilham o mesmo conjunto de atributos.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="612"/>
         <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
-        <translation>Linhas estão ou saindo ou entrando no nó. A classificação do nó é {0}.</translation>
+        <translation type="obsolete">Linhas estão ou saindo ou entrando no nó. A classificação do nó é {0}.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="621"/>
         <source>Line {0} seems to be invalid (unable to point specific reason). </source>
-        <translation>Linha {0} parece estar inválida (não foi possível determinar o motivo específico).</translation>
+        <translation type="obsolete">Linha {0} parece estar inválida (não foi possível determinar o motivo específico).</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="707"/>
         <source>No network starting point was found</source>
-        <translation>Não foi encontrado ponto de início de rede</translation>
+        <translation type="obsolete">Não foi encontrado ponto de início de rede</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1086"/>
         <source>Error!</source>
-        <translation>Erro!</translation>
+        <translation type="obsolete">Erro!</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="789"/>
         <source>There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.</source>
-        <translation>Há {0} nós que foram inseridos na rede. É indicado que seja feito o processo de reclassificação de nós.</translation>
+        <translation type="obsolete">Há {0} nós que foram inseridos na rede. É indicado que seja feito o processo de reclassificação de nós.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="801"/>
         <source>does not end at a node with IN flow type</source>
-        <translation>não termina em um nó de fluxo para fora</translation>
+        <translation type="obsolete">não termina em um nó de fluxo para fora</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="802"/>
         <source>does not start at a node with OUT flow type</source>
-        <translation>não inicia em um nó com tipo de fluxo para dentro</translation>
+        <translation type="obsolete">não inicia em um nó com tipo de fluxo para dentro</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="803"/>
         <source>have conflicting directions</source>
-        <translation>tem direções conflitantes</translation>
+        <translation type="obsolete">tem direções conflitantes</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="804"/>
         <source>Redundant node.</source>
-        <translation>Nó redundante.</translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="823"/>
-        <source> does</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="827"/>
-        <source> and </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="832"/>
-        <source>, </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="876"/>
-        <source>{0} to {1}</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="895"/>
-        <source>Lines that were flipped while directioning hidrography lines: {0}
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="897"/>
-        <source>Lines that were merged while directioning hidrography lines: {0}
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="900"/>
-        <source>{0}: Flipped/Merged Lines</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="983"/>
-        <source>Could not load the class {0}! (If you manually removed {0} from database, reloading QGIS/DSGTools Plugin might sort out the problem.
-</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="991"/>
-        <source>Starting </source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Nó redundante.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="991"/>
         <source> Process.</source>
-        <translation type="unfinished"> Processo.</translation>
+        <translation type="obsolete"> Processo.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="994"/>
         <source>Running</source>
-        <translation type="unfinished">Rodando</translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1007"/>
-        <source>One reference must be selected! Stopping.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Rodando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1029"/>
         <source>Select Layer</source>
-        <translation type="unfinished">Selecione as camadas</translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1086"/>
-        <source>No initial node was found!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1100"/>
-        <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../ValidationTools/ValidationProcesses/hidrographyFlowProcess.py" line="1105"/>
-        <source>Network has coherent directions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Selecione as camadas</translation>
     </message>
 </context>
 <context>
@@ -7136,12 +7226,12 @@ Camada</translation>
         <translation type="obsolete">Não há ângulos fora de limites em {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="143"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="144"/>
         <source>There are features with angles out of bounds. Check log.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="145"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="146"/>
         <source>There are no features with angles out of bounds.</source>
         <translation>Não há feições com ângulos fora de limites.</translation>
     </message>
@@ -7171,17 +7261,17 @@ Camada</translation>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="138"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="139"/>
         <source> features from</source>
         <translation> feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="138"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="139"/>
         <source> have out of bounds angle(s). Check flags.</source>
         <translation> tem ângulos fora do limite. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="140"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="141"/>
         <source>There are no out of bounds angles on </source>
         <translation>Não há ângulos fora de limites na camada </translation>
     </message>
@@ -9487,7 +9577,7 @@ Camada</translation>
 <context>
     <name>PostGISSqlGenerator</name>
     <message>
-        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1215"/>
+        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1216"/>
         <source>Setting type not defined!</source>
         <translation>Tipo de ajuste não definido!</translation>
     </message>
@@ -9538,7 +9628,7 @@ Camada</translation>
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2704"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2707"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
@@ -9603,7 +9693,7 @@ Camada</translation>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2694"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2697"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
@@ -9663,7 +9753,7 @@ Camada</translation>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3418"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3421"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
@@ -9833,7 +9923,7 @@ Camada</translation>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2721"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2724"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
@@ -9843,7 +9933,7 @@ Camada</translation>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2739"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2742"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
@@ -9913,7 +10003,7 @@ Camada</translation>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2263"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2266"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
@@ -9928,37 +10018,37 @@ Camada</translation>
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2287"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2290"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2310"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2313"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2405"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2408"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2422"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2425"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2434"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2437"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2454"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2457"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2477"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2480"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
@@ -9968,32 +10058,32 @@ Camada</translation>
         <translation type="obsolete">Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2555"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2558"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2759"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2762"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2603"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2606"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2662"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2665"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2662"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2665"/>
         <source> Db will be dropped.</source>
         <translation>Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2680"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2683"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
@@ -10020,182 +10110,182 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2612"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2615"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2769"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2772"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2783"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2786"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3137"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3140"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2802"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2805"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2813"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2816"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2823"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2826"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2835"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2838"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2850"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2853"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2861"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2864"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2880"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2883"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2890"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2893"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2904"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2907"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2918"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2921"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2997"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3000"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3035"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3038"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3096"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3099"/>
         <source>Problem constraint dict from db: </source>
         <translation>Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3126"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3129"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3141"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3144"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3141"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3144"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3160"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3163"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3174"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3177"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb:  </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3189"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3192"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3202"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3205"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3211"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3214"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3237"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3240"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3253"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3256"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3262"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3265"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3277"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3280"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3290"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3293"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3298"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3301"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3307"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3310"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3327"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3330"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3368"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3371"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3377"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3380"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2276"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2279"/>
         <source>Problem getting tables dict from db: </source>
         <translation>Problema obtendo tabelas do bd: </translation>
     </message>
@@ -10205,7 +10295,7 @@ Camada</translation>
         <translation type="obsolete">É obrigatório informar a versão! </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2342"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2345"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
@@ -10215,38 +10305,38 @@ Camada</translation>
         <translation>Problema ao abrir os seguintes bancos:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2216"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2219"/>
         <source>Error parsing check constraint!
 :</source>
         <translation>Erro ao decodificar o check constraint! :</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3390"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3393"/>
         <source>Problem dropping database conections: </source>
         <translation>Problema ao derrubar as conexões ao banco de dados:</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2469"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2472"/>
         <source>Creating database {0} from template {1}... </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2489"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2492"/>
         <source>Problem getting view definition: </source>
         <translation>Problema ao tentar obter uma definição de view: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2502"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2505"/>
         <source>Updating SRIDs from {0}... </source>
         <translation>Atualizando os sistemas de referência de {0}... </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="2538"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="2541"/>
         <source>Problem dropping views: </source>
         <translation>Problema ao tentar apagar views: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3400"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3403"/>
         <source>Problem getting attributes from table {0}.{1}: {2}</source>
         <translation>Problema ao tentar obter os atributos da tabela {0}.{1}:{2}</translation>
     </message>
@@ -10256,32 +10346,32 @@ Camada</translation>
         <translation>Feição id {} de {} viola a regra {} {}</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3444"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3447"/>
         <source>Problem creating coverage temp table: </source>
         <translation>Problema criando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3472"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3475"/>
         <source>Problem populating coverage temp table: </source>
         <translation>Problema populando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3477"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3480"/>
         <source>Problem creating spatial index on coverage temp table: </source>
         <translation>Problema criando índice espacial na tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3576"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3579"/>
         <source>Problem getting gaps: </source>
         <translation>Problema obtendo gaps: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3493"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3496"/>
         <source>Gap between the frame layer and coverage layer</source>
         <translation>Gap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3513"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3516"/>
         <source>Problem getting overlaps: </source>
         <translation>Problema obtendo overlaps: </translation>
     </message>
@@ -10291,7 +10381,7 @@ Camada</translation>
         <translation type="obsolete">Overlap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3515"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3518"/>
         <source>Overlap between the features of the layer</source>
         <translation>Overlap entre as feições da camada</translation>
     </message>
@@ -10311,12 +10401,12 @@ Camada</translation>
         <translation>Problema ao apagar a tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3562"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3565"/>
         <source>Problem filtering flags: </source>
         <translation>Problema filtrando as flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3578"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3581"/>
         <source>Gap between the features of the layer</source>
         <translation>Gap entre as feições da camada</translation>
     </message>
@@ -10336,57 +10426,57 @@ Camada</translation>
         <translation>Problema ao tentar apagar banco de dados: o usuário deve ter permissão para tal procedimento.</translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3591"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3594"/>
         <source>Problem while retrieving flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3640"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3643"/>
         <source>Problem while retrieving validation processes history table: </source>
         <translation>Problema ao obter o histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3654"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3657"/>
         <source>Problem while creating compact validation processes history table: </source>
         <translation>Problema ao obter o histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3661"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3664"/>
         <source>Problem while populating compact validation processes history table: </source>
         <translation>Problema ao obter o histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3678"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3681"/>
         <source>Problem while creating hidrography nodes table: </source>
         <translation>Problema ao criar a tabela de nós de hidrografia: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3696"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3699"/>
         <source>Problem while clearing hidrography nodes table: </source>
         <translation>Problema ao apagar dados da tabela de nós de hidrografia: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3717"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3720"/>
         <source>Problem while populating hidrography nodes table: </source>
         <translation>Problema ao popular a tabela de nós de hidrografia: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3742"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3745"/>
         <source>Problem while retrieving nodes geometry from database: </source>
         <translation>Problema ao obter as geometrias dos nós de hidrografia do banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3771"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3774"/>
         <source>Problem while retrieving nodes ID from database: </source>
         <translation>Problema ao recuperar os IDs dos nós do banco de dados: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3792"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3795"/>
         <source>Problem while creating hidrography nodes domain table: </source>
         <translation>Problema ao criar os domínios dos nós de hidrografia: </translation>
     </message>
     <message>
-        <location filename="../Factories/DbFactory/postgisDb.py" line="3808"/>
+        <location filename="../Factories/DbFactory/postgisDb.py" line="3811"/>
         <source>Problem while checking {} existence status : </source>
         <translation>Problema ao verificar a situação de existência do {} :</translation>
     </message>
@@ -10437,54 +10527,54 @@ Camada</translation>
 <context>
     <name>ProcessParametersDialog</name>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="111"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="113"/>
         <source>Select classes</source>
         <translation>Selecione as Classes</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="117"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="119"/>
         <source>Select layers to be snapped</source>
         <translation>Selecione as camadas a serem atraídas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="120"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="122"/>
         <source>Category</source>
         <translation>Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="120"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="122"/>
         <source>Layer Name</source>
         <translation>Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="120"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="122"/>
         <source>Geometry
 Column</source>
         <translation>Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="120"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="122"/>
         <source>Geometry
 Type</source>
         <translation>Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="120"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="122"/>
         <source>Layer
 Type</source>
         <translation>Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="119"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="121"/>
         <source>Select layers</source>
         <translation>Selecione as camadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="125"/>
+        <location filename="../ValidationTools/processParametersDialog.py" line="127"/>
         <source>Select Layer</source>
         <translation>Selecione as camadas</translation>
     </message>
@@ -12916,22 +13006,22 @@ Camada</translation>
         <translation>Operação não definida com o tipo geométrico fornecido! </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="489"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="527"/>
         <source>Error! Different geometry primitives!</source>
         <translation>Erro! Primitivas geométricas diferentes!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="510"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="548"/>
         <source>Building unified layers with  </source>
         <translation>Construindo camada unificada com </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="579"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="617"/>
         <source>Elapsed time for process {0} on layer {1}: {2}</source>
         <translation>Tempo decorrido para o processo {0} na camada {1}: {2}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="583"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="621"/>
         <source>Elapsed time for process {0}: {1}</source>
         <translation>Tempo decorrido para o processo {1}: {2}</translation>
     </message>
@@ -12951,7 +13041,7 @@ Camada</translation>
         <translation type="obsolete">Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="612"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="650"/>
         <source>
 Parameters used on this execution of process {}
 </source>
@@ -12965,13 +13055,13 @@ Parâmetros utilizados nesta execução do processo {}
         <translation type="obsolete">Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="618"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="656"/>
         <source>
 Number of flags raised by the process: {}</source>
         <translation>Número de flags apontadas pelo processo: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="623"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="661"/>
         <source>
 Total elapsed time for process {0}: {1}
 </source>
@@ -12980,7 +13070,7 @@ Tempo total de execução para o processo {0}: {1}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="625"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="663"/>
         <source>
 Unable to get total elapsed time.</source>
         <translation>
@@ -12993,19 +13083,19 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Usuário do banco de dados: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="607"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="645"/>
         <source>
 Database username: {0}</source>
         <translation>Usuário do banco de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="609"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="647"/>
         <source>
 Unable to get database username.</source>
         <translation>Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="616"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="654"/>
         <source>
 Unable to get database parameters for process {}.</source>
         <translation>Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
@@ -13080,7 +13170,7 @@ Unable to get database parameters for process {}.</source>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
-        <source>Situação</source>
+        <source>Situa&#xe7;&#xe3;o</source>
         <translation type="obsolete">Situação</translation>
     </message>
     <message>
@@ -13305,6 +13395,294 @@ Unable to get database parameters for process {}.</source>
         <location filename="../ProductionTools/ContourTool/contour_value.ui" line="37"/>
         <source>OK</source>
         <translation>Ok</translation>
+    </message>
+</context>
+<context>
+    <name>VerifyNetworkDirectioningProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="44"/>
+        <source>Verify Network Directioning</source>
+        <translation>Verificar Direcionamente de Rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="54"/>
+        <source>Warning!</source>
+        <translation>Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="54"/>
+        <source>No node table was found into chosen database. (Did you run Create Network Nodes process?)</source>
+        <translation>Não foi possível identificar os nós da rede no banco de dados selecionado (o processo Criar Nós de Rede foi executado?)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="63"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="64"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="65"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="66"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="67"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1166"/>
+        <source>Only Selected</source>
+        <translation>Somente Selecionados</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1017"/>
+        <source>Network Layer</source>
+        <translation>Camada da Rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1030"/>
+        <source>Node Layer</source>
+        <translation>Camada de Nós</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1016"/>
+        <source>Sink Layer</source>
+        <translation>Camada de Sumidouro</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1018"/>
+        <source>Reference and Water Body Layers</source>
+        <translation>Camadas de Referência
+ e de Corpos d&apos;Água</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="84"/>
+        <source>Search Radius</source>
+        <translation>Raio de Busca</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1088"/>
+        <source>Max. Directioning Cycles</source>
+        <translation>Máx. de Ciclos de Direcionamento</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1163"/>
+        <source>Select All Valid Lines</source>
+        <translation>Selecionar Todas as Linhas Válidas</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="252"/>
+        <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
+        <translation>Linhas id={0} e id={1} possuem direções conflitantes ({2:.2f} graus).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="264"/>
+        <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
+        <translation>Não foi possível inferir o direcionamento para as linhas {0} e {1} (ângulo reto)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1157"/>
+        <source>Error!</source>
+        <translation>Erro!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="307"/>
+        <source>There are unclassified nodes! Node (re)creation process is recommended before this process.</source>
+        <translation>Foram identificados nós não classificados anteriormente! Recomenda-se o executar o processo Criação de Nós de Rede.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="336"/>
+        <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
+        <translation>Nó foi marcado como erro na classificação (provavelmente esse nó não pode ser início ou fim de trecho).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="325"/>
+        <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
+        <translation>Nó redundante. Linhas conectadas ({0}, {1}) compartilham o mesmo conjunto de atributos.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="343"/>
+        <source>Line {0} disconnected from network.</source>
+        <translation>Linha {0} desconectada da rede.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="345"/>
+        <source>Node is overloaded - 4 or more lines are flowing in (&gt;= 2 lines) and out (&gt;= 2 lines).</source>
+        <translation>Nó com sobrecarga de fluxo - 4 ou mais linhas chegam (&gt;= 2 linha) e saem (&gt;= 2 linhas).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="371"/>
+        <source>Line id={0} does not end at a node with IN flow type (node type is {1}). </source>
+        <translation>Linha id={0} não termina em um nó de fluxo exclusivo de ENTRADA (nó do tipo {1}). </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="378"/>
+        <source>Line id={0} does not start at a node with OUT flow type (node type is {1}). </source>
+        <translation>Linha id={0} não inicia em um nó de fluxo exclusivo de SAÍDA (nó do tipo {1}). </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="384"/>
+        <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
+        <translation>Linhas estão ou saindo ou entrando no nó. A classificação do nó é {0}.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="393"/>
+        <source>Line {0} seems to be invalid (unable to point specific reason).</source>
+        <translation>Linha {0} aparenta ser inválida (motivo não claro).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="536"/>
+        <source>No network starting point was found</source>
+        <translation>Não foi encontrado nós de início de rede</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="654"/>
+        <source>There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.</source>
+        <translation>Há {0} nós que foram inseridos na rede. É indicado que os nós sejam reclassificação.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="666"/>
+        <source>does not end at a node with IN flow type</source>
+        <translation>não termina em um nó de fluxo exclusivo de ENTRADA</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="667"/>
+        <source>does not start at a node with OUT flow type</source>
+        <translation>não inicia em um nó de fluxo exclusivo de SAÍDA</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="668"/>
+        <source>have conflicting directions</source>
+        <translation>possuem direções conflitantes</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="669"/>
+        <source>Redundant node.</source>
+        <translation>Nó redundante.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="670"/>
+        <source>Node was flagged upon classification</source>
+        <translation>Nó foi marcado como erro na classificação</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="694"/>
+        <source>id=</source>
+        <translation>id=</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="699"/>
+        <source>, </source>
+        <translation>, </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="755"/>
+        <source>{0} to {1}</source>
+        <translation>{0} à {1}</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="885"/>
+        <source>Lines that were flipped while directioning hidrography lines: {0}
+
+</source>
+        <translation>Linhas que foram invertidas no direcionamento das linhas da rede: {0}
+
+</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="887"/>
+        <source>Lines that were merged while directioning hidrography lines: {0}
+
+</source>
+        <translation>Linhas que foram unidas no direcionamento das linhas da rede: {0}
+
+</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="890"/>
+        <source>
+{0}: Flipped/Merged Lines
+</source>
+        <translation>
+{0}: Linhas Invertidas/Unidas
+</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="975"/>
+        <source>Connected to invalid hidrography node.</source>
+        <translation>Conectada a nó inválido.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="976"/>
+        <source>Line not yet visited.</source>
+        <translation>Linha não visitada.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1009"/>
+        <source>Starting </source>
+        <translation>Iniciando o processo </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1009"/>
+        <source> Process.</source>
+        <translation>.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1012"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1046"/>
+        <source>Select Layer</source>
+        <translation>Selecione uma camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1108"/>
+        <source>Cycle {0} completed (maximum of {1}).</source>
+        <translation>Ciclo {0} concluído (máximo de {1}).</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1139"/>
+        <source>Invalid lines were exposed in layer {0}).</source>
+        <translation>Linhas inválidas registradas na camada {0}.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1157"/>
+        <source>No initial node was found!</source>
+        <translation>Não foi possível encontrar nós de início!</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1171"/>
+        <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
+        <translation>{0} nós inválidos ({1:.2f}% da rede está corretamente direcionada). Verifique os nós e/ou linhas inválidos.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1174"/>
+        <source>{1:.2f}% of network is well directed.</source>
+        <translation>1:.2f}% da rede está corretamente direcionada. Verifique linhas inválidas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1183"/>
+        <source>Network has coherent directions.</source>
+        <translation>A rede está corretamente direcionada.</translation>
     </message>
 </context>
 <context>

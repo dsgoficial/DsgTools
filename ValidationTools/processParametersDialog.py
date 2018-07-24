@@ -29,7 +29,7 @@ from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperPar
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
 from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
-from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
+from DsgTools.ValidationTools.ValidationProcesses.createNetworkNodesProcess import HidrographyFlowParameters
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,

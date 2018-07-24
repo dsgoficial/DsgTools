@@ -28,8 +28,7 @@ from PyQt4.QtGui import QMessageBox
 import binascii, math
 from collections import OrderedDict
 from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.ValidationTools.ValidationProcesses.hidrographyFlowProcess import HidrographyFlowParameters
-from DsgTools.ValidationTools.ValidationProcesses.createNetworkNodesProcess import CreateNetworkNodesProcess
+from DsgTools.ValidationTools.ValidationProcesses.createNetworkNodesProcess import CreateNetworkNodesProcess, HidrographyFlowParameters
 from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
 
 class VerifyNetworkDirectioningProcess(ValidationProcess):
@@ -248,7 +247,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                 if absAzimuthDifference < 90:
                     # if it's a 'beak', lines cannot have opposing directions (e.g. cannot flow to/from the same node)
                     if not self.checkLineDirectionConcordance(line_a=key1, line_b=key2, networkLayer=networkLayer, geomType=geomType):
-                        reason = self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
+                        reason = self.tr('Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).').format(key1.id(), key2.id(), absAzimuthDifference)
                         # checks if any of connected lines are already validated by any previous iteration
                         if key1 not in connectedValidLines:
                             inval[key1.id()] = key1
@@ -365,14 +364,14 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
                     invalidLines[lineID] = line
-                    reason = "".join([reason, self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, nodeType)])
+                    reason = "".join([reason, self.tr('Line id={0} does not end at a node with IN flow type (node type is {1}). ').format(lineID, nodeType)])
             elif flow == 'out':
                 if node == initialNode:
                     if lineID not in validLines.keys():
                         validLines[lineID] = line
                 elif lineID not in invalidLines.keys():
                     invalidLines[lineID] = line
-                    reason = "".join([reason, self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')\
+                    reason = "".join([reason, self.tr('Line id={0} does not start at a node with OUT flow type (node type is {1}). ')\
                     .format(lineID, self.nodeTypeNameDict[nodeType])])
             elif flow == 'in and out':
                 if bool(len(nodePointDict['start'])) != bool(len(nodePointDict['end'])):
@@ -680,13 +679,13 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         """
         if reasonType in [1, 2]:
             # Lines before being built:
-            # self.tr('Line {0} does not end at a node with IN flow type (node type is {1}). ')
-            # self.tr('Line {0} does not start at a node with OUT flow type (node type is {1}). ')
-            return [reason.split(self.tr(" does"))[0].split(" ")[1]]
+            # self.tr('Line id={0} does not end at a node with IN flow type (node type is {1}). ')
+            # self.tr('Line id={0} does not start at a node with OUT flow type (node type is {1}). ')
+            return [reason.split(self.tr("id="))[1].split(" ")[0]]
         elif reasonType == 3:
-            # Line before being built: self.tr('Lines {0} and {1} have conflicting directions ({2:.2f} deg).')
-            lineId1 = reason.split(self.tr(" and "))[0].split(" ")[1]
-            lineId2 = reason.split(self.tr(" and "))[1].split(" ")[0]
+            # Line before being built: self.tr('Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).')
+            lineId1 = reason.split(self.tr("id="))[1].split(" ")[0]
+            lineId2 = reason.split(self.tr("id="))[2].split(" ")[0]
             return [lineId1, lineId2]
         elif reasonType == 4:
             # Line before being built: self.tr('Redundant node. Connected lines ({0}, {1}) share the same set of attributes.')
