@@ -39,7 +39,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
                float: QtWidgets.QDoubleSpinBox,
                list: CustomTableSelector,
                tuple: CustomSnaperParameterSelector,
-               deque:QtWidgets.QComboBox,
+               deque: QtWidgets.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
                HierarchicalSnapParameters:OrderedRecursiveSnapWidget,
                dict:AuxLayerSelector,
