@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
-multiLayerSelect
+ DsgTools
                                  A QGIS plugin
-Builds a temp rubberband with a given size and shape.
+ Builds a temp rubberband with a given size and shape.
                              -------------------
         begin                : 2018-08-02
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : jossan.costa@eb.mil.br
-                               borba.philipe@eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
-Some parts were inspired by QGIS plugin MultipleLayerSelection
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -54,7 +53,7 @@ class AssignBandValueTool(QgsMapTool):
         self.reset()
         self.auxList = []
         self.decimals = self.getDecimals()
-    
+
     def getDecimals(self):
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
@@ -65,10 +64,10 @@ class AssignBandValueTool(QgsMapTool):
             return 0
     
     def getSuppressOptions(self):
-        qgisSettigns = QSettings()
-        qgisSettigns.beginGroup('Qgis/digitizing')
-        setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
-        qgisSettigns.endGroup()
+        qgisSettings = QSettings()
+        qgisSettings.beginGroup('Qgis/digitizing')
+        setting = qgisSettings.value('disable_enter_attribute_values_dialog')
+        qgisSettings.endGroup()
         if not setting:
             return False
         if setting.lower() == u'false':
@@ -95,14 +94,16 @@ class AssignBandValueTool(QgsMapTool):
     def canvasPressEvent(self, e):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
+        :param e: (QgsMouseEvent) mouse event.
         """
-        self.auxList = []
-        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
-            self.isEmittingPoint = True
-            self.startPoint = self.toMapCoordinates(e.pos())
-            self.endPoint = self.startPoint
-            self.isEmittingPoint = True
-            self.showRect(self.startPoint, self.endPoint)
+        if e.button() == QtCore.Qt.LeftButton:
+            self.auxList = []
+            if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+                self.isEmittingPoint = True
+                self.startPoint = self.toMapCoordinates(e.pos())
+                self.endPoint = self.startPoint
+                self.isEmittingPoint = True
+                self.showRect(self.startPoint, self.endPoint)
 
     def canvasMoveEvent(self, e):
         """
@@ -149,31 +150,37 @@ class AssignBandValueTool(QgsMapTool):
         """
         After the rectangle is built, here features are selected.
         """
-        layer = self.iface.mapCanvas().currentLayer()
-        if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
-            self.isEmittingPoint = False
-            r = self.rectangle()
-            if r is None:
-                return
-            bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
-            self.rubberBand.hide()
-            #select all stuff
-            layer.setSelectedFeatures([]) #portar para o feature handler
-            layer.select(bbRect, True)
-            #mudar depois para o dsgmothafucka
-            featDict = dict()
-            pointDict = dict()
-            for feat in layer.selectedFeatures():
-                featDict[feat.id()] = feat
-                pointDict[feat.id()] = feat.geometry()
-            pixelValueDict = self.getPixelValueFromPointDict(pointDict, self.rasterLayer)
-            for idx in pointDict:
-                self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':pixelValueDict[idx]})
-        else:
-            value, pointGeom = self.getPixelValue(self.rasterLayer)
-            self.auxList.append({'geom':pointGeom, 'value':value})
-        #create context menu to select attribute
-        self.createContextMenuOnPosition(e, layer)
+        # tool was planned to work on left click 
+        if e.button() == QtCore.Qt.LeftButton:
+            layer = self.iface.mapCanvas().currentLayer()
+            if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+                self.isEmittingPoint = False
+                r = self.rectangle()
+                if r is None:
+                    return
+                bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
+                self.rubberBand.hide()
+                #select all stuff
+                layer.setSelectedFeatures([]) #portar para o feature handler
+                layer.select(bbRect, True)
+                #mudar depois para o dsgmothafucka
+                featDict = dict()
+                pointDict = dict()
+                for feat in layer.selectedFeatures():
+                    featDict[feat.id()] = feat
+                    pointDict[feat.id()] = feat.geometry()
+                pixelValueDict = self.getPixelValueFromPointDict(pointDict, self.rasterLayer)
+                for idx in pointDict:
+                    value = pixelValueDict[idx]
+                    if value:
+                        self.auxList.append({'featId':idx, 'feat':featDict[idx], 'value':value})
+            else:
+                value, pointGeom = self.getPixelValue(self.rasterLayer)
+                if value:
+                    self.auxList.append({'geom':pointGeom, 'value':value})
+            #create context menu to select attribute
+            if self.auxList:
+                self.createContextMenuOnPosition(e, layer)
 
     def createContextMenuOnPosition(self, e, layer):
         menu = QMenu()
@@ -255,11 +262,11 @@ class AssignBandValueTool(QgsMapTool):
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
         self.iface.mapCanvas().setMapTool(self)
-        if not isinstance(self.iface.mapCanvas().currentLayer(), QgsVectorLayer):
+        layer = self.iface.mapCanvas().currentLayer()
+        if not layer or not isinstance(layer, QgsVectorLayer):
             self.iface.messageBar().pushMessage(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"),
                                                 level=QgsMessageBar.INFO, duration=10)
             self.deactivate()
-
 
     def reprojectSearchArea(self, layer, geom):
         """
@@ -285,7 +292,7 @@ class AssignBandValueTool(QgsMapTool):
         mousePos = self.qgsMapToolEmitPoint.toMapCoordinates(self.canvas.mouseLastXY())
         mousePosGeom = QgsGeometry.fromPoint(mousePos)
         return self.getPixelValueFromPoint(mousePosGeom, rasterLayer), mousePosGeom
-    
+
     def getPixelValueFromPoint(self, mousePosGeom, rasterLayer, fromCanvas = True):
         """
         
@@ -302,7 +309,8 @@ class AssignBandValueTool(QgsMapTool):
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
         if i.isValid():
             value = i.results().values()[0]
-            value = int(value) if self.decimals == 0 else round(value, self.decimals)
+            if value:
+                value = int(value) if self.decimals == 0 else round(value, self.decimals)
             return value
         else:
             return None
@@ -313,4 +321,4 @@ class AssignBandValueTool(QgsMapTool):
 
         returns {'pointId': value}
         """
-        return {key:self.getPixelValueFromPoint(value, rasterLayer, fromCanvas = False) for key, value in pointDict.iteritems()} #no python3 eh items()
+        return {key : self.getPixelValueFromPoint(value, rasterLayer, fromCanvas=False) for key, value in pointDict.iteritems()} #no python3 eh items()
