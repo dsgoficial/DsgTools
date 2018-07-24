@@ -680,7 +680,7 @@ class DsgTools:
         self.flipLineTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
         #enable shortcut config
         self.iface.registerMainWindowAction(action, '')
-        action.setToolTip(self.tr("DSGTools: Flip Line Tool\nInsert tool tip for Flip Line Tool."))
+        action.setToolTip(self.tr("DSGTools: Flip Line Tool\nTool to invert selected lines acquisition diretioning."))
 
         icon_path = ':/plugins/DsgTools/icons/home.png'
         action = self.add_action(
