@@ -13498,7 +13498,7 @@ Camada</translation>
         <translation>Não foi possível inferir o direcionamento para as linhas {0} e {1} (ângulo reto)</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1156"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1158"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -13645,42 +13645,42 @@ Camada</translation>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1011"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1013"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1045"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1047"/>
         <source>Select Layer</source>
         <translation>Selecione as camadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1107"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1109"/>
         <source>Cycle {0} completed (maximum of {1}).</source>
         <translation>Ciclo {0} concluído (máximo de {1}).</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1138"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1140"/>
         <source>Invalid lines were exposed in layer {0}).</source>
         <translation>Linhas inválidas registradas na camada {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1156"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1158"/>
         <source>No initial node was found!</source>
         <translation>Não foi possível encontrar nós de início!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1170"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1172"/>
         <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
         <translation>{0} nós inválidos ({1:.2f}% da rede está corretamente direcionada). Verifique os nós e/ou linhas inválidos.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1173"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1175"/>
         <source>{1:.2f}% of network is well directed.</source>
         <translation>1:.2f}% da rede está corretamente direcionada. Verifique linhas inválidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1182"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1184"/>
         <source>Network has coherent directions.</source>
         <translation>A rede está corretamente direcionada.</translation>
     </message>
