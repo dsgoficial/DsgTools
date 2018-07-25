@@ -86,7 +86,6 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                               }
             # transmit these parameters to CreateNetworkNodesProcess object
             self.createNetworkNodesProcess.parameters = self.parameters
-            self.createNetworkNodesProcess.parameters['Only Selected'] = False
             # in order to execute attribute check (method on creation process)
             self.createNetworkNodesProcess.networkClassesWithElemDict = self.networkClassesWithElemDict
             self.nodeIdDict = None
@@ -1001,6 +1000,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
+        # only selected option set for createNetworkNode object
+        self.createNetworkNodesProcess.parameters['Only Selected'] = False
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -1158,8 +1159,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # log percentage of network directed
             # if self.parameters['Only Selected']:
             #     percValid = float(len(val))*100.0/float(selectedFeatures)
-            else:
-                percValid = float(len(val))*100.0/float(networkLayer.featureCount())
+            # else:
+            percValid = float(len(val))*100.0/float(networkLayer.featureCount())
             if nodeFlags:
                 msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  ' of network is well directed). Check flags.')\
                             .format(len(nodeFlags), percValid)
