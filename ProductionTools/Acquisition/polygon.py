@@ -10,7 +10,7 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
-from qgis.gui import QgsMapMouseEvent, QgsMapTool
+from qgis.gui import QgsMapMouseEvent, QgsMapTool, QgsMessageBar
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -56,13 +56,11 @@ class Polygon(GeometricaAcquisition):
                         if testgeom:
                             new_geom, pf = self.completePolygon(self.geometry, testgeom)
                             self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
-                            self.geometry.append(pf)                    
-                    else:
-                        point = QgsPoint(pointMap)
-                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                        if testgeom:                                
-                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))                   
-                self.endGeometry()        
+                            self.geometry.append(pf)   
+                        self.endGeometry()                         
+                    else:                        
+                        self.iface.messageBar().pushMessage("Observação".decode('utf-8'), "A ferramenta de ângulo reto deve ser utilizada para digitalização de feições retangulares.".decode('utf-8'), level=QgsMessageBar.INFO)                
+
         elif self.free:
             self.geometry.append(pointMap)
             self.qntPoint += 1
@@ -102,7 +100,11 @@ class Polygon(GeometricaAcquisition):
             if self.free:
                 geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(point.x(), point.y())]])
                 self.rubberBand.setToGeometry(geom, None)             
-            else:        
+            else:       
+                if (self.qntPoint % 2 == 1): 
+                    self.setAvoidStyleSnapRubberBand()
+                else:
+                    self.setAllowedStyleSnapRubberBand()
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
                     geom, pf = self.completePolygon(self.geometry, testgeom)
