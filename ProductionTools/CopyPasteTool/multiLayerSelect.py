@@ -430,7 +430,9 @@ class MultiLayerSelection(QgsMapTool):
         """
         # creating a dict to handle all "menu" for each class
         submenuDict = dict()
-        for cl in menuDict.keys():
+        # sort the layers from diciotnary
+        layers = sorted(menuDict.keys())
+        for cl in layers:
             # menu for features of each class
             className = cl.name()
             geomType = cl.geometryType()
