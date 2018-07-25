@@ -86,6 +86,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                               }
             # transmit these parameters to CreateNetworkNodesProcess object
             self.createNetworkNodesProcess.parameters = self.parameters
+            self.createNetworkNodesProcess.parameters['Only Selected'] = False
             # in order to execute attribute check (method on creation process)
             self.createNetworkNodesProcess.networkClassesWithElemDict = self.networkClassesWithElemDict
             self.nodeIdDict = None
