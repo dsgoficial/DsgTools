@@ -72,7 +72,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.sinkClassesWithElemDict = self.nodeClassesWithElemDict
             sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())
             self.parameters = {
-                                'Only Selected' : False,
+                                # 'Only Selected' : False,
                                 'Network Layer' : networkFlowParameterList,
                                 'Node Layer' : nodeFlowParameterList,
                                 'Sink Layer' : sinkFlowParameterList,
@@ -1089,10 +1089,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             networkNodeLayer.beginEditCommand('Reclassify Nodes')
             networkLayer.beginEditCommand('Flip/Merge Lines')
             while True:
-                if self.parameters['Only Selected']:
-                    # in case directioning is to be executed over selected lines
-                    nodeListSelectedLines = None
-                    pass
+                # if self.parameters['Only Selected']:
+                #     # in case directioning is to be executed over selected lines
+                #     nodeListSelectedLines = None
+                #     pass
                 # make it recursive in order to not get stuck after all possible initial fixes
                 nodeFlags_, inval_, val_ = self.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
                 cycleCount += 1
@@ -1155,8 +1155,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             if self.parameters['Select All Valid Lines']:
                 networkLayer.setSelectedFeatures(val.keys())
             # log percentage of network directed
-            if self.parameters['Only Selected']:
-                percValid = float(len(val))*100.0/float(selectedFeatures)
+            # if self.parameters['Only Selected']:
+            #     percValid = float(len(val))*100.0/float(selectedFeatures)
             else:
                 percValid = float(len(val))*100.0/float(networkLayer.featureCount())
             if nodeFlags:
