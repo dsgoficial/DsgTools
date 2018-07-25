@@ -111,17 +111,12 @@ class ProcessParametersDialog(QtWidgets.QDialog):
             widget.setDecimals(20)
             widget.setMaximum(sys.float_info.max)
             widget.setMinimum(sys.float_info.min)
-            if k in selectedDictList:
-                getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
-            else:
-                getattr(widget, self.SETTERS[type(widget)])(v)
+            getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k]) if k in selectedDictList else getattr(widget, self.SETTERS[type(widget)])(v)
+                
         elif self.WIDGETS[type(v)] == QtWidgets.QSpinBox:
             widget.setMaximum(1000000)
             widget.setMinimum(-1000000)
-            if k in selectedDictList:
-                getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k])
-            else:
-                getattr(widget, self.SETTERS[type(widget)])(v)
+            getattr(widget, self.SETTERS[type(widget)])(selectedDictList[k]) if k in selectedDictList else getattr(widget, self.SETTERS[type(widget)])(v)
         
         elif self.WIDGETS[type(v)] == CustomTableSelector:
             widget.setTitle(self.tr('Select classes'))

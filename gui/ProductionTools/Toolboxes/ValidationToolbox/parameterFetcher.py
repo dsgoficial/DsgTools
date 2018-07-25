@@ -128,3 +128,11 @@ class ParameterFetcher(QObject):
         params = dlg.values
         return params
     
+    def buildInputParameterDict(self, paramameters):
+        """
+        Receives parameters dict in the format {'parameterName':parameterValue} and builds a 
+        """
+        for k, v in paramameters.items():
+            pass
+
+    
