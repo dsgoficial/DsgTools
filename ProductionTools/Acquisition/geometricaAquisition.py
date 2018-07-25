@@ -114,31 +114,50 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             pf = p4            
         return new_geom, pf
             
-    def lineIntersection(self, p1, p2, p3, p4):        
-        m1 = (p1.y() - p2.y())/(p1.x() - p2.x())
-        a1 = p2.y() + p2.x()/m1
-        m2 = (p3.y() - p4.y())/(p3.x() - p4.x())
-        #Reta perpendicular P3 P4 que passa por P4
-        a2 = p4.y() + p4.x()/m2
-        if abs(m1 - m2) > 0.01:
-            #intersecao
-            x = (a2 - a1)/(1/m2 - 1/m1) 
-            y = -x/m1 + a1
+    def lineIntersection(self, p1, p2, p3, p4):    
+        p3Projected = p4       
+        if(p1.y() == p2.y()):                     
+            y = p3Projected.y()
+            x = p2.x() 
             return QgsPoint(x,y)
-        return False
+        if(p1.x() == p2.x()):         
+            y = p2.y()
+            x = p3Projected.x() 
+            return QgsPoint(x,y)
+        else:        
+            m1 = (p1.y() - p2.y())/(p1.x() - p2.x())
+            a1 = p2.y() + p2.x()/m1
+            m2 = (p3.y() - p4.y())/(p3.x() - p4.x())
+            #Reta perpendicular P3 P4 que passa por P4
+            a2 = p4.y() + p4.x()/m2
+            if abs(m1 - m2) > 0.01:
+                #intersecao
+                x = (a2 - a1)/(1/m2 - 1/m1) 
+                y = -x/m1 + a1
+                return QgsPoint(x,y)
+            return False
     
     def projectPoint(self, p1, p2, p3):        
         #reta P1 P2
         try:
-            a = (p2.y()-p1.y())/(p2.x()-p1.x())
-            #reta perpendicular a P1P2 que passa por P2
-            a2 = -1/a
-            b2 =  p2.y() - a2*p2.x()
-            #reta paralela a P1P2 que passa por P3
-            b3 = p3.y() - a*p3.x()
-            #intersecao entre retas
-            x = (b3 - b2)/(a2 - a)
-            y = a*x + b3
+            # p1 e p2 na vertical
+            if (p1.x() == p2.x()):
+                x = p3.x()
+                y = p2.y()
+            # p1 e p2 na horizontal
+            elif (p1.y()== p2.y()):
+                x = p2.x()
+                y = p3.y()
+            else:
+                a = (p2.y()-p1.y())/(p2.x()-p1.x())
+                #reta perpendicular a P1P2 que passa por P2
+                a2 = -1/a
+                b2 =  p2.y() - a2*p2.x()
+                #reta paralela a P1P2 que passa por P3
+                b3 = p3.y() - a*p3.x()
+                #intersecao entre retas
+                x = (b3 - b2)/(a2 - a)
+                y = a*x + b3
         except:
             return None
 
@@ -162,7 +181,17 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         rubberBand.setWidth(2)
         rubberBand.setIcon(QgsRubberBand.ICON_X)
         return rubberBand        
-    
+
+    def setAllowedStyleSnapRubberBand(self):
+        self.rubberBand.setLineStyle(Qt.PenStyle(Qt.SolidLine))
+        self.rubberBand.setBorderColor(QColor(255, 0, 0, 200))
+        self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
+
+    def setAvoidStyleSnapRubberBand(self):
+        self.rubberBand.setLineStyle(Qt.PenStyle(Qt.DashDotLine))
+        self.rubberBand.setBorderColor(QColor(255, 255, 0, 200))
+        self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
+
     def createGeometry(self, geom):
         geom = self.reprojectRubberBand(geom)
         if geom :
