@@ -58,8 +58,6 @@ from DsgTools.ProductionTools.InspectFeatures.inspectFeatures import InspectFeat
 from DsgTools.ProductionTools.StyleManagerTool.styleManagerTool import StyleManagerTool
 from DsgTools.ProductionTools.DsgRasterInfoTool.dsgRasterInfoTool import DsgRasterInfoTool
 from DsgTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
-from DsgTools.DsgToolsOp.dsgToolsOpInstaller import DsgToolsOpInstaller
-from DsgTools.DsgToolsOp.dsgToolsOpInstallerDialog import DsgToolsOpInstallerDialog
 from DsgTools.ProductionTools.CopyPasteTool.copyPasteTool import CopyPasteTool
 from DsgTools.ProductionTools.Acquisition.acquisition import Acquisition
 from DsgTools.ProductionTools.FreeHandTool.freeHandMain import FreeHandMain
@@ -253,8 +251,6 @@ class DsgTools:
         indexes = self.addMenu(bdgex, u'indexes', self.tr('Product Indexes'),':/plugins/DsgTools/icons/eb.png')
         rasterIndex = self.addMenu(indexes, u'rasterindex', self.tr('Topographic Charts'),':/plugins/DsgTools/icons/eb.png')
         vectorIndex = self.addMenu(indexes, u'vectorindex', self.tr('Vectorial Charts'),':/plugins/DsgTools/icons/eb.png')
-        dsgtoolsop = self.addMenu(self.dsgTools, u'dsgtoolsop', self.tr('Dsg Tools Military Tools'), ':/plugins/DsgTools/icons/eb.png')
-        self.createMilitaryMenu(dsgtoolsop, ':/plugins/DsgTools/icons/eb.png')
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.add_action(
@@ -736,22 +732,6 @@ class DsgTools:
         # self.iface.registerMainWindowAction(self.inspectFeatures.action, '')
         self.toolbar.addWidget(self.styleManagerTool)
         self.toolbar.addWidget(self.dsgRasterInfoTool)
-        
-
-    
-    def createMilitaryMenu(self, parentMenu, icon_path):
-        self.opInstaller = DsgToolsOpInstaller(self.iface, parent=self, parentMenu=parentMenu)
-        action = self.add_action(
-            icon_path,
-            text=self.tr('DsgTools Op Installer'),
-            callback=self.installDsgToolsOp,
-            parent=parentMenu,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        parentMenu.addAction(action)
-        # if already installed, make the uninstall action and load tool actions
-        if self.opInstaller.checkIfInstalled():
-            self.opInstaller.loadTools()
 
     def unload(self):
         """
@@ -788,24 +768,6 @@ class DsgTools:
         """
         dlg = AboutDialog()
         dlg.exec_()
-
-    def installDsgToolsOp(self):
-        """
-        Installs DsgTools Op
-        """
-        dlg = DsgToolsOpInstallerDialog(self.opInstaller)
-        dlg.show()
-        result = dlg.exec_()
-        if result:
-            pass
-    
-    def uninstallDsgToolsOp(self):
-        """
-        Uninstall dsgtoolsop
-        """
-        self.opInstaller.uninstallDsgToolsOp()
-        self.unload()
-        self.initGui()
 
     def showOptions(self):
         """
