@@ -36,6 +36,7 @@ currentPath = os.path.dirname(__file__)
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
 from qgis.utils import showPluginHelp
+from qgis.core import QgsApplication
 
 try:
     import ptvsd
@@ -44,6 +45,7 @@ except Exception as e:
     pass
 
 from .gui.guiManager import GuiManager
+from .dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
 
 class DsgTools(object):
     """QGIS Plugin Implementation."""
@@ -81,6 +83,7 @@ class DsgTools(object):
 
         self.dsgTools = None
         self.menuBar = self.iface.mainWindow().menuBar()
+        self.provider = DSGToolsProcessingAlgorithmProvider()
 
     # noinspection PyMethodMayBeStatic
     def tr(self, message):
@@ -109,6 +112,7 @@ class DsgTools(object):
         if self.dsgTools is not None:
             self.menuBar.removeAction(self.dsgTools.menuAction())
         self.iface.mainWindow().removeToolBar(self.toolbar)
+        QgsApplication.processingRegistry().removeProvider(self.provider)
         del self.dsgTools
         del self.toolbar
 
@@ -124,6 +128,8 @@ class DsgTools(object):
         #GuiManager
         self.guiManager = GuiManager(self.iface, parentMenu = self.dsgTools, toolbar = self.toolbar)
         self.guiManager.initGui()
+        #provider
+        QgsApplication.processingRegistry().addProvider(self.provider)
 
         #Sub menus
         # server = self.addMenu(self.dsgTools, u'server', self.tr('Server Catalog'),':/plugins/DsgTools/icons/server.png')

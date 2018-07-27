@@ -106,7 +106,7 @@ class ProcessParametersDialog(QtWidgets.QDialog):
             rowCount += 1
         self.setGuiLayout(_firstWidget, rowCount)
     
-    def setWidgetParameters(self, widget, v, selectedDictList)
+    def setWidgetParameters(self, widget, v, selectedDictList):
         if self.WIDGETS[type(v)] == QtWidgets.QDoubleSpinBox:
             widget.setDecimals(20)
             widget.setMaximum(sys.float_info.max)
