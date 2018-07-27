@@ -103,29 +103,8 @@ class IdentifySmallAreaAlgorithm(QgsProcessingAlgorithm):
             if feedback.isCanceled():
                 break
             if feat.geometry().area() < tol:
-                
-            geom = feature.geometry()
-            if not geom:
-                target.deleteFeature(feature.id())
-                # Update the progress bar
-                feedback.setProgress(int(current * total))
-                continue
-            if geom.get().partCount() > 1:
-                parts = geom.asGeometryCollection()
-                for part in parts:
-                    if destIsMulti:
-                        part.convertToMultiType()
-                addList = []
-                for i in range(1,len(parts)):
-                    if parts[i]:
-                        newFeat = QgsFeature(feature)
-                        newFeat.setGeometry(parts[i])
-                        idx = newFeat.fieldNameIndex(keyColumn)
-                        newFeat.setAttribute(idx,provider.defaultValue(idx))
-                        addList.append(newFeat)
-                feature.setGeometry(parts[0])
-                target.updateFeature(feature)
-                target.addFeatures(addList, QgsFeatureSink.FastInsert)             
+                flagText = 
+                self.flagFeature(feat, flagLyr) #parei aqui       
 
             # Update the progress bar
             feedback.setProgress(int(current * total))
