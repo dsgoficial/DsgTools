@@ -22,13 +22,16 @@
 """
 from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
+from .core.ValidationTools.ValidationProcesses.deaggregateGeometriesProcess import DeaggregatorAlgorithm
+from qgis.PyQt.QtGui import QIcon
 
-class ValidationProcessingAlgorithmProvider(QgsProcessingProvider):
+class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     Constructor
     """
     def __init__(self):
-        super(ValidationProcessingAlgorithmProvider, self).__init__()
+        super(DSGToolsProcessingAlgorithmProvider, self).__init__()
+        self.algList = [DeaggregatorAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
@@ -72,7 +75,7 @@ class ValidationProcessingAlgorithmProvider(QgsProcessingProvider):
         """
         We return the default icon.
         """
-        return ':/plugins/DsgTools/icons/dsg.png'
+        return QIcon(':/plugins/DsgTools/icons/dsg.png')
 
     def loadAlgorithms(self):
         """
@@ -87,5 +90,5 @@ class ValidationProcessingAlgorithmProvider(QgsProcessingProvider):
         even if the list does not change, since the self.algs list is
         cleared before calling this method.
         """
-        for alg in [AppendFeaturesToLayer()]:
+        for alg in self.algList:
             self.addAlgorithm(alg)

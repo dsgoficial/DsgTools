@@ -40,6 +40,19 @@ from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
+class ValidationAlgorithm(QgsProcessingAlgorithm):
+    def getIteratorAndFeatureCount(self, lyr, onlySelected = False):
+        if onlySelected:
+            total = 100.0 / lyr.selectedFeatureCount() if lyr.selectedFeatureCount() else 0
+            iterator = lyr.getSelectedFeatures()
+        else:
+            total = 100.0 / lyr.featureCount() if lyr.featureCount() else 0
+            iterator = lyr.getFeatures()
+        return iterator, total
+
+    def clearFlagElements(self, flagLyr, user = None):
+        pass
+
 class ValidationProcess(QgsTask):
     def __init__(self, params, description = '', flags = QgsTask.CanCancel):
         """
