@@ -8,7 +8,7 @@
         begin                : 2016-02-18
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -34,14 +34,28 @@ from qgis.PyQt.Qt import QObject
 from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
                       QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, \
                       QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes, \
-                      QgsTask
+                      QgsTask, QgsProcessingAlgorithm
 
-# DSGTools imports
-from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from qgis.core import (QgsProcessing,
+                       QgsFeatureSink,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterFeatureSink,
+                       QgsFeature,
+                       QgsDataSourceUri,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterVectorLayer,
+                       QgsWkbTypes,
+                       QgsProcessingParameterBoolean)
 
 class ValidationAlgorithm(QgsProcessingAlgorithm):
+    """
+    Processing algorithm with handy stuff for other algs.
+    """
     def getIteratorAndFeatureCount(self, lyr, onlySelected = False):
+        """
+        Gets the iterator and feature count from lyr.
+        """
         if onlySelected:
             total = 100.0 / lyr.selectedFeatureCount() if lyr.selectedFeatureCount() else 0
             iterator = lyr.getSelectedFeatures()
@@ -52,6 +66,16 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
 
     def clearFlagElements(self, flagLyr, user = None):
         pass
+    
+    def prepareFlagSink(self, parameters, source):
+        flagFields = self.getFlagFields()
+        (self.flagSink, self.dest_id) = self.parameterAsSink(parameters, self.FLAGS,
+                context, flagFields, source.wkbType(), source.sourceCrs())
+        if self.sink is None:
+            raise QgsProcessingException(self.invalidSinkError(parameters, self.FLAGS))
+    
+    def flagFeature(self, feat, flagText):
+        sink.addFeature(feat, QgsFeatureSink.FastInsert)
 
 class ValidationProcess(QgsTask):
     def __init__(self, params, description = '', flags = QgsTask.CanCancel):
