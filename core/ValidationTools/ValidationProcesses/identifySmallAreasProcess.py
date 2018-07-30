@@ -39,8 +39,8 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean)
 
-class IdentifySmallAreaAlgorithm(QgsProcessingAlgorithm):
-    OUTPUT = 'FLAGS'
+class IdentifySmallAreasAlgorithm(QgsProcessingAlgorithm):
+    FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
 
@@ -64,8 +64,15 @@ class IdentifySmallAreaAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
+            QgsProcessingParameterDouble(
+                self.TOLERANCE,
+                self.tr('Area tolerance')
+            )
+        )
+
+        self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.OUTPUT,
+                self.FLAGS,
                 self.tr('Flag layer')
             )
         )
@@ -75,49 +82,26 @@ class IdentifySmallAreaAlgorithm(QgsProcessingAlgorithm):
         Here is where the processing itself takes place.
         """
 
-        # Retrieve the feature source and sink. The 'dest_id' variable is used
-        # to uniquely identify the feature sink, and must be included in the
-        # dictionary returned by the processAlgorithm function.
-        source = self.parameterAsSource(parameters, self.INPUT, context)
-        # (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
-        #         context, source.fields(), source.wkbType(), source.sourceCrs())
-
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-
-        target.startEditing()
-        target.beginEditCommand('Updating layer')
-        provider = target.dataProvider()
-        uri = QgsDataSourceUri(provider.dataSourceUri())
-        keyColumn = uri.keyColumn()
-        destType = target.geometryType()
-        destIsMulti = QgsWkbTypes.isMultiType(target.wkbType())
-
+        if inputLyr is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        flagSink, dest_id = self.prepareFlagSink(parameters, inputLyr)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        features, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
 
-        for current, feature in enumerate(features):
+        for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            if feat.geometry().area() < tol:
-                flagText = 
-                self.flagFeature(feat, flagLyr) #parei aqui       
-
+            if feat.geometry().area() < self.TOLERANCE:
+                flagText = self.tr('Area of value {0} smaller than tolerance {1}.').format(feat.geometry().area(), self.TOLERANCE)
+                self.flagFeature(feat, flagText) #parei aqui       
             # Update the progress bar
             feedback.setProgress(int(current * total))
 
-        target.endEditCommand()
-
-        # Return the results of the algorithm. In this case our only result is
-        # the feature sink which contains the processed features, but some
-        # algorithms may return multiple feature sinks, calculated numeric
-        # statistics, etc. These should all be included in the returned
-        # dictionary, with keys matching the feature corresponding parameter
-        # or output names.
-        return {self.OUTPUT: target}
+        return {self.FLAG: self.flagSink}
 
     def name(self):
         """
@@ -127,14 +111,14 @@ class IdentifySmallAreaAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'deaggregategeometries'
+        return 'identifysmallareas'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Deaggregate Geometries')
+        return self.tr('Identify Small Areas')
 
     def group(self):
         """
@@ -157,7 +141,7 @@ class IdentifySmallAreaAlgorithm(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return DeaggregatorAlgorithm()
+        return IdentifySmallAreaAlgorithm()
 
 class IdentifySmallAreasProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
