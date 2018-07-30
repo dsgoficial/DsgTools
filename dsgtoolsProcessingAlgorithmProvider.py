@@ -23,6 +23,8 @@
 from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
 from .core.ValidationTools.ValidationProcesses.deaggregateGeometriesProcess import DeaggregatorAlgorithm
+from .core.ValidationTools.ValidationProcesses.identifySmallAreasProcess import IdentifySmallAreasAlgorithm
+from .core.ValidationTools.ValidationProcesses.identifySmallLinesProcess import IdentifySmallLinesAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -31,7 +33,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
-        self.algList = [DeaggregatorAlgorithm()]
+        self.algList = [DeaggregatorAlgorithm(), IdentifySmallAreasAlgorithm(), IdentifySmallLinesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()

@@ -22,8 +22,7 @@
 """
 from builtins import str
 from qgis.core import QgsMessageLog, Qgis
-from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationAlgorithm, ValidationProcess
 import binascii
 
 from PyQt5.QtCore import QCoreApplication
@@ -37,12 +36,14 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterNumber)
 
-class IdentifySmallAreasAlgorithm(QgsProcessingAlgorithm):
+class IdentifySmallAreasAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
+    TOLERANCE = 'TOLERANCE'
 
     def initAlgorithm(self, config):
         """
@@ -64,9 +65,11 @@ class IdentifySmallAreasAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterDouble(
+            QgsProcessingParameterNumber(
                 self.TOLERANCE,
-                self.tr('Area tolerance')
+                self.tr('Area tolerance'),
+                minValue=0,
+                defaultValue=625
             )
         )
 
@@ -86,22 +89,23 @@ class IdentifySmallAreasAlgorithm(QgsProcessingAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        flagSink, dest_id = self.prepareFlagSink(parameters, inputLyr)
+        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
 
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            if feat.geometry().area() < self.TOLERANCE:
-                flagText = self.tr('Area of value {0} smaller than tolerance {1}.').format(feat.geometry().area(), self.TOLERANCE)
-                self.flagFeature(feat, flagText) #parei aqui       
+            if feat.geometry().area() < tol:
+                flagText = self.tr('Feature from layer {0} with id={1} has area of value {2:.2f}, which is lesser than the tolerance of {3} square units.').format(inputLyr.name(), feat.id(), feat.geometry().area(), tol)
+                self.flagFeature(feat.geometry(), flagText)      
             # Update the progress bar
             feedback.setProgress(int(current * total))
 
-        return {self.FLAG: self.flagSink}
+        return {self.FLAGS: self.flagSink}
 
     def name(self):
         """
@@ -141,7 +145,7 @@ class IdentifySmallAreasAlgorithm(QgsProcessingAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return IdentifySmallAreaAlgorithm()
+        return IdentifySmallAreasAlgorithm()
 
 class IdentifySmallAreasProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
