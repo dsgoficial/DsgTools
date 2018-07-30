@@ -22,8 +22,129 @@
 """
 from builtins import str
 from qgis.core import QgsMessageLog, Qgis
-from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationAlgorithm, ValidationProcess
+
+from PyQt5.QtCore import QCoreApplication
+from qgis.core import (QgsProcessing,
+                       QgsFeatureSink,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterFeatureSink,
+                       QgsFeature,
+                       QgsDataSourceUri,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterVectorLayer,
+                       QgsWkbTypes,
+                       QgsProcessingParameterBoolean)
+
+class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
+    FLAGS = 'FLAGS'
+    INPUT = 'INPUT'
+    SELECTED = 'SELECTED'
+
+    def initAlgorithm(self, config):
+        """
+        Parameter setting.
+        """
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.INPUT,
+                self.tr('Input layer'),
+                [QgsProcessing.TypeVectorAnyGeometry ]
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.SELECTED,
+                self.tr('Process only selected features')
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS,
+                self.tr('Flag layer')
+            )
+        )
+
+    def processAlgorithm(self, parameters, context, feedback):
+        """
+        Here is where the processing itself takes place.
+        """
+
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        isMulti = QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
+        if inputLyr is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        # Compute the number of steps to display within the progress bar and
+        # get features from source
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+        geomDict = dict()
+        for current, feat in enumerate(featureList):
+            # Stop the algorithm if cancel button has been clicked
+            if feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            if isMulti and not geom.isMultipart():
+                geom.convertToMultiType()
+            geomKey = geom.asWkb()
+            if geomKey not in geomDict:
+                geomDict[geomKey] = []
+            geomDict[geomKey].append(feat)
+            # # Update the progress bar
+            feedback.setProgress(int(current * total))
+        for k, v in geomDict.items():
+            if feedback.isCanceled():
+                break
+            if len(v) > 1:
+                idStrList = ','.join( map(str, [i.id() for i in v] ) )
+                flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.').format(inputLyr.name(), idStrList)
+                self.flagFeature(v[0].geometry(), flagText)      
+
+        return {self.FLAGS: self.flagSink}
+
+    def name(self):
+        """
+        Returns the algorithm name, used for identifying the algorithm. This
+        string should be fixed for the algorithm, and must not be localised.
+        The name should be unique within each provider. Names should contain
+        lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return 'identifyduplicatedgeometries'
+
+    def displayName(self):
+        """
+        Returns the translated algorithm name, which should be used for any
+        user-visible display of the algorithm name.
+        """
+        return self.tr('Identify Duplicated Geometries')
+
+    def group(self):
+        """
+        Returns the name of the group this algorithm belongs to. This string
+        should be localised.
+        """
+        return self.tr('Validation Tools')
+
+    def groupId(self):
+        """
+        Returns the unique ID of the group this algorithm belongs to. This
+        string should be fixed for the algorithm, and must not be localised.
+        The group id should be unique within each provider. Group id should
+        contain lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return 'DSGTools: Validation Tools'
+
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+
+    def createInstance(self):
+        return IdentifyDuplicatedGeometriesAlgorithm()
 
 class IdentifyDuplicatedGeometriesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
