@@ -46,7 +46,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsFields)
 
 class ValidationAlgorithm(QgsProcessingAlgorithm):
     """
@@ -63,19 +64,29 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             total = 100.0 / lyr.featureCount() if lyr.featureCount() else 0
             iterator = lyr.getFeatures()
         return iterator, total
-
-    def clearFlagElements(self, flagLyr, user = None):
-        pass
     
-    def prepareFlagSink(self, parameters, source):
+    def prepareFlagSink(self, parameters, source, wkbType, context):
         flagFields = self.getFlagFields()
         (self.flagSink, self.dest_id) = self.parameterAsSink(parameters, self.FLAGS,
-                context, flagFields, source.wkbType(), source.sourceCrs())
-        if self.sink is None:
+                context, flagFields, wkbType, source.sourceCrs())
+        if self.flagSink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.FLAGS))
     
-    def flagFeature(self, feat, flagText):
-        sink.addFeature(feat, QgsFeatureSink.FastInsert)
+    def getFlagFields(self):
+        fields = QgsFields()
+        fields.append(QgsField('reason',QVariant.String))
+        return fields
+    
+    def flagFeature(self, flagGeom, flagText):
+        """
+        Creates and adds to flagSink a new flag with the reason.
+        :param flagGeom: (QgsGeometry) geometry of the flag;
+        :param flagText: (string) Text of the flag
+        """
+        newFeat = QgsFeature(self.getFlagFields())
+        newFeat['reason'] = flagText
+        newFeat.setGeometry(flagGeom)
+        self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
 
 class ValidationProcess(QgsTask):
     def __init__(self, params, description = '', flags = QgsTask.CanCancel):
