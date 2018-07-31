@@ -24,21 +24,22 @@ from __future__ import absolute_import
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
 
 class LayerHandler(QObject):
-    def __init__(self, iface, parent = None):
+    def __init__(self, iface = None, parent = None):
         super(LayerHandler, self).__init__()
         self.parent = parent
         self.iface = iface
-        self.canvas = iface.mapCanvas()
+        if iface:
+            self.canvas = iface.mapCanvas()
         self.featureHandler = FeatureHandler(iface)
     
     def getFeatureList(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
         if onlySelected:
-            featureList = lyr.selectedFeatures()
+            featureList = lyr.getSelectedFeatures()
             size = len(featureList)
         else:
             featureList = [i for i in lyr.getFeatures()] if not returnIterator else lyr.getFeatures()
@@ -98,4 +99,20 @@ class LayerHandler(QObject):
         outputSrc = QgsCoordinateReferenceSystem(outputAuthId)
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
-        
+    
+    def createUnifiedVectorLayer(self, attributeTupple = False):
+        fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
+    
+    def getUnifiedVectorFields(self, attributeTupple = False):
+        if not attributeTupple:
+            fields = [QgsField('featid', QVariant.Int), 
+                      QgsField('classname', QVariant.String)
+                    ]
+        else:
+            fields = [QgsField('featid', QVariant.Int), 
+                      QgsField('classname', QVariant.String), 
+                      QgsField('tupple', QVariant.String), 
+                      QgsField('blacklist', QVariant.String)
+                      ]
+        return fields
+

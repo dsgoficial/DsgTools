@@ -67,3 +67,9 @@ class AttributeHandler(QObject):
         if not editBuffer:
             # we should return when under the normal behavior
             return newFeature
+    
+    def getTuppleAttribute(self, feature, unifiedLyr, bList = []):
+        attributes = [field.name() for idx, field in enumerate(feature.fields()) if (field.type() != 6 and idx not in unifiedLyr.primaryKeyAttributes() and field.name() not in bList)]
+        attributes.sort()
+        attributeList = [u'{0}'.format(feature[attribute]) for attribute in attributes]
+        return ','.join(attributeList)
