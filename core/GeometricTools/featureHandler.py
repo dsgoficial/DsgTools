@@ -30,11 +30,12 @@ from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler
 
 class FeatureHandler(QObject):
-    def __init__(self, iface, parent = None):
+    def __init__(self, iface = None, parent = None):
         super(FeatureHandler, self).__init__()
         self.parent = parent
         self.iface = iface
-        self.canvas = iface.mapCanvas()
+        if iface:
+            self.canvas = iface.mapCanvas()
         self.geometryHandler = GeometryHandler(iface)
         self.attributeHandler = AttributeHandler(iface)
     
@@ -60,3 +61,25 @@ class FeatureHandler(QObject):
             newFeature = self.attributeHandler.setFeatureAttributes(newFeature, attributeDict, oldFeat = originalFeat)
             newFeatureList.append(newFeature)
         return newFeatureList
+    
+    def populateUnifiedLayer(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+        featList = []
+        for layer in layerList:
+            # recording class name
+            classname = layer.name()
+            iterator, total = self.getIteratorAndFeatureCount(layer, onlySelected=onlySelected)
+            for feature in iterator:
+                newFeat = self.createUnifiedFeature(unifiedLyr, feature, classname, bList=)
+                featlist.append(newfeat)
+        return featList
+
+    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False):
+        newfeat = QgsFeature(unifiedLyr.fields())
+        newfeat.setGeometry(feature.geometry())
+        newfeat['featid'] = feature.id()
+        newfeat['classname'] = classname
+        if attributeTupple:
+            newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
+        return newfeat
+    
+    
