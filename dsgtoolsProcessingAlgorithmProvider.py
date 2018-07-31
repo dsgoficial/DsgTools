@@ -26,6 +26,7 @@ from .core.ValidationTools.ValidationProcesses.deaggregateGeometriesProcess impo
 from .core.ValidationTools.ValidationProcesses.identifySmallAreasProcess import IdentifySmallAreasAlgorithm
 from .core.ValidationTools.ValidationProcesses.identifySmallLinesProcess import IdentifySmallLinesAlgorithm
 from .core.ValidationTools.ValidationProcesses.identifyDuplicatedGeometriesProcess import IdentifyDuplicatedGeometriesAlgorithm
+from .core.ValidationTools.ValidationProcesses.identifyOutOfBoundsAnglesProcess import IdentifyOutOfBoundsAnglesAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -34,7 +35,11 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
-        self.algList = [DeaggregatorAlgorithm(), IdentifySmallAreasAlgorithm(), IdentifySmallLinesAlgorithm(), IdentifyDuplicatedGeometriesAlgorithm()]
+        self.algList = [DeaggregatorAlgorithm(), 
+                        IdentifySmallAreasAlgorithm(), 
+                        IdentifySmallLinesAlgorithm(), 
+                        IdentifyDuplicatedGeometriesAlgorithm(),
+                        IdentifyOutOfBoundsAnglesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
