@@ -61,19 +61,11 @@ class FeatureHandler(QObject):
             newFeature = self.attributeHandler.setFeatureAttributes(newFeature, attributeDict, oldFeat = originalFeat)
             newFeatureList.append(newFeature)
         return newFeatureList
-    
-    def populateUnifiedLayer(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False):
-        featList = []
-        for layer in layerList:
-            # recording class name
-            classname = layer.name()
-            iterator, total = self.getIteratorAndFeatureCount(layer, onlySelected=onlySelected)
-            for feature in iterator:
-                newFeat = self.createUnifiedFeature(unifiedLyr, feature, classname, bList=)
-                featlist.append(newfeat)
-        return featList
 
-    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False):
+
+    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False, coordinateTransformer = None, parameterDict = {}):
+        for geom in self.geometryHandler.handleGeometry(feature.geometry(), parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):
+
         newfeat = QgsFeature(unifiedLyr.fields())
         newfeat.setGeometry(feature.geometry())
         newfeat['featid'] = feature.id()
