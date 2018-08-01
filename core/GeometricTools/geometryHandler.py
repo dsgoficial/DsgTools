@@ -72,7 +72,7 @@ class GeometryHandler(QObject):
             geomList.append(geom)
         return geomList
 
-    def reprojectFeature(self, geom, referenceCrs, canvasCrs=None, coordinateTransformer=None, debugging=False):
+    def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None, debugging=False):
         """
         Reprojects geom from the canvas crs to the reference crs.
         :param geom: geometry to be reprojected
@@ -81,11 +81,11 @@ class GeometryHandler(QObject):
         :param coordinateTransformer: the coordinate transformer for canvas to reference CRS
         :param debbuging: if True, method returns the the list [geometry, canvasCrs, referenceCrs, coordinateTransformer]
         """
-        if not canvasCrs:
-            canvasCrs = self.canvas.mapRenderer().destinationCrs()
-        if canvasCrs.authid() != referenceCrs.authid():
+        if not destinationCrs:
+            destinationCrs = self.canvas.mapRenderer().destinationCrs()
+        if destinationCrs.authid() != referenceCrs.authid():
             if not coordinateTransformer:
-                coordinateTransformer = QgsCoordinateTransform(canvasCrs, referenceCrs)
+                coordinateTransformer = QgsCoordinateTransform(destinationCrs, referenceCrs)
             geom.transform(coordinateTransformer)
         if debugging:
             return [geom, canvasCrs, referenceCrs, coordinateTransformer]
@@ -216,3 +216,9 @@ class GeometryHandler(QObject):
             if part.type() == QgsWkbTypes.LineGeometry:
                 self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
         return outOfBoundsList
+    
+    def handleGeometry(self, geom, parameterDict = dict(), coordinateTransformer = None):
+        outputList = []
+        for geom in self.adjustGeometry(geom, parameterDict):
+            outputList += [self.reprojectWithCoordinateTransformer(coordinateTransformer)]
+        return outputList[0] if len(outputList) == 1 else outputList
