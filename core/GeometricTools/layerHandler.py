@@ -136,19 +136,30 @@ class LayerHandler(QObject):
 
     def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = {}):
         featList = []
+        blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
         for layer in layerList:
             # recording class name
             classname = layer.name()
-            iterator, total = self.getIteratorAndFeatureCount(layer, onlySelected=onlySelected)
+            coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
+            iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False) #TODO: add get iterator method
             for feature in iterator:
-                newFeat = self.createUnifiedFeature(unifiedLyr, feature, classname, bList=)
+                newFeat = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, classname,\
+                                                                   bList=blackList, \
+                                                                   attributeTupple=attributeTupple, \
+                                                                   parameterDict=parameterDict, \
+                                                                   coordinateTransformer=coordinateTransformer) #TODO: build black list and reproject features
                 featlist.append(newfeat)
         return featList
     
     def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg, attributeTupple = False, attributeBlackList = '', onlySelected = False):
-        unified_layer = self.createUnifiedVectorLayer(geomType, epsg, attributeTupple = attributeTupple)
+        unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
+                                                      attributeTupple = attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
-        featList = self.getUnifiedLayerFeatures(unified_layer, layerList, attributeTupple=attributeTupple, attributeBlackList=attributeBlackList, onlySelected=onlySelected, parameterDict=parameterDict)
+        featList = self.getUnifiedLayerFeatures(unified_layer, layerList, \
+                                                      attributeTupple=attributeTupple, \
+                                                      attributeBlackList=attributeBlackList, \
+                                                      onlySelected=onlySelected, \
+                                                      parameterDict=parameterDict)
         self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
 
 

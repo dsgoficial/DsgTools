@@ -217,8 +217,8 @@ class GeometryHandler(QObject):
                 self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
         return outOfBoundsList
     
-    def handleGeometry(self, geom, parameterDict = dict(), coordinateTransformer = None):
+    def handleGeometry(self, geom, parameterDict = {}, coordinateTransformer = None):
         outputList = []
         for geom in self.adjustGeometry(geom, parameterDict):
             outputList += [self.reprojectWithCoordinateTransformer(coordinateTransformer)]
-        return outputList[0] if len(outputList) == 1 else outputList
+        return outputList
