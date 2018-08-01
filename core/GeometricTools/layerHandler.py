@@ -23,7 +23,8 @@
 from __future__ import absolute_import
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
+                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
+                      QgsCoordinateTransform, QgsWkbTypes, edit
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
@@ -100,8 +101,18 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
-    def createUnifiedVectorLayer(self, attributeTupple = False):
+    def createUnifiedVectorLayer(self, geomType, srid, attributeTupple = False):
+        """
+        Creates a unified vector layer for validation purposes.
+        """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
+        lyrUri = "{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid)
+        lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
+        lyr.startEditing()
+        fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
+        provider.addAttributes(fields)
+        lyr.updateFields()
+        return lyr
     
     def getUnifiedVectorFields(self, attributeTupple = False):
         if not attributeTupple:
@@ -115,4 +126,31 @@ class LayerHandler(QObject):
                       QgsField('blacklist', QVariant.String)
                       ]
         return fields
+    
+    def addFeaturesToLayer(self, lyr, featList, msg = ''):
+        with edit(lyr):
+            lyr.beginEditCommand(msg)
+            res = lyr.addFeatures(featList)
+            lyr.endEditCommand()
+        return res
+
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = {}):
+        featList = []
+        for layer in layerList:
+            # recording class name
+            classname = layer.name()
+            iterator, total = self.getIteratorAndFeatureCount(layer, onlySelected=onlySelected)
+            for feature in iterator:
+                newFeat = self.createUnifiedFeature(unifiedLyr, feature, classname, bList=)
+                featlist.append(newfeat)
+        return featList
+    
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+        unified_layer = self.createUnifiedVectorLayer(geomType, epsg, attributeTupple = attributeTupple)
+        parameterDict = self.getDestinationParameters(unified_layer)
+        featList = self.getUnifiedLayerFeatures(unified_layer, layerList, attributeTupple=attributeTupple, attributeBlackList=attributeBlackList, onlySelected=onlySelected, parameterDict=parameterDict)
+        self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
+
+
+
 
