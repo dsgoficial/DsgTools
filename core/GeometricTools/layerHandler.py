@@ -39,13 +39,20 @@ class LayerHandler(QObject):
         self.featureHandler = FeatureHandler(iface)
     
     def getFeatureList(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
+        """
+        Gets the features from lyr acording to parameters.
+        :param (QgsVectorLayer) lyr: layer;
+        :param (bool) onlySelected: if true, only fetches selected features from layer;
+        :param (bool) returnIterator: if true, returns the iterator object;
+        :param (bool) returnSize: if true, return the featureList and size.
+        """
         if onlySelected:
-            featureList = lyr.getSelectedFeatures()
+            featureList = lyr.getSelectedFeatures() if returnIterator else [i for i in lyr.getSelectedFeatures()]
             size = len(featureList)
         else:
-            featureList = [i for i in lyr.getFeatures()] if not returnIterator else lyr.getFeatures()
+            featureList = lyr.getFeatures() if returnIterator else [i for i in lyr.getFeatures()]
             size = len(lyr.allFeatureIds())
-        if returnIterator:
+        if returnSize:
             return featureList, size
         else:
             return featureList
@@ -84,6 +91,11 @@ class LayerHandler(QObject):
         return reclassifyCount
 
     def getDestinationParameters(self, destinationLayer):
+        """
+        Gets the layer parameters such as geometryType (geomType), if it
+        has m-values (hasMValues), if it has z-values (hasZValues) and
+        if it is a multi-geometry (isMulti)
+        """
         parameterDict = dict()
         parameterDict['geomType'] = destinationLayer.geometryType()
         parameterDict['hasMValues'] =  QgsWkbTypes.hasM(int(destinationLayer.wkbType()))    #generic check (not every database is implemented as ours)
@@ -92,6 +104,10 @@ class LayerHandler(QObject):
         return parameterDict
     
     def getCoordinateTransformer(self, inputLyr, outputLyr):
+        """
+        If inputLyr and outputLyr have different crs, creates a Coordinate Transform
+        and returns it. Otherwise, returns None.
+        """
         inputAuthId = inputLyr.crs().authid()
         outputAuthId = outputLyr.crs().authid()
         if inputAuthId == outputAuthId:
@@ -101,6 +117,18 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+        unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
+                                                      attributeTupple = attributeTupple)
+        parameterDict = self.getDestinationParameters(unified_layer)
+        featList = self.getUnifiedLayerFeatures(unified_layer, layerList, \
+                                                      attributeTupple=attributeTupple, \
+                                                      attributeBlackList=attributeBlackList, \
+                                                      onlySelected=onlySelected, \
+                                                      parameterDict=parameterDict)
+        self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
+        return unified_layer
+
     def createUnifiedVectorLayer(self, geomType, srid, attributeTupple = False):
         """
         Creates a unified vector layer for validation purposes.
@@ -127,12 +155,6 @@ class LayerHandler(QObject):
                       ]
         return fields
     
-    def addFeaturesToLayer(self, lyr, featList, msg = ''):
-        with edit(lyr):
-            lyr.beginEditCommand(msg)
-            res = lyr.addFeatures(featList)
-            lyr.endEditCommand()
-        return res
 
     def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = {}):
         featList = []
@@ -141,27 +163,30 @@ class LayerHandler(QObject):
             # recording class name
             classname = layer.name()
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
-            iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False) #TODO: add get iterator method
+            iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False)
             for feature in iterator:
-                newFeat = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, classname,\
+                newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, classname,\
                                                                    bList=blackList, \
                                                                    attributeTupple=attributeTupple, \
                                                                    parameterDict=parameterDict, \
-                                                                   coordinateTransformer=coordinateTransformer) #TODO: build black list and reproject features
-                featlist.append(newfeat)
+                                                                   coordinateTransformer=coordinateTransformer)
+                featlist += newFeats
         return featList
+
+    def addFeaturesToLayer(self, lyr, featList, commitChanges = True, msg = ''):
+        with edit(lyr):
+            lyr.beginEditCommand(msg)
+            res = lyr.addFeatures(featList)
+            lyr.endEditCommand()
+            if commitChanges:
+                lyr.commitChanges()
+        return res
     
-    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg, attributeTupple = False, attributeBlackList = '', onlySelected = False):
-        unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
-                                                      attributeTupple = attributeTupple)
-        parameterDict = self.getDestinationParameters(unified_layer)
-        featList = self.getUnifiedLayerFeatures(unified_layer, layerList, \
-                                                      attributeTupple=attributeTupple, \
-                                                      attributeBlackList=attributeBlackList, \
-                                                      onlySelected=onlySelected, \
-                                                      parameterDict=parameterDict)
-        self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
+    def splitUnifiedLayer(self, unifiedLyr, lyrList):
+        """
+        Updates layers from lyrList with features from unifiedLyr
+        """
 
-
-
+        for lyr in lyrList:
+            lyrName = lyr.name()
 
