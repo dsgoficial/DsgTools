@@ -73,6 +73,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         self.attributeRulesEditorPushButton.hide()
         self.itemList = []
         self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
+        self.processChanged = False # for processes filtering classes mechanics
 
     def createContextMenu(self, position):
         """
@@ -83,11 +84,10 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         if item:
             menu.addAction(self.tr('Zoom to flag'), self.zoomToFlag)
             menu.addAction(self.tr('Remove flag'), self.removeCurrentFlag)
-#             menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
-#             menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
+            # menu.addAction(self.tr('Set Visited'), self.setFlagVisited)
+            # menu.addAction(self.tr('Set Unvisited'), self.setFlagUnvisited)
         menu.exec_(self.tableView.viewport().mapToGlobal(position))
-        
-    
+
     def removeCurrentFlag(self):
         """
         Creates the remove flag menu
@@ -323,9 +323,18 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         """
         Changes the current tab in the validation tool box
         """
-        if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb <> None:
+        if self.validationTabWidget.currentIndex() == 1 and self.configWindow.widget.abstractDb != None:
+            self.projectModel.setTable('validation.filtered_flags')
             self.projectModel.select()
-        self.refreshOnChangeProcessOrClass()
+            self.configWindow.widget.abstractDb.createFilteredFlagsViewTable()
+        # populates the comboBoxes
+        self.classFilterComboBox.clear()
+        self.processFilterComboBox.clear()
+        if self.configWindow.widget.abstractDb:
+            listProcesses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("process")
+            listClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("class")
+            self.classFilterComboBox.addItems(listClasses)
+            self.processFilterComboBox.addItems(listProcesses)
 
     @pyqtSlot(bool)
     def on_rulesEditorButton_clicked(self):
@@ -339,29 +348,41 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         except Exception as e:
             QtGui.QMessageBox.critical(self, self.tr('Critical!'), self.tr('Database not loaded or a problem occurred.\n')+':'.join(e.args))
 
-    @pyqtSlot(int, name = 'on_customFilterComboBox_currentIndexChanged')
-    def refreshFlagListOnClassProcessSelection(self):        
+    @pyqtSlot(int, name = 'on_processFilterComboBox_currentIndexChanged')
+    def refreshFlagListOnProcessSelection(self):
         """
-        Refreshs the list of Classes or Processes accordingly to the
-        type of filter chosen
+        Refreshs the list of processes available for filtering the view
         """
-        filterType = self.filterTypeComboBox.currentText()
-        filteredElement = self.customFilterComboBox.currentText()
-        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(filterType=filterType, filteredElement=filteredElement)
-        self.projectModel.setTable('validation.filtered_flags')
+        # marking as a change of process change for on_classFilterComboBox_currentIndexChanged
+        self.processChanged = True
+        className = self.classFilterComboBox.currentText()
+        processName = self.processFilterComboBox.currentText()
+        # classes should be repopulated for filtering purposes
+        # clear classes available
+        self.classFilterComboBox.clear()
+        listClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses("class", filteringProcess=processName)
+        # repopulate classes available for selected class
+        self.classFilterComboBox.addItems(listClasses)
+        # getting text index for resetting after repopulation
+        idx = max(0, self.classFilterComboBox.findText(className))
+        self.classFilterComboBox.setCurrentIndex(idx)
+        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(className=className, processName=processName)
         self.projectModel.select()
-        
-    @pyqtSlot(int, name = 'on_filterTypeComboBox_currentIndexChanged')
-    def refreshOnChangeProcessOrClass(self):
+
+    @pyqtSlot(int, name = 'on_classFilterComboBox_currentIndexChanged')
+    def refreshFlagListOnClassSelection(self):
         """
-        Refreshs the list of processes or classes available 
-        for filtering the view
+        Refreshs the list of classes available for filtering the view
         """
-        filterType = self.filterTypeComboBox.currentText()
-        self.customFilterComboBox.clear()
-        if self.configWindow.widget.abstractDb:
-            listProcessesOrClasses = self.configWindow.widget.abstractDb.fillComboBoxProcessOrClasses(filterType)
-            self.customFilterComboBox.addItems(listProcessesOrClasses)    
+        if self.processChanged:
+            # if index change is due to class change, the table update
+            # is set by process changing signal. Nothing to be done here.
+            self.processChanged = (not self.processChanged)
+            return
+        className = self.classFilterComboBox.currentText()
+        processName = self.processFilterComboBox.currentText()
+        self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(className=className, processName=processName)
+        self.projectModel.select()
 
     @pyqtSlot(bool)
     def on_ruleEnforcerRadio_toggled(self, checked):
@@ -417,14 +438,9 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
             if QtGui.QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to clear those flags?'), QtGui.QMessageBox.Ok|QtGui.QMessageBox.Cancel) == QtGui.QMessageBox.Cancel:
                 return
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-
-            filterType = self.filterTypeComboBox.currentText()
-            processName, layerName = None, None
             # check what is filtered
-            if self.filterDict[filterType] == DsgEnums.ProcessName:
-                processName = self.customFilterComboBox.currentText()
-            elif self.filterDict[filterType] == DsgEnums.ClassName:
-                layerName = self.customFilterComboBox.currentText()
+            processName = self.processFilterComboBox.currentText()
+            layerName = self.classFilterComboBox.currentText()
             if (processName or layerName):
                 self.configWindow.widget.abstractDb.deleteProcessFlags(processName,layerName)
             else:
