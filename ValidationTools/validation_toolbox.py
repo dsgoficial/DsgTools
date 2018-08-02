@@ -366,6 +366,7 @@ class ValidationToolbox(QtGui.QDockWidget, FORM_CLASS):
         # getting text index for resetting after repopulation
         idx = max(0, self.classFilterComboBox.findText(className))
         self.classFilterComboBox.setCurrentIndex(idx)
+        className = self.classFilterComboBox.currentText()
         self.configWindow.widget.abstractDb.createFilteredFlagsViewTable(className=className, processName=processName)
         self.projectModel.select()
 
