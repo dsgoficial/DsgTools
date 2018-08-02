@@ -64,14 +64,15 @@ class FeatureHandler(QObject):
 
 
     def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False, coordinateTransformer = None, parameterDict = {}):
+        newFeats = []
         for geom in self.geometryHandler.handleGeometry(feature.geometry(), parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):
-
-        newfeat = QgsFeature(unifiedLyr.fields())
-        newfeat.setGeometry(feature.geometry())
-        newfeat['featid'] = feature.id()
-        newfeat['classname'] = classname
-        if attributeTupple:
-            newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
-        return newfeat
+            newfeat = QgsFeature(unifiedLyr.fields())
+            newfeat.setGeometry(feature.geometry())
+            newfeat['featid'] = feature.id()
+            newfeat['classname'] = classname
+            if attributeTupple:
+                newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
+            newFeats.append(newfeat)
+        return newFeats
     
     
