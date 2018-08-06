@@ -72,7 +72,7 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             self.sinkClassesWithElemDict = self.nodeClassesWithElemDict
             sinkFlowParameterList = HidrographyFlowParameters(self.sinkClassesWithElemDict.keys())
             self.parameters = {
-                                'Only Selected' : False,
+                                # 'Only Selected' : False,
                                 'Network Layer' : networkFlowParameterList,
                                 'Node Layer' : nodeFlowParameterList,
                                 'Sink Layer' : sinkFlowParameterList,
@@ -1000,6 +1000,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         """
         QgsMessageLog.logMessage(self.tr('Starting ')+self.getName()+self.tr(' Process.'), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
         self.startTimeCount()
+        # only selected option set for createNetworkNode object
+        self.createNetworkNodesProcess.parameters['Only Selected'] = False
         try:
             self.setStatus(self.tr('Running'), 3) #now I'm running!
             self.abstractDb.deleteProcessFlags(self.getName()) #erase previous flags
@@ -1089,10 +1091,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             networkNodeLayer.beginEditCommand('Reclassify Nodes')
             networkLayer.beginEditCommand('Flip/Merge Lines')
             while True:
-                if self.parameters['Only Selected']:
-                    # in case directioning is to be executed over selected lines
-                    nodeListSelectedLines = None
-                    pass
+                # if self.parameters['Only Selected']:
+                #     # in case directioning is to be executed over selected lines
+                #     nodeListSelectedLines = None
+                #     pass
                 # make it recursive in order to not get stuck after all possible initial fixes
                 nodeFlags_, inval_, val_ = self.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
                 cycleCount += 1
@@ -1155,10 +1157,10 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             if self.parameters['Select All Valid Lines']:
                 networkLayer.setSelectedFeatures(val.keys())
             # log percentage of network directed
-            if self.parameters['Only Selected']:
-                percValid = float(len(val))*100.0/float(selectedFeatures)
-            else:
-                percValid = float(len(val))*100.0/float(networkLayer.featureCount())
+            # if self.parameters['Only Selected']:
+            #     percValid = float(len(val))*100.0/float(selectedFeatures)
+            # else:
+            percValid = float(len(val))*100.0/float(networkLayer.featureCount())
             if nodeFlags:
                 msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '%' +  ' of network is well directed). Check flags.')\
                             .format(len(nodeFlags), percValid)

@@ -599,7 +599,6 @@ class ValidationProcess(QObject):
 
     def startTimeCount(self):
         self.startTime = datetime.now()
-        self.endTime = 0
     
     def endTimeCount(self, cummulative = True):
         self.endTime = datetime.now()
