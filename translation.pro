@@ -76,6 +76,7 @@
 					ProductionTools/InspectFeatures/inspectFeatures.py \
 					ProductionTools/InspectFeatures/__init__.py \
 					ProductionTools/__init__.py \
+					ProductionTools/CopyPasteTool/multiLayerSelect.py \
 					ProductionTools/ContourTool/calc_contour.py \
 					ProductionTools/ContourTool/contour_tool.py \
 					ProductionTools/ContourTool/contour_value.py \
