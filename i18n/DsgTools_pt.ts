@@ -7190,6 +7190,112 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyOutOfBoundsAnglesInCoverageProcess</name>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="37"/>
+        <source>Identify Out Of Bounds Angles in Coverage</source>
+        <translation>Identificar Ângulos Fora dos Limites na Cobertura Terrestre</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="47"/>
+        <source>Category</source>
+        <translation>Categoria</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="47"/>
+        <source>Layer Name</source>
+        <translation>Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="47"/>
+        <source>Geometry
+Column</source>
+        <translation>Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="47"/>
+        <source>Geometry
+Type</source>
+        <translation>Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="47"/>
+        <source>Layer
+Type</source>
+        <translation>Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="54"/>
+        <source>Identify Out Of Bounds Angles</source>
+        <translation>Identificar ângulos fora de limites</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="62"/>
+        <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
+</source>
+        <translation>Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="117"/>
+        <source>Angle out of bounds ({0:.2f} deg)</source>
+        <translation>Ângulo fora de limites({0:.2f} graus)</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="127"/>
+        <source>Starting </source>
+        <translation>Iniciando o processo </translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="127"/>
+        <source> Process.</source>
+        <translation>.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="129"/>
+        <source>Running</source>
+        <translation>Rodando</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="133"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="134"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="151"/>
+        <source>Error while trying to remove coverage layer.</source>
+        <translation>Erro ao tentar remover camada de cobertura.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="156"/>
+        <source>{0} angles between coverage features have out of bounds angle(s). Check flags.</source>
+        <translation>{0} problemas com ângulos fora dos limites encontrados na Cobertura Terrestre. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="158"/>
+        <source>There are no out of bounds angles between features from coverage.</source>
+        <translation>Não há ângulos fora dos limites encontrados na Cobertura Terrestre.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="160"/>
+        <source>Error while checking angles. Check log.</source>
+        <translation>Erro ao checar os ângulos. Verifique o log.</translation>
+    </message>
+    <message>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="162"/>
+        <source>There are no features with angles out of bounds.</source>
+        <translation>Não há feições com ângulos fora de limites.</translation>
+    </message>
+</context>
+<context>
     <name>IdentifyOutOfBoundsAnglesProcess</name>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="36"/>
@@ -13225,7 +13331,7 @@ Unable to get database parameters for process {}.</source>
         <translation type="obsolete">Marcar não visitado</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="457"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="458"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -13250,7 +13356,7 @@ Unable to get database parameters for process {}.</source>
         <translation>Processo executado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="411"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="412"/>
         <source>Database not loaded or a problem occurred.
 </source>
         <translation>Banco de Dados não carregado ou um problema ocorreu.</translation>
@@ -13326,17 +13432,17 @@ Unable to get database parameters for process {}.</source>
         <translation>Limpar Todas as Flags</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="439"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="440"/>
         <source>Question</source>
         <translation>Questão</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="421"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="422"/>
         <source>Do you really want to clear all flags?</source>
         <translation>Você realmente deseja limpar todas as flags?</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="457"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="458"/>
         <source>Flags not deleted.
 </source>
         <translation>Flags não apagadas.
@@ -13368,12 +13474,12 @@ Unable to get database parameters for process {}.</source>
         <translation>Sem processo prévio nesta sessão.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="439"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="440"/>
         <source>Do you really want to clear those flags?</source>
         <translation>Você realmente deseja apagar aquelas flags?</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="449"/>
+        <location filename="../ValidationTools/validation_toolbox.py" line="450"/>
         <source>Flags not deleted as no Process nor Class was chosen.
 </source>
         <translation>Flags não deletadas pois nenhum Processo nem Classe foram escolhidos.
