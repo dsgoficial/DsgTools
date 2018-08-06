@@ -38,6 +38,8 @@
 					ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygons.py \	
 					ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \	
 					ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py \
+					ValidationTools/ValidationProcesses/createNetworkNodesProcess.py \
+					ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py \
 					ValidationTools/validation_toolbox.py \
 					ValidationTools/validation_config.py \
 					ValidationTools/setupEarthCoverage.py \
@@ -62,14 +64,6 @@
 					InventoryTools/inventoryTools.py \
 					BDGExTools/__init__.py \
 					BDGExTools/BDGExTools.py \
-					test/test_qgis_environment.py \
-					test/test_dsg_tools_dialog.py \
-					test/test_init.py \
-					test/test_translations.py \
-					test/qgis_interface.py \
-					test/__init__.py \
-					test/utilities.py \
-					test/test_resources.py \
 					ProductionTools/FieldToolBox/field_toolbox.py \
 					ProductionTools/FieldToolBox/FieldSetupConfigs/__init__.py \
 					ProductionTools/FieldToolBox/acquisition_tools.py \

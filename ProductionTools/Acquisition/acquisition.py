@@ -2,7 +2,7 @@
 from PyQt4.QtGui import QIcon, QPixmap, QAction
 from PyQt4.Qt import QObject
 from qgis.gui import QgsMessageBar
-from qgis.core import QGis
+from qgis.core import QGis, QgsVectorLayer
 from circle import Circle
 from polygon import Polygon
 
@@ -12,6 +12,10 @@ class Acquisition(QObject):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool = None
+        self.iface.currentLayerChanged.connect(self.checkToDeactivate)
+        self.iface.actionToggleEditing().triggered.connect(self.setToolsEnabled)
+        self.polygonAction = None
+        self.circleAction = None
 
     def setPolygonAction(self, action):
         self.polygonAction = action
@@ -24,6 +28,29 @@ class Acquisition(QObject):
 
     def acquisitionCircle(self):
         self.run(Circle, self.circleAction)
+    
+    def checkToDeactivate(self, layer):
+        enabled = self.setToolsEnabled(layer)
+        if not enabled and self.tool:
+            self.tool.deactivate()
+    
+    def setToolsEnabled(self, layer):
+        try:
+            if isinstance(self.sender(), QtGui.QAction):
+                layer = self.iface.mapCanvas().currentLayer()
+        except:
+            from PyQt4 import QtGui
+            if isinstance(self.sender(), QtGui.QAction):
+                layer = self.iface.mapCanvas().currentLayer()
+        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QGis.Point or not layer.isEditable():
+            enabled = False
+        else:
+            enabled = True
+        if self.polygonAction:
+            self.polygonAction.setEnabled(enabled)
+        if self.circleAction:
+            self.circleAction.setEnabled(enabled)
+        return enabled
             
     def run(self, func, action):
         layer = self.canvas.currentLayer()

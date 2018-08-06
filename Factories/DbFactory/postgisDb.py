@@ -24,7 +24,7 @@ from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
 from PyQt4.QtSql import QSqlQuery, QSqlDatabase
 from PyQt4.QtCore import QSettings
 from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField
+from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceURI, QgsFeature, QgsVectorLayer, QgsField, QgsGeometry
 from osgeo import ogr
 from uuid import uuid4
 import codecs, os, json, binascii, re
@@ -41,6 +41,7 @@ class PostgisDb(AbstractDb):
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
         self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        self.databaseEncoding = 'utf-8'
 
     def getDatabaseParameters(self):
         """
@@ -1762,9 +1763,12 @@ class PostgisDb(AbstractDb):
             # getting keyColumn idx
             keyIdx = feat.fieldNameIndex(keyColumn)
             # getting only the needed attribute values
-            values = [feat.attribute(fieldname) for fieldname in attributes]
-            # setting the feature id
-            values[keyIdx] = feat.id()
+            values = []
+            for field in attributes:
+                if field == keyColumn:
+                    values.append(feat.id())
+                else:
+                    values.append(feat.attribute(field))
             if not feat.geometry():
                 continue
             geometry = binascii.hexlify(feat.geometry().asWkb())
@@ -1929,7 +1933,7 @@ class PostgisDb(AbstractDb):
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
             #filtering and checking file names for special characters
-            if style[0] == '.':
+            if style[0] == '.' or ".qml" not in style:
                 continue
             if not re.match("^[a-zA-Z0-9_.]*$", style):
                 raise Exception(self.tr('Problem importing style ')+style)
@@ -2177,10 +2181,13 @@ class PostgisDb(AbstractDb):
         geomDict = dict()
         while query.next():
             #parse done in parseCheckConstraintQuery to make code cleaner.
-            tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
-            if tableName not in geomDict.keys():
-                geomDict[tableName] = dict()
-            geomDict[tableName][attribute] = checkList
+            try:
+                tableName, attribute, checkList = self.parseCheckConstraintQuery(query.value(0),query.value(1))
+                if tableName not in geomDict.keys():
+                    geomDict[tableName] = dict()
+                geomDict[tableName][attribute] = checkList
+            except:
+                pass
         return geomDict
     
     def parseFkQuery(self, queryValue0, queryValue1):
@@ -3582,19 +3589,224 @@ class PostgisDb(AbstractDb):
         sql = self.gen.getFlagsByProcess(processName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr('Problem getting flags dict: ') + query.lastError().text())
+            raise Exception(self.tr('Problem while retrieving flags dict: ') + query.lastError().text())
         nrFlags = 0
         while query.next():
             nrFlags += 1
         return nrFlags
 
-    def createValidationHistoryViewTable(self):
+    def createValidationHistoryViewTable(self, idListString=None):
         """
         Creates the view table for validation processes history. 
         """
         self.checkAndOpenDb()
-        sql = self.gen.createValidationHistoryViewTableQuery()
+        sql = self.gen.createValidationHistoryViewTableQuery(idListString=idListString)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
-            raise Exception(self.tr("Problem getting validation processes history table: ")+query.lastError().text())
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
         return
+    
+    def getValidationLog(self, idList=False):
+        """
+        Returns a list of all logs registered for each process executed.
+        """
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        self.checkAndOpenDb()
+        sql = self.gen.getValidationLogQuery()
+        query = QSqlQuery(sql, self.db)
+        log = [] # list of logs
+        idL = [] # list of ID in the same order as the logs appears
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
+        while query.next():
+            log.append(query.value(0).encode(self.databaseEncoding))
+            idL.append(query.value(1))
+        if idList:            
+            return log, idL
+        else:
+            return log
+        
+    def getValidationHistory(self, idListString=False):
+        """
+        Returns a list of all logs registered for each process executed.
+        :param idList: boolean indicating whether or not to return the list of IDs as well.
+        :param consolidate: boolean indicating whether or not the logs should be consoliodated into one.
+        """
+        # ALTERAR PARA FUNÇÃO DE UPDATE DA TABELA PARA QUE INCLUA OS NOMES DE USUÁRIOS
+        self.checkAndOpenDb()
+        sql = self.gen.getValidationHistoryQuery(idListString=idListString)
+        query = QSqlQuery(sql, self.db)
+        history = [] # list of logs
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving validation processes history table: ")+query.lastError().text())
+        while query.next():
+            history.append([query.value(0), query.value(1), query.value(2), query.value(3), query.value(4)])
+        return history
+
+    def createCompactValidationHistory(self, compactHistory):
+        """
+        Creates and populates the compact validation history table from a given list of logs.
+        """
+        self.checkAndOpenDb()
+        # table creation
+        sql = self.gen.createCompactValidationHistoryQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while creating compact validation processes history table: ")+query.lastError().text())
+        # table population
+        for log in compactHistory:
+            sql = self.gen.populateCompactValidationHistoryQuery(logList=log)
+            query = QSqlQuery(sql, self.db)
+            if not query.isActive():
+                self.db.rollback()
+                raise Exception(self.tr("Problem while populating compact validation processes history table: ")+query.lastError().text())
+        self.db.commit()
+        return True
+
+    def createHidNodeTable(self, crs, useTransaction=True):
+        """
+        Creates the aux_hid_nodes_p table into validation schema.
+        :param crs: CRS for geometry column.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :return: (bool) indication whether changes were made or not.
+        """
+        sql = self.gen.createHidNodeTableQuery(crs)
+        # sql = self.gen.createHidNodeTableQuery()        
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while creating hidrography nodes table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
+    def clearHidNodeTable(self, layerName, useTransaction=True):
+        """
+        Gives the query for clearing all entries on hidrography node table.
+        :param layerName: (str) name of hidrography nodes table.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :return: (str) query for table clearing.
+        """
+        sql = self.gen.clearHidNodeTableQuery(layerName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while clearing hidrography nodes table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
+    def insertHidValNode(self, layerName, node, nodeType, crs, useTransaction=True):
+        """
+        Populates hidrography validation table with node information.
+        :param layerName: (str) layer name which feature owner of node point belongs to.
+        :param node: (QgsPoint) node point to be registered.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :nodeType: (int) indicates the point type (confluence, water source, etc).
+        :param crs: CRS for geometry column.
+        :return: (bool) indication whether changes were made or not.
+        """
+        sql = self.gen.fillHidNodeTableQuery(layerName, node, nodeType, crs)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while populating hidrography nodes table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
+    def getNodesGeometry(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the geometry of given feature from database. If feature is not found into database, returns None.
+        :param nodeList: a list of target node points (from WKT form).
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node type from database
+        """
+        nodeDict = dict()
+        if isinstance(nodeList, list):
+            for node in nodeList:
+                nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
+                sql += "\n" + self.gen.getNodeIdQuery(node=nWkt, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)        
+        else:
+            sql = self.gen.getNodesGeometryQuery(node=nodeList, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving nodes geometry from database: ")+query.lastError().text())
+            return None
+        while query.next():
+            if isinstance(nodeList, list):
+                nodeDict = dict()
+                for node in nodeList:
+                    nodeDict[node] = query.value(0)
+        return nodeDict
+
+    def getNodeId(self, nodeList, nodeLayerName, hidrographyLineLayerName, nodeCrs):
+        """
+        Returns the ID of given nodes from database. If node is not found into database, returns None.
+        :param nodes: a node point or a list of node points (QgsPoint).
+        :param nodeLayerName: (str) layer name which feature owner of node point belongs to.
+        :param hidrographyLineLayerName: (str) hidrography lines layer name from which node is related to.
+        :return: node ID from database
+        """
+        sql = ""
+        if isinstance(nodeList, list):
+            for node in nodeList:
+                nWkt = QgsGeometry().fromMultiPoint([node]).exportToWkt()
+                sql += "\n" + self.gen.getNodeIdQuery(node=nWkt, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)        
+        else:
+            sql = self.gen.getNodeIdQuery(node=nodeList, nodeLayerName=nodeLayerName, \
+                                             hidrographyLineLayerName=hidrographyLineLayerName, nodeCrs=nodeCrs)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while retrieving nodes ID from database: ")+query.lastError().text())
+            return None
+        while query.next():
+            if isinstance(nodeList, list):
+                nodeDict = dict()
+                for node in nodeList:
+                    nodeDict[node] = query.value(0)
+                return nodeDict
+            return query.value(0)
+
+    def createNodeTypeDomainTable(self, useTransaction=True):
+        """
+        Creates domain table for node type.
+        :param useTransaction: indicates whether transaction should be confirmed into database.
+        :return: (bool) query execution status.
+        """
+        sql = self.gen.createNodeTypeDomainTableQuery()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            if useTransaction:
+                self.db.rollback()
+            raise Exception(self.tr("Problem while creating hidrography nodes domain table: ")+query.lastError().text())
+            return False
+        elif useTransaction:
+            self.db.commit()
+        return True
+
+    def checkIfTableExists(self, schemaName, tableName):
+        """
+        Query for checking whether a table exists into DB or not.
+        :param schemaName: (str) schema name containing target table.
+        :param tableName: (str) target table name.
+        :return: (bool) table existence status.
+        """
+        sql = self.gen.checkIfTableExistsQuery(schemaName=schemaName, tableName=tableName)
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem while checking {} existence status : ").format(schemaName, tableName)+query.lastError().text())
+            return False
+        while query.next():
+            if query.value(0):
+                return True

@@ -10,7 +10,7 @@ from PyQt4.QtGui import QShortcut, QKeySequence
 from PyQt4.QtCore import QSettings
 from geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPoint, QGis, QgsGeometry
-from qgis.gui import QgsMapMouseEvent, QgsMapTool
+from qgis.gui import QgsMapMouseEvent, QgsMapTool, QgsMessageBar
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -20,14 +20,12 @@ class Polygon(GeometricaAcquisition):
 
     def endGeometry(self):
         if len(self.geometry) > 2:
-            inter = self.lineIntersection(self.geometry[1],self.geometry[0],self.geometry[-2],self.geometry[-1])
-            if inter:
-                if self.iface.activeLayer().geometryType() == QGis.Polygon:
-                    geom = QgsGeometry.fromPolygon([self.geometry+[inter]])
-                elif self.iface.activeLayer().geometryType() == QGis.Line:
-                    geom = QgsGeometry.fromPolyline(self.geometry+[inter])
-                self.rubberBand.setToGeometry(geom,None)
-                self.createGeometry(geom)
+            if self.iface.activeLayer().geometryType() == QGis.Polygon:
+                geom = QgsGeometry.fromPolygon([self.geometry])
+            elif self.iface.activeLayer().geometryType() == QGis.Line:
+                geom = QgsGeometry.fromPolyline(self.geometry)
+            self.rubberBand.setToGeometry(geom,None)
+            self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
@@ -51,7 +49,18 @@ class Polygon(GeometricaAcquisition):
                 self.geometry.append(pointMap)
                 self.endGeometryFree()
             else:
-                self.endGeometry()        
+                if (self.qntPoint >=2):
+                    if (self.qntPoint % 2 == 0):
+                        point = QgsPoint(pointMap)
+                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if testgeom:
+                            new_geom, pf = self.completePolygon(self.geometry, testgeom)
+                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
+                            self.geometry.append(pf)   
+                        self.endGeometry()                         
+                    else:                        
+                        self.iface.messageBar().pushMessage("Observação".decode('utf-8'), "A ferramenta de ângulo reto deve ser utilizada para digitalização de feições retangulares.".decode('utf-8'), level=QgsMessageBar.INFO)                
+
         elif self.free:
             self.geometry.append(pointMap)
             self.qntPoint += 1
@@ -83,14 +92,20 @@ class Polygon(GeometricaAcquisition):
             self.createSnapCursor(point)
         point = QgsPoint(event.mapPoint())   
         if self.qntPoint == 1:
+            self.distanceToolTip.canvasMoveEvent(self.geometry[0], point)
             geom = QgsGeometry.fromPolyline([self.geometry[0], point])
             self.rubberBand.setToGeometry(geom, None)
         elif self.qntPoint >= 2:
+            self.distanceToolTip.canvasMoveEvent(self.geometry[-1], point)
             if self.free:
                 geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(point.x(), point.y())]])
                 self.rubberBand.setToGeometry(geom, None)             
-            else:        
+            else:       
+                if (self.qntPoint % 2 == 1): 
+                    self.setAvoidStyleSnapRubberBand()
+                else:
+                    self.setAllowedStyleSnapRubberBand()
                 testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                 if testgeom:
-                    geom = QgsGeometry.fromPolygon([self.geometry+[QgsPoint(testgeom.x(), testgeom.y())]])
+                    geom, pf = self.completePolygon(self.geometry, testgeom)
                     self.rubberBand.setToGeometry(geom, None)
