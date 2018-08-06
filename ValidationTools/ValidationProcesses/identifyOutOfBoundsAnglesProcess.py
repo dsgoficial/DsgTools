@@ -78,11 +78,12 @@ class IdentifyOutOfBoundsAnglesProcess(ValidationProcess):
     def getOutOfBoundsAngle(self, feat, angle, geometry_column):
         outOfBoundsList = []
         geom = feat.geometry()
-        for part in geom.asGeometryCollection():
-            if part.type() == QGis.Polygon:
-                self.getOutOfBoundsAngleInPolygon(feat, geometry_column, part, angle, outOfBoundsList)
-            if part.type() == QGis.Line:
-                self.getOutOfBoundsAngleInLine(feat, geometry_column, part, angle, outOfBoundsList)            
+        if geom:
+            for part in geom.asGeometryCollection():
+                if part.type() == QGis.Polygon:
+                    self.getOutOfBoundsAngleInPolygon(feat, geometry_column, part, angle, outOfBoundsList)
+                if part.type() == QGis.Line:
+                    self.getOutOfBoundsAngleInLine(feat, geometry_column, part, angle, outOfBoundsList)            
         return outOfBoundsList
     
     def getOutOfBoundsAngleList(self, lyr, angle, geometry_column, onlySelected = False):
