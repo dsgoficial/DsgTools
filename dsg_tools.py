@@ -566,17 +566,6 @@ class DsgTools:
         productiontools.addAction(action)
         self.productionButton.addAction(action)
 
-        icon_path = ':/plugins/DsgTools/icons/frame.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Raster Info Tool'),
-            callback=self.showRasterInfoDock,
-            parent=productiontools,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        productiontools.addAction(action)
-        self.productionButton.addAction(action)
-
         icon_path = ':/plugins/DsgTools/icons/complex.png'
         action = self.add_action(
             icon_path,
