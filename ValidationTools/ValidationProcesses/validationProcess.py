@@ -496,18 +496,20 @@ class ValidationProcess(QObject):
             featureIterator = lyr.getFeatures() if not onlySelected else lyr.selectedFeatures()
             for feature in featureIterator:
                 geom = feature.geometry()
-                parts = geom.asGeometryCollection()
-                for part in parts:
-                    if isPolygon:
-                        linestrings = part.asPolygon()
-                        for line in linestrings:
-                            newfeat = QgsFeature(coverage.pendingFields())
-                            newfeat.setGeometry(QgsGeometry.fromPolyline(line))
-                            addFeatureList.append(newfeat)
-                    else:
-                        newfeat = QgsFeature(coverage.pendingFields())
-                        newfeat.setGeometry(part)
-                        addFeatureList.append(newfeat)
+                if geom:
+                    parts = geom.asGeometryCollection()
+                    if parts:
+                        for part in parts:
+                            if isPolygon:
+                                linestrings = part.asPolygon()
+                                for line in linestrings:
+                                    newfeat = QgsFeature(coverage.pendingFields())
+                                    newfeat.setGeometry(QgsGeometry.fromPolyline(line))
+                                    addFeatureList.append(newfeat)
+                            else:
+                                newfeat = QgsFeature(coverage.pendingFields())
+                                newfeat.setGeometry(part)
+                                addFeatureList.append(newfeat)
             self.localProgress.step()
         coverage.addFeatures(addFeatureList, True)
         coverage.endEditCommand()
