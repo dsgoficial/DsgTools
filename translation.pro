@@ -32,6 +32,7 @@
 					ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py \
 					ValidationTools/ValidationProcesses/identifyDanglesProcess.py \
 					ValidationTools/ValidationProcesses/identifyOverlapsProcess.py \
+					ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py \
 					ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py \
 					ValidationTools/ValidationProcesses/mergeLinesProcess.py \	
 					ValidationTools/ValidationProcesses/identifyGapsProcess.py \				
