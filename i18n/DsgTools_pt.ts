@@ -9187,6 +9187,49 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>MultiLayerSelection</name>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="448"/>
+        <source>{0} (Memory Layer)</source>
+        <translation>{0} (Camada de Rascunho)</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="497"/>
+        <source>{0} From Class {1}</source>
+        <translation>{0} da Camada {1}</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="533"/>
+        <source>Open All Attribute Tables</source>
+        <translation type="obsolete">Abrir Todas as Tabelas de Atributos</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="548"/>
+        <source>Select All Features</source>
+        <translation>Selecionar Todas as Feições</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="543"/>
+        <source>Selected Features</source>
+        <translation>Feições Selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="547"/>
+        <source>Deselect All Features</source>
+        <translation>Remover Seleção de Todas as Feições</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="544"/>
+        <source>Not Selected Features</source>
+        <translation>Feições Não Selecionadas</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="533"/>
+        <source>Open All Feature Forms</source>
+        <translation>Abrir Todos os Formulários de Feição</translation>
+    </message>
+</context>
+<context>
     <name>NewAttributeWidget</name>
     <message>
         <location filename="../CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="79"/>
