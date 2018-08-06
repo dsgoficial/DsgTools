@@ -22,7 +22,7 @@
 """
 import binascii
 from datetime import datetime
-import json
+import json, processing
 # Qt imports
 from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QVariant
@@ -56,6 +56,15 @@ class ValidationProcess(QObject):
         self.dbUserName = None
         self.logMsg = None
         self.processName = None
+    
+    def getFlagLyr(self, dimension):
+        if dimension == 0:
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOINT', 'lyrName': 'flags_validacao_p', 'tableName':'aux_flags_validacao_p', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
+        elif dimension == 1:
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTILINESTRING', 'lyrName': 'flags_validacao_l', 'tableName':'aux_flags_validacao_l', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}
+        elif dimension == 2:
+            layer = {'cat': 'aux', 'geom': 'geom', 'geomType':'MULTIPOLYGON', 'lyrName': 'flags_validacao_a', 'tableName':'aux_flags_validacao_a', 'tableSchema':'validation', 'tableType': 'BASE TABLE'}            
+        return self.loadLayerBeforeValidationProcess(layer)
 
     def setProcessName(self, processName):
         """
@@ -183,9 +192,9 @@ class ValidationProcess(QObject):
             if status not in [0,3]: # neither running nor instatiating status should be logged
                 self.logProcess()
                 if self.logMsg:
-                    msg += "\n\n" + self.logMsg
+                    msg += "\n" + self.logMsg
                 elif not self.dbUserName:
-                    msg += self.tr("Database username: {}").format(self.abstractDb.db.userName())
+                    msg += self.tr("Database username: {}\n").format(self.abstractDb.db.userName())
             self.abstractDb.setValidationProcessStatus(self.getName(), msg, status)
         except Exception as e:
             QMessageBox.critical(None, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
@@ -466,6 +475,44 @@ class ValidationProcess(QObject):
             return 'MultiPolygon'
         else:
             raise Exception(self.tr('Operation not defined with provided geometry type!'))
+    
+    def createUnifiedLineLayer(self, layerList, onlySelected = False):
+        """
+        For each layer in layerList, transforms it into lines if lyrType 
+        is polygon and adds features into layerList.
+        Duplicates can happen in this process.
+        """
+        srid = layerList[0].crs().authid().split(':')[-1]
+        coverage = self.iface.addVectorLayer("{0}?crs=epsg:{1}".format('Linestring',srid), "coverage_lines", "memory")
+        provider = coverage.dataProvider()
+        coverage.startEditing()
+        coverage.beginEditCommand('Creating coverage lines layer')
+
+        self.localProgress = ProgressWidget(1, len(layerList) - 1, self.tr('Building unified layers with  ') + ', '.join([i.name() for i in layerList])+'.', parent=self.iface.mapCanvas())
+        addFeatureList = []
+        for lyr in layerList:
+            isPolygon = True if lyr.dataProvider().geometryType() in [QGis.WKBPolygon, QGis.WKBMultiPolygon] else False
+            isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+            featureIterator = lyr.getFeatures() if not onlySelected else lyr.selectedFeatures()
+            for feature in featureIterator:
+                geom = feature.geometry()
+                parts = geom.asGeometryCollection()
+                for part in parts:
+                    if isPolygon:
+                        linestrings = part.asPolygon()
+                        for line in linestrings:
+                            newfeat = QgsFeature(coverage.pendingFields())
+                            newfeat.setGeometry(QgsGeometry.fromPolyline(line))
+                            addFeatureList.append(newfeat)
+                    else:
+                        newfeat = QgsFeature(coverage.pendingFields())
+                        newfeat.setGeometry(part)
+                        addFeatureList.append(newfeat)
+            self.localProgress.step()
+        coverage.addFeatures(addFeatureList, True)
+        coverage.endEditCommand()
+        coverage.commitChanges()
+        return coverage
 
     def createUnifiedLayer(self, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False):
         """
@@ -594,23 +641,56 @@ class ValidationProcess(QObject):
         # logging username
         logMsg = ""
         if self.dbUserName:
-            logMsg += self.tr("Database username: {0}").format(self.dbUserName)
+            logMsg += self.tr("\nDatabase username: {0}").format(self.dbUserName)
         else:
-            logMsg += self.tr("Unable to get database username.")
+            logMsg += self.tr("\nUnable to get database username.")
         # logging process parameters
         if self.parameters:
             parametersString = self.tr("\nParameters used on this execution of process {}\n").format(self.processAlias)
             parametersString += self.jsonifyParameters(self.parameters)
             logMsg += parametersString
         else:
-            logMsg += self.tr("Unable to get database parameters for process {}.").format(self.processAlias)
+            logMsg += self.tr("\nUnable to get database parameters for process {}.").format(self.processAlias)
         # logging #Flag
         logMsg += self.tr("\nNumber of flags raised by the process: {}").format(\
                         str(self.abstractDb.getNumberOfFlagsByProcess(self.processName)))
         # logging total time elapsed
+        self.endTimeCount()
         if self.totalTime:
             logMsg += self.tr("\nTotal elapsed time for process {0}: {1}\n").format(self.processAlias, self.totalTime)
         else:
             logMsg += self.tr("\nUnable to get total elapsed time.")
         self.logMsg = logMsg
         QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+
+    def raiseVectorFlags(self, flagLyr, featFlagList):
+        flagLyr.startEditing()
+        flagLyr.beginEditCommand('Raising flags') #speedup
+        flagLyr.addFeatures(featFlagList, False)
+        flagLyr.endEditCommand()
+        flagLyr.commitChanges()
+        return len(featFlagList)
+    
+    def buildFlagFeature(self, flagLyr, processName, tableSchema, tableName, feat_id, geometry_column, geom, reason):
+        newFeat = QgsFeature(flagLyr.pendingFields())
+        newFeat['process_name'] = processName
+        newFeat['layer'] = '{0}.{1}'.format(tableSchema, tableName)
+        newFeat['feat_id'] = feat_id
+        newFeat['reason'] = reason
+        newFeat['geometry_column'] = geometry_column
+        newFeat['user_fixed'] = False
+        newFeat['dimension'] = geom.type()
+        newFeat.setGeometry(geom)
+        return newFeat
+            
+    def getFeatures(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
+        if onlySelected:
+            featureList = lyr.selectedFeatures()
+            size = len(featureList)
+        else:
+            featureList = [i for i in lyr.getFeatures()] if not returnIterator else lyr.getFeatures()
+            size = len(lyr.allFeatureIds())
+        if returnIterator:
+            return featureList, size
+        else:
+            return featureList

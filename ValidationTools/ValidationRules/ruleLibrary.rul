@@ -1,2 +1,3 @@
-cb.hid_trecho_massa_dagua_a,0_deve (ser),7_conter,cb.hid_trecho_drenagem_l,1..*
-cb.hid_trecho_drenagem_l,0_deve (ser),2_intersectar,cb.hid_terreno_suj_inundacao_a,0..*
+cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_floresta_a,1..*
+cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_campo_a,1..*
+cb.veg_floresta_a,1_não deve (ser),7_conter,cb.hid_terreno_suj_inundacao_a,

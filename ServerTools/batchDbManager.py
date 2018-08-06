@@ -232,7 +232,7 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
-        if len(selectedStyles) == 0:
+        if not selectedStyles:
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
         successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
@@ -264,7 +264,13 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         successList = []
         for dbName in dbsDict.keys():
             for style in styleList:
+                currentStyleFilesDir = "{0}/{1}".format(styleDir, style.split("/")[1])
+                fileList = os.listdir(currentStyleFilesDir)
+                # iterate over the list of files and check if there are non-QML files
+                onlyQml = bool(sum([int(".qml" in file.lower()) for file in fileList]))
                 try:
+                    if not onlyQml:
+                        raise Exception(self.tr("There are non-QML files in directory {0}.").format(currentStyleFilesDir))
                     dbsDict[dbName].importStylesIntoDb(style)
                     successList.append(dbName)
                 except Exception as e:
@@ -335,8 +341,12 @@ class BatchDbManager(QtGui.QDialog, FORM_CLASS):
         dlg = SelectStyles(styleList)
         dlg.exec_()
         selectedStyles = dlg.selectedStyles
+        if not selectedStyles:
+            return
+        else:
+            removeStyleDict = { style : styleDict[style] for style in selectedStyles }
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        successList, exceptionDict = self.batchDeleteStyles(dbsDict, styleDict)
+        successList, exceptionDict = self.batchDeleteStyles(dbsDict, removeStyleDict)
         QApplication.restoreOverrideCursor()
         header = self.tr('Delete operation complete. \n')
         self.outputMessage(header, successList, exceptionDict)

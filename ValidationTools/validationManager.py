@@ -171,7 +171,7 @@ class ValidationManager(QObject):
             process.setParameters(params)
             process.setDbUserName(self.postgisDb.getDatabaseParameters()[2])
             process.setProcessName(self.processDict[process.processAlias])
-            ret = process.execute() #run bitch run!
+            ret = process.execute() # run bitch run!
             #status = currProc.getStatus() #must set status
             QgsMessageLog.logMessage(self.tr('Process {0} ran with status {1}\n').format(process.processAlias, process.getStatusMessage()), "DSG Tools Plugin", QgsMessageLog.CRITICAL)
             # process.logTotalTime()

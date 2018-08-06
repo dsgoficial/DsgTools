@@ -28,6 +28,8 @@ from DsgTools.CustomWidgets.customTableSelector import CustomTableSelector
 from DsgTools.CustomWidgets.customSnaperParameterSelector import CustomSnaperParameterSelector
 from DsgTools.CustomWidgets.customReferenceAndLayersParameterSelector import CustomReferenceAndLayersParameterSelector
 from DsgTools.CustomWidgets.AdvancedInterfaceWidgets.auxLayerSelector import AuxLayerSelector
+from DsgTools.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
+from DsgTools.ValidationTools.ValidationProcesses.createNetworkNodesProcess import HidrographyFlowParameters
 
 class ProcessParametersDialog(QtGui.QDialog):
     WIDGETS = {str: QtGui.QLineEdit,
@@ -39,7 +41,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                deque:QtGui.QComboBox,
                OrderedDict:CustomReferenceAndLayersParameterSelector,
                dict:AuxLayerSelector,
-               bool: QtGui.QCheckBox}
+               bool: QtGui.QCheckBox,
+               HidrographyFlowParameters:DsgCustomComboBox}
     GETTERS = {QtGui.QLineEdit: "text",
                QtGui.QSpinBox: "value",
                QtGui.QDoubleSpinBox: "value",
@@ -48,7 +51,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                QtGui.QComboBox:"currentText",
                CustomReferenceAndLayersParameterSelector:"getParameters",
                AuxLayerSelector:"getParameters",
-               QtGui.QCheckBox: "isChecked"}
+               QtGui.QCheckBox: "isChecked",
+               DsgCustomComboBox:"currentText"}
     SETTERS = {QtGui.QLineEdit: "setText",
                QtGui.QSpinBox: "setValue",
                QtGui.QDoubleSpinBox: "setValue",
@@ -57,7 +61,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                CustomTableSelector: "setInitialState",
                AuxLayerSelector: "setInitialState",
                QtGui.QComboBox:"addItems",
-               QtGui.QCheckBox: "setChecked"}
+               QtGui.QCheckBox: "setChecked",
+               DsgCustomComboBox:"addItems"}
     VALIDATORS = {QtGui.QLineEdit: lambda x: bool(len(x)),
                   QtGui.QSpinBox: lambda x: True,
                   QtGui.QDoubleSpinBox: lambda x: True,
@@ -66,7 +71,8 @@ class ProcessParametersDialog(QtGui.QDialog):
                   CustomTableSelector: lambda x: True,
                   AuxLayerSelector: lambda x: True,
                   QtGui.QComboBox: lambda x: True,
-                  QtGui.QCheckBox: lambda x: True}
+                  QtGui.QCheckBox: lambda x: True,
+                  DsgCustomComboBox: lambda x: True}
 
     def __init__(self, parent, options, required=None, title=None):
         """
@@ -97,23 +103,29 @@ class ProcessParametersDialog(QtGui.QDialog):
                 widget.setDecimals(20)
                 widget.setMaximum(sys.float_info.max)
                 widget.setMinimum(sys.float_info.min)
-            if self.WIDGETS[type(v)] == QtGui.QSpinBox:
+                getattr(widget, self.SETTERS[type(widget)])(v)
+            elif self.WIDGETS[type(v)] == QtGui.QSpinBox:
                 widget.setMaximum(1000000)
                 widget.setMinimum(-1000000)
+                getattr(widget, self.SETTERS[type(widget)])(v)
             
-            if self.WIDGETS[type(v)] == CustomTableSelector:
+            elif self.WIDGETS[type(v)] == CustomTableSelector:
                 widget.setTitle(self.tr('Select classes'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
-            if self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
+            elif self.WIDGETS[type(v)] == CustomSnaperParameterSelector:
                 getattr(widget, self.SETTERS[type(widget)])(v[0], v[1], unique=True)
                 widget.setTitle(self.tr('Select layers to be snapped'))
-            if self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
+            elif self.WIDGETS[type(v)] == CustomReferenceAndLayersParameterSelector:
                 widget.setTitle(self.tr('Select layers'))
                 headerList = [self.tr('Category'), self.tr('Layer Name'), self.tr('Geometry\nColumn'), self.tr('Geometry\nType'), self.tr('Layer\nType')]
                 widget.customTableSelectorWidget.setHeaders(headerList)
                 getattr(widget, self.SETTERS[type(widget)])(v, unique=True)
+            elif self.WIDGETS[type(v)] == DsgCustomComboBox:
+                items = ['{0}.{1} ({2}, {3}, {4})'.format(r.split(',')[0], r.split(',')[1], r.split(',')[2], r.split(',')[3], r.split(',')[4]) for r in v.values]
+                items = [self.tr('Select Layer')] + items
+                getattr(widget, self.SETTERS[type(widget)])(items)
             else:
                 getattr(widget, self.SETTERS[type(widget)])(v)
 
