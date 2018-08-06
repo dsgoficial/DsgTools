@@ -23,7 +23,6 @@
 from DsgTools.Factories.SqlFactory.sqlGenerator import SqlGenerator
 from DsgTools.dsgEnums import DsgEnums
 
-DB_ENCODING = 'utf-8'
 class PostGISSqlGenerator(SqlGenerator):
     
     def getComplexLinks(self, complex):
@@ -1594,54 +1593,50 @@ class PostGISSqlGenerator(SqlGenerator):
         """.format(tableSchema, tableName, geomColumn, keyColumn)
         return sql
 
-    def getProcessOrClassFlags(self, filterType=None):
+    def getProcessOrClassFlags(self, filterType, filteringProcess=None):
         """
-        Returns all process or classes that raised flags
+        Returns all process or classes that raised flags.
+        This method cannot have both filters on. It WILL 
+        have the process filter ignored.
         """
-        # to allow changing cases as desired
-        # filterType = filterType.lower()
         sql = ""
-        # problemas com o Enum.
-        if 'process' in filterType.lower():
-            filterType = 0
-        elif filterType:
-            filterType = 1
-        if filterType == DsgEnums.ProcessName:            
+        if filterType == "process":          
             sql = """
         SELECT DISTINCT process_name 
             FROM validation.aux_flags_validacao;
             """
-        elif filterType == DsgEnums.ClassName:      
+        elif filterType == "class":    
             sql = """
         SELECT DISTINCT layer
             FROM validation.aux_flags_validacao;
             """
+        if filteringProcess:
+            # case there's a process to filter classes
+            sql = sql.replace(";", " WHERE process_name = \'{0}\';".format(filteringProcess))
         return sql
 
-    def getFilteredFlagsQuery(self, filterType=None, filteredElement=None):
+    def getFilteredFlagsQuery(self, className=None, processName=None):
         """
         Returns process or classes that raised flags filtered by
         chosen element in comboBox
         """
-        sql = ""
-        # problemas com o Enum.
-        if 'process' in filterType.lower():
-            filterTypeEnum = 0
-        elif filterType:
-            filterTypeEnum = 1
         sql = """
         SELECT * FROM validation.aux_flags_validacao;
             """
         whereClause = ""
-        if filterTypeEnum == DsgEnums.ProcessName: 
-            whereClause = " WHERE process_name = '{0}';".format(filteredElement)
-        elif filterType == DsgEnums.ClassName:
-            whereClause = " WHERE layer = '{0}';".format(filteredElement)
-        if filteredElement and filteredElement <> '':
-            sql = sql + whereClause
+        if className and className != '': 
+            whereClause = " WHERE layer = '{0}';".format(className)
+            if processName and processName != '':
+                whereClause = whereClause.replace(";", " AND process_name = '{0}';".format(className))
+        if processName and processName != '':
+            whereClause += " WHERE process_name = '{0}';".format(processName)
+        else:
+            whereClause = ";"
+
+        sql = sql.replace(";", whereClause)
         return sql
 
-    def createFilteredFlagsViewTableQuery(self, filterType=None, filteredElement=None):
+    def createFilteredFlagsViewTableQuery(self, className=None, processName=None):
         """
         Returns the query for creating and populating a view table of flags raised in 
         validation processes based on users settings.
@@ -1650,19 +1645,15 @@ class PostGISSqlGenerator(SqlGenerator):
         CREATE OR REPLACE VIEW validation.filtered_flags AS 
         SELECT * FROM validation.aux_flags_validacao
         """
-        whereClause = ";"
-        # problemas com o Enum.
-        if 'process' in filterType.lower():
-            filterTypeEnum = 0
-        elif filterType:
-            filterTypeEnum = 1            
-        if filterTypeEnum == DsgEnums.ProcessName: 
-            whereClause = " WHERE process_name = '{0}'".format(filteredElement)
-        elif filterTypeEnum == DsgEnums.ClassName:
-            whereClause = " WHERE layer = '{0}'".format(filteredElement)
-        if filteredElement and filteredElement <> '':
-            sql = sql + whereClause
-        return sql + ' ORDER BY id;'
+        whereClause = ""         
+        if processName: 
+            whereClause = " WHERE process_name = '{0}'".format(processName)
+        if className:
+            if whereClause:
+                whereClause += " AND layer = '{0}'".format(className)
+            else:
+                whereClause = " WHERE layer = '{0}'".format(className)
+        return "{0}{1};".format(sql, whereClause)
     
     def checkCoverageForGaps(self, table='validation.coverage_temp', geomColumn='geom', keyColumn='id'):
         tableSchema, tableName = table.split('.')

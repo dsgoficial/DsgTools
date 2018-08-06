@@ -443,9 +443,12 @@ class MultiLayerSelection(QgsMapTool):
         """
         # creating a dict to handle all "menu" for each class
         submenuDict = dict()
-        for cl in menuDict.keys():
+        # sort the layers from diciotnary
+        classNameDict = { cl.name() : cl for cl in menuDict.keys() }
+        layers = sorted(classNameDict.keys())
+        for className in layers:
             # menu for features of each class
-            className = cl.name()
+            cl = classNameDict[className]
             geomType = cl.geometryType()
             # get layer database name
             dsUri = cl.dataProvider().dataSourceUri()
@@ -456,8 +459,12 @@ class MultiLayerSelection(QgsMapTool):
                 db_name = cl.dataProvider().dataSourceUri().split("'")[1]
             if len(menuDict) == 1:
                 # if dictionaty has only 1 class, no need for an extra QMenu - features will be enlisted directly
-                for feat in menuDict[cl]:
-                    s = '{0}.{1} (feat_id = {2})'.format(db_name, className, feat.id())
+                # order features by ID to be displayer ordered
+                featDict = { feat.id() : feat for feat in  menuDict[cl] }
+                orderedFeatIdList = sorted(featDict.keys())
+                for featId in orderedFeatIdList:
+                    feat = featDict[featId]
+                    s = '{0}.{1} (feat_id = {2})'.format(db_name, className, featId)
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
                     triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
@@ -473,8 +480,12 @@ class MultiLayerSelection(QgsMapTool):
             submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
-            for feat in menuDict[cl]:
-                s = 'feat_id = {0}'.format(feat.id())
+            # order features by ID to be displayer ordered
+            featDict = { feat.id() : feat for feat in  menuDict[cl] }
+            orderedFeatIdList = sorted(featDict.keys())
+            for featId in orderedFeatIdList:
+                feat = featDict[featId]
+                s = 'feat_id = {0}'.format(featId)
                 action = submenuDict[cl].addAction(s)
                 triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
