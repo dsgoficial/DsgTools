@@ -4957,7 +4957,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <location filename="../dsg_tools.py" line="679"/>
         <source>DSGTools: Flip Line Tool
 Tool to invert selected lines acquisition diretioning.</source>
-        <translation>DSGTools: Ferramenta de Iversão de Linhas
+        <translation>DSGTools: Ferramenta de Inversão de Linhas
 Ferramenta utilizada para inverter o sentido de aquisição de linhas.</translation>
     </message>
 </context>
