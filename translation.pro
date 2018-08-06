@@ -224,10 +224,6 @@
 					AttributeTools/attributes_viewer.py \
 					AttributeTools/__init__.py \
 					AttributeTools/code_list.py \
-					MilitarySimbologyTools/militarySimbology.py \
-					MilitarySimbologyTools/militarySimbologyDock.py \
-					MilitarySimbologyTools/__init__.py \
-					MilitarySimbologyTools/createSqlite.py \
 					QGIS_Scripts/Sigef.py \
 					QGIS_Scripts/virtual_raster.py \
 					QGIS_Scripts/HSV_fusion.py \
@@ -244,6 +240,11 @@
 					DbTools/BatchDbCreator/createBatchFromCsv.py \
 					ProductionTools/StyleManagerTool/__init__.py \
 					ProductionTools/StyleManagerTool/styleManagerTool.py \
+					ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py \
+					ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool_ui.py \
+					ProductionTools/DsgRasterInfoTool/assignBandValueTool.py \
+					ProductionTools/DsgRasterInfoTool/bandValueTool.py \
+					ProductionTools/FlipLineTool/flipLineTool.py \
 					CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py \
 					CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py \
 					CustomWidgets/customReferenceAndLayersParameterSelector.py
@@ -330,7 +331,6 @@
 					ConversionTools/convert_database.ui \
 					AttributeTools/attributes_viewer.ui \
 					AttributeTools/code_list.ui \
-					MilitarySimbologyTools/militarySimbologyDock.ui \
 					DbTools/PostGISTool/ui_postgisDBTool.ui \
 					DbTools/SpatialiteTool/cria_spatialite_dialog_base.ui \
 					DbTools/BatchDbCreator/createBatchFromCsv.ui \

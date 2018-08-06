@@ -576,6 +576,19 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     </message>
 </context>
 <context>
+    <name>AssignBandValueTool</name>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/assignBandValueTool.py" line="267"/>
+        <source>Warning</source>
+        <translation>Atenção</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/assignBandValueTool.py" line="267"/>
+        <source>Select a point vector layer as the active layer</source>
+        <translation>Selecione uma camada vetorial do tipo ponto como camada ativa</translation>
+    </message>
+</context>
+<context>
     <name>AssignProfiles</name>
     <message>
         <location filename="../UserTools/assign_profiles.py" line="201"/>
@@ -4532,9 +4545,64 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>DsgRasterInfoTool</name>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="106"/>
+        <source>DSGTools: Raster information tool</source>
+        <translation>DSGTools: Ferramenta de informação de raster</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="110"/>
+        <source>DSGTools: Band tooltip</source>
+        <translation>DSGTools: Informação das Bandas no Cursor do Mouse</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="114"/>
+        <source>DSGTools: Dynamic Histogram Viewer</source>
+        <translation>DSGTools: Visualizador Dinâmico de Histograma</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="118"/>
+        <source>DSGTools: Set Value From Point</source>
+        <translation>DSGTools: Capturar Valor do Raster</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool_ui.py" line="124"/>
+        <source>Form</source>
+        <translation>Formulário</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool_ui.py" line="125"/>
+        <source>Raster Info Tool</source>
+        <translation>Ferramenta de Informação de Raster</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="56"/>
+        <source>Show raster tooltip</source>
+        <translation>Mostrar informação de bandas no cursor do mouse</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="57"/>
+        <source>Dynamic histogram view</source>
+        <translation>Visualização dinâmica do histograma</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="58"/>
+        <source>Set value from point</source>
+        <translation type="obsolete">Capturar valor do raster</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/DsgRasterInfoTool/dsgRasterInfoTool.py" line="58"/>
+        <source>Set raster value from mouse click
+Shift + Left Click + Mouse Drag: Selects a set of points and assigns raster value for each point</source>
+        <translation>Capturar valor do raster com clique de mouse
+Shift + Clique Esquerdo + Arrastar e soltar: Seleciona um conjunto de pontos da camada que intersecta o retângulo e captura o valor do raster para cada ponto</translation>
+    </message>
+</context>
+<context>
     <name>DsgTools</name>
     <message>
-        <location filename="../dsg_tools.py" line="741"/>
+        <location filename="../dsg_tools.py" line="730"/>
         <source>&amp;DSG Tools</source>
         <translation>&amp;Ferramentas DSG</translation>
     </message>
@@ -4639,42 +4707,42 @@ Camada</translation>
         <translation>Cartas Topográficas</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1074"/>
+        <location filename="../dsg_tools.py" line="1063"/>
         <source>1:250k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1081"/>
+        <location filename="../dsg_tools.py" line="1070"/>
         <source>1:100k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1088"/>
+        <location filename="../dsg_tools.py" line="1077"/>
         <source>1:50k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1095"/>
+        <location filename="../dsg_tools.py" line="1084"/>
         <source>1:25k Available Raster Charts</source>
         <translation>Cartas Matriciais Disponíveis 1:25k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1102"/>
+        <location filename="../dsg_tools.py" line="1091"/>
         <source>1:250k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:250k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1109"/>
+        <location filename="../dsg_tools.py" line="1098"/>
         <source>1:100k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:100k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1116"/>
+        <location filename="../dsg_tools.py" line="1105"/>
         <source>1:50k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:50k</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="1123"/>
+        <location filename="../dsg_tools.py" line="1112"/>
         <source>1:25k Available Vectorial Charts</source>
         <translation>Cartas Vetoriais Disponíveis 1:25k</translation>
     </message>
@@ -4769,7 +4837,7 @@ Camada</translation>
         <translation type="obsolete">Ferramentas Vetoriais</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="592"/>
+        <location filename="../dsg_tools.py" line="581"/>
         <source>Assign Contour Values</source>
         <translation>Linha Cotadora</translation>
     </message>
@@ -4794,7 +4862,7 @@ Camada</translation>
         <translation type="obsolete">Realizar aquisição de campo</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="640"/>
+        <location filename="../dsg_tools.py" line="629"/>
         <source>Load Auxiliar Structure</source>
         <translation>Carregar Estrutura Auxiliar</translation>
     </message>
@@ -4844,12 +4912,12 @@ Camada</translation>
         <translation>Realizar validação de banco de dados</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="581"/>
+        <location filename="../dsg_tools.py" line="570"/>
         <source>Build Complex Structures</source>
         <translation>Construir estruturas complexas</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="617"/>
+        <location filename="../dsg_tools.py" line="606"/>
         <source>View Code List Codes and Values</source>
         <translation>Visualizar Code List e Valores</translation>
     </message>
@@ -4869,7 +4937,7 @@ Camada</translation>
         <translation type="obsolete">Ferramenta de reclassificação de feições</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="628"/>
+        <location filename="../dsg_tools.py" line="617"/>
         <source>Load Layers</source>
         <translation>Carregar Camadas</translation>
     </message>
@@ -4899,12 +4967,12 @@ Camada</translation>
         <translation type="obsolete">Instalador do DsgTools Op</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="651"/>
+        <location filename="../dsg_tools.py" line="640"/>
         <source>DSGTools: Generic Selector</source>
         <translation>DSGTools: Seletor Genérico</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="663"/>
+        <location filename="../dsg_tools.py" line="652"/>
         <source>DSGTools: Generic Selector
 Left Click: select feature&apos;s layer and put it on edit mode
 Right Click: Open feature&apos;s form
@@ -4917,7 +4985,7 @@ Control+Clique de botão esquerdo: adiciona/remove a feição da seleção atual
 Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições que intersectam a região formada. </translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="682"/>
+        <location filename="../dsg_tools.py" line="671"/>
         <source>DSGTools: Right Degree Angle Digitizing</source>
         <translation>DSGTools: Ferramenta de aquisição com ângulos retos</translation>
     </message>
@@ -4929,7 +4997,7 @@ Control modifyer: disables tool while control is pressed.</source>
 Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enquanto o botão estiver pressionado.</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="697"/>
+        <location filename="../dsg_tools.py" line="686"/>
         <source>DSGTools: Circle Digitizing</source>
         <translation>DSGTools: Ferramenta de Aquisição de Círculos</translation>
     </message>
@@ -4951,10 +5019,10 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../dsg_tools.py" line="570"/>
         <source>Raster Info Tool</source>
-        <translation>Tipo de raster de saída</translation>
+        <translation type="obsolete">Tipo de raster de saída</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="666"/>
+        <location filename="../dsg_tools.py" line="655"/>
         <source>DSGTools: Flip Line Tool</source>
         <translation>DSGTools: Ferramenta de Inversão de Linhas</translation>
     </message>
@@ -4965,19 +5033,19 @@ Insert tool tip for Flip Line Tool.</source>
         <translation type="obsolete">DSGTools: </translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="694"/>
+        <location filename="../dsg_tools.py" line="683"/>
         <source>DSGTools: Right Degree Angle Digitizing
 Control modifier: disables tool while control is pressed.</source>
         <translation>DSGTools: Ferramenta de aquisição com ângulos retos
 Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enquanto o botão estiver pressionado.</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="713"/>
+        <location filename="../dsg_tools.py" line="702"/>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição a Mão Livre</translation>
     </message>
     <message>
-        <location filename="../dsg_tools.py" line="679"/>
+        <location filename="../dsg_tools.py" line="668"/>
         <source>DSGTools: Flip Line Tool
 Tool to invert selected lines acquisition diretioning.</source>
         <translation>DSGTools: Ferramenta de Inversão de Linhas
@@ -5727,6 +5795,53 @@ Ferramenta utilizada para inverter o sentido de aquisição de linhas.</translat
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="311"/>
         <source>File not formated propperly.</source>
         <translation>Arquivo não formatado corretamente.</translation>
+    </message>
+</context>
+<context>
+    <name>FlipLine</name>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="123"/>
+        <source>Error</source>
+        <translation>Erro</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="130"/>
+        <source>Success</source>
+        <translation>Sucesso</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="142"/>
+        <source>There are no (valid) lines selected!</source>
+        <translation>Não há linhas (válidas) selecionadas!</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="145"/>
+        <source>Feature(s) flipped: </source>
+        <translation>Feição(ões) invertidas: </translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="151"/>
+        <source>
+Feature(s) that failed to be flipped: </source>
+        <translation>
+Feição(ões) não invertida(s): </translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="155"/>
+        <source>
+{} lines flipped. {} failed to be flipped.</source>
+        <translation>
+{} linha(s) invertida(s). {} linhas falharam a inversão.</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="161"/>
+        <source>Warning</source>
+        <translation>Atenção</translation>
+    </message>
+    <message>
+        <location filename="../ProductionTools/FlipLineTool/flipLineTool.py" line="161"/>
+        <source>Start editing in current layer!</source>
+        <translation>Inicie a edição na camada atual!</translation>
     </message>
 </context>
 <context>

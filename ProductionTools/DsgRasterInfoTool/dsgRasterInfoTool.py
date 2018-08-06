@@ -53,6 +53,9 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.canvas = iface.mapCanvas()
         super(DsgRasterInfoTool, self).__init__(parent)
         self.setupUi(self)
+        self.bandTooltipButton.setToolTip(self.tr("Show raster tooltip"))
+        self.dynamicHistogramButton.setToolTip(self.tr("Dynamic histogram view"))
+        self.valueSetterButton.setToolTip(self.tr("Set raster value from mouse click\nShift + Left Click + Mouse Drag: Selects a set of points and assigns raster value for each point"))
         self.assignBandValueTool = None
         self.parent = parent
         self.splitter.hide()
