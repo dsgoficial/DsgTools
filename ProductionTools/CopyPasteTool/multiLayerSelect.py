@@ -298,7 +298,7 @@ class MultiLayerSelection(QgsMapTool):
 
     def openMultipleFeatureForm(self, dictLayerFeature):
         """
-        Opens all features Attribute Tables of a given list.
+        Opens all features Feature Forms of a given list.
         :param dictLayerFeature: (dict) dict of layers/features to have their feature form exposed.
         """
         for layer, features in dictLayerFeature.iteritems():
@@ -454,9 +454,15 @@ class MultiLayerSelection(QgsMapTool):
             dsUri = cl.dataProvider().dataSourceUri()
             temp = []
             if '/' in dsUri or '\\' in dsUri:
-                db_name = dsUri
+                db_name = dsUri.split("|")[0] if "|" in dsUri else dsUri
+                # data source is a file, not a postgres database
+                dbIsFile = True
+            elif 'memory' in dsUri:
+                db_name = self.tr('{0} (Memory Layer)').format(className)
+                dbIsFile = True
             else:
-                db_name = cl.dataProvider().dataSourceUri().split("'")[1]
+                db_name = dsUri.split("'")[1]
+                dbIsFile = False
             if len(menuDict) == 1:
                 # if dictionaty has only 1 class, no need for an extra QMenu - features will be enlisted directly
                 # order features by ID to be displayer ordered
@@ -464,7 +470,10 @@ class MultiLayerSelection(QgsMapTool):
                 orderedFeatIdList = sorted(featDict.keys())
                 for featId in orderedFeatIdList:
                     feat = featDict[featId]
-                    s = '{0}.{1} (feat_id = {2})'.format(db_name, className, featId)
+                    if dbIsFile:
+                        s = '{0} (feat_id = {1})'.format(db_name, featId)
+                    else:
+                        s = '{0}.{1} (feat_id = {2})'.format(db_name, className, featId)
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
                     triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
@@ -477,7 +486,11 @@ class MultiLayerSelection(QgsMapTool):
                     self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
                 return dict()
-            submenuDict[cl] = QtGui.QMenu(title='{0}.{1}'.format(db_name, className), parent=parentMenu)
+            if dbIsFile:
+                title = db_name
+            else:
+                title = '{0}.{1}'.format(db_name, className)
+            submenuDict[cl] = QtGui.QMenu(title=title, parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
             # order features by ID to be displayer ordered
@@ -514,7 +527,7 @@ class MultiLayerSelection(QgsMapTool):
         selectedXORnotSelected = (selectedDict != notSelectedDict)
         # setting "All"-command name
         if e.button() == QtCore.Qt.RightButton:
-            genericAction = self.tr('Open All Attribute Tables')
+            genericAction = self.tr('Open All Feature Forms')
         else:
             genericAction = self.tr('Select All Features')
         # in case one of given dict is empty
@@ -530,7 +543,7 @@ class MultiLayerSelection(QgsMapTool):
                 # if the dictionary is from non-selected features, we want commands to be able to select them
                 selectAll = True
             if e.button() == QtCore.Qt.RightButton:
-                genericAction = self.tr('Open All Attribute Tables')
+                genericAction = self.tr('Open All Feature Forms')
             self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction, selectAll=selectAll)
             if len(menuDict) != 1 and len(menuDict.values()) > 1:
                 # if there's only one class, "All"-command is given by createSubmenu method
