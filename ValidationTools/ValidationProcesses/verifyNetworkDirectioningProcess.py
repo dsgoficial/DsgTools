@@ -94,6 +94,8 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
             # retrieving types from node creation object
             self.nodeTypeNameDict = self.createNetworkNodesProcess.nodeTypeNameDict
             self.reclassifyNodeType = dict()
+            # list of nodes to be popped from node dict
+            self.nodesToPop = []
 
     def getFirstNode(self, lyr, feat, geomType=None):
         """
@@ -745,8 +747,18 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
         """
         line_a = self.nodeDict[node]['end'][0]
         line_b = self.nodeDict[node]['start'][0]
-        self.DsgGeometryHandler.mergeLines(line_a=line_a, line_b=line_b, layer=networkLayer)
-        return self.tr('{0} to {1}').format(line_b.id(), line_a.id())
+        # lines have their order changed so that the deleted line is the intial one
+        self.DsgGeometryHandler.mergeLines(line_a=line_b, line_b=line_a, layer=networkLayer)
+        # the updated feature should be updated into node dict for the NEXT NODE!
+        nn = self.getLastNode(lyr=networkLayer, feat=line_b, geomType=1)
+        for line in self.nodeDict[nn]['end']:
+            if line.id() == line_b.id():
+                self.nodeDict[nn]['end'].remove(line)
+                self.nodeDict[nn]['end'].append(line_b)
+        # remove attribute change flag node (there are no lines connected to it anymore)
+        self.nodesToPop.append(node)
+        self.createNetworkNodesProcess.nodeDict[nn]['end'] = self.nodeDict[nn]['end']
+        return self.tr('{0} to {1}').format(line_a.id(), line_b.id())
 
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
         """
@@ -1145,6 +1157,12 @@ class VerifyNetworkDirectioningProcess(ValidationProcess):
                     break
                 # for the next iterations
                 nodeFlags, inval, val = nodeFlags_, inval_, val_
+                # pop all nodes to be popped and reset list
+                for node in self.nodesToPop:
+                    # those were nodes connected to lines that were merged and now are no longer to be used
+                    self.nodeDict.pop(key, None)
+                    self.createNetworkNodesProcess.nodeDict.pop(key, None)
+                self.nodesToPop = []
             # if there are no starting nodes into network, a warning is raised
             if not isinstance(val, dict):
                 # in that case method directNetwork() returns None, None, REASON
