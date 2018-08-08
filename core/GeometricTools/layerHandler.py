@@ -189,4 +189,16 @@ class LayerHandler(QObject):
 
         for lyr in lyrList:
             lyrName = lyr.name()
+    
+    def buildInputDict(self, inpytLyr):
+        """
+        Maps inputLyr into a dict with its attributes.
+        """
+        inputDict = dict()
+        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
+        for feature in inpytLyr.getFeatures(request):
+            inputDict[feature.id()] = dict()
+            inputDict[feature.id()]['featList'] = []
+            inputDict[feature.id()]['featWithoutGeom'] = feature
+        return inputDict
 
