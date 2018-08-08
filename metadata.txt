@@ -57,6 +57,7 @@ changelog=
 		.Generic Selection Tool: New rubberband on features, new context menu and better performance;
 		.Right Angle digitizing tool: Better rubberband, real time segment length and real time polygon check;
 		.New options menu to customize tools.
+	Bug fixes
 	3.1.2 - Bug fixes:
 		.Bug fix on Generic Selection Tool
 		.Bug fix on loading EDGV FTer_2a_Ed databases with custom check constraints
