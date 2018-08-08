@@ -188,7 +188,7 @@ class LayerHandler(QObject):
         """
 
         for lyr in lyrList:
-            lyrName = lyr.name()
+            self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
     
     def buildInputDict(self, inpytLyr):
         """
@@ -201,4 +201,39 @@ class LayerHandler(QObject):
             inputDict[feature.id()]['featList'] = []
             inputDict[feature.id()]['featWithoutGeom'] = feature
         return inputDict
-
+    
+    def updateOriginalLayerFromUnifiedLayer(self, lyr, unifiedLyr):
+        inputDict = self.buildInputDict(lyr)
+        request = QgsFeatureRequest(QgsExpression('classname = {0}'.format(lyr.name())))
+        for feat in unifiedLyr.getFeatures(request):
+            fid = feat['featid']
+            if fid in inputDict:
+                inputDict[fid]['featList'].append(feat)
+        parameterDict = self.getDestinationParameters(unifiedLyr)
+        coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
+        self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer)
+    
+    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = {}, coordinateTransformer = None):
+        """
+        Updates lyr using inputDict
+        """
+        idsToRemove, featuresToAdd, idsToRemove = [], [], []
+        lyr.startEditing()
+        lyr.beginEditCommand('Updating layer {0}'.format(lyr.name()))
+        for id in inputDict:
+            outFeats = inputDict[id]['featList']
+            if len(outFeats) == 0 and id not in idsToRemove: #no output, must delete feature
+                idsToRemove.append(id)
+                continue
+            for feat in outFeats:
+                geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(feat.geometry(), \
+                                                                                            inputDict[id]['featWithoutGeom'], \
+                                                                                            parameterDict = parameterDict, \
+                                                                                            coordinateTransformer = coordinateTransformer)
+                if geomToUpdate is not None:
+                    lyr.changeGeometry(id, geomToUpdate) #faster according to the api
+                featuresToAdd += addedFeatures
+                idsToRemove += [id] if deleteId else []
+        lyr.addFeatures(featuresToAdd)
+        lyr.deleteFeatures(idsToRemove)
+        lyr.endEditCommand()

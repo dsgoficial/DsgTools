@@ -54,22 +54,23 @@ class GeometryHandler(QObject):
     
     def adjustGeometry(self, geom, parameterDict):
         geomList = []
-        if 'geometry' in dir(geom):
-            if not parameterDict['hasMValues']:
-                geom.geometry().dropMValue()
-            if not parameterDict['hasZValues']:
-                geom.geometry().dropZValue()
-        if parameterDict['isMulti'] and not geom.isMultipart():
-            geom.convertToMultiType()
-            geomList.append(geom)
-        if not parameterDict['isMulti'] and geom.isMultipart():
-            #deaggregate here
-            parts = geom.asGeometryCollection()
-            for part in parts:
-                part.convertToSingleType()
-                geomList.append(part)
-        else:
-            geomList.append(geom)
+        if geom is not None:
+            if 'geometry' in dir(geom):
+                if not parameterDict['hasMValues']:
+                    geom.geometry().dropMValue()
+                if not parameterDict['hasZValues']:
+                    geom.geometry().dropZValue()
+            if parameterDict['isMulti'] and not geom.isMultipart():
+                geom.convertToMultiType()
+                geomList.append(geom)
+            if not parameterDict['isMulti'] and geom.isMultipart():
+                #deaggregate here
+                parts = geom.asGeometryCollection()
+                for part in parts:
+                    part.convertToSingleType()
+                    geomList.append(part)
+            else:
+                geomList.append(geom)
         return geomList
 
     def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None, debugging=False):
