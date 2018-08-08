@@ -62,7 +62,6 @@ class FeatureHandler(QObject):
             newFeatureList.append(newFeature)
         return newFeatureList
 
-
     def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False, coordinateTransformer = None, parameterDict = {}):
         newFeats = []
         for geom in self.geometryHandler.handleGeometry(feature.geometry(), parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):
@@ -74,5 +73,26 @@ class FeatureHandler(QObject):
                 newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
             newFeats.append(newfeat)
         return newFeats
+    
+    def getNewFeatureWithoutGeom(self, referenceFeature, lyr):
+        newFeat = QgsFeature(referenceFeature)
+        provider = lyr.dataProvider()
+        for idx in lyr.primaryKeyAttributes():
+            newFeat.setAttribute(idx, None)
+        return newFeat
+    
+    def handleFeature(self, newGeom, featureWithoutGeom, lyr, parameterDict = {}, coordinateTransformer = None):
+        geomList = self.geometryHandler.handleGeometry(newGeom, parameterDict)
+        geomToUpdate = None
+        newFeatList = []
+        if not geomList:
+            return geomToUpdate, [], True
+        for idx, geom in enumerate(geomList):
+            if idx == 0:
+                geomToUpdate = geom
+                continue        
+            newFeat = self.getNewFeature(getNewFeatureWithoutGeom, lyr)
+            newFeatList.append(newFeat)
+        return geomToUpdate, newFeatList, False
     
     
