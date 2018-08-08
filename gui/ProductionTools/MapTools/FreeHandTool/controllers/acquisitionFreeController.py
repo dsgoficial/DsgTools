@@ -26,20 +26,27 @@ from qgis import core, gui
 class AcquisitionFreeController(object):
 
     def __init__(self, acquisitionFree, iface):
-        #Construtor
+        """
+        Class constructor.
+        :param acquisitionFree: (AcquisitionFree) AcquisitionFree object.
+        :param iface: (QgisInterface) QGIS interface object to be set.
+        """
         super(AcquisitionFreeController, self).__init__()
         self.acquisitionFree = acquisitionFree
         self.iface = iface
         self.active = False
            
     def setIface(self, iface):
-        #Método para definir classe iface
-        #Parâmetro de entrada: iface (classe iface do Qgis)
-        self.iface = i
+        """
+        Sets a QGIS interface object to iface attribute from AcquisitionFreeController object.
+        :param iface: (QgisInterface) QGIS interface object to be set.
+        """
+        self.iface = iface
 
     def getIface(self):
-        #Método para obter classe iface do Qgis
-        #Parâmetro de retorno: iface (classe do Qgis)
+        """
+        Gets the QGIS interface object from AcquisitionFreeController object iface attribute.
+        """
         return self.iface
 
     def setActionAcquisitionFree(self, actionAcquisitionFree):
@@ -76,7 +83,8 @@ class AcquisitionFreeController(object):
         #Método para iniciar sinais do plugin 
         iface = self.getIface()
         iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
-        iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
+        iface.currentLayerChanged.connect(self.checkToActiveAction)
+        # iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.triggered.connect(self.activateTool)
 
@@ -84,10 +92,11 @@ class AcquisitionFreeController(object):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
         actionAcquisitionFree = self.getActionAcquisitionFree()
         layer = self.getIface().activeLayer()
-        if layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]):
+        if core is not None and layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]):
             actionAcquisitionFree.setEnabled(True)
         else:
             actionAcquisitionFree.setEnabled(False)
+            self.deactivateTool()
     
     def getParametersFromConfig(self):
         #Método para obter as configurações da tool do QSettings
@@ -142,22 +151,22 @@ class AcquisitionFreeController(object):
             coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest)
             lyrType = iface.activeLayer().geometryType()
             # Transforming the points
-            if lyrType == core.Qgis.Line:
+            if lyrType == core.QgsWkbTypes.LineGeometry:
                 geomList = geom.asPolyline()
-            elif lyrType == core.Qgis.Polygon:
+            elif lyrType == core.QgsWkbTypes.PolygonGeometry:
                 geomList = geom.asPolygon()
             newGeom = []
             for j in range(len(geomList)):
-                if lyrType == core.Qgis.Line:
+                if lyrType == core.QgsWkbTypes.LineGeometry:
                     newGeom.append(coordinateTransformer.transform(geomList[j]))
-                elif lyrType == core.Qgis.Polygon:
+                elif lyrType == core.QgsWkbTypes.PolygonGeometry:
                     line = geomList[j]
                     for i in range(len(line)):
                         point = line[i]
                         newGeom.append(coordinateTransformer.transform(point))
-            if lyrType == core.Qgis.Line:
+            if lyrType == core.QgsWkbTypes.LineGeometry:
                 return core.QgsGeometry.fromPolyline(newGeom)
-            elif lyrType == core.Qgis.Polygon:
+            elif lyrType == core.QgsWkbTypes.PolygonGeometry:
                 return core.QgsGeometry.fromPolygon([newGeom])
         return geom        
 
@@ -223,6 +232,10 @@ class AcquisitionFreeController(object):
         actionAcquisitionFree.setChecked(False)
         if self.getActiveState():
             tool = self.getAcquisitionFree()
-            tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
+            try:
+                tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
+                tool.deactivate()
+            except:
+                pass
         self.setActiveState(False)
       

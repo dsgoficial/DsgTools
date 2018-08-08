@@ -30,7 +30,7 @@ class FreeHandMain(QObject):
         #construtor
         super(FreeHandMain, self).__init__()
         self.iface = iface
-        self.acquisitionFree = AcquisitionFree(iface.mapCanvas())
+        self.acquisitionFree = AcquisitionFree(iface)
         self.acquisitionFreeController = AcquisitionFreeController(
             self.acquisitionFree,
             iface
