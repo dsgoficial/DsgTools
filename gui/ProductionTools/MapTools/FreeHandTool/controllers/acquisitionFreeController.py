@@ -23,6 +23,8 @@ from builtins import object
 from qgis.PyQt import QtGui, QtCore
 from qgis import core, gui
 
+from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import AcquisitionFree
+
 class AcquisitionFreeController(object):
 
     def __init__(self, acquisitionFree, iface):
@@ -84,7 +86,7 @@ class AcquisitionFreeController(object):
         iface = self.getIface()
         iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
         iface.currentLayerChanged.connect(self.checkToActiveAction)
-        # iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
+        iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.triggered.connect(self.activateTool)
 
@@ -97,7 +99,7 @@ class AcquisitionFreeController(object):
         else:
             actionAcquisitionFree.setEnabled(False)
             self.deactivateTool()
-    
+
     def getParametersFromConfig(self):
         #Método para obter as configurações da tool do QSettings
         #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
@@ -219,23 +221,24 @@ class AcquisitionFreeController(object):
     def activateTool(self):
         #Método para iniciar a ferramenta 
         tool = self.getAcquisitionFree()
-        tool.acquisitionFinished['QgsGeometry*'].connect(self.createFeature)
+        tool.acquisitionFinished.connect(self.createFeature)
         canvas = self.getIface().mapCanvas()
         canvas.setMapTool(tool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.setChecked(True)
         self.setActiveState(True)
                                         
-    def deactivateTool(self):
+    def deactivateTool(self, oldTool=None, newTool=None):
         #Método para desativar a ferramenta
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.setChecked(False)
-        if self.getActiveState():
-            tool = self.getAcquisitionFree()
-            try:
-                tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
-                tool.deactivate()
-            except:
-                pass
-        self.setActiveState(False)
+        if isinstance(oldTool, AcquisitionFree) and not isinstance(newTool, AcquisitionFree) or not (oldTool and newTool):
+            actionAcquisitionFree = self.getActionAcquisitionFree()
+            actionAcquisitionFree.setChecked(False)
+            if self.getActiveState():
+                tool = self.getAcquisitionFree()
+                try:
+                    tool.acquisitionFinished.disconnect(self.createFeature)
+                    tool.deactivate()
+                except:
+                    pass
+            self.setActiveState(False)
       
