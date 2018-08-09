@@ -154,5 +154,14 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 QToolTip.showText( p, text, self.canvas )
     
     def unload(self):
-        self.iface.mapCanvas().extentsChanged.disconnect(self.stretch_raster)
-        self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
+        try:
+            self.iface.mapCanvas().extentsChanged.disconnect(self.stretch_raster)
+        except:
+            pass
+        try:
+            self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
+        except:
+            pass
+        self.iface.unregisterMainWindowAction(self.activateToolAction)
+        self.iface.unregisterMainWindowAction(self.bandTooltipButtonAction)
+        self.iface.unregisterMainWindowAction(self.dynamicHistogramButtonAction)

@@ -58,4 +58,6 @@ class ToolbarsGuiManager(QObject):
         self.toolbar.addWidget(self.rasterInfoTool)
     
     def unload(self):
+        self.minimumAreaTool.unload()
+        self.inspectFeaturesTool.unload()
         self.rasterInfoTool.unload()
