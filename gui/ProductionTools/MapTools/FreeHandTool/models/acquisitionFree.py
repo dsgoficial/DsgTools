@@ -216,8 +216,8 @@ class AcquisitionFree(gui.QgsMapTool):
                 self.getCanvas(), 
                 geometryType = core.QgsWkbTypes.PointGeometry
             )
+        rubberBand.setColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
-        rubberBand.setBorderColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setWidth(5)
         rubberBand.setIcon(gui.QgsRubberBand.ICON_X)
         rubberBand.addPoint(point)
