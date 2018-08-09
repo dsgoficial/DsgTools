@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
+
 """
 /***************************************************************************
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2018-06-08
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
-        email                : luiz.claudio@dsg.eb.mil.br
+        copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
-
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -20,13 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, QGis, QgsMapLayerRegistry
-import math, processing
-from math import pi
-from itertools import combinations
-from DsgTools.ValidationTools.ValidationProcesses.validationProcess import ValidationAlgorithm, ValidationProcess
-from DsgTools.CustomWidgets.progressWidget import ProgressWidget
-from DsgTools.GeometricTools.DsgGeometryHandler import DsgGeometryHandler
+from builtins import str
+from builtins import range
+import processing
+from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, Qgis
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess, ValidationAlgorithm
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
@@ -40,7 +39,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterNumber)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterMultipleLayers)
 
 class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -56,7 +56,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine, QgsProcessing.TypeVectorPolygon]
+                QgsProcessing.TypeVectorLine
             )
         )
 
@@ -89,13 +89,19 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         """
         geometryHandler = GeometryHandler()
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
-        if inputLyr == []:
+        if inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
         for lyr in inputLyrList:
-            pass
+            parameters = {
+                'INPUT': lyr,
+                'SELECTED' : onlySelected,
+                'TOLERANCE' : tol,
+                'FLAGS' : self.dest_id
+            }
+            x = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context, feedback = feedback)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         # featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
@@ -112,7 +118,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         #     # Update the progress bar
         #     feedback.setProgress(int(current * total))
 
-        return {self.FLAGS: self.flagSink}
+        return {self.FLAGS: self.dest_id}
 
     def name(self):
         """
@@ -122,7 +128,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyoutofboundsangles'
+        return 'identifyoutofboundsanglesincoverage'
 
     def displayName(self):
         """
