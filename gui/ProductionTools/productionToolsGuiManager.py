@@ -57,3 +57,4 @@ class ProductionToolsGuiManager(QObject):
     def unload(self):
         self.toolBoxesGuiManager.unload()
         self.mapToolsGuiManager.unload()
+        self.toolbarsGuiManager.unload()
