@@ -94,21 +94,23 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
+        for lyr in inputLyrList:
+            pass
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+        # featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
 
-        for current, feat in enumerate(featureList):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
-                break
-            outOfBoundsList = geometryHandler.getOutOfBoundsAngle(feat, tol)
-            if outOfBoundsList:
-                for item in outOfBoundsList:
-                    flagText = self.tr('Feature from layer {0} with id={1} has angle of value {2} degrees, which is lesser than the tolerance of {3} degrees.').format(inputLyr.name(), item['feat_id'], item['angle'], tol)
-                    self.flagFeature(item['geom'], flagText)      
-            # Update the progress bar
-            feedback.setProgress(int(current * total))
+        # for current, feat in enumerate(featureList):
+        #     # Stop the algorithm if cancel button has been clicked
+        #     if feedback.isCanceled():
+        #         break
+        #     outOfBoundsList = geometryHandler.getOutOfBoundsAngle(feat, tol)
+        #     if outOfBoundsList:
+        #         for item in outOfBoundsList:
+        #             flagText = self.tr('Feature from layer {0} with id={1} has angle of value {2} degrees, which is lesser than the tolerance of {3} degrees.').format(inputLyr.name(), item['feat_id'], item['angle'], tol)
+        #             self.flagFeature(item['geom'], flagText)      
+        #     # Update the progress bar
+        #     feedback.setProgress(int(current * total))
 
         return {self.FLAGS: self.flagSink}
 
@@ -127,7 +129,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Out Of Bounds Angles')
+        return self.tr('Identify Out Of Bounds Angles in Coverage')
 
     def group(self):
         """
