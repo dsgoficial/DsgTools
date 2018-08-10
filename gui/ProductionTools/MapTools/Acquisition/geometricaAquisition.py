@@ -1,4 +1,23 @@
-# -*- coding: utf-8 -*-
+#! -*- coding: UTF-8 -*-
+"""
+/***************************************************************************
+                             -------------------
+        begin                : 2018-04-02
+        git sha              : $Format:%H$
+        copyright            : (C) 2017 by  Jossan Costa - Surveying Technician @ Brazilian Army
+        email                : jossan.costa@eb.mil.br
+ ***************************************************************************/
+Some parts were inspired by QGIS plugin FreeHandEditting
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
+
 from builtins import range
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
@@ -12,15 +31,18 @@ from qgis.PyQt.QtWidgets import QShortcut
 from qgis.PyQt.QtGui import QKeySequence, QCursor, QPixmap, QColor
 from qgis.PyQt.QtCore import QSettings
 
+from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import DistanceToolTip
+
 class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def __init__(self, canvas, iface, action):
         super(GeometricaAcquisition, self).__init__(canvas, None)
-        self.iface=iface        
+        self.iface=iface
         self.canvas = canvas
         self.rubberBand = None
         self.snapCursorRubberBand = None
         self.initVariable()
         self.setAction(action)
+        self.distanceToolTip = DistanceToolTip(self.iface)
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
@@ -72,7 +94,6 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         if self is not None:
             QgsMapTool.deactivate(self)
 
-   
     def keyReleaseEvent(self, event):
         if event.key() == Qt.Key_Escape:
             self.initVariable()
@@ -99,36 +120,66 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
-    
-    def lineIntersection(self, p1, p2, p3, p4):        
-        m1 = (p1.y() - p2.y())/(p1.x() - p2.x())
-        a1 = p2.y() + p2.x()/m1
-        m2 = (p3.y() - p4.y())/(p3.x() - p4.x())
-        #Reta perpendicular P3 P4 que passa por P4
-        a2 = p4.y() + p4.x()/m2
-        if abs(m1 - m2) > 0.01:
-            #intersecao
-            x = (a2 - a1)/(1/m2 - 1/m1) 
-            y = -x/m1 + a1
+
+    def completePolygon(self,geom, p4):                
+        if (len(geom)>=2) and (len(geom) % 2 == 0):
+            p1      = geom[1]
+            p2      = geom[0]
+            p3      = geom[-1]
+            pf = self.lineIntersection(p1, p2, p3, p4)
+            new_geom = QgsGeometry.fromPolygonXY([self.geometry+[p4, pf]])                            
+        else:
+            new_geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(p4.x(), p4.y())]])            
+            pf = p4            
+        return new_geom, pf
+
+    def lineIntersection(self, p1, p2, p3, p4):    
+        p3Projected = p4       
+        if(p1.y() == p2.y()):                     
+            y = p3Projected.y()
+            x = p2.x() 
             return QgsPointXY(x,y)
-        return False
+        if(p1.x() == p2.x()):         
+            y = p2.y()
+            x = p3Projected.x() 
+            return QgsPointXY(x,y)
+        else:        
+            m1 = (p1.y() - p2.y())/(p1.x() - p2.x())
+            a1 = p2.y() + p2.x()/m1
+            m2 = (p3.y() - p4.y())/(p3.x() - p4.x())
+            #Reta perpendicular P3 P4 que passa por P4
+            a2 = p4.y() + p4.x()/m2
+            if abs(m1 - m2) > 0.01:
+                #intersecao
+                x = (a2 - a1)/(1/m2 - 1/m1) 
+                y = -x/m1 + a1
+                return QgsPointXY(x,y)
+            return False
     
-    def projectPoint(self, p1, p2, p3):        
+    def projectPoint(self, p1, p2, p3):
         #reta P1 P2
         try:
-            a = (p2.y()-p1.y())/(p2.x()-p1.x())
-            #reta perpendicular a P1P2 que passa por P2
-            a2 = -1/a
-            b2 =  p2.y() - a2*p2.x()
-            #reta paralela a P1P2 que passa por P3
-            b3 = p3.y() - a*p3.x()
-            #intersecao entre retas
-            x = (b3 - b2)/(a2 - a)
-            y = a*x + b3
+            # p1 e p2 na vertical
+            if (p1.x() == p2.x()):
+                x = p3.x()
+                y = p2.y()
+            # p1 e p2 na horizontal
+            elif (p1.y()== p2.y()):
+                x = p2.x()
+                y = p3.y()
+            else:
+                a = (p2.y()-p1.y())/(p2.x()-p1.x())
+                #reta perpendicular a P1P2 que passa por P2
+                a2 = -1/a
+                b2 =  p2.y() - a2*p2.x()
+                #reta paralela a P1P2 que passa por P3
+                b3 = p3.y() - a*p3.x()
+                #intersecao entre retas
+                x = (b3 - b2)/(a2 - a)
+                y = a*x + b3
+            return QgsPointXY(x, y)
         except:
             return None
-
-        return QgsPointXY(x, y)
     
     def getRubberBand(self):
         geomType = self.iface.activeLayer().geometryType()
@@ -147,8 +198,18 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
         rubberBand.setWidth(2)
         rubberBand.setIcon(QgsRubberBand.ICON_X)
-        return rubberBand        
-    
+        return rubberBand
+
+    def setAllowedStyleSnapRubberBand(self):
+        self.rubberBand.setLineStyle(Qt.PenStyle(Qt.SolidLine))
+        self.rubberBand.setSecondaryStrokeColor(QColor(255, 0, 0, 200))
+        self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
+
+    def setAvoidStyleSnapRubberBand(self):
+        self.rubberBand.setLineStyle(Qt.PenStyle(Qt.DashDotLine))
+        self.rubberBand.setSecondaryStrokeColor(QColor(255, 255, 0, 200))
+        self.rubberBand.setFillColor(QColor(255, 0, 0, 40))
+
     def createGeometry(self, geom):
         geom = self.reprojectRubberBand(geom)
         if geom :
@@ -205,15 +266,15 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         elif lyrType == QgsWkbTypes.PolygonGeometry:
             geomList = geom.asPolygon()
         newGeom = []
-        for j in range(len(geomList)):
+        for idx, geomIdx in enumerate(geomList):
             if lyrType == QgsWkbTypes.LineGeometry:
-                newGeom.append(coordinateTransformer.transform(geomList[j]))
+                newGeom.append(coordinateTransformer.transform(geomIdx))
             elif lyrType == QgsWkbTypes.PolygonGeometry:
-                line = geomList[j]
+                line = geomIdx
                 for i in range(len(line)):
                     point = line[i]
                     newGeom.append(coordinateTransformer.transform(point))
         if lyrType == QgsWkbTypes.LineGeometry:
             return QgsGeometry.fromPolylineXY(newGeom + [newGeom[0]])
         elif lyrType == QgsWkbTypes.PolygonGeometry:
-            return QgsGeometry.fromPolygonXY([newGeom])                   
+            return QgsGeometry.fromPolygonXY([newGeom])

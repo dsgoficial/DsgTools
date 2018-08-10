@@ -186,7 +186,7 @@ class AcquisitionFreeController(object):
             if lyrType == core.QgsWkbTypes.LineGeometry:
                 return core.QgsGeometry.fromPolyline(newGeom)
             elif lyrType == core.QgsWkbTypes.PolygonGeometry:
-                return core.QgsGeometry.fromPolygon([newGeom])
+                return core.QgsGeometry.fromPolygonXY([newGeom])
         return geom        
 
     def createFeature(self, geom):
@@ -253,7 +253,10 @@ class AcquisitionFreeController(object):
         self.disconnectToolSignals()
         tool = self.getAcquisitionFree()
         if isinstance(tool, AcquisitionFree):
-            tool.acquisitionFinished.disconnect(self.createFeature)
+            try:
+                tool.acquisitionFinished.disconnect(self.createFeature)
+            except:
+                pass
         self.setActiveState(False)
         tool.deactivate()
         actionAcquisitionFree = self.getActionAcquisitionFree()
