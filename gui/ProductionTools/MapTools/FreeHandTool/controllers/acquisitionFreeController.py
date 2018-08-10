@@ -89,7 +89,6 @@ class AcquisitionFreeController(object):
         iface.currentLayerChanged.connect(self.checkToActiveAction)
         iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.setCheckable(True)
         actionAcquisitionFree.triggered.connect(self.activateTool)
 
     def disconnectToolSignals(self):
@@ -109,14 +108,14 @@ class AcquisitionFreeController(object):
     def checkToActiveAction(self):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
         actionAcquisitionFree = self.getActionAcquisitionFree()
-        layer = self.getIface().activeLayer()
-        self.deactivateTool()        
+        layer = self.getIface().activeLayer()       
         if core is not None and layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]):
             if not actionAcquisitionFree.isEnabled():
                 actionAcquisitionFree.setEnabled(True)
-                actionAcquisitionFree.setChecked(self.getActiveState())
+            return True
         else:
             actionAcquisitionFree.setEnabled(False)
+        return False
 
     def getParametersFromConfig(self):
         #Método para obter as configurações da tool do QSettings
@@ -239,7 +238,7 @@ class AcquisitionFreeController(object):
     def activateTool(self):
         #Método para iniciar a ferramenta
         tool = self.getAcquisitionFree()
-        if not tool.getActiveState():
+        if not self.getActiveState():
             tool.acquisitionFinished.connect(self.createFeature)
             canvas = self.getIface().mapCanvas()
             canvas.setMapTool(tool)
@@ -250,15 +249,16 @@ class AcquisitionFreeController(object):
                                         
     def deactivateTool(self, oldTool=None, newTool=None):
         #Método para desativar a ferramenta
-        actionAcquisitionFree = self.getActionAcquisitionFree()
+        isActivable = self.checkToActiveAction()
         self.disconnectToolSignals()
-        if newTool and (isinstance(oldTool, AcquisitionFree) and not isinstance(newTool, AcquisitionFree)):
-            actionAcquisitionFree.setChecked(False)
-            tool = self.getAcquisitionFree()
-            if self.getActiveState():
-                # tool = self.getAcquisitionFree()
-                tool.acquisitionFinished.disconnect(self.createFeature)
-                tool.deactivate()
+        tool = self.getAcquisitionFree()
+        if isinstance(tool, AcquisitionFree):
+            tool.acquisitionFinished.disconnect(self.createFeature)
         self.setActiveState(False)
+        tool.deactivate()
+        actionAcquisitionFree = self.getActionAcquisitionFree()
+        if isActivable and isinstance(oldTool, AcquisitionFree) and isinstance(newTool, AcquisitionFree):
+            self.activateTool()
         self.connectToolSignals()
+        actionAcquisitionFree.triggered.disconnect(self.activateTool)
       
