@@ -26,6 +26,7 @@ import processing
 from qgis.core import QgsMessageLog, QgsFeature, QgsGeometry, QgsVertexId, Qgis
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess, ValidationAlgorithm
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
@@ -82,12 +83,45 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
                 self.tr('Flag layer')
             )
         )
+    
+    def runIdentifyOutOfBoundsAngles(self, lyr, onlySelected, tol):
+        parameters = {
+                'INPUT': lyr,
+                'SELECTED' : onlySelected,
+                'TOLERANCE' : tol,
+                'FLAGS' : 'memory:'
+            }
+        output = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context, feedback = feedback)
+        self.flagFeaturesFromProcessOutput(output)
+    
+    def cleanCoverage(self, coverage):
+        output = QgsProcessingUtils.generateTempFilename('output.shp')
+        error = QgsProcessingUtils.generateTempFilename('error.shp')
+        parameters = {
+            'input':coverage,
+            'type':[0,1,2,3,4,5,6],
+            'tool':[0,6],
+            'threshold':'-1', 
+            '-b':False, 
+            '-c':True, 
+            'output' : output, 
+            'error': error, 
+            'GRASS_REGION_PARAMETER':None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER': -1,
+            'GRASS_MIN_AREA_PARAMETER': 0.0001,
+            'GRASS_OUTPUT_TYPE_PARAMETER': 0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''
+            }
+        x = processing.run('grass7:v.clean', parameters, context = context)
+        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         geometryHandler = GeometryHandler()
+        layerHandler = LayerHandler()
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
@@ -95,13 +129,12 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
         for lyr in inputLyrList:
-            parameters = {
-                'INPUT': lyr,
-                'SELECTED' : onlySelected,
-                'TOLERANCE' : tol,
-                'FLAGS' : self.dest_id
-            }
-            x = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context, feedback = feedback)
+            if feedback.isCanceled():
+                break
+            self.runIdentifyOutOfBoundsAngles(lyr, onlySelected, tol)
+        epsg = inputLyrList[0].crs().authid().split(':')[-1]
+        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Point, epsg, onlySelected = onlySelected)
+        
         # Compute the number of steps to display within the progress bar and
         # get features from source
         # featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
