@@ -87,6 +87,17 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         newFeat['reason'] = flagText
         newFeat.setGeometry(flagGeom)
         self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
+    
+    def getFlagsFromOutput(self, output):
+        if 'FLAGS' not in output:
+            return []
+        return [i for i in output['FLAGS'].getFeatures()]
+    
+    def flagFeaturesFromProcessOutput(self, output):
+        if 'FLAGS' in output:
+            for feat in output['FLAGS'].getFeatures():
+                self.flagSink.addFeature(feat, QgsFeatureSink.FastInsert)
+
 
 class ValidationProcess(QgsTask):
     def __init__(self, params, description = '', flags = QgsTask.CanCancel):
