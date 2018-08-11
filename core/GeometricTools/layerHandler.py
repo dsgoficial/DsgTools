@@ -117,7 +117,9 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
-    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg = None, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+        if not epsg:
+            epsg = layerList[0].crs().authid().split(':')[-1]
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
                                                       attributeTupple = attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
@@ -145,11 +147,11 @@ class LayerHandler(QObject):
     def getUnifiedVectorFields(self, attributeTupple = False):
         if not attributeTupple:
             fields = [QgsField('featid', QVariant.Int), 
-                      QgsField('layername', QVariant.String)
+                      QgsField('layer', QVariant.String)
                     ]
         else:
             fields = [QgsField('featid', QVariant.Int), 
-                      QgsField('layername', QVariant.String), 
+                      QgsField('layer', QVariant.String), 
                       QgsField('tupple', QVariant.String), 
                       QgsField('blacklist', QVariant.String)
                       ]

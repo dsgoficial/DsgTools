@@ -68,7 +68,7 @@ class FeatureHandler(QObject):
             newfeat = QgsFeature(unifiedLyr.fields())
             newfeat.setGeometry(feature.geometry())
             newfeat['featid'] = feature.id()
-            newfeat['layername'] = classname
+            newfeat['layer'] = classname
             if attributeTupple:
                 newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
             newFeats.append(newfeat)
