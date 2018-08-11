@@ -44,7 +44,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterMultipleLayers,
                        QgsWkbTypes,
-                       QgsProcessingUtils)
+                       QgsProcessingUtils,
+                       QgsProcessingException)
 
 class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -153,7 +154,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         }
         differenceOutput = processing.run('native:difference', differenceParameters, context = context)
         for feat in differenceOutput['OUTPUT'].getFeatures():
-            self.flagFeature(feat.geometry(), self.tr('Gap of coverage with frame'))
+            self.flagFeature(feat.geometry(), self.tr('Gap in coverage with frame'))
     
     def getGeomDict(self, featureList, isMulti, feedback, total):
         geomDict = dict()
@@ -201,7 +202,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Gaps and Overlaps on Coverage Layers')
+        return self.tr('Identify Gaps and Overlaps in Coverage Layers')
 
     def group(self):
         """
