@@ -75,7 +75,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.FRAMELAYER,
                 self.tr('Frame Layer'),
-                QgsProcessing.TypeVectorPolygon,
+                [QgsProcessing.TypeVectorPolygon],
                 optional = True
             )
         )
