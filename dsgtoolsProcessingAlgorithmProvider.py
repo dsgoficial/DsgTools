@@ -28,6 +28,7 @@ from .core.ValidationTools.ValidationProcesses.identifySmallLinesProcess import 
 from .core.ValidationTools.ValidationProcesses.identifyDuplicatedGeometriesProcess import IdentifyDuplicatedGeometriesAlgorithm
 from .core.ValidationTools.ValidationProcesses.identifyOutOfBoundsAnglesProcess import IdentifyOutOfBoundsAnglesAlgorithm
 from .core.ValidationTools.ValidationProcesses.identifyOutOfBoundsAnglesInCoverageProcess import IdentifyOutOfBoundsAnglesInCoverageAlgorithm
+from .core.ValidationTools.ValidationProcesses.identifyOverlapsProcess import IdentifyOverlapsAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -41,7 +42,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         IdentifySmallLinesAlgorithm(), 
                         IdentifyDuplicatedGeometriesAlgorithm(),
                         IdentifyOutOfBoundsAnglesAlgorithm(),
-                        IdentifyOutOfBoundsAnglesInCoverageAlgorithm()]
+                        IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
+                        IdentifyOverlapsAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
