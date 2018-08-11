@@ -255,5 +255,5 @@ class GeometryHandler(QObject):
     def handleGeometry(self, geom, parameterDict = {}, coordinateTransformer = None):
         outputList = []
         for geom in self.adjustGeometry(geom, parameterDict):
-            outputList += [self.reprojectWithCoordinateTransformer(coordinateTransformer)]
+            outputList += [self.reprojectWithCoordinateTransformer(geom, coordinateTransformer)]
         return outputList
