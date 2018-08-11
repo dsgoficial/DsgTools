@@ -29,6 +29,7 @@ from .core.ValidationTools.ValidationProcesses.identifyDuplicatedGeometriesProce
 from .core.ValidationTools.ValidationProcesses.identifyOutOfBoundsAnglesProcess import IdentifyOutOfBoundsAnglesAlgorithm
 from .core.ValidationTools.ValidationProcesses.identifyOutOfBoundsAnglesInCoverageProcess import IdentifyOutOfBoundsAnglesInCoverageAlgorithm
 from .core.ValidationTools.ValidationProcesses.identifyOverlapsProcess import IdentifyOverlapsAlgorithm
+from .core.ValidationTools.ValidationProcesses.identifyGapsAndOverlapsProcess import IdentifyGapsAndOverlapsAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -43,7 +44,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         IdentifyDuplicatedGeometriesAlgorithm(),
                         IdentifyOutOfBoundsAnglesAlgorithm(),
                         IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
-                        IdentifyOverlapsAlgorithm()]
+                        IdentifyOverlapsAlgorithm(),
+                        IdentifyGapsAndOverlapsAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
