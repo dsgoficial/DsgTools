@@ -114,7 +114,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
         geomDict = self.getGeomDict(featureList, isMulti, feedback)
         self.raiseFlags(geomDict, feedback)
-
+        QgsProject.instance().removeMapLayer(lyr)
         return {self.FLAGS: self.dest_id}
 
     def overlayCoverage(self, coverage, context):
