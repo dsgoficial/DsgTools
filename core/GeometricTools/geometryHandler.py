@@ -217,6 +217,22 @@ class GeometryHandler(QObject):
             if part.type() == QgsWkbTypes.LineGeometry:
                 self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
         return outOfBoundsList
+
+    def getSegmentDict(self, lineLyr):
+        segmentDict = dict()
+        geomList = []
+        for feat in lineLyr.getFeatures():
+            geom = feat.geometry()
+            if geom not in geomList:
+                geomList.append(geom)
+                lineList = geom.asPolyline()
+                if lineList[0] not in segmentDict:
+                    segmentDict[lineList[0]] = []
+                segmentDict[lineList[0]].append(QgsGeometry.fromPolyline([lineList[0], lineList[1]]))
+                if lineList[-1] not in segmentDict:
+                    segmentDict[lineList[-1]] = []
+                segmentDict[lineList[-1]].append(QgsGeometry.fromPolyline([lineList[-1], lineList[-2]]))
+        return segmentDict
     
     def handleGeometry(self, geom, parameterDict = {}, coordinateTransformer = None):
         outputList = []

@@ -115,6 +115,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             }
         x = processing.run('grass7:v.clean', parameters, context = context)
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
+        return lyr
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -134,7 +135,8 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             self.runIdentifyOutOfBoundsAngles(lyr, onlySelected, tol)
         epsg = inputLyrList[0].crs().authid().split(':')[-1]
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Point, epsg, onlySelected = onlySelected)
-        
+        cleanedCoverage = self.cleanCoverage(coverage)
+        segmentDict = self.getSegmentDict(cleanedCoverage)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         # featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
