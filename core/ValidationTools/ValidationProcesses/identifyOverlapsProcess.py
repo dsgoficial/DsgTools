@@ -27,6 +27,7 @@ from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from PyQt5.QtCore import QCoreApplication
+import processing
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -39,7 +40,8 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes)
+                       QgsWkbTypes,
+                       QgsProcessingUtils)
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -103,6 +105,9 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
+        isMulti = True
+        for intputLyr in inputLyrList:
+            isMulti &= QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
