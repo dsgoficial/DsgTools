@@ -136,7 +136,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         epsg = inputLyrList[0].crs().authid().split(':')[-1]
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Point, epsg, onlySelected = onlySelected)
         cleanedCoverage = self.cleanCoverage(coverage)
-        segmentDict = self.getSegmentDict(cleanedCoverage)
+        segmentDict = self.geometryHandler.getSegmentDict(cleanedCoverage)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         # featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
