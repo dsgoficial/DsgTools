@@ -218,6 +218,24 @@ class GeometryHandler(QObject):
                 self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
         return outOfBoundsList
 
+    def getAngleBetweenSegments(self, part):
+        line = part.asPolyline()
+        vertexAngle = (line[1].azimuth(line[0]) - line[1].azimuth(line[2]) + 360)
+        vertexAngle = math.fmod(vertexAngle, 360)
+        if vertexAngle > 180:
+            vertexAngle = 360 - vertexAngle
+        return vertexAngle
+
+    def getOutOfBountsAngleInSegmentList(self, segmentList, angle):
+        for line1, line2 in combinations(segmentList, 2):
+            geom = line1.combine(line2)
+            part = geom.mergeLines()
+            if len(part.asPolyline()) > 2:
+                vertexAngle = self.getAngleBetweenSegments(part)
+                if vertexAngle < angle:
+                    return vertexAngle
+        return None
+
     def getSegmentDict(self, lineLyr):
         segmentDict = dict()
         geomList = []
