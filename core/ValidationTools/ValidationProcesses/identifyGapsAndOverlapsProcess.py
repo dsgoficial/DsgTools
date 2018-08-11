@@ -112,7 +112,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         if frameLyr:
             self.getGapsOfCoverageWithFrame(lyr, frameLyr, context)
         featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
-        geomDict = self.getGeomDict(featureList, isMulti, feedback)
+        geomDict = self.getGeomDict(featureList, isMulti, feedback, total)
         self.raiseFlags(geomDict, feedback)
         QgsProject.instance().removeMapLayer(lyr)
         return {self.FLAGS: self.dest_id}
@@ -155,7 +155,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         for feat in differenceOutput['OUTPUT'].getFeatures():
             self.flagFeature(feat.geometry(), self.tr('Gap of coverage with frame'))
     
-    def getGeomDict(self, featureList, isMulti, feedback):
+    def getGeomDict(self, featureList, isMulti, feedback, total):
         geomDict = dict()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
