@@ -134,7 +134,7 @@ class LayerHandler(QObject):
         Creates a unified vector layer for validation purposes.
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        lyrUri = "{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid)
+        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomtype),srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
@@ -145,11 +145,11 @@ class LayerHandler(QObject):
     def getUnifiedVectorFields(self, attributeTupple = False):
         if not attributeTupple:
             fields = [QgsField('featid', QVariant.Int), 
-                      QgsField('classname', QVariant.String)
+                      QgsField('layername', QVariant.String)
                     ]
         else:
             fields = [QgsField('featid', QVariant.Int), 
-                      QgsField('classname', QVariant.String), 
+                      QgsField('layername', QVariant.String), 
                       QgsField('tupple', QVariant.String), 
                       QgsField('blacklist', QVariant.String)
                       ]
@@ -161,11 +161,11 @@ class LayerHandler(QObject):
         blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
         for layer in layerList:
             # recording class name
-            classname = layer.name()
+            layername = layer.name()
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
             iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False)
             for feature in iterator:
-                newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, classname,\
+                newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, layername,\
                                                                    bList=blackList, \
                                                                    attributeTupple=attributeTupple, \
                                                                    parameterDict=parameterDict, \
@@ -204,7 +204,7 @@ class LayerHandler(QObject):
     
     def updateOriginalLayerFromUnifiedLayer(self, lyr, unifiedLyr):
         inputDict = self.buildInputDict(lyr)
-        request = QgsFeatureRequest(QgsExpression('classname = {0}'.format(lyr.name())))
+        request = QgsFeatureRequest(QgsExpression('layername = {0}'.format(lyr.name())))
         for feat in unifiedLyr.getFeatures(request):
             fid = feat['featid']
             if fid in inputDict:
