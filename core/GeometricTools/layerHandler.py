@@ -170,16 +170,16 @@ class LayerHandler(QObject):
                                                                    attributeTupple=attributeTupple, \
                                                                    parameterDict=parameterDict, \
                                                                    coordinateTransformer=coordinateTransformer)
-                featlist += newFeats
+                featList += newFeats
         return featList
 
     def addFeaturesToLayer(self, lyr, featList, commitChanges = True, msg = ''):
-        with edit(lyr):
-            lyr.beginEditCommand(msg)
-            res = lyr.addFeatures(featList)
-            lyr.endEditCommand()
-            if commitChanges:
-                lyr.commitChanges()
+        lyr.startEditing()
+        lyr.beginEditCommand(msg)
+        res = lyr.addFeatures(featList)
+        lyr.endEditCommand()
+        if commitChanges:
+            lyr.commitChanges()
         return res
     
     def splitUnifiedLayer(self, unifiedLyr, lyrList):
