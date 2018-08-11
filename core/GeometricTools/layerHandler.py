@@ -134,11 +134,11 @@ class LayerHandler(QObject):
         Creates a unified vector layer for validation purposes.
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomtype),srid)
+        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType),srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        provider.addAttributes(fields)
+        lyr.dataProvider().addAttributes(fields)
         lyr.updateFields()
         return lyr
     
