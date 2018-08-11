@@ -45,7 +45,7 @@ from qgis.core import (QgsProcessing,
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
-    INPUTLAYERS = 'INPUTLAYERS'
+    INPUT = 'INPUT'
     SELECTED = 'SELECTED'
 
     def initAlgorithm(self, config):
@@ -53,10 +53,10 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         Parameter setting.
         """
         self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.INPUTLAYERS,
-                self.tr('Coverage Polygons'),
-                QgsProcessing.TypeVectorPolygon
+            QgsProcessingParameterVectorLayer(
+                self.INPUT,
+                self.tr('Input Polygon Layer'),
+                [QgsProcessing.TypeVectorPolygon]
             )
         )
 
@@ -74,7 +74,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             )
         )
 
-    def overlayCoverage(self, coverage, context):
+    def overlayCoverage(self, coverage, context, feedback):
         output = QgsProcessingUtils.generateTempFilename('output.shp')
         parameters = {
             'ainput':coverage,
@@ -102,21 +102,18 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         """
         geometryHandler = GeometryHandler()
         layerHandler = LayerHandler()
-        inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
-        if inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
-        isMulti = True
-        for intputLyr in inputLyrList:
-            isMulti &= QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        if inputLyr is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        isMulti = QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        
-        epsg = inputLyrList[0].crs().authid().split(':')[-1]
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Polygon, epsg, onlySelected = onlySelected)
-        lyr = self.overlayCoverage(coverage, context)
+        lyr = self.overlayCoverage(inputLyr, context, feedback)
         featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
+        QgsProject.instance().removeMapLayer(lyr)
+        geomDict = dict()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
@@ -134,10 +131,8 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             if len(v) > 1:
-                layerList = ','.join( map(str, set([i['layername'] for i in v]) ) )
-                flagText = self.tr('Features from layers {0} overlap.').format(layerList)
+                flagText = self.tr('Features from {0} overlap.').format(inputLyr.name())
                 self.flagFeature(v[0].geometry(), flagText) 
-
         return {self.FLAGS: self.dest_id}
 
     def name(self):
