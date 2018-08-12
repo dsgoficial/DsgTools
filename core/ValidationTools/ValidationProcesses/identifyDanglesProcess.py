@@ -33,7 +33,7 @@ from qgis.PyQt.QtCore import QVariant
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 
 from collections import deque, OrderedDict
-
+import processing
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationAlgorithm, ValidationProcess
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
@@ -50,7 +50,9 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingUtils)
 
 class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -98,7 +100,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.LINEFILTERLAYERS,
+                self.POLYGONFILTERLAYERS,
                 self.tr('Polygon Filter Layers'),
                 QgsProcessing.TypeVectorPolygon,
                 optional = True
@@ -107,16 +109,13 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.TYPE,
-                self.tr('Identification Type'),
-                self.tr('Ignore dangle on unsegmented lines'),
-                defaultValue = False
+                self.tr('Ignore dangle on unsegmented lines')
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.IGNOREINNER,
-                self.tr('Ignore search radius on inner layer search'),
-                defaultValue = False
+                self.tr('Ignore search radius on inner layer search')
             )
         )
         self.addParameter(
@@ -138,22 +137,22 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
         ignoreNotSplit = self.parameterAsBool(parameters, self.TYPE, context)
         ignoreInner = self.parameterAsBool(parameters, self.IGNOREINNER, context)
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Point, context)
 
         # Compute the number of steps to display within the progress bar and
         # get features from source
         featureList, total = self.getIteratorAndFeatureCount(inputLyr)
-        endVerticesDict = self.buildInitialAndEndPointDict(featureList, feedback, progressDelta=25)
+        endVerticesDict = self.buildInitialAndEndPointDict(featureList, 0.25*total, feedback, progressDelta=25)
         #search for dangles candidates
         pointList = self.searchDanglesOnPointDict(endVerticesDict, feedback, progressDelta=25)
         #build filter layer
-        filterLayer = self.buildFilterLayer(lineLyrList, polygonLyrList, context, feedback, onlySelected=onlySelected)
+        filterLayer = self.buildFilterLayer(lineFilterLyrList, polygonFilterLyrList, context, feedback, onlySelected=onlySelected)
         #filter pointList with filterLayer
         delta = 20 if not ignoreInner else 40
         filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, searchRadius, feedback, progressDelta = delta)
         #filter with own layer
         if not ignoreInner: #True when looking for dangles on contour lines
-            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, reflyr, searchRadius, isRefLyr = True, ignoreNotSplit = ignoreNotSplit, progressDelta=20)
+            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, inputLyr, searchRadius, feedback, isRefLyr = True, ignoreNotSplit = ignoreNotSplit, progressDelta=20)
         #build flag list with filtered points
         if filteredPointList:
             currentValue = feedback.progress()
@@ -161,19 +160,19 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             for current, point in enumerate(filteredPointList):
                 if feedback.isCanceled():
                     break
-                self.flagFeature(QgsGeometry.fromPoint(point), self.tr('Dangle on {0}').format(inputLyr.name()))
+                self.flagFeature(QgsGeometry.fromPointXY(point), self.tr('Dangle on {0}').format(inputLyr.name()))
                 feedback.setProgress(currentValue + int(current*currentTotal))      
         feedback.setProgress(100)
         return {self.FLAGS: self.flagSink}
 
-    def buildInitialAndEndPointDict(self, featureList, feedback, progressDelta = 100):
+    def buildInitialAndEndPointDict(self, featureList, total, feedback, progressDelta = 100):
         """
         Calculates initial point and end point from each line from lyr.
         """
         # start and end points dict
         currentProgress = feedback.progress()
         endVerticesDict = dict()
-        localTotal = progressDelta/len(featureList)
+        localTotal = total
         # iterating over features to store start and end points
         for current, feat in enumerate(featureList):
             if feedback.isCanceled():
@@ -200,7 +199,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         """
         pointList = []
         currentProgress = feedback.progress()
-        localTotal = progressDelta/len(featureList)
+        localTotal = progressDelta/len(endVerticesDict)
         # actual search for dangles
         for current, point in enumerate(endVerticesDict):
             if feedback.isCanceled():
@@ -217,13 +216,15 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         Build unified layer is not used because we do not care for attributes here, only geometry.
         refLyr elements are also added.
         """
+        if not(lineLyrList + polygonLyrList):
+            return []
         layerHandler = LayerHandler()
         lineLyrs = lineLyrList
         for polygonLyr in polygonLyrList:
             if feedback.isCanceled():
                 break
-            lineLyrs += self.makeBoundaries(polygonLyr, context, feedback)
-        unifiedLinesLyr = layerHandler.createAndPopulateUnifiedVectorLayer(lineLyrs, QgsWkbTypes.MultiLinestring, onlySelected = onlySelected)
+            lineLyrs += [self.makeBoundaries(polygonLyr, context, feedback)]
+        unifiedLinesLyr = layerHandler.createAndPopulateUnifiedVectorLayer(lineLyrs, QgsWkbTypes.MultiLineString, onlySelected = onlySelected)
         filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
         return filterLyr
     
@@ -271,7 +272,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             candidateCount = 0
-            qgisPoint = QgsGeometry.fromPoint(point)
+            qgisPoint = QgsGeometry.fromPointXY(point)
             #search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
@@ -283,7 +284,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 if not isRefLyr:
                     if buffer.intersects(allFeatureDict[id].geometry()) and \
                     qgisPoint.distance(allFeatureDict[id].geometry()) < 10**-9: #float problem, tried with intersects and touches and did not get results
-                        notDangleIndexList.append(point)
+                        notDangleList.append(point)
                         break
                 else:
                     if ignoreNotSplit:
@@ -296,7 +297,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                         (qgisPoint.touches(allFeatureDict[id].geometry())): #float problem, tried with intersects and touches and did not get results
                             candidateCount += 1
                     if candidateCount == bufferCount:
-                        notDangleIndexList.append(point)
+                        notDangleList.append(point)
             feedback.setProgress(currentProgress + localTotal*current)
         filteredDangleList = [point for point in pointList if point not in notDangleList]
         return filteredDangleList
@@ -350,7 +351,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return IdentifyDuplicatedGeometriesAlgorithm()
+        return IdentifyDanglesAlgorithm()
 
 class IdentifyDanglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
@@ -581,7 +582,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         notDangleIndexList = []
         for i in range(len(pointList)):
             candidateCount = 0
-            qgisPoint = QgsGeometry.fromPoint(pointList[i])
+            qgisPoint = QgsGeometry.fromPointXY(pointList[i])
             #search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()
