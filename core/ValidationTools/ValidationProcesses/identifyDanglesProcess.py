@@ -31,14 +31,181 @@ from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpressi
 from qgis.PyQt.QtCore import QVariant
 
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.core.ValidationTools.ValidationProcesses.unbuildEarthCoveragePolygonsProcess import UnbuildEarthCoveragePolygonsProcess
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 from collections import deque, OrderedDict
 
-import binascii
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationAlgorithm, ValidationProcess
 
-from collections import OrderedDict
+from PyQt5.QtCore import QCoreApplication
+from qgis.core import (QgsProcessing,
+                       QgsFeatureSink,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterFeatureSink,
+                       QgsFeature,
+                       QgsDataSourceUri,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterVectorLayer,
+                       QgsWkbTypes,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterNumber)
+
+class IdentifyDanglesAlgorithm(ValidationAlgorithm):
+    INPUT = 'INPUT'
+    SELECTED = 'SELECTED'
+    TOLERANCE = 'TOLERANCE'
+    LINEFILTERLAYERS = 'LINEFILTERLAYERS'
+    POLYGONFILTERLAYERS = 'POLYGONFILTERLAYERS'
+    TYPE = 'TYPE'
+    IGNOREINNER = 'IGNOREINNER'
+    FLAGS = 'FLAGS'
+    
+
+    def initAlgorithm(self, config):
+        """
+        Parameter setting.
+        """
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.INPUT,
+                self.tr('Input layer'),
+                [QgsProcessing.TypeVectorLine ]
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.SELECTED,
+                self.tr('Process only selected features')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.TOLERANCE,
+                self.tr('Search radius'),
+                minValue=0,
+                defaultValue=2
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINEFILTERLAYERS,
+                self.tr('Linestring Filter Layers'),
+                QgsProcessing.TypeVectorLine,
+                optional = True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterMultipleLayers(
+                self.LINEFILTERLAYERS,
+                self.tr('Polygon Filter Layers'),
+                QgsProcessing.TypeVectorPolygon,
+                optional = True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.IGNOREINNER,
+                self.tr('Identification Type'),
+                options=[
+                    self.tr('Consider dangle on unsegmented lines'),
+                    self.tr('Ignore dangle on unsegmented lines')
+                ]
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNOREINNER,
+                self.tr('Ignore search radius on inner layer search'),
+                defaultValue = False
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS,
+                self.tr('Flag layer')
+            )
+        )
+
+    def processAlgorithm(self, parameters, context, feedback):
+        """
+        Here is where the processing itself takes place.
+        """
+
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        lineFilterLyrList = self.parameterAsLayerList(parameters, self.LINEFILTERLAYERS, context)
+        polygonFilterLyrList = self.parameterAsLayerList(parameters, self.POLYGONFILTERLAYERS, context)
+        if inputLyrList == []:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.LINEFILTERLAYERS))
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
+        # Compute the number of steps to display within the progress bar and
+        # get features from source
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+        geomDict = dict()
+        for current, feat in enumerate(featureList):
+            # Stop the algorithm if cancel button has been clicked
+            if feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            if isMulti and not geom.isMultipart():
+                geom.convertToMultiType()
+            geomKey = geom.asWkb()
+            if geomKey not in geomDict:
+                geomDict[geomKey] = []
+            geomDict[geomKey].append(feat)
+            # # Update the progress bar
+            feedback.setProgress(int(current * total))
+        for k, v in geomDict.items():
+            if feedback.isCanceled():
+                break
+            if len(v) > 1:
+                idStrList = ','.join( map(str, [i.id() for i in v] ) )
+                flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.').format(inputLyr.name(), idStrList)
+                self.flagFeature(v[0].geometry(), flagText)      
+
+        return {self.FLAGS: self.flagSink}
+
+    def name(self):
+        """
+        Returns the algorithm name, used for identifying the algorithm. This
+        string should be fixed for the algorithm, and must not be localised.
+        The name should be unique within each provider. Names should contain
+        lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return 'identifydangles'
+
+    def displayName(self):
+        """
+        Returns the translated algorithm name, which should be used for any
+        user-visible display of the algorithm name.
+        """
+        return self.tr('Identify Dangles')
+
+    def group(self):
+        """
+        Returns the name of the group this algorithm belongs to. This string
+        should be localised.
+        """
+        return self.tr('Validation Tools')
+
+    def groupId(self):
+        """
+        Returns the unique ID of the group this algorithm belongs to. This
+        string should be fixed for the algorithm, and must not be localised.
+        The group id should be unique within each provider. Group id should
+        contain lowercase alphanumeric characters only and no spaces or other
+        formatting characters.
+        """
+        return 'DSGTools: Validation Tools'
+
+    def tr(self, string):
+        return QCoreApplication.translate('Processing', string)
+
+    def createInstance(self):
+        return IdentifyDuplicatedGeometriesAlgorithm()
+
 class IdentifyDanglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
