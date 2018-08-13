@@ -257,3 +257,17 @@ class GeometryHandler(QObject):
         for geom in self.adjustGeometry(geom, parameterDict):
             outputList += [self.reprojectWithCoordinateTransformer(geom, coordinateTransformer)]
         return outputList
+    
+    def getOuterShellAndHoles(self, geom, isMulti):
+        outershells, donutholes = [], []
+        for part in geom.asGeometryCollection():
+            for current, item in enumerate(part.asPolygon()):
+                newGeom = QgsGeometry.fromPolygonXY(item)
+                if isMulti:
+                    newGeom.convertToMultiType()
+                if current == 0:
+                    outershells.append(newGeom)
+                else:
+                    donutholes.append(newGeom)
+        return outershells, donutholes
+                
