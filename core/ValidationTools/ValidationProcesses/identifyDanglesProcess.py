@@ -121,7 +121,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
-                self.tr('Flag layer')
+                self.tr('{0} Flags').format(self.displayName())
             )
         )
 
@@ -142,7 +142,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         # Compute the number of steps to display within the progress bar and
         # get features from source
         featureList, total = self.getIteratorAndFeatureCount(inputLyr)
-        endVerticesDict = self.buildInitialAndEndPointDict(featureList, 0.25*total, feedback, progressDelta=25)
+        endVerticesDict = self.buildInitialAndEndPointDict(featureList, 0.25*total, feedback)
         #search for dangles candidates
         pointList = self.searchDanglesOnPointDict(endVerticesDict, feedback, progressDelta=25)
         #build filter layer
@@ -233,7 +233,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             'INPUT' : lyr,
             'OUTPUT' : 'memory:'
         }
-        output = processing.run("native:boundary", parameters, context = context, feedback = feedback)
+        output = processing.run("native:boundary", parameters, context = context)
         return output['OUTPUT']
 
     def cleanLayer(self, inputLyr, toolList, context, typeList=[0,1,2,3,4,5,6]): 
