@@ -31,6 +31,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBound
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOverlapsAlgorithm import IdentifyOverlapsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import IdentifyGapsAndOverlapsInCoverageAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import IdentifyDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import IdentifyGapsAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import DonutHoleExtractorAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -47,7 +50,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
                         IdentifyOverlapsAlgorithm(),
                         IdentifyGapsAndOverlapsInCoverageAlgorithm(),
-                        IdentifyDanglesAlgorithm()]
+                        IdentifyDanglesAlgorithm(),
+                        IdentifyGapsAlgorithm(),
+                        DonutHoleExtractorAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
