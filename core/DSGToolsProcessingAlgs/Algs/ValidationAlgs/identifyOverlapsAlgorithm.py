@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess, ValidationAlgorithm
+from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
@@ -39,7 +39,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterMultipleLayers,
                        QgsWkbTypes,
-                       QgsProcessingUtils)
+                       QgsProcessingUtils,
+                       QgsProject)
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -68,7 +69,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
-                self.tr('Flag layer')
+                self.tr('{0} Flags').format(self.displayName())
             )
         )
 

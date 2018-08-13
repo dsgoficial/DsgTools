@@ -27,7 +27,8 @@ from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 from PyQt5.QtCore import QCoreApplication
 import processing
-from qgis.core import (QgsProcessing,
+from qgis.core import (QgsProject, 
+                       QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSource,
@@ -43,7 +44,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsProcessingException)
 
-class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
+class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUTLAYERS = 'INPUTLAYERS'
     FRAMELAYER = 'FRAMELAYER'
@@ -80,7 +81,7 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
-                self.tr('Flag layer')
+                self.tr('{0} Flags').format(self.displayName())
             )
         )
 
@@ -221,4 +222,4 @@ class IdentifyGapsAndOverlapsAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return IdentifyGapsAndOverlapsAlgorithm()
+        return IdentifyGapsAndOverlapsInCoverageAlgorithm()

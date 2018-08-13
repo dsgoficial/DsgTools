@@ -22,7 +22,7 @@
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
+import processing
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -75,18 +75,18 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
-                self.tr('Flag layer')
+                self.tr('{0} Flags').format(self.displayName())
             )
         )
     
-    def runIdentifyOutOfBoundsAngles(self, lyr, onlySelected, tol):
+    def runIdentifyOutOfBoundsAngles(self, lyr, onlySelected, tol, context):
         parameters = {
                 'INPUT': lyr,
                 'SELECTED' : onlySelected,
                 'TOLERANCE' : tol,
                 'FLAGS' : 'memory:'
             }
-        output = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context, feedback = feedback)
+        output = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context)
         self.flagFeaturesFromProcessOutput(output)
     
     def cleanCoverage(self, coverage):
@@ -127,7 +127,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         for lyr in inputLyrList:
             if feedback.isCanceled():
                 break
-            self.runIdentifyOutOfBoundsAngles(lyr, onlySelected, tol)
+            self.runIdentifyOutOfBoundsAngles(lyr, onlySelected, tol, context)
         epsg = inputLyrList[0].crs().authid().split(':')[-1]
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Point, epsg, onlySelected = onlySelected)
         cleanedCoverage = self.cleanCoverage(coverage)

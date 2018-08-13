@@ -22,15 +22,15 @@
 """
 from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
-from .deaggregateGeometriesAlgorithm import DeaggregatorAlgorithm
-from .identifySmallPolygonsAlgorithm import IdentifySmallPolygonsAlgorithm'
-from .identifySmallLinesalgorithm import IdentifySmallLinesAlgorithm
-from .identifyDuplicatedGeometriesAlgorithm import IdentifyDuplicatedGeometriesAlgorithm
-from .identifyOutOfBoundsAnglesAlgorithm import IdentifyOutOfBoundsAnglesAlgorithm
-from .identifyOutOfBoundsAnglesInCoverageAlgorithm import IdentifyOutOfBoundsAnglesInCoverageAlgorithm
-from .identifyOverlapsAlgorithm import IdentifyOverlapsAlgorithm
-from .identifyGapsAndOverlapsAlgorithm import IdentifyGapsAndOverlapsAlgorithm
-from .identifyDanglesAlgorithm import IdentifyDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import DeaggregatorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallPolygonsAlgorithm import IdentifySmallPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallLinesAlgorithm import IdentifySmallLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import IdentifyDuplicatedGeometriesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesAlgorithm import IdentifyOutOfBoundsAnglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesInCoverageAlgorithm import IdentifyOutOfBoundsAnglesInCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOverlapsAlgorithm import IdentifyOverlapsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import IdentifyGapsAndOverlapsInCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import IdentifyDanglesAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -46,7 +46,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         IdentifyOutOfBoundsAnglesAlgorithm(),
                         IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
                         IdentifyOverlapsAlgorithm(),
-                        IdentifyGapsAndOverlapsAlgorithm(),
+                        IdentifyGapsAndOverlapsInCoverageAlgorithm(),
                         IdentifyDanglesAlgorithm()]
 
     def load(self):

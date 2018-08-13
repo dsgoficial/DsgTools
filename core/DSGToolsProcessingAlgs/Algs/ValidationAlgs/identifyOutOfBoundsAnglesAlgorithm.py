@@ -75,7 +75,7 @@ class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
-                self.tr('Flag layer')
+                self.tr('{0} Flags').format(self.displayName())
             )
         )
 

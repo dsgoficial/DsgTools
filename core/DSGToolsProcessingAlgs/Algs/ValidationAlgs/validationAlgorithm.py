@@ -20,6 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 """
+from qgis.PyQt.QtCore import QVariant
+
+from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
+                      QgsGeometry, QgsFeature, QgsDataSourceUri, QgsFeatureRequest, \
+                      QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes, \
+                      QgsTask, QgsProcessingAlgorithm
 
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
