@@ -66,8 +66,9 @@ class IdentifySmallLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr('Line length tolerance'),
+                type=QgsProcessingParameterNumber.Double,
                 minValue=0,
-                defaultValue=100
+                defaultValue=5
             )
         )
 
