@@ -37,6 +37,8 @@ import numpy as np
 from qgis.PyQt.QtCore import Qt
 from functools import partial
 
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
+
 class GenericSelectionTool(QgsMapTool):
     finished = QtCore.pyqtSignal(list)
     def __init__(self, iface):
@@ -66,6 +68,7 @@ class GenericSelectionTool(QgsMapTool):
         self.cursorChanged = False
         self.cursorChangingHotkey = QtCore.Qt.Key_Alt
         self.menuHovered = False # indicates hovering actions over context menu
+        self.geometryHandler = GeometryHandler(iface=self.iface)
     
     def addTool(self, manager, callback, parentMenu, iconBasePath):
         icon_path = iconBasePath + '/genericSelect.png'
@@ -646,7 +649,7 @@ class GenericSelectionTool(QgsMapTool):
                 for feature in layer.getFeatures(QgsFeatureRequest(bbRect)):
                     geom = feature.geometry()
                     if geom:
-                        searchRect = self.reprojectSearchArea(layer, rect)
+                        searchRect = self.geometryHandler.reprojectSearchArea(layer, rect)
                         if selected:
                             # if Control was held, appending behaviour is different
                             if not firstGeom:
@@ -686,23 +689,3 @@ class GenericSelectionTool(QgsMapTool):
 
     def unload(self):
         self.deactivate()
-
-    def reprojectSearchArea(self, layer, geom):
-        """
-        Reprojects search area if necessary, according to what is being searched.
-        :param layer: (QgsVectorLayer) layer which target rectangle has to have same SRC.
-        :param geom: (QgsRectangle) rectangle representing search area.
-        """
-        #geom always have canvas coordinates
-        epsg = self.canvas.mapSettings().destinationCrs().authid()
-        #getting srid from something like 'EPSG:31983'
-        srid = layer.crs().authid()
-        if epsg == srid:
-            return geom
-        crsSrc = QgsCoordinateReferenceSystem(epsg)
-        crsDest = QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
-        # Creating a transformer
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-        auxGeom = QgsGeometry.fromRect(geom)
-        auxGeom.transform(coordinateTransformer)
-        return auxGeom.boundingBox()
