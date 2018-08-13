@@ -147,9 +147,13 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         pointList = self.searchDanglesOnPointDict(endVerticesDict, feedback, progressDelta=25)
         #build filter layer
         filterLayer = self.buildFilterLayer(lineFilterLyrList, polygonFilterLyrList, context, feedback, onlySelected=onlySelected)
-        #filter pointList with filterLayer
         delta = 20 if not ignoreInner else 40
-        filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, searchRadius, feedback, progressDelta = delta)
+        #filter pointList with filterLayer
+        if filterLayer:
+            filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, searchRadius, feedback, progressDelta = delta)
+        else:
+            filteredPointList = pointList
+            feedback.setProgress(feedback.progress()+delta)
         #filter with own layer
         if not ignoreInner: #True when looking for dangles on contour lines
             filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, inputLyr, searchRadius, feedback, isRefLyr = True, ignoreNotSplit = ignoreNotSplit, progressDelta=20)
@@ -224,6 +228,8 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             lineLyrs += [self.makeBoundaries(polygonLyr, context, feedback)]
+        if not lineLyrs:
+            return None
         unifiedLinesLyr = layerHandler.createAndPopulateUnifiedVectorLayer(lineLyrs, QgsWkbTypes.MultiLineString, onlySelected = onlySelected)
         filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
         return filterLyr
