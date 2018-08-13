@@ -62,7 +62,6 @@ class FeatureHandler(QObject):
             newFeatureList.append(newFeature)
         return newFeatureList
 
-
     def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False, coordinateTransformer = None, parameterDict = {}):
         newFeats = []
         for geom in self.geometryHandler.handleGeometry(feature.geometry(), parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):

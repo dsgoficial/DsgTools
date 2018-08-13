@@ -31,7 +31,7 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
 from qgis.PyQt.Qt import QObject
 
 class GeometryHandler(QObject):
-    def __init__(self, iface = None, parent = None):
+    def __init__(self, iface=None, parent=None):
         super(GeometryHandler, self).__init__()
         self.parent = parent
         self.iface = iface
@@ -89,6 +89,27 @@ class GeometryHandler(QObject):
             geom.transform(coordinateTransformer)
         if debugging:
             return [geom, canvasCrs, referenceCrs, coordinateTransformer]
+
+    def reprojectSearchArea(self, layer, geom):
+        """
+        Reprojects search area if necessary, according to what is being searched.
+        :param layer: (QgsVectorLayer) layer which target rectangle has to have same SRC.
+        :param geom: (QgsRectangle) rectangle representing search area.
+        :return: (QgsRectangle) rectangle representing reprojected search area.
+        """
+        #geom always have canvas coordinates
+        epsg = self.canvas.mapSettings().destinationCrs().authid()
+        #getting srid from something like 'EPSG:31983'
+        srid = layer.crs().authid()
+        if epsg == srid:
+            return geom
+        crsSrc = QgsCoordinateReferenceSystem(epsg)
+        crsDest = QgsCoordinateReferenceSystem(srid)
+        # Creating a transformer
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance()) # here we have to put authid, not srid
+        auxGeom = QgsGeometry.fromRect(geom)
+        auxGeom.transform(coordinateTransformer)
+        return auxGeom.boundingBox()
 
     def flipFeature(self, layer, feature, geomType=None, refreshCanvas=False):
         """

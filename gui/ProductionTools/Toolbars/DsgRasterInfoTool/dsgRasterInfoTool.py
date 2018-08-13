@@ -23,15 +23,16 @@
 
 import os
 
-from qgis.core import QgsGeometry, QgsRaster
+from qgis.core import QgsGeometry, QgsRaster, QgsVectorLayer, QgsWkbTypes
 
 from qgis.PyQt import QtGui, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QTimer
 from qgis.PyQt.QtWidgets import QWidget, QToolTip, QAction
 from qgis.PyQt.QtGui import QIcon
 
-from .bandValueTool import BandValueTool
-from .....core.GeometricTools.geometryHandler import GeometryHandler
+from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.bandValueTool import BandValueTool
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
+from DsgTools.gui.ProductionTools.Toolbars.DsgRasterInfoTool.assignBandValueTool import AssignBandValueTool
 
 # FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'dsgRasterInfoTool.ui'))
 from .dsgRasterInfoTool_ui import Ui_DsgRasterInfoTool
@@ -49,17 +50,49 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         """
         Class constructor.
         """
-        # super(QgsRasterLayer, self).__init__()
         self.canvas = iface.mapCanvas()
         super(DsgRasterInfoTool, self).__init__(parent)
         self.setupUi(self)
+        self.bandTooltipButton.setToolTip(self.tr("Show raster tooltip"))
+        self.dynamicHistogramButton.setToolTip(self.tr("Dynamic histogram view"))
+        self.valueSetterButton.setToolTip(self.tr("Set raster value from mouse click\nShift + Left Click + Mouse Drag: Selects a set of points and assigns raster value for each point"))
+        self.assignBandValueTool = None
         self.parent = parent
         self.splitter.hide()
         self.iface = iface
         self.timerMapTips = QTimer( self.canvas )
-        self.DsgGeometryHandler = GeometryHandler(iface)
+        self.geometryHandler = GeometryHandler(iface)
         self.addShortcuts()
-    
+        self.valueSetterButton.setEnabled(False)
+        self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
+        self.iface.actionToggleEditing().triggered.connect(self.enableAssignValue)
+        # start currentLayer selection
+        self.currentLayer = None
+
+    def resetEditingSignals(self, currentLayer):
+        """
+        Disconnects editing signal from previously selected layer and connects it to newly selected layer.
+        Method is called whenever currentlLayerChanged signal is emitted.
+        """
+        # get previous selected layer
+        prevLayer = self.currentLayer
+        # update current selected layer
+        self.currentLayer = currentLayer
+        activateAlias = lambda : self.activateValueSetter(True)
+        deactivateAlias = lambda : self.activateValueSetter(False)
+        if prevLayer:
+            try:
+                # if there was a previous selection, signals must be disconnected from it before connecting to the new layer
+                prevLayer.editingStarted.disconnect(activateAlias)
+                prevLayer.editingStopped.disconnect(deactivateAlias)
+            except:
+                # in case signal is not yet connected, somehow
+                pass
+        # connecting signals to new layer
+        if isinstance(self.currentLayer, QgsVectorLayer):
+            self.currentLayer.editingStarted.connect(activateAlias)
+            self.currentLayer.editingStopped.connect(deactivateAlias)
+
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
         action = QAction(icon, text, parent)
@@ -81,11 +114,32 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         text = self.tr('DSGTools: Dynamic Histogram Viewer')
         self.dynamicHistogramButtonAction = self.add_action(icon_path, text, self.dynamicHistogramButton.toggle, parent = self.parent)
         self.iface.registerMainWindowAction(self.dynamicHistogramButtonAction, '')
+        icon_path = ':/plugins/DsgTools/icons/valueSetter.png'
+        text = self.tr('DSGTools: Set Value From Point')
+        self.valueSetterButtonAction = self.add_action(icon_path, text, self.valueSetterButton.toggle, parent = self.parent)
+        self.iface.registerMainWindowAction(self.valueSetterButtonAction, '')
         # self.timerMapTips.timeout.connect( self.showToolTip )
     
+    def enableAssignValue(self):
+        layer = self.iface.mapCanvas().currentLayer()
+        if layer and isinstance(layer, QgsVectorLayer):
+            if layer.geometryType() == QgsWkbTypes.PointGeometry and layer.isEditable():
+                self.valueSetterButton.setEnabled(True)
+                # reset editing signals
+                self.resetEditingSignals(currentLayer=layer)
+            else:
+                self.valueSetterButton.setEnabled(False)
+                self.valueSetterButton.setChecked(False)
+                self.activateValueSetter(False)
+        else:
+            self.valueSetterButton.setEnabled(False)
+            self.valueSetterButton.setChecked(False)
+            self.activateValueSetter(False)
+
     def deactivate(self):
         self.activateBandValueTool(False)
         self.activateStretchTool(False)
+        self.activateValueSetter(False)
 
     @pyqtSlot(bool, name = 'on_rasterInfoPushButton_toggled')
     def toggleBar(self, toggled=None):
@@ -112,7 +166,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
             self.iface.mapCanvas().extentsChanged.connect(self.stretch_raster)
         else:
             self.iface.mapCanvas().extentsChanged.disconnect(self.stretch_raster)
-    
+
     def stretch_raster(self):
         try:
             formerLayer = self.iface.activeLayer()
@@ -122,7 +176,24 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
             self.iface.setActiveLayer(formerLayer)
         except AttributeError:
             pass
+
+    @pyqtSlot(bool, name = 'on_valueSetterButton_toggled')
+    def activateValueSetter(self, state):
+        if state:
+            raster = self.rasterComboBox.currentLayer()
+            self.loadTool(self.iface, raster)
+        else:
+            self.unloadTool()
+
+    def loadTool(self, iface, raster):
+        self.assignBandValueTool = AssignBandValueTool(self.iface, raster)
+        self.assignBandValueTool.activate()
     
+    def unloadTool(self):
+        if self.assignBandValueTool:
+            self.assignBandValueTool.deactivate()
+        self.assignBandValueTool = None
+
     def getPixelValue(self, mousePos, rasterLayer):
         """
         
@@ -130,7 +201,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         rasterCrs = rasterLayer.crs()
         mousePosGeom = QgsGeometry.fromPointXY(mousePos)
         canvasCrs = self.canvas.mapSettings().destinationCrs()
-        self.DsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, canvasCrs)
+        self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, canvasCrs)
         mousePos = mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
