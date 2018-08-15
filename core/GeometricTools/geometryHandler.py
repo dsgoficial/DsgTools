@@ -262,7 +262,7 @@ class GeometryHandler(QObject):
         outershells, donutholes = [], []
         for part in geom.asGeometryCollection():
             for current, item in enumerate(part.asPolygon()):
-                newGeom = QgsGeometry.fromPolygonXY(item)
+                newGeom = QgsGeometry.fromPolygonXY([item])
                 if isMulti:
                     newGeom.convertToMultiType()
                 if current == 0:
