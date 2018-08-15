@@ -23,6 +23,7 @@
 from .validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from ...algRunner import AlgRunner
 
 from PyQt5.QtCore import QCoreApplication
 import processing
@@ -73,27 +74,13 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
             )
         )
 
-    def overlayCoverage(self, coverage, context, feedback):
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
-        parameters = {
-            'ainput':coverage,
-            'atype':0,
-            'binput':coverage,
-            'btype':0,
-            'operator':0,
-            'snap':0,
-            '-t':False,
-            'output':output,
-            'GRASS_REGION_PARAMETER':None,
-            'GRASS_SNAP_TOLERANCE_PARAMETER':-1,
-            'GRASS_MIN_AREA_PARAMETER':0.0001,
-            'GRASS_OUTPUT_TYPE_PARAMETER':0,
-            'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':''
-            }
-        x = processing.run('grass7:v.overlay', parameters, context = context)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
-        return lyr
+    
+    def getGapLyr(self, inputLyr, context, onlySelected = False):
+        algRunner = AlgRunner()
+        dissolvedLyr = algRunner.runDissolve(inputLyr, context)
+        deletedHolesLyr = algRunner.runDeleteHoles(dissolvedLyr, context)
+        gapLyr = algRunner.runOverlay(deletedHolesLyr, deletedHolesLyr, context)
+        return gapLyr
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -109,7 +96,7 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        lyr = self.overlayCoverage(inputLyr, context, feedback)
+        lyr = self.getGapLyr(inputLyr, context, onlySelected=onlySelected)
         featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
         QgsProject.instance().removeMapLayer(lyr)
         geomDict = dict()
@@ -117,15 +104,9 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-            geom = feat.geometry()
-            if isMulti and not geom.isMultipart():
-                geom.convertToMultiType()
-            geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = []
-            geomDict[geomKey].append(feat)
             attrList = feat.attributes()
             if attrList == len(attrList)*[None]:
+                geom = feat.geometry()
                 self.flagFeature(geom, self.tr('Gap in layer {0}.').format(inputLyr.name()))
             # # Update the progress bar
             feedback.setProgress(int(current * total))         
