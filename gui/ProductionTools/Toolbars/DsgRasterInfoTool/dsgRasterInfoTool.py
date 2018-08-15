@@ -22,6 +22,7 @@
 """
 
 import os
+from functools import partial
 
 from qgis.core import QgsGeometry, QgsRaster, QgsVectorLayer, QgsWkbTypes
 
@@ -66,6 +67,8 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.valueSetterButton.setEnabled(False)
         self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
         self.iface.actionToggleEditing().triggered.connect(self.enableAssignValue)
+        self.iface.mapCanvas().mapToolSet.connect(self.enableAssignValue)
+        self.valueSetterButton.toggled.connect(self.activateValueSetter)
         # start currentLayer selection
         self.currentLayer = None
 
@@ -77,21 +80,22 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         # get previous selected layer
         prevLayer = self.currentLayer
         # update current selected layer
-        self.currentLayer = currentLayer
-        activateAlias = lambda : self.activateValueSetter(True)
-        deactivateAlias = lambda : self.activateValueSetter(False)
+        if not currentLayer:
+            self.currentLayer = currentLayer
+        self.activateAlias = partial(self.activateValueSetter, True)
+        self.deactivateAlias = partial(self.activateValueSetter, False)
         if prevLayer:
             try:
                 # if there was a previous selection, signals must be disconnected from it before connecting to the new layer
-                prevLayer.editingStarted.disconnect(activateAlias)
-                prevLayer.editingStopped.disconnect(deactivateAlias)
+                prevLayer.editingStarted.disconnect(self.activateAlias)
+                prevLayer.editingStopped.disconnect(self.deactivateAlias)
             except:
                 # in case signal is not yet connected, somehow
                 pass
         # connecting signals to new layer
         if isinstance(self.currentLayer, QgsVectorLayer):
-            self.currentLayer.editingStarted.connect(activateAlias)
-            self.currentLayer.editingStopped.connect(deactivateAlias)
+            self.currentLayer.editingStarted.connect(self.activateAlias)
+            self.currentLayer.editingStopped.connect(self.deactivateAlias)
 
     def add_action(self, icon_path, text, callback, parent=None):
         icon = QIcon(icon_path)
@@ -119,8 +123,52 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.valueSetterButtonAction = self.add_action(icon_path, text, self.valueSetterButton.toggle, parent = self.parent)
         self.iface.registerMainWindowAction(self.valueSetterButtonAction, '')
         # self.timerMapTips.timeout.connect( self.showToolTip )
-    
+
+    def disconnectAllSignals(self):
+        """
+        Disconnects all signals connected/related to Set Value Checker tool.
+        """
+        try:
+            self.valueSetterButton.toggled.disconnect(self.activateValueSetter)
+            # self.valueSetterButton.blockSignals(True)
+        except:
+            pass
+        try:
+            self.iface.mapCanvas().currentLayerChanged.disconnect(self.enableAssignValue)
+        except:
+            pass
+        try:
+            self.iface.actionToggleEditing().triggered.disconnect(self.enableAssignValue)
+        except:
+            pass
+        try:
+            self.iface.mapCanvas().mapToolSet.disconnect(self.enableAssignValue)
+        except:
+            pass
+        try:
+            self.currentLayer.editingStarted.disconnect(self.activateAlias)
+        except:
+            pass
+        try:
+            self.currentLayer.editingStopped.disconnect(self.deactivateAlias)
+        except:
+            pass
+
+    def connectAllSignals(self):
+        """
+        Connects all signals connected/related to Set Value Checker tool.
+        """
+        self.valueSetterButton.toggled.connect(self.activateValueSetter)
+        # self.valueSetterButton.blockSignals(False)
+        self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
+        self.iface.actionToggleEditing().triggered.connect(self.enableAssignValue)
+        self.iface.mapCanvas().mapToolSet.connect(self.enableAssignValue)
+        if self.currentLayer:
+            self.currentLayer.editingStarted.connect(self.activateAlias)
+            self.currentLayer.editingStopped.connect(self.deactivateAlias)
+
     def enableAssignValue(self):
+        self.disconnectAllSignals()
         layer = self.iface.mapCanvas().currentLayer()
         if layer and isinstance(layer, QgsVectorLayer):
             if layer.geometryType() == QgsWkbTypes.PointGeometry and layer.isEditable():
@@ -129,12 +177,15 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 self.resetEditingSignals(currentLayer=layer)
             else:
                 self.valueSetterButton.setEnabled(False)
-                self.valueSetterButton.setChecked(False)
-                self.activateValueSetter(False)
+                if self.valueSetterButton.isChecked():
+                    self.valueSetterButton.setChecked(False)
+                    self.activateValueSetter(False)
         else:
             self.valueSetterButton.setEnabled(False)
-            self.valueSetterButton.setChecked(False)
-            self.activateValueSetter(False)
+            if self.valueSetterButton.isChecked():
+                self.valueSetterButton.setChecked(False)
+                self.activateValueSetter(False)
+        self.connectAllSignals()
 
     def deactivate(self):
         self.activateBandValueTool(False)
@@ -177,7 +228,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         except AttributeError:
             pass
 
-    @pyqtSlot(bool, name = 'on_valueSetterButton_toggled')
+    # @pyqtSlot(bool, name = 'on_valueSetterButton_toggled')
     def activateValueSetter(self, state):
         if state:
             raster = self.rasterComboBox.currentLayer()
@@ -186,13 +237,22 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
             self.unloadTool()
 
     def loadTool(self, iface, raster):
+        self.disconnectAllSignals()
         self.assignBandValueTool = AssignBandValueTool(self.iface, raster)
         self.assignBandValueTool.activate()
-    
+        self.connectAllSignals()
+
     def unloadTool(self):
+        self.disconnectAllSignals()
+        try:
+            self.iface.mapCanvas().mapToolSet.disconnect(self.enableAssignValue)
+        except:
+            pass
         if self.assignBandValueTool:
             self.assignBandValueTool.deactivate()
         self.assignBandValueTool = None
+        self.iface.mapCanvas().mapToolSet.connect(self.enableAssignValue)
+        self.connectAllSignals()
 
     def getPixelValue(self, mousePos, rasterLayer):
         """
@@ -225,5 +285,6 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
                 QToolTip.showText( p, text, self.canvas )
     
     def unload(self):
+        self.disconnectAllSignals()
         self.iface.mapCanvas().extentsChanged.disconnect(self.stretch_raster)
         self.iface.mapCanvas().xyCoordinates.disconnect(self.showToolTip)
