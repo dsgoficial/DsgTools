@@ -20,11 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+from functools import partial
+
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, \
                      QgsAttributeDialog, QgsAttributeForm, QgsMessageBar
 from qgis import core
 from qgis.core import QgsPointXY, QgsRectangle, QgsVectorLayer, QgsGeometry, \
-                      QgsEditFormConfig, QgsRaster, QgsFeature, QgsWkbTypes
+                      QgsEditFormConfig, QgsRaster, QgsFeature, QgsWkbTypes, QgsProject
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
@@ -188,7 +191,7 @@ class AssignBandValueTool(QgsMapTool):
         for field in fieldList:
             action = menu.addAction(field)
             callback = partial(self.handleFeatures, field, layer)
-            action.triggered[()].connect(callback)
+            action.triggered.connect(callback)
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
     
     def handleFeatures(self, selectedField, layer):
@@ -260,16 +263,15 @@ class AssignBandValueTool(QgsMapTool):
         if self.toolAction:
             self.toolAction.setChecked(True)
         QgsMapTool.activate(self)
-        self.iface.mapCanvas().setMapTool(self)
+        # self.iface.mapCanvas().setMapTool(self)
         layer = self.iface.mapCanvas().currentLayer()
         if not layer or not isinstance(layer, QgsVectorLayer):
-            self.iface.messageBar().pushMessage(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"),
-                                                level=QgsMessageBar.INFO, duration=10)
+            self.iface.messageBar().pushInfo(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"), duration=10)
             self.deactivate()
 
     def getPixelValue(self, rasterLayer):
         mousePos = self.qgsMapToolEmitPoint.toMapCoordinates(self.canvas.mouseLastXY())
-        mousePosGeom = QgsGeometry.fromPoint(mousePos)
+        mousePosGeom = QgsGeometry.fromPointXY(mousePos)
         return self.getPixelValueFromPoint(mousePosGeom, rasterLayer), mousePosGeom
 
     def getPixelValueFromPoint(self, mousePosGeom, rasterLayer, fromCanvas = True):
@@ -278,7 +280,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         rasterCrs = rasterLayer.crs()
         if fromCanvas:
-            self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
+            self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, QgsProject.instance().crs())
         else:
             mousePosGeom = QgsGeometry(mousePosGeom)
             self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
@@ -287,7 +289,7 @@ class AssignBandValueTool(QgsMapTool):
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
         if i.isValid():
-            value = i.results().values()[0]
+            value = list(i.results().values())[0]
             if value:
                 value = int(value) if self.decimals == 0 else round(value, self.decimals)
             return value
