@@ -27,7 +27,8 @@ from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, \
                      QgsAttributeDialog, QgsAttributeForm, QgsMessageBar
 from qgis import core
 from qgis.core import QgsPointXY, QgsRectangle, QgsVectorLayer, QgsGeometry, \
-                      QgsEditFormConfig, QgsRaster, QgsFeature, QgsWkbTypes, QgsProject
+                      QgsEditFormConfig, QgsRaster, QgsFeature, QgsWkbTypes, \
+                      QgsProject, QgsVectorLayerUtils
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
@@ -163,8 +164,8 @@ class AssignBandValueTool(QgsMapTool):
                 bbRect = self.canvas.mapSettings().mapToLayerCoordinates(layer, r)
                 self.rubberBand.hide()
                 #select all stuff
-                layer.setSelectedFeatures([]) #portar para o feature handler
-                layer.select(bbRect, True)
+                layer.selectByIds([]) #portar para o feature handler
+                layer.selectByRect(bbRect, True)
                 #mudar depois para o dsgmothafucka
                 featDict = dict()
                 pointDict = dict()
@@ -203,20 +204,18 @@ class AssignBandValueTool(QgsMapTool):
                 feat.setAttribute(idx, item['value'])
                 layer.updateFeature(feat)
             else:
-                feature = QgsFeature(layer.fields())
                 self.geometryHandler.reprojectFeature(item['geom'], layer.crs())
-                feature.setGeometry(item['geom'])
+                feature = QgsVectorLayerUtils.createFeature(layer, item['geom'])
                 self.addFeature(feature, layer, selectedField, item['value'])
         self.auxList = []
         self.canvas.refresh()
     
     def addFeature(self, feature, layer, field, pointValue):
-        fields = layer.fields()
-        feature.initAttributes(fields.count())            
+        fields = layer.fields()          
         provider = layer.dataProvider()             
         for i in range(fields.count()):
             value = provider.defaultValue(i) if fields[i].name() != field else pointValue
-            if value:
+            if value is not None:
                 feature.setAttribute(i, value)                
         form = QgsAttributeDialog(layer, feature, False)
         form.setMode(QgsAttributeForm.AddFeatureMode)
@@ -252,7 +251,7 @@ class AssignBandValueTool(QgsMapTool):
                 self.toolAction.setChecked(False)
             if self is not None:
                 QgsMapTool.deactivate(self)
-                self.canvas.unsetMapTool(self)
+                # self.canvas.unsetMapTool(self)
         except:
             pass
 
@@ -274,17 +273,16 @@ class AssignBandValueTool(QgsMapTool):
         mousePosGeom = QgsGeometry.fromPointXY(mousePos)
         return self.getPixelValueFromPoint(mousePosGeom, rasterLayer), mousePosGeom
 
-    def getPixelValueFromPoint(self, mousePosGeom, rasterLayer, fromCanvas = True):
+    def getPixelValueFromPoint(self, mousePosGeom, rasterLayer, fromCanvas=True):
         """
         
         """
         rasterCrs = rasterLayer.crs()
-        if fromCanvas:
-            self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, QgsProject.instance().crs())
-        else:
-            mousePosGeom = QgsGeometry(mousePosGeom)
-            self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
-        # isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType())) # tem que ver se serve pra QgsGeometry
+        # if fromCanvas:
+        #     self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, QgsProject.instance().crs())
+        # else:
+        mousePosGeom = QgsGeometry(mousePosGeom)
+        self.geometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
         mousePos = mousePosGeom.asMultiPoint()[0] if mousePosGeom.isMultipart() else mousePosGeom.asPoint()
         # identify pixel(s) information
         i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
@@ -302,4 +300,4 @@ class AssignBandValueTool(QgsMapTool):
 
         returns {'pointId': value}
         """
-        return {key : self.getPixelValueFromPoint(value, rasterLayer, fromCanvas=False) for key, value in pointDict.iteritems()} #no python3 eh items()
+        return {key : self.getPixelValueFromPoint(value, rasterLayer, fromCanvas=False) for key, value in pointDict.items()} #no python3 eh items()
