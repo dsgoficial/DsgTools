@@ -82,10 +82,10 @@ class GeometryHandler(QObject):
         :param debbuging: if True, method returns the the list [geometry, canvasCrs, referenceCrs, coordinateTransformer]
         """
         if not destinationCrs:
-            destinationCrs = self.canvas.mapRenderer().destinationCrs()
+            destinationCrs = QgsProject.instance().crs()
         if destinationCrs.authid() != referenceCrs.authid():
             if not coordinateTransformer:
-                coordinateTransformer = QgsCoordinateTransform(destinationCrs, referenceCrs)
+                coordinateTransformer = QgsCoordinateTransform(destinationCrs, referenceCrs, QgsProject.instance())
             geom.transform(coordinateTransformer)
         if debugging:
             return [geom, canvasCrs, referenceCrs, coordinateTransformer]
