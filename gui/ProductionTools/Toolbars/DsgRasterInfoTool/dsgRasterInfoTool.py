@@ -174,7 +174,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
             self.currentLayer.editingStarted.connect(self.activateAlias)
             self.currentLayer.editingStopped.connect(self.deactivateAlias)
 
-    def enableAssignValue(self):
+    def enableAssignValue(self, newTool=None, oldTool=None):
         self.disconnectAllSignals()
         layer = self.iface.mapCanvas().currentLayer()
         if layer and isinstance(layer, QgsVectorLayer):
@@ -254,6 +254,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         self.disconnectAllSignals()
         if self.assignBandValueTool:
             self.assignBandValueTool.deactivate()
+            self.iface.mapCanvas().unsetMapTool(self.assignBandValueTool)
         self.assignBandValueTool = None
         self.iface.mapCanvas().mapToolSet.connect(self.enableAssignValue)
         self.connectAllSignals()
