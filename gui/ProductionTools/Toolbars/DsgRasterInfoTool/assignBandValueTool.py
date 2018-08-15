@@ -28,7 +28,7 @@ from qgis.core import QgsPointXY, QgsRectangle, QgsVectorLayer, QgsGeometry, \
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
-from qgis.PyQt.QtWidgets import QMenu
+from qgis.PyQt.QtWidgets import QMenu, QApplication
 
 from qgis.PyQt.QtCore import Qt
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
@@ -97,7 +97,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         if e.button() == QtCore.Qt.LeftButton:
             self.auxList = []
-            if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            if QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
                 self.isEmittingPoint = True
                 self.startPoint = self.toMapCoordinates(e.pos())
                 self.endPoint = self.startPoint
@@ -152,7 +152,7 @@ class AssignBandValueTool(QgsMapTool):
         # tool was planned to work on left click 
         if e.button() == QtCore.Qt.LeftButton:
             layer = self.iface.mapCanvas().currentLayer()
-            if QtGui.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+            if QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
                 self.isEmittingPoint = False
                 r = self.rectangle()
                 if r is None:
@@ -187,7 +187,7 @@ class AssignBandValueTool(QgsMapTool):
         fieldList = [field.name() for field in layer.fields() if field.isNumeric()]
         for field in fieldList:
             action = menu.addAction(field)
-            callback = lambda t = [field, layer] : self.handleFeatures(t[0], t[1])
+            callback = partial(self.handleFeatures, field, layer)
             action.triggered[()].connect(callback)
         menu.exec_(self.canvas.viewport().mapToGlobal(e.pos()))
     
@@ -242,7 +242,7 @@ class AssignBandValueTool(QgsMapTool):
         """
         Deactivate tool.
         """
-        QtGui.QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
         self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
         try:
             if self.toolAction:
