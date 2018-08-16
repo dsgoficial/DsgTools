@@ -87,6 +87,7 @@ class AcquisitionFreeController(object):
         iface = self.getIface()
         iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
         iface.currentLayerChanged.connect(self.checkToActiveAction)
+        iface.currentLayerChanged.connect(self.deactivateTool)
         iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.triggered.connect(self.activateTool)
@@ -237,6 +238,7 @@ class AcquisitionFreeController(object):
 
     def activateTool(self):
         #Método para iniciar a ferramenta
+        self.disconnectToolSignals()
         tool = self.getAcquisitionFree()
         if not self.getActiveState():
             tool.acquisitionFinished.connect(self.createFeature)
@@ -244,10 +246,11 @@ class AcquisitionFreeController(object):
             canvas.setMapTool(tool)
             actionAcquisitionFree = self.getActionAcquisitionFree()
             actionAcquisitionFree.setChecked(True)
+            self.iface.mapCanvas().setMapTool(tool)
             self.setActiveState(True)
-            actionAcquisitionFree.triggered.disconnect(self.activateTool)
-                                        
-    def deactivateTool(self, oldTool=None, newTool=None):
+        self.connectToolSignals()
+                        
+    def deactivateTool(self, newTool=None, oldTool=None):
         #Método para desativar a ferramenta
         isActivable = self.checkToActiveAction()
         self.disconnectToolSignals()
@@ -260,8 +263,9 @@ class AcquisitionFreeController(object):
         self.setActiveState(False)
         tool.deactivate()
         actionAcquisitionFree = self.getActionAcquisitionFree()
-        if isActivable and isinstance(oldTool, AcquisitionFree) and isinstance(newTool, AcquisitionFree):
+        actionAcquisitionFree.setChecked(False)
+        self.iface.mapCanvas().unsetMapTool(tool)
+        if isinstance(newTool, AcquisitionFree):
             self.activateTool()
         self.connectToolSignals()
-        actionAcquisitionFree.triggered.disconnect(self.activateTool)
       
