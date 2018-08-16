@@ -50,6 +50,7 @@ class MapToolsGuiManager(QObject):
         #adding flip line tool
         self.flipLineTool = FlipLine(self.iface)
         self.flipLineTool.addTool(self.manager, self.flipLineTool.startFlipLineTool, self.parentMenu, self.iconBasePath)
+        self.flipLineTool.setToolEnabled(self.iface.mapCanvas().currentLayer())
         #adding acquisition
         self.acquisition = Acquisition(self.iface)
         self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)

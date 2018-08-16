@@ -1,4 +1,22 @@
-# -*- coding: utf-8 -*-
+#! -*- coding: UTF-8 -*-
+"""
+/***************************************************************************
+                             -------------------
+        begin                : 2018-04-02
+        git sha              : $Format:%H$
+        copyright            : (C) 2017 by  Jossan Costa - Surveying Technician @ Brazilian Army
+        email                : jossan.costa@eb.mil.br
+ ***************************************************************************/
+Some parts were inspired by QGIS plugin FreeHandEditting
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************/
+"""
 
 from __future__ import absolute_import
 import os                                                                         
@@ -12,7 +30,7 @@ from qgis.PyQt.QtGui import QKeySequence
 from qgis.PyQt.QtCore import QSettings
 from .geometricaAquisition import GeometricaAcquisition
 from qgis.core import QgsPointXY, Qgis, QgsGeometry, QgsWkbTypes
-from qgis.gui import QgsMapMouseEvent, QgsMapTool
+from qgis.gui import QgsMapMouseEvent, QgsMapTool, QgsMessageBar
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -22,14 +40,12 @@ class Polygon(GeometricaAcquisition):
 
     def endGeometry(self):
         if len(self.geometry) > 2:
-            inter = self.lineIntersection(self.geometry[1],self.geometry[0],self.geometry[-2],self.geometry[-1])
-            if inter:
-                if self.iface.activeLayer().geometryType() == QgsWkbTypes.PolygonGeometry:
-                    geom = QgsGeometry.fromPolygonXY([self.geometry+[inter]])
-                elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
-                    geom = QgsGeometry.fromPolylineXY(self.geometry+[inter])
-                self.rubberBand.setToGeometry(geom,None)
-                self.createGeometry(geom)
+            if self.iface.activeLayer().geometryType() == QgsWkbTypes.PolygonGeometry:
+                geom = QgsGeometry.fromPolygonXY([self.geometry])
+            elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
+                geom = QgsGeometry.fromPolylineXY(self.geometry)
+            self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+            self.createGeometry(geom)
 
     def endGeometryFree(self):
         if len(self.geometry) > 2:
@@ -37,7 +53,7 @@ class Polygon(GeometricaAcquisition):
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
             elif self.iface.activeLayer().geometryType() == QgsWkbTypes.LineGeometry:
                 geom = QgsGeometry.fromPolylineXY(self.geometry + [self.geometry[0]])
-            self.rubberBand.setToGeometry(geom, None)
+            self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
             self.createGeometry(geom)
   
     def canvasReleaseEvent(self, event):
@@ -47,13 +63,29 @@ class Polygon(GeometricaAcquisition):
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
         pointMap = QgsPointXY(event.mapPoint())
-        # pointMap = self.snapToLayer(event) 
         if event.button() == Qt.RightButton:
+            if not self.rubberBand:
+                self.geometry = []
+                self.qntPoint = 0
+                return
             if self.free:
                 self.geometry.append(pointMap)
                 self.endGeometryFree()
+                self.qntPoint = 0
             else:
-                self.endGeometry()        
+                if (self.qntPoint >=2):
+                    if (self.qntPoint % 2 == 0):
+                        point = QgsPointXY(pointMap)
+                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if testgeom:
+                            new_geom, pf = self.completePolygon(self.geometry, testgeom)
+                            self.geometry.append(QgsPointXY(testgeom.x(), testgeom.y()))        
+                            self.geometry.append(pf)   
+                        self.endGeometry()
+                        self.qntPoint = 0
+                    else:
+                        msg = self.tr("Tool is designed for composed features by straight angles.")
+                        self.iface.messageBar().pushInfo(self.tr("Warning!"), msg)
         elif self.free:
             self.geometry.append(pointMap)
             self.qntPoint += 1
@@ -83,16 +115,25 @@ class Polygon(GeometricaAcquisition):
         point = QgsPointXY(event.mapPoint())
         if oldPoint != point:
             self.createSnapCursor(point)
-        point = QgsPointXY(event.mapPoint())   
-        if self.qntPoint == 1:
-            geom = QgsGeometry.fromPolylineXY([self.geometry[0], point])
-            self.rubberBand.setToGeometry(geom, None)
-        elif self.qntPoint >= 2:
-            if self.free:
-                geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(point.x(), point.y())]])
-                self.rubberBand.setToGeometry(geom, None)             
-            else:        
-                testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                if testgeom:
-                    geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(testgeom.x(), testgeom.y())]])
-                    self.rubberBand.setToGeometry(geom, None)
+        point = QgsPointXY(event.mapPoint())
+        if self.rubberBand:
+            if self.qntPoint == 1:
+                self.distanceToolTip.canvasMoveEvent(self.geometry[0], point)
+                geom = QgsGeometry.fromPolylineXY([self.geometry[0], point])
+                self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+            elif self.qntPoint >= 2:
+                self.distanceToolTip.canvasMoveEvent(self.geometry[-1], point)
+                if self.free:
+                    geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(point.x(), point.y())]])
+                    self.rubberBand.setToGeometry(geom, self.iface.activeLayer())             
+                else:   
+                    if (self.qntPoint % 2 == 1): 
+                        self.setAvoidStyleSnapRubberBand()
+                    else:
+                        self.setAllowedStyleSnapRubberBand()     
+                    testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                    if testgeom:
+                        geom, pf = self.completePolygon(self.geometry, testgeom)
+                        self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+        else:
+            self.initVariable()

@@ -62,5 +62,6 @@
         <file>icons/up.png</file>
         <file>icons/down.png</file>
         <file>icons/info.png</file>
+        <file>icons/valueSetter.png</file>
     </qresource>
 </RCC>
