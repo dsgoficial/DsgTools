@@ -260,12 +260,10 @@ class AcquisitionFreeController(object):
                 tool.acquisitionFinished.disconnect(self.createFeature)
             except:
                 pass
-        self.setActiveState(False)
         tool.deactivate()
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.setChecked(False)
         self.iface.mapCanvas().unsetMapTool(tool)
-        if isinstance(newTool, AcquisitionFree):
-            self.activateTool()
+        self.setActiveState(False)
         self.connectToolSignals()
       
