@@ -108,7 +108,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
                 self.geometry.pop()
                 geom = QgsGeometry.fromPolygonXY([self.geometry])
                 self.qntPoint -= 1
-                self.rubberBand.setToGeometry(geom, None)      
+                self.rubberBand.setToGeometry(geom, self.iface.activeLayer())      
     
     def initVariable(self):
         if self.rubberBand:
