@@ -437,7 +437,7 @@ class GenericSelectionTool(QgsMapTool):
         elif e.button() == QtCore.Qt.RightButton:
             selected = (QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
             if selected:
-                triggeredAction = parital(self.iface.setActiveLayer, layer)
+                triggeredAction = partial(self.iface.setActiveLayer, layer)
                 hoveredAction = None
             else:
                 triggeredAction = partial(self.iface.openFeatureForm, layer, feature, showModal=False)
