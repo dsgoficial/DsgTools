@@ -343,4 +343,9 @@ class InspectFeatures(QWidget,Ui_Form):
             featIdList = currentLayer.allFeatureIds()
             self.setValues(featIdList, currentLayer)
             self.idSpinBox.setEnabled(True)
+    
+    def unload(self):
+        self.iface.unregisterMainWindowAction(self.activateToolAction)
+        self.iface.unregisterMainWindowAction(self.backButtonAction)
+        self.iface.unregisterMainWindowAction(self.nextButtonAction)
             

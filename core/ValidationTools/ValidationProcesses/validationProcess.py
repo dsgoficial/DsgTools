@@ -36,58 +36,6 @@ from qgis.core import Qgis, QgsVectorLayer, QgsCoordinateReferenceSystem, \
                       QgsMessageLog, QgsExpression, QgsField, QgsWkbTypes, \
                       QgsTask, QgsProcessingAlgorithm
 
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsFields)
-
-class ValidationAlgorithm(QgsProcessingAlgorithm):
-    """
-    Processing algorithm with handy stuff for other algs.
-    """
-    def getIteratorAndFeatureCount(self, lyr, onlySelected = False):
-        """
-        Gets the iterator and feature count from lyr.
-        """
-        if onlySelected:
-            total = 100.0 / lyr.selectedFeatureCount() if lyr.selectedFeatureCount() else 0
-            iterator = lyr.getSelectedFeatures()
-        else:
-            total = 100.0 / lyr.featureCount() if lyr.featureCount() else 0
-            iterator = lyr.getFeatures()
-        return iterator, total
-    
-    def prepareFlagSink(self, parameters, source, wkbType, context):
-        flagFields = self.getFlagFields()
-        (self.flagSink, self.dest_id) = self.parameterAsSink(parameters, self.FLAGS,
-                context, flagFields, wkbType, source.sourceCrs())
-        if self.flagSink is None:
-            raise QgsProcessingException(self.invalidSinkError(parameters, self.FLAGS))
-    
-    def getFlagFields(self):
-        fields = QgsFields()
-        fields.append(QgsField('reason',QVariant.String))
-        return fields
-    
-    def flagFeature(self, flagGeom, flagText):
-        """
-        Creates and adds to flagSink a new flag with the reason.
-        :param flagGeom: (QgsGeometry) geometry of the flag;
-        :param flagText: (string) Text of the flag
-        """
-        newFeat = QgsFeature(self.getFlagFields())
-        newFeat['reason'] = flagText
-        newFeat.setGeometry(flagGeom)
-        self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
-
 class ValidationProcess(QgsTask):
     def __init__(self, params, description = '', flags = QgsTask.CanCancel):
         """

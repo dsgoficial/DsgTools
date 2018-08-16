@@ -31,14 +31,12 @@ from qgis.core import QgsMessageLog, QgsGeometry, QgsFeatureRequest, QgsExpressi
 from qgis.PyQt.QtCore import QVariant
 
 from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
-from DsgTools.core.ValidationTools.ValidationProcesses.unbuildEarthCoveragePolygonsProcess import UnbuildEarthCoveragePolygonsProcess
-from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 from collections import deque, OrderedDict
+import processing
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
-import binascii
-
-from collections import OrderedDict
 class IdentifyDanglesProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """
@@ -268,7 +266,7 @@ class IdentifyDanglesProcess(ValidationProcess):
         notDangleIndexList = []
         for i in range(len(pointList)):
             candidateCount = 0
-            qgisPoint = QgsGeometry.fromPoint(pointList[i])
+            qgisPoint = QgsGeometry.fromPointXY(pointList[i])
             #search radius to narrow down candidates
             buffer = qgisPoint.buffer(searchRadius, -1)
             bufferBB = buffer.boundingBox()

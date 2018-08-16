@@ -68,10 +68,48 @@ class FeatureHandler(QObject):
             newfeat = QgsFeature(unifiedLyr.fields())
             newfeat.setGeometry(feature.geometry())
             newfeat['featid'] = feature.id()
-            newfeat['classname'] = classname
+            newfeat['layer'] = classname
             if attributeTupple:
                 newfeat['tupple'] = self.attributeHandler.getTuppleAttribute(feature, unifiedLyr, bList=bList)
             newFeats.append(newfeat)
         return newFeats
+    
+    def getNewFeatureWithoutGeom(self, referenceFeature, lyr):
+        newFeat = QgsFeature(referenceFeature)
+        provider = lyr.dataProvider()
+        for idx in lyr.primaryKeyAttributes():
+            newFeat.setAttribute(idx, None)
+        return newFeat
+    
+    def handleFeature(self, newGeom, featureWithoutGeom, lyr, parameterDict = {}, coordinateTransformer = None):
+        geomList = self.geometryHandler.handleGeometry(newGeom, parameterDict)
+        geomToUpdate = None
+        newFeatList = []
+        if not geomList:
+            return geomToUpdate, [], True
+        for idx, geom in enumerate(geomList):
+            if idx == 0:
+                geomToUpdate = geom
+                continue        
+            newFeat = self.getNewFeature(getNewFeatureWithoutGeom, lyr)
+            newFeatList.append(newFeat)
+        return geomToUpdate, newFeatList, False
+    
+    def getFeatureOuterShellAndHoles(self, feat, isMulti):
+        geom = feat.geometry()
+        
+        outershells, donutholes = self.geometryHandler.getOuterShellAndHoles(geom, isMulti)
+        outershellList = []
+        for shell in outershells:
+            outerShellFeat = QgsFeature(feat)
+            outerShellFeat.setGeometry(shell)
+            outershellList.append(outerShellFeat)
+
+        donutHoleList = []
+        for hole in donutholes:
+            newFeat = QgsFeature(feat)
+            newFeat.setGeometry(hole)
+            donutHoleList.append(newFeat)
+        return outershellList, donutHoleList
     
     

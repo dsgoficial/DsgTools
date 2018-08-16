@@ -252,3 +252,13 @@ class MinimumAreaTool(QWidget,FORM_CLASS):
         dlg = CustomSizeSetter(customSizesDict)
         dlg.sizeCreated.connect(self.addValueToCustomSizesDict)
         dlg.exec_()
+    
+    def unload(self):
+        try:
+            self.iface.unregisterMainWindowAction(self.showAction)
+        except:
+            pass
+        try:
+            self.iface.unregisterMainWindowAction(self.shapeAction)
+        except:
+            pass
