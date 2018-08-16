@@ -22,11 +22,18 @@
 """
 from qgis.core import QgsProcessingProvider
 from processing.core.ProcessingConfig import Setting, ProcessingConfig
-from .core.ValidationTools.ValidationProcesses.deaggregateGeometriesProcess import DeaggregatorAlgorithm
-from .core.ValidationTools.ValidationProcesses.identifySmallAreasProcess import IdentifySmallAreasAlgorithm
-from .core.ValidationTools.ValidationProcesses.identifySmallLinesProcess import IdentifySmallLinesAlgorithm
-from .core.ValidationTools.ValidationProcesses.identifyDuplicatedGeometriesProcess import IdentifyDuplicatedGeometriesAlgorithm
-from .core.ValidationTools.ValidationProcesses.identifyOutOfBoundsAnglesProcess import IdentifyOutOfBoundsAnglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import DeaggregatorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallPolygonsAlgorithm import IdentifySmallPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallLinesAlgorithm import IdentifySmallLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import IdentifyDuplicatedGeometriesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesAlgorithm import IdentifyOutOfBoundsAnglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesInCoverageAlgorithm import IdentifyOutOfBoundsAnglesInCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOverlapsAlgorithm import IdentifyOverlapsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import IdentifyGapsAndOverlapsInCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import IdentifyDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import IdentifyGapsAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import DonutHoleExtractorAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -36,10 +43,16 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
         self.algList = [DeaggregatorAlgorithm(), 
-                        IdentifySmallAreasAlgorithm(), 
+                        IdentifySmallPolygonsAlgorithm(), 
                         IdentifySmallLinesAlgorithm(), 
                         IdentifyDuplicatedGeometriesAlgorithm(),
-                        IdentifyOutOfBoundsAnglesAlgorithm()]
+                        IdentifyOutOfBoundsAnglesAlgorithm(),
+                        IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
+                        IdentifyOverlapsAlgorithm(),
+                        IdentifyGapsAndOverlapsInCoverageAlgorithm(),
+                        IdentifyDanglesAlgorithm(),
+                        IdentifyGapsAlgorithm(),
+                        DonutHoleExtractorAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()

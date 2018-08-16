@@ -54,22 +54,23 @@ class GeometryHandler(QObject):
     
     def adjustGeometry(self, geom, parameterDict):
         geomList = []
-        if 'geometry' in dir(geom):
-            if not parameterDict['hasMValues']:
-                geom.geometry().dropMValue()
-            if not parameterDict['hasZValues']:
-                geom.geometry().dropZValue()
-        if parameterDict['isMulti'] and not geom.isMultipart():
-            geom.convertToMultiType()
-            geomList.append(geom)
-        if not parameterDict['isMulti'] and geom.isMultipart():
-            #deaggregate here
-            parts = geom.asGeometryCollection()
-            for part in parts:
-                part.convertToSingleType()
-                geomList.append(part)
-        else:
-            geomList.append(geom)
+        if geom is not None:
+            if 'geometry' in dir(geom):
+                if not parameterDict['hasMValues']:
+                    geom.geometry().dropMValue()
+                if not parameterDict['hasZValues']:
+                    geom.geometry().dropZValue()
+            if parameterDict['isMulti'] and not geom.isMultipart():
+                geom.convertToMultiType()
+                geomList.append(geom)
+            if not parameterDict['isMulti'] and geom.isMultipart():
+                #deaggregate here
+                parts = geom.asGeometryCollection()
+                for part in parts:
+                    part.convertToSingleType()
+                    geomList.append(part)
+            else:
+                geomList.append(geom)
         return geomList
 
     def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None, debugging=False):
@@ -237,9 +238,57 @@ class GeometryHandler(QObject):
             if part.type() == QgsWkbTypes.LineGeometry:
                 self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
         return outOfBoundsList
+
+    def getAngleBetweenSegments(self, part):
+        line = part.asPolyline()
+        vertexAngle = (line[1].azimuth(line[0]) - line[1].azimuth(line[2]) + 360)
+        vertexAngle = math.fmod(vertexAngle, 360)
+        if vertexAngle > 180:
+            vertexAngle = 360 - vertexAngle
+        return vertexAngle
+
+    def getOutOfBountsAngleInSegmentList(self, segmentList, angle):
+        for line1, line2 in combinations(segmentList, 2):
+            geom = line1.combine(line2)
+            part = geom.mergeLines()
+            if len(part.asPolyline()) > 2:
+                vertexAngle = self.getAngleBetweenSegments(part)
+                if vertexAngle < angle:
+                    return vertexAngle
+        return None
+
+    def getSegmentDict(self, lineLyr):
+        segmentDict = dict()
+        geomList = []
+        for feat in lineLyr.getFeatures():
+            geom = feat.geometry()
+            if geom not in geomList:
+                geomList.append(geom)
+                lineList = geom.asPolyline()
+                if lineList[0] not in segmentDict:
+                    segmentDict[lineList[0]] = []
+                segmentDict[lineList[0]].append(QgsGeometry.fromPolyline([lineList[0], lineList[1]]))
+                if lineList[-1] not in segmentDict:
+                    segmentDict[lineList[-1]] = []
+                segmentDict[lineList[-1]].append(QgsGeometry.fromPolyline([lineList[-1], lineList[-2]]))
+        return segmentDict
     
     def handleGeometry(self, geom, parameterDict = {}, coordinateTransformer = None):
         outputList = []
         for geom in self.adjustGeometry(geom, parameterDict):
-            outputList += [self.reprojectWithCoordinateTransformer(coordinateTransformer)]
+            outputList += [self.reprojectWithCoordinateTransformer(geom, coordinateTransformer)]
         return outputList
+    
+    def getOuterShellAndHoles(self, geom, isMulti):
+        outershells, donutholes = [], []
+        for part in geom.asGeometryCollection():
+            for current, item in enumerate(part.asPolygon()):
+                newGeom = QgsGeometry.fromPolygonXY([item])
+                if isMulti:
+                    newGeom.convertToMultiType()
+                if current == 0:
+                    outershells.append(newGeom)
+                else:
+                    donutholes.append(newGeom)
+        return outershells, donutholes
+                

@@ -21,10 +21,12 @@
  ***************************************************************************/
 """
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsProject, Qgis
-from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcess
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 from collections import OrderedDict
+
+from DsgTools.core.ValidationTools.ValidationProcesses.validationProcess import ValidationProcesses
+
 class IdentifyGapsAndOverlapsProcess(ValidationProcess):
     def __init__(self, postgisDb, iface, instantiating = False, withElements = True):
         """

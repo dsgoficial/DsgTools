@@ -117,7 +117,9 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
-    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType, epsg = None, attributeTupple = False, attributeBlackList = '', onlySelected = False):
+        if not epsg:
+            epsg = layerList[0].crs().authid().split(':')[-1]
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
                                                       attributeTupple = attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
@@ -134,22 +136,22 @@ class LayerHandler(QObject):
         Creates a unified vector layer for validation purposes.
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        lyrUri = "{0}?crs=epsg:{1}".format(self.getGeometryTypeText(geomtype),srid)
+        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType),srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        provider.addAttributes(fields)
+        lyr.dataProvider().addAttributes(fields)
         lyr.updateFields()
         return lyr
     
     def getUnifiedVectorFields(self, attributeTupple = False):
         if not attributeTupple:
             fields = [QgsField('featid', QVariant.Int), 
-                      QgsField('classname', QVariant.String)
+                      QgsField('layer', QVariant.String)
                     ]
         else:
             fields = [QgsField('featid', QVariant.Int), 
-                      QgsField('classname', QVariant.String), 
+                      QgsField('layer', QVariant.String), 
                       QgsField('tupple', QVariant.String), 
                       QgsField('blacklist', QVariant.String)
                       ]
@@ -161,25 +163,25 @@ class LayerHandler(QObject):
         blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
         for layer in layerList:
             # recording class name
-            classname = layer.name()
+            layername = layer.name()
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
             iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False)
             for feature in iterator:
-                newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, classname,\
+                newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, layername,\
                                                                    bList=blackList, \
                                                                    attributeTupple=attributeTupple, \
                                                                    parameterDict=parameterDict, \
                                                                    coordinateTransformer=coordinateTransformer)
-                featlist += newFeats
+                featList += newFeats
         return featList
 
     def addFeaturesToLayer(self, lyr, featList, commitChanges = True, msg = ''):
-        with edit(lyr):
-            lyr.beginEditCommand(msg)
-            res = lyr.addFeatures(featList)
-            lyr.endEditCommand()
-            if commitChanges:
-                lyr.commitChanges()
+        lyr.startEditing()
+        lyr.beginEditCommand(msg)
+        res = lyr.addFeatures(featList)
+        lyr.endEditCommand()
+        if commitChanges:
+            lyr.commitChanges()
         return res
     
     def splitUnifiedLayer(self, unifiedLyr, lyrList):
@@ -188,5 +190,52 @@ class LayerHandler(QObject):
         """
 
         for lyr in lyrList:
-            lyrName = lyr.name()
-
+            self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
+    
+    def buildInputDict(self, inpytLyr):
+        """
+        Maps inputLyr into a dict with its attributes.
+        """
+        inputDict = dict()
+        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
+        for feature in inpytLyr.getFeatures(request):
+            inputDict[feature.id()] = dict()
+            inputDict[feature.id()]['featList'] = []
+            inputDict[feature.id()]['featWithoutGeom'] = feature
+        return inputDict
+    
+    def updateOriginalLayerFromUnifiedLayer(self, lyr, unifiedLyr):
+        inputDict = self.buildInputDict(lyr)
+        request = QgsFeatureRequest(QgsExpression('layername = {0}'.format(lyr.name())))
+        for feat in unifiedLyr.getFeatures(request):
+            fid = feat['featid']
+            if fid in inputDict:
+                inputDict[fid]['featList'].append(feat)
+        parameterDict = self.getDestinationParameters(unifiedLyr)
+        coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
+        self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer)
+    
+    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = {}, coordinateTransformer = None):
+        """
+        Updates lyr using inputDict
+        """
+        idsToRemove, featuresToAdd, idsToRemove = [], [], []
+        lyr.startEditing()
+        lyr.beginEditCommand('Updating layer {0}'.format(lyr.name()))
+        for id in inputDict:
+            outFeats = inputDict[id]['featList']
+            if len(outFeats) == 0 and id not in idsToRemove: #no output, must delete feature
+                idsToRemove.append(id)
+                continue
+            for feat in outFeats:
+                geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(feat.geometry(), \
+                                                                                            inputDict[id]['featWithoutGeom'], \
+                                                                                            parameterDict = parameterDict, \
+                                                                                            coordinateTransformer = coordinateTransformer)
+                if geomToUpdate is not None:
+                    lyr.changeGeometry(id, geomToUpdate) #faster according to the api
+                featuresToAdd += addedFeatures
+                idsToRemove += [id] if deleteId else []
+        lyr.addFeatures(featuresToAdd)
+        lyr.deleteFeatures(idsToRemove)
+        lyr.endEditCommand()
