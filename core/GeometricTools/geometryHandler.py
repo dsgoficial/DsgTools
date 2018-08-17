@@ -27,7 +27,7 @@ from math import pi
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
-                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsWkbTypes
+                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsWkbTypes, QgsCoordinateReferenceSystem
 from qgis.PyQt.Qt import QObject
 
 class GeometryHandler(QObject):
