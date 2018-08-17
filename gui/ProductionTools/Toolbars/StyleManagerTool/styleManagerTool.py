@@ -99,6 +99,10 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                     fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
                     if fullPath:
                         lyr.loadNamedStyle(fullPath)
+                        # remove qml temporary file
+                        self.utils.deleteQml(fullPath)
+                        # clear fullPath variable
+                        del fullPath
                 except:
                     pass
                 localProgress.step()
@@ -195,6 +199,12 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         if styleName in availableStyles:
             path = os.path.join(stylePath, styleName)
             qml = self.utils.parseStyle(path)
-            return qml
+            # dsgtools have the right to write on its own directory
+            # a temporary file "temp.qml"
+            tempPath = os.path.join(stylePath, "temp.qml")
+            with open(tempPath, "w") as f:
+                f.writelines(qml)
+                f.close()
+            return tempPath
         else:
             return None
