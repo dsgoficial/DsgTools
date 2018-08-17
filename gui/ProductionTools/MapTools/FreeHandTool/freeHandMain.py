@@ -30,7 +30,7 @@ class FreeHandMain(QObject):
         #construtor
         super(FreeHandMain, self).__init__()
         self.iface = iface
-        self.acquisitionFree = AcquisitionFree(iface.mapCanvas())
+        self.acquisitionFree = AcquisitionFree(iface)
         self.acquisitionFreeController = AcquisitionFreeController(
             self.acquisitionFree,
             iface
@@ -44,8 +44,8 @@ class FreeHandMain(QObject):
             callback=self.run,
             add_to_menu=False,
             add_to_toolbar=True,
-            withShortcut = True,
-            parentToolbar =parentMenu
+            withShortcut=True,
+            parentToolbar=parentMenu
         )
         self.setAction(action)
 

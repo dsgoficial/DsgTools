@@ -19,19 +19,21 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from builtins import range
-from qgis.PyQt import QtCore, QtGui
+from qgis.PyQt import QtCore, QtGui, QtWidgets
 from qgis import core, gui
+from qgis.core import QgsGeometry
 import math, json
 
 class AcquisitionFree(gui.QgsMapTool):
  
     #Sinal usado para enviar a geometria adquirida ao finalizar aquisição
-    acquisitionFinished = QtCore.pyqtSignal('QgsGeometry*')
+    acquisitionFinished = QtCore.pyqtSignal(QgsGeometry)
 
-    def __init__(self, canvas):
+    def __init__(self, iface):
         #construtor
-        super(AcquisitionFree, self).__init__(canvas)
-        self.canvas = canvas
+        self.iface = iface
+        self.canvas = iface.mapCanvas()
+        super(AcquisitionFree, self).__init__(self.canvas)
         self.rubberBand = None
         self.rubberBandToStopState = None
         self.drawing = False
@@ -203,8 +205,7 @@ class AcquisitionFree(gui.QgsMapTool):
             self.setStopedState(False)
             self.getRubberBandToStopState().reset()
             self.cancelEdition()
-        
-               
+
     def createSnapCursor(self, point):
         #Método para criar rubberBand do snap
         rubberBand = self.getSnapRubberBand()
@@ -215,8 +216,8 @@ class AcquisitionFree(gui.QgsMapTool):
                 self.getCanvas(), 
                 geometryType = core.QgsWkbTypes.PointGeometry
             )
+        rubberBand.setColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setFillColor(QtGui.QColor(255, 0, 0, 40))
-        rubberBand.setBorderColor(QtGui.QColor(255, 0, 0, 200))
         rubberBand.setWidth(5)
         rubberBand.setIcon(gui.QgsRubberBand.ICON_X)
         rubberBand.addPoint(point)
@@ -338,3 +339,7 @@ class AcquisitionFree(gui.QgsMapTool):
         #Método chamado ao ativar a ferramenta
         mapCanvas = self.getCanvas()
         mapCanvas.setCursor(self.getCursor())
+
+    def deactivate(self):
+        QtWidgets.QApplication.restoreOverrideCursor()
+        gui.QgsMapTool.deactivate(self)

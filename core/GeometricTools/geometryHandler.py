@@ -31,7 +31,7 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
 from qgis.PyQt.Qt import QObject
 
 class GeometryHandler(QObject):
-    def __init__(self, iface = None, parent = None):
+    def __init__(self, iface=None, parent=None):
         super(GeometryHandler, self).__init__()
         self.parent = parent
         self.iface = iface
@@ -83,13 +83,34 @@ class GeometryHandler(QObject):
         :param debbuging: if True, method returns the the list [geometry, canvasCrs, referenceCrs, coordinateTransformer]
         """
         if not destinationCrs:
-            destinationCrs = self.canvas.mapRenderer().destinationCrs()
+            destinationCrs = QgsProject.instance().crs()
         if destinationCrs.authid() != referenceCrs.authid():
             if not coordinateTransformer:
-                coordinateTransformer = QgsCoordinateTransform(destinationCrs, referenceCrs)
+                coordinateTransformer = QgsCoordinateTransform(destinationCrs, referenceCrs, QgsProject.instance())
             geom.transform(coordinateTransformer)
         if debugging:
             return [geom, canvasCrs, referenceCrs, coordinateTransformer]
+
+    def reprojectSearchArea(self, layer, geom):
+        """
+        Reprojects search area if necessary, according to what is being searched.
+        :param layer: (QgsVectorLayer) layer which target rectangle has to have same SRC.
+        :param geom: (QgsRectangle) rectangle representing search area.
+        :return: (QgsRectangle) rectangle representing reprojected search area.
+        """
+        #geom always have canvas coordinates
+        epsg = self.canvas.mapSettings().destinationCrs().authid()
+        #getting srid from something like 'EPSG:31983'
+        srid = layer.crs().authid()
+        if epsg == srid:
+            return geom
+        crsSrc = QgsCoordinateReferenceSystem(epsg)
+        crsDest = QgsCoordinateReferenceSystem(srid)
+        # Creating a transformer
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance()) # here we have to put authid, not srid
+        auxGeom = QgsGeometry.fromRect(geom)
+        auxGeom.transform(coordinateTransformer)
+        return auxGeom.boundingBox()
 
     def flipFeature(self, layer, feature, geomType=None, refreshCanvas=False):
         """
@@ -257,3 +278,17 @@ class GeometryHandler(QObject):
         for geom in self.adjustGeometry(geom, parameterDict):
             outputList += [self.reprojectWithCoordinateTransformer(geom, coordinateTransformer)]
         return outputList
+    
+    def getOuterShellAndHoles(self, geom, isMulti):
+        outershells, donutholes = [], []
+        for part in geom.asGeometryCollection():
+            for current, item in enumerate(part.asPolygon()):
+                newGeom = QgsGeometry.fromPolygonXY([item])
+                if isMulti:
+                    newGeom.convertToMultiType()
+                if current == 0:
+                    outershells.append(newGeom)
+                else:
+                    donutholes.append(newGeom)
+        return outershells, donutholes
+                
