@@ -91,7 +91,7 @@ class FeatureHandler(QObject):
             if idx == 0:
                 geomToUpdate = geom
                 continue        
-            newFeat = self.getNewFeature(getNewFeatureWithoutGeom, lyr)
+            newFeat = self.getNewFeatureWithoutGeom(featureWithoutGeom, lyr)
             newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
     
