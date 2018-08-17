@@ -4,7 +4,7 @@ from qgis.PyQt.QtGui import QIcon, QPixmap
 from qgis.PyQt.QtWidgets import QAction
 from qgis.PyQt.Qt import QObject
 from qgis.gui import QgsMessageBar
-from qgis.core import Qgis, Qgis, QgsWkbTypes
+from qgis.core import Qgis, Qgis, QgsWkbTypes, QgsVectorLayer
 from .circle import Circle
 from .polygon import Polygon
 
@@ -14,6 +14,10 @@ class Acquisition(QObject):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool = None
+        self.iface.currentLayerChanged.connect(self.checkToDeactivate)
+        self.iface.actionToggleEditing().triggered.connect(self.setToolsEnabled)
+        self.polygonAction = None
+        self.circleAction = None
     
     def addTool(self, manager, callback, parentMenu, iconBasePath):
         icon_path = iconBasePath + 'home.png'
@@ -52,6 +56,23 @@ class Acquisition(QObject):
 
     def acquisitionCircle(self):
         self.run(Circle, self.circleAction)
+
+    def checkToDeactivate(self, layer):
+        enabled = self.setToolsEnabled(layer)
+        if not enabled and self.tool:
+            self.tool.deactivate()
+    
+    def setToolsEnabled(self, layer):
+        layer = self.iface.mapCanvas().currentLayer()
+        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QgsWkbTypes.PointGeometry or not layer.isEditable():
+            enabled = False
+        else:
+            enabled = True
+        if self.polygonAction:
+            self.polygonAction.setEnabled(enabled)
+        if self.circleAction:
+            self.circleAction.setEnabled(enabled)
+        return enabled
             
     def run(self, func, action):
         layer = self.canvas.currentLayer()
@@ -69,5 +90,9 @@ class Acquisition(QObject):
         else:
             self.iface.messageBar().pushMessage(self.tr('Warning'), self.tr('Start editing in current layer!'), level=Qgis.Info, duration=3)
             self.tool.deactivate() if self.tool else ""
-                                    
-            
+
+    def unload(self):
+        """
+        Unloads tool and unsets it.
+        """
+        self.tool.deactivate() if self.tool else ""

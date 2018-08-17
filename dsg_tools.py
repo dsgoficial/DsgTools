@@ -45,7 +45,7 @@ except Exception as e:
     pass
 
 from .gui.guiManager import GuiManager
-from .dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
+from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
 
 class DsgTools(object):
     """QGIS Plugin Implementation."""

@@ -95,4 +95,21 @@ class FeatureHandler(QObject):
             newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
     
+    def getFeatureOuterShellAndHoles(self, feat, isMulti):
+        geom = feat.geometry()
+        
+        outershells, donutholes = self.geometryHandler.getOuterShellAndHoles(geom, isMulti)
+        outershellList = []
+        for shell in outershells:
+            outerShellFeat = QgsFeature(feat)
+            outerShellFeat.setGeometry(shell)
+            outershellList.append(outerShellFeat)
+
+        donutHoleList = []
+        for hole in donutholes:
+            newFeat = QgsFeature(feat)
+            newFeat.setGeometry(hole)
+            donutHoleList.append(newFeat)
+        return outershellList, donutHoleList
+    
     
