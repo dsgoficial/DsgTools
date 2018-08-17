@@ -249,3 +249,21 @@ class Utils(object):
             return jsonDict
         else:
             return json.loads(jsonDict)
+
+    def deleteQml(self, tempQml):
+        """
+        Deletes a file from a given dir, if it's a QML file.
+        """
+        try:
+            if temp[-4:].lower() == '.qml':
+                try:
+                    # linux/unix env
+                    os.system('rm {0}'.format(tempQml))
+                except:
+                    # windows/dos env
+                    os.system('del {0}'.format(tempQml))
+                return True
+            else:
+                return False
+        except:
+            return False
