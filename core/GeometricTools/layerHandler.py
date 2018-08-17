@@ -192,18 +192,33 @@ class LayerHandler(QObject):
         for lyr in lyrList:
             self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
     
-    def buildInputDict(self, inpytLyr):
+    def buildInputDict(self, inpytLyr, pk = None):
         """
         Maps inputLyr into a dict with its attributes.
         """
         inputDict = dict()
         request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
         for feature in inpytLyr.getFeatures(request):
-            inputDict[feature.id()] = dict()
-            inputDict[feature.id()]['featList'] = []
-            inputDict[feature.id()]['featWithoutGeom'] = feature
+            key = feature[pk] if pk else feature.id()
+            inputDict[key] = dict()
+            inputDict[key]['featList'] = []
+            inputDict[key]['featWithoutGeom'] = feature
         return inputDict
     
+    def populateInputDictFeatList(self, lyr, inputDict, pk = None, request = None):
+        iterator = lyr.getFeatures(request) if request else lyr.getFeatures()
+        for feat in iterator:
+            fid = feat[pk] if pk else feat.id()
+            if fid in inputDict:
+                inputDict[fid]['featList'].append(feat)
+    
+    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None):
+        inputDict = self.buildInputDict(originalLayer, pk = field)
+        self.populateInputDictFeatList(resultLayer, inputDict, pk=field)
+        parameterDict = self.getDestinationParameters(originalLayer)
+        coordinateTransformer = self.getCoordinateTransformer(resultLayer, originalLayer)
+        self.updateOriginalLayerFeatures(originalLayer, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer)
+
     def updateOriginalLayerFromUnifiedLayer(self, lyr, unifiedLyr):
         inputDict = self.buildInputDict(lyr)
         request = QgsFeatureRequest(QgsExpression('layername = {0}'.format(lyr.name())))
@@ -230,6 +245,7 @@ class LayerHandler(QObject):
             for feat in outFeats:
                 geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(feat.geometry(), \
                                                                                             inputDict[id]['featWithoutGeom'], \
+                                                                                            lyr, \
                                                                                             parameterDict = parameterDict, \
                                                                                             coordinateTransformer = coordinateTransformer)
                 if geomToUpdate is not None:
