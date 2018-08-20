@@ -71,12 +71,18 @@ class EDGVLayerLoader(QObject):
             return self.getStyleFromFile(stylePath['style'], className)
     
     def getStyleFromFile(self, stylePath, className):
-        availableStyles = os.walk(stylePath).next()[2]
+        availableStyles = next(os.walk(stylePath))[2]
         styleName = className+'.qml'
         if styleName in availableStyles:
             path = os.path.join(stylePath, styleName)
             qml = self.utils.parseStyle(path)
-            return qml
+            # dsgtools have the right to write on its own directory
+            # a temporary file "temp.qml"
+            tempPath = os.path.join(stylePath, "temp.qml")
+            with open(tempPath, "w") as f:
+                f.writelines(qml)
+                f.close()
+            return tempPath
         else:
             return None
     
