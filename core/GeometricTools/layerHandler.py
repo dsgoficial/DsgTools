@@ -252,7 +252,7 @@ class LayerHandler(QObject):
         parameterDict = self.getDestinationParameters(unifiedLyr)
         for lyr in lyrList:
             inputDict = self.buildInputDict(lyr)
-            request = QgsFeatureRequest(QgsExpression('layername = {0}'.format(lyr.name())))
+            request = QgsFeatureRequest(QgsExpression("layer = '{0}'".format(lyr.name())))
             self.populateInputDictFeatList(unifiedLyr, inputDict, pk = 'featid', request = request, feedback=feedback, progressDelta=progressDelta/(2*lenList))
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
             self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, feedback=feedback, progressDelta=progressDelta/(2*lenList))
