@@ -41,7 +41,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
-                       QgsGeometry)
+                       QgsGeometry,
+                       QgsProject)
 
 class TopologicalCleanAlgorithm(ValidationAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
@@ -81,7 +82,8 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 self.MINAREA,
                 self.tr('Minimum area'),
                 minValue=0,
-                defaultValue=0.0001
+                defaultValue=0.0001,
+                type=QgsProcessingParameterNumber.Double
             )
         )
         
@@ -114,6 +116,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                                                     returnError=True, \
                                                     snap=snap, \
                                                     minArea=minArea)
+
         layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, cleanedCoverage, feedback=feedback, progressDelta=70)
         if error:
             for feat in error.getFeatures():
