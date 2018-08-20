@@ -274,16 +274,15 @@ class LayerHandler(QObject):
             if len(outFeats) == 0 and id not in idsToRemove: #no output, must delete feature
                 idsToRemove.append(id)
                 continue
-            for feat in outFeats:
-                geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(feat.geometry(), \
-                                                                                            inputDict[id]['featWithoutGeom'], \
-                                                                                            lyr, \
-                                                                                            parameterDict = parameterDict, \
-                                                                                            coordinateTransformer = coordinateTransformer)
-                if geomToUpdate is not None:
-                    lyr.changeGeometry(id, geomToUpdate) #faster according to the api
-                featuresToAdd += addedFeatures
-                idsToRemove += [id] if deleteId else []
+            geomToUpdate, addedFeatures, deleteId = self.featureHandler.handleFeature(outFeats, \
+                                                                                 inputDict[id]['featWithoutGeom'], \
+                                                                                 lyr, \
+                                                                                 parameterDict = parameterDict, \
+                                                                                 coordinateTransformer = coordinateTransformer)
+            if geomToUpdate is not None:
+                lyr.changeGeometry(id, geomToUpdate) #faster according to the api
+            featuresToAdd += addedFeatures
+            idsToRemove += [id] if deleteId else []
             if feedback:
                 feedback.setProgress(currentProgress + int(localTotal*current))
         lyr.addFeatures(featuresToAdd)
