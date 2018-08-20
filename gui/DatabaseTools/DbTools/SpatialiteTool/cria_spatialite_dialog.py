@@ -32,7 +32,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'cria_spatialite_dialog_base.ui'))
 
 class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, parentMenu=None):
         """Constructor."""
         super(CriaSpatialiteDialog, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -41,6 +41,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
+        self.parentMenu = parentMenu
 
         self.filepath = ""
         self.carregado = False
@@ -48,6 +49,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         self.epsgCriaSpatialite = 0
         self.srsCriaSpatialite = ''
         self.sqliteFileName = ''
+        self.action = None
 
         self.bar = QgsMessageBar()
         self.setLayout(QtWidgets.QGridLayout(self))
@@ -87,6 +89,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         self.pastaDestinoCriaSpatialiteLineEdit.setText("")
         self.coordSysCriaSpatialiteLineEdit.setText("")
         self.nomeLineEdit.setText("")
+        self.action = None
 
     def definePastaDestino(self):
         """
@@ -97,6 +100,13 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         if self.filepath != "":
             self.carregado = True
             self.pastaDestinoCriaSpatialiteLineEdit.setText(self.filepath)
+
+    def setAction(self, action):
+        """
+        Sets a action to tool button.
+        :param action: (QAction) action to be set to tool button.
+        """
+        self.action = action
 
     def setaSistCoordCriaSpatialite(self):
         """
@@ -158,3 +168,26 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select a folder to save the database'), level=Qgis.CRITICAL)
             if len(self.nomeLineEdit.text()) == 0:
                 self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=Qgis.CRITICAL)
+
+    def addAction(self):
+        """
+        Adds the action to button on QGIS GUI and adds it to DSGTools menu.
+        """
+        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
+        action = self.add_action(
+            icon_path,
+            text=self.tr('Create Spatialite'),
+            callback=self.createSpatialiteDatabase,
+            parent=self.parentMenu,
+            add_to_menu=False,
+            add_to_toolbar=False)
+        database.addAction(action)
+        self.setAction(action)
+        self.manager.addTool(
+
+            
+        )
+        self.databaseButton.addAction(action) 
+
+    def unload(self):
+        pass
