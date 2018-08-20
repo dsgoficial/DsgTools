@@ -29,7 +29,7 @@ from DsgTools.gui.DatabaseTools.DbTools.SpatialiteTool.cria_spatialite_dialog im
 
 class DatabaseGuiManager(QObject):
 
-    def __init__(self, manager, iface, parentMenu=None, source=None):
+    def __init__(self, manager, iface, parentMenu=None, toolbar=None):
         """Constructor.
         :param iface: An interface instance that will be passed to this class
             which provides the hook by which you can manipulate the QGIS
@@ -42,15 +42,30 @@ class DatabaseGuiManager(QObject):
         self.iface = iface
         self.parentMenu = parentMenu
         # self.dbAbstract = dbAbstract
-        self.source = source
+        self.toolbar = toolbar
         self.menu = self.manager.addMenu(u'databasetools', self.tr('Database Tools'),'database.png')
-        self.stackButton = self.manager.createToolButton(self.source, u'DatabaseTools')
+        self.postgisButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
+        self.spatialiteButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
+    def addTool(self, text, callback, parentMenu, icon, defaultButton = False):
+        icon_path = self.iconBasePath + icon
+        action = self.manager.add_action(
+            icon_path,
+            text=text,
+            callback=callback,
+            add_to_menu = False,
+            add_to_toolbar = False,
+            withShortcut = False,
+            parentToolbar = parentMenu,
+            isCheckable = False
+        )
+        self.stackButton.addAction(action)
+
     def initGui(self):
         # self.postgisManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
         # self.postgisManager.initGui()
-        self.spatialiteManager = CriaSpatialiteDialog()
+        self.spatialiteManager = CriaSpatialiteDialog(parentMenu=self.menu)
         # self.spatialiteManager.initGui()
 
     def unload(self):
