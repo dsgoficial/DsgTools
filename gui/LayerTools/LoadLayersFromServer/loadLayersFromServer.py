@@ -134,23 +134,16 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         if len(selectedKeys) == 0:
             QMessageBox.information(self, self.tr('Error!'), self.tr('Select at least one layer to be loaded!'))
             return
-
         #2- get parameters
         withElements = self.checkBoxOnlyWithElements.isChecked()
         selectedStyle = None
         edgvVersion = self.customServerConnectionWidget.getDatabaseVersion()
-        if edgvVersion == 'Non_EDGV':
-            isEdgv = False
-        else:
-            isEdgv = True
+        isEdgv = not edgvVersion == 'Non_EDGV'
         if self.styleComboBox.currentIndex() != 0:
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
         onlyParents = self.onlyParentsCheckBox.isChecked()
-        if 'Pro' in edgvVersion:
-            customForm = True if not self.customFormCheckBox.isChecked() else False
-        else:
-            customForm = False
+        customForm = not self.customFormCheckBox.isChecked() if 'Pro' in edgvVersion else False
         #3- Build factory dict
         factoryDict = dict()
         dbList = list(self.customServerConnectionWidget.selectedDbsDict.keys())
@@ -159,13 +152,13 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
         #4- load for each db
         exceptionDict = dict()
         progress = ProgressWidget(1, len(dbList), self.tr('Loading layers from selected databases... '), parent=self)
-        for dbName in list(factoryDict.keys()):
+        for dbName in factoryDict:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             try:
                 selectedClasses = []
                 for i in selectedKeys:
-                    if i in list(self.lyrDict.keys()):
-                        if dbName in list(self.lyrDict[i].keys()):
+                    if i in self.lyrDict:
+                        if dbName in self.lyrDict[i]:
                             selectedClasses.append(self.lyrDict[i][dbName])
                 factoryDict[dbName].load(selectedClasses, uniqueLoad=uniqueLoad, onlyWithElements=withElements, stylePath=selectedStyle, useInheritance=onlyParents, isEdgv=isEdgv, customForm = customForm, parent=self)
                 progress.step()
