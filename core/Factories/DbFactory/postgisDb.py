@@ -1870,7 +1870,13 @@ class PostgisDb(AbstractDb):
         if parsing:
             if qml:
                 qml = self.utils.parseStyle(qml)
-        return qml
+        tempPath = None
+        if qml:
+            tempPath = os.path.join(os.path.dirname(__file__), 'temp.qml')
+            with open(tempPath, 'w') as f:
+                f.writelines(qml)
+                f.close()
+        return tempPath
     
     def importStyle(self, styleName, table_name, qml, tableSchema, useTransaction = True):
         self.checkAndOpenDb()
