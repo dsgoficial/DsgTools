@@ -22,7 +22,7 @@
 """
 import os
 # Import the PyQt and QGIS libraries
-from qgis.PyQt import uic
+from qgis.PyQt import uic, QtGui
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from qgis.PyQt.QtWidgets import QDialog
@@ -32,9 +32,9 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsMessageLog, QgsCredential
 from qgis.gui import QgsProjectionSelectionTreeWidget
 
 #DsgTools Imports
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.gui.ServerTools.viewServers import ViewServers
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

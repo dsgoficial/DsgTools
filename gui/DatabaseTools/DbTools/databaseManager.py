@@ -27,7 +27,7 @@ from qgis.PyQt.QtCore import QObject
 from DsgTools.gui.DatabaseTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 from DsgTools.gui.DatabaseTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 
-class ProductionToolsGuiManager(QObject):
+class DatabaseGuiManager(QObject):
 
     def __init__(self, manager, iface, parentMenu=None, source=None):
         """Constructor.
@@ -37,21 +37,22 @@ class ProductionToolsGuiManager(QObject):
         :type iface: QgsInterface
         """
         # Save reference to the QGIS interface
-        super(ProductionToolsGuiManager, self).__init__()
+        super(DatabaseGuiManager, self).__init__()
         self.manager = manager
         self.iface = iface
         self.parentMenu = parentMenu
-        self.dbAbstract = dbAbstract
+        # self.dbAbstract = dbAbstract
+        self.source = source
         self.menu = self.manager.addMenu(u'databasetools', self.tr('Database Tools'),'database.png')
-        self.stackButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
+        self.stackButton = self.manager.createToolButton(self.source, u'DatabaseTools')
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        self.postgisManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
-        self.postgisManager.initGui()
-        self.spatialiteManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
-        self.spatialiteManager.initGui()
+        # self.postgisManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
+        # self.postgisManager.initGui()
+        self.spatialiteManager = CriaSpatialiteDialog()
+        # self.spatialiteManager.initGui()
 
     def unload(self):
-        self.postgisManager.unload()
+        # self.postgisManager.unload()
         self.spatialiteManager.unload()
