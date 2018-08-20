@@ -214,7 +214,11 @@ class PostGISLayerLoader(EDGVLayerLoader):
             if stylePath:
                 fullPath = self.getStyle(stylePath, tableName)
                 if fullPath:
-                    vlayer.applyNamedStyle(fullPath)
+                    vlayer.loadNamedStyle(fullPath)
+                    # remove qml temporary file
+                    self.utils.deleteQml(fullPath)
+                    # clear fullPath variable
+                    del fullPath
             if customForm:
                 vlayer = self.loadFormCustom(vlayer)
             parentNode.addLayer(vlayer)
