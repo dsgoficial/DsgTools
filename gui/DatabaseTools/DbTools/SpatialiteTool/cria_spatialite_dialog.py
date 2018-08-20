@@ -20,9 +20,9 @@ Create spatialite database built according to Brazilian's EDGV
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt import QtCore
+from qgis.PyQt import QtCore, QtWidgets
 from qgis.core import QgsCoordinateReferenceSystem, Qgis
-from qgis.gui import QgsProjectionSelectionTreeWidget
+from qgis.gui import QgsProjectionSelectionTreeWidget, QgsMessageBar
 from qgis.PyQt import uic, QtWidgets
 
 import sqlite3, os
@@ -49,11 +49,11 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         self.srsCriaSpatialite = ''
         self.sqliteFileName = ''
 
-        self.bar = Qgis()
-        self.setLayout(QtGui.QGridLayout(self))
+        self.bar = QgsMessageBar()
+        self.setLayout(QtWidgets.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0,0,1,1)
 
@@ -92,7 +92,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         Defines destination folder
         """
-        fd = QtGui.QFileDialog()
+        fd = QtWidgets.QFileDialog()
         self.filepath = fd.getExistingDirectory()
         if self.filepath != "":
             self.carregado = True
