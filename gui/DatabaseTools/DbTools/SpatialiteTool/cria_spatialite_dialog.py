@@ -21,8 +21,8 @@ Create spatialite database built according to Brazilian's EDGV
  ***************************************************************************/
 """
 from qgis.PyQt import QtCore
-from qgis.core import QgsCoordinateReferenceSystem
-from qgis.gui import QgsProjectionSelectionTreeWidget, QgsMessageBar
+from qgis.core import QgsCoordinateReferenceSystem, Qgis
+from qgis.gui import QgsProjectionSelectionTreeWidget
 from qgis.PyQt import uic, QtWidgets
 
 import sqlite3, os
@@ -49,7 +49,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         self.srsCriaSpatialite = ''
         self.sqliteFileName = ''
 
-        self.bar = QgsMessageBar()
+        self.bar = Qgis()
         self.setLayout(QtGui.QGridLayout(self))
         self.layout().setContentsMargins(0,0,0,0)
         self.layout().setAlignment(QtCore.Qt.AlignTop)
@@ -57,9 +57,9 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         self.bar.setSizePolicy(sizePolicy)
         self.layout().addWidget(self.bar, 0,0,1,1)
 
-        QtCore.QObject.connect(self.pushButtonBuscarPastaDestinoCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.definePastaDestino)
-        QtCore.QObject.connect(self.pushButtonBuscarSistCoordCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.setaSistCoordCriaSpatialite)
-        QtCore.QObject.connect(self.pushButtonOkCriaSpatialite, QtCore.SIGNAL(("clicked()")), self.okselecionadoCriaSpatialite)
+        self.pushButtonBuscarPastaDestinoCriaSpatialite.clicked.connect(self.definePastaDestino)
+        self.pushButtonBuscarSistCoordCriaSpatialite.clicked.connect(self.setaSistCoordCriaSpatialite)
+        self.pushButtonOkCriaSpatialite.clicked.connect(self.okselecionadoCriaSpatialite)
 
     def getTemplateLocation(self):
         """
@@ -76,7 +76,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
 
     def restauraInicio(self):
         """
-        Stes the initial state
+        Sets the initial state
         """
         self.filepath = ""
         self.carregado = False
@@ -112,7 +112,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.coordSysDefinido = True
                 self.coordSysCriaSpatialiteLineEdit.setText(self.srsCriaSpatialite.description())
         except:
-            self.bar.pushMessage("", self.tr('Please, select the coordinate system'), level=QgsMessageBar.WARNING)
+            self.bar.pushMessage("", self.tr('Please, select the coordinate system'), level=Qgis.WARNING)
             pass
 
     def copiaSemente(self, destino, srid):
@@ -148,13 +148,13 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.restauraInicio()
                 QMessageBox.information(self, self.tr('Information'), self.tr('Spatialite created successfully!'))
             except:
-                qgis.utils.iface.messageBar().pushMessage(self.tr("Error!"), self.tr("Problem creating the database!"), level=QgsMessageBar.CRITICAL)
+                qgis.utils.iface.messageBar().pushMessage(self.tr("Error!"), self.tr("Problem creating the database!"), level=Qgis.CRITICAL)
                 self.restauraInicio()
                 pass
         else:
             if self.coordSysDefinido == False:
-                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select the coordinate system'), level=QgsMessageBar.WARNING)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select the coordinate system'), level=Qgis.WARNING)
             if self.carregado == False:
-                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select a folder to save the database'), level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select a folder to save the database'), level=Qgis.CRITICAL)
             if len(self.nomeLineEdit.text()) == 0:
-                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=QgsMessageBar.CRITICAL)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=Qgis.CRITICAL)
