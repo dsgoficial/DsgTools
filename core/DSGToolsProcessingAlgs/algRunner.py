@@ -25,10 +25,7 @@ import processing
 from qgis.core import QgsProcessingUtils
 
 class AlgRunner:
-    
-    def runClean(self):
-        pass
-    
+    Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
     def runDissolve(self, inputLyr, context, outputLyr = 'memory:', field = []):
         parameters = {
             'INPUT' : inputLyr,
@@ -78,3 +75,30 @@ class AlgRunner:
         x = processing.run('grass7:v.overlay', parameters, context = context)
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
         return lyr
+    
+    def runClean(self, inputLyr, toolList, context, typeList=[0,1,2,3,4,5,6], returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
+        output = QgsProcessingUtils.generateTempFilename('output.shp')
+        error = QgsProcessingUtils.generateTempFilename('error.shp')
+        parameters = {
+            'input':inputLyr,
+            'type':typeList,
+            'tool':toolList,
+            'threshold':'-1', 
+            '-b': False, 
+            '-c': useFollowup, 
+            'output' : output, 
+            'error': error, 
+            'GRASS_REGION_PARAMETER': None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER': snap,
+            'GRASS_MIN_AREA_PARAMETER': minArea,
+            'GRASS_OUTPUT_TYPE_PARAMETER': 0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''
+            }
+        x = processing.run('grass7:v.clean', parameters, context = context)
+        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
+        if returnError:
+            errorLyr = QgsProcessingUtils.mapLayerFromString(x['error'], context)
+            return lyr, errorLyr
+        else:
+            return lyr

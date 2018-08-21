@@ -35,6 +35,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgori
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import DonutHoleExtractorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import UpdateOriginalLayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAlgorithm import TopologicalCleanAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -54,7 +55,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         IdentifyDanglesAlgorithm(),
                         IdentifyGapsAlgorithm(),
                         DonutHoleExtractorAlgorithm(),
-                        UpdateOriginalLayerAlgorithm()]
+                        UpdateOriginalLayerAlgorithm(),
+                        TopologicalCleanAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
