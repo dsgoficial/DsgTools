@@ -26,6 +26,20 @@ from qgis.core import QgsProcessingUtils
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
+
+    def generateGrassOutputAndError(self):
+        output = QgsProcessingUtils.generateTempFilename('output.shp')
+        error = QgsProcessingUtils.generateTempFilename('error.shp')
+        return output, error
+    
+    def getGrassReturn(self, outputDict, context, returnError = False):
+        lyr = QgsProcessingUtils.mapLayerFromString(outputDict['output'], context)
+        if returnError:
+            errorLyr = QgsProcessingUtils.mapLayerFromString(outputDict['error'], context)
+            return lyr, errorLyr
+        else:
+            return lyr
+
     def runDissolve(self, inputLyr, context, outputLyr = 'memory:', field = []):
         parameters = {
             'INPUT' : inputLyr,
@@ -72,13 +86,11 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''
             }
-        x = processing.run('grass7:v.overlay', parameters, context = context)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
-        return lyr
+        outputDict = processing.run('grass7:v.overlay', parameters, context = context)
+        return self.getGrassReturn(outputDict, context)
     
     def runClean(self, inputLyr, toolList, context, typeList=[0,1,2,3,4,5,6], returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
-        output = QgsProcessingUtils.generateTempFilename('output.shp')
-        error = QgsProcessingUtils.generateTempFilename('error.shp')
+        output, error = self.generateGrassOutputAndError()
         parameters = {
             'input':inputLyr,
             'type':typeList,
@@ -95,10 +107,37 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''
             }
-        x = processing.run('grass7:v.clean', parameters, context = context)
-        lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
-        if returnError:
-            errorLyr = QgsProcessingUtils.mapLayerFromString(x['error'], context)
-            return lyr, errorLyr
-        else:
-            return lyr
+        outputDict = processing.run('grass7:v.clean', parameters, context = context)
+        return self.getGrassReturn(outputDict, context, returnError=returnError)
+    
+    def runDouglasSimplification(self, inputLyr, threshold, context, snap=-1, minArea=0.0001, iterations=1, type=[0,1,2], returnError=False):
+        output, error = self.generateGrassOutputAndError()
+        parameters = {
+            'input': inputLyr,
+            'type':[0,1,2],
+            'cats':'',
+            'where':'',
+            'method':0,
+            'threshold':threshold,
+            'look_ahead':7,
+            'reduction':50,
+            'slide':0.5,
+            'angle_thresh':3,
+            'degree_thresh':0,
+            'closeness_thresh':0,
+            'betweeness_thresh':0,
+            'alpha':1,
+            'beta':1,
+            'iterations':iterations,
+            '-t':False,
+            '-l':True,
+            'output':output,
+            'error':error,
+            'GRASS_REGION_PARAMETER':None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER':snap,
+            'GRASS_MIN_AREA_PARAMETER':minArea,
+            'GRASS_OUTPUT_TYPE_PARAMETER':0,
+            'GRASS_VECTOR_DSCO':'',
+            'GRASS_VECTOR_LCO':''}
+        outputDict = processing.run("grass7:v.generalize", parameters, context=context)
+        return self.getGrassReturn(outputDict, context, returnError=returnError)
