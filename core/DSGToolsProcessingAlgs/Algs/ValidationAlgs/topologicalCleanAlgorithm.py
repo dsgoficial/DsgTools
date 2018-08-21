@@ -106,7 +106,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        minArea = snap = self.parameterAsDouble(parameters, self.MINAREA, context)
+        minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
 
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=feedback, progressDelta=30)
@@ -118,13 +118,39 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                                                     minArea=minArea)
 
         layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, cleanedCoverage, feedback=feedback, progressDelta=70)
-        if error:
-            for feat in error.getFeatures():
-                self.flagFeature(feat.geometry(), self.tr('Clean error on coverage.'))
+        self.flagCoverageIssues(cleanedCoverage, error, feedback)
 
         return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flagSink}
 
-    
+    def flagCoverageIssues(self, cleanedCoverage, error, feedback):
+        overlapDict = dict()
+        for feat in cleanedCoverage.getFeatures():
+            if feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            geomKey = geom.asWkb()
+            if geomKey not in overlapDict:
+                overlapDict[geomKey] = []
+            overlapDict[geomKey].append(feat)
+        for geomKey, featList in overlapDict.items():
+            if feedback.isCanceled():
+                break
+            if len(featList) > 1:
+                txtList = []
+                for i in featList:
+                    txtList += ['{0} (id={1})'.format(i['layer'], i['featid'])]
+                txt = ', '.join(txtList)
+                self.flagFeature(featList[0].geometry(), self.tr('Features from {0} overlap').format(txt))
+            elif len(featList) == 1:
+                attrList = featList[0].attributes()
+                if attrList == len(attrList)*[None]:
+                    self.flagFeature(featList[0].geometry(), self.tr('Gap in coverage.'))
+
+        if error:
+            for feat in error.getFeatures():
+                if feedback.isCanceled():
+                    break
+                self.flagFeature(feat.geometry(), self.tr('Clean error on coverage.'))
 
     def name(self):
         """
