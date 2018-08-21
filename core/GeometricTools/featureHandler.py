@@ -81,8 +81,10 @@ class FeatureHandler(QObject):
             newFeat.setAttribute(idx, None)
         return newFeat
     
-    def handleFeature(self, newGeom, featureWithoutGeom, lyr, parameterDict = {}, coordinateTransformer = None):
-        geomList = self.geometryHandler.handleGeometry(newGeom, parameterDict)
+    def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = {}, coordinateTransformer = None):
+        geomList = []
+        for feat in featList:
+            geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict)
         geomToUpdate = None
         newFeatList = []
         if not geomList:
