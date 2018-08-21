@@ -55,8 +55,8 @@ class MapToolsGuiManager(QObject):
         self.acquisition = Acquisition(self.iface)
         self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
         #adding free hand tool
-        self.freeHandAcquisiton = FreeHandMain(self.iface)
-        self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        # self.freeHandAcquisiton = FreeHandMain(self.iface)
+        # self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
         
     
     def activateGenericTool(self):
