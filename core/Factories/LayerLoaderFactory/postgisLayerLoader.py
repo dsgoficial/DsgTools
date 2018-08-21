@@ -214,7 +214,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             if stylePath:
                 fullPath = self.getStyle(stylePath, tableName)
                 if fullPath:
-                    vlayer.loadNamedStyle(fullPath)
+                    vlayer.loadNamedStyle(fullPath, True)
                     # remove qml temporary file
                     self.utils.deleteQml(fullPath)
                     # clear fullPath variable
