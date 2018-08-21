@@ -98,7 +98,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                     uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                     fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
                     if fullPath:
-                        lyr.loadNamedStyle(fullPath)
+                        lyr.loadNamedStyle(fullPath, True)
                         # remove qml temporary file
                         self.utils.deleteQml(fullPath)
                         # clear fullPath variable

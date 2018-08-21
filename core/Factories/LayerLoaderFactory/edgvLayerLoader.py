@@ -217,7 +217,7 @@ class EDGVLayerLoader(QObject):
         else:
             vlayerQml = os.path.join(qmldir, vlayer.name()+'.qml')
             #treat case of qml with multi
-            vlayer.loadNamedStyle(vlayerQml, False)
+            vlayer.loadNamedStyle(vlayerQml, True)
         return vlayer
     
     def removeEmptyNodes(self, dbNode):
