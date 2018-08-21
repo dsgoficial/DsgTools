@@ -92,9 +92,11 @@ class FeatureHandler(QObject):
         for idx, geom in enumerate(geomList):
             if idx == 0:
                 geomToUpdate = geom
-                continue        
-            newFeat = self.getNewFeatureWithoutGeom(featureWithoutGeom, lyr)
-            newFeatList.append(newFeat)
+                continue
+            else:
+                newFeat = self.getNewFeatureWithoutGeom(featureWithoutGeom, lyr)
+                newFeat.setGeometry(geom)
+                newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
     
     def getFeatureOuterShellAndHoles(self, feat, isMulti):
