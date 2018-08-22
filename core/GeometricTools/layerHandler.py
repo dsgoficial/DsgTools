@@ -289,3 +289,18 @@ class LayerHandler(QObject):
         if not keepFeatures:
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
+    
+    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, progressDelta = 100):
+        pass
+    
+    def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        attributeDict = dict()
+        pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
+        typeBlackList = [6] if ignoreVirtualFields else []
+        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
+        for current, feat in enumerate(iterator):
+            if feedback.isCanceled():
+                break
+            pass #continuo amanha
+                
