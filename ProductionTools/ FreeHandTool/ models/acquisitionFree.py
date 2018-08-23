@@ -19,7 +19,9 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from PyQt4 import QtCore, QtGui, Qt
+from PyQt4.QtCore import Qt
 from qgis import core, gui
+from qgis.core import QGis, QgsGeometry
 import math, json
 
 class AcquisitionFree(gui.QgsMapTool):
@@ -57,6 +59,7 @@ class AcquisitionFree(gui.QgsMapTool):
                                     "  +     #     +  ",
                                     "   +++++++++++   ",
                                     "                 ",]))
+        self.controlPressed = False
 
     def setCursor(self, cursor):
         #Método para definir cursor da ferramenta
@@ -164,7 +167,13 @@ class AcquisitionFree(gui.QgsMapTool):
         if event.key() == QtCore.Qt.Key_Escape:
             self.cancelEdition()
             event.ignore()
+        if event.key() == QtCore.Qt.Key_Control:
+            self.controlPressed = True
     
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Control:
+            self.controlPressed = False
+
     def cancelEdition(self): 
         #Método para cancelar aquisição
         self.getRubberBand().reset() if self.getRubberBand() else None
@@ -331,8 +340,28 @@ class AcquisitionFree(gui.QgsMapTool):
             return
         if self.getRubberBand().numberOfVertices() > 2:
             geom = self.getRubberBand().asGeometry()
-            self.acquisitionFinished.emit(geom)
+            if self.controlPressed == False:
+                self.acquisitionFinished.emit(geom) ##### SIGNAL ######
+            else:
+                self.doReshape(geom)
+
         self.cancelEdition()
+
+    def doReshape(self, g):
+        line = ''
+        if g.type() == QGis.Line:
+            line = g.asPolyline()
+        elif g.type() == QGis.Polygon:
+            line = g.asPolygon()[0]
+            del line[-1]
+
+        layer = self.iface.mapCanvas().currentLayer() # layer atual.
+        for feat in layer.getFeatures():
+            geom = feat.geometry() # geometria que receberá o reshape.
+            if geom.intersects(QgsGeometry.fromPolyline(line)): # Se intersecta e transforma frompolyline em geometria.
+                geom.reshapeGeometry(line) # realiza o reshape entre a linha e a geometria.
+                layer.changeGeometry(feat.id(), geom) 
+                self.iface.mapCanvas().refresh() # Refresh para atualizar, mas não salvar as alterações.
 
     def activate(self):
         #Método chamado ao ativar a ferramenta
