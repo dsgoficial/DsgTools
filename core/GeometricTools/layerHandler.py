@@ -291,7 +291,28 @@ class LayerHandler(QObject):
         lyr.endEditCommand()
     
     def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, progressDelta = 100):
-        pass
+        attributeFeatDict = self.buildAttributeFeatureDict(lyr, onlySelected=onlySelected, feedback=feedback, progressDelta=progressDelta/2)
+        parameterDict = self.getDestinationParameters(lyr)
+        idsToRemove = []
+        for current, key, featList in enumerate(attributeFeatDict.items()):
+            if feedback:
+                if feedback.isCanceled():
+                    break
+            #transformar em metodo do featureHandler e continuar amanha
+            for feat_a in featList:
+                if feat_a.id() in idsToRemove:
+                    continue
+                geom = feat_a.geometry()
+                for feat_b in featList:
+                    if feat_a.id() == feat_b.id():
+                        continue
+                    if feat_b.id() in idsToRemove:
+                        continue
+                    if geom.touches(feat_b.geometry()):
+                        newGeom = geom.combine(feat_b.geometry())
+                        newGeom = newGeom.mergeLines()
+                        newGeom = self.geometryHandler
+
     
     def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
@@ -300,8 +321,9 @@ class LayerHandler(QObject):
         typeBlackList = [6] if ignoreVirtualFields else []
         columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
         for current, feat in enumerate(iterator):
-            if feedback.isCanceled():
-                break
+            if feedback:
+                if feedback.isCanceled():
+                    break
             attrKey = ''.join(['{}'.format(feat[column]) for column in columns if feat[column]])
             if attrKey not in attributeFeatDict:
                 attributeFeatDict[attrKey] = []
