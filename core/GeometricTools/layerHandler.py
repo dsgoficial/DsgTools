@@ -295,12 +295,19 @@ class LayerHandler(QObject):
     
     def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
-        attributeDict = dict()
+        attributeFeatDict = dict()
         pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
         typeBlackList = [6] if ignoreVirtualFields else []
         columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
         for current, feat in enumerate(iterator):
             if feedback.isCanceled():
                 break
-            pass #continuo amanha
+            attrKey = ''.join(['{}'.format(feat[column]) for column in columns if feat[column]])
+            if attrKey not in attributeFeatDict:
+                attributeFeatDict[attrKey] = []
+            attributeFeatDict[attrKey].append(feat)
+            if feedback:
+                feedback.setProgress(currentProgress + int(localTotal*current))
+        return attributeFeatDict
+
                 
