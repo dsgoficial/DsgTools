@@ -37,6 +37,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorA
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import UpdateOriginalLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAlgorithm import TopologicalCleanAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import TopologicalDouglasSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedGeometriesAlgorithm import RemoveDuplicatedGeometriesAlgorithm
 
 from qgis.PyQt.QtGui import QIcon
 
@@ -59,7 +60,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         DonutHoleExtractorAlgorithm(),
                         UpdateOriginalLayerAlgorithm(),
                         TopologicalCleanAlgorithm(),
-                        TopologicalDouglasSimplificationAlgorithm()]
+                        TopologicalDouglasSimplificationAlgorithm(),
+                        RemoveDuplicatedGeometriesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()

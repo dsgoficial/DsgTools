@@ -141,3 +141,12 @@ class AlgRunner:
             'GRASS_VECTOR_LCO':''}
         outputDict = processing.run("grass7:v.generalize", parameters, context=context)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
+    
+    def runIdentifyDuplicatedGeometries(self, inputLyr, context, flagLyr = 'memory:', onlySelected = False):
+        parameters = {
+            'INPUT' : inputLyr,
+            'SELECTED' : selected,
+            'FLAGS': flagLyr
+        }
+        output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context)
+        return output['FLAGS']
