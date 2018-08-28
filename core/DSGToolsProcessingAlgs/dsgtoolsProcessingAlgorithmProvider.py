@@ -40,7 +40,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglas
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedGeometriesAlgorithm import RemoveDuplicatedGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallLinesAlgorithm import RemoveSmallLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallPolygonsAlgorithm import RemoveSmallPolygonsAlgorithm
-
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import CleanGeometriesAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -65,7 +65,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         TopologicalDouglasSimplificationAlgorithm(),
                         RemoveDuplicatedGeometriesAlgorithm(),
                         RemoveSmallLinesAlgorithm(),
-                        RemoveSmallPolygonsAlgorithm()]
+                        RemoveSmallPolygonsAlgorithm(),
+                        CleanGeometriesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
