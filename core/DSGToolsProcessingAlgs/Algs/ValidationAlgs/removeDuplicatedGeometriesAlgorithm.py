@@ -60,6 +60,13 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS,
+                self.tr('{0} Flags').format(self.displayName())
+            )
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
