@@ -643,7 +643,11 @@ class AbstractDb(QObject):
             styleDir = os.path.join(styleDir, 'edgv_FTer_2a_Ed')
         else:
             styleDir = os.path.join(styleDir, 'Non_EDGV')
-        styleList = next(os.walk(styleDir))[1]
+        styleList = []
+        for f in os.listdir(styleDir):
+            if '.py' in f.lower() or '.pyc' in f.lower():
+                continue
+            styleList.append(f)
         styleDict = dict()
         try:
             for s in styleList:
