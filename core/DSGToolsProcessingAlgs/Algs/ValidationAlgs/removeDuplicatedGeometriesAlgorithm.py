@@ -40,7 +40,6 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    FLAGLAYER = 'FLAGLAYER'
 
     def initAlgorithm(self, config):
         """
@@ -61,15 +60,6 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.FLAGLAYER,
-                self.tr('Flag layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ],
-                optional=True
-            )
-        )
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -79,13 +69,11 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        flagLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        if flagLyr is None:
-            flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, onlySelected=onlySelected)
+        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, onlySelected=onlySelected)
         self.removeFeatures(inputLyr, flagLyr, feedback)
+        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, onlySelected=onlySelected)
 
-
-        return {self.INPUT: inputLyr}
+        return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)

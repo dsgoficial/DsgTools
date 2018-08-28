@@ -58,7 +58,7 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
     
     def prepareFlagSink(self, parameters, source, wkbType, context):
         flagFields = self.getFlagFields()
-        (self.flagSink, self.dest_id) = self.parameterAsSink(parameters, self.FLAGS,
+        (self.flagSink, self.flag_id) = self.parameterAsSink(parameters, self.FLAGS,
                 context, flagFields, wkbType, source.sourceCrs())
         if self.flagSink is None:
             raise QgsProcessingException(self.invalidSinkError(parameters, self.FLAGS))
