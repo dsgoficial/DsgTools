@@ -81,7 +81,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         flagLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if flagLyr is None:
-            flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, onlySelected=onlySelected)
+            flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, onlySelected=onlySelected)
         self.removeFeatures(inputLyr, flagLyr, feedback)
 
 

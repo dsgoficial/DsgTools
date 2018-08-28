@@ -145,7 +145,7 @@ class AlgRunner:
     def runIdentifyDuplicatedGeometries(self, inputLyr, context, flagLyr = 'memory:', onlySelected = False):
         parameters = {
             'INPUT' : inputLyr,
-            'SELECTED' : selected,
+            'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
         output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context)

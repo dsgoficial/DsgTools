@@ -113,7 +113,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         geomDict = self.getGeomDict(featureList, isMulti, feedback, total)
         self.raiseFlags(geomDict, feedback)
         QgsProject.instance().removeMapLayer(lyr)
-        return {self.FLAGS: self.dest_id}
+        return {self.FLAGS: self.flag_id}
 
     def overlayCoverage(self, coverage, context):
         output = QgsProcessingUtils.generateTempFilename('output.shp')

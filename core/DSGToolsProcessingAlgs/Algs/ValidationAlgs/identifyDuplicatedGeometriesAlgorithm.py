@@ -102,7 +102,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
                 flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.').format(inputLyr.name(), idStrList)
                 self.flagFeature(v[0].geometry(), flagText)      
 
-        return {self.FLAGS: self.flagSink}
+        return {self.FLAGS: self.flag_id}
 
     def name(self):
         """

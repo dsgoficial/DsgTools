@@ -102,7 +102,7 @@ class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
             # Update the progress bar
             feedback.setProgress(int(current * total))
 
-        return {self.FLAGS: self.flagSink}
+        return {self.FLAGS: self.flag_id}
 
     def name(self):
         """

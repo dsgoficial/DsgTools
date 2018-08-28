@@ -106,7 +106,7 @@ class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
             # Update the progress bar
             feedback.setProgress(int(current * total))
 
-        return {self.FLAGS: self.dest_id}
+        return {self.FLAGS: self.flag_id}
 
     def name(self):
         """

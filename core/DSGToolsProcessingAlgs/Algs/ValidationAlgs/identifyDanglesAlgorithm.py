@@ -155,7 +155,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.flagFeature(QgsGeometry.fromPointXY(point), self.tr('Dangle on {0}').format(inputLyr.name()))
                 feedback.setProgress(currentValue + int(current*currentTotal))      
         feedback.setProgress(100)
-        return {self.FLAGS: self.flagSink}
+        return {self.FLAGS: self.flag_id}
 
     def buildInitialAndEndPointDict(self, featureList, total, feedback, progressDelta = 100):
         """
