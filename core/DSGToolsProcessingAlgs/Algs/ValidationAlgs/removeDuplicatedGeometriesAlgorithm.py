@@ -79,7 +79,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        flagLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        flagLyr = self.parameterAsVectorLayer(parameters, self.FLAGLAYER, context)
         if flagLyr is None:
             flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, onlySelected=onlySelected)
         self.removeFeatures(inputLyr, flagLyr, feedback)
