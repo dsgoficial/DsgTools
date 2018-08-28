@@ -150,3 +150,23 @@ class AlgRunner:
         }
         output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context)
         return output['FLAGS']
+    
+    def runIdentifySmallLines(self, inputLyr, tol, context, flagLyr = 'memory:', onlySelected = False):
+        parameters = {
+            'INPUT' : inputLyr,
+            'TOLERANCE' : tol,
+            'SELECTED' : onlySelected,
+            'FLAGS': flagLyr
+        }
+        output = processing.run('dsgtools:identifysmalllines', parameters, context = context)
+        return output['FLAGS']
+
+    def runIdentifySmallPolygons(self, inputLyr, tol, context, flagLyr = 'memory:', onlySelected = False):
+        parameters = {
+            'INPUT' : inputLyr,
+            'TOLERANCE' : tol,
+            'SELECTED' : onlySelected,
+            'FLAGS': flagLyr
+        }
+        output = processing.run('dsgtools:identifysmallpolygons', parameters, context = context)
+        return output['FLAGS']
