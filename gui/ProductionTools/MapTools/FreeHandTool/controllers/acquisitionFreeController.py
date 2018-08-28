@@ -54,7 +54,6 @@ class AcquisitionFreeController(object):
     def setActionAcquisitionFree(self, actionAcquisitionFree):
         #Método para definir a classe ActionAcquisitionFree
         #Parâmetro de entrada: actionAcquisitionFree (classe ActionAcquisitionFree)
-        actionAcquisitionFree.setCheckable(True)
         self.actionAcquisitionFree = actionAcquisitionFree
         
     def getActionAcquisitionFree(self):
@@ -84,38 +83,35 @@ class AcquisitionFreeController(object):
     
     def connectToolSignals(self):
         #Método para iniciar sinais do plugin 
-        iface = self.getIface()
-        iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
-        iface.currentLayerChanged.connect(self.checkToActiveAction)
-        iface.currentLayerChanged.connect(self.deactivateTool)
-        iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.triggered.connect(self.activateTool)
+        self.iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
+        self.iface.currentLayerChanged.connect(self.checkToActiveAction)
+        self.iface.currentLayerChanged.connect(self.deactivateTool)
+        self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
+        self.actionAcquisitionFree.triggered.connect(self.activateTool)
 
-    def disconnectToolSignals(self):
-        """
-        Disconnects all signals used by Free Hand tool.
-        """
-        iface = self.getIface()
-        iface.actionToggleEditing().triggered.disconnect(self.checkToActiveAction)
-        iface.currentLayerChanged.disconnect(self.checkToActiveAction)
-        iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        try:
-            actionAcquisitionFree.triggered.disconnect(self.activateTool)
-        except:
-            pass
+    # def disconnectToolSignals(self):
+    #     """
+    #     Disconnects all signals used by Free Hand tool.
+    #     """
+    #     iface = self.getIface()
+    #     iface.actionToggleEditing().triggered.disconnect(self.checkToActiveAction)
+    #     iface.currentLayerChanged.disconnect(self.checkToActiveAction)
+    #     iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
+    #     actionAcquisitionFree = self.getActionAcquisitionFree()
+    #     try:
+    #         actionAcquisitionFree.triggered.disconnect(self.activateTool)
+    #     except:
+    #         pass
 
     def checkToActiveAction(self):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
-        actionAcquisitionFree = self.getActionAcquisitionFree()
         layer = self.getIface().activeLayer()       
         if core is not None and layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QgsWkbTypes.LineGeometry, core.QgsWkbTypes.PolygonGeometry]):
-            if not actionAcquisitionFree.isEnabled():
-                actionAcquisitionFree.setEnabled(True)
+            if not self.actionAcquisitionFree.isEnabled():
+                self.actionAcquisitionFree.setEnabled(True)
             return True
         else:
-            actionAcquisitionFree.setEnabled(False)
+            self.actionAcquisitionFree.setEnabled(False)
         return False
 
     def getParametersFromConfig(self):
@@ -238,32 +234,28 @@ class AcquisitionFreeController(object):
 
     def activateTool(self):
         #Método para iniciar a ferramenta
-        self.disconnectToolSignals()
-        tool = self.getAcquisitionFree()
-        if not self.getActiveState():
-            tool.acquisitionFinished.connect(self.createFeature)
-            canvas = self.getIface().mapCanvas()
-            canvas.setMapTool(tool)
-            actionAcquisitionFree = self.getActionAcquisitionFree()
-            actionAcquisitionFree.setChecked(True)
-            self.iface.mapCanvas().setMapTool(tool)
-            self.setActiveState(True)
-        self.connectToolSignals()
+        # if not self.getActiveState():
+        self.acquisitionFree.acquisitionFinished.connect(self.createFeature)
+        self.iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
+        self.actionAcquisitionFree.setChecked(True)
+        self.iface.mapCanvas().setMapTool(self.acquisitionFree)
+        self.setActiveState(True)
+        self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
+
                         
     def deactivateTool(self, newTool=None, oldTool=None):
         #Método para desativar a ferramenta
-        isActivable = self.checkToActiveAction()
-        self.disconnectToolSignals()
-        tool = self.getAcquisitionFree()
-        if isinstance(tool, AcquisitionFree):
+        self.checkToActiveAction()
+        if isinstance(newTool, AcquisitionFree):
             try:
-                tool.acquisitionFinished.disconnect(self.createFeature)
+                self.acquisitionFree.acquisitionFinished.disconnect(self.createFeature)
             except:
                 pass
-        tool.deactivate()
+        self.iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
+        self.acquisitionFree.deactivate()
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.setChecked(False)
-        self.iface.mapCanvas().unsetMapTool(tool)
+        self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
         self.setActiveState(False)
-        self.connectToolSignals()
+        self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
       
