@@ -194,7 +194,12 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             return self.getStyleFromFile(stylePath, className)
     
     def getStyleFromFile(self, stylePath, className):
-        availableStyles = next(os.walk(stylePath))[2]
+        # availableStyles = next(os.walk(stylePath))[2]
+        availableStyles = []
+        for f in os.listdir(stylePath):
+            if '.qml' in f.lower():
+                continue
+            availableStyles.append(f)
         styleName = className+'.qml'
         if styleName in availableStyles:
             path = os.path.join(stylePath, styleName)
