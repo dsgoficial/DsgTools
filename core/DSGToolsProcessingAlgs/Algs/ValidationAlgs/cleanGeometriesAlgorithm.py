@@ -108,9 +108,9 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.type(), context)
+        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.type(), onlySelected = onlySelected, feedback=feedback, progressDelta=30)
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=feedback, progressDelta=30)
         cleanedLyr, error = algRunner.runClean(auxLyr, \
                                                     [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle], \
                                                     context, \
@@ -119,13 +119,13 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                                                     minArea=minArea)
 
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=feedback, progressDelta=70)
-        self.flagCoverageIssues(cleanedLyr, error, feedback)
+        self.flagIssues(cleanedLyr, error, feedback)
 
-        return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flagSink}
+        return {self.INPUT : inputLyr, self.FLAGS : self.flagSink}
 
-    def flagCoverageIssues(self, cleanedCoverage, error, feedback):
+    def flagIssues(self, cleanedLyr, error, feedback):
         overlapDict = dict()
-        for feat in cleanedCoverage.getFeatures():
+        for feat in cleanedLyr.getFeatures():
             if feedback.isCanceled():
                 break
             geom = feat.geometry()
@@ -168,7 +168,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Clean Geometries Geometries')
+        return self.tr('Clean Geometries')
 
     def group(self):
         """
