@@ -50,9 +50,10 @@ Este projeto visa cumprir a missão estabelecida no Plano Estratégico do Exérc
 
 O plugin foi todo desenvolvido em python e está disponível para download pelo próprio QGIS ou pelo endereço http://plugins.qgis.org/plugins/DsgTools/.
 
-Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.1 (changelog completo disponível em https://github.com/dsgoficial/DsgTools/wiki ):
+Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.2 (changelog completo disponível em https://github.com/dsgoficial/DsgTools/wiki ):
 
 - Criação, armazenamento e remoção de configuração de servidores PostGIS;
+- Criação em lote de bancos de dados;
 - Criação de banco de dados em Spatialite e em PostGIS de acordo a ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
 - Criação de banco de dados em Spatialite e em PostGIS de acordo com ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
 - Carregamento de camadas por classe e por categoria conforme definido na ET-EDGV 2.1.3, ET-EDGV 3.0 e ET-EDGV Defesa F Ter 2ª Edição;
@@ -70,5 +71,13 @@ Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.1 (c
 - Deleção de bancos EDGV feitos em PostgreSQL;
 - Ferramenta de (re)classificação de feições;
 - Ferramentas de validação geométrica;
+- Ferramenta de aquisição utilizando ângulos retos;
+- Ferramenta de aquisição de feições circulares;
+- Ferramenta de inspeção de feições;
+- Ferramenta de aquisição a mão livre;
+- Ferramenta de seleção genérica;
+- Ferramenta de inversão de sentido de linhas;
+- Ferramenta de gerência de estilos;
+- Ferramenta de área mínima
 
 Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
