@@ -5,11 +5,11 @@
 ------------------------------------
 # DSGTools Plugin (English Version)
 
-DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3 and ET-EDGV Defesa F Ter 2ª Edição). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
+DSGTools is a QGIS plugin that allow users to create and manipulate Geospatial Data according to Brazilian Law (ET-EDGV 2.1.3, ET-EDGV Defesa F Ter 2ª Edição and ET-EDGV 3.0). DSGTools aims to provide tools not only to Brazilian Army, but to GIS comunity in general.
 
 Current changelog can be viewed on https://github.com/dsgoficial/DsgTools/wiki (portuguese only, for now).
 
-DSGTools 3.1 has the following features:
+DSGTools 3.2 has the following features:
 
 - Creation, Storage and Deletion of PostGIS servers configurations;
 - Database creation using Spatialite and PostGIS according to EDGV version 2.1.3, EDGV version 3.0 and EDGV version FTer_2a_Ed;
@@ -29,6 +29,11 @@ DSGTools 3.1 has the following features:
 - Drop EDGV databases;
 - Tool to reclassify features (move them to another layer) with predefined attributes;
 - Validation Tools: fix geometry problems prior to creating a topology structure;
+- Right Angle acquisition tool;
+- Minimum area tool;
+- Feature inspection tool;
+- Free hand acquisition tool;
+- Flip line tool;
 
 Requirements for LINUX (Ubuntu/Debian):
 Install the following packages as follows:
