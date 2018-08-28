@@ -132,7 +132,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             if len(v) > 1:
                 flagText = self.tr('Features from {0} overlap.').format(inputLyr.name())
                 self.flagFeature(v[0].geometry(), flagText) 
-        return {self.FLAGS: self.dest_id}
+        return {self.FLAGS: self.flag_id}
 
     def name(self):
         """
