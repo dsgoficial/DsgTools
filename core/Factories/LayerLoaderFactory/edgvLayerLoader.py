@@ -74,7 +74,7 @@ class EDGVLayerLoader(QObject):
         # availableStyles = next(os.walk(stylePath))[2]
         availableStyles = []
         for f in os.listdir(stylePath):
-            if '.qml' in f.lower():
+            if '.qml' not in f.lower():
                 continue
             availableStyles.append(f)
         styleName = className+'.qml'

@@ -197,7 +197,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         # availableStyles = next(os.walk(stylePath))[2]
         availableStyles = []
         for f in os.listdir(stylePath):
-            if '.qml' in f.lower():
+            if '.qml' not in f.lower():
                 continue
             availableStyles.append(f)
         styleName = className+'.qml'
