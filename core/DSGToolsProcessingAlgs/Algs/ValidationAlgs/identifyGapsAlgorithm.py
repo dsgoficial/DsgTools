@@ -110,7 +110,7 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
                 self.flagFeature(geom, self.tr('Gap in layer {0}.').format(inputLyr.name()))
             # # Update the progress bar
             feedback.setProgress(int(current * total))         
-        return {self.FLAGS: self.dest_id}
+        return {self.FLAGS: self.flag_id}
 
     def name(self):
         """

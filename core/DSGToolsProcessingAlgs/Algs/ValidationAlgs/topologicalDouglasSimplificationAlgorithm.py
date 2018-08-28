@@ -132,7 +132,7 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
         layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, simplifiedCoverage, feedback=feedback, progressDelta=70)
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
-        return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flagSink}
+        return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flag_id}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         overlapDict = dict()
