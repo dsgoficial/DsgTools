@@ -644,10 +644,15 @@ class AbstractDb(QObject):
         else:
             styleDir = os.path.join(styleDir, 'Non_EDGV')
         styleList = []
-        for f in os.listdir(styleDir):
-            if '.py' in f.lower() or '.pyc' in f.lower():
-                continue
-            styleList.append(f)
+        try:
+            for f in os.listdir(styleDir):
+                if '.py' in f.lower() or '.pyc' in f.lower():
+                    continue
+                styleList.append(f)
+        except FileNotFoundError:
+            # in case style folder is not found, it will be created
+            os.system('mkdir {0}'.format(os.path.join(currentPath, '..', '..', 'Styles')))
+            os.system('mkdir {0}'.format(styleDir))
         styleDict = dict()
         try:
             for s in styleList:
