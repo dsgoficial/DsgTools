@@ -113,9 +113,10 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         Opens the CRS selector
         """
-        projSelector = QgsProjectionSelectionTreeWidget()
-        projSelector.setMessage(theMessage=self.tr('Please, select the coordinate system'))
-        projSelector.exec_()
+        projSelector = QgsProjectionSelectionTreeWidget(self)
+        self.addWidget(projSelector)
+        # projSelector.setMessage(theMessage=self.tr('Please, select the coordinate system'))
+        projSelector.show()
         try:
             self.epsgCriaSpatialite = int(projSelector.selectedAuthId().split(':')[-1])
             self.srsCriaSpatialite = QgsCoordinateReferenceSystem(self.epsgCriaSpatialite, QgsCoordinateReferenceSystem.EpsgCrsId)
@@ -123,7 +124,7 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.coordSysDefinido = True
                 self.coordSysCriaSpatialiteLineEdit.setText(self.srsCriaSpatialite.description())
         except:
-            self.bar.pushMessage("", self.tr('Please, select the coordinate system'), level=Qgis.WARNING)
+            self.bar.pushMessage("", self.tr('Please, select the coordinate system'), level=Qgis.Warning)
             pass
 
     def copiaSemente(self, destino, srid):
@@ -159,16 +160,16 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
                 self.restauraInicio()
                 QMessageBox.information(self, self.tr('Information'), self.tr('Spatialite created successfully!'))
             except:
-                qgis.utils.iface.messageBar().pushMessage(self.tr("Error!"), self.tr("Problem creating the database!"), level=Qgis.CRITICAL)
+                qgis.utils.iface.messageBar().pushMessage(self.tr("Error!"), self.tr("Problem creating the database!"), level=Qgis.Critical)
                 self.restauraInicio()
                 pass
         else:
             if self.coordSysDefinido == False:
-                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select the coordinate system'), level=Qgis.WARNING)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select the coordinate system'), level=Qgis.Warning)
             if self.carregado == False:
-                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select a folder to save the database'), level=Qgis.CRITICAL)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, select a folder to save the database'), level=Qgis.Critical)
             if len(self.nomeLineEdit.text()) == 0:
-                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=Qgis.CRITICAL)
+                self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=Qgis.Critical)
 
     # def addAction(self):
     #     """
@@ -194,13 +195,14 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         Instantiates user interface and prepare it to be called whenever tool button is activated. 
         """
-        callback = lambda x: print(x)
+        callback = lambda : self.manager.createDatabase(isSpatialite=True)
         self.manager.addTool(
             text=self.tr('Create a Spatialite Database'),
             callback=callback,
             parentMenu=self.parentMenu,
             icon='spatialite.png',
-            parentButton=self.parentButton
+            parentButton=self.parentButton,
+            defaultButton=True
         )
 
     def unload(self):
