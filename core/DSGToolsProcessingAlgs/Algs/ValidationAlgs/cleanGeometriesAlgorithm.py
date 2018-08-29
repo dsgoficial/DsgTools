@@ -43,7 +43,7 @@ from qgis.core import (QgsProcessing,
                        QgsSpatialIndex,
                        QgsGeometry,
                        QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingmultiStepFeedbackFeedback)
 
 class CleanGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -111,22 +111,22 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
-        multiStep = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStep.setCurrentStep(0)
-        multiStep.pushInfo(self.tr('Populating temp layer...'))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStep)
-        multiStep.setCurrentStep(1)
-        multiStep.pushInfo(self.tr('Running clean...'))
+        multiStepFeedback = QgsProcessingmultiStepFeedbackFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Running clean...'))
         cleanedLyr, error = algRunner.runClean(auxLyr, \
                                                     [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle], \
                                                     context, \
                                                     returnError=True, \
                                                     snap=snap, \
                                                     minArea=minArea,
-                                                    feedback=multiStep)
-        multiStep.setCurrentStep(2)
-        multiStep.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStep)
+                                                    feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback)
         self.flagIssues(cleanedLyr, error, feedback)
 
         return {self.INPUT : inputLyr, self.FLAGS : self.flagSink}
