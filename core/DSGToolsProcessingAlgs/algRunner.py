@@ -40,35 +40,35 @@ class AlgRunner:
         else:
             return lyr
 
-    def runDissolve(self, inputLyr, context, outputLyr = 'memory:', field = []):
+    def runDissolve(self, inputLyr, context, feedback = None, outputLyr = 'memory:', field = []):
         parameters = {
             'INPUT' : inputLyr,
             'FIELD': [],
             'OUTPUT': outputLyr
         }
-        output = processing.run('native:dissolve', parameters, context = context)
+        output = processing.run('native:dissolve', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
     
-    def runDonutHoleExtractor(self, inputLyr, context, donuthole = 'memory:', outershell = 'memory:' , selected = False):
+    def runDonutHoleExtractor(self, inputLyr, context, feedback = None, donuthole = 'memory:', outershell = 'memory:' , selected = False):
         parameters = {
             'INPUT' : inputLyr,
             'SELECTED' : selected,
             'OUTERSHELL': outershell,
             'DONUTHOLE' : donuthole
         }
-        output = processing.run('dsgtools:donutholeextractor', parameters, context = context)
+        output = processing.run('dsgtools:donutholeextractor', parameters, context = context, feedback = feedback)
         return output['OUTERSHELL'], output['DONUTHOLE']
     
-    def runDeleteHoles(self, inputLyr, context, outputLyr='memory:', min_area=0):
+    def runDeleteHoles(self, inputLyr, context, feedback = None, outputLyr='memory:', min_area=0):
         parameters = {
             'INPUT' : inputLyr,
             'MIN_AREA': min_area,
             'OUTPUT': outputLyr
         }
-        output = processing.run('native:deleteholes', parameters, context = context)
+        output = processing.run('native:deleteholes', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
     
-    def runOverlay(self, lyrA, lyrB, context, snap=0, operator=0, minArea=0.0001):
+    def runOverlay(self, lyrA, lyrB, context, feedback = None, snap=0, operator=0, minArea=0.0001):
         output = QgsProcessingUtils.generateTempFilename('output.shp')
         parameters = {
             'ainput':lyrA,
@@ -86,7 +86,7 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''
             }
-        outputDict = processing.run('grass7:v.overlay', parameters, context = context)
+        outputDict = processing.run('grass7:v.overlay', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context)
     
     def runClean(self, inputLyr, toolList, context, feedback=None, typeList=[0,1,2,3,4,5,6], returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
@@ -110,7 +110,7 @@ class AlgRunner:
         outputDict = processing.run('grass7:v.clean', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
     
-    def runDouglasSimplification(self, inputLyr, threshold, context, snap=-1, minArea=0.0001, iterations=1, type=[0,1,2], returnError=False):
+    def runDouglasSimplification(self, inputLyr, threshold, context, feedback = None, snap=-1, minArea=0.0001, iterations=1, type=[0,1,2], returnError=False):
         output, error = self.generateGrassOutputAndError()
         parameters = {
             'input': inputLyr,
@@ -139,7 +139,7 @@ class AlgRunner:
             'GRASS_OUTPUT_TYPE_PARAMETER':0,
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''}
-        outputDict = processing.run("grass7:v.generalize", parameters, context=context)
+        outputDict = processing.run("grass7:v.generalize", parameters, context=context, feedback=feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
     
     def runIdentifyDuplicatedGeometries(self, inputLyr, context, feedback = None, flagLyr = 'memory:', onlySelected = False):
