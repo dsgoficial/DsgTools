@@ -40,7 +40,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterMultipleLayers,
                        QgsWkbTypes,
                        QgsProcessingUtils,
-                       QgsProject)
+                       QgsProject,
+                       QgsProcessingMultiStepFeedback)
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -91,7 +92,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''
             }
-        x = processing.run('grass7:v.overlay', parameters, context = context)
+        x = processing.run('grass7:v.overlay', parameters, context = context, feedback = feedback)
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
         return lyr
 
@@ -109,10 +110,14 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        lyr = self.overlayCoverage(inputLyr, context, feedback)
+
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        lyr = self.overlayCoverage(inputLyr, context, multiStepFeedback)
         featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
         QgsProject.instance().removeMapLayer(lyr)
         geomDict = dict()
+        multiStepFeedback.setCurrentStep(1)
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
@@ -125,13 +130,16 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
                 geomDict[geomKey] = []
             geomDict[geomKey].append(feat)
             # # Update the progress bar
-            feedback.setProgress(int(current * total))         
+            multiStepFeedback.setProgress(current * total)
+        multiStepFeedback.setCurrentStep(2)        
+        total = 100/len(geomDict) if len(geomDict) != 0 else 0
         for k, v in geomDict.items():
             if feedback.isCanceled():
                 break
             if len(v) > 1:
                 flagText = self.tr('Features from {0} overlap.').format(inputLyr.name())
-                self.flagFeature(v[0].geometry(), flagText) 
+                self.flagFeature(v[0].geometry(), flagText)
+            multiStepFeedback.setProgress(current * total)
         return {self.FLAGS: self.flag_id}
 
     def name(self):
