@@ -112,7 +112,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Unified layer...'))
+        multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=multiStepFeedback)
         
         multiStepFeedback.setCurrentStep(1)
