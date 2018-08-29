@@ -89,7 +89,7 @@ class AlgRunner:
         outputDict = processing.run('grass7:v.overlay', parameters, context = context)
         return self.getGrassReturn(outputDict, context)
     
-    def runClean(self, inputLyr, toolList, context, typeList=[0,1,2,3,4,5,6], returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
+    def runClean(self, inputLyr, toolList, context, feedback=None, typeList=[0,1,2,3,4,5,6], returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
         output, error = self.generateGrassOutputAndError()
         parameters = {
             'input':inputLyr,
@@ -107,7 +107,7 @@ class AlgRunner:
             'GRASS_VECTOR_DSCO':'',
             'GRASS_VECTOR_LCO':''
             }
-        outputDict = processing.run('grass7:v.clean', parameters, context = context)
+        outputDict = processing.run('grass7:v.clean', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
     
     def runDouglasSimplification(self, inputLyr, threshold, context, snap=-1, minArea=0.0001, iterations=1, type=[0,1,2], returnError=False):
