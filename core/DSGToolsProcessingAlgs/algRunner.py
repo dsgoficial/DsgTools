@@ -142,31 +142,31 @@ class AlgRunner:
         outputDict = processing.run("grass7:v.generalize", parameters, context=context)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
     
-    def runIdentifyDuplicatedGeometries(self, inputLyr, context, flagLyr = 'memory:', onlySelected = False):
+    def runIdentifyDuplicatedGeometries(self, inputLyr, context, feedback = None, flagLyr = 'memory:', onlySelected = False):
         parameters = {
             'INPUT' : inputLyr,
             'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
-        output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context)
+        output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context, feedback = feedback)
         return output['FLAGS']
     
-    def runIdentifySmallLines(self, inputLyr, tol, context, flagLyr = 'memory:', onlySelected = False):
+    def runIdentifySmallLines(self, inputLyr, tol, context, feedback = None, flagLyr = 'memory:', onlySelected = False):
         parameters = {
             'INPUT' : inputLyr,
             'TOLERANCE' : tol,
             'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
-        output = processing.run('dsgtools:identifysmalllines', parameters, context = context)
+        output = processing.run('dsgtools:identifysmalllines', parameters, context = context, feedback = feedback)
         return output['FLAGS']
 
-    def runIdentifySmallPolygons(self, inputLyr, tol, context, flagLyr = 'memory:', onlySelected = False):
+    def runIdentifySmallPolygons(self, inputLyr, tol, context, feedback = None, flagLyr = 'memory:', onlySelected = False):
         parameters = {
             'INPUT' : inputLyr,
             'TOLERANCE' : tol,
             'SELECTED' : onlySelected,
             'FLAGS': flagLyr
         }
-        output = processing.run('dsgtools:identifysmallpolygons', parameters, context = context)
+        output = processing.run('dsgtools:identifysmallpolygons', parameters, context = context, feedback = feedback)
         return output['FLAGS']

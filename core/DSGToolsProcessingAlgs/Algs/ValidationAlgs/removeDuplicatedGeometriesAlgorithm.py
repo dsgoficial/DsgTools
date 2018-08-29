@@ -34,7 +34,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingMultiStepFeedback)
 
 class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -76,16 +77,25 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, onlySelected=onlySelected)
-        self.removeFeatures(inputLyr, flagLyr, feedback)
-        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, onlySelected=onlySelected)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Identifying duplicated geometries in layer {0}...').format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Removing duplicated geometries in layer {0}...').format(inputLyr.name()))
+        self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
+
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Identifying remaining duplicated geometries in layer {0}...').format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, feedback = multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
     
-    def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
+    def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
         currentProgress = feedback.progress()
-        localTotal = progressDelta/total if total else 0
+        localTotal = 100/total if total else 0
         inputLyr.startEditing()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
@@ -93,7 +103,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
                 break
             idRemoveList = [i for i in map(int, feat['reason'].split('(')[-1].split(')')[0].split(','))][1::]
             inputLyr.deleteFeatures(idRemoveList)
-            feedback.setProgress(currentProgress + (current * localTotal))
+            feedback.setProgress(current * localTotal)
         
 
     def name(self):
