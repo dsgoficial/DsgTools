@@ -44,30 +44,31 @@ class DatabaseGuiManager(QObject):
         # self.dbAbstract = dbAbstract
         self.toolbar = toolbar
         self.menu = self.manager.addMenu(u'databasetools', self.tr('Database Tools'),'database.png')
-        self.postgisButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
-        self.spatialiteButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
+        self.stackButton = self.manager.createToolButton(self.toolbar, u'DatabaseTools')
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
-    def addTool(self, text, callback, parentMenu, icon, defaultButton = False):
+    def addTool(self, text, callback, parentMenu, icon, parentButton=None, defaultButton=False):
         icon_path = self.iconBasePath + icon
         action = self.manager.add_action(
             icon_path,
             text=text,
             callback=callback,
-            add_to_menu = False,
-            add_to_toolbar = False,
-            withShortcut = False,
-            parentToolbar = parentMenu,
-            isCheckable = False
+            add_to_menu=False,
+            add_to_toolbar=False,
+            withShortcut=False,
+            parentToolbar=parentMenu,
+            isCheckable=False,
+            parentButton=self.stackButton
         )
-        self.stackButton.addAction(action)
+        if defaultButton:
+            self.stackButton.setDefaultAction(action)
 
     def initGui(self):
         # self.postgisManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
         # self.postgisManager.initGui()
-        self.spatialiteManager = CriaSpatialiteDialog(parentMenu=self.menu)
-        # self.spatialiteManager.initGui()
+        self.spatialiteDialog = CriaSpatialiteDialog(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+        self.spatialiteDialog.initGui()
 
     def unload(self):
         # self.postgisManager.unload()
-        self.spatialiteManager.unload()
+        self.spatialiteDialog.unload()
