@@ -41,7 +41,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterMultipleLayers,
                        QgsWkbTypes,
                        QgsProcessingUtils,
-                       QgsProject)
+                       QgsProject,
+                       QgsProcessingMultiStepFeedback)
 
 class IdentifyGapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -75,11 +76,14 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
         )
 
     
-    def getGapLyr(self, inputLyr, context, onlySelected = False):
+    def getGapLyr(self, inputLyr, context, multiStepFeedback, onlySelected = False):
         algRunner = AlgRunner()
-        dissolvedLyr = algRunner.runDissolve(inputLyr, context)
-        deletedHolesLyr = algRunner.runDeleteHoles(dissolvedLyr, context)
-        gapLyr = algRunner.runOverlay(deletedHolesLyr, deletedHolesLyr, context)
+        multiStepFeedback.setCurrentStep(0)
+        dissolvedLyr = algRunner.runDissolve(inputLyr, context, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        deletedHolesLyr = algRunner.runDeleteHoles(dissolvedLyr, context, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
+        gapLyr = algRunner.runOverlay(deletedHolesLyr, deletedHolesLyr, context, feedback=multiStepFeedback)
         return gapLyr
 
     def processAlgorithm(self, parameters, context, feedback):
@@ -96,10 +100,13 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.Polygon, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        lyr = self.getGapLyr(inputLyr, context, onlySelected=onlySelected)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) 
+        lyr = self.getGapLyr(inputLyr, context, multiStepFeedback, onlySelected=onlySelected)
         featureList, total = self.getIteratorAndFeatureCount(lyr) #only selected is not applied because we are using an inner layer, not the original ones
         QgsProject.instance().removeMapLayer(lyr)
         geomDict = dict()
+
+        multiStepFeedback.setCurrentStep(3)
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
@@ -109,7 +116,7 @@ class IdentifyGapsAlgorithm(ValidationAlgorithm):
                 geom = feat.geometry()
                 self.flagFeature(geom, self.tr('Gap in layer {0}.').format(inputLyr.name()))
             # # Update the progress bar
-            feedback.setProgress(int(current * total))         
+            multiStepFeedback.setProgress(current * total)
         return {self.FLAGS: self.flag_id}
 
     def name(self):
