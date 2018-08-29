@@ -40,7 +40,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
-                       QgsGeometry)
+                       QgsGeometry,
+                       QgsProcessingMultiStepFeedback)
 
 class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -130,31 +131,53 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         # Compute the number of steps to display within the progress bar and
         # get features from source
         featureList, total = self.getIteratorAndFeatureCount(inputLyr)
-        endVerticesDict = self.buildInitialAndEndPointDict(featureList, 0.25*total, feedback)
+        feedbackTotal = 3
+        feedbackTotal += 1 if lineFilterLyrList or polygonFilterLyrList else 0
+        feedbackTotal += 1 if not ignoreInner else 0
+        multiStep = QgsProcessingMultiStepFeedback(feedbackTotal, feedback)
+        currentStep = 0
+        multiStep.setCurrentStep(currentStep)
+        multiStep.pushInfo(self.tr('Building search structure...'))
+        endVerticesDict = self.buildInitialAndEndPointDict(featureList, total, multiStep)
+
         #search for dangles candidates
-        pointList = self.searchDanglesOnPointDict(endVerticesDict, feedback, progressDelta=25)
+        currentStep += 1
+        multiStep.setCurrentStep(currentStep)
+        multiStep.pushInfo(self.tr('Looking for dangles...'))
+        pointList = self.searchDanglesOnPointDict(endVerticesDict, multiStep)
         #build filter layer
-        filterLayer = self.buildFilterLayer(lineFilterLyrList, polygonFilterLyrList, context, feedback, onlySelected=onlySelected)
-        delta = 20 if not ignoreInner else 40
+        currentStep += 1
+        multiStep.setCurrentStep(currentStep)
+        multiStep.pushInfo(self.tr('Filtering dangles candidates...'))
+        filterLayer = self.buildFilterLayer(lineFilterLyrList, polygonFilterLyrList, context, multiStep, onlySelected=onlySelected)
         #filter pointList with filterLayer
+        
         if filterLayer:
-            filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, searchRadius, feedback, progressDelta = delta)
+            currentStep += 1
+            multiStep.setCurrentStep(currentStep)
+            multiStep.pushInfo(self.tr('Filtering dangles candidates with filter...'))
+            filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, searchRadius, multiStep)
         else:
             filteredPointList = pointList
-            feedback.setProgress(feedback.progress()+delta)
         #filter with own layer
         if not ignoreInner: #True when looking for dangles on contour lines
+            currentStep += 1
+            multiStep.setCurrentStep(currentStep)
+            multiStep.pushInfo(self.tr('Filtering inner dangles...'))
             filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, inputLyr, searchRadius, feedback, isRefLyr = True, ignoreNotSplit = ignoreNotSplit, progressDelta=20)
         #build flag list with filtered points
+        currentStep += 1
+        multiStep.setCurrentStep(currentStep)
+        multiStep.pushInfo(self.tr('Raising flags...'))
         if filteredPointList:
-            currentValue = feedback.progress()
-            currentTotal = 10/len(filteredPointList)
+            # currentValue = feedback.progress()
+            currentTotal = 100/len(filteredPointList)
             for current, point in enumerate(filteredPointList):
                 if feedback.isCanceled():
                     break
                 self.flagFeature(QgsGeometry.fromPointXY(point), self.tr('Dangle on {0}').format(inputLyr.name()))
-                feedback.setProgress(currentValue + int(current*currentTotal))      
-        feedback.setProgress(100)
+                multiStep.setProgress(current*currentTotal)      
+        # feedback.setProgress(100)
         return {self.FLAGS: self.flag_id}
 
     def buildInitialAndEndPointDict(self, featureList, total, feedback, progressDelta = 100):
@@ -162,9 +185,8 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         Calculates initial point and end point from each line from lyr.
         """
         # start and end points dict
-        currentProgress = feedback.progress()
+        # currentProgress = feedback.progress()
         endVerticesDict = dict()
-        localTotal = total
         # iterating over features to store start and end points
         for current, feat in enumerate(featureList):
             if feedback.isCanceled():
@@ -173,7 +195,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             lineList = geom.asMultiPolyline() if geom.isMultipart() else [geom.asPolyline()]
             for line in lineList:
                 self.addFeatToDict(endVerticesDict, line, feat.id())
-            feedback.setProgress(currentProgress + int(localTotal*current))
+            feedback.setProgress(total*current)
         return endVerticesDict
 
     def addFeatToDict(self, endVerticesDict, line, featid):
