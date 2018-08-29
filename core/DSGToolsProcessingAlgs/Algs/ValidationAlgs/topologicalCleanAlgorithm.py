@@ -42,7 +42,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProject)
+                       QgsProject,
+                       QgsProcessingMultiStepFeedback)
 
 class TopologicalCleanAlgorithm(ValidationAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
@@ -109,22 +110,31 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
 
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=feedback, progressDelta=30)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Unified layer...'))
+        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=multiStepFeedback)
+        
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
         cleanedCoverage, error = algRunner.runClean(coverage, \
                                                     [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle], \
                                                     context, \
                                                     returnError=True, \
                                                     snap=snap, \
-                                                    minArea=minArea)
+                                                    minArea=minArea,
+                                                    feedback=multiStepFeedback)
 
-        layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, cleanedCoverage, feedback=feedback, progressDelta=70)
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, cleanedCoverage, feedback=multiStepFeedback)
         self.flagCoverageIssues(cleanedCoverage, error, feedback)
 
         return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flagSink}
 
     def flagCoverageIssues(self, cleanedCoverage, error, feedback):
         overlapDict = dict()
-        for feat in cleanedCoverage.getFeatures():
+        for current, feat in enumerate(cleanedCoverage.getFeatures()):
             if feedback.isCanceled():
                 break
             geom = feat.geometry()
