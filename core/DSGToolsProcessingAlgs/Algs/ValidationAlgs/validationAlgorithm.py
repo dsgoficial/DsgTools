@@ -48,13 +48,16 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         """
         Gets the iterator and feature count from lyr.
         """
-        if onlySelected:
-            total = 100.0 / lyr.selectedFeatureCount() if lyr.selectedFeatureCount() else 0
-            iterator = lyr.getSelectedFeatures()
-        else:
-            total = 100.0 / lyr.featureCount() if lyr.featureCount() else 0
-            iterator = lyr.getFeatures()
-        return iterator, total
+        try:
+            if onlySelected:
+                total = 100.0 / lyr.selectedFeatureCount() if lyr.selectedFeatureCount() else 0
+                iterator = lyr.getSelectedFeatures()
+            else:
+                total = 100.0 / lyr.featureCount() if lyr.featureCount() else 0
+                iterator = lyr.getFeatures()
+            return iterator, total
+        except:
+            return [], 0
     
     def prepareFlagSink(self, parameters, source, wkbType, context):
         flagFields = self.getFlagFields()
