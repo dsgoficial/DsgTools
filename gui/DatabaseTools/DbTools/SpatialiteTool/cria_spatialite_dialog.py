@@ -32,7 +32,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'cria_spatialite_dialog_base.ui'))
 
 class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
-    def __init__(self, parent=None, parentMenu=None):
+    def __init__(self, manager, parentButton=None, parent=None, parentMenu=None):
         """Constructor."""
         super(CriaSpatialiteDialog, self).__init__(parent)
         # Set up the user interface from Designer.
@@ -42,7 +42,8 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
         # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.parentMenu = parentMenu
-
+        self.manager = manager
+        self.parentButton = parentButton
         self.filepath = ""
         self.carregado = False
         self.coordSysDefinido = False
@@ -169,25 +170,38 @@ class CriaSpatialiteDialog(QtWidgets.QDialog, FORM_CLASS):
             if len(self.nomeLineEdit.text()) == 0:
                 self.bar.pushMessage(self.tr("Warning!"), self.tr('Please, fill the file name.'), level=Qgis.CRITICAL)
 
-    def addAction(self):
-        """
-        Adds the action to button on QGIS GUI and adds it to DSGTools menu.
-        """
-        icon_path = ':/plugins/DsgTools/icons/spatialite.png'
-        action = self.add_action(
-            icon_path,
-            text=self.tr('Create Spatialite'),
-            callback=self.createSpatialiteDatabase,
-            parent=self.parentMenu,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        database.addAction(action)
-        self.setAction(action)
-        self.manager.addTool(
+    # def addAction(self):
+    #     """
+    #     Adds the action to button on QGIS GUI and adds it to DSGTools menu.
+    #     """
+    #     icon_path = ':/plugins/DsgTools/icons/spatialite.png'
+    #     action = self.add_action(
+    #         icon_path,
+    #         text=self.tr('Create Spatialite'),
+    #         callback=self.createSpatialiteDatabase,
+    #         parent=self.parentMenu,
+    #         add_to_menu=False,
+    #         add_to_toolbar=False)
+    #     database.addAction(action)
+    #     self.setAction(action)
+    #     self.manager.addTool(
 
             
+    #     )
+    #     self.databaseButton.addAction(action) 
+
+    def initGui(self):
+        """
+        Instantiates user interface and prepare it to be called whenever tool button is activated. 
+        """
+        callback = lambda x: print(x)
+        self.manager.addTool(
+            text=self.tr('Create a Spatialite Database'),
+            callback=callback,
+            parentMenu=self.parentMenu,
+            icon='spatialite.png',
+            parentButton=self.parentButton
         )
-        self.databaseButton.addAction(action) 
 
     def unload(self):
         pass
