@@ -21,6 +21,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 from PyQt4 import QtGui, QtCore
 from qgis import core, gui
 
+from qgis.core import QgsFeatureRequest
 class AcquisitionFreeController(object):
 
     def __init__(self, acquisitionFree, iface):
@@ -150,6 +151,29 @@ class AcquisitionFreeController(object):
             for j in xrange(len(geomList)):
                 if lyrType == core.QGis.Line:
                     newGeom.append(coordinateTransformer.transform(geomList[j]))
+def reprojectGeometry(self, geom):
+        # Defining the crs from src and destiny
+        iface = self.getIface()
+        canvas = iface.mapCanvas()
+        epsg = canvas.mapSettings().destinationCrs().authid()
+        crsSrc = core.QgsCoordinateReferenceSystem(epsg)
+        #getting srid from something like 'EPSG:31983'
+        layer = canvas.currentLayer()
+        srid = layer.crs().authid()
+        crsDest = core.QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
+        if srid != epsg:
+            # Creating a transformer
+            coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest)
+            lyrType = iface.activeLayer().geometryType()
+            # Transforming the points
+            if lyrType == core.QGis.Line:
+                geomList = geom.asPolyline()
+            elif lyrType == core.QGis.Polygon:
+                geomList = geom.asPolygon()
+            newGeom = []
+            for j in xrange(len(geomList)):
+                if lyrType == core.QGis.Line:
+                    newGeom.append(coordinateTransformer.transform(geomList[j]))
                 elif lyrType == core.QGis.Polygon:
                     line = geomList[j]
                     for i in xrange(len(line)):
@@ -169,8 +193,10 @@ class AcquisitionFreeController(object):
             canvas = self.getIface().mapCanvas()
             layer = canvas.currentLayer() 
             tolerance = self.getTolerance(layer)
-            geom = self.reprojectGeometry(geom)
-            simplifyGeometry = self.simplifyGeometry(geom, tolerance)
+        
+            geom = self.reprojectGeometry(geom) 
+            simplifyGeometry = self.simplifyGeometry(geom, tolerance) 
+       
             fields = layer.pendingFields()
             feature = core.QgsFeature()
             feature.setGeometry(simplifyGeometry)
@@ -184,7 +210,24 @@ class AcquisitionFreeController(object):
                 self.addFeatureWithoutForm(layer, feature)
             else:
                 self.addFeatureWithForm(layer, feature)
-            
+
+    def reshapeSimplify(self, reshapeLine):
+        canvas = self.getIface().mapCanvas()
+        layer = canvas.currentLayer()
+        tolerance = self.getTolerance(layer)
+        
+        rsLine = self.simplifyGeometry(reshapeLine, tolerance)
+
+        request = QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
+        
+        for feat in layer.getFeatures(request):
+            geom = feat.geometry() # geometria que receberá o reshape.
+            if geom.intersects(rsLine): # Se intersecta e transforma frompolyline em geometria.
+                geom.reshapeGeometry(rsLine.asPolyline()) # realiza o reshape entre a linha e a geometria.
+                layer.changeGeometry(feat.id(), geom)
+        
+        canvas.refresh() # Refresh para atualizar, mas não salvar as alterações.
+
     def getFormSuppressStateSettings(self):
         #Método para verificar se o formulário de aquisição está suprimido nas configurações do projeto
         #Parâmetro de retorno: suppressForm ( boleano )
@@ -209,6 +252,7 @@ class AcquisitionFreeController(object):
         #Método para iniciar a ferramenta 
         tool = self.getAcquisitionFree()
         tool.acquisitionFinished['QgsGeometry*'].connect(self.createFeature)
+        tool.reshapeLineCreated.connect( self.reshapeSimplify )        
         canvas = self.getIface().mapCanvas()
         canvas.setMapTool(tool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
