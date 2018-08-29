@@ -294,6 +294,8 @@ class LayerHandler(QObject):
         attributeFeatDict = self.buildAttributeFeatureDict(lyr, onlySelected=onlySelected, feedback=feedback, progressDelta=progressDelta/2)
         parameterDict = self.getDestinationParameters(lyr)
         idsToRemove = []
+        currentProgress = feedback.progress() if feedback else None
+        localTotal = progressDelta/(2*len(attributeFeatDict)) if len(attributeFeatDict) != 0 else 0
         for current, key, featList in enumerate(attributeFeatDict.items()):
             if feedback:
                 if feedback.isCanceled():
@@ -312,6 +314,8 @@ class LayerHandler(QObject):
                         newGeom = geom.combine(feat_b.geometry())
                         newGeom = newGeom.mergeLines()
                         newGeom = self.geometryHandler
+            if feedback:
+                feedback.setProgress(currentProgress + localTotal*current)
 
     
     def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
@@ -329,7 +333,7 @@ class LayerHandler(QObject):
                 attributeFeatDict[attrKey] = []
             attributeFeatDict[attrKey].append(feat)
             if feedback:
-                feedback.setProgress(currentProgress + int(localTotal*current))
+                feedback.setProgress(currentProgress + localTotal*current)
         return attributeFeatDict
 
                 
