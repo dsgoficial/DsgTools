@@ -72,3 +72,21 @@ class DatabaseGuiManager(QObject):
     def unload(self):
         # self.postgisManager.unload()
         self.spatialiteDialog.unload()
+
+    def createDatabase(self, isSpatialite):
+        """
+        Shows the dialog for desired database creation.
+        :param isSpatialite: (bool) indicates whether target db is a SpatiaLite db or not (PostGIS).
+        """
+        try:
+            self.stackButton.setDefaultAction(self.toolbar.sender())
+        except:
+            pass
+        if isSpatialite:
+            dlg = self.spatialiteDialog
+        # else:
+        #     dlg = self.postgisManager
+        if dlg:
+            result = dlg.exec_()
+            if result:
+                pass
