@@ -28,7 +28,8 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes,
+                       QgsProcessingMultiStepFeedback)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -85,9 +86,18 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        flagLyr = algRunner.runIdentifySmallPolygons(inputLyr, tol, context, onlySelected=onlySelected)
-        self.removeFeatures(inputLyr, flagLyr, feedback)
-        flagLyr = algRunner.runIdentifySmallPolygons(inputLyr, tol, context, onlySelected=onlySelected)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Identifying small polygons in layer {0}...').format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifySmallPolygons(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Removing small polygons from layer {0}...').format(inputLyr.name()))
+        self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
+
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Identifying remaining small polygons in layer {0}...').format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifySmallPolygons(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
     
