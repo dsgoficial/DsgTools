@@ -42,7 +42,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProject)
+                       QgsProject,
+                       QgsProcessingMultiStepFeedback)
 
 class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
@@ -121,15 +122,26 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
 
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=feedback, progressDelta=30)
+
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
+        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=multiStepFeedback)
+
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
         simplifiedCoverage, error = algRunner.runDouglasSimplification(coverage, \
                                                     threshold,\
                                                     context, \
                                                     returnError=True, \
                                                     snap=snap, \
-                                                    minArea=minArea)
+                                                    minArea=minArea,
+                                                    feedback=multiStepFeedback)
 
-        layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, simplifiedCoverage, feedback=feedback, progressDelta=70)
+
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, simplifiedCoverage, feedback=multiStepFeedback)
         self.flagCoverageIssues(simplifiedCoverage, error, feedback)
 
         return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flag_id}
