@@ -43,7 +43,7 @@ from qgis.core import (QgsProcessing,
                        QgsSpatialIndex,
                        QgsGeometry,
                        QgsProject,
-                       QgsProcessingmultiStepFeedbackFeedback)
+                       QgsProcessingMultiStepFeedback)
 
 class CleanGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -111,7 +111,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
-        multiStepFeedback = QgsProcessingmultiStepFeedbackFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
