@@ -75,7 +75,8 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE,
                 self.tr('Snap radius'),
                 minValue=0,
-                defaultValue=1
+                defaultValue=1,
+                type=QgsProcessingParameterNumber.Double
             )
         )
         self.addParameter(
