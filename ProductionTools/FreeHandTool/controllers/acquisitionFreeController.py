@@ -72,21 +72,18 @@ class AcquisitionFreeController(object):
     
     def connectToolSignals(self):
         #Método para iniciar sinais do plugin 
-        iface = self.getIface()
-        iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
-        iface.currentLayerChanged.connect(self.checkToActiveAction)
-        iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.triggered.connect(self.activateTool)
+        self.iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
+        self.iface.currentLayerChanged.connect(self.checkToActiveAction)
+        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
+        self.actionAcquisitionFree.triggered.connect(self.activateTool)
 
     def checkToActiveAction(self):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        layer = self.getIface().activeLayer()
+        layer = self.iface.activeLayer()
         if core is not None and layer and layer.isEditable() and  (layer.type() == core.QgsMapLayer.VectorLayer) and (layer.geometryType() in [core.QGis.Line, core.QGis.Polygon]):
-            actionAcquisitionFree.setEnabled(True)
+            self.actionAcquisitionFree.setEnabled(True)
         else:
-            actionAcquisitionFree.setEnabled(False)
+            self.actionAcquisitionFree.setEnabled(False)
             self.deactivateTool()
     
     def getParametersFromConfig(self):
@@ -207,24 +204,24 @@ class AcquisitionFreeController(object):
 
     def activateTool(self):
         #Método para iniciar a ferramenta 
-        tool = self.getAcquisitionFree()
-        tool.acquisitionFinished['QgsGeometry*'].connect(self.createFeature)
-        canvas = self.getIface().mapCanvas()
-        canvas.setMapTool(tool)
+        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].disconnect(self.deactivateTool)
+        self.acquisitionFree.acquisitionFinished['QgsGeometry*'].connect(self.createFeature)
+        self.iface.mapCanvas().setMapTool(self.acquisitionFree)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.setChecked(True)
         self.setActiveState(True)
+        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
                                         
     def deactivateTool(self):
         #Método para desativar a ferramenta
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.setChecked(False)
+        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].disconnect(self.deactivateTool)
+        self.actionAcquisitionFree.setChecked(False)
         if self.getActiveState():
-            tool = self.getAcquisitionFree()
             try:
-                tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
-                tool.deactivate()
+                self.acquisitionFree.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
             except:
                 pass
+            self.acquisitionFree.deactivate()
+            self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
         self.setActiveState(False)
-      
+        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
