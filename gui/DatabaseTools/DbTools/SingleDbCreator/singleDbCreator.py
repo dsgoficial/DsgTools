@@ -7,8 +7,10 @@
                               -------------------
         begin                : 2016-08-25
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
+                               (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : esperidiao.joao@eb.mil.br
+                               borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -36,7 +38,7 @@ from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactor
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchIncrementing.ui'))
 
-class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
+class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
     parametersSet = pyqtSignal(dict)
     def __init__(self, parent=None):
         """Constructor."""
@@ -51,15 +53,9 @@ class CreateBatchIncrementing(QtWidgets.QWizardPage, FORM_CLASS):
     def getParameters(self):
         #Get outputDir, outputList, refSys
         parameterDict = dict()
-        parameterDict['prefix'] = None
-        parameterDict['sufix'] = None
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
         parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
-        if self.databaseParameterWidget.prefixLineEdit.text() != '':
-            parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
-        if self.databaseParameterWidget.sufixLineEdit.text() != '':
-            parameterDict['sufix'] = self.databaseParameterWidget.sufixLineEdit.text()
         parameterDict['dbBaseName'] = self.databaseParameterWidget.dbNameLineEdit.text()
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
         parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
