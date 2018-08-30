@@ -9,7 +9,7 @@
         git sha              : $Format:%H$
         copyright            : (C) 2015 by Philipe Borba - Cartographic Engineer @ Brazilian Army
                                            Maurício de Paulo - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
                                mauricio@dsg.eb.mil.br
        mod history          : 2015-04-12 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
  ***************************************************************************/
