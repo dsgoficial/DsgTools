@@ -32,7 +32,7 @@ from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 from .BDGExTools.bdgexGuiManager import BDGExGuiManager
 from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
-from .DatabaseTools.DbTools.databaseManager import DatabaseGuiManager
+from .DatabaseTools.databaseManager import DatabaseGuiManager
 from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
 
 class GuiManager(QObject):
