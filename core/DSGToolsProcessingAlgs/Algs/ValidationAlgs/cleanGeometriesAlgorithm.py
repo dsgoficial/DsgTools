@@ -75,7 +75,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE,
                 self.tr('Snap radius'),
                 minValue=0,
-                defaultValue=1,
+                defaultValue=1.0000000000000000000000000,
                 type=QgsProcessingParameterNumber.Double
             )
         )
