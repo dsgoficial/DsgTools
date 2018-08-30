@@ -67,28 +67,29 @@ class DatabaseGuiManager(QObject):
     def initGui(self):
         # self.postgisManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
         # self.postgisManager.initGui()
-        self.spatialiteDialog = CriaSpatialiteDialog(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
-        self.spatialiteDialog.initGui()
-        self.singleDbCreator = CreateSingleDatabase()
+        # self.spatialiteDialog = CriaSpatialiteDialog(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+        # self.spatialiteDialog.initGui()
+        self.singleDbCreator = CreateSingleDatabase(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+        self.singleDbCreator.initGui()
 
     def unload(self):
         # self.postgisManager.unload()
         self.spatialiteDialog.unload()
 
-    def createDatabase(self, isSpatialite):
+    def createDatabase(self, isBatchCreation):
         """
         Shows the dialog for desired database creation.
-        :param isSpatialite: (bool) indicates whether target db is a SpatiaLite db or not (PostGIS).
+        :param isBatchCreation: (bool) indicates whether creation is in batch or not.
         """
         try:
             self.stackButton.setDefaultAction(self.toolbar.sender())
         except:
             pass
-        if isSpatialite:
+        if not isBatchCreation:
             # dlg = self.spatialiteDialog
-            dlg = self.createDatabase
+            dlg = self.singleDbCreator
         # else:
-        #     dlg = self.postgisManager
+        #     dlg = self.batchCreator
         if dlg:
             result = dlg.exec_()
             if result:
