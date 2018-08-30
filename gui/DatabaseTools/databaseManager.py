@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.DatabaseTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
 from DsgTools.gui.DatabaseTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
+from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import CreateSingleDatabase
 
 class DatabaseGuiManager(QObject):
 
@@ -68,6 +69,7 @@ class DatabaseGuiManager(QObject):
         # self.postgisManager.initGui()
         self.spatialiteDialog = CriaSpatialiteDialog(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.spatialiteDialog.initGui()
+        self.singleDbCreator = CreateSingleDatabase()
 
     def unload(self):
         # self.postgisManager.unload()
@@ -83,7 +85,8 @@ class DatabaseGuiManager(QObject):
         except:
             pass
         if isSpatialite:
-            dlg = self.spatialiteDialog
+            # dlg = self.spatialiteDialog
+            dlg = self.createDatabase
         # else:
         #     dlg = self.postgisManager
         if dlg:

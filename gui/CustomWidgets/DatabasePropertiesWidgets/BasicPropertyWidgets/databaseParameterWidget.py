@@ -22,7 +22,7 @@
 """
 import os
 
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 from qgis.core import QgsMessageLog
 
