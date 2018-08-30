@@ -36,14 +36,24 @@ from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import TabD
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), '..', 'BatchDbCreator', 'createBatchIncrementing.ui'))
+    os.path.dirname(__file__), 'singleDbCreator.ui'))
 
 class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
     parametersSet = pyqtSignal(dict)
-    def __init__(self, parent=None):
+    def __init__(self, manager, parentButton, parentMenu, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__()
+        self.manager = manager
+        self.parentButton = parentButton
+        self.parentMenu = parentMenu
+        self.parent = parent
         self.setupUi(self)
+        # hide unnecessary parts from reused interface
+        self.databaseParameterWidget.prefixLineEdit.hide()
+        self.databaseParameterWidget.sufixLineEdit.hide()
+        self.databaseParameterWidget.prefixLabel.hide()
+        self.databaseParameterWidget.sufixLabel.hide()
+        self.databaseParameterWidget.groupBox.setTitle('')
         self.databaseParameterWidget.setDbNameVisible(False)
         self.tabDbSelectorWidget.serverWidget.serverAbstractDbLoaded.connect(self.databaseParameterWidget.setServerDb)
         self.databaseParameterWidget.comboBoxPostgis.parent = self
@@ -98,3 +108,20 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         dbDict, errorDict = dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict['templateInfo'])
         QApplication.restoreOverrideCursor()
         return dbDict, errorDict
+
+    def initGui(self):
+        """
+        Instantiates user interface and prepare it to be called whenever tool button is activated. 
+        """
+        callback = lambda : self.manager.createDatabase(isBatchCreation=False)
+        self.manager.addTool(
+            text=self.tr('Create a PostGIS or a SpatiaLite Database'),
+            callback=callback,
+            parentMenu=self.parentMenu,
+            icon='database.png',
+            parentButton=self.parentButton,
+            defaultButton=True
+        )
+
+    def unload(self):
+        pass
