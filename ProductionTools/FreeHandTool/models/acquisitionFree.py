@@ -343,4 +343,3 @@ class AcquisitionFree(gui.QgsMapTool):
         QtGui.QApplication.restoreOverrideCursor()
         if self is not None and gui is not None:
             gui.QgsMapTool.deactivate(self)
-            self.canvas.unsetMapTool(self)
