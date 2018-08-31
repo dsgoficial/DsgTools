@@ -42,9 +42,11 @@ class SpatialiteDbCreator(DbCreator):
     def getTemplateLocation(self, version):
         currentPath = os.path.dirname(__file__)
         if version == '2.1.3':
-            edgvPath = os.path.join(currentPath,'..','..','DbTools','SpatialiteTool','template', '213', 'seed_edgv213.sqlite')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', '213', 'seed_edgv213.sqlite')
         elif version == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath,'..','..','DbTools','SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
+        elif version == 'FTer_2a_Ed':
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', '3', 'seed_edgv3.sqlite')
         return edgvPath
     
     def createDb(self, dbName, srid, paramDict = dict(), parentWidget = None):
