@@ -116,4 +116,21 @@ class FeatureHandler(QObject):
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
     
+    def mergeLineFeatures(self, featList, lyr, idsToRemove, parameterDict = {}):
+        for feat_a in featList:
+            if feat_a.id() in idsToRemove:
+                continue
+            geom = feat_a.geometry()
+            for feat_b in featList:
+                if feat_a.id() == feat_b.id():
+                    continue
+                if feat_b.id() in idsToRemove:
+                    continue
+                if geom.touches(feat_b.geometry()):
+                    newGeom = geom.combine(feat_b.geometry())
+                    newGeom = newGeom.mergeLines()
+                    newGeom = self.geometryHandler.handleGeometry(newGeom, parameterDict)[0] #only one candidate is possible because features are touching
+                    feat_a.setGeometry(newGeom)
+                    idsToRemove.append(feat_b.id())
+                    lyr.updateFeature(feat_a)    
     
