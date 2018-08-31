@@ -87,7 +87,7 @@ class DatabaseGuiManager(QObject):
         """
         Unloads all loaded GUI.
         """
-        self.spatialiteDialog.unload()
+        self.singleDbCreator.unload()
         # self.batchCreator.unload()
 
     def createDatabase(self, isBatchCreation):
@@ -100,7 +100,6 @@ class DatabaseGuiManager(QObject):
         except:
             pass
         if not isBatchCreation:
-            # dlg = self.spatialiteDialog
             dlg = self.singleDbCreator
         # else:
         #     dlg = self.batchCreator
