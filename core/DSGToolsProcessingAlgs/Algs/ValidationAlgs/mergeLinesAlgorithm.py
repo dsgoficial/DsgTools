@@ -5,11 +5,12 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-08-13
+        begin                : 2018-08-31
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
+
 /***************************************************************************
  *                                                                         *
  *   This program is free software; you can redistribute it and/or modify  *
@@ -19,12 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.validationAlgorithm import ValidationAlgorithm
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
-from PyQt5.QtCore import QCoreApplication
+from .validationAlgorithm import ValidationAlgorithm
+from ...algRunner import AlgRunner
 import processing
+from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -32,17 +32,24 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFeatureSink,
                        QgsFeature,
                        QgsDataSourceUri,
+                       QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
-                       QgsProcessingParameterField,
                        QgsProcessingParameterBoolean,
-                       QgsWkbTypes,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterMultipleLayers,
                        QgsProcessingUtils,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsSpatialIndex,
+                       QgsGeometry,
+                       QgsProcessingParameterField)
 
-class TestAlgorithm(ValidationAlgorithm):
+class MergeLinesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
+    SELECTED = 'SELECTED'
+    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
+    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
 
     def initAlgorithm(self, config):
         """
@@ -55,26 +62,54 @@ class TestAlgorithm(ValidationAlgorithm):
                 [QgsProcessing.TypeVectorLine ]
             )
         )
-
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.SELECTED,
+                self.tr('Process only selected features')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.ATTRIBUTE_BLACK_LIST, 
+                self.tr('Fields to ignore'),
+                None, 
+                'INPUT', 
+                QgsProcessingParameterField.Any,
+                allowMultiple=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_VIRTUAL_FIELDS,
+                self.tr('Ignore virtual fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_PK_FIELDS,
+                self.tr('Ignore primary key fields'),
+                defaultValue=True
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        multiStep = QgsProcessingMultiStepFeedback(3, feedback)
-        for i in range(3):
-            if feedback.isCanceled():
-                break
-            delta = 100/10000000
-            multiStep.setCurrentStep(i)
-            multiStep.pushInfo('testing {0}'.format(i))
-            for j in range(10000000):
-                if feedback.isCanceled():
-                    break
-                multiStep.setProgress(delta*j)
-            
-        
-        return {}
+        layerHandler = LayerHandler()
+        algRunner = AlgRunner()
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
+        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
+
+        layerHandler.mergeLinesOnLayer(inputLyr, feedback = feedback, onlySelected=onlySelected, ignoreVirtualFields = ignoreVirtual, attributeBlackList = attributeBlackList, excludePrimaryKeys=ignorePK)
+        # cleaned = algRunner.runDsgToolsClean(inputLyr, context, feedback=feedback,onlySelected=onlySelected)
+
+
+        return {self.INPUT: inputLyr}
 
     def name(self):
         """
@@ -84,21 +119,21 @@ class TestAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'test'
+        return 'mergelineswithsameattributeset'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('test')
+        return self.tr('Merge lines with same attribute set')
 
     def group(self):
         """
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Other Algorithms')
+        return self.tr('Validation Tools (Manipulation Processes)')
 
     def groupId(self):
         """
@@ -108,10 +143,10 @@ class TestAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Other Algorithms'
+        return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return TestAlgorithm()
+        return MergeLinesAlgorithm()

@@ -110,6 +110,17 @@ class AlgRunner:
         outputDict = processing.run('grass7:v.clean', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)
     
+    def runDsgToolsClean(self, inputLyr, context, feedback = None, onlySelected = False, snap = -1, minArea = 0.0001, flags = 'memory:'):
+        parameters = {
+            'INPUT' : inputLyr,
+            'SELECTED' : onlySelected,
+            'TOLERANCE': snap,
+            'MINAREA': minArea,
+            'FLAGS' : flags
+        }
+        output = processing.run('dsgtools:cleangeometries', parameters, context = context, feedback = feedback)
+        return output['INPUT']
+    
     def runDouglasSimplification(self, inputLyr, threshold, context, feedback = None, snap=-1, minArea=0.0001, iterations=1, type=[0,1,2], returnError=False):
         output, error = self.generateGrassOutputAndError()
         parameters = {

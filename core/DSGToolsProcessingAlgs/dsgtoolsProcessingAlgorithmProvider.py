@@ -41,7 +41,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedGe
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallLinesAlgorithm import RemoveSmallLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallPolygonsAlgorithm import RemoveSmallPolygonsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import CleanGeometriesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.test import TestAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.mergeLinesAlgorithm import MergeLinesAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -68,7 +68,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         RemoveSmallLinesAlgorithm(),
                         RemoveSmallPolygonsAlgorithm(),
                         CleanGeometriesAlgorithm(),
-                        TestAlgorithm()]
+                        MergeLinesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()

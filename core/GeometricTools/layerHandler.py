@@ -48,7 +48,7 @@ class LayerHandler(QObject):
         """
         if onlySelected:
             featureList = lyr.getSelectedFeatures() if returnIterator else [i for i in lyr.getSelectedFeatures()]
-            size = len(featureList)
+            size = len(list(featureList)) if returnIterator else 
         else:
             featureList = lyr.getFeatures() if returnIterator else [i for i in lyr.getFeatures()]
             size = len(lyr.allFeatureIds())
@@ -290,40 +290,32 @@ class LayerHandler(QObject):
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, progressDelta = 100):
-        attributeFeatDict = self.buildAttributeFeatureDict(lyr, onlySelected=onlySelected, feedback=feedback, progressDelta=progressDelta/2)
+    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+        attributeFeatDict = self.buildAttributeFeatureDict(lyr, onlySelected=onlySelected, feedback=feedback, progressDelta=progressDelta/2, attributeBlackList=attributeBlackList)
         parameterDict = self.getDestinationParameters(lyr)
         idsToRemove = []
         currentProgress = feedback.progress() if feedback else None
         localTotal = progressDelta/(2*len(attributeFeatDict)) if len(attributeFeatDict) != 0 else 0
-        for current, key, featList in enumerate(attributeFeatDict.items()):
+        lyr.startEditing()
+        lyr.beginEditCommand(self.tr('Merging Lines'))
+        for current, (key, featList) in enumerate(attributeFeatDict.items()):
             if feedback:
                 if feedback.isCanceled():
                     break
-            #transformar em metodo do featureHandler e continuar amanha
-            for feat_a in featList:
-                if feat_a.id() in idsToRemove:
-                    continue
-                geom = feat_a.geometry()
-                for feat_b in featList:
-                    if feat_a.id() == feat_b.id():
-                        continue
-                    if feat_b.id() in idsToRemove:
-                        continue
-                    if geom.touches(feat_b.geometry()):
-                        newGeom = geom.combine(feat_b.geometry())
-                        newGeom = newGeom.mergeLines()
-                        newGeom = self.geometryHandler
+            self.featureHandler.mergeLineFeatures(featList, lyr, idsToRemove, parameterDict=parameterDict)
             if feedback:
                 feedback.setProgress(currentProgress + localTotal*current)
-
+        lyr.deleteFeatures(idsToRemove)
+        lyr.endEditCommand()
     
     def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+        currentProgress = feedback.progress() if feedback else None
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        localTotal = progressDelta/size if size != 0 else 0
         attributeFeatDict = dict()
         pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
         typeBlackList = [6] if ignoreVirtualFields else []
-        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
+        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field not in attributeBlackList]
         for current, feat in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
