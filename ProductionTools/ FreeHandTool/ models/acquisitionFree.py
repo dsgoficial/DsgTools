@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+
+#-*- coding: utf-8 -*-
 """
 /***************************************************************************
                              -------------------
@@ -19,13 +20,16 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from PyQt4 import QtCore, QtGui, Qt
+from PyQt4.QtCore import Qt
 from qgis import core, gui
+from qgis.core import QGis, QgsGeometry, QgsFeatureRequest
 import math, json
 
 class AcquisitionFree(gui.QgsMapTool):
  
     #Sinal usado para enviar a geometria adquirida ao finalizar aquisição
     acquisitionFinished = QtCore.pyqtSignal('QgsGeometry*')
+    reshapeLineCreated = QtCore.pyqtSignal('QgsGeometry*')
 
     def __init__(self, iface):
         #construtor
@@ -57,6 +61,7 @@ class AcquisitionFree(gui.QgsMapTool):
                                     "  +     #     +  ",
                                     "   +++++++++++   ",
                                     "                 ",]))
+        self.controlPressed = False
 
     def setCursor(self, cursor):
         #Método para definir cursor da ferramenta
@@ -164,7 +169,13 @@ class AcquisitionFree(gui.QgsMapTool):
         if event.key() == QtCore.Qt.Key_Escape:
             self.cancelEdition()
             event.ignore()
+        if event.key() == QtCore.Qt.Key_Control:
+            self.controlPressed = True
     
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Control:
+            self.controlPressed = False
+
     def cancelEdition(self): 
         #Método para cancelar aquisição
         self.getRubberBand().reset() if self.getRubberBand() else None
@@ -331,8 +342,23 @@ class AcquisitionFree(gui.QgsMapTool):
             return
         if self.getRubberBand().numberOfVertices() > 2:
             geom = self.getRubberBand().asGeometry()
-            self.acquisitionFinished.emit(geom)
+            #self.simplifyGeometry()
+            if self.controlPressed == False:
+                self.acquisitionFinished.emit(geom) ##### SIGNAL ######
+            else:
+                self.doReshape(geom)
+
         self.cancelEdition()
+
+    def doReshape(self, geom):
+        line = ''
+        if geom.type() == QGis.Line:
+            line = geom.asPolyline()
+        elif geom.type() == QGis.Polygon:
+            line = geom.asPolygon()[0]
+            del line[-1]
+        
+        self.reshapeLineCreated.emit(QgsGeometry.fromPolyline(line))
 
     def activate(self):
         #Método chamado ao ativar a ferramenta
@@ -343,3 +369,4 @@ class AcquisitionFree(gui.QgsMapTool):
         QtGui.QApplication.restoreOverrideCursor()
         if self is not None and gui is not None:
             gui.QgsMapTool.deactivate(self)
+            self.canvas.unsetMapTool(self)

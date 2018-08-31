@@ -158,7 +158,7 @@ class AcquisitionFreeController(object):
                 return core.QgsGeometry.fromPolygon([newGeom])
         return geom        
 
-    def createFeature(self, geom):
+      def createFeature(self, geom):
         #Método para criar feição
         #Parâmetro de entrada: geom (geometria adquirida)
         if geom :
@@ -166,8 +166,10 @@ class AcquisitionFreeController(object):
             canvas = self.getIface().mapCanvas()
             layer = canvas.currentLayer() 
             tolerance = self.getTolerance(layer)
-            geom = self.reprojectGeometry(geom)
-            simplifyGeometry = self.simplifyGeometry(geom, tolerance)
+        
+            geom = self.reprojectGeometry(geom) 
+            simplifyGeometry = self.simplifyGeometry(geom, tolerance) 
+       
             fields = layer.pendingFields()
             feature = core.QgsFeature()
             feature.setGeometry(simplifyGeometry)
@@ -181,7 +183,24 @@ class AcquisitionFreeController(object):
                 self.addFeatureWithoutForm(layer, feature)
             else:
                 self.addFeatureWithForm(layer, feature)
-            
+
+    def reshapeSimplify(self, reshapeLine):        
+        canvas = self.getIface().mapCanvas()
+        layer = canvas.currentLayer()
+        tolerance = self.getTolerance(layer)
+        
+        rsLine = self.simplifyGeometry(reshapeLine, tolerance)
+
+        request = QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
+        
+        for feat in layer.getFeatures(request):
+            geom = feat.geometry() # geometria que receberá o reshape.
+            if geom.intersects(rsLine): # Se intersecta e transforma frompolyline em geometria.
+                geom.reshapeGeometry(rsLine.asPolyline()) # realiza o reshape entre a linha e a geometria.
+                layer.changeGeometry(feat.id(), geom)
+        
+        canvas.refresh() # Refresh para atualizar, mas não salvar as alterações.
+
     def getFormSuppressStateSettings(self):
         #Método para verificar se o formulário de aquisição está suprimido nas configurações do projeto
         #Parâmetro de retorno: suppressForm ( boleano )
@@ -204,24 +223,25 @@ class AcquisitionFreeController(object):
 
     def activateTool(self):
         #Método para iniciar a ferramenta 
-        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].disconnect(self.deactivateTool)
-        self.acquisitionFree.acquisitionFinished['QgsGeometry*'].connect(self.createFeature)
-        self.iface.mapCanvas().setMapTool(self.acquisitionFree)
+        tool = self.getAcquisitionFree()
+        tool.acquisitionFinished['QgsGeometry*'].connect(self.createFeature)
+        tool.reshapeLineCreated.connect( self.reshapeSimplify )        
+        canvas = self.getIface().mapCanvas()
+        canvas.setMapTool(tool)
         actionAcquisitionFree = self.getActionAcquisitionFree()
         actionAcquisitionFree.setChecked(True)
         self.setActiveState(True)
-        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
                                         
     def deactivateTool(self):
         #Método para desativar a ferramenta
-        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].disconnect(self.deactivateTool)
-        self.actionAcquisitionFree.setChecked(False)
+        actionAcquisitionFree = self.getActionAcquisitionFree()
+        actionAcquisitionFree.setChecked(False)
         if self.getActiveState():
+            tool = self.getAcquisitionFree()
             try:
-                self.acquisitionFree.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
+                tool.acquisitionFinished['QgsGeometry*'].disconnect(self.createFeature)
+                tool.deactivate()
             except:
                 pass
-            self.acquisitionFree.deactivate()
-            self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
         self.setActiveState(False)
-        self.iface.mapCanvas().mapToolSet['QgsMapTool*'].connect(self.deactivateTool)
+      
