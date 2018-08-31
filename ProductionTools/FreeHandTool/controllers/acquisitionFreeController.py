@@ -158,7 +158,7 @@ class AcquisitionFreeController(object):
                 return core.QgsGeometry.fromPolygon([newGeom])
         return geom        
 
-      def createFeature(self, geom):
+    def createFeature(self, geom):
         #Método para criar feição
         #Parâmetro de entrada: geom (geometria adquirida)
         if geom :
@@ -169,7 +169,7 @@ class AcquisitionFreeController(object):
         
             geom = self.reprojectGeometry(geom) 
             simplifyGeometry = self.simplifyGeometry(geom, tolerance) 
-       
+        
             fields = layer.pendingFields()
             feature = core.QgsFeature()
             feature.setGeometry(simplifyGeometry)
@@ -191,7 +191,7 @@ class AcquisitionFreeController(object):
         
         rsLine = self.simplifyGeometry(reshapeLine, tolerance)
 
-        request = QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
+        request = core.QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
         
         for feat in layer.getFeatures(request):
             geom = feat.geometry() # geometria que receberá o reshape.
