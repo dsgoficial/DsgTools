@@ -113,7 +113,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
                                                 paramDict=parameterDict['templateInfo'], parentWidget=self)
             dbDict[parameterDict['dbBaseName']] = newDb
         except Exception as e:
-            errorDict[dbName] = ':'.join(e.args)
+            errorDict[parameterDict['dbBaseName']] = ':'.join(map(str, e.args))
         dbDict[parameterDict['dbBaseName']] = newDb
         QApplication.restoreOverrideCursor()        
         return dbDict, errorDict
