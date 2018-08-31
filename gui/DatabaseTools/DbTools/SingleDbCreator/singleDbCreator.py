@@ -59,6 +59,9 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         self.databaseParameterWidget.comboBoxPostgis.parent = self
         self.databaseParameterWidget.useFrame = False
         self.databaseParameterWidget.setDbNameVisible(True)
+        self.tabDbSelectorWidget.outputDirSelector.label.setText(self.tr('Select Database Path'))
+        self.okPushButton.clicked.connect(self.validateParameters)
+        self.cancelPushButton.clicked.connect(self.close_)
     
     def getParameters(self):
         #Get outputDir, outputList, refSys
@@ -69,11 +72,10 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         parameterDict['dbBaseName'] = self.databaseParameterWidget.dbNameLineEdit.text()
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
         parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
-        parameterDict['numberOfDatabases'] = self.spinBox.value()
         parameterDict['templateInfo'] = self.databaseParameterWidget.getTemplateParameters()
         return parameterDict
 
-    def validatePage(self):
+    def validateParameters(self):
         #insert validation messages
         validatedDbParams = self.databaseParameterWidget.validate()
         if not validatedDbParams:
@@ -103,9 +105,10 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         return True
     
     def createDatabases(self, parameterDict):
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget=self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        dbDict, errorDict = dbCreator.createDbWithAutoIncrementingName(parameterDict['dbBaseName'], parameterDict['srid'], parameterDict['numberOfDatabases'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], paramDict = parameterDict['templateInfo'])
+        dbDict, errorDict = dbCreator.createDb(dbName=parameterDict['dbBaseName'], srid=parameterDict['srid'],\
+                                                paramDict=parameterDict['templateInfo'], parentWidget=self)
         QApplication.restoreOverrideCursor()
         return dbDict, errorDict
 
@@ -122,6 +125,12 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             parentButton=self.parentButton,
             defaultButton=True
         )
+
+    def close_(self):
+        """
+        Closes interface.
+        """
+        self.close()
 
     def unload(self):
         pass
