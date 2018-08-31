@@ -8,7 +8,7 @@
         begin                : 2016-08-25
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -28,10 +28,10 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
-from DsgTools.Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
-from DsgTools.CustomWidgets.tabDbSelectorWidget import TabDbSelectorWidget
-from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
+from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import TabDbSelectorWidget
+from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchIncrementing.ui'))

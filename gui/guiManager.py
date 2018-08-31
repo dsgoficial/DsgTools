@@ -32,6 +32,7 @@ from qgis.PyQt.QtWidgets import QToolButton, QMenu, QAction
 from .BDGExTools.bdgexGuiManager import BDGExGuiManager
 from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
+from .DatabaseTools.databaseManager import DatabaseGuiManager
 from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
 
 class GuiManager(QObject):
@@ -155,6 +156,8 @@ class GuiManager(QObject):
         return action
     
     def instantiateManagers(self):
+        self.databaseGuiManager = DatabaseGuiManager(self, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
+        self.managerList.append(self.databaseGuiManager)
         self.layerToolsGuiManager = LayerToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.layerToolsGuiManager)
         self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)

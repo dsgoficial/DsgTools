@@ -188,7 +188,7 @@ class PostgisDbThread(GenericThread):
                     self.db.rollback()
                     self.db.close()
                     self.dropDatabase(self.db)                
-                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", Qgis.Info)
                     return (-1, self.messenger.getUserCanceledFeedbackMessage())
     
             self.db.commit()
@@ -222,9 +222,9 @@ class PostgisDbThread(GenericThread):
                 return (0, self.messenger.getProblemFeedbackMessage())                
             self.signals.stepProcessed.emit(self.getId())
         else:
-            QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", Qgis.Info)
             return (-1, self.messenger.getUserCanceledFeedbackMessage())
-        QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+        QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", Qgis.Info)
         return (1, self.messenger.getSuccessFeedbackMessage())
 
     def dropDatabase(self,db):
