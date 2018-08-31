@@ -8,7 +8,7 @@
         begin                : 2016-08-26
         git sha              : $Format:%H$
         copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -22,7 +22,7 @@
 """
 import os
 
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 from qgis.core import QgsMessageLog
 

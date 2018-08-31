@@ -5,10 +5,12 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2016-02-18
+        begin                : 2016-08-25
         git sha              : $Format:%H$
-        copyright            : (C) 2016 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
+                               (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        email                : esperidiao.joao@eb.mil.br
+                               borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,62 +22,60 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+import os, sqlite3
 import json
 
 from qgis.core import QgsMessageLog
-
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, Qt
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
-from fileinput import filename
 from DsgTools.core.Utils.utils import Utils
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget import TabDbSelectorWidget
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'createBatchFromCsv.ui'))
+    os.path.dirname(__file__), 'singleDbCreator.ui'))
 
-class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
-    coverageChanged = pyqtSignal()
-    def __init__(self, parent=None):
+class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
+    parametersSet = pyqtSignal(dict)
+    def __init__(self, manager, parentButton, parentMenu, parent=None):
         """Constructor."""
-        super(self.__class__, self).__init__()
+        super(CreateSingleDatabase, self).__init__()
+        self.manager = manager
+        self.parentButton = parentButton
+        self.parentMenu = parentMenu
+        self.parent = parent
         self.setupUi(self)
+        # hide unnecessary parts from reused interface
+        self.databaseParameterWidget.prefixLineEdit.hide()
+        self.databaseParameterWidget.sufixLineEdit.hide()
+        self.databaseParameterWidget.prefixLabel.hide()
+        self.databaseParameterWidget.sufixLabel.hide()
+        self.databaseParameterWidget.groupBox.setTitle('')
         self.databaseParameterWidget.setDbNameVisible(False)
-        self.customFileSelector.setCaption(self.tr('Select a Comma Separated Values File'))
-        self.customFileSelector.setFilter(self.tr('Comma Separated Values File (*.csv)'))
-        self.customFileSelector.setType('single')
-        self.customFileSelector.setTitle(self.tr('CSV File'))
-        self.tabDbSelectorWidget.tabWidget.currentChanged.connect(self.changeTemplateInterface)
         self.tabDbSelectorWidget.serverWidget.serverAbstractDbLoaded.connect(self.databaseParameterWidget.setServerDb)
         self.databaseParameterWidget.comboBoxPostgis.parent = self
+        self.databaseParameterWidget.useFrame = False
+        self.databaseParameterWidget.setDbNameVisible(True)
+        self.tabDbSelectorWidget.outputDirSelector.label.setText(self.tr('Select Database Path'))
+        self.okPushButton.clicked.connect(self.validateParameters)
+        self.cancelPushButton.clicked.connect(self.close_)
     
     def getParameters(self):
         #Get outputDir, outputList, refSys
         parameterDict = dict()
-        parameterDict['prefix'] = None
-        parameterDict['sufix'] = None
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
         parameterDict['version'] = self.databaseParameterWidget.getVersion()
         parameterDict['nonDefaultTemplate'] = self.databaseParameterWidget.getTemplateName()
-        if self.databaseParameterWidget.prefixLineEdit.text() != '':
-            parameterDict['prefix'] = self.databaseParameterWidget.prefixLineEdit.text()
-        if self.databaseParameterWidget.sufixLineEdit.text() != '':
-            parameterDict['sufix'] = self.databaseParameterWidget.sufixLineEdit.text()
-        parameterDict['miList'] = self.getMiListFromCSV() 
+        parameterDict['dbBaseName'] = self.databaseParameterWidget.dbNameLineEdit.text()
         parameterDict['driverName'] = self.tabDbSelectorWidget.getType()
         parameterDict['factoryParam'] = self.tabDbSelectorWidget.getFactoryCreationParam()
         parameterDict['templateInfo'] = self.databaseParameterWidget.getTemplateParameters()
         return parameterDict
-    
-    def getMiListFromCSV(self):
-        f = open(self.customFileSelector.fileNameList,'r')
-        miList = [i.replace('\n','').strip() for i in f.readlines()]
-        miList = [i for i in miList if i != '']
-        return miList
 
-    def validatePage(self):
+    def validateParameters(self):
         #insert validation messages
         validatedDbParams = self.databaseParameterWidget.validate()
         if not validatedDbParams:
@@ -86,39 +86,57 @@ class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
         parameterDict = self.getParameters()
         dbDict, errorDict = self.createDatabases(parameterDict)
         creationMsg = ''
-        if len(list(dbDict.keys())) > 0:
-            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(list(dbDict.keys())))
-        errorFrameMsg = ''
+        if len(dbDict):
+            creationMsg = self.tr('Database {0} successfully created.').format(', '.join(list(dbDict.keys())))
         errorMsg = ''
-        if len(list(errorDict.keys())) > 0:
+        if len(errorDict):
             frameList = []
             errorList = []
             for key in list(errorDict.keys()):
-                if self.tr('Invalid inomen parameter!') in errorDict[key]:
-                    frameList.append(key)
-                else:
-                    errorList.append(key)
+                errorList.append(key)
                 QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSG Tools Plugin", Qgis.Critical)
-            if len(frameList) > 0:
-                errorFrameMsg += self.tr('Frame was not created on the following databases: {0}').format(', '.join(frameList))
             if len(errorList) > 0:
                 errorMsg += self.tr('Some errors occurred while trying to create database(s) {0}').format(', '.join(errorList))
         logMsg = ''
-        if errorFrameMsg != '' or errorMsg != '':
+        if errorMsg != '':
             logMsg += self.tr('Check log for more details.')
-        msg = [i for i in (creationMsg, errorFrameMsg, errorMsg, logMsg) if i != '']
+        msg = [i for i in (creationMsg, errorMsg, logMsg) if i != '']
         QMessageBox.warning(self, self.tr('Info!'), self.tr('Process finished.')+'\n'+'\n'.join(msg))
         return True
     
     def createDatabases(self, parameterDict):
-        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget = self)
+        dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget=self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        dbDict, errorDict =dbCreator.createDbFromMIList(parameterDict['miList'], parameterDict['srid'], prefix = parameterDict['prefix'], sufix = parameterDict['sufix'], createFrame = True, paramDict = parameterDict['templateInfo'])
-        QApplication.restoreOverrideCursor()
+        dbDict, errorDict = dict(), dict()
+        try:
+            newDb = dbCreator.createDb(dbName=parameterDict['dbBaseName'], srid=parameterDict['srid'],\
+                                                paramDict=parameterDict['templateInfo'], parentWidget=self)
+            dbDict[parameterDict['dbBaseName']] = newDb
+        except Exception as e:
+            errorDict[parameterDict['dbBaseName']] = ':'.join(map(str, e.args))
+        dbDict[parameterDict['dbBaseName']] = newDb
+        QApplication.restoreOverrideCursor()        
         return dbDict, errorDict
-    
-    def changeTemplateInterface(self):
-        if self.tabDbSelectorWidget.tabWidget.currentIndex() == 1:
-            self.databaseParameterWidget.changeInterfaceState(True, hideInterface = True)
-        else:
-            self.databaseParameterWidget.changeInterfaceState(True, hideInterface = False)
+
+    def initGui(self):
+        """
+        Instantiates user interface and prepare it to be called whenever tool button is activated. 
+        """
+        callback = lambda : self.manager.createDatabase(isBatchCreation=False)
+        self.manager.addTool(
+            text=self.tr('Create a PostGIS or a SpatiaLite Database'),
+            callback=callback,
+            parentMenu=self.parentMenu,
+            icon='database.png',
+            parentButton=self.parentButton,
+            defaultButton=True
+        )
+
+    def close_(self):
+        """
+        Closes interface.
+        """
+        self.close()
+
+    def unload(self):
+        pass
