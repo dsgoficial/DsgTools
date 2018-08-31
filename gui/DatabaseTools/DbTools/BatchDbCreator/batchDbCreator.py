@@ -27,17 +27,16 @@ from qgis.PyQt import QtGui, uic, QtWidgets
 from qgis.PyQt.QtCore import pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
-from DsgTools.Utils.utils import Utils
-
-from DsgTools.DbTools.BatchDbCreator.createBatchFromCsv import CreateBatchFromCsv
-from DsgTools.DbTools.BatchDbCreator.createBatchIncrementing import CreateBatchIncrementing
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchFromCsv import CreateBatchFromCsv
+from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.createBatchIncrementing import CreateBatchIncrementing
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbCreator.ui'))
 
 class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
     coverageChanged = pyqtSignal()
-    def __init__(self, parent=None):
+    def __init__(self, manager, parentButton, parentMenu, parent=None):
         """Constructor."""
         super(self.__class__, self).__init__()
         # Set up the user interface from Designer.
@@ -45,6 +44,10 @@ class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
         # self.<objectname>, and you can use autoconnect slots - see
         # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
         # #widgets-and-dialogs-with-auto-connect
+        self.manager = manager
+        self.parentButton = parentButton
+        self.parentMenu = parentMenu
+        self.parent = parent
         self.setupUi(self)
         self.sequenceDict = {'CreateBatchFromCsv':1, 'CreateBatchIncrementing':2, 'CreateBatchBasedOnList':3}
         
@@ -65,3 +68,20 @@ class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
             return -1
         else:
             return -1
+
+    def initGui(self):
+        """
+        Instantiates user interface and prepare it to be called whenever tool button is activated. 
+        """
+        callback = lambda : self.manager.createDatabase(isBatchCreation=True)
+        self.manager.addTool(
+            text=self.tr('Create batches of PostGIS/SpatiaLite Databases'),
+            callback=callback,
+            parentMenu=self.parentMenu,
+            icon='batchDatabase.png',
+            parentButton=self.parentButton,
+            defaultButton=False
+        )
+
+    def unload(self):
+        pass

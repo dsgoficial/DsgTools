@@ -61,19 +61,19 @@
   <customwidget>
    <class>SelectFileWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.selectFileWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>DatabaseParameterWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.databaseParameterWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.databaseParameterWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>TabDbSelectorWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.tabDbSelectorWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.tabDbSelectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

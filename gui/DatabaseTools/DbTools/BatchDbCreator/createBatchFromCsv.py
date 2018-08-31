@@ -30,8 +30,8 @@ from qgis.PyQt.QtCore import pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
 from qgis.PyQt.QtGui import QCursor
 from fileinput import filename
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createBatchFromCsv.ui'))
