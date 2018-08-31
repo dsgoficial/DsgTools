@@ -42,7 +42,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
     parametersSet = pyqtSignal(dict)
     def __init__(self, manager, parentButton, parentMenu, parent=None):
         """Constructor."""
-        super(self.__class__, self).__init__()
+        super(CreateSingleDatabase, self).__init__()
         self.manager = manager
         self.parentButton = parentButton
         self.parentMenu = parentMenu
@@ -86,10 +86,10 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         parameterDict = self.getParameters()
         dbDict, errorDict = self.createDatabases(parameterDict)
         creationMsg = ''
-        if len(list(dbDict.keys())) > 0:
-            creationMsg += self.tr('Database(s) {0} created successfully.').format(', '.join(list(dbDict.keys())))
+        if len(dbDict):
+            creationMsg = self.tr('Database {0} successfully created.').format(', '.join(list(dbDict.keys())))
         errorMsg = ''
-        if len(list(errorDict.keys())) > 0:
+        if len(errorDict):
             frameList = []
             errorList = []
             for key in list(errorDict.keys()):
@@ -107,9 +107,15 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
     def createDatabases(self, parameterDict):
         dbCreator = DbCreatorFactory().createDbCreatorFactory(parameterDict['driverName'], parameterDict['factoryParam'], parentWidget=self)
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        dbDict, errorDict = dbCreator.createDb(dbName=parameterDict['dbBaseName'], srid=parameterDict['srid'],\
+        dbDict, errorDict = dict(), dict()
+        try:
+            newDb = dbCreator.createDb(dbName=parameterDict['dbBaseName'], srid=parameterDict['srid'],\
                                                 paramDict=parameterDict['templateInfo'], parentWidget=self)
-        QApplication.restoreOverrideCursor()
+            dbDict[parameterDict['dbBaseName']] = newDb
+        except Exception as e:
+            errorDict[dbName] = ':'.join(e.args)
+        dbDict[parameterDict['dbBaseName']] = newDb
+        QApplication.restoreOverrideCursor()        
         return dbDict, errorDict
 
     def initGui(self):
