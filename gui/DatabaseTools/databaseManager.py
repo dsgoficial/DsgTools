@@ -49,6 +49,16 @@ class DatabaseGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def addTool(self, text, callback, parentMenu, icon, parentButton=None, defaultButton=False):
+        """
+        Prepares the funcionalities to be added to both the DSGTools menu and it's shortcut button into QGIS main interface.
+        :param text: (str) text to be shown when the action is hovered over.
+        :param callback: (method/function) desired behavior for when action is activated.
+        :param parentMenu: (QMenu) menu to which action will be added.
+        :param parentButton: (QButton) button to which action will be associated.
+        :param defaultButton: (bool) considering it is a stack button (button overloaded with >1 actions associated), it indicates
+                              whether the included action will be the default one (e.g. if it will the action representative and 
+                              1st to be displayed). 
+        """
         icon_path = self.iconBasePath + icon
         action = self.manager.add_action(
             icon_path,
@@ -65,16 +75,20 @@ class DatabaseGuiManager(QObject):
             self.stackButton.setDefaultAction(action)
 
     def initGui(self):
-        # self.postgisManager = (self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
-        # self.postgisManager.initGui()
-        # self.spatialiteDialog = CriaSpatialiteDialog(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
-        # self.spatialiteDialog.initGui()
+        """
+        Instantiates all available database creation GUI. 
+        """
         self.singleDbCreator = CreateSingleDatabase(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.singleDbCreator.initGui()
+        # self.batchCreator = CreateBatchDatabases(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+        # self.batchCreator.initGui()
 
     def unload(self):
-        # self.postgisManager.unload()
+        """
+        Unloads all loaded GUI.
+        """
         self.spatialiteDialog.unload()
+        # self.batchCreator.unload()
 
     def createDatabase(self, isBatchCreation):
         """
