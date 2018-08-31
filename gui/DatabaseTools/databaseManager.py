@@ -25,6 +25,7 @@ from __future__ import absolute_import
 from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import CreateSingleDatabase
+from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
 
 class DatabaseGuiManager(QObject):
 
@@ -78,15 +79,15 @@ class DatabaseGuiManager(QObject):
         """
         self.singleDbCreator = CreateSingleDatabase(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.singleDbCreator.initGui()
-        # self.batchCreator = CreateBatchDatabases(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
-        # self.batchCreator.initGui()
+        self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
+        self.batchCreator.initGui()
 
     def unload(self):
         """
         Unloads all loaded GUI.
         """
         self.singleDbCreator.unload()
-        # self.batchCreator.unload()
+        self.batchCreator.unload()
 
     def createDatabase(self, isBatchCreation):
         """
@@ -99,8 +100,8 @@ class DatabaseGuiManager(QObject):
             pass
         if not isBatchCreation:
             dlg = self.singleDbCreator
-        # else:
-        #     dlg = self.batchCreator
+        else:
+            dlg = self.batchCreator
         if dlg:
             result = dlg.exec_()
             if result:
