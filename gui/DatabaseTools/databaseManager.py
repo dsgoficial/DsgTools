@@ -24,8 +24,6 @@ from __future__ import absolute_import
 
 from qgis.PyQt.QtCore import QObject
 
-from DsgTools.gui.DatabaseTools.DbTools.PostGISTool.postgisDBTool import PostgisDBTool
-from DsgTools.gui.DatabaseTools.DbTools.SpatialiteTool.cria_spatialite_dialog import CriaSpatialiteDialog
 from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import CreateSingleDatabase
 
 class DatabaseGuiManager(QObject):
