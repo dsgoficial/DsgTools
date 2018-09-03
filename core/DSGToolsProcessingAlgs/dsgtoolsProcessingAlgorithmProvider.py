@@ -35,6 +35,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgori
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import DonutHoleExtractorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import UpdateOriginalLayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import TopologicalCleanLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAlgorithm import TopologicalCleanAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import TopologicalDouglasSimplificationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedGeometriesAlgorithm import RemoveDuplicatedGeometriesAlgorithm
@@ -68,7 +69,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         RemoveSmallLinesAlgorithm(),
                         RemoveSmallPolygonsAlgorithm(),
                         CleanGeometriesAlgorithm(),
-                        MergeLinesAlgorithm()]
+                        MergeLinesAlgorithm(),
+                        TopologicalCleanLinesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()

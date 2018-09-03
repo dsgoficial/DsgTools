@@ -48,10 +48,10 @@ class LayerHandler(QObject):
         """
         if onlySelected:
             featureList = lyr.getSelectedFeatures() if returnIterator else [i for i in lyr.getSelectedFeatures()]
-            size = len(list(featureList)) if returnIterator else 
+            size = lyr.selectedFeatureCount()
         else:
             featureList = lyr.getFeatures() if returnIterator else [i for i in lyr.getFeatures()]
-            size = len(lyr.allFeatureIds())
+            size = lyr.featureCount()
         if returnSize:
             return featureList, size
         else:
