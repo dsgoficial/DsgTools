@@ -188,9 +188,11 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         try:
             formerLayer = self.iface.activeLayer()
             layer = self.rasterComboBox.currentLayer()
+            self.iface.mapCanvas().currentLayerChanged.disconnect(self.enableAssignValue)
             self.iface.setActiveLayer(layer)
             self.iface.mainWindow().findChild( QAction, 'mActionLocalCumulativeCutStretch' ).trigger()
             self.iface.setActiveLayer(formerLayer)
+            self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
         except AttributeError:
             pass
     
