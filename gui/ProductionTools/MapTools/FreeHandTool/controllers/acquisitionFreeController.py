@@ -22,6 +22,7 @@ from builtins import range
 from builtins import object
 from qgis.PyQt import QtGui, QtCore
 from qgis import core, gui
+from qgis.core import QgsPoint, QgsLineString
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import AcquisitionFree
 
@@ -211,7 +212,24 @@ class AcquisitionFreeController(object):
                 self.addFeatureWithoutForm(layer, feature)
             else:
                 self.addFeatureWithForm(layer, feature)
-            
+
+    def reshapeSimplify(self, reshapeLine):        
+        canvas = self.getIface().mapCanvas()
+        layer = canvas.currentLayer()
+        tolerance = self.getTolerance(layer)
+        
+        rsLine = self.simplifyGeometry(reshapeLine, tolerance)
+
+        request = core.QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
+        
+        for feat in layer.getFeatures(request):
+            geom = feat.geometry() # geometria que receberá o reshape.
+            if geom.intersects(rsLine): # Se intersecta e transforma frompolyline em geometria.
+                geom.reshapeGeometry(QgsLineString([QgsPoint(p) for p in rsLine.asPolyline()])) # realiza o reshape entre a linha e a geometria.
+                layer.changeGeometry(feat.id(), geom)
+        
+        canvas.refresh() # Refresh para atualizar, mas não salvar as alterações.
+
     def getFormSuppressStateSettings(self):
         #Método para verificar se o formulário de aquisição está suprimido nas configurações do projeto
         #Parâmetro de retorno: suppressForm ( boleano )
@@ -236,6 +254,7 @@ class AcquisitionFreeController(object):
         #Método para iniciar a ferramenta
         # if not self.getActiveState():
         self.acquisitionFree.acquisitionFinished.connect(self.createFeature)
+        self.acquisitionFree.reshapeLineCreated.connect( self.reshapeSimplify ) 
         self.iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
         self.actionAcquisitionFree.setChecked(True)
         self.iface.mapCanvas().setMapTool(self.acquisitionFree)
