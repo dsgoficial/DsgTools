@@ -28,6 +28,7 @@ class AcquisitionFree(gui.QgsMapTool):
  
     #Sinal usado para enviar a geometria adquirida ao finalizar aquisição
     acquisitionFinished = QtCore.pyqtSignal(QgsGeometry)
+    reshapeLineCreated = QtCore.pyqtSignal(QgsGeometry)
 
     def __init__(self, iface):
         #construtor
@@ -59,6 +60,7 @@ class AcquisitionFree(gui.QgsMapTool):
                                     "  +     #     +  ",
                                     "   +++++++++++   ",
                                     "                 ",]))
+        self.controlPressed = False
 
     def setCursor(self, cursor):
         #Método para definir cursor da ferramenta
@@ -163,10 +165,16 @@ class AcquisitionFree(gui.QgsMapTool):
             self.setStopedState(True)
             self.removeVertice()
             event.ignore()
-        if event.key() == QtCore.Qt.Key_Escape:
+        elif event.key() == QtCore.Qt.Key_Escape:
             self.cancelEdition()
             event.ignore()
-    
+        elif event.key() == QtCore.Qt.Key_Control:
+            self.controlPressed = True
+
+    def keyReleaseEvent(self, event):
+        if event.key() == QtCore.Qt.Key_Control:
+            self.controlPressed = False
+
     def cancelEdition(self): 
         #Método para cancelar aquisição
         self.getRubberBand().reset() if self.getRubberBand() else None
@@ -332,8 +340,21 @@ class AcquisitionFree(gui.QgsMapTool):
             return
         if self.getRubberBand().numberOfVertices() > 2:
             geom = self.getRubberBand().asGeometry()
-            self.acquisitionFinished.emit(geom)
+            if not self.controlPressed:
+                self.acquisitionFinished.emit(geom)
+            else:
+                self.doReshape(geom)
         self.cancelEdition()
+
+    def doReshape(self, geom):
+        line = ''
+        if geom.type() == core.QgsWkbTypes.LineGeometry:
+            line = geom.asPolyline()
+        elif geom.type() == core.QgsWkbTypes.PolygonGeometry:
+            line = geom.asPolygon()[0]
+            del line[-1]
+        
+        self.reshapeLineCreated.emit(QgsGeometry.fromPolylineXY(line))
 
     def activate(self):
         #Método chamado ao ativar a ferramenta
