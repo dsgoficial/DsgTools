@@ -229,19 +229,17 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         try:
             formerLayer = self.iface.activeLayer()
             layer = self.rasterComboBox.currentLayer()
-            setValueActive = self.valueSetterButton.isChecked() if self.valueSetterButton else False
+            # in order to not interfere with the other tool behavior
+            self.iface.mapCanvas().currentLayerChanged.disconnect(self.enableAssignValue)
             self.iface.setActiveLayer(layer)
             self.iface.mainWindow().findChild( QAction, 'mActionLocalCumulativeCutStretch' ).trigger()
             self.iface.setActiveLayer(formerLayer)
-            if setValueActive:
-                self.activateValueSetter(True)
-                self.valueSetterButton.setChecked(True)
+            self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
         except AttributeError:
             pass
 
     # @pyqtSlot(bool, name = 'on_valueSetterButton_toggled')
     def activateValueSetter(self, state):
-        self.valueSetterActive = state
         if state:
             raster = self.rasterComboBox.currentLayer()
             self.loadTool(self.iface, raster)
