@@ -8,7 +8,7 @@
         begin                : 2015-10-21
         git sha              : $Format:%H$
         copyright            : (C) 2015 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba@dsg.eb.mil.br
+        email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -2621,20 +2621,19 @@ class PostgisDb(AbstractDb):
     
     def getCreationSqlPath(self, version):
         currentPath = os.path.dirname(__file__)
-        currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
         edgvPath = ''
         if version == '2.1.3':
-            edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', '213', 'edgv213.sql')
         elif version == '2.1.3 Pro':
-            edgvPath = os.path.join(currentPath, 'sqls', '213_Pro', 'edgv213_pro.sql')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', '213_Pro', 'edgv213_pro.sql')
         elif version == 'FTer_2a_Ed':
-            edgvPath = os.path.join(currentPath, 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
         elif version == '3.0':
-            edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', '3', 'edgv3.sql')
         elif version == '3.0 Pro':
-            edgvPath = os.path.join(currentPath, 'sqls', '3_Pro', 'edgv3_pro.sql')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', '3_Pro', 'edgv3_pro.sql')
         elif version == 'admin':
-            edgvPath = os.path.join(currentPath, 'sqls', 'admin', 'dsgtools_admindb.sql')
+            edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','PostGIS', 'admin', 'dsgtools_admindb.sql')
         return edgvPath
     
     def getCommandsFromFile(self, edgvPath, epsg = None):
