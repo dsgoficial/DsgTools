@@ -75,7 +75,8 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 None, 
                 'INPUT', 
                 QgsProcessingParameterField.Any,
-                allowMultiple=True
+                allowMultiple=True,
+                optional = True
             )
         )
         self.addParameter(
@@ -106,7 +107,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
         layerHandler.mergeLinesOnLayer(inputLyr, feedback = feedback, onlySelected=onlySelected, ignoreVirtualFields = ignoreVirtual, attributeBlackList = attributeBlackList, excludePrimaryKeys=ignorePK)
-        # cleaned = algRunner.runDsgToolsClean(inputLyr, context, feedback=feedback,onlySelected=onlySelected)
+        cleaned = algRunner.runDsgToolsClean(inputLyr, context, feedback=feedback,onlySelected=onlySelected)
 
 
         return {self.INPUT: inputLyr}
