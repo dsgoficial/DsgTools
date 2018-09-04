@@ -86,23 +86,9 @@ class AcquisitionFreeController(object):
         #Método para iniciar sinais do plugin 
         self.iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
         self.iface.currentLayerChanged.connect(self.checkToActiveAction)
-        self.iface.currentLayerChanged.connect(self.deactivateTool)
+        # self.iface.currentLayerChanged.connect(self.deactivateTool)
         self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
         self.actionAcquisitionFree.triggered.connect(self.activateTool)
-
-    # def disconnectToolSignals(self):
-    #     """
-    #     Disconnects all signals used by Free Hand tool.
-    #     """
-    #     iface = self.getIface()
-    #     iface.actionToggleEditing().triggered.disconnect(self.checkToActiveAction)
-    #     iface.currentLayerChanged.disconnect(self.checkToActiveAction)
-    #     iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
-    #     actionAcquisitionFree = self.getActionAcquisitionFree()
-    #     try:
-    #         actionAcquisitionFree.triggered.disconnect(self.activateTool)
-    #     except:
-    #         pass
 
     def checkToActiveAction(self):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
@@ -113,6 +99,7 @@ class AcquisitionFreeController(object):
             return True
         else:
             self.actionAcquisitionFree.setEnabled(False)
+            self.deactivateTool(checkActivationtatus=False)
         return False
 
     def getParametersFromConfig(self):
@@ -262,10 +249,11 @@ class AcquisitionFreeController(object):
         self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
 
                         
-    def deactivateTool(self, newTool=None, oldTool=None):
+    def deactivateTool(self, newTool=None, oldTool=None, checkActivationtatus=True):
         #Método para desativar a ferramenta
-        self.checkToActiveAction()
-        if isinstance(newTool, AcquisitionFree):
+        if checkActivationtatus:
+            self.checkToActiveAction()
+        if self.getActiveState():
             try:
                 self.acquisitionFree.acquisitionFinished.disconnect(self.createFeature)
             except:
