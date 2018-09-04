@@ -302,7 +302,7 @@ class LayerHandler(QObject):
             if feedback:
                 if feedback.isCanceled():
                     break
-            self.featureHandler.mergeLineFeatures(featList, lyr, idsToRemove, parameterDict=parameterDict)
+            self.featureHandler.mergeLineFeatures(featList, lyr, idsToRemove, parameterDict=parameterDict, feedback=feedback)
             if feedback:
                 feedback.setProgress(currentProgress + localTotal*current)
         lyr.deleteFeatures(idsToRemove)
@@ -315,12 +315,12 @@ class LayerHandler(QObject):
         attributeFeatDict = dict()
         pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
         typeBlackList = [6] if ignoreVirtualFields else []
-        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field not in attributeBlackList]
+        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
         for current, feat in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
                     break
-            attrKey = ''.join(['{}'.format(feat[column]) for column in columns if feat[column]])
+            attrKey = ','.join(['{}'.format(feat[column]) for column in columns])
             if attrKey not in attributeFeatDict:
                 attributeFeatDict[attrKey] = []
             attributeFeatDict[attrKey].append(feat)

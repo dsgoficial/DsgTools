@@ -116,16 +116,22 @@ class FeatureHandler(QObject):
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
     
-    def mergeLineFeatures(self, featList, lyr, idsToRemove, parameterDict = {}):
+    def mergeLineFeatures(self, featList, lyr, idsToRemove, parameterDict = {}, feedback = None):
         for feat_a in featList:
+            if feedback:
+                if feedback.isCanceled():
+                    break
             if feat_a.id() in idsToRemove:
                 continue
-            geom = feat_a.geometry()
             for feat_b in featList:
+                if feedback:
+                    if feedback.isCanceled():
+                        break
                 if feat_a.id() == feat_b.id():
                     continue
                 if feat_b.id() in idsToRemove:
                     continue
+                geom = feat_a.geometry()
                 if geom.touches(feat_b.geometry()):
                     newGeom = geom.combine(feat_b.geometry())
                     newGeom = newGeom.mergeLines()
