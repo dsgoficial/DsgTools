@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Wizard</class>
+ <widget class="QWizard" name="Wizard">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>500</width>
+    <height>360</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Datasource Conversion</string>
+  </property>
+  <widget class="QWizardPage" name="inputWizardPage">
+   <layout class="QGridLayout" name="gridLayout_3"/>
+  </widget>
+  <widget class="QWizardPage" name="outputWizardPage">
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="DatasourceSelectionWidget" name="widget_2" native="true"/>
+    </item>
+    <item row="1" column="0">
+     <layout class="QGridLayout" name="dbGridLayout_2"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="mappingWizardPage">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTableWidget" name="tableWidget"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DatasourceSelectionWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.datasourceSelectionWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
