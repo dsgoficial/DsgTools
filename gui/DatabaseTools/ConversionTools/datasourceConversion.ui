@@ -14,15 +14,16 @@
    <string>Datasource Conversion</string>
   </property>
   <widget class="QWizardPage" name="inputWizardPage">
-   <layout class="QGridLayout" name="gridLayout_3"/>
-  </widget>
-  <widget class="QWizardPage" name="outputWizardPage">
    <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
-     <widget class="DatasourceSelectionWidget" name="widget_2" native="true"/>
+     <widget class="DatasourceManagementWidget" name="datasourceManagementWidgetIn" native="true"/>
     </item>
-    <item row="1" column="0">
-     <layout class="QGridLayout" name="dbGridLayout_2"/>
+   </layout>
+  </widget>
+  <widget class="QWizardPage" name="outputWizardPage">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="0">
+     <widget class="DatasourceManagementWidget" name="datasourceManagementWidgetOut" native="true"/>
     </item>
    </layout>
   </widget>
@@ -33,12 +34,25 @@
     </item>
    </layout>
   </widget>
+  <widget class="QWizardPage" name="wizardPage">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Ceck Summary
+Confirm Selection
+Start Conversion</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>DatasourceSelectionWidget</class>
+   <class>DatasourceManagementWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.datasourceSelectionWidget.h</header>
+   <header>DsgTools.gui.DatabaseTools.ConversionTools.datasourceManagementWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
