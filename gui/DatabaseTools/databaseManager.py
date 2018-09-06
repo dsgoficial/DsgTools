@@ -26,7 +26,7 @@ from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import CreateSingleDatabase
 from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
-from DsgTools.gui.DatabaseTools.ConversionTools.datasourceSelectionWidget import DatasourceSelectionWidget
+from DsgTools.gui.DatabaseTools.ConversionTools.datasourceConversion import DatasourceConversion
 
 class DatabaseGuiManager(QObject):
 
@@ -82,7 +82,7 @@ class DatabaseGuiManager(QObject):
         self.singleDbCreator.initGui()
         self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.batchCreator.initGui()
-        self.datasourceSelectionWidget = DatasourceSelectionWidget(manager=self, parentMenu=self.menu)
+        self.datasourceSelectionWidget = DatasourceConversion(manager=self, parentMenu=self.menu)
         self.datasourceSelectionWidget.initGui()
 
     def unload(self):

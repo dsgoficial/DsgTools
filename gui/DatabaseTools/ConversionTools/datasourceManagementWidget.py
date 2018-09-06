@@ -23,18 +23,21 @@
 
 from qgis.PyQt import QtWidgets, uic
 
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget import ExploreServerWidget
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
+from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 
 import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceSelectionWidget.ui'))
+    os.path.dirname(__file__), 'datasourceManagementWidget.ui'))
 
-class InputWizardPage(QtWidgets.QWizardPage, FORM_CLASS):
+class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     def __init__(self, parent=None):
         """
+        Class constructor.
+        :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
         """
-        super(InputWizardPage, self).__init__()
+        super(DatasourceManagementWidget, self).__init__()
         self.setupUi(self)
         self.fillSupportedDatasouces()
         self.connectToolSignals()
@@ -50,7 +53,7 @@ class InputWizardPage(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Fills the datasource selection combobox with all supported drivers.
         """
-        driversList = ['', 'PostGIS']
+        driversList = ['', 'PostGIS', 'SpatiaLite']
         self.datasourceComboBox.addItems(driversList)
 
     def getWidget(self, source):
@@ -59,9 +62,10 @@ class InputWizardPage(QtWidgets.QWizardPage, FORM_CLASS):
         :param source: (str) driver name.
         """
         widgetDict = {
-            'PostGIS' : ExploreServerWidget()
+            'PostGIS' : ConnectionComboBox(),
+            'SpatiaLite' : SelectFileWidget()
         }
-        return source if source in widgetDict else None
+        return widgetDict[source] if source in widgetDict else None
 
     def addDatasourceSelectionFirstPage(self):
         """
@@ -71,9 +75,12 @@ class InputWizardPage(QtWidgets.QWizardPage, FORM_CLASS):
         # get current text on datasource techonology selection combobox
         currentDbSource = self.datasourceComboBox.currentText()
         if currentDbSource:
-            # in case a valid technology is selected, add its widget to the interface
-            w = self.getWidget(source=source)
-            self.dbGridLayout.addWidget(w)
+            # in case a valid driver is selected, add its widget to the interface
+            w = self.getWidget(source=currentDbSource)
+            try:
+                self.datasourceLayout.addWidget(w)
+            except:
+                pass
         else:
             # if no tech is selected, inform user and nothing else
             pass
