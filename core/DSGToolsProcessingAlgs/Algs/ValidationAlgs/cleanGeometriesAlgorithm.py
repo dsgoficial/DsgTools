@@ -74,7 +74,6 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterNumber(
                 self.TOLERANCE,
                 self.tr('Snap radius'),
-                minValue=0,
                 defaultValue=1.0000000000000000000000000,
                 type=QgsProcessingParameterNumber.Double
             )
@@ -108,6 +107,8 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        if snap < 0 and snap != -1:
+            raise QgsProcessingException(self.invalidParameterError(parameters, self.TOLERANCE))
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
@@ -129,7 +130,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback)
         self.flagIssues(cleanedLyr, error, feedback)
 
-        return {self.INPUT : inputLyr, self.FLAGS : self.flagSink}
+        return {self.INPUT : inputLyr, self.FLAGS : self.flag_id}
 
     def flagIssues(self, cleanedLyr, error, feedback):
         overlapDict = dict()
