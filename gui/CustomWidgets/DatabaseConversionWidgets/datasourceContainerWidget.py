@@ -22,61 +22,71 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtCore import pyqtSignal
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import DatasourceContainerWidget
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
+from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 
 import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceManagementWidget.ui'))
+    os.path.dirname(__file__), 'datasourceContainerWidget.ui'))
 
-class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
-    def __init__(self, parent=None):
+class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
+    """
+    Widget resposinble for adequate GUI to chosen data driver.
+    """
+    # signal to be emitted when deletion button is clicked - emits itself (Q)
+    removeWidget = pyqtSignal(QtWidgets.QWidget)
+
+    def __init__(self, source, inputContainer, parent=None):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
+        :param source: (str) driver codename to be have its widget produced.
+        :param inputContainer: (bool) indicates whether the chosen database is supposed to be a reading widget or writting/output one.
         """
-        super(DatasourceManagementWidget, self).__init__()
+        super(DatasourceContainerWidget, self).__init__()
         self.setupUi(self)
-        self.fillSupportedDatasouces()
-        self.connectToolSignals()
+        self.addDatasourceSelectionWidget(source=source)
+        self.setGroupWidgetName(name=source)
+        if self.truncateCheckBox:
+            self.truncateCheckBox.hide()
 
-    def connectToolSignals(self):
+    def setGroupWidgetName(self, name=None):
         """
-        Connects all tool generic behavior signals.
+        Sets the name to the group added.
+        :param name: (str) name for the group.
         """
-        self.addSourcePushButton.clicked.connect(self.addDatasourceSelectionFirstPage)
-        pass
+        self.groupBox.setTitle('{0}'.format(name))
 
-    def fillSupportedDatasouces(self):
+    def getWidget(self, source):
         """
-        Fills the datasource selection combobox with all supported drivers.
+        Gets the widget according to selected datasource on datasource combobox on first page.
+        :param source: (str) driver name.
         """
-        driversList = ['', 'PostGIS', 'SpatiaLite']
-        self.datasourceComboBox.addItems(driversList)
+        widgetDict = {
+            'PostGIS' : ConnectionComboBox(),
+            'SpatiaLite' : SelectFileWidget()
+        }
+        return widgetDict[source] if source in widgetDict else None
 
-    def addDatasourceSelectionFirstPage(self):
+    def addDatasourceSelectionWidget(self, source):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
         :param source: (str) driver name.
         """
         # get current text on datasource techonology selection combobox
-        currentDbSource = self.datasourceComboBox.currentText()
-        if currentDbSource:
+        if source:
             # in case a valid driver is selected, add its widget to the interface
-            w = DatasourceContainerWidget(source=currentDbSource, inputContainer=True)
-            # connect removal widget signal to new widget
-            w.removeWidget.connect(self.removeWidget)
-            # add new driver container to GUI 
-            self.datasourceLayout.addWidget(w)
+            w = self.getWidget(source=source)
+            self.driverLayout.addWidget(w)
         else:
             # if no tech is selected, inform user and nothing else
             pass
 
-    def removeWidget(self, w):
+    def on_removePushButton_clicked(self):
         """
-        Removes driver widget from GUI.
-        :param w: (QWidget) driver widget to be removed. 
+        Emits widget removal signal when remove button is clicked.
         """
-        if w:
-            self.datasourceLayout.removeWidget(w)
+        self.removeWidget.emit(self)
