@@ -52,7 +52,7 @@ Start Conversion</string>
   <customwidget>
    <class>DatasourceManagementWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.gui.DatabaseTools.ConversionTools.datasourceManagementWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceManagementWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

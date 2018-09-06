@@ -24,7 +24,6 @@
 from qgis.PyQt import QtWidgets, uic
 
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget import ExploreServerWidget
-# from DsgTools.gui.DatabaseTools.ConversionTools.datasourceManagementWidget import DataSourceManagementWidget
 
 import os
 
@@ -41,8 +40,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.manager = manager
         self.parentMenu = parentMenu
         self.parentButton = None
-        # self.sequenceDict = {'InputPage':1, 'OutputPage':2, 'MappingPage':3}
-        # self.setPage(self.sequenceDict['InputPage'], DataSourceManagementWidget(parent=parent))
 
     def initGui(self):
         """
