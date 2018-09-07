@@ -181,3 +181,14 @@ class AlgRunner:
         }
         output = processing.run('dsgtools:identifysmallpolygons', parameters, context = context, feedback = feedback)
         return output['FLAGS']
+    
+    def runSnapGeometriesToLayer(self, inputLayer, referenceLayer, tol, context, feedback = None, behavior=0, outputLyr = 'memory:'):
+        parameters = {
+            'INPUT' : inputLayer,
+            'REFERENCE_LAYER' : referenceLayer,
+            'TOLERANCE' : tol,
+            'BEHAVIOR' : behavior,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run('qgis:snapgeometries', parameters, context = context, feedback = feedback)
+        return output['OUTPUT']

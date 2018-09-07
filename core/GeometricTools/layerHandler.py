@@ -203,15 +203,20 @@ class LayerHandler(QObject):
         for lyr in lyrList:
             self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
     
-    def buildInputDict(self, inpytLyr, pk = None, feedback = None, progressDelta = 100):
+    def buildInputDict(self, inputLyr, pk = None, feedback = None, progressDelta = 100, onlySelected = False):
         """
         Maps inputLyr into a dict with its attributes.
         """
         inputDict = dict()
-        request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
         currentProgress = feedback.progress() if feedback else None
-        localTotal = progressDelta/inpytLyr.featureCount() if inpytLyr.featureCount() else 0
-        for current, feature in enumerate(inpytLyr.getFeatures(request)):
+        if onlySelected:
+            iterator = inputLyr.getSelectedFeatures()
+            localTotal = progressDelta/inputLyr.selectedFeatureCount() if inputLyr.selectedFeatureCount() else 0
+        else:
+            request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
+            iterator = inputLyr.getFeatures(request)
+            localTotal = progressDelta/inputLyr.featureCount() if inputLyr.featureCount() else 0
+        for current, feature in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
                     break            
@@ -220,7 +225,7 @@ class LayerHandler(QObject):
             inputDict[key]['featList'] = []
             inputDict[key]['featWithoutGeom'] = feature
             if feedback:
-                feedback.setProgress(currentProgress + int(localTotal*current))
+                feedback.setProgress(currentProgress + (localTotal*current))
         return inputDict
     
     def populateInputDictFeatList(self, lyr, inputDict, pk = None, request = None, feedback = None, progressDelta = 100):
@@ -235,11 +240,12 @@ class LayerHandler(QObject):
             if fid in inputDict:
                 inputDict[fid]['featList'].append(feat)
             if feedback:
-                feedback.setProgress(currentProgress + int(localTotal*current))
+                feedback.setProgress(currentProgress + (localTotal*current))
+
     
-    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None, progressDelta = 100, keepFeatures = False):
+    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None, progressDelta = 100, keepFeatures = False, onlySelected = True):
         #1- build inputDict structure to store the original state of the layer
-        inputDict = self.buildInputDict(originalLayer, pk = field, feedback = feedback, progressDelta = progressDelta/5) 
+        inputDict = self.buildInputDict(originalLayer, pk = field, feedback = feedback, progressDelta = progressDelta/5, onlySelected = onlySelected) 
         #2- populate the inputDict with the features from the resultLayer
         self.populateInputDictFeatList(resultLayer, inputDict, pk=field, feedback = feedback, progressDelta = progressDelta/5)
         #3- get information from originalLayer and resultLayer
@@ -248,11 +254,11 @@ class LayerHandler(QObject):
         #4- run update original layer
         self.updateOriginalLayerFeatures(originalLayer, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, keepFeatures = keepFeatures, feedback = feedback, progressDelta = 3*progressDelta/5)
 
-    def updateOriginalLayersFromUnifiedLayer(self, lyrList, unifiedLyr, feedback = None, progressDelta = 100):
+    def updateOriginalLayersFromUnifiedLayer(self, lyrList, unifiedLyr, feedback = None, progressDelta = 100, onlySelected = False):
         lenList = len(lyrList)
         parameterDict = self.getDestinationParameters(unifiedLyr)
         for lyr in lyrList:
-            inputDict = self.buildInputDict(lyr)
+            inputDict = self.buildInputDict(lyr, onlySelected=onlySelected)
             request = QgsFeatureRequest(QgsExpression("layer = '{0}'".format(lyr.name())))
             self.populateInputDictFeatList(unifiedLyr, inputDict, pk = 'featid', request = request, feedback=feedback, progressDelta=progressDelta/(2*lenList))
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
