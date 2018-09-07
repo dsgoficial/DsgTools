@@ -43,13 +43,14 @@ from qgis.core import (QgsProcessing,
                        QgsSpatialIndex,
                        QgsGeometry,
                        QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDistance)
 
 class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
+    SELECTED = 'SELECTED'
     REFERENCE_LAYER = 'REFERENCE_LAYER'
     TOLERANCE = 'TOLERANCE'
-    OUTPUT = 'OUTPUT'
     BEHAVIOR = 'BEHAVIOR'
 
     def initAlgorithm(self, config):
@@ -60,13 +61,21 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                [QgsProcessing.TypeVectorAnyGeometry ]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED,
                 self.tr('Process only selected features')
+            )
+        )
+
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.REFERENCE_LAYER,
+                self.tr('Reference layer'),
+                [QgsProcessing.TypeVectorAnyGeometry ]
             )
         )
 
