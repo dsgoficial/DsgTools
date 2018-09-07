@@ -118,7 +118,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-
+        self.layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         searchRadius = self.parameterAsDouble(parameters, self.TOLERANCE, context)
@@ -130,7 +130,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
 
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr)
         feedbackTotal = 3
         feedbackTotal += 1 if lineFilterLyrList or polygonFilterLyrList else 0
         feedbackTotal += 1 if not ignoreInner else 0
@@ -138,7 +137,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         currentStep = 0
         multiStep.setCurrentStep(currentStep)
         multiStep.pushInfo(self.tr('Building search structure...'))
-        endVerticesDict = self.buildInitialAndEndPointDict(featureList, total, multiStep)
+        endVerticesDict = self.layerHandler.buildInitialAndEndPointDict(inputLyr, onlySelected = onlySelected, feedback=multiStep)
 
         #search for dangles candidates
         currentStep += 1
@@ -179,33 +178,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 multiStep.setProgress(current*currentTotal)      
         # feedback.setProgress(100)
         return {self.FLAGS: self.flag_id}
-
-    def buildInitialAndEndPointDict(self, featureList, total, feedback, progressDelta = 100):
-        """
-        Calculates initial point and end point from each line from lyr.
-        """
-        # start and end points dict
-        # currentProgress = feedback.progress()
-        endVerticesDict = dict()
-        # iterating over features to store start and end points
-        for current, feat in enumerate(featureList):
-            if feedback.isCanceled():
-                break
-            geom = feat.geometry()
-            lineList = geom.asMultiPolyline() if geom.isMultipart() else [geom.asPolyline()]
-            for line in lineList:
-                self.addFeatToDict(endVerticesDict, line, feat.id())
-            feedback.setProgress(total*current)
-        return endVerticesDict
-
-    def addFeatToDict(self, endVerticesDict, line, featid):
-        self.addPointToDict(line[0], endVerticesDict, featid)
-        self.addPointToDict(line[len(line) - 1], endVerticesDict, featid)
-    
-    def addPointToDict(self, point, pointDict, featid):
-        if point not in pointDict:
-            pointDict[point] = []
-        pointDict[point].append(featid)
     
     def searchDanglesOnPointDict(self, endVerticesDict, feedback, progressDelta = 100):
         """
@@ -232,7 +204,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         """
         if not(lineLyrList + polygonLyrList):
             return []
-        layerHandler = LayerHandler()
         lineLyrs = lineLyrList
         for polygonLyr in polygonLyrList:
             if feedback.isCanceled():
@@ -240,7 +211,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             lineLyrs += [self.makeBoundaries(polygonLyr, context, feedback)]
         if not lineLyrs:
             return None
-        unifiedLinesLyr = layerHandler.createAndPopulateUnifiedVectorLayer(lineLyrs, QgsWkbTypes.MultiLineString, onlySelected = onlySelected)
+        unifiedLinesLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(lineLyrs, QgsWkbTypes.MultiLineString, onlySelected = onlySelected)
         filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
         return filterLyr
     

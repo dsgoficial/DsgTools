@@ -116,27 +116,35 @@ class FeatureHandler(QObject):
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
     
-    def mergeLineFeatures(self, featList, lyr, idsToRemove, parameterDict = {}, feedback = None):
-        for feat_a in featList:
+    def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict = {}, feedback = None):
+        changeDict = dict()
+        size = 100 / len(featList)
+        for current, feat_a in enumerate(featList):
             if feedback:
                 if feedback.isCanceled():
                     break
-            if feat_a.id() in idsToRemove:
+            id_a = feat_a.id()
+            if id_a in idsToRemove:
                 continue
             for feat_b in featList:
                 if feedback:
                     if feedback.isCanceled():
                         break
-                if feat_a.id() == feat_b.id():
+                id_b = feat_b.id()
+                if id_a == id_b or id_b in idsToRemove:
                     continue
-                if feat_b.id() in idsToRemove:
-                    continue
-                geom = feat_a.geometry()
-                if geom.touches(feat_b.geometry()):
-                    newGeom = geom.combine(feat_b.geometry())
-                    newGeom = newGeom.mergeLines()
-                    newGeom = self.geometryHandler.handleGeometry(newGeom, parameterDict)[0] #only one candidate is possible because features are touching
-                    feat_a.setGeometry(newGeom)
-                    idsToRemove.append(feat_b.id())
-                    lyr.updateFeature(feat_a)    
+                geom_a = feat_a.geometry()
+                geom_b = feat_b.geometry()
+                if geom_a.touches(geom_b):
+                    point = geom_a.intersection(geom_b).asPoint()
+                    if point in networkDict:
+                        if len(networkDict[point]) == 2:
+                            newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(), parameterDict)[0] #only one candidate is possible because features are touching
+                            feat_a.setGeometry(newGeom)
+                            idsToRemove.append(id_b)
+                            changeDict[id_a] = newGeom
+            if feedback:
+                feedback.setProgress(size*current)
+        for id, geom in changeDict.items():
+            lyr.changeGeometry(id, geom)
     

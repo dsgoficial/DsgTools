@@ -24,7 +24,8 @@ from __future__ import absolute_import
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject
+                      QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
+                      QgsProcessingMultiStepFeedback
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
@@ -290,28 +291,42 @@ class LayerHandler(QObject):
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
-        attributeFeatDict = self.buildAttributeFeatureDict(lyr, onlySelected=onlySelected, feedback=feedback, progressDelta=progressDelta/2, attributeBlackList=attributeBlackList)
+    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+        if feedback:
+            localFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+            localFeedback.setCurrentStep(0)
+        #build attribute dict
+        attributeFeatDict = self.buildAttributeFeatureDict(lyr, onlySelected=onlySelected, feedback=localFeedback, attributeBlackList=attributeBlackList)
+        
+        #build network dict
+        if feedback:
+            localFeedback.setCurrentStep(1)
+        networkDict = self.buildInitialAndEndPointDict(lyr, onlySelected=onlySelected, feedback=localFeedback)
+        
         parameterDict = self.getDestinationParameters(lyr)
+
         idsToRemove = []
-        currentProgress = feedback.progress() if feedback else None
-        localTotal = progressDelta/(2*len(attributeFeatDict)) if len(attributeFeatDict) != 0 else 0
+        if feedback:
+            localFeedback.setCurrentStep(2)
+            localTotal = 100/(len(attributeFeatDict)) if len(attributeFeatDict) != 0 else 0
+            mergeFeedback = QgsProcessingMultiStepFeedback(len(attributeFeatDict), localFeedback)
         lyr.startEditing()
         lyr.beginEditCommand(self.tr('Merging Lines'))
+        mergeLines = lambda x : self.featureHandler.mergeLineFeatures(featList=x[0], lyr=lyr, idsToRemove=x[1], parameterDict=parameterDict, feedback=x[2], networkDict=networkDict)
+
         for current, (key, featList) in enumerate(attributeFeatDict.items()):
             if feedback:
                 if feedback.isCanceled():
                     break
-            self.featureHandler.mergeLineFeatures(featList, lyr, idsToRemove, parameterDict=parameterDict, feedback=feedback)
-            if feedback:
-                feedback.setProgress(currentProgress + localTotal*current)
+                mergeFeedback.setCurrentStep(current)
+            mergeLines([featList,idsToRemove, mergeFeedback])
         lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, progressDelta = 100, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+    def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
         currentProgress = feedback.progress() if feedback else None
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
-        localTotal = progressDelta/size if size != 0 else 0
+        localTotal = 100/size if size != 0 else 0
         attributeFeatDict = dict()
         pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
         typeBlackList = [6] if ignoreVirtualFields else []
@@ -325,7 +340,36 @@ class LayerHandler(QObject):
                 attributeFeatDict[attrKey] = []
             attributeFeatDict[attrKey].append(feat)
             if feedback:
-                feedback.setProgress(currentProgress + localTotal*current)
+                feedback.setProgress(localTotal*current)
         return attributeFeatDict
+    
+    def buildInitialAndEndPointDict(self, lyr, onlySelected = False, feedback = None):
+        """
+        Calculates initial point and end point from each line from lyr.
+        """
+        # start and end points dict
+        endVerticesDict = dict()
+        # iterating over features to store start and end points
+        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        for current, feat in enumerate(iterator):
+            if feedback:
+                if feedback.isCanceled():
+                    break
+            geom = feat.geometry()
+            lineList = geom.asMultiPolyline() if geom.isMultipart() else [geom.asPolyline()]
+            for line in lineList:
+                self.addFeatToDict(endVerticesDict, line, feat.id())
+            if feedback:
+                feedback.setProgress(size*current)
+        return endVerticesDict
+
+    def addFeatToDict(self, endVerticesDict, line, featid):
+        self.addPointToDict(line[0], endVerticesDict, featid)
+        self.addPointToDict(line[len(line) - 1], endVerticesDict, featid)
+    
+    def addPointToDict(self, point, pointDict, featid):
+        if point not in pointDict:
+            pointDict[point] = []
+        pointDict[point].append(featid)
 
                 

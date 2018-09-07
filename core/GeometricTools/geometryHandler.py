@@ -291,4 +291,7 @@ class GeometryHandler(QObject):
                 else:
                     donutholes.append(newGeom)
         return outershells, donutholes
-                
+    
+    def getStartAndEndPointOnLine(self, geom):
+        lineList = geom.asMultiPolyline() if geom.isMultipart() else [geom.asPolyline()]
+        return lineList[0], lineList[len(lineList) - 1]
