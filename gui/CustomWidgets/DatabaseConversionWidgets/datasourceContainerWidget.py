@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
@@ -85,6 +85,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # if no tech is selected, inform user and nothing else
             pass
 
+    @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         """
         Emits widget removal signal when remove button is clicked.

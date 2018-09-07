@@ -78,5 +78,5 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Removes driver widget from GUI.
         :param w: (QWidget) driver widget to be removed. 
         """
-        if w:
-            self.datasourceLayout.removeWidget(w)
+        w.hide()
+        # self.datasourceLayout.removeWidget(w)
