@@ -127,7 +127,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                                                     feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback)
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
         self.flagIssues(cleanedLyr, error, feedback)
 
         return {self.INPUT : inputLyr, self.FLAGS : self.flag_id}
