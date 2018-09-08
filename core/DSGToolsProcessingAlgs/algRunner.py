@@ -192,3 +192,17 @@ class AlgRunner:
         }
         output = processing.run('qgis:snapgeometries', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback = None, onlySelected=False, lineFilter = [], polygonFilter = [], ignoreUnsegmented = False, ignoreInner = False, flagLyr = 'memory:'):
+        parameters = {
+            'INPUT' = inputLayer,
+            'SELECTED' = onlySelected,
+            'TOLERANCE' = searchRadius,
+            'LINEFILTERLAYERS' = lineFilter,
+            'POLYGONFILTERLAYERS' = polygonFilter,
+            'TYPE' = ignoreUnsegmented,
+            'IGNOREINNER' = ignoreInner,
+            'FLAGS' = flagLyr
+        }
+        output = processing.run('dsgtools:identifydangles', parameters, context = context, feedback = feedback)
+        return output['FLAGS']
