@@ -71,11 +71,12 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.TOLERANCE,
-                self.tr('Snap radius'),
-                defaultValue=1.0000000000000000000000000,
-                type=QgsProcessingParameterNumber.Double
+            QgsProcessingParameterDistance(
+                self.TOLERANCE, 
+                self.tr('Snap radius'), 
+                parentParameterName=self.INPUT,                                         
+                minValue=0, 
+                defaultValue=1.0
             )
         )
         self.addParameter(

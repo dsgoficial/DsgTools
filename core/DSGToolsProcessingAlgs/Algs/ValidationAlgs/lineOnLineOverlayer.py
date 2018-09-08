@@ -42,11 +42,14 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProcessingParameterField)
+                       QgsProcessingParameterField,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDistance)
 
 class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
+    TOLERANCE = 'TOLERANCE'
 
     def initAlgorithm(self, config):
         """
@@ -65,6 +68,15 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
+        self.addParameter(
+            QgsProcessingParameterDistance(
+                self.TOLERANCE, 
+                self.tr('Snap radius'), 
+                parentParameterName=self.INPUT,                                         
+                minValue=0, 
+                defaultValue=1.0
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -74,8 +86,20 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
 
-        # layerHandler.mergeLinesOnLayer(inputLyr, feedback = feedback, onlySelected=onlySelected, ignoreVirtualFields = ignoreVirtual, attributeBlackList = attributeBlackList, excludePrimaryKeys=ignorePK)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=inputLyr.name()))
+        dangleLyr = algRunner.runIdentifyDangles(inputLayer, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
+        algRunner.runSnapGeometriesToLayer(inputLayer, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Cleanning layer {layer}...').format(layer=inputLyr.name()))
+        algRunner.runDsgToolsClean(inputLyr, context, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr}
 
