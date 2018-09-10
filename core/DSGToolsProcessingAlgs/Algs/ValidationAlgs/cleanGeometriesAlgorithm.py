@@ -43,7 +43,8 @@ from qgis.core import (QgsProcessing,
                        QgsSpatialIndex,
                        QgsGeometry,
                        QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDistance)
 
 class CleanGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
