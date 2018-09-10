@@ -44,6 +44,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallPolygon
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import CleanGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.mergeLinesAlgorithm import MergeLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapLayerOnLayerAndUpdateAlgorithm import SnapLayerOnLayerAndUpdateAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlayer import LineOnLineOverlayerAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -72,7 +73,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         CleanGeometriesAlgorithm(),
                         MergeLinesAlgorithm(),
                         TopologicalCleanLinesAlgorithm(),
-                        SnapLayerOnLayerAndUpdateAlgorithm()]
+                        SnapLayerOnLayerAndUpdateAlgorithm(),
+                        LineOnLineOverlayerAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
