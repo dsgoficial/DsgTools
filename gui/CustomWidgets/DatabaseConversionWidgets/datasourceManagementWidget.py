@@ -154,3 +154,5 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         outDs = [self.tr('Select Output Datasource')] + [w.getDatasourceConnectionName() \
                                                         for w in self.datasourceManagementWidgetOut.activeDrivers]
+        for driverName, widgetList in self.activeDrivers.items():
+            pass
