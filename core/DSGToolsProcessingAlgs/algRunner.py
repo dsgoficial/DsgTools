@@ -40,10 +40,11 @@ class AlgRunner:
         else:
             return lyr
 
-    def runDissolve(self, inputLyr, context, feedback = None, outputLyr = 'memory:', field = []):
+    def runDissolve(self, inputLyr, context, feedback = None, outputLyr = 'memory:', field = None):
+        field = [] if field is None else field
         parameters = {
             'INPUT' : inputLyr,
-            'FIELD': [],
+            'FIELD': field,
             'OUTPUT': outputLyr
         }
         output = processing.run('native:dissolve', parameters, context = context, feedback = feedback)
@@ -89,7 +90,8 @@ class AlgRunner:
         outputDict = processing.run('grass7:v.overlay', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context)
     
-    def runClean(self, inputLyr, toolList, context, feedback=None, typeList=[0,1,2,3,4,5,6], returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
+    def runClean(self, inputLyr, toolList, context, feedback=None, typeList=None, returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
+        typeList = [0,1,2,3,4,5,6] if typeList is None else typeList
         output, error = self.generateGrassOutputAndError()
         parameters = {
             'input':inputLyr,
@@ -121,11 +123,12 @@ class AlgRunner:
         output = processing.run('dsgtools:cleangeometries', parameters, context = context, feedback = feedback)
         return output['INPUT']
     
-    def runDouglasSimplification(self, inputLyr, threshold, context, feedback = None, snap=-1, minArea=0.0001, iterations=1, type=[0,1,2], returnError=False):
+    def runDouglasSimplification(self, inputLyr, threshold, context, feedback = None, snap=-1, minArea=0.0001, iterations=1, type=None, returnError=False):
+        algType = [0,1,2] if type is None else type
         output, error = self.generateGrassOutputAndError()
         parameters = {
             'input': inputLyr,
-            'type':[0,1,2],
+            'type':algType,
             'cats':'',
             'where':'',
             'method':0,
@@ -193,7 +196,9 @@ class AlgRunner:
         output = processing.run('qgis:snapgeometries', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
     
-    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback = None, onlySelected=False, lineFilter = [], polygonFilter = [], ignoreUnsegmented = False, ignoreInner = False, flagLyr = 'memory:'):
+    def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback = None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr = 'memory:'):
+        lineFilter = [] if lineFilter is None else lineFilter
+        polygonFilter = [] if polygonFilter is None else polygonFilter
         parameters = {
             'INPUT' : inputLayer,
             'SELECTED' : onlySelected,
