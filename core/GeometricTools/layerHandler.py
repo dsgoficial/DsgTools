@@ -163,7 +163,8 @@ class LayerHandler(QObject):
         return fields
     
 
-    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = {}, feedback = None, progressDelta = 100):
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = None, feedback = None, progressDelta = 100):
+        parameterDict = {} if parameterDict is None else parameterDict
         featList = []
         blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
         if feedback:
@@ -264,10 +265,11 @@ class LayerHandler(QObject):
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
             self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, feedback=feedback, progressDelta=progressDelta/(2*lenList))
     
-    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = {}, coordinateTransformer = None, keepFeatures = False, feedback = None, progressDelta = 100):
+    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = None, coordinateTransformer = None, keepFeatures = False, feedback = None, progressDelta = 100):
         """
         Updates lyr using inputDict
         """
+        parameterDict = {} if parameterDict is None else parameterDict
         idsToRemove, featuresToAdd, idsToRemove = [], [], []
         lyr.startEditing()
         lyr.beginEditCommand('Updating layer {0}'.format(lyr.name()))
@@ -297,7 +299,8 @@ class LayerHandler(QObject):
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         if feedback:
             localFeedback = QgsProcessingMultiStepFeedback(3, feedback)
             localFeedback.setCurrentStep(0)
@@ -329,7 +332,8 @@ class LayerHandler(QObject):
         lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = [], excludePrimaryKeys = True):
+    def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         currentProgress = feedback.progress() if feedback else None
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
         localTotal = 100/size if size != 0 else 0
@@ -378,4 +382,7 @@ class LayerHandler(QObject):
             pointDict[point] = []
         pointDict[point].append(featid)
 
+    def dissolvePolygonsWithSameAttributes(elf, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        pass
                 
