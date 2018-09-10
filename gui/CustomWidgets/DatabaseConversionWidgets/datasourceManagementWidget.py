@@ -59,8 +59,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
 
     def addElementToDict(self, k, e, d):
         """
-        Sets and element to a dict composed by list as values.
-        :param k: (str) key entry for the new value.
+        Adds widget to a dict composed by list as values and driver names as key.
+        :param k: (str) new widget's driver name.
         :param e: (QWidget) widget to be added to the dict.
         :param d: (dict) dictionary to be updated.
         :return: (bool) operation success status.
@@ -104,9 +104,23 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 self.datasourceLayout.addWidget(w)
             # update dict of active widgets
             self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
+            # # reset all driver's groupboxes names
+            # self.resetWidgetsTitle()
         else:
             # if no tech is selected, inform user and nothing else
             pass
+
+    def resetWidgetsTitle(self):
+        """
+        Resets all widgets containers titles.
+        """
+        for driverName, widgetList in self.activeDrivers.items():
+            if not widgetList:
+                # if there are no active widgets for current driver, there's nothing to be updated
+                continue
+            for idx, w in enumerate(widgetList):
+                # if there are widgets from chosen driver, reset it's group box name
+                w.setGroupWidgetName(name='{0} #{1}'.format(driverName, idx + 1))
 
     def removeWidget(self, w):
         """
@@ -119,3 +133,5 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.activeDrivers[w.source].remove(w)
         # update dict of inactive widgets
         self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)
+        # reset all driver's groupboxes names
+        self.resetWidgetsTitle()
