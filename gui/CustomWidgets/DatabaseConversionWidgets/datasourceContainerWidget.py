@@ -54,13 +54,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         if not inputContainer:
             self.layerFilterPushButton.hide()
 
-    def setGroupWidgetName(self, source=None):
+    def setGroupWidgetName(self, name=None):
         """
         Sets the name to the group added.
         :param name: (str) name for the group.
         """
-        # change name according to source - to be properly adapted later
-        name = source
         self.groupBox.setTitle('{0}'.format(name))
 
     def getWidget(self, source):
