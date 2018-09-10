@@ -48,10 +48,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         super(DatasourceContainerWidget, self).__init__()
         self.setupUi(self)
+        self.source = source
         self.addDatasourceSelectionWidget(source=source)
         self.setGroupWidgetName(name=source)
-        if self.truncateCheckBox:
-            self.truncateCheckBox.hide()
+        if not inputContainer:
+            self.layerFilterPushButton.hide()
 
     def setGroupWidgetName(self, name=None):
         """
