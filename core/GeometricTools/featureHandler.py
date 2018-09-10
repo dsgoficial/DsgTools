@@ -62,7 +62,9 @@ class FeatureHandler(QObject):
             newFeatureList.append(newFeature)
         return newFeatureList
 
-    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False, coordinateTransformer = None, parameterDict = {}):
+    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = None, attributeTupple = False, coordinateTransformer = None, parameterDict = None):
+        parameterDict = {} if parameterDict is None else parameterDict
+        bList = [] if bList is None else bList
         newFeats = []
         for geom in self.geometryHandler.handleGeometry(feature.geometry(), parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):
             newfeat = QgsFeature(unifiedLyr.fields())
@@ -81,7 +83,8 @@ class FeatureHandler(QObject):
             newFeat.setAttribute(idx, None)
         return newFeat
     
-    def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = {}, coordinateTransformer = None):
+    def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = None, coordinateTransformer = None):
+        parameterDict = {} if parameterDict is None else parameterDict
         geomList = []
         for feat in featList:
             geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict)
@@ -116,7 +119,8 @@ class FeatureHandler(QObject):
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
     
-    def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict = {}, feedback = None):
+    def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict = None, feedback = None):
+        parameterDict = {} if parameterDict is None else parameterDict
         changeDict = dict()
         size = 100 / len(featList)
         for current, feat_a in enumerate(featList):
