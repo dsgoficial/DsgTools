@@ -40,6 +40,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.setupUi(self)
         self.fillSupportedDatasouces()
         self.connectToolSignals()
+        self.activeDrivers = dict()
+        self.inactiveDrivers = dict()
 
     def connectToolSignals(self):
         """
@@ -55,6 +57,24 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         driversList = ['', 'PostGIS', 'SpatiaLite']
         self.datasourceComboBox.addItems(driversList)
 
+    def elementToDict(self, k, e, d):
+        """
+        Sets and element to a dict composed by list as values.
+        :param k: (str) key entry for the new value.
+        :param e: (QWidget) widget to be added to the dict.
+        :param d: (dict) dictionary to be updated.
+        :return: (bool) operation success status.
+        """
+        try:
+            if k not in d:
+                d[k] = [e]
+            else:
+                if e not in d[k]:
+                    d[k].append(e)
+            return e in d[k]
+        except:
+            return False
+
     def addDatasourceSelectionFirstPage(self):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
@@ -62,11 +82,24 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         # get current text on datasource techonology selection combobox
         currentDbSource = self.datasourceComboBox.currentText()
+        # identify if it's an input or output page call
+        inputPage = (self.objectName() == 'datasourceManagementWidgetIn')
         if currentDbSource:
             # in case a valid driver is selected, add its widget to the interface
-            w = DatasourceContainerWidget(source=currentDbSource, inputContainer=True)
-            # connect removal widget signal to new widget
-            w.removeWidget.connect(self.removeWidget)
+            # first checks if there are any widgets already created
+            inactiveWidgets = self.inactiveDrivers[currentDbSource] if currentDbSource in self.inactiveDrivers else []
+            if inactiveWidgets:
+                # if there are inactive widgets, reuse them instead of instantianting new ones
+                w = self.inactiveDrivers[currentDbSource][0]
+                # remove widget from inactive dict
+                self.inactiveDrivers[currentDbSource].remove(w)
+                w.show()
+            else:
+                w = DatasourceContainerWidget(source=currentDbSource, inputContainer=inputPage)
+                # connect removal widget signal to new widget
+                w.removeWidget.connect(self.removeWidget)
+            # update dict of active widgets
+            self.elementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
             # add new driver container to GUI 
             self.datasourceLayout.addWidget(w)
         else:
@@ -78,5 +111,9 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Removes driver widget from GUI.
         :param w: (QWidget) driver widget to be removed. 
         """
+        # hide widget from GUI
         w.hide()
-        # self.datasourceLayout.removeWidget(w)
+        # remove from active dict
+        self.activeDrivers[w.source].remove(w)
+        # update dict of inactive widgets
+        self.elementToDict(k=w.source, e=w, d=self.inactiveDrivers)
