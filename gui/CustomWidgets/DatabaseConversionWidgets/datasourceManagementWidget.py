@@ -31,6 +31,12 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceManagementWidget.ui'))
 
 class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
+    """
+    Class scope:
+    1- manage input/output datasources selection;
+    2- prepare the conversion mapping sctructure using the table as a means to translate user's intentions; and
+    3- make the call to core code to do the actual conversion.
+    """
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -38,8 +44,11 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         super(DatasourceManagementWidget, self).__init__()
         self.setupUi(self)
+        # adds all available drivers to conversion to GUI
         self.fillSupportedDatasouces()
+        # centralize all tool signals in order to keep track of all non-standard signals used
         self.connectToolSignals()
+        # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
         self.inactiveDrivers = dict()
 
@@ -135,3 +144,13 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
+
+    # # TABLE MAPPING MANAGEMENT STARTS HERE
+
+    def setTableInitialState(self):
+        """
+        Sets the mapping table to its initial state. Each row is composed by input datasource name, widget with
+        all output datasource and conversion mode (whether -9999 would be set to all non-null restriction not respected)
+        """
+        outDs = [self.tr('Select Output Datasource')] + [w.getDatasourceConnectionName() \
+                                                        for w in self.datasourceManagementWidgetOut.activeDrivers]

@@ -50,7 +50,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.source = source
         self.addDatasourceSelectionWidget(source=source)
-        self.setGroupWidgetName(source=source)
+        self.setGroupWidgetName(name=source)
         if not inputContainer:
             self.layerFilterPushButton.hide()
 
@@ -81,11 +81,40 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # get current text on datasource techonology selection combobox
         if source:
             # in case a valid driver is selected, add its widget to the interface
-            w = self.getWidget(source=source)
-            self.driverLayout.addWidget(w)
+            self.connWidget = self.getWidget(source=source)
+            self.driverLayout.addWidget(self.connWidget)
         else:
             # if no tech is selected, inform user and nothing else
             pass
+
+    def getDatasourceConnectionName(self):
+        """
+        Gets the datasource connection name.
+        :return: (str) datasource connection name.
+        """
+        # temporarily, it'll be set to current db name
+        methodDict = {
+            # using lamda functions in order to not get the method triggered whilst this dict is being instantiated
+            'PostGIS' : lambda : self.getPostgisConnectionName(),
+            'SpatiaLite' : lambda : self.getSpatialiteConnectionName()
+        }
+        return methodDict[self.source]()
+
+    def getPostgisConnectionName(self):
+        """
+        Gets the PostGIS connection name.
+        """
+        return self.connWidget.connectionSelectorComboBox.currentText()
+
+    def getSpatialiteConnectionName(self):
+        """
+        Gets the SpatiaLite connection name.
+        """
+        n = self.connWidget.lineEdit.text()
+        # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
+        splitChar = '/' if '/' in n else '\\'
+        ret = n.split(splitChar)[-1].split('.')[0] if n else ''
+        return ret 
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
