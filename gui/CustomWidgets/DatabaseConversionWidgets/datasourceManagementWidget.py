@@ -57,7 +57,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         driversList = ['', 'PostGIS', 'SpatiaLite']
         self.datasourceComboBox.addItems(driversList)
 
-    def elementToDict(self, k, e, d):
+    def addElementToDict(self, k, e, d):
         """
         Sets and element to a dict composed by list as values.
         :param k: (str) key entry for the new value.
@@ -93,15 +93,17 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 w = self.inactiveDrivers[currentDbSource][0]
                 # remove widget from inactive dict
                 self.inactiveDrivers[currentDbSource].remove(w)
+                # re-display widget on GUI
                 w.show()
             else:
+                # if no unused widget is found, a new one will be instantiated
                 w = DatasourceContainerWidget(source=currentDbSource, inputContainer=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
+                # add new driver container to GUI 
+                self.datasourceLayout.addWidget(w)
             # update dict of active widgets
-            self.elementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
-            # add new driver container to GUI 
-            self.datasourceLayout.addWidget(w)
+            self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
         else:
             # if no tech is selected, inform user and nothing else
             pass
@@ -116,4 +118,4 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # remove from active dict
         self.activeDrivers[w.source].remove(w)
         # update dict of inactive widgets
-        self.elementToDict(k=w.source, e=w, d=self.inactiveDrivers)
+        self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)

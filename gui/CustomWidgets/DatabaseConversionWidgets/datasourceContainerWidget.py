@@ -36,7 +36,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     """
     Widget resposinble for adequate GUI to chosen data driver.
     """
-    # signal to be emitted when deletion button is clicked - emits itself (Q)
+    # signal to be emitted when deletion button is clicked - emits itself (QWidget)
     removeWidget = pyqtSignal(QtWidgets.QWidget)
 
     def __init__(self, source, inputContainer, parent=None):
@@ -50,21 +50,24 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.source = source
         self.addDatasourceSelectionWidget(source=source)
-        self.setGroupWidgetName(name=source)
+        self.setGroupWidgetName(source=source)
         if not inputContainer:
             self.layerFilterPushButton.hide()
 
-    def setGroupWidgetName(self, name=None):
+    def setGroupWidgetName(self, source=None):
         """
         Sets the name to the group added.
         :param name: (str) name for the group.
         """
+        # change name according to source - to be properly adapted later
+        name = source
         self.groupBox.setTitle('{0}'.format(name))
 
     def getWidget(self, source):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.
         :param source: (str) driver name.
+        :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
         widgetDict = {
             'PostGIS' : ConnectionComboBox(),
