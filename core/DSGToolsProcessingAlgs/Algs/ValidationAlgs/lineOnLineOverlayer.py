@@ -91,15 +91,15 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=inputLyr.name()))
-        dangleLyr = algRunner.runIdentifyDangles(inputLayer, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        dangleLyr = algRunner.runIdentifyDangles(inputLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
-        algRunner.runSnapGeometriesToLayer(inputLayer, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
         
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Cleanning layer {layer}...').format(layer=inputLyr.name()))
-        algRunner.runDsgToolsClean(inputLyr, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        algRunner.runDsgToolsClean(inputLyr, context, snap=tol, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr}
 

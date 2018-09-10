@@ -109,8 +109,8 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        if snap < 0 and snap != -1:
-            raise QgsProcessingException(self.invalidParameterError(parameters, self.TOLERANCE))
+        # if snap < 0 and snap != -1:
+        #     raise QgsProcessingException(self.invalidParameterError(parameters, self.TOLERANCE))
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
