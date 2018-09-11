@@ -63,8 +63,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setEnabled(enabled)
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.tableWidget.setHorizontalHeaderLabels([self.tr("Input"), self.tr("Output"), self.tr("Conversion Mode")])
-
 
     def setTableInitialState(self):
         """
@@ -92,17 +92,19 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # create combobox containing conversion mode options
             outModeComboboxDict[idx] = QtWidgets.QComboBox()
             outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
-            # set value to its own row, always in the first column 
+            # set value to its own row, always in the first column
             self.tableWidget.setItem(idx, 0, item)
             # set classes combobox to its own row, always in the second column 
             self.tableWidget.setCellWidget(idx, 1, outDsComboboxDict[idx])
             # set conversion mode combobox to its own row, always in the third column 
             self.tableWidget.setCellWidget(idx, 2, outModeComboboxDict[idx])
+        # resize to contents
+        self.tableWidget.resizeColumnsToContents()
 
     def keyPressEvent(self, e):
         """
         Binds table population to F5 (TEMPORARILY).
-        :param e: keyboard event
+        :param e: keyboard event.
         """
         if e.key() == Qt.Key_F5 and self.currentId() == 2:
             self.setTableInitialState()
