@@ -113,8 +113,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 self.datasourceLayout.addWidget(w)
             # update dict of active widgets
             self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
-            # # reset all driver's groupboxes names
-            # self.resetWidgetsTitle()
+            # reset all driver's groupboxes names
+            self.resetWidgetsTitle()
         else:
             # if no tech is selected, inform user and nothing else
             pass
@@ -123,12 +123,15 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Resets all widgets containers titles.
         """
+        hideAlias = lambda w : w.hide()
         for driverName, widgetList in self.activeDrivers.items():
             if not widgetList:
                 # if there are no active widgets for current driver, there's nothing to be updated
                 continue
+            map(hideAlias, widgetList)
             for idx, w in enumerate(widgetList):
                 # if there are widgets from chosen driver, reset it's group box name
+                w.show()
                 w.setGroupWidgetName(name='{0} #{1}'.format(driverName, idx + 1))
 
     def removeWidget(self, w):
@@ -144,60 +147,3 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
-
-    # # TABLE MAPPING MANAGEMENT STARTS HERE
-
-    def getWidgetNameDict(self, d):
-        """
-        Gets the name translated into widget dict from a given dict.
-        :param d: (dict) dictionary  - { (str)driver : (QWidget)widget } - to have its widgets translated.
-        :return: (dict) translated dict - { (str)datasource_name : (QWidget)widget }.
-        """
-        vl = []
-        for k in d:
-            vl += d[k]
-        returnDict
-        newDictLambda = lambda w : returnDict[w.getDatasourceConnectionName()] = w
-        map(newDictLambda, vl)
-        return returnDict
-
-    def resetTable(self, enabled=False):
-        """
-        Resets table to initial state.
-        :param enabled: (bool) indicates whether table will be enabled.
-        """
-        # clear possible content in it
-        self.tableWidget.setEnabled(enabled)
-        self.tableWidget.setRowCount(0)
-
-    def setTableInitialState(self):
-        """
-        Sets the mapping table to its initial state. Each row is composed by input datasource name, widget with
-        all output datasource and conversion mode (whether -9999 would be set to all non-null restriction not respected)
-        """
-        self.resetTable(enabled=True)
-        # output ds dict/list
-        outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
-        outDsList = list(outDs.keys())
-        # set the table rows # the same as the # of input ds
-        self.tableWidget.setRowCount(len(self.datasourceManagementWidgetIn.activeDrivers))
-        # initiate comboboxes control dictionaries
-        outDsComboboxDict = dict()
-        outModeComboboxDict = dict()
-        for driverName, widgetList in self.datasourceManagementWidgetIn.activeDrivers.items():
-            for idx, w in enumerate(widgetList):
-                # create the combobox containing all output ds
-                outDsComboboxDict[idx] = QtWidgets.QComboBox()
-                outDsComboboxDict[idx].addItems(outDsList)
-                # create the item containing current loop's input ds
-                item = QtWidgets.QTableWidgetItem()
-                item.setText('{0}: {1}'.format(driverName, w.getConnectionName()))
-                # create combobox containing conversion mode options
-                outModeComboboxDict[idx] = QtWidgets.QComboBox()
-                outDsComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
-                # set value to its own row, always in the first column 
-                self.tableWidget.setItem(idx, 0, item)
-                # set classes combobox to its own row, always in the second column 
-                self.tableWidget.setCellWidget(idx, 1, outDsComboboxDict[idx])
-                # set conversion mode combobox to its own row, always in the third column 
-                self.tableWidget.setCellWidget(idx, 2, outDsComboboxDict[idx])

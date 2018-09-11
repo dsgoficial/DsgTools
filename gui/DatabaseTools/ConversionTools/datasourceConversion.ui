@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Wizard</class>
- <widget class="QWizard" name="Wizard">
+ <class>wizard</class>
+ <widget class="QWizard" name="wizard">
   <property name="geometry">
    <rect>
     <x>0</x>
