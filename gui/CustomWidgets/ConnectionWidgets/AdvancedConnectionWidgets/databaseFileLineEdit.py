@@ -89,14 +89,16 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
             text = text.split(dirSplit)[-1].split('.')[0] if text else ''
             return text
     
-    @pyqtSlot(name = 'on_lineEdit_editingFinished')
+    @pyqtSlot(name = 'on_lineEdit_textChanged')
     def loadDatabase(self, currentText):
         """
         Loads the selected database
         """
         try:
-            currentText = self.connectionSelectorLineEdit.lineEdit.currentText()
-            if not self.instantiateAbstractDb:
+            if not self.currentDb():
+                # in case no datasource was selected
+                self.closeDatabase()
+            elif not self.instantiateAbstractDb:
                 self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
                 self.abstractDb.connectDatabase(conn=currentText)
                 self.abstractDb.checkAndOpenDb()

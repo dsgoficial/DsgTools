@@ -40,6 +40,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     """
     # setting signal to alert conversion tool about any active widgets change
     activeWidgetsChanged = pyqtSignal()
+    # setting signal to alert conversion tool about any datasource updates
+    datasourceChangedSignal = pyqtSignal()
 
     def __init__(self, parent=None):
         """
@@ -113,6 +115,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 w = DatasourceContainerWidget(source=currentDbSource, inputContainer=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
+                w.connWidget.dbChanged.connect(self.datasourceChanged)
                 # add new driver container to GUI 
                 self.datasourceLayout.addWidget(w)
             # update dict of active widgets
@@ -153,3 +156,10 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
+
+    def datasourceChanged(self):
+        """
+        Keeps track of every container widget's abstract database change.
+        """
+        # if any abstractDb changes
+        self.datasourceChangedSignal.emit()

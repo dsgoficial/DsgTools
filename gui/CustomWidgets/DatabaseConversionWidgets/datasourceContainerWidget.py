@@ -88,7 +88,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.driverLayout.addWidget(self.connWidget)
         else:
             # if no tech is selected, inform user and nothing else
-            pass
+            self.connWidget = None
 
     def getDatasourceConnectionName(self):
         """
@@ -124,8 +124,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Gets the datasource selected on current widget.
         :return: (object) the object representing the target datasource according to its driver. 
         """
-        # TO BE IMPLEMENTED: FOR NOW (TESTING/PROTOTYPING PURPOSES), IT'LL RETURN ITSELF
-        return self 
+        return self.connWidget.abstractDb if self.connWidget else None
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
