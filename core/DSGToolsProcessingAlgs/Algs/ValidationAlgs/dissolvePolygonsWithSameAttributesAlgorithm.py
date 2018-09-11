@@ -149,4 +149,4 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return MergeLinesAlgorithm()
+        return DissolvePolygonsWithSameAttributesAlgorithm()
