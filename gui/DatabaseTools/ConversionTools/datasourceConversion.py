@@ -45,8 +45,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         Connects all tool generic signals.
         """
+        # if any widget was turned active/inactive
         self.datasourceManagementWidgetIn.activeWidgetsChanged.connect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.activeWidgetsChanged.connect(self.setTableInitialState)
+        # if datasource is changed (e.g. user changed his postgis database selection, for instance)
+        self.datasourceManagementWidgetIn.datasourceChangedSignal.connect(self.setTableInitialState)
+        self.datasourceManagementWidgetOut.datasourceChangedSignal.connect(self.setTableInitialState)
 
     def getWidgetNameDict(self, d):
         """
@@ -57,7 +61,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         returnDict = dict()
         for k in d:
             for w in d[k]:
-                returnDict[w.groupBox.title()] = w.getDatasource()
+                returnDict[w.groupBox.title()] = w
         return returnDict
 
     def resetTable(self, enabled=False):
