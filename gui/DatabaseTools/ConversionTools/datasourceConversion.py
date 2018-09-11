@@ -73,32 +73,31 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         self.resetTable(enabled=True)
         # output ds dict/list
-        outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
-        outDsList = list(outDs.keys())
+        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
+        outDsList = list(self.outDs.keys())
         # set the table rows # the same as the # of input ds
-        inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
-        inDsList = list(inDs.keys())
+        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        inDsList = list(self.inDs.values())
         self.tableWidget.setRowCount(len(inDsList))
         # initiate comboboxes control dictionaries
         outDsComboboxDict = dict()
         outModeComboboxDict = dict()
-        for driverName, widgetList in self.datasourceManagementWidgetIn.activeDrivers.items():
-            for idx, w in enumerate(widgetList):
-                # create the combobox containing all output ds
-                outDsComboboxDict[idx] = QtWidgets.QComboBox()
-                outDsComboboxDict[idx].addItems(outDsList)
-                # create the item containing current loop's input ds
-                item = QtWidgets.QTableWidgetItem()
-                item.setText('{0}: {1}'.format(driverName, w.groupBox.title()))
-                # create combobox containing conversion mode options
-                outModeComboboxDict[idx] = QtWidgets.QComboBox()
-                outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
-                # set value to its own row, always in the first column 
-                self.tableWidget.setItem(idx, 0, item)
-                # set classes combobox to its own row, always in the second column 
-                self.tableWidget.setCellWidget(idx, 1, outDsComboboxDict[idx])
-                # set conversion mode combobox to its own row, always in the third column 
-                self.tableWidget.setCellWidget(idx, 2, outModeComboboxDict[idx])
+        for idx, w in enumerate(inDsList):
+            # create the combobox containing all output ds
+            outDsComboboxDict[idx] = QtWidgets.QComboBox()
+            outDsComboboxDict[idx].addItems(outDsList)
+            # create the item containing current loop's input ds
+            item = QtWidgets.QTableWidgetItem()
+            item.setText('{0}'.format(w.groupBox.title()))
+            # create combobox containing conversion mode options
+            outModeComboboxDict[idx] = QtWidgets.QComboBox()
+            outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
+            # set value to its own row, always in the first column 
+            self.tableWidget.setItem(idx, 0, item)
+            # set classes combobox to its own row, always in the second column 
+            self.tableWidget.setCellWidget(idx, 1, outDsComboboxDict[idx])
+            # set conversion mode combobox to its own row, always in the third column 
+            self.tableWidget.setCellWidget(idx, 2, outModeComboboxDict[idx])
 
     def keyPressEvent(self, e):
         """
