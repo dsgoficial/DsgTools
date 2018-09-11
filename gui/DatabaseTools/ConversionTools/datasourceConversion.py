@@ -85,7 +85,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.resetTable(enabled=True)
         # output ds dict/list
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
-        outDsList = list(self.outDs.keys())
+        # create a 'function' get datasource exposing name
+        getNameAlias = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
+        outDsList = map(getNameAlias, self.outDs.values())
         # input ds dict/list
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
         inDsList = list(self.inDs.values())

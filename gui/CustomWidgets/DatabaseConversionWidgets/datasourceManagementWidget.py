@@ -25,6 +25,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import DatasourceContainerWidget
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 import os
 
@@ -41,7 +42,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     # setting signal to alert conversion tool about any active widgets change
     activeWidgetsChanged = pyqtSignal()
     # setting signal to alert conversion tool about any datasource updates
-    datasourceChangedSignal = pyqtSignal()
+    datasourceChangedSignal = pyqtSignal(AbstractDb)
 
     def __init__(self, parent=None):
         """
@@ -115,6 +116,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 w = DatasourceContainerWidget(source=currentDbSource, inputContainer=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
+                # connect
                 w.connWidget.dbChanged.connect(self.datasourceChanged)
                 # add new driver container to GUI 
                 self.datasourceLayout.addWidget(w)
@@ -157,9 +159,9 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
 
-    def datasourceChanged(self):
+    def datasourceChanged(self, newDbAbstract):
         """
         Keeps track of every container widget's abstract database change.
         """
         # if any abstractDb changes
-        self.datasourceChangedSignal.emit()
+        self.datasourceChangedSignal.emit(newDbAbstract)
