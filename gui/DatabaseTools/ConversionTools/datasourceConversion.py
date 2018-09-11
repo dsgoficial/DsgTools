@@ -48,14 +48,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param d: (dict) dictionary  - { (str)driver : (QWidget)widget } - to have its widgets translated.
         :return: (dict) translated dict - { (str)datasource_name : (QWidget)widget }.
         """
-        vl = []
-        for k in d:
-            vl += d[k]
         returnDict = dict()
-        print(3, returnDict)
-        newDictLambda = lambda w : returnDict.update({ w.getDatasourceConnectionName() : w })
-        print(4, returnDict)
-        map(newDictLambda, vl)
+        for k in d:
+            for w in d[k]:
+                returnDict[w.groupBox.title()] = w
         return returnDict
 
     def resetTable(self, enabled=False):
@@ -65,7 +61,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         # clear possible content in it
         self.tableWidget.setEnabled(enabled)
+        self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(0)
+        self.tableWidget.setHorizontalHeaderLabels([self.tr("Input"), self.tr("Output"), self.tr("Conversion Mode")])
+
 
     def setTableInitialState(self):
         """
@@ -76,10 +75,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # output ds dict/list
         outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         outDsList = list(outDs.keys())
-        print(1, self.datasourceManagementWidgetOut.activeDrivers)
         # set the table rows # the same as the # of input ds
-        self.tableWidget.setRowCount(len(self.datasourceManagementWidgetIn.activeDrivers))
-        print(2, self.datasourceManagementWidgetIn.activeDrivers)
+        inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
+        inDsList = list(inDs.keys())
+        self.tableWidget.setRowCount(len(inDsList))
         # initiate comboboxes control dictionaries
         outDsComboboxDict = dict()
         outModeComboboxDict = dict()
@@ -90,16 +89,16 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 outDsComboboxDict[idx].addItems(outDsList)
                 # create the item containing current loop's input ds
                 item = QtWidgets.QTableWidgetItem()
-                item.setText('{0}: {1}'.format(driverName, w.getDatasourceConnectionName()))
+                item.setText('{0}: {1}'.format(driverName, w.groupBox.title()))
                 # create combobox containing conversion mode options
                 outModeComboboxDict[idx] = QtWidgets.QComboBox()
-                outDsComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
+                outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
                 # set value to its own row, always in the first column 
                 self.tableWidget.setItem(idx, 0, item)
                 # set classes combobox to its own row, always in the second column 
                 self.tableWidget.setCellWidget(idx, 1, outDsComboboxDict[idx])
                 # set conversion mode combobox to its own row, always in the third column 
-                self.tableWidget.setCellWidget(idx, 2, outDsComboboxDict[idx])
+                self.tableWidget.setCellWidget(idx, 2, outModeComboboxDict[idx])
 
     def keyPressEvent(self, e):
         """

@@ -56,7 +56,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Connects all tool generic behavior signals.
         """
-        self.addSourcePushButton.clicked.connect(self.addDatasourceSelectionFirstPage)
+        self.addSourcePushButton.clicked.connect(self.addDatasourceWidget)
         pass
 
     def fillSupportedDatasouces(self):
@@ -84,7 +84,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         except:
             return False
 
-    def addDatasourceSelectionFirstPage(self):
+    def addDatasourceWidget(self):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
         :param source: (str) driver name.
