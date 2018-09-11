@@ -90,14 +90,13 @@ class AlgRunner:
         outputDict = processing.run('grass7:v.overlay', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context)
     
-    def runClean(self, inputLyr, toolList, context, feedback=None, typeList=None, returnError = False, useFollowup = True, snap = -1, minArea = 0.0001): 
+    def runClean(self, inputLyr, toolList, context, feedback=None, typeList=None, returnError = False, useFollowup = False, snap = -1, minArea = 0.0001): 
         typeList = [0,1,2,3,4,5,6] if typeList is None else typeList
         output, error = self.generateGrassOutputAndError()
         parameters = {
             'input':inputLyr,
             'type':typeList,
             'tool':toolList,
-            'threshold':'-1', 
             '-b': False, 
             '-c': useFollowup, 
             'output' : output, 
