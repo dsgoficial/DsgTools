@@ -103,6 +103,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # create the item containing current loop's input ds
             item = QtWidgets.QTableWidgetItem()
             item.setText('{0}: {1}'.format(w.groupBox.title(), w.getDatasourceConnectionName()))
+            item.setFlags(Qt.ItemIsEditable)
             # create combobox containing conversion mode options
             outModeComboboxDict[idx] = QtWidgets.QComboBox()
             outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
