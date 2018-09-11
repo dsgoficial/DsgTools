@@ -34,7 +34,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     """
-    Widget resposinble for adequate GUI to chosen data driver.
+    Widget resposinble for adequating GUI to chosen data driver.
     """
     # signal to be emitted when deletion button is clicked - emits itself (QWidget)
     removeWidget = pyqtSignal(QtWidgets.QWidget)
@@ -43,8 +43,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
-        :param source: (str) driver codename to be have its widget produced.
-        :param inputContainer: (bool) indicates whether the chosen database is supposed to be a reading widget or writting/output one.
+        :param source: (str) driver codename to have its widget produced.
+        :param inputContainer: (bool) indicates whether the chosen database is supposed to be a reading/input widget or writting/output one.
         """
         super(DatasourceContainerWidget, self).__init__()
         self.setupUi(self)
@@ -115,7 +115,20 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
         splitChar = '/' if '/' in n else '\\'
         ret = n.split(splitChar)[-1].split('.')[0] if n else ''
-        return ret 
+        return ret
+
+    def getDatasource(self):
+        """
+        Gets the datasource selected on current widget.
+        :return: (object) the object representing the target datasource according to its driver. 
+        """
+        pass
+
+    def getVectorLayerList(self):
+        """
+        Gets all available vector layers according to what user filled, including layer filters.
+        """
+        pass
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
