@@ -22,6 +22,7 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt.QtCore import pyqtSignal
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import DatasourceContainerWidget
 
@@ -37,6 +38,9 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     2- prepare the conversion mapping sctructure using the table as a means to translate user's intentions; and
     3- make the call to core code to do the actual conversion.
     """
+    # setting signal to alert conversion tool about any active widgets change
+    activeWidgetsChanged = pyqtSignal()
+
     def __init__(self, parent=None):
         """
         Class constructor.
@@ -113,6 +117,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 self.datasourceLayout.addWidget(w)
             # update dict of active widgets
             self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
+            self.activeWidgetsChanged.emit()
             # reset all driver's groupboxes names
             self.resetWidgetsTitle()
         else:
@@ -143,6 +148,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         w.hide()
         # remove from active dict
         self.activeDrivers[w.source].remove(w)
+        self.activeWidgetsChanged.emit()
         # update dict of inactive widgets
         self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)
         # reset all driver's groupboxes names

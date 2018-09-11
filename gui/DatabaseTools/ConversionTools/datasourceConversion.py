@@ -41,6 +41,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.manager = manager
         self.parentMenu = parentMenu
         self.parentButton = None
+        self.connectToolSignals()
+
+    def connectToolSignals(self):
+        """
+        Connects all tool generic signals.
+        """
+        self.datasourceManagementWidgetIn.activeWidgetsChanged.connect(self.setTableInitialState)
+        self.datasourceManagementWidgetOut.activeWidgetsChanged.connect(self.setTableInitialState)
 
     def getWidgetNameDict(self, d):
         """
@@ -63,13 +71,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setEnabled(enabled)
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setRowCount(0)
+        # set policy to make cell size adjust to content
         self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         self.tableWidget.setHorizontalHeaderLabels([self.tr("Input"), self.tr("Output"), self.tr("Conversion Mode")])
 
     def setTableInitialState(self):
         """
         Sets the mapping table to its initial state. Each row is composed by input datasource name, widget with
-        all output datasource and conversion mode (whether -9999 would be set to all non-null restriction not respected)
+        all output datasource and conversion mode (whether -9999 would be set to all non-null restriction not respected).
         """
         self.resetTable(enabled=True)
         # output ds dict/list
@@ -88,7 +97,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outDsComboboxDict[idx].addItems(outDsList)
             # create the item containing current loop's input ds
             item = QtWidgets.QTableWidgetItem()
-            item.setText('{0}'.format(w.groupBox.title()))
+            item.setText('{0}: {1}'.format(w.groupBox.title(), w.getDatasourceConnectionName()))
             # create combobox containing conversion mode options
             outModeComboboxDict[idx] = QtWidgets.QComboBox()
             outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
@@ -100,16 +109,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             self.tableWidget.setCellWidget(idx, 2, outModeComboboxDict[idx])
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
-
-    def keyPressEvent(self, e):
-        """
-        Binds table population to F5 (TEMPORARILY).
-        :param e: keyboard event.
-        """
-        if e.key() == Qt.Key_F5 and self.currentId() == 2:
-            self.setTableInitialState()
-        elif e.key() == Qt.Key_Escape:
-            self.close()
 
     def initGui(self):
         """
