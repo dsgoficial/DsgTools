@@ -124,12 +124,6 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         pass
 
-    def getVectorLayerList(self):
-        """
-        Gets all available vector layers according to what user filled, including layer filters.
-        """
-        pass
-
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         """
