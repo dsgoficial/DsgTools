@@ -122,9 +122,10 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 self.datasourceLayout.addWidget(w)
             # update dict of active widgets
             self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
-            self.activeWidgetsChanged.emit()
             # reset all driver's groupboxes names
             self.resetWidgetsTitle()
+            # emit signal advising that there is a new active widget
+            self.activeWidgetsChanged.emit()
         else:
             # if no tech is selected, inform user and nothing else
             pass

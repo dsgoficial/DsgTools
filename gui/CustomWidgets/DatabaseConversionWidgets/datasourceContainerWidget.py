@@ -51,7 +51,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.source = source
         self.addDatasourceSelectionWidget(source=source)
-        self.setGroupWidgetName(name=source)
+        # self.setGroupWidgetName(name=source)
         if not inputContainer:
             # output widget should not have filtering options
             self.layerFilterPushButton.hide()

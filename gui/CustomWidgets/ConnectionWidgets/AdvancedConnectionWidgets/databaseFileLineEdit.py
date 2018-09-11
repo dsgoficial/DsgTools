@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -74,6 +74,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         Unsets any selected database and clears db directory, if necessary.
         """
         self.connectionSelectorLineEdit.lineEdit.clear()
+        self.connectionSelectorLineEdit.lineEdit.setText(self.tr('Select datasource'))
         self.closeDatabase()
     
     def currentDb(self):
@@ -81,7 +82,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         Returns current loaded datasource name, if any.
         :return: (str) current loaded datasource name; an empty string if no ds is selected.
         """
-        text = self.currentText()
+        text = self.connectionSelectorLineEdit.lineEdit.text()
         if text == self.tr('Select datasource'):
             return None
         else:
@@ -89,7 +90,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
             text = text.split(dirSplit)[-1].split('.')[0] if text else ''
             return text
     
-    @pyqtSlot(name = 'on_lineEdit_textChanged')
+    @pyqtSlot(str, name = 'on_lineEdit_textChanged')
     def loadDatabase(self, currentText):
         """
         Loads the selected database

@@ -79,13 +79,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
 
     def setTableInitialState(self):
         """
-        Sets the mapping table to its initial state. Each row is composed by input datasource name, widget with
+        Sets the mapping table to its initial (populated) state. Each row is composed by input datasource name, widget with
         all output datasource and conversion mode (whether -9999 would be set to all non-null restriction not respected).
         """
         self.resetTable(enabled=True)
         # output ds dict/list
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
-        # create a 'function' get datasource exposing name
+        # create a 'function' to get datasource exposing name and create the output list
         getNameAlias = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
         outDsList = map(getNameAlias, self.outDs.values())
         # input ds dict/list
