@@ -25,7 +25,8 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
-from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.databaseFileLineEdit import DatabaseFileLineEdit
+# from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 
 import os
 
@@ -70,7 +71,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         widgetDict = {
             'PostGIS' : ConnectionComboBox(),
-            'SpatiaLite' : SelectFileWidget()
+            'SpatiaLite' : DatabaseFileLineEdit()
+            # 'SpatiaLite' : SelectFileWidget()
         }
         return widgetDict[source] if source in widgetDict else None
 
@@ -111,7 +113,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Gets the SpatiaLite connection name.
         """
-        n = self.connWidget.lineEdit.text()
+        n = self.connWidget.connectionSelectorLineEdit.lineEdit.text()
         # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
         splitChar = '/' if '/' in n else '\\'
         ret = n.split(splitChar)[-1].split('.')[0] if n else ''

@@ -63,6 +63,7 @@ class SpatialiteDb(AbstractDb):
         '''
         fd = QFileDialog()
         filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
+        filename = filename[0] if isinstance(filename, tuple) else filename
         self.db.setDatabaseName(filename)
     
     def listGeomClassesFromDatabase(self, primitiveFilter = []):
