@@ -24,8 +24,6 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt
 
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget import ExploreServerWidget
-
 import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -59,7 +57,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         returnDict = dict()
         for k in d:
             for w in d[k]:
-                returnDict[w.groupBox.title()] = w
+                returnDict[w.groupBox.title()] = w.getDatasource()
         return returnDict
 
     def resetTable(self, enabled=False):
@@ -84,9 +82,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # output ds dict/list
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         outDsList = list(self.outDs.keys())
-        # set the table rows # the same as the # of input ds
+        # input ds dict/list
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
         inDsList = list(self.inDs.values())
+        # set the table rows # the same as the # of input ds
         self.tableWidget.setRowCount(len(inDsList))
         # initiate comboboxes control dictionaries
         outDsComboboxDict = dict()
