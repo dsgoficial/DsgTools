@@ -122,7 +122,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Gets the datasource selected on current widget.
         :return: (object) the object representing the target datasource according to its driver. 
         """
-        pass
+        # TO BE IMPLEMENTED: FOR NOW (TESTING/PROTOTYPING PURPOSES), IT'LL RETURN ITSELF
+        return self 
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
