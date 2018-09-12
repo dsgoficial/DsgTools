@@ -170,7 +170,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Validation Tools'
+        return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
