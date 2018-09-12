@@ -42,7 +42,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProcessingParameterField)
+                       QgsProcessingParameterField,
+                       QgsProcessingMultiStepFeedback)
 
 class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -107,7 +108,14 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
-        layerHandler.dissolvePolygonsWithSameAttributes(inputLyr, feedback = feedback, onlySelected=onlySelected, ignoreVirtualFields = ignoreVirtual, attributeBlackList = attributeBlackList, excludePrimaryKeys=ignorePK)
+
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
+        if tol > 0:
+            unifiedLyr = layerHandler.addDissolveField(unifiedLyr, tol)
+        dissolveFields = layerHandler.getDissolveFields(inputLyr, attributeBlackList = attributeBlackList)
+        dissolvedLyr = algRunner.runDissolve(unifiedLyr, context, feedback=multiStepFeedback, field=dissolveFields)
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], dissolvedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr}
 

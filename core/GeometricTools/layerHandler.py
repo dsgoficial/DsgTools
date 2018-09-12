@@ -381,8 +381,39 @@ class LayerHandler(QObject):
         if point not in pointDict:
             pointDict[point] = []
         pointDict[point].append(featid)
-
-    def dissolvePolygonsWithSameAttributes(elf, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
-        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
-        pass
                 
+    def addDissolveField(self, layer, tol):
+        #add temp field
+        idField = QgsField('d_id',QVariant.Int)
+        layer.dataProvider().addAttributes([idField])
+        layer.updateFields()
+        #small feature list
+        smallFeatureList = []
+        bigFeatureList = []
+        bigFeatIndex = QgsSpatialIndex()
+        for feat in layer.getFeatures():
+            feat['d_id'] = feat['featid']
+            if feat.geometry().area() < float(tol):
+                smallFeatureList.append(feat)
+            else:
+                bigFeatIndex.insertFeature(feat)
+                bigFeatureList.append(feat)
+        
+        # using spatial index to speed up the process
+        for sfeat in smallFeatureList:
+            candidates = bigFeatIndex.intersects(sfeat.geometry().boundingBox())
+            for candidate in candidates:
+                bfeat = [i for i in layer.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
+                if sfeat['d_id'] == sfeat['featid'] and sfeat.geometry().intersects(bfeat.geometry()) and sfeat['tupple'] == bfeat['tupple']:
+                    sfeat['d_id'] = bfeat['featid']
+
+        idx = layer.fieldNameIndex('tupple')
+        updateDict = dict()
+        for feat in smallFeatureList + bigFeatureList:
+            newValue = u'{0},{1}'.format(feat['tupple'], feat['d_id'])
+            updateDict[feat.id()] = {idx:newValue}
+        layer.dataProvider().changeAttributeValues(updateDict)
+        return layer
+    
+    def getCandidates(self, idx, bbox):
+        return idx.intersects(bbox)
