@@ -160,7 +160,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Validation Tools')
+        return self.tr('Validation Tools (Manipulation Processes)')
 
     def groupId(self):
         """
