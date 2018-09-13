@@ -108,11 +108,22 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
-
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        nSteps = 4 if tol > 0 else 3
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        currentStep = 0
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Populating temp layer...\n'))
         unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
+        currentStep += 1
+        
         if tol > 0:
-            unifiedLyr = layerHandler.addDissolveField(unifiedLyr, tol)
+            multiStepFeedback.setCurrentStep(currentStep)
+            multiStepFeedback.pushInfo(self.tr('Adding size constraint field...\n'))
+            unifiedLyr = layerHandler.addDissolveField(unifiedLyr, tol, feedback = multiStepFeedback)
+            currentStep += 1
+    
+        multiStepFeedback.setCurrentStep(currentStep)
+        multiStepFeedback.pushInfo(self.tr('Running dissolve...\n'))
         dissolvedLyr = algRunner.runDissolve(unifiedLyr, context, feedback=multiStepFeedback, field=['tupple'])
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], dissolvedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
 
