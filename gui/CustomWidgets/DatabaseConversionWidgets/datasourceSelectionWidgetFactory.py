@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QWidgets
+from qgis.PyQt.QtWidgets import QWidget
 
 from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.SupportedDrivers.postgisWidget import PostgisWidget
 from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget

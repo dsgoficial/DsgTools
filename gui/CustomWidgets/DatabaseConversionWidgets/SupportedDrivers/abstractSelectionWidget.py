@@ -21,13 +21,15 @@
  ***************************************************************************/
 """
 
-from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.abstractSelectionWidget import AbstractSelectionWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
-class DatasourceSelectionWidgetFactory(QtWidgets.QWidget):
+class AbstractSelectionWidget(QtWidgets.QWidget):
     """
-    Class parento to each selection widget available to be added to a widget container.
+    Class parent to to each selection widget available to be added to a widget container.
+    Class scope:
+    1- Define common methods to all manageable drivers
+    2- Set and define generic behavior method for reimplementation in all children.
     """
-
     def __init__(self, source, parent=None):
         """
         Class constructor.
@@ -35,75 +37,66 @@ class DatasourceSelectionWidgetFactory(QtWidgets.QWidget):
         :param source: (str) driver codename to have its widget produced.
         """
         super(DatasourceSelectionWidgetFactory, self).__init__()
-        self.abstractSelectionWidget = self.getSelectionWidget(source=source)
-        
-        # self.sourceNameDict = {
-        #     DsgEnums.NoDriver : self.tr('Select a datasource driver'),
-        #     DsgEnums.PostGIS : 'PostGIS',
-        #     DsgEnums.NewPostGIS : self.tr('PostGIS (create new database)'),
-        #     DsgEnums.SpatiaLite : 'SpatiaLite',
-        #     DsgEnums.NewSpatiaLite : self.tr('SpatiaLite (create new database)')
-        # }
+        self.source = ''
+        self.abstractDb = None
 
-    def getSelectionWidget(self, source):
+    def getSelectionWidgetName(self, source=None):
         """
         Gets selection widget to be returned to user as selectionWidget attribute.
-        :param source: (str) driver codename to have its widget produced.
-        :return: (QWidget) selection widget for selected driver.
+        :param source: (DsgEnum.int) driver enum to have its name exposed.
+        :return: (str) selection widget user-friendly name for selected driver.
         """
-        return selectionWidgetsDict[source]
-
-    def setGroupWidgetName(self, name=None):
-        """
-        Sets the name to the group added.
-        :param name: (str) name for the group.
-        """
-        self.groupBox.setTitle('{0}'.format(name))
-
-    def addDatasourceSelectionWidget(self):
-        """
-        Adds the widget according to selected datasource on datasource combobox on first page.
-        :param source: (str) driver name.
-        """
-        # in case a valid driver is selected, add its widget to the interface
-        self.connWidget = DatabaseConversionWidgetFactory(parent=self.driverLayout, source=self.source)
-        # self.driverLayout.addWidget(self.connWidget)
+        if not source:
+            source = self.source
+        sourceNameDict = {
+            '' : self.tr('No database selected.'),
+            DsgEnums.NoDriver : self.tr('Select a datasource driver'),
+            DsgEnums.PostGIS : 'PostGIS',
+            DsgEnums.NewPostGIS : self.tr('PostGIS (create new database)'),
+            DsgEnums.SpatiaLite : 'SpatiaLite',
+            DsgEnums.NewSpatiaLite : self.tr('SpatiaLite (create new database)'),
+            DsgEnums.Shapefile : 'Shapefile',
+            DsgEnums.NewShapefile : self.tr('Shapefile (create new database)'),
+            DsgEnums.Geopackage : 'Geopackage',
+            DsgEnums.NewGeopackage : self.tr('Geopackage (create new database)')
+        }
+        return sourceNameDict[source]
 
     def getDatasourceConnectionName(self):
         """
         Gets the datasource connection name.
         :return: (str) datasource connection name.
         """
-        # temporarily, it'll be set to current db name
-        return self.connWidget.getDatasourceConnectionName() if self.connWidget else ''
+        # to be reimplemented
+        return ''
 
-    def getPostgisConnectionName(self):
-        """
-        Gets the PostGIS connection name.
-        """
-        return self.connWidget.connectionSelectorComboBox.currentText()
+    # def getPostgisConnectionName(self):
+    #     """
+    #     Gets the PostGIS connection name.
+    #     """
+    #     return self.connWidget.connectionSelectorComboBox.currentText()
 
-    def getSpatialiteConnectionName(self):
+    # def getSpatialiteConnectionName(self):
+    #     """
+    #     Gets the SpatiaLite connection name.
+    #     """
+    #     n = self.connWidget.connectionSelectorLineEdit.lineEdit.text()
+    #     # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
+    #     splitChar = '/' if '/' in n else '\\'
+    #     ret = n.split(splitChar)[-1].split('.')[0] if n else ''
+    #     return ret
+
+    def setDatasource(self, newDatasource):
         """
-        Gets the SpatiaLite connection name.
+        Gets the datasource selected on current widget.
+        :param newDatasource: (object) new datasource to be set.
         """
-        n = self.connWidget.connectionSelectorLineEdit.lineEdit.text()
-        # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
-        splitChar = '/' if '/' in n else '\\'
-        ret = n.split(splitChar)[-1].split('.')[0] if n else ''
-        return ret
+        # to be reimplemented
+        pass
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (object) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according. 
         """
-        return self.connWidget.abstractDb if self.connWidget else None
-
-    @pyqtSlot(bool)
-    def on_removePushButton_clicked(self):
-        """
-        Emits widget removal signal when remove button is clicked.
-        """
-        self.removeWidget.emit(self)
-
+        return self.abstractDb
