@@ -36,7 +36,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     """
     Class scope:
     1- manage input/output datasources selection;
-    2- prepare the conversion mapping sctructure using the table as a means to translate user's intentions; and
+    2- prepare the conversion mapping structure using the table as a means to translate user's intentions; and
     3- make the call to core code to do the actual conversion.
     """
     # setting signal to alert conversion tool about any active widgets change
@@ -58,6 +58,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
         self.inactiveDrivers = dict()
+        self.addSourcePushButton.setToolTip(self.tr('Add single datasource.'))
+        self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource.'))
 
     def connectToolSignals(self):
         """
@@ -70,7 +72,10 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Fills the datasource selection combobox with all supported drivers.
         """
-        driversList = ['', 'PostGIS', 'SpatiaLite']
+        driversList = [DatasourceContainerWidget.NoDriver,
+                        DatasourceContainerWidget.PostGIS, DatasourceContainerWidget.NewPostGIS,
+                        DatasourceContainerWidget.SpatiaLite, DatasourceContainerWidget.NewSpatiaLite
+                    ]
         self.datasourceComboBox.addItems(driversList)
 
     def addElementToDict(self, k, e, d):

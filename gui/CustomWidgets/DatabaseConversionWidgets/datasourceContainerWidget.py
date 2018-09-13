@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
 
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.databaseFileLineEdit import DatabaseFileLineEdit
@@ -39,6 +39,13 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     """
     # signal to be emitted when deletion button is clicked - emits itself (QWidget)
     removeWidget = pyqtSignal(QtWidgets.QWidget)
+
+    # available drivers 'enum'
+    tr = QObject() # just to access translation method
+    NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite = tr.tr('Select a datasource driver'),\
+                                                                'PostGIS', tr.tr('PostGIS (create new database)'),\
+                                                                'SpatiaLite', tr.tr('SpatiaLite (create new database)')
+    del tr
 
     def __init__(self, source, inputContainer, parent=None):
         """
@@ -70,9 +77,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
         widgetDict = {
-            'PostGIS' : ConnectionComboBox(),
-            'SpatiaLite' : DatabaseFileLineEdit()
-            # 'SpatiaLite' : SelectFileWidget()
+            DatasourceContainerWidget.PostGIS : ConnectionComboBox(),
+            DatasourceContainerWidget.NewPostGIS : ConnectionComboBox(),
+            DatasourceContainerWidget.SpatiaLite : DatabaseFileLineEdit(),
+            DatasourceContainerWidget.NewSpatiaLite : DatabaseFileLineEdit()
         }
         return widgetDict[source] if source in widgetDict else None
 
@@ -98,8 +106,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # temporarily, it'll be set to current db name
         methodDict = {
             # using lamda functions in order to not get the method triggered whilst this dict is being instantiated
-            'PostGIS' : lambda : self.getPostgisConnectionName(),
-            'SpatiaLite' : lambda : self.getSpatialiteConnectionName()
+            DatasourceContainerWidget.PostGIS : lambda : self.getPostgisConnectionName(),
+            DatasourceContainerWidget.NewPostGIS : lambda : self.getPostgisConnectionName(),
+            DatasourceContainerWidget.SpatiaLite : lambda : self.getSpatialiteConnectionName(),
+            DatasourceContainerWidget.NewSpatiaLite : lambda : self.getSpatialiteConnectionName()
         }
         return methodDict[self.source]()
 
