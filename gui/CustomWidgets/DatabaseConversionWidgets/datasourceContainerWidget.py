@@ -89,10 +89,5 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Emits widget removal signal when remove button is clicked.
         """
-        # self.driverLayout.removeWidget(self.connWidget.selectionWidget)
-        # self.connWidget.selectionWidget.setParent(None)
-        # del self.connWidget
-        # self.connWidget = None
-        # # i was not able to remove it from layout, so, for now, it'll be kept 'hide' behavior...
         # finally, emits removal signal
         self.removeWidget.emit(self)

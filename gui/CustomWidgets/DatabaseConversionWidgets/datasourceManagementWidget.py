@@ -70,7 +70,6 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.connectClassSignals()
         # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
-        self.inactiveDrivers = dict()
         self.addSourcePushButton.setToolTip(self.tr('Add single datasource.'))
         self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource.'))
 
@@ -118,25 +117,14 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         inputPage = (self.objectName() == 'datasourceManagementWidgetIn')
         if currentDbSource:
             # in case a valid driver is selected, add its widget to the interface
-            # first checks if there are any widgets already created
-            inactiveWidgets = self.inactiveDrivers[currentDbSource] if currentDbSource in self.inactiveDrivers else []
-            if inactiveWidgets:
-                # if there are inactive widgets, reuse them instead of instantianting new ones
-                w = self.inactiveDrivers[currentDbSource][0]
-                # remove widget from inactive dict
-                self.inactiveDrivers[currentDbSource].remove(w)
-                # re-display widget on GUI
-                w.show()
-            else:
-                # if no unused widget is found, a new one will be instantiated
-                source = self.sourceNameDict[currentDbSource]
-                w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
-                # connect removal widget signal to new widget
-                w.removeWidget.connect(self.removeWidget)
-                # connect
-                w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
-                # add new driver container to GUI 
-                self.datasourceLayout.addWidget(w)
+            source = self.sourceNameDict[currentDbSource]
+            w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
+            # connect removal widget signal to new widget
+            w.removeWidget.connect(self.removeWidget)
+            # connect
+            w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+            # add new driver container to GUI 
+            self.datasourceLayout.addWidget(w)
             # update dict of active widgets
             self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
             # reset all driver's groupboxes names
@@ -213,15 +201,19 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Removes driver widget from GUI.
         :param w: (QWidget) driver widget to be removed. 
         """
-        # hide widget from GUI
-        w.hide()
+        # disconnect all widget connected signals
+        w.removeWidget.disconnect(self.removeWidget)
+        w.connWidget.selectionWidget.dbChanged.disconnect(self.datasourceChanged)
         # remove from active dict
-        self.activeDrivers[w.source].remove(w)
-        self.activeWidgetsChanged.emit()
-        # update dict of inactive widgets
-        self.addElementToDict(k=w.source, e=w, d=self.inactiveDrivers)
+        self.activeDrivers[w.connWidget.getSelectionWidgetName(source=w.connWidget.source)].remove(w)
+        # remove widget from GUI, remove its reference on a parent widget and delete it
+        self.datasourceLayout.removeWidget(w)
+        w.setParent(None)
+        del w
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
+        # emit current active widgets changed signal
+        self.activeWidgetsChanged.emit()
 
     def datasourceChanged(self, newDbAbstract):
         """
