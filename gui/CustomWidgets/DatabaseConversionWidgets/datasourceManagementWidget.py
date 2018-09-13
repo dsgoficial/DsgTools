@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import pyqtSignal
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import DatasourceContainerWidget
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
@@ -36,23 +37,35 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     """
     Class scope:
     1- manage input/output datasources selection;
-    2- prepare the conversion mapping structure using the table as a means to translate user's intentions; and
-    3- make the call to core code to do the actual conversion.
+    2- prepare the conversion mapping structure using the table as a means to translate user's intentions.
     """
     # setting signal to alert conversion tool about any active widgets change
     activeWidgetsChanged = pyqtSignal()
     # setting signal to alert conversion tool about any datasource updates
     datasourceChangedSignal = pyqtSignal(AbstractDb)
-
+    # make an exhibition text 'enum' for supported drivers
+    
     def __init__(self, parent=None):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
         """
         super(DatasourceManagementWidget, self).__init__()
+        # define mapping from GUI to enum
+        self.sourceNameDict = {
+            self.tr('Select a datasource driver') : DsgEnums.NoDriver,
+            'PostGIS' : DsgEnums.PostGIS,
+            self.tr('PostGIS (create new database)') : DsgEnums.NewPostGIS,
+            'SpatiaLite' : DsgEnums.SpatiaLite,
+            self.tr('SpatiaLite (create new database)') : DsgEnums.NewSpatiaLite,
+            'Shapefile' : DsgEnums.Shapefile,
+            self.tr('Shapefile (create new database)') : DsgEnums.NewShapefile,
+            'Geopackage' : DsgEnums.Geopackage,
+            self.tr('Geopackage (create new database)') : DsgEnums.NewGeopackage
+        }
         self.setupUi(self)
         # adds all available drivers to conversion to GUI
-        self.fillSupportedDatasouces()
+        self.fillSupportedDatasources()
         # centralize all tool signals in order to keep track of all non-standard signals used
         self.connectClassSignals()
         # keep track of all (in)active widgets on input/output GUI
@@ -69,15 +82,11 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.addMultiSourcePushButton.clicked.connect(self.addMultiDatasourceWidgets)
         pass
 
-    def fillSupportedDatasouces(self):
+    def fillSupportedDatasources(self):
         """
         Fills the datasource selection combobox with all supported drivers.
         """
-        driversList = [DatasourceContainerWidget.NoDriver,
-                        DatasourceContainerWidget.PostGIS, DatasourceContainerWidget.NewPostGIS,
-                        DatasourceContainerWidget.SpatiaLite, DatasourceContainerWidget.NewSpatiaLite
-                    ]
-        self.datasourceComboBox.addItems(driversList)
+        self.datasourceComboBox.addItems(list(self.sourceNameDict.keys()))
 
     def addElementToDict(self, k, e, d):
         """
@@ -120,11 +129,12 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 w.show()
             else:
                 # if no unused widget is found, a new one will be instantiated
-                w = DatasourceContainerWidget(source=currentDbSource, inputContainer=inputPage)
+                source = self.sourceNameDict[currentDbSource]
+                w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
                 # connect
-                w.connWidget.dbChanged.connect(self.datasourceChanged)
+                w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
                 # add new driver container to GUI 
                 self.datasourceLayout.addWidget(w)
             # update dict of active widgets
@@ -145,14 +155,18 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         :param source: (str) driver name.
         """
         actionDict = {
-            DatasourceContainerWidget.NoDriver : lambda : None, # no action is executed in case a driver is not selected
-            DatasourceContainerWidget.PostGIS : lambda : print('NADA A FAZER AGORA'),
-            DatasourceContainerWidget.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
-            DatasourceContainerWidget.SpatiaLite : lambda : self.addMultiFile(extensionFilter='SpatiaLite Databases (*.sqlite)'),
-            DatasourceContainerWidget.NewSpatiaLite : lambda : print('NADA A FAZER AGORA')
+            DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
+            DsgEnums.PostGIS : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.SpatiaLite : lambda : self.addMultiFile(extensionFilter='SpatiaLite Databases (*.sqlite)'),
+            DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.Shapefile : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.NewShapefile : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.Geopackage : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.NewGeopackage : lambda : print('NADA A FAZER AGORA')
         }
         # get current text on datasource techonology selection combobox
-        currentDbSource = self.datasourceComboBox.currentText()
+        currentDbSource = self.sourceNameDict[self.datasourceComboBox.currentText()]
         actionDict[currentDbSource]()
 
     def addMultiFile(self, extensionFilter=None):
@@ -160,13 +174,12 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Adds widgets for all selected files.
         """
         # get current text on datasource techonology selection combobox
-        currentDbSource = self.datasourceComboBox.currentText()
         fList = self.getMultiFile(extensionFilter=extensionFilter)
         for dbName in fList:
             # add new widget to GUI
             w = self.addDatasourceWidget()
             # set db (all file-based drivers have a 'lineEdit' object due to their common child 'SelectFileWidget')
-            w.connWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
+            w.connWidget.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
 
     def getMultiFile(self, extensionFilter=None):
         """
