@@ -54,18 +54,19 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # adds all available drivers to conversion to GUI
         self.fillSupportedDatasouces()
         # centralize all tool signals in order to keep track of all non-standard signals used
-        self.connectToolSignals()
+        self.connectClassSignals()
         # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
         self.inactiveDrivers = dict()
         self.addSourcePushButton.setToolTip(self.tr('Add single datasource.'))
         self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource.'))
 
-    def connectToolSignals(self):
+    def connectClassSignals(self):
         """
         Connects all tool generic behavior signals.
         """
         self.addSourcePushButton.clicked.connect(self.addDatasourceWidget)
+        self.addMultiSourcePushButton.clicked.connect(self.addMultiDatasourceWidgets)
         pass
 
     def fillSupportedDatasouces(self):
@@ -100,6 +101,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
         :param source: (str) driver name.
+        :return: (QWidget) newly added widget.
         """
         # get current text on datasource techonology selection combobox
         currentDbSource = self.datasourceComboBox.currentText()
@@ -131,9 +133,52 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             self.resetWidgetsTitle()
             # emit signal advising that there is a new active widget
             self.activeWidgetsChanged.emit()
+            # returns newly added widget
+            return w
         else:
             # if no tech is selected, inform user and nothing else
             pass
+
+    def addMultiDatasourceWidgets(self):
+        """
+        Adds the widget according to selected datasource on datasource combobox on first page.
+        :param source: (str) driver name.
+        """
+        actionDict = {
+            DatasourceContainerWidget.NoDriver : lambda : None, # no action is executed in case a driver is not selected
+            DatasourceContainerWidget.PostGIS : lambda : print('NADA A FAZER AGORA'),
+            DatasourceContainerWidget.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
+            DatasourceContainerWidget.SpatiaLite : lambda : self.addMultiFile(extensionFilter='SpatiaLite Databases (*.sqlite)'),
+            DatasourceContainerWidget.NewSpatiaLite : lambda : print('NADA A FAZER AGORA')
+        }
+        # get current text on datasource techonology selection combobox
+        currentDbSource = self.datasourceComboBox.currentText()
+        actionDict[currentDbSource]()
+
+    def addMultiFile(self, extensionFilter=None):
+        """
+        Adds widgets for all selected files.
+        """
+        # get current text on datasource techonology selection combobox
+        currentDbSource = self.datasourceComboBox.currentText()
+        fList = self.getMultiFile(extensionFilter=extensionFilter)
+        for dbName in fList:
+            # add new widget to GUI
+            w = self.addDatasourceWidget()
+            # set db (all file-based drivers have a 'lineEdit' object due to their common child 'SelectFileWidget')
+            w.connWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
+
+    def getMultiFile(self, extensionFilter=None):
+        """
+        Opens dialog multiple file selection and gets file list.
+        :param extensionFilter: (str) file extensions to be filtered.
+        :return: (list-of-str) list containing all filenames for selected files.
+        """
+        fd = QtWidgets.QFileDialog()
+        # get current text on datasource techonology selection combobox
+        currentDbSource = self.datasourceComboBox.currentText()
+        fileList = fd.getOpenFileNames(caption=self.tr("Select a {0}").format(currentDbSource), filter=extensionFilter)[0]
+        return fileList
 
     def resetWidgetsTitle(self):
         """
