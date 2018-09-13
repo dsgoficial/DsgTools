@@ -4,11 +4,11 @@
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
-                              -------------------
-        begin                : 2017-03-03
+                             -------------------
+        begin                : 2018-09-13
         git sha              : $Format:%H$
-        copyright            : (C) 2017 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
+        email                : esperidiao.joao@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -20,14 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
-from builtins import object
-class DsgEnums(object):
-    #generic manager and database enumerate
-    Property, Database = list(range(2))
-    #generic validation property
-    ProcessName, ClassName = list(range(2))
-    #property enum
-    PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = list(range(6))
-    # datasource selection widgets enum
-    NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite = list(range(5))
+
+class GeopackageWidget():
+    def __init__:
+        pass

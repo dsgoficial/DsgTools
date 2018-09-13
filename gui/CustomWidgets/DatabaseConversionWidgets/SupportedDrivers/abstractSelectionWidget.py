@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                              -------------------
-        begin                : 2018-09-05
+        begin                : 2018-09-13
         git sha              : $Format:%H$
         copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
         email                : esperidiao.joao@eb.mil.br
@@ -21,44 +21,37 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
+from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.abstractSelectionWidget import AbstractSelectionWidget
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
-
-import os
-
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceContainerWidget.ui'))
-
-class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
+class DatasourceSelectionWidgetFactory(QtWidgets.QWidget):
     """
-    Widget resposinble for adequating GUI to chosen data driver.
+    Class parento to each selection widget available to be added to a widget container.
     """
-    # signal to be emitted when deletion button is clicked - emits itself (QWidget)
-    removeWidget = pyqtSignal(QtWidgets.QWidget)
 
-    # available drivers 'enum'
-    tr = QObject() # just to access translation method
-    NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite = tr.tr('Select a datasource driver'),\
-                                                                'PostGIS', tr.tr('PostGIS (create new database)'),\
-                                                                'SpatiaLite', tr.tr('SpatiaLite (create new database)')
-    del tr
-
-    def __init__(self, source, inputContainer, parent=None):
+    def __init__(self, source, parent=None):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
         :param source: (str) driver codename to have its widget produced.
-        :param inputContainer: (bool) indicates whether the chosen database is supposed to be a reading/input widget or writting/output one.
         """
-        super(DatasourceContainerWidget, self).__init__()
-        self.setupUi(self)
-        self.source = source
-        self.addDatasourceSelectionWidget()
-        if not inputContainer:
-            # output widget should not have filtering options
-            self.layerFilterPushButton.hide()
+        super(DatasourceSelectionWidgetFactory, self).__init__()
+        self.abstractSelectionWidget = self.getSelectionWidget(source=source)
+        
+        # self.sourceNameDict = {
+        #     DsgEnums.NoDriver : self.tr('Select a datasource driver'),
+        #     DsgEnums.PostGIS : 'PostGIS',
+        #     DsgEnums.NewPostGIS : self.tr('PostGIS (create new database)'),
+        #     DsgEnums.SpatiaLite : 'SpatiaLite',
+        #     DsgEnums.NewSpatiaLite : self.tr('SpatiaLite (create new database)')
+        # }
+
+    def getSelectionWidget(self, source):
+        """
+        Gets selection widget to be returned to user as selectionWidget attribute.
+        :param source: (str) driver codename to have its widget produced.
+        :return: (QWidget) selection widget for selected driver.
+        """
+        return selectionWidgetsDict[source]
 
     def setGroupWidgetName(self, name=None):
         """
@@ -73,7 +66,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :param source: (str) driver name.
         """
         # in case a valid driver is selected, add its widget to the interface
-        self.connWidget = DatasourceSelectionWidgetFactory(parent=self.driverLayout, source=self.source)
+        self.connWidget = DatabaseConversionWidgetFactory(parent=self.driverLayout, source=self.source)
         # self.driverLayout.addWidget(self.connWidget)
 
     def getDatasourceConnectionName(self):
@@ -113,3 +106,4 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Emits widget removal signal when remove button is clicked.
         """
         self.removeWidget.emit(self)
+

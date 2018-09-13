@@ -24,14 +24,12 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
 
-from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
+from DsgTools.gui.CustomWidgets.databaseConversionWidget import DatasourceContainerWidgetFactory
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'datasourceContainerWidget.ui'))
-
-class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
+class PostgisContainerWidget(DatasourceContainerWidgetFactory):
     """
     Widget resposinble for adequating GUI to chosen data driver.
     """
@@ -56,60 +54,41 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.source = source
         self.addDatasourceSelectionWidget()
+        # self.setGroupWidgetName(name=source)
         if not inputContainer:
             # output widget should not have filtering options
             self.layerFilterPushButton.hide()
 
-    def setGroupWidgetName(self, name=None):
+    def getNewContainerWidget(self):
         """
-        Sets the name to the group added.
-        :param name: (str) name for the group.
+        Gets the widget according to selected datasource on datasource combobox on first page.
+        :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
-        self.groupBox.setTitle('{0}'.format(name))
+        return ConnectionComboBox()
 
     def addDatasourceSelectionWidget(self):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
-        :param source: (str) driver name.
         """
-        # in case a valid driver is selected, add its widget to the interface
-        self.connWidget = DatasourceSelectionWidgetFactory(parent=self.driverLayout, source=self.source)
-        # self.driverLayout.addWidget(self.connWidget)
+        # get current text on datasource techonology selection combobox
+        if source:
+            # in case a valid driver is selected, add its widget to the interface
+            self.connWidget = self.getNewContainerWidget()
+            self.driverLayout.addWidget(self.connWidget)
+        else:
+            # if no tech is selected, inform user and nothing else
+            self.connWidget = None
 
     def getDatasourceConnectionName(self):
         """
         Gets the datasource connection name.
         :return: (str) datasource connection name.
         """
-        # temporarily, it'll be set to current db name
-        return self.connWidget.getDatasourceConnectionName() if self.connWidget else ''
-
-    def getPostgisConnectionName(self):
-        """
-        Gets the PostGIS connection name.
-        """
         return self.connWidget.connectionSelectorComboBox.currentText()
-
-    def getSpatialiteConnectionName(self):
-        """
-        Gets the SpatiaLite connection name.
-        """
-        n = self.connWidget.connectionSelectorLineEdit.lineEdit.text()
-        # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
-        splitChar = '/' if '/' in n else '\\'
-        ret = n.split(splitChar)[-1].split('.')[0] if n else ''
-        return ret
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
         :return: (object) the object representing the target datasource according to its driver. 
         """
-        return self.connWidget.abstractDb if self.connWidget else None
-
-    @pyqtSlot(bool)
-    def on_removePushButton_clicked(self):
-        """
-        Emits widget removal signal when remove button is clicked.
-        """
-        self.removeWidget.emit(self)
+        return self.abstractDb
