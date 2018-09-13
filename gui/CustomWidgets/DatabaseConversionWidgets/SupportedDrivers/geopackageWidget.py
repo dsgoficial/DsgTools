@@ -21,6 +21,16 @@
  ***************************************************************************/
 """
 
-class GeopackageWidget():
-    def __init__:
+from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.abstractSelectionWidget import AbstractSelectionWidget
+
+class GeopackageWidget(AbstractSelectionWidget):
+    """
+    Class designed to manage geopackge widgets.
+    """
+    def __init__(self, parent=None):
+        """
+        Class contructor.
+        :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
+        """
+        super(GeopackageWidget, self).__init__(parent=parent)
         pass

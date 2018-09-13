@@ -21,6 +21,16 @@
  ***************************************************************************/
 """
 
-class GeopackageWidget():
-    def __init__:
+from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.abstractSelectionWidget import AbstractSelectionWidget
+
+class ShapefileWidget(AbstractSelectionWidget):
+    """
+    Class designed to manage shapefile widgets.
+    """
+    def __init__(self, parent=None):
+        """
+        Class contructor.
+        :param parent: (QWidget) widget parent to newly instantiated shapefile widget.
+        """
+        super(ShapefileWidget, self).__init__(parent=parent)
         pass

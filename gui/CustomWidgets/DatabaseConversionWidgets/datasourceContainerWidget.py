@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
+from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
 
@@ -37,13 +37,6 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     """
     # signal to be emitted when deletion button is clicked - emits itself (QWidget)
     removeWidget = pyqtSignal(QtWidgets.QWidget)
-
-    # available drivers 'enum'
-    tr = QObject() # just to access translation method
-    NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite = tr.tr('Select a datasource driver'),\
-                                                                'PostGIS', tr.tr('PostGIS (create new database)'),\
-                                                                'SpatiaLite', tr.tr('SpatiaLite (create new database)')
-    del tr
 
     def __init__(self, source, inputContainer, parent=None):
         """
