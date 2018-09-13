@@ -21,74 +21,54 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, QObject
-
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.connectionComboBox import ConnectionComboBox
-from DsgTools.gui.CustomWidgets.databaseConversionWidget import DatasourceContainerWidgetFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
-class PostgisContainerWidget(DatasourceContainerWidgetFactory):
+class PostgisWidget(AbstractSelectionWidget):
     """
     Widget resposinble for adequating GUI to chosen data driver.
     """
-    # signal to be emitted when deletion button is clicked - emits itself (QWidget)
-    removeWidget = pyqtSignal(QtWidgets.QWidget)
 
-    # available drivers 'enum'
-    tr = QObject() # just to access translation method
-    NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite = tr.tr('Select a datasource driver'),\
-                                                                'PostGIS', tr.tr('PostGIS (create new database)'),\
-                                                                'SpatiaLite', tr.tr('SpatiaLite (create new database)')
-    del tr
-
-    def __init__(self, source, inputContainer, parent=None):
+    def __init__(self, parent=None):
         """
-        Class constructor.
-        :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
-        :param source: (str) driver codename to have its widget produced.
-        :param inputContainer: (bool) indicates whether the chosen database is supposed to be a reading/input widget or writting/output one.
+        Class contructor.
+        :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
         """
-        super(DatasourceContainerWidget, self).__init__()
-        self.setupUi(self)
-        self.source = source
-        self.addDatasourceSelectionWidget()
-        # self.setGroupWidgetName(name=source)
-        if not inputContainer:
-            # output widget should not have filtering options
-            self.layerFilterPushButton.hide()
+        super(PostgisWidget, self).__init__(parent=parent)
+        # reset source attribute value as now it is defined as a PostGIS
+        self.source = DsgEnums.PostGIS
+        # initiate new instance of actual class widget
+        self.selectionWidget = self.getNewSelectionWidget(parent=parent)
 
-    def getNewContainerWidget(self):
+    def getNewSelectionWidget(self, parent=None):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.
+        :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
         :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
-        return ConnectionComboBox()
-
-    def addDatasourceSelectionWidget(self):
-        """
-        Adds the widget according to selected datasource on datasource combobox on first page.
-        """
-        # get current text on datasource techonology selection combobox
-        if source:
-            # in case a valid driver is selected, add its widget to the interface
-            self.connWidget = self.getNewContainerWidget()
-            self.driverLayout.addWidget(self.connWidget)
-        else:
-            # if no tech is selected, inform user and nothing else
-            self.connWidget = None
+        return ConnectionComboBox(parent=parent)
 
     def getDatasourceConnectionName(self):
         """
         Gets the datasource connection name.
         :return: (str) datasource connection name.
         """
-        return self.connWidget.connectionSelectorComboBox.currentText()
+        return self.selectionWidget.connectionSelectorComboBox.currentText() if self.selectionWidget else ''
+
+    def setDatasource(self, newDatasource):
+        """
+        Sets the datasource selected on current widget.
+        :param newDatasource: (object) new datasource to be set.
+        """
+        # to be reimplemented
+        pass
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
-        :return: (object) the object representing the target datasource according to its driver. 
+        :return: (AbstractDb) the object representing the target datasource according to its driver. 
         """
-        return self.abstractDb
+        return self.selectionWidget.abstractDb

@@ -66,8 +66,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :param source: (str) driver name.
         """
         # in case a valid driver is selected, add its widget to the interface
-        self.connWidget = DatasourceSelectionWidgetFactory(parent=self.driverLayout, source=self.source)
-        # self.driverLayout.addWidget(self.connWidget)
+        self.connWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
+        self.driverLayout.addWidget(self.connWidget.selectionWidget)
 
     def getDatasourceConnectionName(self):
         """
@@ -75,23 +75,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :return: (str) datasource connection name.
         """
         # temporarily, it'll be set to current db name
-        return self.connWidget.getDatasourceConnectionName() if self.connWidget else ''
-
-    def getPostgisConnectionName(self):
-        """
-        Gets the PostGIS connection name.
-        """
-        return self.connWidget.connectionSelectorComboBox.currentText()
-
-    def getSpatialiteConnectionName(self):
-        """
-        Gets the SpatiaLite connection name.
-        """
-        n = self.connWidget.connectionSelectorLineEdit.lineEdit.text()
-        # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
-        splitChar = '/' if '/' in n else '\\'
-        ret = n.split(splitChar)[-1].split('.')[0] if n else ''
-        return ret
+        return self.connWidget.getDatasourceConnectionName()
 
     def getDatasource(self):
         """
@@ -105,4 +89,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         Emits widget removal signal when remove button is clicked.
         """
+        # self.driverLayout.removeWidget(self.connWidget.selectionWidget)
+        # self.connWidget.selectionWidget.setParent(None)
+        # del self.connWidget
+        # self.connWidget = None
+        # # i was not able to remove it from layout, so, for now, it'll be kept 'hide' behavior...
+        # finally, emits removal signal
         self.removeWidget.emit(self)

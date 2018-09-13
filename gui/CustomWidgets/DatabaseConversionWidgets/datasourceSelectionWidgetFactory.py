@@ -23,17 +23,18 @@
 
 from qgis.PyQt.QtWidgets import QWidget
 
-from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.SupportedDrivers.postgisWidget import PostgisWidget
-from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget
-from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.SupportedDrivers.shapefileWidget import ShapefileWidget
-from DsgTools.gui.CustomWidgets.DatasourceConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postgisWidget import PostgisWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import ShapefileWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 class DatasourceSelectionWidgetFactory(QWidget):
     """
     Class designed to prepare each selection widget to be added to a widget container.
     """
 
-    def getSelectionWidget(self, source, parent=None):
+    def getSelectionWidget(source, parent=None):
         """
         Gets selection widget to be returned to user as selectionWidget attribute.
         :param parent: (QWidget) widget parent to newly instantiated selection widget.
@@ -48,7 +49,7 @@ class DatasourceSelectionWidgetFactory(QWidget):
             DsgEnums.NewSpatiaLite : lambda : SpatialiteWidget(parent=parent),
             DsgEnums.Shapefile : lambda : ShapefileWidget(parent=parent),
             DsgEnums.NewShapefile : lambda : ShapefileWidget(parent=parent),
-            DsgEnums.Geopackage : lambda : Geopackage(parent=parent),
-            DsgEnums.NewGeopackage : lambda : Geopackage(parent=parent)
+            DsgEnums.Geopackage : lambda : GeopackageWidget(parent=parent),
+            DsgEnums.NewGeopackage : lambda : GeopackageWidget(parent=parent)
         }
         return sourceDict[source]()
