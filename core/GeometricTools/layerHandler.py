@@ -382,38 +382,87 @@ class LayerHandler(QObject):
             pointDict[point] = []
         pointDict[point].append(featid)
                 
-    def addDissolveField(self, layer, tol):
+    def addDissolveField(self, layer, tol, feedback = None):
         #add temp field
         idField = QgsField('d_id',QVariant.Int)
         layer.dataProvider().addAttributes([idField])
         layer.updateFields()
         #small feature list
+        
+        if feedback:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+            multiStepFeedback.setCurrentStep(0)
+        else:
+            multiStepFeedback = None
+        smallFeatureList, bigFeatureList, bigFeatIndex = self.buildSizeSearchStructure(layer, tol, feedback=multiStepFeedback)
+
+        if multiStepFeedback:
+            multiStepFeedback.setCurrentStep(1)
+        self.populateSizeSearchStructure(layer, smallFeatureList, bigFeatIndex, feedback=multiStepFeedback)
+
+        if multiStepFeedback:
+            multiStepFeedback.setCurrentStep(2)
+        updateDict = self.updateFeaturesWithSize(layer, smallFeatureList, bigFeatureList, feedback=multiStepFeedback)
+        return layer
+    
+    def getCandidates(self, idx, bbox):
+        return idx.intersects(bbox)
+
+    def buildSizeSearchStructure(self, layer, tol, feedback = None):
+        """
+        Builds search structure according to layer and tol.
+
+        Returns a list with small features, another list with big features and the spatial index of the big feats.
+        """
         smallFeatureList = []
         bigFeatureList = []
         bigFeatIndex = QgsSpatialIndex()
-        for feat in layer.getFeatures():
+
+        featSize = layer.featureCount()
+        size = 100 / featSize if featSize else 0
+
+        for current, feat in enumerate(layer.getFeatures()):
+            if feedback:
+                if feedback.isCanceled():
+                    break
             feat['d_id'] = feat['featid']
             if feat.geometry().area() < float(tol):
                 smallFeatureList.append(feat)
             else:
                 bigFeatIndex.insertFeature(feat)
                 bigFeatureList.append(feat)
-        
+            if feedback:
+                feedback.setProgress(size * current)
+        return smallFeatureList, bigFeatureList, bigFeatIndex
+    
+    def populateSizeSearchStructure(self, layer, smallFeatureList, bigFeatIndex, feedback = None):
         # using spatial index to speed up the process
-        for sfeat in smallFeatureList:
+        featSize = len(smallFeatureList)
+        size = 100 / featSize if featSize else 0
+        for current, sfeat in enumerate(smallFeatureList):
+            if feedback:
+                if feedback.isCanceled():
+                    break
             candidates = bigFeatIndex.intersects(sfeat.geometry().boundingBox())
             for candidate in candidates:
                 bfeat = [i for i in layer.dataProvider().getFeatures(QgsFeatureRequest(candidate))][0]
                 if sfeat['d_id'] == sfeat['featid'] and sfeat.geometry().intersects(bfeat.geometry()) and sfeat['tupple'] == bfeat['tupple']:
                     sfeat['d_id'] = bfeat['featid']
-
-        idx = layer.fieldNameIndex('tupple')
+            if feedback:
+                feedback.setProgress(size * current)
+    
+    def updateFeaturesWithSize(self, layer, smallFeatureList, bigFeatureList, feedback = None):
         updateDict = dict()
-        for feat in smallFeatureList + bigFeatureList:
+        idx = layer.fieldNameIndex('tupple')
+        featList = smallFeatureList + bigFeatureList
+        featSize = len(featList)
+        size = 100 / featSize if featSize else 0
+        for current, feat in enumerate(featList):
+            if feedback:
+                if feedback.isCanceled():
+                    break
             newValue = u'{0},{1}'.format(feat['tupple'], feat['d_id'])
             updateDict[feat.id()] = {idx:newValue}
-        layer.dataProvider().changeAttributeValues(updateDict)
-        return layer
-    
-    def getCandidates(self, idx, bbox):
-        return idx.intersects(bbox)
+            if feedback:
+                feedback.setProgress(size * current)
+        return updateDict
