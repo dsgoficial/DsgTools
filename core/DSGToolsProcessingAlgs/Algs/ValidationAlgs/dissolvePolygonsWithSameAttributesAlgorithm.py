@@ -113,8 +113,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
         if tol > 0:
             unifiedLyr = layerHandler.addDissolveField(unifiedLyr, tol)
-        dissolveFields = layerHandler.getDissolveFields(inputLyr, attributeBlackList = attributeBlackList)
-        dissolvedLyr = algRunner.runDissolve(unifiedLyr, context, feedback=multiStepFeedback, field=dissolveFields)
+        dissolvedLyr = algRunner.runDissolve(unifiedLyr, context, feedback=multiStepFeedback, field=['tupple'])
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], dissolvedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr}
