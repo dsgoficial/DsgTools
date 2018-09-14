@@ -52,6 +52,17 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.datasourceManagementWidgetIn.datasourceChangedSignal.connect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.datasourceChangedSignal.connect(self.setTableInitialState)
 
+    def disconnectToolSignals(self):
+        """
+        Connects all tool generic signals.
+        """
+        # if any widget was turned active/inactive
+        self.datasourceManagementWidgetIn.activeWidgetsChanged.disconnect(self.setTableInitialState)
+        self.datasourceManagementWidgetOut.activeWidgetsChanged.disconnect(self.setTableInitialState)
+        # if datasource is changed (e.g. user changed his postgis database selection, for instance)
+        self.datasourceManagementWidgetIn.datasourceChangedSignal.disconnect(self.setTableInitialState)
+        self.datasourceManagementWidgetOut.datasourceChangedSignal.disconnect(self.setTableInitialState)
+
     def getWidgetNameDict(self, d):
         """
         Gets the name translated into widget dict from a given dict.
@@ -134,4 +145,18 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         Unloads GUI.
         """
-        pass
+        # disconnect all tool signals
+        self.disconnectToolSignals()
+        # remove every widget added to interface (in and output) and, consequently, disconnect all signals
+        for d in [self.datasourceManagementWidgetIn.activeDrivers, self.datasourceManagementWidgetOut.activeDrivers]:
+            for driverName, wList in d.items():
+                for w in wList:
+                    # removeWidget method disconnects all widget signals
+                    try:
+                        self.datasourceManagementWidgetIn.removeWidget(w)
+                    except:
+                        # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
+                        pass
+        # for last, removes itself
+        self.setParent(None)
+        del self
