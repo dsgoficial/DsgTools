@@ -98,7 +98,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         # create a 'function' to get datasource exposing name and create the output list
         getNameAlias = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
-        outDsList = list(map(getNameAlias, self.outDs.values()))
+        outDsList = [self.tr('Select a datasource')] + list(map(getNameAlias, self.outDs.values()))
         # input ds dict/list
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
         inDsList = list(self.inDs.values())
@@ -152,11 +152,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             for driverName, wList in d.items():
                 for w in wList:
                     # removeWidget method disconnects all widget signals
-                    try:
-                        self.datasourceManagementWidgetIn.removeWidget(w)
-                    except:
-                        # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
-                        pass
+                    self.datasourceManagementWidgetIn.removeWidget(w)
         # for last, removes itself
         self.setParent(None)
         del self

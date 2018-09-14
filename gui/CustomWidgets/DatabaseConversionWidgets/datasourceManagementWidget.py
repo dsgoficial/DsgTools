@@ -205,7 +205,11 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         w.removeWidget.disconnect(self.removeWidget)
         w.connWidget.selectionWidget.dbChanged.disconnect(self.datasourceChanged)
         # remove from active dict
-        self.activeDrivers[w.connWidget.getSelectionWidgetName(source=w.connWidget.source)].remove(w)
+        try:
+            self.activeDrivers[w.connWidget.getSelectionWidgetName(source=w.connWidget.source)].remove(w)
+        except:
+            # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
+            pass
         # remove widget from GUI, remove its reference on a parent widget and delete it
         self.datasourceLayout.removeWidget(w)
         w.setParent(None)
