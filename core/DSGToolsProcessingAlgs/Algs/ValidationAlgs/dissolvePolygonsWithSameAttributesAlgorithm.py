@@ -61,13 +61,22 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorLine ]
+                [QgsProcessing.TypeVectorPolygon ]
             )
         )
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.SELECTED,
                 self.tr('Process only selected features')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.MIN_AREA,
+                self.tr('Max dissolve area'),
+                minValue=0,
+                defaultValue=-1,
+                optional = True
             )
         )
         self.addParameter(
@@ -104,11 +113,12 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        tol = self.parameterAsDouble(parameters, self.MIN_AREA, context)
         attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
         ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
-        nSteps = 4 if tol > 0 else 3
+        nSteps = 4 if (tol is not None and tol > 0) else 3
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
