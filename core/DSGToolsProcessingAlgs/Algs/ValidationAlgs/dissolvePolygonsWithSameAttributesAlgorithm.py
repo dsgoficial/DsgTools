@@ -75,7 +75,6 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
                 self.MIN_AREA,
                 self.tr('Max dissolve area'),
                 minValue=0,
-                defaultValue=-1,
                 optional = True
             )
         )
@@ -118,12 +117,13 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
 
-        nSteps = 4 if (tol is not None and tol > 0) else 3
+        tol = -1 if tol is None else tol
+        nSteps = 4 if tol > 0 else 3
         multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         currentStep = 0
         multiStepFeedback.setCurrentStep(currentStep)
         multiStepFeedback.pushInfo(self.tr('Populating temp layer...\n'))
-        unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
+        unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=QgsWkbTypes.MultiPolygon, attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
         currentStep += 1
         
         if tol > 0:
