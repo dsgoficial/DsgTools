@@ -71,7 +71,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterBoolean(
+            QgsProcessingParameterNumber(
                 self.MIN_AREA,
                 self.tr('Max dissolve area'),
                 minValue=0,
