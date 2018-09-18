@@ -51,6 +51,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
     MINAREA = 'MINAREA'
+    BEHAVIOR = 'BEHAVIOR'
 
     def initAlgorithm(self, config):
         """
@@ -87,6 +88,19 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double
             )
         )
+        self.modes = [self.tr('Overlay and Keep Elements'),
+                      self.tr('Remove outside elements'),
+                      self.tr('Remove inside elements')
+                      ]
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.BEHAVIOR,
+                self.tr('Behavior'),
+                options=self.modes,
+                defaultValue=0
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -101,7 +115,6 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
@@ -110,7 +123,6 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running overlay...'))
         cleanedLyr, error = algRunner.runOverlay(auxLyr, \
-                                                    [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle], \
                                                     context, \
                                                     returnError=True, \
                                                     snap=snap, \
