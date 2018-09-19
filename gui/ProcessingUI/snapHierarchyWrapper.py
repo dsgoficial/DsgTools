@@ -28,11 +28,16 @@ class SnapHierarchyWrapper(WidgetWrapper):
         super(SnapHierarchyWrapper, self).__init__(*args, **kwargs)
     
     def createPanel(self):
-        pass
-        # return OrderedRecursiveSnapWidget()
+        return OrderedRecursiveSnapWidget()
     
     def createWidget(self):
-        pass
+        self.panel = self.createPanel()
+        self.panel.dialogType = self.dialogType
+        if self.dialogType == DIALOG_MODELER:
+            #TODO
+            return self.panel
+        else:
+            return self.panel
     
     def parentLayerChanged(self, layer=None):
         pass
