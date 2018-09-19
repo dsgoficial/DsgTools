@@ -61,7 +61,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         hierarchy = hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(self.SNAP_HIERARCHY,
                                                              description=self.tr('Snap hierarchy'))
         hierarchy.setMetadata({
-            'widget_wrapper': 'processing.algs.qgis.ui.FieldsMappingPanel.FieldsMappingWidgetWrapper'
+            'widget_wrapper': 'DsgTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'
         })
         self.addParameter(hierarchy)
 
