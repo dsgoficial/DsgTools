@@ -49,6 +49,7 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterType)
 
 class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
+    INPUTLYRLIST = 'INPUTLYRLIST'
     SELECTED = 'SELECTED'
     SNAP_HIERARCHY = 'SNAP_HIERARCHY'
     BEHAVIOR = 'BEHAVIOR'
@@ -164,10 +165,10 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             super(QgsProcessingParameterType).__init__()
 
         def create(self, name):
-            return hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(name)
+            return hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(name) #mudar
 
         def metadata(self):
-            return {'widget_wrapper': 'processing.algs.qgis.ui.FieldsMappingPanel.FieldsMappingWidgetWrapper'}
+            return {'widget_wrapper': 'processing.algs.qgis.ui.FieldsMappingPanel.FieldsMappingWidgetWrapper'} #mudar
 
         def name(self):
             return QCoreApplication.translate('Processing', 'Snap Hierarchy')
