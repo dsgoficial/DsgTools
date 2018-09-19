@@ -259,8 +259,8 @@ class MultiLayerSelection(QgsMapTool):
         :param setActiveLayer: (bool) indicates whether method should set layer as active.
         """        
         idList = layer.selectedFeaturesIds()
-        self.iface.setActiveLayer(layer)
-        layer.startEditing()
+        # self.iface.setActiveLayer(layer) # esp acho q o problema eh aqui
+        # layer.startEditing()
         featId = feature.id()
         if featId not in idList:
             idList.append(featId)
@@ -269,7 +269,8 @@ class MultiLayerSelection(QgsMapTool):
         layer.setSelectedFeatures(idList)
         if setActiveLayer:
             layer.startEditing()
-            self.iface.setActiveLayer(layer)
+            if self.iface.activeLayer() != layer:
+                self.iface.setActiveLayer(layer)
         return 
 
     def setSelectionListFeature(self, dictLayerFeature, selectAll=True):
@@ -294,7 +295,8 @@ class MultiLayerSelection(QgsMapTool):
             layer.setSelectedFeatures(idList)
             layer.startEditing()
         # last layer is set active and 
-        self.iface.setActiveLayer(layer)
+        if self.iface.activeLayer() != layer:
+            self.iface.setActiveLayer(layer)
 
     def openMultipleFeatureForm(self, dictLayerFeature):
         """
@@ -676,6 +678,7 @@ class MultiLayerSelection(QgsMapTool):
                         # if feature is selected, we want it to be de-selected
                         self.setSelectionFeature(layer=layer, feature=feature, selectAll=False, setActiveLayer=True)
                     elif selected:
-                        self.iface.setActiveLayer(layer)
+                        if self.iface.activeLayer() != layer:
+                            self.iface.setActiveLayer(layer)
                     else:
                         self.iface.openFeatureForm(layer, feature, showModal=False)
