@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-09-10
+        begin                : 2018-09-17
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -42,16 +42,16 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingUtils,
                        QgsSpatialIndex,
                        QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProject,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingParameterDistance)
 
-class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
+class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    MIN_AREA = 'MIN_AREA'
-    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
-    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
-    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
+    TOLERANCE = 'TOLERANCE'
+    MINAREA = 'MINAREA'
+    BEHAVIOR = 'BEHAVIOR'
 
     def initAlgorithm(self, config):
         """
@@ -60,8 +60,8 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
-                self.tr('Input layer'),
-                [QgsProcessing.TypeVectorPolygon ]
+                self.tr('Input Layer'),
+                [QgsProcessing.TypeVectorAnyGeometry]
             )
         )
         self.addParameter(
@@ -71,36 +71,34 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterDistance(
+                self.TOLERANCE, 
+                self.tr('Snap radius'), 
+                parentParameterName=self.INPUT,                                         
+                minValue=0, 
+                defaultValue=1.0
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterNumber(
-                self.MIN_AREA,
-                self.tr('Max dissolve area'),
+                self.MINAREA,
+                self.tr('Minimum area'),
                 minValue=0,
-                optional = True
+                defaultValue=0.0001,
+                type=QgsProcessingParameterNumber.Double
             )
         )
+        self.modes = [self.tr('Overlay and Keep Elements'),
+                      self.tr('Remove outside elements'),
+                      self.tr('Remove inside elements')
+                      ]
+
         self.addParameter(
-            QgsProcessingParameterField(
-                self.ATTRIBUTE_BLACK_LIST, 
-                self.tr('Fields to ignore'),
-                None, 
-                'INPUT', 
-                QgsProcessingParameterField.Any,
-                allowMultiple=True,
-                optional = True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.IGNORE_VIRTUAL_FIELDS,
-                self.tr('Ignore virtual fields'),
-                defaultValue=True
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.IGNORE_PK_FIELDS,
-                self.tr('Ignore primary key fields'),
-                defaultValue=True
+            QgsProcessingParameterEnum(
+                self.BEHAVIOR,
+                self.tr('Behavior'),
+                options=self.modes,
+                defaultValue=0
             )
         )
 
@@ -110,34 +108,32 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         """
         layerHandler = LayerHandler()
         algRunner = AlgRunner()
+
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        if inputLyr is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        tol = self.parameterAsDouble(parameters, self.MIN_AREA, context)
-        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
-        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
-        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
+        snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
 
-        tol = -1 if tol is None else tol
-        nSteps = 4 if tol > 0 else 3
-        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
-        currentStep = 0
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...\n'))
-        unifiedLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=QgsWkbTypes.MultiPolygon, attributeBlackList = attributeBlackList, onlySelected=onlySelected, feedback=multiStepFeedback)
-        currentStep += 1
-        
-        if tol > 0:
-            multiStepFeedback.setCurrentStep(currentStep)
-            multiStepFeedback.pushInfo(self.tr('Adding size constraint field...\n'))
-            unifiedLyr = layerHandler.addDissolveField(unifiedLyr, tol, feedback = multiStepFeedback)
-            currentStep += 1
-    
-        multiStepFeedback.setCurrentStep(currentStep)
-        multiStepFeedback.pushInfo(self.tr('Running dissolve...\n'))
-        dissolvedLyr = algRunner.runDissolve(unifiedLyr, context, feedback=multiStepFeedback, field=['tupple'])
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], dissolvedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Running overlay...'))
+        cleanedLyr, error = algRunner.runOverlay(auxLyr, \
+                                                    context, \
+                                                    returnError=True, \
+                                                    snap=snap, \
+                                                    minArea=minArea,
+                                                    feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
+        self.flagIssues(cleanedLyr, error, feedback)
 
-        return {self.INPUT: inputLyr}
+        return {self.INPUT : inputLyr, self.FLAGS : self.flag_id}
 
     def name(self):
         """
@@ -147,14 +143,14 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'dissolvepolygonswithsameattributes'
+        return 'overlayelementswithareas'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Dissolve polygons with same attribute set')
+        return self.tr('Overlay Elements With Areas')
 
     def group(self):
         """
@@ -177,4 +173,4 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return DissolvePolygonsWithSameAttributesAlgorithm()
+        return OverlayElementsWithAreasAlgorithm()
