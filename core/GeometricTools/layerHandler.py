@@ -118,7 +118,7 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
-    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType = None, epsg = None, attributeTupple = False, attributeBlackList = '', onlySelected = False, feedback = None, progressDelta = 100):
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType = None, epsg = None, attributeTupple = False, attributeBlackList = '', onlySelected = False, feedback = None):
         if not epsg:
             epsg = layerList[0].crs().authid().split(':')[-1]
         if not geomType:
@@ -131,8 +131,7 @@ class LayerHandler(QObject):
                                                       attributeBlackList=attributeBlackList, \
                                                       onlySelected=onlySelected, \
                                                       parameterDict=parameterDict, \
-                                                      feedback = feedback, \
-                                                      progressDelta = progressDelta)
+                                                      feedback = feedback)
         self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
         return unified_layer
 
@@ -163,22 +162,24 @@ class LayerHandler(QObject):
         return fields
     
 
-    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = None, feedback = None, progressDelta = 100):
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = None, feedback = None):
         parameterDict = {} if parameterDict is None else parameterDict
         featList = []
         blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
         if feedback:
-            currentValue = feedback.progress()
-            totalFeatures = sum([lyr.featureCount() for lyr in layerList])
-            currentTotal = progressDelta/totalFeatures if totalFeatures else 0
-        for layer in layerList:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(len(layerList), feedback)
+        for i, layer in enumerate(layerList):
+            if feedback:
+                if feedback.isCanceled():
+                    break
+                multiStepFeedback.setCurrentStep(i)
             # recording class name
             layername = layer.name()
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
-            iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False)
+            iterator, size = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=True)
             for current, feature in enumerate(iterator):
                 if feedback:
-                    if feedback.isCanceled():
+                    if multiStepFeedback.isCanceled():
                         break
                 newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, layername,\
                                                                    bList=blackList, \
@@ -187,7 +188,7 @@ class LayerHandler(QObject):
                                                                    coordinateTransformer=coordinateTransformer)
                 featList += newFeats
                 if feedback:
-                    feedback.setProgress(currentValue + int(current*currentTotal))
+                    multiStepFeedback.setProgress(current*size)
         return featList
 
     def addFeaturesToLayer(self, lyr, featList, commitChanges = True, msg = ''):
@@ -207,19 +208,18 @@ class LayerHandler(QObject):
         for lyr in lyrList:
             self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
     
-    def buildInputDict(self, inputLyr, pk = None, feedback = None, progressDelta = 100, onlySelected = False):
+    def buildInputDict(self, inputLyr, pk = None, feedback = None, onlySelected = False):
         """
         Maps inputLyr into a dict with its attributes.
         """
         inputDict = dict()
-        currentProgress = feedback.progress() if feedback else None
         if onlySelected:
             iterator = inputLyr.getSelectedFeatures()
-            localTotal = progressDelta/inputLyr.selectedFeatureCount() if inputLyr.selectedFeatureCount() else 0
+            localTotal = 100/inputLyr.selectedFeatureCount() if inputLyr.selectedFeatureCount() else 0
         else:
             request = QgsFeatureRequest().setFlags(QgsFeatureRequest.NoGeometry)
             iterator = inputLyr.getFeatures(request)
-            localTotal = progressDelta/inputLyr.featureCount() if inputLyr.featureCount() else 0
+            localTotal = 100/inputLyr.featureCount() if inputLyr.featureCount() else 0
         for current, feature in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
@@ -229,13 +229,12 @@ class LayerHandler(QObject):
             inputDict[key]['featList'] = []
             inputDict[key]['featWithoutGeom'] = feature
             if feedback:
-                feedback.setProgress(currentProgress + (localTotal*current))
+                feedback.setProgress(localTotal*current)
         return inputDict
     
-    def populateInputDictFeatList(self, lyr, inputDict, pk = None, request = None, feedback = None, progressDelta = 100):
+    def populateInputDictFeatList(self, lyr, inputDict, pk = None, request = None, feedback = None):
         iterator = lyr.getFeatures(request) if request else lyr.getFeatures()
-        currentProgress = feedback.progress() if feedback else None
-        localTotal = progressDelta/lyr.featureCount() if lyr.featureCount() else 0
+        localTotal = 100/lyr.featureCount() if lyr.featureCount() else 0
         for current, feat in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
@@ -244,31 +243,53 @@ class LayerHandler(QObject):
             if fid in inputDict:
                 inputDict[fid]['featList'].append(feat)
             if feedback:
-                feedback.setProgress(currentProgress + (localTotal*current))
+                feedback.setProgress(localTotal*current)
 
     
-    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None, progressDelta = 100, keepFeatures = False, onlySelected = True):
+    def updateOriginalLayer(self, originalLayer, resultLayer, field=None, feedback = None, keepFeatures = False, onlySelected = True):
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback else None
         #1- build inputDict structure to store the original state of the layer
-        inputDict = self.buildInputDict(originalLayer, pk = field, feedback = feedback, progressDelta = progressDelta/5, onlySelected = onlySelected) 
+        if feedback:
+            multiStepFeedback.setCurrentStep(0)
+        inputDict = self.buildInputDict(originalLayer, pk = field, feedback = multiStepFeedback, onlySelected = onlySelected) 
         #2- populate the inputDict with the features from the resultLayer
-        self.populateInputDictFeatList(resultLayer, inputDict, pk=field, feedback = feedback, progressDelta = progressDelta/5)
+        if feedback:
+            multiStepFeedback.setCurrentStep(1)
+        self.populateInputDictFeatList(resultLayer, inputDict, pk=field, feedback = multiStepFeedback)
         #3- get information from originalLayer and resultLayer
+        if feedback:
+            multiStepFeedback.setCurrentStep(2)
         parameterDict = self.getDestinationParameters(originalLayer)
         coordinateTransformer = self.getCoordinateTransformer(resultLayer, originalLayer)
         #4- run update original layer
-        self.updateOriginalLayerFeatures(originalLayer, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, keepFeatures = keepFeatures, feedback = feedback, progressDelta = 3*progressDelta/5)
+        self.updateOriginalLayerFeatures(originalLayer, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, keepFeatures = keepFeatures, feedback = multiStepFeedback)
 
-    def updateOriginalLayersFromUnifiedLayer(self, lyrList, unifiedLyr, feedback = None, progressDelta = 100, onlySelected = False):
+    def updateOriginalLayersFromUnifiedLayer(self, lyrList, unifiedLyr, feedback = None, onlySelected = False):
         lenList = len(lyrList)
         parameterDict = self.getDestinationParameters(unifiedLyr)
-        for lyr in lyrList:
-            inputDict = self.buildInputDict(lyr, onlySelected=onlySelected)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(lenList, feedback) if feedback else None
+        for i, lyr in enumerate(lyrList):
+            if feedback:
+                if multiStepFeedback.isCanceled():
+                    break
+                multiStepFeedback.setCurrentStep(i)
+            innerFeedback = QgsProcessingMultiStepFeedback(3, multiStepFeedback) if multiStepFeedback else None
+            innerFeedback.setCurrentStep(0)
+            inputDict = self.buildInputDict(lyr, onlySelected=onlySelected, feedback=innerFeedback)
+            if innerFeedback:
+                if innerFeedback.isCanceled():
+                    break
             request = QgsFeatureRequest(QgsExpression("layer = '{0}'".format(lyr.name())))
-            self.populateInputDictFeatList(unifiedLyr, inputDict, pk = 'featid', request = request, feedback=feedback, progressDelta=progressDelta/(2*lenList))
+            innerFeedback.setCurrentStep(1)
+            self.populateInputDictFeatList(unifiedLyr, inputDict, pk = 'featid', request = request, feedback=innerFeedback)
+            if innerFeedback:
+                if innerFeedback.isCanceled():
+                    break
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, lyr)
-            self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, feedback=feedback, progressDelta=progressDelta/(2*lenList))
+            innerFeedback.setCurrentStep(2)
+            self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, feedback=innerFeedback)
     
-    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = None, coordinateTransformer = None, keepFeatures = False, feedback = None, progressDelta = 100):
+    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = None, coordinateTransformer = None, keepFeatures = False, feedback = None):
         """
         Updates lyr using inputDict
         """
@@ -276,8 +297,7 @@ class LayerHandler(QObject):
         idsToRemove, featuresToAdd, idsToRemove = [], [], []
         lyr.startEditing()
         lyr.beginEditCommand('Updating layer {0}'.format(lyr.name()))
-        currentProgress = feedback.progress() if feedback else None
-        localTotal = progressDelta/len(inputDict)
+        localTotal = 100/len(inputDict) if parameterDict else 0
         for current, id in enumerate(inputDict):
             if feedback:
                 if feedback.isCanceled():
@@ -296,7 +316,7 @@ class LayerHandler(QObject):
             featuresToAdd += addedFeatures
             idsToRemove += [id] if deleteId else []
             if feedback:
-                feedback.setProgress(currentProgress + int(localTotal*current))
+                feedback.setProgress(localTotal*current)
         lyr.addFeatures(featuresToAdd)
         if not keepFeatures:
             lyr.deleteFeatures(idsToRemove)
@@ -337,7 +357,6 @@ class LayerHandler(QObject):
     
     def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
-        currentProgress = feedback.progress() if feedback else None
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
         localTotal = 100/size if size != 0 else 0
         attributeFeatDict = dict()
