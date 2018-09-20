@@ -24,14 +24,16 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 
+from functools import partial
 import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceConversion.ui'))
 
 class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
-    # signal planned to advise about output datasource cell request for it to have its row (emitted) filled
-    dynamicCellContentRequest = pyqtSignal(int)
+    # enum for column ordering
+    COLUMN_COUNT = 8
+    InDs, Filter, InEdgv, InSrc, OutDs, OutEdgv, OutSrc, ConversionMode = list(range(COLUMN_COUNT))
 
     def __init__(self, manager, parentMenu, parent=None):
         """
@@ -43,6 +45,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.parentMenu = parentMenu
         self.parentButton = None
         self.connectToolSignals()
+        # initiate widget dicts
+        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
+        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
 
     def connectToolSignals(self):
         """
@@ -85,13 +90,73 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         # clear possible content in it
         self.tableWidget.setEnabled(enabled)
-        self.tableWidget.setColumnCount(5)
+        self.tableWidget.setColumnCount(DatasourceConversion.COLUMN_COUNT)
+        # if a signal issue comes along, maybe cell shoul've been systematically removed
+        # and signals disconnect for each row along. So that's where shit might be re-coded (=
         self.tableWidget.setRowCount(0)
         # set policy to make cell size adjust to content
         self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-        self.tableWidget.setHorizontalHeaderLabels(
-            [self.tr("Input"), self.tr("In: EDGV Version"), self.tr("Output"), self.tr("Out: EDGV Version"), self.tr("Conversion Mode")]
-            )
+        self.tableWidget.setHorizontalHeaderLabels([
+                self.tr("Input"), self.tr("In: EDGV Version"), self.tr("Output"), self.tr("Out: EDGV Version"), 
+                self.tr("Conversion Mode"), 
+                ])
+
+    def getRowInfo(self, row):
+        """
+        Retrieves all filled row info.
+        :param row: (int) row index to have its output columns populated.
+        :return: (list-of-object) a list of all information found on a given row (may be a widget or string).
+        """
+        # input datasource, input and output EDGV versions are always a text
+        inDs = self.tableWidget.item(row, DatasourceConversion.InDs).text()
+        inEdgv = self.tableWidget.item(row, DatasourceConversion.InEdgv).text()
+        outEdgv = self.tableWidget.item(row, DatasourceConversion.OutEdgv).text()
+        # output datasource, input and output SRC and filter status are always a QWidget
+        outDs = self.tableWidget.cellWidget(idx, DatasourceConversion.OutDs)
+        # however, output info might not yet have been filled
+        try:
+            _filter = self.tableWidget.cellWidget(idx, DatasourceConversion.Filter)
+        except:
+            _filter = None
+        try:
+            inSrc = self.tableWidget.cellWidget(idx, DatasourceConversion.InSrc)
+        except:
+            inSrc = None
+        try:
+            outSrc = self.tableWidget.cellWidget(idx, DatasourceConversion.OutSrc)
+        except:
+            outSrc = None
+        return [inDs, _filter, inEdgv, inSrc, outDs, outEdgv, outSrc]
+
+    def fillOutDsInfoRow(self, row):
+        """
+        Fills out row with output info for each output column. In here, ouput SRC and EDGV are filled. 
+        :param row: (int) row index to have its output columns populated.
+        :return: (list-of-object) return a list containing (str) output EDGV version and (QPushButton) output SRC.
+        """
+        # get only outDs widget
+        outDs = self.getRowInfo(row=row)[5]
+        # widget dict keys are defined as group title, which is part of outDs current text
+        groupTitle = outDs.currentText().split(':')[0]
+        if groupTitle in self.outDs:
+            widget = self.outDs[groupTitle]
+            # only fills line if dictionary is a controlled widget
+            # new push button for SRC
+            outSrc = QtWidgets.QPushButton()
+            outSrc.setText(self.tr('SRC'))
+            # get new text item to add output datasource
+            edgvOut = widget.connWidget.getDatasourceEdgvVersion()
+            itemEdgvOut = QtWidgets.QTableWidgetItem()
+            itemEdgvOut.setText(edgvOut)
+            itemEdgvOut.setFlags(Qt.ItemIsEditable) # not editable
+            # add both to table
+            self.tableWidget.setItem(idx, DatasourceConversion.OutSrc, outSrc)
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.OutEdgv, itemEdgvOut)
+            return [edgvOut, outSrc]
+        else:
+            # if is not controlled, clear line
+            pass
+
 
     def setTableInitialState(self):
         """
@@ -133,11 +198,11 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # set edgv version for input version
             self.tableWidget.setItem(idx, 1, itemEdgvIn)
             # set classes combobox to its own row, always in the second column 
-            self.tableWidget.setCellWidget(idx, 2, outDsComboboxDict[idx])            
+            self.tableWidget.setCellWidget(idx, 2, outDsComboboxDict[idx])
             # set conversion mode combobox to its own row, always in the third column 
             self.tableWidget.setCellWidget(idx, 4, outModeComboboxDict[idx])
             # set table output information population to its widget
-            self.dynamicCellContentRequest.emit(idx)
+            outModeComboboxDict[idx].currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
 
