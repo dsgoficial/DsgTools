@@ -98,7 +98,7 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         controlId = self.parameterAsFields(parameters, self.CONTROLID, context)
         keepFeatures = self.parameterAsBool(parameters, self.KEEPFEATURES, context)
 
-        layerHandler.updateOriginalLayer(originalLyr, processOutputLyr, field=str(controlId[0]), feedback=feedback, keepFeatures = keepFeatures, progressDelta = (100-feedback.progress()))
+        layerHandler.updateOriginalLayer(originalLyr, processOutputLyr, field=str(controlId[0]), feedback=feedback, keepFeatures = keepFeatures)
         return {self.ORIGINALLAYER:originalLyr}
 
     def name(self):
