@@ -52,6 +52,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         if not inputContainer:
             # output widget should not have filtering options
             self.layerFilterPushButton.hide()
+        # set filtering config
+        self.filters = dict()
 
     def setGroupWidgetName(self, name=None):
         """

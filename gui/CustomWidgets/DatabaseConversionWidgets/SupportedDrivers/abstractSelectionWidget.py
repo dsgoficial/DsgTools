@@ -40,7 +40,7 @@ class AbstractSelectionWidget(QObject):
         """
         super(AbstractSelectionWidget, self).__init__()
         self.source = ''
-        self.abstractDb = None
+        self.selectionWidget = None
 
     def getSelectionWidgetName(self, source=None):
         """
@@ -92,4 +92,12 @@ class AbstractSelectionWidget(QObject):
         Gets the datasource selected on current widget.
         :return: (AbstractDb) the object representing the target datasource according. 
         """
-        return self.abstractDb
+        return self.selectionWidget.abstractDb if self.selectionWidget else None
+
+    def getDatasourceEdgvVersion(self):
+        """
+        Gets current datasource selection EDGV Version.
+        :return: (str) current EDGV version.
+        """
+        abstracDb = self.getDatasource()
+        return abstracDb.getDatabaseVersion() if abstracDb else ''

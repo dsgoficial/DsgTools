@@ -37,7 +37,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     """
     Class scope:
     1- manage input/output datasources selection;
-    2- prepare the conversion mapping structure using the table as a means to translate user's intentions.
+    2- prepare the conversion mapping structure using the table as a means to translate user's intentions; and
+    3- read filtering info to be applied to data.
     """
     # setting signal to alert conversion tool about any active widgets change
     activeWidgetsChanged = pyqtSignal()
@@ -108,7 +109,6 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     def addDatasourceWidget(self):
         """
         Adds the widget according to selected datasource on datasource combobox on first page.
-        :param source: (str) driver name.
         :return: (QWidget) newly added widget.
         """
         # get current text on datasource techonology selection combobox
@@ -118,24 +118,22 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         if currentDbSource:
             # in case a valid driver is selected, add its widget to the interface
             source = self.sourceNameDict[currentDbSource]
-            w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
-            # connect removal widget signal to new widget
-            w.removeWidget.connect(self.removeWidget)
-            # connect
-            w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
-            # add new driver container to GUI 
-            self.datasourceLayout.addWidget(w)
-            # update dict of active widgets
-            self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
-            # reset all driver's groupboxes names
-            self.resetWidgetsTitle()
-            # emit signal advising that there is a new active widget
-            self.activeWidgetsChanged.emit()
-            # returns newly added widget
-            return w
-        else:
-            # if no tech is selected, inform user and nothing else
-            pass
+            if source != DsgEnums.NoDriver:
+                w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
+                # connect removal widget signal to new widget
+                w.removeWidget.connect(self.removeWidget)
+                # connect
+                w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+                # add new driver container to GUI 
+                self.datasourceLayout.addWidget(w)
+                # update dict of active widgets
+                self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
+                # reset all driver's groupboxes names
+                self.resetWidgetsTitle()
+                # emit signal advising that there is a new active widget
+                self.activeWidgetsChanged.emit()
+                # returns newly added widget
+                return w
 
     def addMultiDatasourceWidgets(self):
         """
