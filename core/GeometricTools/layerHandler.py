@@ -177,6 +177,9 @@ class LayerHandler(QObject):
             coordinateTransformer = self.getCoordinateTransformer(unifiedLyr, layer)
             iterator = self.getFeatureList(layer, onlySelected=onlySelected, returnSize=False)
             for current, feature in enumerate(iterator):
+                if feedback:
+                    if feedback.isCanceled():
+                        break
                 newFeats = self.featureHandler.createUnifiedFeature(unifiedLyr, feature, layername,\
                                                                    bList=blackList, \
                                                                    attributeTupple=attributeTupple, \
