@@ -297,7 +297,7 @@ class LayerHandler(QObject):
         idsToRemove, featuresToAdd, idsToRemove = [], [], []
         lyr.startEditing()
         lyr.beginEditCommand('Updating layer {0}'.format(lyr.name()))
-        localTotal = 100/len(inputDict) if parameterDict else 0
+        localTotal = 100/len(inputDict) if inputDict else 0
         for current, id in enumerate(inputDict):
             if feedback:
                 if feedback.isCanceled():
