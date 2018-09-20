@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 
 import os
 
@@ -30,6 +30,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceConversion.ui'))
 
 class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
+    # signal planned to advise about output datasource cell request for it to have its row (emitted) filled
+    dynamicCellContentRequest = pyqtSignal(int)
+
     def __init__(self, manager, parentMenu, parent=None):
         """
         """
@@ -82,11 +85,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         # clear possible content in it
         self.tableWidget.setEnabled(enabled)
-        self.tableWidget.setColumnCount(3)
+        self.tableWidget.setColumnCount(5)
         self.tableWidget.setRowCount(0)
         # set policy to make cell size adjust to content
         self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-        self.tableWidget.setHorizontalHeaderLabels([self.tr("Input"), self.tr("Output"), self.tr("Conversion Mode")])
+        self.tableWidget.setHorizontalHeaderLabels(
+            [self.tr("Input"), self.tr("In: EDGV Version"), self.tr("Output"), self.tr("Out: EDGV Version"), self.tr("Conversion Mode")]
+            )
 
     def setTableInitialState(self):
         """
@@ -118,12 +123,21 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # create combobox containing conversion mode options
             outModeComboboxDict[idx] = QtWidgets.QComboBox()
             outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
-            # set value to its own row, always in the first column
+            # populate edgv versions column
+            # input is always text
+            itemEdgvIn = QtWidgets.QTableWidgetItem()
+            itemEdgvIn.setText(w.connWidget.getDatasourceEdgvVersion())
+            itemEdgvIn.setFlags(Qt.ItemIsEditable)
+            # set input datasource to first column
             self.tableWidget.setItem(idx, 0, item)
+            # set edgv version for input version
+            self.tableWidget.setItem(idx, 1, itemEdgvIn)
             # set classes combobox to its own row, always in the second column 
-            self.tableWidget.setCellWidget(idx, 1, outDsComboboxDict[idx])
+            self.tableWidget.setCellWidget(idx, 2, outDsComboboxDict[idx])            
             # set conversion mode combobox to its own row, always in the third column 
-            self.tableWidget.setCellWidget(idx, 2, outModeComboboxDict[idx])
+            self.tableWidget.setCellWidget(idx, 4, outModeComboboxDict[idx])
+            # set table output information population to its widget
+            self.dynamicCellContentRequest.emit(idx)
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
 

@@ -42,7 +42,7 @@ class DatasourceSelectionWidgetFactory(QWidget):
         :return: (QWidget) selection widget for selected driver.
         """
         sourceDict = {
-            DsgEnums.NoDriver : lambda : None,
+            DsgEnums.NoDriver : lambda : QWidget(), # returns a parent class empty object, to minimize standard distorsion
             DsgEnums.PostGIS : lambda : PostgisWidget(parent=parent),
             DsgEnums.NewPostGIS : lambda : PostgisWidget(parent=parent),
             DsgEnums.SpatiaLite : lambda : SpatialiteWidget(parent=parent),
