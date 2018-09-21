@@ -23,6 +23,7 @@
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
+from qgis.PyQt.QtGui import QIcon
 
 from functools import partial
 import os
@@ -96,12 +97,21 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setRowCount(0)
         # set policy to make cell size adjust to content
         self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
-        self.tableWidget.setHorizontalHeaderLabels([
-                self.tr("Input"), self.tr("In: EDGV Version"), self.tr("Output"), self.tr("Out: EDGV Version"), 
-                self.tr("Conversion Mode"), 
-                ])
+        # map header to its enum
+        headerDict = {
+            DatasourceConversion.InDs : self.tr("Input"),
+            DatasourceConversion.Filter : self.tr("Filters"),
+            DatasourceConversion.InSrc : self.tr("In: SRC"),
+            DatasourceConversion.InEdgv : self.tr("In: EDGV Version"),
+            DatasourceConversion.OutDs : self.tr("Output"),
+            DatasourceConversion.OutSrc : self.tr("Out: SRC"),
+            DatasourceConversion.OutEdgv : self.tr("Out: EDGV Version"),
+            DatasourceConversion.ConversionMode : self.tr("Conversion Mode")
+        }
+        # make the order always follow as presented at enum
+        self.tableWidget.setHorizontalHeaderLabels(list([headerDict[i] for i in range(DatasourceConversion.COLUMN_COUNT)]))
 
-    def getRowInfo(self, row):
+    def getRowContents(self, row):
         """
         Retrieves all filled row info.
         :param row: (int) row index to have its output columns populated.
@@ -110,23 +120,40 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # input datasource, input and output EDGV versions are always a text
         inDs = self.tableWidget.item(row, DatasourceConversion.InDs).text()
         inEdgv = self.tableWidget.item(row, DatasourceConversion.InEdgv).text()
-        outEdgv = self.tableWidget.item(row, DatasourceConversion.OutEdgv).text()
+        outEdgvItem = self.tableWidget.item(row, DatasourceConversion.OutEdgv)
+        outEdgv = outEdgvItem.text() if outEdgvItem else ''
         # output datasource, input and output SRC and filter status are always a QWidget
-        outDs = self.tableWidget.cellWidget(idx, DatasourceConversion.OutDs)
+        outDs = self.tableWidget.cellWidget(row, DatasourceConversion.OutDs)
         # however, output info might not yet have been filled
         try:
-            _filter = self.tableWidget.cellWidget(idx, DatasourceConversion.Filter)
+            _filter = self.tableWidget.cellWidget(row, DatasourceConversion.Filter)
         except:
             _filter = None
         try:
-            inSrc = self.tableWidget.cellWidget(idx, DatasourceConversion.InSrc)
+            inSrc = self.tableWidget.cellWidget(row, DatasourceConversion.InSrc)
         except:
             inSrc = None
         try:
-            outSrc = self.tableWidget.cellWidget(idx, DatasourceConversion.OutSrc)
+            outSrc = self.tableWidget.cellWidget(row, DatasourceConversion.OutSrc)
         except:
             outSrc = None
         return [inDs, _filter, inEdgv, inSrc, outDs, outEdgv, outSrc]
+
+    def clearOutDsInforRow(self, row):
+        """
+        Clears output information for a given row.
+        :param row: (int) row to have its output info cleared.
+        """
+        self.addItemToTable(col=DatasourceConversion.OutEdgv, row=row, isEditable=False)
+        outSrcPb = self.getRowContents(row=row)[6]
+        if outSrcPb:
+            outSrcPb.setParent(None)
+            # outSrcPb = None
+            # add an empty item to it
+            self.addItemToTable(col=DatasourceConversion.OutEdgv, row=row, isEditable=False)
+        # outSrcPb = QtWidgets.QPushButton()
+        # outSrcPb.setIcon(crsIcon)
+        # self.tableWidget.setCellWidget(row, DatasourceConversion.OutSrc, outSrcPb)
 
     def fillOutDsInfoRow(self, row):
         """
@@ -134,29 +161,60 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param row: (int) row index to have its output columns populated.
         :return: (list-of-object) return a list containing (str) output EDGV version and (QPushButton) output SRC.
         """
+        # clear current content, if any
+        self.clearOutDsInforRow(row=row)
         # get only outDs widget
-        outDs = self.getRowInfo(row=row)[5]
+        outDs = self.getRowContents(row=row)[DatasourceConversion.OutDs]
         # widget dict keys are defined as group title, which is part of outDs current text
-        groupTitle = outDs.currentText().split(':')[0]
+        if outDs:
+            groupTitle = outDs.currentText().split(':')[0]
+            crsIcon = QIcon(os.path.join(os.path.dirname(__file__,), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
+        else:
+            return []
         if groupTitle in self.outDs:
             widget = self.outDs[groupTitle]
             # only fills line if dictionary is a controlled widget
             # new push button for SRC
             outSrc = QtWidgets.QPushButton()
-            outSrc.setText(self.tr('SRC'))
+            outSrc.setIcon(crsIcon)
             # get new text item to add output datasource
             edgvOut = widget.connWidget.getDatasourceEdgvVersion()
             itemEdgvOut = QtWidgets.QTableWidgetItem()
             itemEdgvOut.setText(edgvOut)
             itemEdgvOut.setFlags(Qt.ItemIsEditable) # not editable
             # add both to table
-            self.tableWidget.setItem(idx, DatasourceConversion.OutSrc, outSrc)
-            self.tableWidget.setCellWidget(idx, DatasourceConversion.OutEdgv, itemEdgvOut)
+            self.tableWidget.setCellWidget(row, DatasourceConversion.OutSrc, outSrc)
+            self.tableWidget.setItem(row, DatasourceConversion.OutEdgv, itemEdgvOut)
             return [edgvOut, outSrc]
         else:
             # if is not controlled, clear line
-            pass
+            return []
 
+    def getTableItem(self, text='', isEditable=True):
+        """
+        Gets an item to be added to the table that may be set to not be editable.
+        :param text: (str) name to be exposed on table cell.
+        :param isEditable: (bool) boolean indicating whether cell content should be editable.
+        :return: (QTableWidgetItem) item to be added as a table cell.
+        """
+        item = QtWidgets.QTableWidgetItem()
+        item.setText(text)
+        if not isEditable:
+            item.setFlags(Qt.ItemIsEditable) # not editable
+        return item
+
+    def addItemToTable(self, col, row, text='', isEditable=True):
+        """
+        Adds an item to the mapping table into a given column and row.
+        :param col: (int) column containing new item.
+        :param row: (int) row containing new item.
+        :param text: (str) name to be exposed on table cell.
+        :param isEditable: (bool) boolean indicating whether cell content should be editable.
+        :return: (QTableWidgetItem) item added.
+        """
+        newItem = self.getTableItem(text=text, isEditable=isEditable)
+        self.tableWidget.setItem(row, col, newItem)
+        return newItem
 
     def setTableInitialState(self):
         """
@@ -174,35 +232,39 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         inDsList = list(self.inDs.values())
         # set the table rows # the same as the # of input ds
         self.tableWidget.setRowCount(len(inDsList))
-        # initiate comboboxes control dictionaries
-        outDsComboboxDict = dict()
-        outModeComboboxDict = dict()
+        # prepare widgets control dict
+        outWidgets = dict()
+        filterIcon = QIcon(os.path.join(os.path.dirname(__file__,), '..', '..', '..', 'icons', 'filter.png'))
+        crsIcon = QIcon(os.path.join(os.path.dirname(__file__,), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
         for idx, w in enumerate(inDsList):
-            # create the combobox containing all output ds
-            outDsComboboxDict[idx] = QtWidgets.QComboBox()
-            outDsComboboxDict[idx].addItems(outDsList)
+            # initiate widgets map for current row
+            outWidgets[idx] = dict()
             # create the item containing current loop's input ds
-            item = QtWidgets.QTableWidgetItem()
-            item.setText('{0}: {1}'.format(w.groupBox.title(), w.getDatasourceConnectionName()))
-            item.setFlags(Qt.ItemIsEditable)
-            # create combobox containing conversion mode options
-            outModeComboboxDict[idx] = QtWidgets.QComboBox()
-            outModeComboboxDict[idx].addItems(['Mode 1', 'Mode 2'])
+            t = '{0}: {1}'.format(w.groupBox.title(), w.getDatasourceConnectionName())
+            self.addItemToTable(col=DatasourceConversion.InDs, row=idx, text=t, isEditable=False)
             # populate edgv versions column
             # input is always text
-            itemEdgvIn = QtWidgets.QTableWidgetItem()
-            itemEdgvIn.setText(w.connWidget.getDatasourceEdgvVersion())
-            itemEdgvIn.setFlags(Qt.ItemIsEditable)
-            # set input datasource to first column
-            self.tableWidget.setItem(idx, 0, item)
-            # set edgv version for input version
-            self.tableWidget.setItem(idx, 1, itemEdgvIn)
-            # set classes combobox to its own row, always in the second column 
-            self.tableWidget.setCellWidget(idx, 2, outDsComboboxDict[idx])
-            # set conversion mode combobox to its own row, always in the third column 
-            self.tableWidget.setCellWidget(idx, 4, outModeComboboxDict[idx])
+            t = w.connWidget.getDatasourceEdgvVersion()
+            self.addItemToTable(col=DatasourceConversion.InEdgv, row=idx, text=t, isEditable=False)
+            # create filter push button
+            outWidgets[idx][DatasourceConversion.Filter] = QtWidgets.QPushButton()
+            outWidgets[idx][DatasourceConversion.Filter].setIcon(filterIcon)
+            # create input SRC push button
+            outWidgets[idx][DatasourceConversion.InSrc] = QtWidgets.QPushButton()
+            outWidgets[idx][DatasourceConversion.InSrc].setIcon(crsIcon)
+            # create the combobox containing all output ds
+            outWidgets[idx][DatasourceConversion.OutDs] = QtWidgets.QComboBox()
+            outWidgets[idx][DatasourceConversion.OutDs].addItems(outDsList)
+            # create combobox containing conversion mode options
+            outWidgets[idx][DatasourceConversion.ConversionMode] = QtWidgets.QComboBox()
+            outWidgets[idx][DatasourceConversion.ConversionMode].addItems(['Mode 1', 'Mode 2'])
+            # set each widget to their column
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.OutDs, outWidgets[idx][DatasourceConversion.OutDs])
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.Filter, outWidgets[idx][DatasourceConversion.Filter])
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.InSrc, outWidgets[idx][DatasourceConversion.InSrc])
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.ConversionMode, outWidgets[idx][DatasourceConversion.ConversionMode])
             # set table output information population to its widget
-            outModeComboboxDict[idx].currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
+            outWidgets[idx][DatasourceConversion.OutDs].currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
 
@@ -224,8 +286,11 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         Unloads GUI.
         """
-        # disconnect all tool signals
-        self.disconnectToolSignals()
+        try:
+            # disconnect all tool signals
+            self.disconnectToolSignals()
+        except:
+            pass
         # remove every widget added to interface (in and output) and, consequently, disconnect all signals
         for d in [self.datasourceManagementWidgetIn.activeDrivers, self.datasourceManagementWidgetOut.activeDrivers]:
             for driverName, wList in d.items():
