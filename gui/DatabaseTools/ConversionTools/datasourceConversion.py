@@ -307,8 +307,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         conversionMap = self.createConversionMap()
         convMap = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
-        with open(convMap, 'w') as fp:
-            json.dump(conversionMap, fp)
+        # with open(convMap, 'w') as fp:
+        #     json.dump(conversionMap, fp)
 
     def initGui(self):
         """
