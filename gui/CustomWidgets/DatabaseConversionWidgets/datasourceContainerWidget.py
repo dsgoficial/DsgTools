@@ -24,6 +24,7 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
 
 import os
@@ -51,9 +52,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.addDatasourceSelectionWidget()
         if not inputContainer:
             # output widget should not have filtering options
-            self.layerFilterPushButton.hide()
+            self.filterPushButton.hide()
         # set filtering config
-        self.filters = dict()
+        self.filterDialog = None
+        self.filters = { 'layer' :  dict(), 'spatial' : None }
 
     def setGroupWidgetName(self, name=None):
         """
@@ -93,3 +95,63 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         # finally, emits removal signal
         self.removeWidget.emit(self)
+    
+    @pyqtSlot(bool)
+    def on_filterPushButton_clicked(self):
+        """
+        Opens filter dialog.
+        """
+        if self.filterDialog:
+                # if dialog is already created, old signals must be blocked
+                self.filterDialog.blockSignals(True)
+                # and clear it
+                self.filterDialog = None
+        if self.connWidget:
+            if not self.connWidget.getDatasourcePath():
+                # in case a connection path is not found, a connection was not made ('generic text' is selected)
+                return
+            # instantiate a new filter dialog
+            filterDlg = GenericDialogLayout()
+            # set dialog title to current datasource path
+            title = '{0}: {2} ({1})'.format(self.groupBox.title(), self.connWidget.getDatasourcePath(), \
+                                        self.connWidget.getDatasourceConnectionName())
+            filterDlg.setWindowTitle(title)
+            # get layers dict
+            layers = self.connWidget.getLayersDict()
+            # control dict for each new checkbox added
+            checkBoxes = dict()
+            for layerName, featCount in layers.items():
+                # add a new checkbox widget to layout for each layer found
+                checkBoxes[layerName] = QtWidgets.QCheckBox()
+                msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
+                checkBoxes[layerName].setText(msg.format(layerName, featCount))
+                if not self.filters['layer'] or layerName in self.filters['layer']:
+                    # in case no filters are added or if layer is among the filtered ones, set it checked
+                    checkBoxes[layerName].setChecked(True)
+                filterDlg.layout.addWidget(checkBoxes[layerName])
+            self.filterDlg = filterDlg
+            # connect cancel push button to close method
+            closeAlias = lambda : self.filterDlg.close()
+            self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
+            # connect Ok push button from Filter Dialog to filter dict update method
+            self.filterDlg.okPushButton.clicked.connect(self.resetLayerFilters)
+            # for last, open dialog            
+            self.filterDlg.exec_()
+
+    def resetLayerFilters(self):
+        """
+        Prepares filter dialog for current dataset in a given row.
+        """
+        # reset filters already set
+        self.filters['layer'] = dict()
+        for widgetIdx in range(self.filterDlg.layout.count()):
+            widget = self.filterDlg.layout.itemAt(widgetIdx).widget()
+            # label format is: layer_name (feat_count feature's')
+            label = widget.text()
+            if widget.isChecked():
+                # if is checked, add it to filter dict
+                # for some reason the char '&' got into the labels... i honestly don't know how
+                featCount = label.replace('&', '').split(' (')[1].split(' ')[0]
+                label = label.replace('&', '').split(' (')[0]
+                self.filters['layer'].update({label : int(featCount)})
+        self.filterDlg.close()

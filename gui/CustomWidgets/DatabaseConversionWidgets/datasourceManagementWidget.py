@@ -67,19 +67,20 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.setupUi(self)
         # adds all available drivers to conversion to GUI
         self.fillSupportedDatasources()
-        # centralize all tool signals in order to keep track of all non-standard signals used
-        self.connectClassSignals()
         # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
         self.addSourcePushButton.setToolTip(self.tr('Add single datasource.'))
         self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource.'))
-        self.filters = []
+        # centralize all tool signals in order to keep track of all non-standard signals used
+        self.connectClassSignals()
 
     def connectClassSignals(self):
         """
         Connects all tool generic behavior signals.
         """
+        # add single datasource
         self.addSourcePushButton.clicked.connect(self.addDatasourceWidget)
+        # add multiple datasources
         self.addMultiSourcePushButton.clicked.connect(self.addMultiDatasourceWidgets)
 
     def fillSupportedDatasources(self):
