@@ -322,7 +322,7 @@ class LayerHandler(QObject):
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
+    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True, ignoreNetwork = False):
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         if feedback:
             localFeedback = QgsProcessingMultiStepFeedback(3, feedback)
@@ -344,7 +344,7 @@ class LayerHandler(QObject):
             mergeFeedback = QgsProcessingMultiStepFeedback(len(attributeFeatDict), localFeedback)
         lyr.startEditing()
         lyr.beginEditCommand(self.tr('Merging Lines'))
-        mergeLines = lambda x : self.featureHandler.mergeLineFeatures(featList=x[0], lyr=lyr, idsToRemove=x[1], parameterDict=parameterDict, feedback=x[2], networkDict=networkDict)
+        mergeLines = lambda x : self.featureHandler.mergeLineFeatures(featList=x[0], lyr=lyr, idsToRemove=x[1], parameterDict=parameterDict, feedback=x[2], networkDict=networkDict, ignoreNetwork = ignoreNetwork)
 
         for current, (key, featList) in enumerate(attributeFeatDict.items()):
             if feedback:
