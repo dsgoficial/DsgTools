@@ -1,1 +1,1 @@
-{"PostGIS #1: banco_capacitacao": [{"filter": "", "outDs": "/home/esperidiao/Documents/exemplos_dados/bancos/mi19591se_04ago.sqlite", "createDb": "False", "conversionMode": "Mode 1"}]}
+{"PostGIS #1: banco_capacitacao": [{"filter": ["cb.hid_trecho_drenagem_l", "cb.hid_trecho_massa_dagua_a", "cb.rel_curva_nivel_l", "cb.rel_ponto_cotado_altimetrico_p", "cb.veg_campo_a", "cb.veg_floresta_a", "public.aux_moldura_a"], "outDs": "localhost:5432", "createDb": "False", "conversionMode": "Mode 1"}]}

@@ -324,7 +324,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
-            rowMapping['filter'] = _filter.objectName() # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
+            title = inDs.split(':')[0]
+            inputFilteredLayers = [ln.split(' (')[0] for ln in self.inDs[title].filters['layer']]
+            rowMapping['filter'] = inputFilteredLayers # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
             # replace group title to datasource path
             title = outDs.currentText().split(':')[0]
             # retrieve widget's datasource path
