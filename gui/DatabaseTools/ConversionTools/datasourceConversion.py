@@ -144,13 +144,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Clears output information for a given row.
         :param row: (int) row to have its output info cleared.
         """
+        # add an empty item to it
         self.addItemToTable(col=DatasourceConversion.OutEdgv, row=row, isEditable=False)
         outSrcPb = self.getRowContents(row=row)[6]
         if outSrcPb:
-            outSrcPb.setParent(None)
-            # outSrcPb = None
-            # add an empty item to it
-            self.addItemToTable(col=DatasourceConversion.OutEdgv, row=row, isEditable=False)
+            outSrcPb.setEnabled(False)
+            # insert here signal disconnection
         # outSrcPb = QtWidgets.QPushButton()
         # outSrcPb.setIcon(crsIcon)
         # self.tableWidget.setCellWidget(row, DatasourceConversion.OutSrc, outSrcPb)
