@@ -39,7 +39,7 @@
        <number>0</number>
       </property>
       <item row="0" column="1">
-       <widget class="QPushButton" name="layerFilterPushButton">
+       <widget class="QPushButton" name="filterPushButton">
         <property name="minimumSize">
          <size>
           <width>30</width>

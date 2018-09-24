@@ -39,3 +39,10 @@ class GenericDialogLayout(QtWidgets.QDialog, FORM_CLASS):
         """
         super(GenericDialogLayout, self).__init__(parent)
         self.setupUi(self)
+
+    def hideButtons(self):
+        """
+        Hides Ok and Cancel push buttons from GUI.
+        """
+        self.okPushButton.hide()
+        self.cancelPushButton.hide()

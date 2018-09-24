@@ -233,8 +233,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # instantiate a new filter dialog
         filterDlg = GenericDialogLayout()
         # prepare its own GUI
-        filterDlg.cancelPushButton.hide()
-        filterDlg.okPushButton.hide()
+        filterDlg.hideButtons() # hide Ok and Cancel
         title = '{0}: {2} ({1})'.format(inWidget.groupBox.title(), inWidget.connWidget.getDatasourcePath(), \
                                      inWidget.connWidget.getDatasourceConnectionName())
         # set dialog title to current datasource path
