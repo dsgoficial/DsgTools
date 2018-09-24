@@ -113,9 +113,9 @@ class AbstractSelectionWidget(QObject):
     def getLayersList(self):
         """
         Gets the list of all layers registered into datasource.
-        :return: (list-of-QgsVectorLayer) list of all layers contained by the selected datasource.
+        :return: (dict) dictionaty for every (filled) layer contained by the selected datasource and its feature count.
         """
         abstracDb = self.getDatasource()
         if abstracDb:
             return abstracDb.listClassesWithElementsFromDatabase(useComplex = True, primitiveFilter = [])
-        return []
+        return {}
