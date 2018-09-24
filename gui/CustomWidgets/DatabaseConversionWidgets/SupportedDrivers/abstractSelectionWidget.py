@@ -109,3 +109,13 @@ class AbstractSelectionWidget(QObject):
         """
         abstracDb = self.getDatasource()
         return abstracDb.getDatabaseVersion() if abstracDb else ''
+
+    def getLayersList(self):
+        """
+        Gets the list of all layers registered into datasource.
+        :return: (list-of-QgsVectorLayer) list of all layers contained by the selected datasource.
+        """
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            return abstracDb.listClassesWithElementsFromDatabase(useComplex = True, primitiveFilter = [])
+        return []
