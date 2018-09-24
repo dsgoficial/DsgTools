@@ -73,6 +73,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.activeDrivers = dict()
         self.addSourcePushButton.setToolTip(self.tr('Add single datasource.'))
         self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource.'))
+        self.filters = []
 
     def connectClassSignals(self):
         """

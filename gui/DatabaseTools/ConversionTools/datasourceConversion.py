@@ -25,6 +25,8 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
+
 from functools import partial
 import os, json
 
@@ -219,6 +221,40 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setItem(row, col, newItem)
         return newItem
 
+    def prepareRowFilterDialog(self, row):
+        """
+        Prepares filter dialog for current dataset in a given row.
+        :param row: (int) row containing dataset information.
+        """
+        # instantiate a new filter dialog
+        filterDlg = GenericDialogLayout()
+        filterDlg.cancelPushButton.hide()
+        filterDlg.okPushButton.setText(self.tr('Close'))
+        # close dialog alias
+        closeAlias = lambda : filterDlg.close()
+        filterDlg.okPushButton.clicked.connect(closeAlias)
+        # get row information
+        inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+        # retrieve input widget
+        inWidget = self.inDs[inDs.split(':')[0]]
+        # get layers dict
+        layers = inWidget.connWidget.getLayersList()
+        # control dict for each new checkbox added
+        checkBoxes = dict()
+        for layerName, featCount in layers.items():
+            # add a new checkbox widget to layout for each layer found
+            checkBoxes[layerName] = QtWidgets.QCheckBox()
+            checkBoxes[layerName].setText('{0} ({1} features)'.format(layerName, featCount))
+            if not inWidget.filters or (inWidget.filters and layerName in inWidget.filters):
+                # in case no filters are added or if layer is among the filtered ones, set it checked
+                checkBoxes[layerName].setChecked(True)
+            # those are only for confirmation, so it should be disabled
+            checkBoxes[layerName].setEnabled(False)
+            filterDlg.layout.addWidget(checkBoxes[layerName])
+        # connect filter pushbutton signal to newly created dialog
+        openDialog = lambda : filterDlg.exec_()
+        _filter.clicked.connect(openDialog)
+
     def setTableInitialState(self):
         """
         Sets the mapping table to its initial (populated) state. Each row is composed by input datasource name, widget with
@@ -266,6 +302,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             self.tableWidget.setCellWidget(idx, DatasourceConversion.Filter, outWidgets[idx][DatasourceConversion.Filter])
             self.tableWidget.setCellWidget(idx, DatasourceConversion.inCrs, outWidgets[idx][DatasourceConversion.inCrs])
             self.tableWidget.setCellWidget(idx, DatasourceConversion.ConversionMode, outWidgets[idx][DatasourceConversion.ConversionMode])
+            # start filter widget
+            self.prepareRowFilterDialog(row=idx)
             # set table output information population to its widget
             outWidgets[idx][DatasourceConversion.OutDs].currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
         # resize to contents
