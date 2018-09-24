@@ -26,7 +26,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 
 from functools import partial
-import os
+import os, json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceConversion.ui'))
@@ -34,10 +34,14 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     # enum for column ordering
     COLUMN_COUNT = 8
-    InDs, Filter, InEdgv, InSrc, OutDs, OutEdgv, OutSrc, ConversionMode = list(range(COLUMN_COUNT))
+    InDs, Filter, InEdgv, inCrs, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
 
     def __init__(self, manager, parentMenu, parent=None):
         """
+        Class constructor.
+        :param manager:
+        :param parentMenu: menu to which conversion tool will be listed
+        :param parent: (QWidget) widget parent to a datasource conversion GUI widget.
         """
         super(DatasourceConversion, self).__init__()
         self.setupUi(self)
@@ -60,6 +64,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.datasourceChangedSignal.connect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.datasourceChangedSignal.connect(self.setTableInitialState)
+        # conversion mapping start
+        self.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.startConversion)
 
     def disconnectToolSignals(self):
         """
@@ -71,6 +77,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.datasourceChangedSignal.disconnect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.datasourceChangedSignal.disconnect(self.setTableInitialState)
+        self.button(QtWidgets.QWizard.FinishButton).clicked.disconnect(self.startConversion)
 
     def getWidgetNameDict(self, d):
         """
@@ -101,10 +108,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         headerDict = {
             DatasourceConversion.InDs : self.tr("Input"),
             DatasourceConversion.Filter : self.tr("Filters"),
-            DatasourceConversion.InSrc : self.tr("In: SRC"),
+            DatasourceConversion.inCrs : self.tr("In: CRS"),
             DatasourceConversion.InEdgv : self.tr("In: EDGV Version"),
             DatasourceConversion.OutDs : self.tr("Output"),
-            DatasourceConversion.OutSrc : self.tr("Out: SRC"),
+            DatasourceConversion.outCrs : self.tr("Out: CRS"),
             DatasourceConversion.OutEdgv : self.tr("Out: EDGV Version"),
             DatasourceConversion.ConversionMode : self.tr("Conversion Mode")
         }
@@ -122,6 +129,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         inEdgv = self.tableWidget.item(row, DatasourceConversion.InEdgv).text()
         outEdgvItem = self.tableWidget.item(row, DatasourceConversion.OutEdgv)
         outEdgv = outEdgvItem.text() if outEdgvItem else ''
+        conversionMode = self.tableWidget.cellWidget(row, DatasourceConversion.ConversionMode).currentText()
         # output datasource, input and output SRC and filter status are always a QWidget
         outDs = self.tableWidget.cellWidget(row, DatasourceConversion.OutDs)
         # however, output info might not yet have been filled
@@ -130,14 +138,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         except:
             _filter = None
         try:
-            inSrc = self.tableWidget.cellWidget(row, DatasourceConversion.InSrc)
+            inCrs = self.tableWidget.cellWidget(row, DatasourceConversion.inCrs)
         except:
-            inSrc = None
+            inCrs = None
         try:
-            outSrc = self.tableWidget.cellWidget(row, DatasourceConversion.OutSrc)
+            outCrs = self.tableWidget.cellWidget(row, DatasourceConversion.outCrs)
         except:
-            outSrc = None
-        return [inDs, _filter, inEdgv, inSrc, outDs, outEdgv, outSrc]
+            outCrs = None
+        return [inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode]
 
     def clearOutDsInforRow(self, row):
         """
@@ -146,13 +154,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         # add an empty item to it
         self.addItemToTable(col=DatasourceConversion.OutEdgv, row=row, isEditable=False)
-        outSrcPb = self.getRowContents(row=row)[6]
-        if outSrcPb:
-            outSrcPb.setEnabled(False)
-            # insert here signal disconnection
-        # outSrcPb = QtWidgets.QPushButton()
-        # outSrcPb.setIcon(crsIcon)
-        # self.tableWidget.setCellWidget(row, DatasourceConversion.OutSrc, outSrcPb)
+        outCrsPb = self.getRowContents(row=row)[6]
+        if outCrsPb:
+            outCrsPb.setEnabled(False)
 
     def fillOutDsInfoRow(self, row):
         """
@@ -174,17 +178,17 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             widget = self.outDs[groupTitle]
             # only fills line if dictionary is a controlled widget
             # new push button for SRC
-            outSrc = QtWidgets.QPushButton()
-            outSrc.setIcon(crsIcon)
+            outCrs = QtWidgets.QPushButton()
+            outCrs.setIcon(crsIcon)
             # get new text item to add output datasource
             edgvOut = widget.connWidget.getDatasourceEdgvVersion()
             itemEdgvOut = QtWidgets.QTableWidgetItem()
             itemEdgvOut.setText(edgvOut)
             itemEdgvOut.setFlags(Qt.ItemIsEditable) # not editable
             # add both to table
-            self.tableWidget.setCellWidget(row, DatasourceConversion.OutSrc, outSrc)
+            self.tableWidget.setCellWidget(row, DatasourceConversion.outCrs, outCrs)
             self.tableWidget.setItem(row, DatasourceConversion.OutEdgv, itemEdgvOut)
-            return [edgvOut, outSrc]
+            return [edgvOut, outCrs]
         else:
             # if is not controlled, clear line
             return []
@@ -249,8 +253,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outWidgets[idx][DatasourceConversion.Filter] = QtWidgets.QPushButton()
             outWidgets[idx][DatasourceConversion.Filter].setIcon(filterIcon)
             # create input SRC push button
-            outWidgets[idx][DatasourceConversion.InSrc] = QtWidgets.QPushButton()
-            outWidgets[idx][DatasourceConversion.InSrc].setIcon(crsIcon)
+            outWidgets[idx][DatasourceConversion.inCrs] = QtWidgets.QPushButton()
+            outWidgets[idx][DatasourceConversion.inCrs].setIcon(crsIcon)
             # create the combobox containing all output ds
             outWidgets[idx][DatasourceConversion.OutDs] = QtWidgets.QComboBox()
             outWidgets[idx][DatasourceConversion.OutDs].addItems(outDsList)
@@ -260,12 +264,46 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # set each widget to their column
             self.tableWidget.setCellWidget(idx, DatasourceConversion.OutDs, outWidgets[idx][DatasourceConversion.OutDs])
             self.tableWidget.setCellWidget(idx, DatasourceConversion.Filter, outWidgets[idx][DatasourceConversion.Filter])
-            self.tableWidget.setCellWidget(idx, DatasourceConversion.InSrc, outWidgets[idx][DatasourceConversion.InSrc])
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.inCrs, outWidgets[idx][DatasourceConversion.inCrs])
             self.tableWidget.setCellWidget(idx, DatasourceConversion.ConversionMode, outWidgets[idx][DatasourceConversion.ConversionMode])
             # set table output information population to its widget
             outWidgets[idx][DatasourceConversion.OutDs].currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
+
+    def createConversionMap(self):
+        """
+        Creates the conversion map JSON based on table widget contents.
+        :return: (dict) the conversion map. (SPECIFY FORMAT!)
+        """
+        # initiate conversion map dict
+        conversionMap = dict()
+        # get the row count from table widget and iterate over it
+        for row in range(self.tableWidget.rowCount()):
+            # get row contents
+            inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            # initiate this row's mapping dict and fill it
+            rowMapping = dict()
+            rowMapping['filter'] = _filter.objectName() # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
+            rowMapping['outDs'] = outDs.currentText() # still to decide what to fill up in here
+            rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
+            rowMapping['conversionMode'] = conversionMode
+            # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
+            # more than once, map it all to the same dict entry and control layer/feature flux through filter entry 
+            if inDs not in conversionMap:
+                conversionMap[inDs] = [rowMapping]
+            else:
+                conversionMap[inDs].append(rowMapping)
+        return conversionMap
+
+    def startConversion(self):
+        """
+        Converts the datasets.
+        """
+        conversionMap = self.createConversionMap()
+        convMap = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
+        with open(convMap, 'w') as fp:
+            json.dump(conversionMap, fp)
 
     def initGui(self):
         """
