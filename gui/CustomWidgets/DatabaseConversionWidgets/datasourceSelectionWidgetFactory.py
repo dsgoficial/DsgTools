@@ -29,7 +29,7 @@ from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shape
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
-class DatasourceSelectionWidgetFactory(QWidget):
+class DatasourceSelectionWidgetFactory():
     """
     Class designed to prepare each selection widget to be added to a widget container.
     """

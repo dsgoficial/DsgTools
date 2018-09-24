@@ -71,6 +71,14 @@ class AbstractSelectionWidget(QObject):
         # to be reimplemented
         return ''
 
+    def getDatasourcePath(self):
+        """
+        Gets the datasource path.
+        :return: (str) datasource path.
+        """
+        # to be reimplemented
+        return ''
+
     def getNewSelectionWidget(self):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.

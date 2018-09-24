@@ -171,7 +171,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # widget dict keys are defined as group title, which is part of outDs current text
         if outDs:
             groupTitle = outDs.currentText().split(':')[0]
-            crsIcon = QIcon(os.path.join(os.path.dirname(__file__,), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
+            crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
         else:
             return []
         if groupTitle in self.outDs:
@@ -237,8 +237,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setRowCount(len(inDsList))
         # prepare widgets control dict
         outWidgets = dict()
-        filterIcon = QIcon(os.path.join(os.path.dirname(__file__,), '..', '..', '..', 'icons', 'filter.png'))
-        crsIcon = QIcon(os.path.join(os.path.dirname(__file__,), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
+        filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
+        crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
         for idx, w in enumerate(inDsList):
             # initiate widgets map for current row
             outWidgets[idx] = dict()
@@ -285,7 +285,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
             rowMapping['filter'] = _filter.objectName() # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
-            rowMapping['outDs'] = outDs.currentText() # still to decide what to fill up in here
+            # replace group title to datasource path
+            title = outDs.currentText().split(':')[0]
+            # retrieve widget's datasource path
+            outputDsPath = self.outDs[title].connWidget.getDatasourcePath()
+            rowMapping['outDs'] = outputDsPath # still to decide what to fill up in here
+            # parameter indicating whether it is a new datasource
             rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
             rowMapping['conversionMode'] = conversionMode
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it

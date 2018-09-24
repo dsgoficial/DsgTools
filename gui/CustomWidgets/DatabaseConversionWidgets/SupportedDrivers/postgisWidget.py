@@ -58,6 +58,17 @@ class PostgisWidget(AbstractSelectionWidget):
         """
         return self.selectionWidget.connectionSelectorComboBox.currentText() if self.selectionWidget else ''
 
+    def getDatasourcePath(self):
+        """
+        Gets the PostGIS connection path (server:port).
+        :return: (str) datasource connection name.
+        """
+        abstractDb = self.getDatasource()
+        if abstractDb:
+            host, port, _, _ = abstractDb.getDatabaseParameters()
+            return '{0}:{1}'.format(host, port)
+        return ''
+
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
