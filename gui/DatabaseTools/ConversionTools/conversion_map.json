@@ -1,0 +1,1 @@
+{"PostGIS #1: consolidado_harrison": [{"filter": "", "outDs": "SpatiaLite (create new database) #1: mi19591se_04ago", "createDb": "True", "conversionMode": "Mode 1"}], "PostGIS #2: teste_1": [{"filter": "", "outDs": "PostGIS (create new database) #1: consolidado", "createDb": "True", "conversionMode": "Mode 2"}]}
