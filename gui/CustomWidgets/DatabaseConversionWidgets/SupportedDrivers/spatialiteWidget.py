@@ -65,6 +65,13 @@ class SpatialiteWidget(AbstractSelectionWidget):
         ret = n.split(splitChar)[-1].split('.')[0] if n else ''
         return ret
 
+    def getDatasourcePath(self):
+        """
+        Gets the SpatiaLite database path.
+        :return: (str) datasource path name.
+        """
+        return self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.

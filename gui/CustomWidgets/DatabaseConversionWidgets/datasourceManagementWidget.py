@@ -80,7 +80,6 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         self.addSourcePushButton.clicked.connect(self.addDatasourceWidget)
         self.addMultiSourcePushButton.clicked.connect(self.addMultiDatasourceWidgets)
-        pass
 
     def fillSupportedDatasources(self):
         """
