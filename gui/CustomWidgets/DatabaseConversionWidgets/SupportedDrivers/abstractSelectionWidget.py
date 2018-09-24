@@ -110,7 +110,7 @@ class AbstractSelectionWidget(QObject):
         abstracDb = self.getDatasource()
         return abstracDb.getDatabaseVersion() if abstracDb else ''
 
-    def getLayersList(self):
+    def getLayersDict(self):
         """
         Gets the list of all layers registered into datasource.
         :return: (dict) dictionaty for every (filled) layer contained by the selected datasource and its feature count.
