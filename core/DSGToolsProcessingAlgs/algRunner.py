@@ -222,7 +222,7 @@ class AlgRunner:
         output = processing.run('dsgtools:identifydangles', parameters, context = context, feedback = feedback)
         return output['FLAGS']
     
-    def snapToGrid(self, inputLayer, tol, context, feedback = None, outputLyr = 'memory:'):
+    def runSnapToGrid(self, inputLayer, tol, context, feedback = None, outputLyr = 'memory:'):
         parameters = {
             'INPUT':inputLayer,
             'HSPACING':tol,
