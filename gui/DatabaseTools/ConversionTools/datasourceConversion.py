@@ -247,7 +247,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             checkBoxes[layerName] = QtWidgets.QCheckBox()
             msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
             checkBoxes[layerName].setText(msg.format(layerName, featCount))
-            if not inWidget.filters or (inWidget.filters and layerName in inWidget.filters):
+            if not inWidget.filters['layer'] or (inWidget.filters['layer'] and layerName in inWidget.filters['layer']):
                 # in case no filters are added or if layer is among the filtered ones, set it checked
                 checkBoxes[layerName].setChecked(True)
             # those are only for confirmation, so it should be disabled
