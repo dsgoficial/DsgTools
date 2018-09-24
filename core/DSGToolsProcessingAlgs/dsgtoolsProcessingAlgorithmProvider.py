@@ -46,6 +46,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.mergeLinesAlgorith
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapLayerOnLayerAndUpdateAlgorithm import SnapLayerOnLayerAndUpdateAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlayerAlgorithm import LineOnLineOverlayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import DissolvePolygonsWithSameAttributesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapToGridAndUpdateAlgorithm import SnapToGridAndUpdateAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -76,7 +77,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         TopologicalCleanLinesAlgorithm(),
                         SnapLayerOnLayerAndUpdateAlgorithm(),
                         LineOnLineOverlayerAlgorithm(),
-                        DissolvePolygonsWithSameAttributesAlgorithm()]
+                        DissolvePolygonsWithSameAttributesAlgorithm(),
+                        SnapToGridAndUpdateAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
