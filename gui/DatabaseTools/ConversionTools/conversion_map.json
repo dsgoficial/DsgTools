@@ -1,18 +1,1 @@
-{
-    "PostGIS #1: consolidado_harrison": [
-            {
-                "filter": "", 
-                "outDs": "localhost:5432", 
-                "createDb": "False", 
-                "conversionMode": "Mode 1"
-            }
-        ], 
-    "PostGIS #2: teste_1": [
-            {
-                "filter": "", 
-                "outDs": "/home/esperidiao/Documents/exemplos_dados/bancos/banco_capacitacao.sqlite", 
-                "createDb": "False", 
-                "conversionMode": "Mode 1"
-            }
-        ]
-}
+{"PostGIS #1: banco_capacitacao": [{"filter": "", "outDs": "/home/esperidiao/Documents/exemplos_dados/bancos/mi19591se_04ago.sqlite", "createDb": "False", "conversionMode": "Mode 1"}]}

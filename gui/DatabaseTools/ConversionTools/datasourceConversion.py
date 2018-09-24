@@ -226,25 +226,28 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Prepares filter dialog for current dataset in a given row.
         :param row: (int) row containing dataset information.
         """
-        # instantiate a new filter dialog
-        filterDlg = GenericDialogLayout()
-        filterDlg.cancelPushButton.hide()
-        filterDlg.okPushButton.setText(self.tr('Close'))
-        # close dialog alias
-        closeAlias = lambda : filterDlg.close()
-        filterDlg.okPushButton.clicked.connect(closeAlias)
         # get row information
         inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
         # retrieve input widget
         inWidget = self.inDs[inDs.split(':')[0]]
+        # instantiate a new filter dialog
+        filterDlg = GenericDialogLayout()
+        # prepare its own GUI
+        filterDlg.cancelPushButton.hide()
+        filterDlg.okPushButton.hide()
+        title = '{0}: {2} ({1})'.format(inWidget.groupBox.title(), inWidget.connWidget.getDatasourcePath(), \
+                                     inWidget.connWidget.getDatasourceConnectionName())
+        # set dialog title to current datasource path
+        filterDlg.setWindowTitle(title)
         # get layers dict
-        layers = inWidget.connWidget.getLayersList()
+        layers = inWidget.connWidget.getLayersDict()
         # control dict for each new checkbox added
         checkBoxes = dict()
         for layerName, featCount in layers.items():
             # add a new checkbox widget to layout for each layer found
             checkBoxes[layerName] = QtWidgets.QCheckBox()
-            checkBoxes[layerName].setText('{0} ({1} features)'.format(layerName, featCount))
+            msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
+            checkBoxes[layerName].setText(msg.format(layerName, featCount))
             if not inWidget.filters or (inWidget.filters and layerName in inWidget.filters):
                 # in case no filters are added or if layer is among the filtered ones, set it checked
                 checkBoxes[layerName].setChecked(True)
@@ -345,8 +348,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         conversionMap = self.createConversionMap()
         convMap = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
-        # with open(convMap, 'w') as fp:
-        #     json.dump(conversionMap, fp)
+        with open(convMap, 'w') as fp:
+            json.dump(conversionMap, fp)
 
     def initGui(self):
         """
