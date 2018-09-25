@@ -44,7 +44,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     activeWidgetsChanged = pyqtSignal()
     # setting signal to alert conversion tool about any datasource updates
     datasourceChangedSignal = pyqtSignal(AbstractDb)
-    # make an exhibition text 'enum' for supported drivers
+    # filtering settings from widget container has changed signal
+    containerFilterSettingsChanged = pyqtSignal(DatasourceContainerWidget)
     
     def __init__(self, parent=None):
         """
@@ -125,6 +126,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 w.removeWidget.connect(self.removeWidget)
                 # connect
                 w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+                # connect filtering settings changed signal to this class signal on filtering settings change
+                w.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
                 # add new driver container to GUI 
                 self.datasourceLayout.addWidget(w)
                 # update dict of active widgets

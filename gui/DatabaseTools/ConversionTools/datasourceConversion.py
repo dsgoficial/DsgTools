@@ -63,6 +63,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # if any widget was turned active/inactive
         self.datasourceManagementWidgetIn.activeWidgetsChanged.connect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.activeWidgetsChanged.connect(self.setTableInitialState)
+        self.datasourceManagementWidgetIn.containerFilterSettingsChanged.connect(self.updateFilterSettings)
+        self.datasourceManagementWidgetOut.containerFilterSettingsChanged.connect(self.updateFilterSettings)
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.datasourceChangedSignal.connect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.datasourceChangedSignal.connect(self.setTableInitialState)
@@ -76,6 +78,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # if any widget was turned active/inactive
         self.datasourceManagementWidgetIn.activeWidgetsChanged.disconnect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.activeWidgetsChanged.disconnect(self.setTableInitialState)
+        self.datasourceManagementWidgetIn.containerFilterSettingsChanged.disconnect(self.updateFilterSettings)
+        self.datasourceManagementWidgetOut.containerFilterSettingsChanged.disconnect(self.updateFilterSettings)
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.datasourceChangedSignal.disconnect(self.setTableInitialState)
         self.datasourceManagementWidgetOut.datasourceChangedSignal.disconnect(self.setTableInitialState)
@@ -148,6 +152,41 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         except:
             outCrs = None
         return [inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode]
+
+    def getInputDatasourceRow(self, inputDatasourceWidget):
+        """
+        Returns row containing given input datasource container widget.
+        :param inputDatasourceWidget: (DatasourceContainerWidget) input container widget.
+        :return: (tuple-of-objects) row number containing target input datasource and row contents.
+                                    If not found, -1 and an empty list are returned.
+        """
+        inputText = '{0}: {1}'.format(inputDatasourceWidget.groupBox.title(), inputDatasourceWidget.getDatasourceConnectionName())
+        for row in range(self.tableWidget.rowCount()):
+            inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            if inDs == inputText:
+                return row, [inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode]
+        return -1, []
+
+    def updateFilterSettings(self, containerWidget):
+        """
+        Updates a container widget's filtering settings.
+        :param containerWidget: (DatasourceContainerWidget) widget that had its filtering settings modified.
+        """
+        row, contents = self.getInputDatasourceRow(inputDatasourceWidget=containerWidget)
+        if row > -1:
+            # clear filter push button
+            _filter = contents[1]
+            _filter.blockSignals(True)
+            _filter.setParent(None)
+            _filter = None
+            # create and reset push button
+            newFilter = QtWidgets.QPushButton()
+            filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
+            newFilter.setIcon(filterIcon)
+            # set it as the new widget to cell
+            self.tableWidget.setCellWidget(row, DatasourceConversion.Filter, newFilter)
+            # reset filter dialog
+            self.prepareRowFilterDialog(row=row)
 
     def clearOutDsInforRow(self, row):
         """
@@ -317,7 +356,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outWidgets[idx][DatasourceConversion.OutDs].addItems(outDsList)
             # create combobox containing conversion mode options
             outWidgets[idx][DatasourceConversion.ConversionMode] = QtWidgets.QComboBox()
-            outWidgets[idx][DatasourceConversion.ConversionMode].addItems(['Mode 1', 'Mode 2'])
+            outWidgets[idx][DatasourceConversion.ConversionMode].addItems([
+                    self.tr('Choose Conversion Mode'), self.tr('Map No Data'), self.tr('Strict Conversion')])
             # set each widget to their column
             self.tableWidget.setCellWidget(idx, DatasourceConversion.OutDs, outWidgets[idx][DatasourceConversion.OutDs])
             self.tableWidget.setCellWidget(idx, DatasourceConversion.Filter, outWidgets[idx][DatasourceConversion.Filter])
