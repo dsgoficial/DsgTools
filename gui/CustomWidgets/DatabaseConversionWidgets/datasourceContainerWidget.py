@@ -39,6 +39,9 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     """
     # signal to be emitted when deletion button is clicked - emits itself (QWidget)
     removeWidget = pyqtSignal(QtWidgets.QWidget)
+    # signal emitted to advise about filtering options change
+    filterSettingsChanged = pyqtSignal(QtWidgets.QWidget)
+
 
     def __init__(self, source, inputContainer, parent=None):
         """
@@ -163,7 +166,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     if not self.filters['layer'] or layerName in self.filters['layer']:
                         # in case no filters are added or if layer is among the filtered ones, set it checked
                         widgets[layerName]['checkBox'].setChecked(True)
-                    layout = QtWidgets.QHBoxLayout()
+                    if layerName in self.filters['layer_filter']:
+                        # if a layer feature filter was set, refill it back to UI
+                        widgets[layerName]['fieldExpression'].setExpression(self.filters['layer_filter'][layerName])
+                    # # set layer to filter expression
+                    # widgets[layerName]['fieldExpression'].setLayer(self.getDatasource().getLayerByName(layerName))
                     checkBoxLayout.addWidget(widgets[layerName]['checkBox'])
                     filterExpressionLayout.addWidget(widgets[layerName]['fieldExpression'])
             self.filterDlg = filterDlg
@@ -210,4 +217,6 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 if expression:
                     # fill layer features filter expression info only if an expression is found
                     self.filters['layer_filter'].update({ layerName : expression })
+        # advise about filtering settings change
+        self.filterSettingsChanged.emit(self)
         self.filterDlg.close()
