@@ -326,7 +326,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping = dict()
             title = inDs.split(':')[0] # get input group box title (widget's dict key)
             inputDatasourcePath =  self.inDs[title].connWidget.getDatasourcePath()
-            inputFilteredLayers = [ln.split(' (')[0] for ln in self.inDs[title].filters['layer']]
+            inputFilteredLayers = self.inDs[title].filters
             rowMapping['filter'] = inputFilteredLayers # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
             # replace group title to datasource path
             title = outDs.currentText().split(':')[0] # get output group box title (widget's dict key)

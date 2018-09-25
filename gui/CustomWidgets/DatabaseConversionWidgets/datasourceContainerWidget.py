@@ -23,6 +23,7 @@
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
+from qgis.gui import QgsFieldExpressionWidget
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
@@ -105,11 +106,25 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         # finally, emits removal signal
         self.removeWidget.emit(self)
-    
+
+    def getNewLayerFilterLayout(self):
+        """
+        Gets the minimum filter structure (e.g. for a layer) inside a layout to be set to filter dialog.
+        :return: (QVBoxLayout) 
+        """
+        # layout = QtWidgets.QVBoxLayout()
+        # checkBox = QtWidgets.QCheckBox()
+        # filterExpression = QgsFieldExpressionWidget()
+        # layout.addWidget(checkBox)
+        # layout.addWidget(filterExpression)
+        return QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
+
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
         """
-        Opens filter dialog.
+        Opens filter dialog. Filters are updated as Ok push button on this dialog is clicked. If cancel is pressed,
+        no update to filters contents will be made. This dialog is repopulated as filter push button from container
+        is pressed. 
         """
         if self.filterDialog:
                 # if dialog is already created, old signals must be blocked
@@ -129,16 +144,24 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # get layers dict
             layers = self.connWidget.getLayersDict()
             # control dict for each new checkbox added
-            checkBoxes = dict()
+            widgets = dict()
             for layerName, featCount in layers.items():
-                # add a new checkbox widget to layout for each layer found
-                checkBoxes[layerName] = QtWidgets.QCheckBox()
+                widgets[layerName] = dict()
+                widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = dict(), dict()
+                widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = self.getNewLayerFilterLayout()
+                # add a new checkbox widget to layout for each layer found and a field expression widget
+                # widgets[layerName]['checkBox'] = QtWidgets.QCheckBox()
+                # widgets[layerName]['fieldExpression'] = QgsFieldExpressionWidget()
                 msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-                checkBoxes[layerName].setText(msg.format(layerName, featCount))
+                widgets[layerName]['checkBox'].setText(msg.format(layerName, featCount))
                 if not self.filters['layer'] or layerName in self.filters['layer']:
                     # in case no filters are added or if layer is among the filtered ones, set it checked
-                    checkBoxes[layerName].setChecked(True)
-                filterDlg.layout.addWidget(checkBoxes[layerName])
+                    widgets[layerName]['checkBox'].setChecked(True)
+                layout = QtWidgets.QHBoxLayout()
+                layout.addWidget(widgets[layerName]['checkBox'])
+                layout.addWidget(widgets[layerName]['fieldExpression'])
+                # filterDlg.layout.addWidget(checkBoxes[layerName])
+                filterDlg.layout.addLayout(layout)
             self.filterDlg = filterDlg
             # connect cancel push button to close method
             closeAlias = lambda : self.filterDlg.close()
@@ -153,15 +176,33 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Prepares filter dialog for current dataset in a given row.
         """
         # reset filters already set
-        self.filters['layer'] = dict()
+        self.filters = {
+            'layer' : dict(),
+            'layer_filter' : dict(),
+            'spatial_filter' : []
+                # spatial filter dictionaty form
+                # {
+                #     'layer_name' : (str) layer_name,
+                #     'filter_type' : (str) cut, buffer, intersect, etc
+                #     'topological_relation' : (str) rule_string - inside, outside, buffer distance, etc
+                # }
+            }
         for widgetIdx in range(self.filterDlg.layout.count()):
-            widget = self.filterDlg.layout.itemAt(widgetIdx).widget()
-            # label format is: layer_name (feat_count feature's')
-            label = widget.text()
-            if widget.isChecked():
-                # if is checked, add it to filter dict
+            layerLayout = self.filterDlg.layout.itemAt(widgetIdx).layout()
+            checkBox = layerLayout.itemAt(0).widget()
+            filterExpression = layerLayout.itemAt(1).widget()
+            print(checkBox.text(), filterExpression)
+            if checkBox.isChecked():
+                # filters will be applicable only if layer is supposed to be converted 
+                # label format is: layer_name (feat_count feature's')
                 # for some reason the char '&' got into the labels... i honestly don't know how
-                featCount = label.replace('&', '').split(' (')[1].split(' ')[0]
-                label = label.replace('&', '').split(' (')[0]
-                self.filters['layer'].update({label : int(featCount)})
+                label = checkBox.text().replace('&', '')
+                featCount = label.split(' (')[1].split(' ')[0]
+                layerName = label.split(' (')[0]
+                # fill layer selection filter info
+                self.filters['layer'].update({ layerName : int(featCount) })
+                expression = filterExpression.currentText()
+                if expression:
+                    # fill layer features filter expression info only if an expression is found
+                    self.filters['layer_filter'].update({ layerName : expression })
         self.filterDlg.close()
