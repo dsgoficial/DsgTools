@@ -293,7 +293,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             if layerName:
                 # initiate dict and widgets
                 widgets[layerName] = dict()
-                widgets[layerName]['checkbox'], widgets[layerName]['filterexpression'] = dict(), dict()
                 widgets[layerName]['checkbox'] = QtWidgets.QCheckBox()
                 widgets[layerName]['filterexpression'] = QtWidgets.QLineEdit()
                 # since it is only for reading and confirmation purposes, widgets are all disabled

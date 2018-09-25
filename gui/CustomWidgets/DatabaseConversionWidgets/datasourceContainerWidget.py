@@ -24,6 +24,8 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 from qgis.gui import QgsFieldExpressionWidget
+from qgis.utils import iface
+from qgis.core import QgsProject
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
@@ -70,6 +72,9 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 #     'topological_relation' : (str) rule_string - inside, outside, buffer distance, etc
                 # }
             }
+        self.layersComboBox = None
+        self.filterExpressionWidget = None
+        self.topologicalRelationWidget = None
 
     def setGroupWidgetName(self, name=None):
         """
@@ -110,17 +115,59 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # finally, emits removal signal
         self.removeWidget.emit(self)
 
-    def getNewLayerFilterLayout(self):
+    def clearWidget(self, widget):
         """
-        Gets the minimum filter structure (e.g. for a layer) inside a layout to be set to filter dialog.
-        :return: (QVBoxLayout) 
+        Clear a widget before in order to reassign it.
+        :param widget: widget to be cleared.
         """
-        # layout = QtWidgets.QVBoxLayout()
-        # checkBox = QtWidgets.QCheckBox()
-        # filterExpression = QgsFieldExpressionWidget()
-        # layout.addWidget(checkBox)
-        # layout.addWidget(filterExpression)
-        return QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
+        widget.blockSignals(True)
+        widget.setParent(None)
+        widget = None
+
+    @pyqtSlot(int)
+    def spatialFilterLayerChanged(self, idx):
+        """
+        Sets up interface according to a spatial filtering layer selection.
+        """
+        if idx == self.tr('Select a layer...'):
+            return
+        # vLayer = QgsProject.mapLayersByName(currentLayer)
+        # if vLayer:
+        #     self.filterExpressionWidget.setLayer(vLayer)
+
+    def setupSpatialFilterWidgets(self):
+        """
+        Sets up widgets into filter dialog.
+        """
+        # prepare layer selection combo box
+        if self.layersComboBox:
+            self.filterDlg.outHLayout.removeWidget(self.layersComboBox)
+            # clear layer selection combo box, if it exists 
+            self.clearWidget(widget=self.layersComboBox)
+        self.layersComboBox = QtWidgets.QComboBox()
+        layerList = [self.tr('Select a layer...')] + sorted([l.name() for l in iface.mapCanvas().layers()])
+        self.layersComboBox.addItems(layerList)
+        # prepare layer feature filter widget
+        if self.filterExpressionWidget:
+            self.filterDlg.outHLayout.removeWidget(self.filterExpressionWidget)
+            # clear layer selection combo box, if it exists 
+            self.clearWidget(widget=self.filterExpressionWidget)
+        self.filterExpressionWidget = QgsFieldExpressionWidget()
+        # prepare layer selection combo box
+        if self.topologicalRelationWidget:
+            self.filterDlg.outHLayout.removeWidget(self.topologicalRelationWidget)
+            # clear layer selection combo box, if it exists 
+            self.clearWidget(widget=self.topologicalRelationWidget)
+        self.topologicalRelationWidget = QtWidgets.QComboBox()
+        # current supported topological relations
+        topoRelList = sorted([self.tr('Cut'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals')])
+        self.topologicalRelationWidget.addItems(topoRelList)
+        layerList = [self.tr('Select a layer...')] + sorted([l.name() for l in iface.mapCanvas().layers()])
+        # ADD TOPOLOGICAL PARAMETER WIDGET!
+        self.layersComboBox.currentIndexChanged.connect(self.spatialFilterLayerChanged)
+        self.filterDlg.outHLayout.addWidget(self.layersComboBox)
+        self.filterDlg.outHLayout.addWidget(self.filterExpressionWidget)
+        self.filterDlg.outHLayout.addWidget(self.topologicalRelationWidget)
 
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
@@ -154,8 +201,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             for layerName, featCount in layers.items():
                 if layerName:
                     widgets[layerName] = dict()
-                    widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = dict(), dict()
-                    widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = self.getNewLayerFilterLayout()
+                    widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
                     # allow filtering option only when layer is marked to be filtered
                     widgets[layerName]['checkBox'].toggled.connect(widgets[layerName]['fieldExpression'].setEnabled)
                     # add a new checkbox widget to layout for each layer found and a field expression widget
@@ -174,6 +220,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     checkBoxLayout.addWidget(widgets[layerName]['checkBox'])
                     filterExpressionLayout.addWidget(widgets[layerName]['fieldExpression'])
             self.filterDlg = filterDlg
+            # setup spatial filter part
+            self.setupSpatialFilterWidgets()
             # connect cancel push button to close method
             closeAlias = lambda : self.filterDlg.close()
             self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
