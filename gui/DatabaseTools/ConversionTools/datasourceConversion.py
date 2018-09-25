@@ -242,17 +242,35 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         layers = inWidget.connWidget.getLayersDict()
         # control dict for each new checkbox added
         checkBoxes = dict()
+        # get layouts for checkboxes and filter expression widgets
+        checkBoxLayout, filterExpressionLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
+        filterDlg.hLayout.addLayout(checkBoxLayout)
+        filterDlg.hLayout.addLayout(filterExpressionLayout)
+        # initiate a widget creation control dict
+        widgets = dict()
+        # retrieve filter dict
+        filterDict = inWidget.filters
         for layerName, featCount in layers.items():
+            # initiate dict and widgets
+            widgets[layerName] = dict()
+            widgets[layerName]['checkbox'], widgets[layerName]['filterexpression'] = dict(), dict()
+            widgets[layerName]['checkbox'] = QtWidgets.QCheckBox()
+            widgets[layerName]['filterexpression'] = QtWidgets.QLineEdit()
+            # since it is only for reading and confirmation purposes, widgets are all disabled
+            widgets[layerName]['checkbox'].setEnabled(False)
+            widgets[layerName]['filterexpression'].setEnabled(False)
             # add a new checkbox widget to layout for each layer found
-            checkBoxes[layerName] = QtWidgets.QCheckBox()
             msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-            checkBoxes[layerName].setText(msg.format(layerName, featCount))
-            if not inWidget.filters['layer'] or (inWidget.filters['layer'] and layerName in inWidget.filters['layer']):
+            widgets[layerName]['checkbox'].setText(msg.format(layerName, featCount))
+            if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
                 # in case no filters are added or if layer is among the filtered ones, set it checked
-                checkBoxes[layerName].setChecked(True)
+                widgets[layerName]['checkbox'].setChecked(True)
+            # fill up an edit line containing filtering expression, if any
+            if layerName in filterDict['layer_filter']:
+                widgets[layerName]['filterexpression'].setText(filterDict['layer_filter'][layerName])
             # those are only for confirmation, so it should be disabled
-            checkBoxes[layerName].setEnabled(False)
-            filterDlg.layout.addWidget(checkBoxes[layerName])
+            checkBoxLayout.addWidget(widgets[layerName]['checkbox'])
+            filterExpressionLayout.addWidget(widgets[layerName]['filterexpression'])
         # connect filter pushbutton signal to newly created dialog
         openDialog = lambda : filterDlg.exec_()
         _filter.clicked.connect(openDialog)
@@ -324,36 +342,92 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
-            title = inDs.split(':')[0] # get input group box title (widget's dict key)
-            inputDatasourcePath =  self.inDs[title].connWidget.getDatasourcePath()
-            inputFilteredLayers = self.inDs[title].filters
+            # get input information to be mapped - input datasource identification and filtering options
+            w = self.inDs[inDs.split(':')[0]] # input group box title (widget's dict key)
+            inputDatasourceId =  w.connWidget.getDatasourcePath()
+            inputFilteredLayers = w.filters
+            # get output information to be mapped - output datasource identification and if it's
+            w = self.outDs[outDs.currentText().split(':')[0]] # output group box title (widget's dict key)
+            outputDatasourceId =  w.connWidget.getDatasourcePath()
+            # populate row's conversion map
+            rowMapping['outDs'] = outputDatasourceId,  # still to decide what to fill up in here
             rowMapping['filter'] = inputFilteredLayers # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
-            # replace group title to datasource path
-            title = outDs.currentText().split(':')[0] # get output group box title (widget's dict key)
-            # retrieve widget's datasource path
-            outputDsPath = self.outDs[title].connWidget.getDatasourcePath()
-            rowMapping['outDs'] = outputDsPath # still to decide what to fill up in here
             # parameter indicating whether it is a new datasource
             rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
             rowMapping['conversionMode'] = conversionMode
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
             # more than once, map it all to the same dict entry and control layer/feature flux through filter entry
-            if inputDatasourcePath not in conversionMap:
+            if inputDatasourceId not in conversionMap:
                 # setting the conversion map key to input datasource path will secure that conversions using the same ds
                 # as data origin will make it be read only once
-                conversionMap[inputDatasourcePath] = [rowMapping]
+                conversionMap[inputDatasourceId] = [rowMapping]
             else:
-                conversionMap[inputDatasourcePath].append(rowMapping)
+                conversionMap[inputDatasourceId].append(rowMapping)
         return conversionMap
+
+    def getParameterDict(self):
+        """
+        Gets the conversion parameter dict. Alias for createConversionMap().
+        :return: (dict) the conversion map. (SPECIFY FORMAT!)
+        """
+        return self.createConversionMap()
+
+    def exportConversionJson(self, filepath=None):
+        """
+        Exports conversion mapping structure to a JSON file.
+        :param filepath: (str) file path for output JSON mapping file.
+        """
+        conversionMap = self.createConversionMap()
+        if not filepath:
+            filepath = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
+        with open(filepath, 'w') as fp:
+            json.dump(conversionMap, fp, indent=4, sort_keys=True)
+
+    def validateJson(self, inputJson):
+        """
+        Validates JSON file containing conversion mapping parameters.
+        :param inputJson: (str) JSON file path.
+        :return: (bool) whether JSON is valid.
+        """
+        conversionMap = json.loads(inputJson)
+        pass
+
+    def validate(self):
+        """
+        Validates interface parameters.
+        """
+        pass
+
+    def invalidatedReason(self):
+        """
+        Identifies invalidation reason for user advising.
+        """
+        pass
+
+    def run(self, conversionMap):
+        """
+        Executes conversion itself based on a conversion map.
+        :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
+        """
+        pass
 
     def startConversion(self):
         """
-        Converts the datasets.
+        Starts the conversion process.
         """
+        # get conversion map
         conversionMap = self.createConversionMap()
-        convMap = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
-        with open(convMap, 'w') as fp:
-            json.dump(conversionMap, fp, indent=4, sort_keys=True)
+        self.exportConversionJson()
+        # validate interface parameters
+        self.validate()
+        # call conversion method taking the mapping json
+        self.run(conversionMap=conversionMap)
+
+    def populateInterface(self, parameterDict):
+        """
+        Populates interface with parameters from a mapping parameter dict.
+        """
+        pass
 
     def initGui(self):
         """
