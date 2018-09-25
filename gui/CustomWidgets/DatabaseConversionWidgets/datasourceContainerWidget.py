@@ -55,7 +55,17 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.filterPushButton.hide()
         # set filtering config
         self.filterDialog = None
-        self.filters = { 'layer' :  dict(), 'spatial' : None }
+        self.filters = {
+            'layer' : dict(),
+            'layer_filter' : dict(),
+            'spatial_filter' : []
+                # spatial filter dictionaty form
+                # {
+                #     'layer_name' : (str) layer_name,
+                #     'filter_type' : (str) cut, buffer, intersect, etc
+                #     'topological_relation' : (str) rule_string - inside, outside, buffer distance, etc
+                # }
+            }
 
     def setGroupWidgetName(self, name=None):
         """
