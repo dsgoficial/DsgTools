@@ -237,8 +237,7 @@ class AlgRunner:
     def runRemoveNull(self, inputLayer, context, feedback = None, outputLyr = 'memory:'):
         parameters = {
             'INPUT':inputLayer,
-            'OUTPUT':outputLyr,
-            'NULL_OUTPUT':'memory:'
+            'OUTPUT':outputLyr
         }
         output = processing.run("native:removenullgeometries", parameters, context = context, feedback = feedback)
         return output['OUTPUT']
