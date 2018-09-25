@@ -251,26 +251,27 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # retrieve filter dict
         filterDict = inWidget.filters
         for layerName, featCount in layers.items():
-            # initiate dict and widgets
-            widgets[layerName] = dict()
-            widgets[layerName]['checkbox'], widgets[layerName]['filterexpression'] = dict(), dict()
-            widgets[layerName]['checkbox'] = QtWidgets.QCheckBox()
-            widgets[layerName]['filterexpression'] = QtWidgets.QLineEdit()
-            # since it is only for reading and confirmation purposes, widgets are all disabled
-            widgets[layerName]['checkbox'].setEnabled(False)
-            widgets[layerName]['filterexpression'].setEnabled(False)
-            # add a new checkbox widget to layout for each layer found
-            msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-            widgets[layerName]['checkbox'].setText(msg.format(layerName, featCount))
-            if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
-                # in case no filters are added or if layer is among the filtered ones, set it checked
-                widgets[layerName]['checkbox'].setChecked(True)
-            # fill up an edit line containing filtering expression, if any
-            if layerName in filterDict['layer_filter']:
-                widgets[layerName]['filterexpression'].setText(filterDict['layer_filter'][layerName])
-            # those are only for confirmation, so it should be disabled
-            checkBoxLayout.addWidget(widgets[layerName]['checkbox'])
-            filterExpressionLayout.addWidget(widgets[layerName]['filterexpression'])
+            if layerName:
+                # initiate dict and widgets
+                widgets[layerName] = dict()
+                widgets[layerName]['checkbox'], widgets[layerName]['filterexpression'] = dict(), dict()
+                widgets[layerName]['checkbox'] = QtWidgets.QCheckBox()
+                widgets[layerName]['filterexpression'] = QtWidgets.QLineEdit()
+                # since it is only for reading and confirmation purposes, widgets are all disabled
+                widgets[layerName]['checkbox'].setEnabled(False)
+                widgets[layerName]['filterexpression'].setEnabled(False)
+                # add a new checkbox widget to layout for each layer found
+                msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
+                widgets[layerName]['checkbox'].setText(msg.format(layerName, featCount))
+                if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
+                    # in case no filters are added or if layer is among the filtered ones, set it checked
+                    widgets[layerName]['checkbox'].setChecked(True)
+                # fill up an edit line containing filtering expression, if any
+                if layerName in filterDict['layer_filter']:
+                    widgets[layerName]['filterexpression'].setText(filterDict['layer_filter'][layerName])
+                # those are only for confirmation, so it should be disabled
+                checkBoxLayout.addWidget(widgets[layerName]['checkbox'])
+                filterExpressionLayout.addWidget(widgets[layerName]['filterexpression'])
         # connect filter pushbutton signal to newly created dialog
         openDialog = lambda : filterDlg.exec_()
         _filter.clicked.connect(openDialog)
