@@ -233,3 +233,12 @@ class AlgRunner:
         }
         output = processing.run("native:snappointstogrid", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
+    
+    def runRemoveNull(self, inputLayer, context, feedback = None, outputLyr = 'memory:'):
+        parameters = {
+            'INPUT':inputLayer,
+            'OUTPUT':outputLyr,
+            'NULL_OUTPUT':'memory:'
+        }
+        output = processing.run("native:removenullgeometries", parameters, context = context, feedback = feedback)
+        return output['OUTPUT']
