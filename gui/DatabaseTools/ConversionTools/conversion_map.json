@@ -3,14 +3,22 @@
         {
             "conversionMode": "Mode 2",
             "createDb": "False",
-            "filter": [
-                "cb.hid_trecho_massa_dagua_a",
-                "cb.rel_curva_nivel_l",
-                "cb.rel_ponto_cotado_altimetrico_p",
-                "cb.veg_campo_a",
-                "cb.veg_floresta_a",
-                "public.aux_moldura_a"
-            ],
+            "filter": {
+                "layer": {
+                    "cb.hid_corredeira_l": 2,
+                    "cb.hid_ilha_a": 98,
+                    "cb.hid_trecho_drenagem_l": 1016,
+                    "cb.rel_curva_nivel_l": 1322,
+                    "cb.rel_ponto_cotado_altimetrico_p": 1177,
+                    "cb.veg_campo_a": 4,
+                    "cb.veg_floresta_a": 108,
+                    "public.aux_moldura_a": 1
+                },
+                "layer_filter": {
+                    "cb.hid_corredeira_l": " collect( )"
+                },
+                "spatial_filter": []
+            },
             "outDs": "postgres@localhost:5432"
         }
     ]
