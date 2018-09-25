@@ -138,17 +138,22 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # instantiate a new filter dialog
             filterDlg = GenericDialogLayout()
             # set dialog title to current datasource path
-            title = '{0}: {2} ({1})'.format(self.groupBox.title(), self.connWidget.getDatasourcePath(), \
-                                        self.connWidget.getDatasourceConnectionName())
+            title = '{0}: {1}'.format(self.groupBox.title(), self.connWidget.getDatasourcePath())
             filterDlg.setWindowTitle(title)
             # get layers dict
             layers = self.connWidget.getLayersDict()
+            # get layouts for checkboxes and filter expression widgets
+            checkBoxLayout, filterExpressionLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
+            filterDlg.hLayout.addLayout(checkBoxLayout)
+            filterDlg.hLayout.addLayout(filterExpressionLayout)
             # control dict for each new checkbox added
             widgets = dict()
             for layerName, featCount in layers.items():
                 widgets[layerName] = dict()
                 widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = dict(), dict()
                 widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = self.getNewLayerFilterLayout()
+                # allow filtering option only when layer is marked to be filtered
+                widgets[layerName]['checkBox'].toggled.connect(widgets[layerName]['fieldExpression'].setEnabled)
                 # add a new checkbox widget to layout for each layer found and a field expression widget
                 # widgets[layerName]['checkBox'] = QtWidgets.QCheckBox()
                 # widgets[layerName]['fieldExpression'] = QgsFieldExpressionWidget()
@@ -158,10 +163,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     # in case no filters are added or if layer is among the filtered ones, set it checked
                     widgets[layerName]['checkBox'].setChecked(True)
                 layout = QtWidgets.QHBoxLayout()
-                layout.addWidget(widgets[layerName]['checkBox'])
-                layout.addWidget(widgets[layerName]['fieldExpression'])
-                # filterDlg.layout.addWidget(checkBoxes[layerName])
-                filterDlg.layout.addLayout(layout)
+                checkBoxLayout.addWidget(widgets[layerName]['checkBox'])
+                filterExpressionLayout.addWidget(widgets[layerName]['fieldExpression'])
             self.filterDlg = filterDlg
             # connect cancel push button to close method
             closeAlias = lambda : self.filterDlg.close()
@@ -191,11 +194,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             layerLayout = self.filterDlg.layout.itemAt(widgetIdx).layout()
             checkBox = layerLayout.itemAt(0).widget()
             filterExpression = layerLayout.itemAt(1).widget()
-            print(checkBox.text(), filterExpression)
             if checkBox.isChecked():
                 # filters will be applicable only if layer is supposed to be converted 
                 # label format is: layer_name (feat_count feature's')
-                # for some reason the char '&' got into the labels... i honestly don't know how
+                # for some reason the char '&' got into the labels... i honestly don't know how/why
                 label = checkBox.text().replace('&', '')
                 featCount = label.split(' (')[1].split(' ')[0]
                 layerName = label.split(' (')[0]
