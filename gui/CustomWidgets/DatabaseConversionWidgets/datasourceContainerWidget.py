@@ -64,16 +64,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.filters = {
             'layer' : dict(),
             'layer_filter' : dict(),
-            'spatial_filter' : []
-                # spatial filter dictionaty form
-                # {
-                #     'layer_name' : (str) layer_name,
-                #     'filter_type' : (str) cut, buffer, intersect, etc
-                #     'topological_relation' : (str) rule_string - inside, outside, buffer distance, etc
-                # }
+            'spatial_filter' : dict()
             }
         self.layersComboBox = None
         self.filterExpressionWidget = None
+        self.topologicalTestWidget = None
         self.topologicalRelationWidget = None
 
     def setGroupWidgetName(self, name=None):
@@ -121,19 +116,69 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :param widget: widget to be cleared.
         """
         widget.blockSignals(True)
-        widget.setParent(None)
+        # widget.setParent(None)
         widget = None
+    
+    def getCutRelationParameterWidget(self):
+        """
+        Gets the widget for a Cut spatial filter.
+        :return: (QWidget) the topological relation parameter widget.        
+        """
+        # widget will ask for a cut mode
+        w = QtWidgets.QComboBox()
+        w.addItems([self.tr('Choose a region...'), self.tr('Inside Features'), self.tr('Outside Features')])
+        return w
+        
+    def getBufferRelationParameterWidget(self):
+        """
+        Gets the widget for a Cut spatial filter.
+        :return: (QWidget) the topological relation parameter widget.        
+        """
+        # widget will ask for a double (buffer distance)
+        w = QtWidgets.QDoubleSpinBox()
+        # colocar regras de preenchimento! > 0...
+        return w
+
+    @pyqtSlot(int)
+    def setTopologicalParameter(self, idx):
+        """
+        Sets the widget for capturing the topological relationship comparison parameter.
+        :param idx: current topological operation index.
+        """
+        if self.topologicalRelationWidget:
+            self.filterDlg.outHLayout.removeWidget(self.topologicalRelationWidget)
+            self.topologicalRelationWidget.setParent(None)
+            self.clearWidget(widget=self.topologicalRelationWidget)
+        widgetDict = {
+            self.tr('Cut') : lambda : self.getCutRelationParameterWidget(), 
+            self.tr('Buffer') : lambda : self.getBufferRelationParameterWidget(), 
+            self.tr('Intersects') : lambda : None, # no widget is necessary
+            self.tr('Equals (Geometry)') : lambda : None # no widget is necessary
+        }
+        try:
+            print(idx)
+            if isinstance(idx, int):
+                self.topologicalRelationWidget = widgetDict[self.topologicalTestWidget.currentText()]()
+                print('int', type(self.topologicalRelationWidget))
+            else:
+                self.topologicalRelationWidget = widgetDict[idx]()
+                print('str', type(self.topologicalRelationWidget))
+            if self.topologicalRelationWidget:
+                self.filterDlg.outHLayout.addWidget(self.topologicalRelationWidget)
+        except:
+            return
 
     @pyqtSlot(int)
     def spatialFilterLayerChanged(self, idx):
         """
         Sets up interface according to a spatial filtering layer selection.
         """
-        if idx == self.tr('Select a layer...'):
+        currentLayer = self.layersComboBox.currentText()
+        if currentLayer == self.tr('Select a layer...'):
             return
-        # vLayer = QgsProject.mapLayersByName(currentLayer)
-        # if vLayer:
-        #     self.filterExpressionWidget.setLayer(vLayer)
+        vLayer = QgsProject.instance().mapLayersByName(currentLayer)
+        if vLayer:
+            self.filterExpressionWidget.setLayer(vLayer[0])
 
     def setupSpatialFilterWidgets(self):
         """
@@ -141,7 +186,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         # prepare layer selection combo box
         if self.layersComboBox:
-            self.filterDlg.outHLayout.removeWidget(self.layersComboBox)
+            # self.filterDlg.outHLayout.removeWidget(self.layersComboBox)
             # clear layer selection combo box, if it exists 
             self.clearWidget(widget=self.layersComboBox)
         self.layersComboBox = QtWidgets.QComboBox()
@@ -149,25 +194,28 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.layersComboBox.addItems(layerList)
         # prepare layer feature filter widget
         if self.filterExpressionWidget:
-            self.filterDlg.outHLayout.removeWidget(self.filterExpressionWidget)
+            # self.filterDlg.outHLayout.removeWidget(self.filterExpressionWidget)
             # clear layer selection combo box, if it exists 
             self.clearWidget(widget=self.filterExpressionWidget)
         self.filterExpressionWidget = QgsFieldExpressionWidget()
         # prepare layer selection combo box
-        if self.topologicalRelationWidget:
-            self.filterDlg.outHLayout.removeWidget(self.topologicalRelationWidget)
+        if self.topologicalTestWidget:
+            # self.filterDlg.outHLayout.removeWidget(self.topologicalTestWidget)
             # clear layer selection combo box, if it exists 
-            self.clearWidget(widget=self.topologicalRelationWidget)
-        self.topologicalRelationWidget = QtWidgets.QComboBox()
+            self.clearWidget(widget=self.topologicalTestWidget)
+        self.topologicalTestWidget = QtWidgets.QComboBox()
         # current supported topological relations
-        topoRelList = sorted([self.tr('Cut'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals')])
-        self.topologicalRelationWidget.addItems(topoRelList)
-        layerList = [self.tr('Select a layer...')] + sorted([l.name() for l in iface.mapCanvas().layers()])
+        topoRelList = sorted([self.tr('Cut'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals (Geometry)')])
+        self.topologicalTestWidget.addItems(topoRelList)
+        # topological parameter is adjusted accordingly chosen topological relation
+        self.topologicalTestWidget.currentIndexChanged.connect(self.setTopologicalParameter)
+        # first execution does not activate signal, so use it manually
         # ADD TOPOLOGICAL PARAMETER WIDGET!
         self.layersComboBox.currentIndexChanged.connect(self.spatialFilterLayerChanged)
         self.filterDlg.outHLayout.addWidget(self.layersComboBox)
         self.filterDlg.outHLayout.addWidget(self.filterExpressionWidget)
-        self.filterDlg.outHLayout.addWidget(self.topologicalRelationWidget)
+        self.filterDlg.outHLayout.addWidget(self.topologicalTestWidget)
+        self.setTopologicalParameter(topoRelList[0])
 
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
@@ -230,6 +278,27 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # for last, open dialog            
             self.filterDlg.exec_()
 
+    def getSpatialFilterInformation(self):
+        """
+        Retrieves spatial filter information from GUI.
+        :return: (tuple) spatial filter information (reference layer, feature filter for that layer,
+                 topology comparison ,topology relation).
+        """
+        layer, spatialExpression, topologicalComparison, topologyParameter = '', '', '', ''
+        if self.layersComboBox and self.layersComboBox.currentText() != self.tr('Select a layer...'):
+            layer = self.layersComboBox and self.layersComboBox.currentText()
+        if self.filterExpressionWidget:
+            spatialExpression = self.filterExpressionWidget.currentText()
+        if self.topologicalTestWidget:
+            topologicalComparison = self.topologicalTestWidget.currentText()
+        if self.topologicalRelationWidget:
+            if isinstance(self.topologicalRelationWidget, QtWidgets.QDoubleSpinBox):
+                topologyParameter = self.topologicalRelationWidget.value()
+            if isinstance(self.topologicalRelationWidget, QtWidgets.QComboBox):
+                topologyParameter = self.topologicalRelationWidget.currentText()
+        return layer, spatialExpression, topologicalComparison, topologyParameter
+
+
     def resetLayerFilters(self):
         """
         Prepares filter dialog for current dataset in a given row.
@@ -238,10 +307,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.filters = {
             'layer' : dict(),
             'layer_filter' : dict(),
-            'spatial_filter' : []
+            'spatial_filter' : dict()
                 # spatial filter dictionaty form
                 # {
-                #     'layer_name' : (str) layer_name,
+                #     'layer_name' : (str) reference layer_name,
+                #     'layer_filter' : (str) expression for filtering the reference layer
                 #     'filter_type' : (str) cut, buffer, intersect, etc
                 #     'topological_relation' : (str) rule_string - inside, outside, buffer distance, etc
                 # }
@@ -265,6 +335,16 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 if expression:
                     # fill layer features filter expression info only if an expression is found
                     self.filters['layer_filter'].update({ layerName : expression })
+        # fill spatial filter info
+        layer, spatialExpression, topologicalComparison, topologyParameter = self.getSpatialFilterInformation()
+        if layer:
+            # there's only a spatial filter if a layer is selected for it
+            self.filters['spatial_filter'] = {
+                'layer_name' : layer,
+                'layer_filter' : spatialExpression,
+                'filter_type' : topologicalComparison,
+                'topological_relation' : topologyParameter
+            }
         # advise about filtering settings change
         self.filterSettingsChanged.emit(self)
         self.filterDlg.close()
