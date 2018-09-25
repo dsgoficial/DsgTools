@@ -324,11 +324,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
-            title = inDs.split(':')[0]
+            title = inDs.split(':')[0] # get input group box title (widget's dict key)
+            inputDatasourcePath =  self.inDs[title].connWidget.getDatasourcePath()
             inputFilteredLayers = [ln.split(' (')[0] for ln in self.inDs[title].filters['layer']]
             rowMapping['filter'] = inputFilteredLayers # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
             # replace group title to datasource path
-            title = outDs.currentText().split(':')[0]
+            title = outDs.currentText().split(':')[0] # get output group box title (widget's dict key)
             # retrieve widget's datasource path
             outputDsPath = self.outDs[title].connWidget.getDatasourcePath()
             rowMapping['outDs'] = outputDsPath # still to decide what to fill up in here
@@ -336,11 +337,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
             rowMapping['conversionMode'] = conversionMode
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
-            # more than once, map it all to the same dict entry and control layer/feature flux through filter entry 
-            if inDs not in conversionMap:
-                conversionMap[inDs] = [rowMapping]
+            # more than once, map it all to the same dict entry and control layer/feature flux through filter entry
+            if inputDatasourcePath not in conversionMap:
+                # setting the conversion map key to input datasource path will secure that conversions using the same ds
+                # as data origin will make it be read only once
+                conversionMap[inputDatasourcePath] = [rowMapping]
             else:
-                conversionMap[inDs].append(rowMapping)
+                conversionMap[inputDatasourcePath].append(rowMapping)
         return conversionMap
 
     def startConversion(self):
@@ -350,7 +353,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         conversionMap = self.createConversionMap()
         convMap = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
         with open(convMap, 'w') as fp:
-            json.dump(conversionMap, fp)
+            json.dump(conversionMap, fp, indent=4, sort_keys=True)
 
     def initGui(self):
         """

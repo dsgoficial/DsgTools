@@ -65,8 +65,8 @@ class PostgisWidget(AbstractSelectionWidget):
         """
         abstractDb = self.getDatasource()
         if abstractDb:
-            host, port, _, _ = abstractDb.getDatabaseParameters()
-            return '{0}:{1}'.format(host, port)
+            host, port, username, _ = abstractDb.getDatabaseParameters()
+            return '{2}@{0}:{1}'.format(host, port, username)
         return ''
 
     def setDatasource(self, newDatasource):
