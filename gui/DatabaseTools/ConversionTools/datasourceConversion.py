@@ -51,11 +51,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.manager = manager
         self.parentMenu = parentMenu
         self.parentButton = None
+        # fill output datasources including new datasources options
+        self.datasourceManagementWidgetOut.fillSupportedDatasources(inputPage=False)
         self.connectToolSignals()
         # initiate widget dicts
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
-
+        
     def connectToolSignals(self):
         """
         Connects all tool generic signals.

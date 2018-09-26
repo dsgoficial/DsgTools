@@ -84,11 +84,24 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # add multiple datasources
         self.addMultiSourcePushButton.clicked.connect(self.addMultiDatasourceWidgets)
 
-    def fillSupportedDatasources(self):
+    def fillSupportedDatasources(self, inputPage=True):
         """
         Fills the datasource selection combobox with all supported drivers.
+        :param inputPage: (bool) indicates if this object works as an input page.
         """
-        self.datasourceComboBox.addItems(list(self.sourceNameDict.keys()))
+        # clear contents
+        self.datasourceComboBox.clear()
+        if inputPage:
+            # if it's an input page, items should not include the option for a new datasource
+            items = []
+            for ds in self.sourceNameDict:
+                if self.tr('new') in ds:
+                    continue
+                else:
+                    items.append(ds)
+        else:
+            items = list(self.sourceNameDict.keys())
+        self.datasourceComboBox.addItems(items)
 
     def addElementToDict(self, k, e, d):
         """
