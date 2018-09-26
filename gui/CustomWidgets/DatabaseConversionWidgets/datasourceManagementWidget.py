@@ -124,8 +124,10 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
-                # connect
+                # connect datasource change signal to this class datasource signal change
                 w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+                # connect datasource change signal to its filters reset method
+                w.connWidget.selectionWidget.dbChanged.connect(w.clearFilters)
                 # connect filtering settings changed signal to this class signal on filtering settings change
                 w.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
                 # add new driver container to GUI 

@@ -260,6 +260,56 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setItem(row, col, newItem)
         return newItem
 
+    def getSpatialFilterSummary(self, spatialFilterDict):
+        """
+        Gets the spatial filter contents, if any, and set up widgets for GUI population.
+        :param spatialFilterDict: (dict) dictionary containing spatial filter information. 
+        :return: (tuple-of-QWidgets) widgets containing spatial filter, if exists.
+        """
+        # spatial dict format:
+        # self.filters['spatial_filter'] = {
+        #         'layer_name' : (str) layer,
+        #         'layer_filter' : (str) spatialExpression,
+        #         'filter_type' : (str) topologicalComparison,
+        #         'topological_relation' : (str) topologyParameter
+        #     }
+        layerNameWidget, layerFilterWidget, topologyTestWidget, topologyParameter = None, None, None, None
+        if spatialFilterDict:
+            if spatialFilterDict['layer_name']:
+                layerNameWidget = QtWidgets.QLineEdit()
+                layerNameWidget.setText(spatialFilterDict['layer_name'])
+            if spatialFilterDict['layer_filter']:
+                layerFilterWidget = QtWidgets.QLineEdit()
+                layerFilterWidget.setText(spatialFilterDict['layer_filter'])
+            if spatialFilterDict['filter_type']:
+                topologyTestWidget = QtWidgets.QLineEdit()
+                topologyTestWidget.setText(spatialFilterDict['filter_type'])
+            if spatialFilterDict['topological_relation']:
+                topologyParameter = QtWidgets.QLineEdit()
+                topologyParameter.setText(str(spatialFilterDict['topological_relation']))
+        return layerNameWidget, layerFilterWidget, topologyTestWidget, topologyParameter
+
+    def setupSpatialSummaryGui(self, spatialFilterDict, filterDlg):
+        """
+        Sets up the spatial filter contents summary GUI into filter dialog.
+        :param spatialFilterDict: (dict) dictionary containing spatial filter information. 
+        :para filterDlg: (QDialog) filter dialog on which spatial filter summary is setup.
+        """
+        # label list must have the same order as the output from spatial summary
+        labelList = [
+            self.tr('Reference Layer'),
+            self.tr('Layer Filtering Exp.'),
+            self.tr('Topological Test'),
+            self.tr('Topology Relation')
+        ]
+        for idx, w in enumerate(self.getSpatialFilterSummary(spatialFilterDict=spatialFilterDict)):
+            if w:
+                # add label before it
+                lW = QtWidgets.QLabel(labelList[idx])
+                filterDlg.outHLayout.addWidget(lW)
+                w.setEnabled(False)
+                filterDlg.outHLayout.addWidget(w)
+
     def prepareRowFilterDialog(self, row):
         """
         Prepares filter dialog for current dataset in a given row.
@@ -273,14 +323,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         filterDlg = GenericDialogLayout()
         # prepare its own GUI
         filterDlg.hideButtons() # hide Ok and Cancel
+        # filterDlg.horizontalSpacer.hide() # no need for the horizontal spacer if no buttons are displayed
         title = '{0}: {2} ({1})'.format(inWidget.groupBox.title(), inWidget.connWidget.getDatasourcePath(), \
                                      inWidget.connWidget.getDatasourceConnectionName())
         # set dialog title to current datasource path
         filterDlg.setWindowTitle(title)
         # get layers dict
         layers = inWidget.connWidget.getLayersDict()
-        # control dict for each new checkbox added
-        checkBoxes = dict()
         # get layouts for checkboxes and filter expression widgets
         checkBoxLayout, filterExpressionLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
         filterDlg.hLayout.addLayout(checkBoxLayout)
@@ -310,6 +359,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 # those are only for confirmation, so it should be disabled
                 checkBoxLayout.addWidget(widgets[layerName]['checkbox'])
                 filterExpressionLayout.addWidget(widgets[layerName]['filterexpression'])
+        # setup spatial filtering settings
+        self.setupSpatialSummaryGui(spatialFilterDict=filterDict['spatial_filter'], filterDlg=filterDlg)
         # connect filter pushbutton signal to newly created dialog
         openDialog = lambda : filterDlg.exec_()
         _filter.clicked.connect(openDialog)
