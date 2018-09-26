@@ -66,6 +66,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             'layer_filter' : dict(),
             'spatial_filter' : dict()
             }
+        self.filterPushButton.setToolTip(self.tr('Click to set datasource filter options'))
+        self.removePushButton.setToolTip(self.tr('Remove this datasource widget'))
         self.layersComboBox = None
         self.filterExpressionWidget = None
         self.topologicalTestWidget = None
