@@ -70,8 +70,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         self.fillSupportedDatasources()
         # keep track of all (in)active widgets on input/output GUI
         self.activeDrivers = dict()
-        self.addSourcePushButton.setToolTip(self.tr('Add single datasource.'))
-        self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource.'))
+        self.addSourcePushButton.setToolTip(self.tr('Add single datasource'))
+        self.addMultiSourcePushButton.setToolTip(self.tr('Add multiple datasource'))
         # centralize all tool signals in order to keep track of all non-standard signals used
         self.connectClassSignals()
 
