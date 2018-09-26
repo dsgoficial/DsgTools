@@ -115,10 +115,14 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Clear a widget before in order to reassign it.
         :param widget: widget to be cleared.
         """
-        widget.blockSignals(True)
-        # widget.setParent(None)
-        widget = None
-    
+        try:
+            widget.blockSignals(True)
+            # widget.setParent(None)
+            widget = None
+        except:
+            # in case the python wrapper for a QgsFilterExpressionWidget is deleted before the object
+            widget = None
+
     def getCutRelationParameterWidget(self):
         """
         Gets the widget for a Cut spatial filter.
@@ -146,8 +150,12 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :param idx: current topological operation index.
         """
         if self.topologicalRelationWidget:
-            self.filterDlg.outHLayout.removeWidget(self.topologicalRelationWidget)
-            self.topologicalRelationWidget.setParent(None)
+            try:
+                self.filterDlg.outHLayout.removeWidget(self.topologicalRelationWidget)
+                self.topologicalRelationWidget.setParent(None)
+            except:
+                pass
+                # problems with a qgis python wrappers for its widgets... 
             self.clearWidget(widget=self.topologicalRelationWidget)
         widgetDict = {
             self.tr('Cut') : lambda : self.getCutRelationParameterWidget(), 
@@ -156,13 +164,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.tr('Equals (Geometry)') : lambda : None # no widget is necessary
         }
         try:
-            print(idx)
             if isinstance(idx, int):
                 self.topologicalRelationWidget = widgetDict[self.topologicalTestWidget.currentText()]()
-                print('int', type(self.topologicalRelationWidget))
             else:
                 self.topologicalRelationWidget = widgetDict[idx]()
-                print('str', type(self.topologicalRelationWidget))
             if self.topologicalRelationWidget:
                 self.filterDlg.outHLayout.addWidget(self.topologicalRelationWidget)
         except:
@@ -210,12 +215,29 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # topological parameter is adjusted accordingly chosen topological relation
         self.topologicalTestWidget.currentIndexChanged.connect(self.setTopologicalParameter)
         # first execution does not activate signal, so use it manually
-        # ADD TOPOLOGICAL PARAMETER WIDGET!
         self.layersComboBox.currentIndexChanged.connect(self.spatialFilterLayerChanged)
-        self.filterDlg.outHLayout.addWidget(self.layersComboBox)
-        self.filterDlg.outHLayout.addWidget(self.filterExpressionWidget)
-        self.filterDlg.outHLayout.addWidget(self.topologicalTestWidget)
-        self.setTopologicalParameter(topoRelList[0])
+        if self.filterDlg:
+            self.filterDlg.outHLayout.addWidget(self.layersComboBox)
+            self.filterDlg.outHLayout.addWidget(self.filterExpressionWidget)
+            self.filterDlg.outHLayout.addWidget(self.topologicalTestWidget)
+            self.setTopologicalParameter(topoRelList[0])
+
+    def fillSpatialFilterInformation(self):
+        """
+        Fills the filter information set to its GUI.
+        """
+        if self.filters['spatial_filter']:
+            # get index for combo box item that has the layer
+            self.layersComboBox.setCurrentText(self.filters['spatial_filter']['layer_name'])
+            self.filterExpressionWidget.setExpression(self.filters['spatial_filter']['layer_filter'])
+            # get index for combo box item that has the topological test
+            self.topologicalTestWidget.setCurrentText(self.filters['spatial_filter']['filter_type'])
+            if isinstance(self.topologicalRelationWidget, QtWidgets.QDoubleSpinBox):
+                self.topologicalRelationWidget.setValue(self.filters['spatial_filter']['topological_relation'])
+            if isinstance(self.topologicalRelationWidget, QtWidgets.QComboBox):
+                # get index for combo box item that has the topological relationship
+                # idx = self.topologicalRelationWidget.findText()
+                self.topologicalRelationWidget.setCurrentText(self.filters['spatial_filter']['topological_relation'])
 
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
@@ -270,6 +292,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.filterDlg = filterDlg
             # setup spatial filter part
             self.setupSpatialFilterWidgets()
+            self.fillSpatialFilterInformation()
             # connect cancel push button to close method
             closeAlias = lambda : self.filterDlg.close()
             self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
@@ -284,26 +307,24 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :return: (tuple) spatial filter information (reference layer, feature filter for that layer,
                  topology comparison ,topology relation).
         """
-        layer, spatialExpression, topologicalComparison, topologyParameter = '', '', '', ''
+        layer, spatialExpression, topologicalTest, topologyParameter = '', '', '', ''
         if self.layersComboBox and self.layersComboBox.currentText() != self.tr('Select a layer...'):
             layer = self.layersComboBox and self.layersComboBox.currentText()
         if self.filterExpressionWidget:
             spatialExpression = self.filterExpressionWidget.currentText()
         if self.topologicalTestWidget:
-            topologicalComparison = self.topologicalTestWidget.currentText()
+            topologicalTest = self.topologicalTestWidget.currentText()
         if self.topologicalRelationWidget:
             if isinstance(self.topologicalRelationWidget, QtWidgets.QDoubleSpinBox):
                 topologyParameter = self.topologicalRelationWidget.value()
             if isinstance(self.topologicalRelationWidget, QtWidgets.QComboBox):
                 topologyParameter = self.topologicalRelationWidget.currentText()
-        return layer, spatialExpression, topologicalComparison, topologyParameter
+        return layer, spatialExpression, topologicalTest, topologyParameter
 
-
-    def resetLayerFilters(self):
+    def clearFilters(self):
         """
-        Prepares filter dialog for current dataset in a given row.
+        Clear filled filters.
         """
-        # reset filters already set
         self.filters = {
             'layer' : dict(),
             'layer_filter' : dict(),
@@ -316,6 +337,13 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 #     'topological_relation' : (str) rule_string - inside, outside, buffer distance, etc
                 # }
             }
+
+    def resetLayerFilters(self):
+        """
+        Prepares filter dialog for current dataset in a given row.
+        """
+        # reset filters already set
+        self.clearFilters()
         # retrieve layouts
         checkBoxLayout = self.filterDlg.hLayout.itemAt(0).layout()
         filterExpressionLayout = self.filterDlg.hLayout.itemAt(1).layout()
@@ -336,13 +364,13 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     # fill layer features filter expression info only if an expression is found
                     self.filters['layer_filter'].update({ layerName : expression })
         # fill spatial filter info
-        layer, spatialExpression, topologicalComparison, topologyParameter = self.getSpatialFilterInformation()
+        layer, spatialExpression, topologicalTest, topologyParameter = self.getSpatialFilterInformation()
         if layer:
             # there's only a spatial filter if a layer is selected for it
             self.filters['spatial_filter'] = {
                 'layer_name' : layer,
                 'layer_filter' : spatialExpression,
-                'filter_type' : topologicalComparison,
+                'filter_type' : topologicalTest,
                 'topological_relation' : topologyParameter
             }
         # advise about filtering settings change
