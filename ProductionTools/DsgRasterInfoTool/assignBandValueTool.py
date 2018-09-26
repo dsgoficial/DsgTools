@@ -297,23 +297,24 @@ class AssignBandValueTool(QgsMapTool):
         """
         
         """
-        rasterCrs = rasterLayer.crs()
-        if fromCanvas:
-            self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
-        else:
-            mousePosGeom = QgsGeometry(mousePosGeom)
-            self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
-        # isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType())) # tem que ver se serve pra QgsGeometry
-        mousePos = mousePosGeom.asMultiPoint()[0] if mousePosGeom.isMultipart() else mousePosGeom.asPoint()
-        # identify pixel(s) information
-        i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
-        if i.isValid():
-            value = i.results().values()[0]
-            if value:
-                value = int(value) if self.decimals == 0 else round(value, self.decimals)
-            return value
-        else:
-            return None
+        rasterCrs = rasterLayer.crs() if rasterLayer else False
+        if rasterCrs:
+            if fromCanvas:
+                self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.mapRenderer().destinationCrs())
+            else:
+                mousePosGeom = QgsGeometry(mousePosGeom)
+                self.dsgGeometryHandler.reprojectFeature(mousePosGeom, rasterCrs, self.canvas.currentLayer().crs())
+            # isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType())) # tem que ver se serve pra QgsGeometry
+            mousePos = mousePosGeom.asMultiPoint()[0] if mousePosGeom.isMultipart() else mousePosGeom.asPoint()
+            # identify pixel(s) information
+            i = rasterLayer.dataProvider().identify( mousePos, QgsRaster.IdentifyFormatValue )
+            if i.isValid():
+                value = i.results().values()[0]
+                if value:
+                    value = int(value) if self.decimals == 0 else round(value, self.decimals)
+                return value
+            else:
+                return None
     
     def getPixelValueFromPointDict(self, pointDict, rasterLayer):
         """
