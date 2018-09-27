@@ -21,3 +21,38 @@
  *                                                                         *
  ***************************************************************************/
 """
+
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QWidget
+
+from .abstractMultiDsSelectorWidget import AbstractMultiDsSelectorWidget
+from DsgTools.core.dsgEnums import DsgEnums
+import os
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'multiPostgisSelectorWidget.ui'))
+
+class MultiPostgisSelector(QWidget, FORM_CLASS):
+    """
+    Class designed to manipulate just the driver selection behavior.
+    """
+    def __init__(self, parent=None):
+        """
+        Class constructor.
+        """
+        super(MultiPostgisSelector, self).__init__(parent)
+        self.setupUi(self)
+
+class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
+    """
+    Class designed to integrate the datasource selector widget to the abstract multi datasource selector widget.
+    """
+    def __init__(self, parent=None):
+        super(MultiPostgisSelectorWidget, self).__init__(parent=parent)
+        self.source = DsgEnums.PostGIS
+
+    def getMultiDsWidget(self, parent=None):
+        """
+        parents class reimplementation to retrieve widget.
+        :param parent: (QWidget) widget parent to new multi datasource widget.
+        """
+        return MultiPostgisSelector(parent=parent)

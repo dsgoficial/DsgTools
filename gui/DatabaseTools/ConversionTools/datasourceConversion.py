@@ -422,7 +422,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
 
-    def createConversionMap(self):
+    def getConversionMap(self):
         """
         Creates the conversion map JSON based on table widget contents.
         :return: (dict) the conversion map. (SPECIFY FORMAT!)
@@ -460,17 +460,17 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
 
     def getParameterDict(self):
         """
-        Gets the conversion parameter dict. Alias for createConversionMap().
+        Gets the conversion parameter dict. Alias for getConversionMap().
         :return: (dict) the conversion map. (SPECIFY FORMAT!)
         """
-        return self.createConversionMap()
+        return self.getConversionMap()
 
     def exportConversionJson(self, filepath=None):
         """
         Exports conversion mapping structure to a JSON file.
         :param filepath: (str) file path for output JSON mapping file.
         """
-        conversionMap = self.createConversionMap()
+        conversionMap = self.getConversionMap()
         if not filepath:
             filepath = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
         with open(filepath, 'w') as fp:
@@ -509,7 +509,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Starts the conversion process.
         """
         # get conversion map
-        conversionMap = self.createConversionMap()
+        conversionMap = self.getConversionMap()
         self.exportConversionJson()
         # validate interface parameters
         self.validate()

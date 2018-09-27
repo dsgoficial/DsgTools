@@ -27,6 +27,7 @@ from qgis.PyQt.QtCore import pyqtSignal
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceContainerWidget import DatasourceContainerWidget
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets.multiDsWidgetFactory import MultiDsWidgetFactory
 
 import os
 
@@ -161,7 +162,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         actionDict = {
             DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
-            DsgEnums.PostGIS : lambda : print('NADA A FAZER AGORA'),
+            DsgEnums.PostGIS : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS).exec_(),
             DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
             DsgEnums.SpatiaLite : lambda : self.addMultiFile(extensionFilter='SpatiaLite Databases (*.sqlite)'),
             DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),

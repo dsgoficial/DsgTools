@@ -35,9 +35,9 @@ class MultiDsWidgetFactory:
         :param driver: (int) driver enum. 
         """
         dialogDict = {
-            DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget(),
-            DsgEnums.SpatiaLite : lambda : MultiSpatiaLiteSelectorWidget(),
-            DsgEnums.Shapefile : lambda : MultiShapefileSelectorWidget(),
-            DsgEnums.Geopackage : lambda : MultiGeopackageSelectorWidget()
+            DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget()
+            # DsgEnums.SpatiaLite : lambda : MultiSpatiaLiteSelectorWidget(),
+            # DsgEnums.Shapefile : lambda : MultiShapefileSelectorWidget(),
+            # DsgEnums.Geopackage : lambda : MultiGeopackageSelectorWidget()
         }
-        return dialogDict[driver]
+        return dialogDict[driver]()
