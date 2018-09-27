@@ -126,7 +126,9 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         Loads the selected database
         """
         try:
-            if self.serverAbstractDb and idx > 0:
+            if self.abstractDb is not None:
+                self.closeDatabase()
+            if self.serverAbstractDb is not None and idx > 0:
                 if not self.instantiateAbstractDb:
                     self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()
