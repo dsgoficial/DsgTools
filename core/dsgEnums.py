@@ -29,3 +29,5 @@ class DsgEnums(object):
     ProcessName, ClassName = list(range(2))
     #property enum
     PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = list(range(6))
+    # datasource selection widgets enum
+    NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite, Shapefile, NewShapefile, Geopackage, NewGeopackage = list(range(9))
