@@ -22,41 +22,67 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtWidgets, uic
+from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QDialog 
 
-import .abstractMultiDsSelectorWidget import abstractMultiDsSelectorWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
-FORM_CLASS, _ = uic.load(os.path.join(os.path.dirname(__file__), 'abstractMultiDsSelectorWidget.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'abstractMultiDsSelectorWidget.ui'))
 
 class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
     """
     Class containing minimum structure for multiple datasource selection.
     Particularities from each driver are settled within its own class (child from this). 
     """
-    def __init__(self, parent=None):
+    def __init__(self, source, parent=None):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to new instance.
         """
         super(AbstractMultiDsSelectorWidget, self).__init__(parent)
         self.setupUi(self)
+        self.source = source
         if not self.createDbCheckBox.isChecked():
             self.edgvComboBox.hide()
+        self.clearMultiDsDict() # instantiate a clear multiple ds input map inclusion.
+        self.fillDriversVersion(isNew=self.createDbCheckBox.isChecked())
+        self.fillEdgvVersion()
+
+    def clearMultiDsDict(self):
+        """
+        Clears multiple datasource input conversion map.
+        """
         self.multiDsDict = {
             'databases' : [],
-            'autoMapOption' : {
+            'autoMapOptions' : {
                 'createDb' : self.createDbCheckBox.isChecked(),
                 'outDriver' : DsgEnums.NoDriver,
                 'outEdgv' : '',
                 'mapType' : ''
             }
         }
-        self.fillDriversVersion()
-        self.fillEdgvVersion()
+
+    def clearAutoMapDict(self):
+        """
+        Clears automatic mapping dict.
+        """
+        self.multiDsDict['autoMapOptions'] = {
+                'createDb' : self.createDbCheckBox.isChecked(),
+                'outDriver' : DsgEnums.NoDriver,
+                'outEdgv' : '',
+                'mapType' : ''
+            }
+
+    def resetAutoMapDict(self):
+        """
+        Resets automatic mapping dict to current widgets' contents.
+        """
+        self.on_createDbCheckBox_toggled(isChecked=self.createDbCheckBox.isChecked())
+        self.on_driverComboBox_currentIndexChanged()
+        self.on_edgvComboBox_currentIndexChanged()
 
     def addWidgetToLayout(self, widget):
         """
@@ -71,20 +97,42 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         Update output EDGV version with a new value.
         :param edgv: (str) new edgv version. 
         """
-        self.multiDsDict['autoMapOptions']['outEdgv'] = edgv
+        self.multiDsDict['autoMapOptions']['outEdgv'] = edgv if edgv != self.tr('EDGV Version...') else ''
+
+    def disableAutoMap(self, status):
+        """
+        Set all auto map related widget enabled status.
+        """
+        self.createDbCheckBox.setEnabled(status)
+        self.driverComboBox.setEnabled(status)
+        self.edgvComboBox.setEnabled(status)
+        if status:
+            self.resetAutoMapDict()
+        else:
+            self.clearAutoMapDict()
+
+    def updateMapType(self, mapType=''):
+        """
+        Update conversion mapping type with a new value. If no map is selected, all automatic 
+        mapping related widgets will be disabled.
+        :param mapType: (str) new mapping type. 
+        """
+        self.multiDsDict['autoMapOptions']['mapType'] = mapType
+        self.disableAutoMap(bool(mapType))
 
     def updateOutDriver(self, driver):
         """
         Update output EDGV version with a new value.
         :param edgv: (str) output driver enum. 
         """
-        driversDict = [
+        driversDict = {
+            '' : DsgEnums.NoDriver,
             self.tr('Select a driver...') : DsgEnums.NoDriver,
             'PostGIS' : DsgEnums.PostGIS,
             'SpatiaLite' : DsgEnums.SpatiaLite,
             'Shapefile' : DsgEnums.Shapefile,
             'Geopackage' : DsgEnums.Geopackage
-        ]
+        }
         self.multiDsDict['autoMapOptions']['outDriver'] = driversDict[driver]
 
     def fillEdgvVersion(self):
@@ -124,35 +172,39 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         edgv = self.edgvComboBox.currentText() if isChecked else ''
         self.updateEdgvOut(edgv=edgv)
         # control edgv widget enabled status
-        if isChecked:
+        if not isChecked:
             self.edgvComboBox.hide()
         else:
             self.edgvComboBox.show()
 
     @pyqtSlot(int)
-    def on_driverComboBox_currentIndexChanged(self, idx):
+    def on_driverComboBox_currentIndexChanged(self):
         """
         Updates output driver info.
-        :param idx: output driver combo box current index. 
         """
-        currentText = self.edgvComboBox.currentText()
+        currentText = self.driverComboBox.currentText()
         self.updateOutDriver(driver=currentText)
 
     @pyqtSlot(int)
-    def on_edgvComboBox_currentIndexChanged(self, idx):
+    def on_edgvComboBox_currentIndexChanged(self):
         """
         Updates output driver info.
-        :param idx: output EDGV combo box current index. 
         """
         currentText = self.edgvComboBox.currentText()
         edgv = currentText if currentText != self.tr('EDGV Version...') or self.createDbCheckBox.isChecked() else ''
         self.updateEdgvOut(edgv=edgv)
 
-    @pyqtSlot()
-    @pyqtSlot()
-    @pyqtSlot()
+    @pyqtSlot(bool, name='on_noMapRadioButton_toggled')
+    @pyqtSlot(bool, name='on_singleRadioButton_toggled')
+    @pyqtSlot(bool, name='on_consolidateRadioButton_toggled')
     def radioButtonChanged(self):
         """
-        Defines
+        Updates type of automatic conversion
         """
-        pass
+        buttonNameDict = {
+            'noMapRadioButton' : '',
+            'singleRadioButton' : 'single',
+            'consolidateRadioButton' : 'consolidate'
+        }
+        buttonName = self.sender().objectName()
+        self.updateMapType(mapType=buttonNameDict[buttonName])
