@@ -37,19 +37,30 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
     Class containing minimum structure for multiple datasource selection.
     Particularities from each driver are settled within its own class (child from this). 
     """
-    def __init__(self, source, parent=None):
+    def __init__(self, parent=None):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to new instance.
         """
         super(AbstractMultiDsSelectorWidget, self).__init__(parent)
         self.setupUi(self)
-        self.source = source
+        self.widget = self.getMultiDsWidget()
+        self.source = -1 # no source is selected
+        if self.widget:
+            self.addInputWidgetToLayout(widget=self.widget)
         if not self.createDbCheckBox.isChecked():
             self.edgvComboBox.hide()
+            self.mQgsProjectionSelectionWidget.hide()
         self.clearMultiDsDict() # instantiate a clear multiple ds input map inclusion.
         self.fillDriversVersion(isNew=self.createDbCheckBox.isChecked())
         self.fillEdgvVersion()
+
+    def getMultiDsWidget(self, parent=None):
+        """
+        Gets the multiple datasource selection widget
+        :param parent: (QWidget) widget parent to new multi datasource widget.
+        """
+        # to be reimplemented into child class
 
     def clearMultiDsDict(self):
         """
@@ -84,13 +95,21 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         self.on_driverComboBox_currentIndexChanged()
         self.on_edgvComboBox_currentIndexChanged()
 
-    def addWidgetToLayout(self, widget):
+    def addInputWidgetToLayout(self, widget):
         """
-        Adds a given widget to (0,0) position of this dialog's grid layout.
+        Adds a given widget to input layout (left side of upper part).
         :param widget: (QWidget) widget to be added to grid.
         """
         # useful for adding its own widget without much thinking...
-        self.driverGridLayout.addWidget(widget, 0, 0)
+        self.inputLayout.addWidget(widget)
+
+    def addOutputWidgetToLayout(self, widget):
+        """
+        Adds a given widget to output layout (right side of upper part).
+        :param widget: (QWidget) widget to be added to grid.
+        """
+        # useful for adding its own widget without much thinking...
+        self.outputLayout.addWidget(widget)
 
     def updateEdgvOut(self, edgv=''):
         """
@@ -106,6 +125,7 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         self.createDbCheckBox.setEnabled(status)
         self.driverComboBox.setEnabled(status)
         self.edgvComboBox.setEnabled(status)
+        self.mQgsProjectionSelectionWidget.setEnabled(status)
         if status:
             self.resetAutoMapDict()
         else:
@@ -174,8 +194,10 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         # control edgv widget enabled status
         if not isChecked:
             self.edgvComboBox.hide()
+            self.mQgsProjectionSelectionWidget.hide()
         else:
             self.edgvComboBox.show()
+            self.mQgsProjectionSelectionWidget.show()
 
     @pyqtSlot(int)
     def on_driverComboBox_currentIndexChanged(self):
@@ -208,3 +230,17 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         }
         buttonName = self.sender().objectName()
         self.updateMapType(mapType=buttonNameDict[buttonName])
+
+    def validate(self):
+        """
+        Validates contents information.
+        :return: (bool) whether contents are a valid selection.
+        """
+        pass
+
+    @pyqtSlot(bool)
+    def on_okPushButton_clicked(self):
+        """
+        Wraps GUI contents up, validates it and, if valid, pass information through to next conversion step.
+        """
+        self.validate()
