@@ -99,6 +99,19 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 returnDict[w.groupBox.title()] = w
         return returnDict
 
+    def replicateFirstRowContent(self, col):
+        """
+        Replicates first row value to all the other rows from a selected column.
+        :param col: (int) column to have its first row replicated.
+        """
+        if col in [DatasourceConversion.OutDs, DatasourceConversion.ConversionMode]:
+            for row in range(self.tableWidget.rowCount()):
+                if row == 0:
+                    # if it's first row, need to capture cell value
+                    value = self.getRowContents(row=row)[col].currentText()
+                else:
+                    self.getRowContents(row=row)[col].setCurrentText(value)
+
     def resetTable(self, enabled=False):
         """
         Resets table to initial state.
@@ -125,6 +138,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         }
         # make the order always follow as presented at enum
         self.tableWidget.setHorizontalHeaderLabels(list([headerDict[i] for i in range(DatasourceConversion.COLUMN_COUNT)]))
+        # connect header double click signal to first row contents replicate to the other rows
+        self.tableWidget.horizontalHeader().sectionDoubleClicked.connect(self.replicateFirstRowContent)
 
     def getRowContents(self, row):
         """
@@ -137,7 +152,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         inEdgv = self.tableWidget.item(row, DatasourceConversion.InEdgv).text()
         outEdgvItem = self.tableWidget.item(row, DatasourceConversion.OutEdgv)
         outEdgv = outEdgvItem.text() if outEdgvItem else ''
-        conversionMode = self.tableWidget.cellWidget(row, DatasourceConversion.ConversionMode).currentText()
+        conversionMode = self.tableWidget.cellWidget(row, DatasourceConversion.ConversionMode)
         # output datasource, input and output SRC and filter status are always a QWidget
         outDs = self.tableWidget.cellWidget(row, DatasourceConversion.OutDs)
         # however, output info might not yet have been filled
@@ -197,7 +212,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         # add an empty item to it
         self.addItemToTable(col=DatasourceConversion.OutEdgv, row=row, isEditable=False)
-        outCrsPb = self.getRowContents(row=row)[6]
+        outCrsPb = self.getRowContents(row=row)[DatasourceConversion.outCrs]
         if outCrsPb:
             outCrsPb.setEnabled(False)
 
@@ -236,7 +251,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # if is not controlled, clear line
             return []
 
-    def getTableItem(self, text='', isEditable=True):
+    def getNewTableItem(self, text='', isEditable=True):
         """
         Gets an item to be added to the table that may be set to not be editable.
         :param text: (str) name to be exposed on table cell.
@@ -258,7 +273,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param isEditable: (bool) boolean indicating whether cell content should be editable.
         :return: (QTableWidgetItem) item added.
         """
-        newItem = self.getTableItem(text=text, isEditable=isEditable)
+        newItem = self.getNewTableItem(text=text, isEditable=isEditable)
         self.tableWidget.setItem(row, col, newItem)
         return newItem
 
@@ -447,7 +462,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['filter'] = inputFilteredLayers # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
             # parameter indicating whether it is a new datasource
             rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
-            rowMapping['conversionMode'] = conversionMode
+            rowMapping['conversionMode'] = conversionMode.currentText()
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
             # more than once, map it all to the same dict entry and control layer/feature flux through filter entry
             if inputDatasourceId not in conversionMap:
