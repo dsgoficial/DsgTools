@@ -86,8 +86,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :param source: (str) driver name.
         """
         # in case a valid driver is selected, add its widget to the interface
-        self.connWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
-        self.driverLayout.addWidget(self.connWidget.selectionWidget)
+        self.connectionWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
+        self.driverLayout.addWidget(self.connectionWidget.selectionWidget)
 
     def getDatasourceConnectionName(self):
         """
@@ -95,14 +95,14 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :return: (str) datasource connection name.
         """
         # temporarily, it'll be set to current db name
-        return self.connWidget.getDatasourceConnectionName()
+        return self.connectionWidget.getDatasourceConnectionName()
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
         :return: (object) the object representing the target datasource according to its driver. 
         """
-        return self.connWidget.abstractDb if self.connWidget else None
+        return self.connectionWidget.abstractDb if self.connectionWidget else None
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
@@ -253,17 +253,17 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.filterDlg.blockSignals(True)
                 # and clear it
                 self.filterDlg = None
-        if self.connWidget:
-            if not self.connWidget.getDatasourcePath():
+        if self.connectionWidget:
+            if not self.connectionWidget.getDatasourcePath():
                 # in case a connection path is not found, a connection was not made ('generic text' is selected)
                 return
             # instantiate a new filter dialog
             filterDlg = GenericDialogLayout()
             # set dialog title to current datasource path
-            title = '{0}: {1}'.format(self.groupBox.title(), self.connWidget.getDatasourcePath())
+            title = '{0}: {1}'.format(self.groupBox.title(), self.connectionWidget.getDatasourcePath())
             filterDlg.setWindowTitle(title)
             # get layers dict
-            layers = self.connWidget.getLayersDict()
+            layers = self.connectionWidget.getLayersDict()
             # get layouts for checkboxes and filter expression widgets
             checkBoxLayout, filterExpressionLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
             filterDlg.hLayout.addLayout(checkBoxLayout)
