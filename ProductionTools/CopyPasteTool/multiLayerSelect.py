@@ -460,7 +460,7 @@ class MultiLayerSelection(QgsMapTool):
                 # data source is a file, not a postgres database
                 dbIsFile = True
             elif 'memory' in dsUri:
-                db_name = self.tr('{0} (Memory Layer)').format(className)
+                db_name = self.tr(u'{0} (Memory Layer)').format(className)
                 dbIsFile = True
             else:
                 db_name = dsUri.split("'")[1]
@@ -473,9 +473,9 @@ class MultiLayerSelection(QgsMapTool):
                 for featId in orderedFeatIdList:
                     feat = featDict[featId]
                     if dbIsFile:
-                        s = '{0} (feat_id = {1})'.format(db_name, featId)
+                        s = u'{0} (feat_id = {1})'.format(db_name, featId)
                     else:
-                        s = '{0}.{1} (feat_id = {2})'.format(db_name, className, featId)
+                        s = u'{0}.{1} (feat_id = {2})'.format(db_name, className, featId)
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
                     triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
@@ -483,7 +483,7 @@ class MultiLayerSelection(QgsMapTool):
                 # inserting generic action, if necessary
                 if len(menuDict[cl]) > 1:
                     # if there are more than 1 feature to be filled, "All"-command should be added
-                    action = parentMenu.addAction(self.tr("{0} From Class {1}").format(genericAction, className))
+                    action = parentMenu.addAction(self.tr(u"{0} From Class {1}").format(genericAction, className))
                     triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature=menuDict, selectAll=selectAll)
                     self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
@@ -500,7 +500,7 @@ class MultiLayerSelection(QgsMapTool):
             orderedFeatIdList = sorted(featDict.keys())
             for featId in orderedFeatIdList:
                 feat = featDict[featId]
-                s = 'feat_id = {0}'.format(featId)
+                s = u'feat_id = {0}'.format(featId)
                 action = submenuDict[cl].addAction(s)
                 triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
@@ -509,7 +509,7 @@ class MultiLayerSelection(QgsMapTool):
             # adding generic action for each class
             if len(menuDict[cl]) > 1:
                 # if there are more than 1 feature to be filled, "All"-command should be added
-                action = submenuDict[cl].addAction(self.tr("{0} From Class {1}").format(genericAction, className))
+                action = submenuDict[cl].addAction(self.tr(u"{0} From Class {1}").format(genericAction, className))
                 triggeredAction, hoveredAction = self.getCallbackMultipleFeatures(e=e, dictLayerFeature={ cl : menuDict[cl] }, selectAll=selectAll)
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         return submenuDict
