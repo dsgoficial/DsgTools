@@ -330,7 +330,12 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.filters = {
             'layer' : dict(),
             'layer_filter' : dict(),
-            'spatial_filter' : dict()
+            'spatial_filter' : {
+                'layer_name' : '',
+                'layer_filter' : '',
+                'filter_type' : '',
+                'topological_relation' : ''
+            }
                 # spatial filter dictionaty form
                 # {
                 #     'layer_name' : (str) reference layer_name,
