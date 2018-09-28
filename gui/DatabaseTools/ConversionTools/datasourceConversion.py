@@ -36,7 +36,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     # enum for column ordering
     COLUMN_COUNT = 8
-    InDs, Filter, InEdgv, inCrs, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
+    InDs, Filter, SpatialFilterFanOut, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
 
     def __init__(self, manager, parentMenu, parent=None):
         """
@@ -129,7 +129,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         headerDict = {
             DatasourceConversion.InDs : self.tr("Input"),
             DatasourceConversion.Filter : self.tr("Filters"),
-            DatasourceConversion.inCrs : self.tr("In: CRS"),
+            DatasourceConversion.SpatialFilterFanOut : self.tr("Spatial Fan-out"),
             DatasourceConversion.InEdgv : self.tr("In: EDGV Version"),
             DatasourceConversion.OutDs : self.tr("Output"),
             DatasourceConversion.outCrs : self.tr("Out: CRS"),
@@ -161,14 +161,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         except:
             _filter = None
         try:
-            inCrs = self.tableWidget.cellWidget(row, DatasourceConversion.inCrs)
+            spatialFanOut = self.tableWidget.cellWidget(row, DatasourceConversion.SpatialFilterFanOut)
         except:
-            inCrs = None
+            spatialFanOut = None
         try:
             outCrs = self.tableWidget.cellWidget(row, DatasourceConversion.outCrs)
         except:
             outCrs = None
-        return [inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode]
+        return [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
 
     def getInputDatasourceRow(self, inputDatasourceWidget):
         """
@@ -179,9 +179,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         inputText = '{0}: {1}'.format(inputDatasourceWidget.groupBox.title(), inputDatasourceWidget.getDatasourceConnectionName())
         for row in range(self.tableWidget.rowCount()):
-            inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
             if inDs == inputText:
-                return row, [inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode]
+                return row, [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
         return -1, []
 
     def updateFilterSettings(self, containerWidget):
@@ -192,7 +192,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         row, contents = self.getInputDatasourceRow(inputDatasourceWidget=containerWidget)
         if row > -1:
             # clear filter push button
-            _filter = contents[1]
+            _filter = contents[DatasourceConversion.Filter]
             _filter.blockSignals(True)
             _filter.setParent(None)
             _filter = None
@@ -202,6 +202,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             newFilter.setIcon(filterIcon)
             # set it as the new widget to cell
             self.tableWidget.setCellWidget(row, DatasourceConversion.Filter, newFilter)
+            contents[DatasourceConversion.SpatialFilterFanOut].setEnabled(bool(containerWidget.filters['spatial_filter']))
             # reset filter dialog
             self.prepareRowFilterDialog(row=row)
 
@@ -333,7 +334,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param row: (int) row containing dataset information.
         """
         # get row information
-        inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+        inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
         # retrieve input widget
         inWidget = self.inDs[inDs.split(':')[0]]
         # instantiate a new filter dialog
@@ -348,34 +349,42 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # get layers dict
         layers = inWidget.connWidget.getLayersDict()
         # get layouts for checkboxes and filter expression widgets
-        checkBoxLayout, filterExpressionLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
+        checkBoxLayout, filterExpressionLayout, crsLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
         filterDlg.hLayout.addLayout(checkBoxLayout)
         filterDlg.hLayout.addLayout(filterExpressionLayout)
-        # initiate a widget creation control dict
-        widgets = dict()
+        filterDlg.hLayout.addLayout(crsLayout)
+        # # initiate a widget creation control dict
+        # widgets = dict()
         # retrieve filter dict
         filterDict = inWidget.filters
+        # get dict with layers crs
+        crsDict = inWidget.connWidget.getLayersCrs()
         for layerName, featCount in layers.items():
             if layerName:
                 # initiate dict and widgets
-                widgets[layerName] = dict()
-                widgets[layerName]['checkbox'] = QtWidgets.QCheckBox()
-                widgets[layerName]['filterexpression'] = QtWidgets.QLineEdit()
+                # widgets[layerName] = dict()
+                checkbox = QtWidgets.QCheckBox()
+                filterExpression = QtWidgets.QLineEdit()
+                crs = QtWidgets.QLineEdit()
                 # since it is only for reading and confirmation purposes, widgets are all disabled
-                widgets[layerName]['checkbox'].setEnabled(False)
-                widgets[layerName]['filterexpression'].setEnabled(False)
+                checkbox.setEnabled(False)
+                filterExpression.setEnabled(False)
+                crs.setEnabled(False)
                 # add a new checkbox widget to layout for each layer found
                 msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-                widgets[layerName]['checkbox'].setText(msg.format(layerName, featCount))
+                checkbox.setText(msg.format(layerName, featCount))
                 if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
                     # in case no filters are added or if layer is among the filtered ones, set it checked
-                    widgets[layerName]['checkbox'].setChecked(True)
+                    checkbox.setChecked(True)
                 # fill up an edit line containing filtering expression, if any
                 if layerName in filterDict['layer_filter']:
-                    widgets[layerName]['filterexpression'].setText(filterDict['layer_filter'][layerName])
-                # those are only for confirmation, so it should be disabled
-                checkBoxLayout.addWidget(widgets[layerName]['checkbox'])
-                filterExpressionLayout.addWidget(widgets[layerName]['filterexpression'])
+                    filterExpression.setText(filterDict['layer_filter'][layerName])
+                # fill crs
+                crs.setText(crsDict[layerName])
+                # add widgets to their layouts
+                checkBoxLayout.addWidget(checkbox)
+                filterExpressionLayout.addWidget(filterExpression)
+                crsLayout.addWidget(crs)
         # setup spatial filtering settings
         self.setupSpatialSummaryGui(spatialFilterDict=filterDict['spatial_filter'], filterDlg=filterDlg)
         # connect filter pushbutton signal to newly created dialog
@@ -398,13 +407,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         inDsList = list(self.inDs.values())
         # set the table rows # the same as the # of input ds
         self.tableWidget.setRowCount(len(inDsList))
-        # prepare widgets control dict
-        outWidgets = dict()
+        # # prepare widgets control dict
+        # outWidgets = dict()
         filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
         crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
         for idx, w in enumerate(inDsList):
-            # initiate widgets map for current row
-            outWidgets[idx] = dict()
+            # # initiate widgets map for current row
+            # outWidgets[idx] = dict()
             # create the item containing current loop's input ds
             t = '{0}: {1}'.format(w.groupBox.title(), w.getDatasourceConnectionName())
             self.addItemToTable(col=DatasourceConversion.InDs, row=idx, text=t, isEditable=False)
@@ -413,27 +422,30 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             t = w.connWidget.getDatasourceEdgvVersion()
             self.addItemToTable(col=DatasourceConversion.InEdgv, row=idx, text=t, isEditable=False)
             # create filter push button
-            outWidgets[idx][DatasourceConversion.Filter] = QtWidgets.QPushButton()
-            outWidgets[idx][DatasourceConversion.Filter].setIcon(filterIcon)
-            # create input SRC push button
-            outWidgets[idx][DatasourceConversion.inCrs] = QtWidgets.QPushButton()
-            outWidgets[idx][DatasourceConversion.inCrs].setIcon(crsIcon)
+            filterPushButton = QtWidgets.QPushButton()
+            filterPushButton.setIcon(filterIcon)
+            # create  push button
+            fanOutCheckBox = QtWidgets.QCheckBox()
+            # set enable status if necessary
+            fanOutCheckBox.setEnabled(bool(w.filters['spatial_filter']))
+            # add tooltip to it
+            fanOutCheckBox.setToolTip(self.tr('Fan-out by filtered features from reference layer'))
             # create the combobox containing all output ds
-            outWidgets[idx][DatasourceConversion.OutDs] = QtWidgets.QComboBox()
-            outWidgets[idx][DatasourceConversion.OutDs].addItems(outDsList)
+            outDsComboBox = QtWidgets.QComboBox()
+            outDsComboBox.addItems(outDsList)
             # create combobox containing conversion mode options
-            outWidgets[idx][DatasourceConversion.ConversionMode] = QtWidgets.QComboBox()
-            outWidgets[idx][DatasourceConversion.ConversionMode].addItems([
+            convModeComboBox = QtWidgets.QComboBox()
+            convModeComboBox.addItems([
                     self.tr('Choose Conversion Mode'), self.tr('Map No Data'), self.tr('Strict Conversion')])
             # set each widget to their column
-            self.tableWidget.setCellWidget(idx, DatasourceConversion.OutDs, outWidgets[idx][DatasourceConversion.OutDs])
-            self.tableWidget.setCellWidget(idx, DatasourceConversion.Filter, outWidgets[idx][DatasourceConversion.Filter])
-            self.tableWidget.setCellWidget(idx, DatasourceConversion.inCrs, outWidgets[idx][DatasourceConversion.inCrs])
-            self.tableWidget.setCellWidget(idx, DatasourceConversion.ConversionMode, outWidgets[idx][DatasourceConversion.ConversionMode])
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.OutDs, outDsComboBox)
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.Filter, filterPushButton)
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.SpatialFilterFanOut, fanOutCheckBox)
+            self.tableWidget.setCellWidget(idx, DatasourceConversion.ConversionMode, convModeComboBox)
             # start filter widget
             self.prepareRowFilterDialog(row=idx)
             # set table output information population to its widget
-            outWidgets[idx][DatasourceConversion.OutDs].currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
+            outDsComboBox.currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=idx))
         # resize to contents
         self.tableWidget.resizeColumnsToContents()
 
@@ -447,7 +459,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # get the row count from table widget and iterate over it
         for row in range(self.tableWidget.rowCount()):
             # get row contents
-            inDs, _filter, inEdgv, inCrs, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            inDs, _, spatialFanOut, _, outDs, _, _, conversionMode = self.getRowContents(row=row)
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
             # get input information to be mapped - input datasource identification and filtering options
@@ -459,7 +471,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outputDatasourceId =  w.connWidget.getDatasourcePath()
             # populate row's conversion map
             rowMapping['outDs'] = outputDatasourceId,  # still to decide what to fill up in here
-            rowMapping['filter'] = inputFilteredLayers # TEMPORARY - CHANGE FOR ACTUAL FILTER RETRIEVING METHOD LATER
+            rowMapping['filter'] = inputFilteredLayers
+            rowMapping['spatialFanOut'] = str(spatialFanOut.isChecked())
             # parameter indicating whether it is a new datasource
             rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
             rowMapping['conversionMode'] = conversionMode.currentText()
