@@ -70,7 +70,10 @@ class SpatialiteWidget(AbstractSelectionWidget):
         Gets the SpatiaLite database path.
         :return: (str) datasource path name.
         """
-        return self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+        if self.getDatasource():
+            # just return a datasource path if a valid one was loaded
+            return self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+        return ''
 
     def setDatasource(self, newDatasource):
         """

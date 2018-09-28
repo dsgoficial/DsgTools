@@ -90,13 +90,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     def getWidgetNameDict(self, d):
         """
         Gets the name translated into widget dict from a given dict.
-        :param d: (dict) dictionary  - { (str)driver : (QWidget)widget } - to have its widgets translated.
-        :return: (dict) translated dict - { (str)datasource_name : (QWidget)widget }.
+        :param d: (dict) dictionary  - { (str)driver : (DatasourceContainerWidget)widget } - to have its widgets translated.
+        :return: (dict) translated dict - { (str)datasource_name : (DatasourceContainerWidget)widget }.
         """
         returnDict = dict()
         for k in d:
-            for w in d[k]:
-                returnDict[w.groupBox.title()] = w
+            for containerWidget in d[k]:
+                returnDict[containerWidget.groupBox.title()] = containerWidget
         return returnDict
 
     def replicateFirstRowContent(self, col):
@@ -248,13 +248,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         else:
             return []
         if groupTitle in self.outDs:
-            widget = self.outDs[groupTitle]
+            containerWidget = self.outDs[groupTitle]
             # only fills line if dictionary is a controlled widget
             # new push button for SRC
             outCrs = QtWidgets.QPushButton()
             outCrs.setIcon(crsIcon)
             # get new text item to add output datasource
-            edgvOut = widget.connWidget.getDatasourceEdgvVersion()
+            edgvOut = containerWidget.connectionWidget.getDatasourceEdgvVersion()
             itemEdgvOut = QtWidgets.QTableWidgetItem()
             itemEdgvOut.setText(edgvOut)
             itemEdgvOut.setFlags(Qt.ItemIsEditable) # not editable
@@ -356,12 +356,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # prepare its own GUI
         filterDlg.hideButtons() # hide Ok and Cancel
         # filterDlg.horizontalSpacer.hide() # no need for the horizontal spacer if no buttons are displayed
-        title = '{0}: {2} ({1})'.format(inWidget.groupBox.title(), inWidget.connWidget.getDatasourcePath(), \
-                                     inWidget.connWidget.getDatasourceConnectionName())
+        title = '{0}: {2} ({1})'.format(inWidget.groupBox.title(), inWidget.connectionWidget.getDatasourcePath(), \
+                                     inWidget.connectionWidget.getDatasourceConnectionName())
         # set dialog title to current datasource path
         filterDlg.setWindowTitle(title)
         # get layers dict
-        layers = inWidget.connWidget.getLayersDict()
+        layers = inWidget.connectionWidget.getLayersDict()
         # get layouts for checkboxes and filter expression widgets
         checkBoxLayout, filterExpressionLayout, crsLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
         filterDlg.hLayout.addLayout(checkBoxLayout)
@@ -372,7 +372,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # retrieve filter dict
         filterDict = inWidget.filters
         # get dict with layers crs
-        crsDict = inWidget.connWidget.getLayersCrs()
+        crsDict = inWidget.connectionWidget.getLayersCrs()
         for layerName, featCount in layers.items():
             if layerName:
                 # initiate dict and widgets
@@ -425,15 +425,15 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # outWidgets = dict()
         filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
         crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
-        for idx, w in enumerate(inDsList):
+        for idx, containerWidget in enumerate(inDsList):
             # # initiate widgets map for current row
             # outWidgets[idx] = dict()
             # create the item containing current loop's input ds
-            t = '{0}: {1}'.format(w.groupBox.title(), w.getDatasourceConnectionName())
+            t = '{0}: {1}'.format(containerWidget.groupBox.title(), containerWidget.getDatasourceConnectionName())
             self.addItemToTable(col=DatasourceConversion.InDs, row=idx, text=t, isEditable=False)
             # populate edgv versions column
             # input is always text
-            t = w.connWidget.getDatasourceEdgvVersion()
+            t = containerWidget.connectionWidget.getDatasourceEdgvVersion()
             self.addItemToTable(col=DatasourceConversion.InEdgv, row=idx, text=t, isEditable=False)
             # create filter push button
             filterPushButton = QtWidgets.QPushButton()
@@ -441,7 +441,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # create  push button
             fanOutCheckBox = QtWidgets.QCheckBox()
             # set enable status if necessary
-            fanOutCheckBox.setEnabled(bool(w.filters['spatial_filter']))
+            fanOutCheckBox.setEnabled(bool(containerWidget.filters['spatial_filter']))
             # add tooltip to it
             fanOutCheckBox.setToolTip(self.tr('Fan-out by filtered features from reference layer'))
             # create the combobox containing all output ds
@@ -477,14 +477,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
             # get input information to be mapped - input datasource identification and filtering options
-            w = self.inDs[inDs.split(':')[0]] # input group box title (widget's dict key)
-            inputDatasourceId =  w.connWidget.getDatasourcePath()
-            inputFilteredLayers = w.filters
+            containerWidget = self.inDs[inDs.split(':')[0]] # input group box title (widget's dict key)
+            inputDatasourceId =  containerWidget.connectionWidget.getDatasourcePath()
+            inputFilteredLayers = containerWidget.filters
             # get output information to be mapped - output datasource identification and if it's
-            w = self.outDs[outDs.currentText().split(':')[0]] # output group box title (widget's dict key)
-            outputDatasourceId =  w.connWidget.getDatasourcePath()
+            containerWidget = self.outDs[outDs.currentText().split(':')[0]] # output group box title (widget's dict key)
             # populate row's conversion map
-            rowMapping['outDs'] = outputDatasourceId,  # still to decide what to fill up in here
+            rowMapping['outDs'] = containerWidget.connectionWidget.getDatasourcePath(),  # still to decide what to fill up in here
+            rowMapping['outDs'] = rowMapping['outDs'][-1] # I DON'T KNOW WHY, BUT THAT'S THE ONLY WAY THIS COMES OUT AS A TUPLE.
             rowMapping['filter'] = inputFilteredLayers
             rowMapping['spatialFanOut'] = str(spatialFanOut.isChecked())
             # parameter indicating whether it is a new datasource
@@ -516,6 +516,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         if not filepath:
             filepath = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
         with open(filepath, 'w') as fp:
+            print(json.dumps(conversionMap, indent=4, sort_keys=True))
             json.dump(conversionMap, fp, indent=4, sort_keys=True)
 
     def validateJson(self, inputJson):

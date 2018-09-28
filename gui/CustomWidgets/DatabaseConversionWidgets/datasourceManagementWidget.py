@@ -108,7 +108,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Adds widget to a dict composed by list as values and driver names as key.
         :param k: (str) new widget's driver name.
-        :param e: (QWidget) widget to be added to the dict.
+        :param e: (DatasourceContainerWidget) widget to be added to the dict.
         :param d: (dict) dictionary to be updated.
         :return: (bool) operation success status.
         """
@@ -139,9 +139,9 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
                 # connect datasource change signal to this class datasource signal change
-                w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+                w.connectionWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
                 # connect datasource change signal to its filters reset method
-                w.connWidget.selectionWidget.dbChanged.connect(w.clearFilters)
+                w.connectionWidget.selectionWidget.dbChanged.connect(w.clearFilters)
                 # connect filtering settings changed signal to this class signal on filtering settings change
                 w.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
                 # add new driver container to GUI 
@@ -198,7 +198,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             # add new widget to GUI
             w = self.addDatasourceWidget()
             # set db (all file-based drivers have a 'lineEdit' object due to their common child 'SelectFileWidget')
-            w.connWidget.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
+            w.connectionWidget.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
 
     def getMultiFile(self, extensionFilter=None):
         """
@@ -238,12 +238,12 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         except:
             pass
         try:
-            w.connWidget.selectionWidget.dbChanged.disconnect(self.datasourceChanged)
+            w.connectionWidget.selectionWidget.dbChanged.disconnect(self.datasourceChanged)
         except:
             pass
         # remove from active dict
         try:
-            self.activeDrivers[w.connWidget.getSelectionWidgetName(source=w.connWidget.source)].remove(w)
+            self.activeDrivers[w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)].remove(w)
         except:
             # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
             pass

@@ -1,12 +1,10 @@
 {
-    "postgres@localhost:5432.consolidado_harrison": [
+    "postgres@localhost:5432.consolidado": [
         {
-            "conversionMode": "Map No Data",
+            "conversionMode": "Strict Conversion",
             "createDb": "False",
             "filter": {
                 "layer": {
-                    "cb.adm_edif_pub_civil_p": 1,
-                    "cb.asb_dep_abast_agua_p": 3,
                     "cb.eco_deposito_geral_p": 1,
                     "cb.eco_ext_mineral_p": 1,
                     "cb.edu_edif_ensino_p": 6,
@@ -17,8 +15,8 @@
                     "cb.hid_queda_dagua_p": 8,
                     "cb.hid_sumidouro_vertedouro_p": 2,
                     "cb.hid_terreno_suj_inundacao_a": 490,
-                    "cb.hid_trecho_drenagem_l": 17229,
-                    "cb.hid_trecho_massa_dagua_a": 15,
+                    "cb.hid_trecho_drenagem_l": 14216,
+                    "cb.hid_trecho_massa_dagua_a": 29,
                     "cb.loc_hab_indigena_p": 119,
                     "cb.loc_nome_local_p": 33,
                     "cb.rel_curva_nivel_l": 28286,
@@ -31,22 +29,22 @@
                     "cb.tra_trecho_rodoviario_l": 3,
                     "cb.tra_trilha_picada_l": 1,
                     "cb.veg_campo_a": 647,
-                    "cb.veg_floresta_a": 330,
+                    "cb.veg_floresta_a": 331,
                     "cb.veg_vegetacao_a": 9,
-                    "public.aux_moldura_a": 17,
+                    "public.aux_moldura_a": 16,
                     "public.aux_ponto_p": 6126
                 },
-                "layer_filter": {},
+                "layer_filter": {
+                    "cb.eco_deposito_geral_p": "123"
+                },
                 "spatial_filter": {
                     "filter_type": "Clip",
-                    "layer_filter": "denso",
-                    "layer_name": "veg_floresta_a",
+                    "layer_filter": "",
+                    "layer_name": "rel_curva_nivel_l",
                     "topological_relation": "Inside Features"
                 }
             },
-            "outDs": [
-                "postgres@localhost:5432.consolidado"
-            ],
+            "outDs": "postgres@localhost:5432.testes",
             "spatialFanOut": "True"
         }
     ]
