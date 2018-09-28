@@ -104,13 +104,27 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Replicates first row value to all the other rows from a selected column.
         :param col: (int) column to have its first row replicated.
         """
-        if col in [DatasourceConversion.OutDs, DatasourceConversion.ConversionMode]:
+        if col in [DatasourceConversion.OutDs, DatasourceConversion.ConversionMode, DatasourceConversion.SpatialFilterFanOut]:
+            value = None
             for row in range(self.tableWidget.rowCount()):
-                if row == 0:
-                    # if it's first row, need to capture cell value
-                    value = self.getRowContents(row=row)[col].currentText()
+                if value is None:
+                    # if it's first row, need to check if widget is activated
+                    widget = self.getRowContents(row=row)[col]
+                    if widget.isEnabled():
+                        # if widget is enabled, capture its value
+                        if col == DatasourceConversion.SpatialFilterFanOut:
+                            value = self.getRowContents(row=row)[col].isChecked()
+                        else:
+                            value = self.getRowContents(row=row)[col].currentText()
                 else:
-                    self.getRowContents(row=row)[col].setCurrentText(value)
+                    widget = self.getRowContents(row=row)[col]
+                    # if value is captured from first activated widget, set it to all following activated widgets
+                    if widget.isEnabled():
+                        # if widget is active, set its value
+                        if col == DatasourceConversion.SpatialFilterFanOut:
+                            widget.setChecked(value)
+                        else:
+                            widget.setCurrentText(value)
 
     def resetTable(self, enabled=False):
         """
