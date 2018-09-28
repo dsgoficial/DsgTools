@@ -160,7 +160,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 # problems with a qgis python wrappers for its widgets... 
             self.clearWidget(widget=self.topologicalRelationWidget)
         widgetDict = {
-            self.tr('Cut') : lambda : self.getCutRelationParameterWidget(), 
+            self.tr('Clip') : lambda : self.getCutRelationParameterWidget(), 
             self.tr('Buffer') : lambda : self.getBufferRelationParameterWidget(), 
             self.tr('Intersects') : lambda : None, # no widget is necessary
             self.tr('Equals (Geometry)') : lambda : None # no widget is necessary
@@ -212,7 +212,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.clearWidget(widget=self.topologicalTestWidget)
         self.topologicalTestWidget = QtWidgets.QComboBox()
         # current supported topological relations
-        topoRelList = sorted([self.tr('Cut'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals (Geometry)')])
+        topoRelList = sorted([self.tr('Clip'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals (Geometry)')])
         self.topologicalTestWidget.addItems(topoRelList)
         # topological parameter is adjusted accordingly chosen topological relation
         self.topologicalTestWidget.currentIndexChanged.connect(self.setTopologicalParameter)

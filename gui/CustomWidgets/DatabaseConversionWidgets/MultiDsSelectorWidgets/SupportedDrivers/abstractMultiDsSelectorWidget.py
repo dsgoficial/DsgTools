@@ -45,6 +45,7 @@ class AbstractMultiDsSelectorWidget(QDialog, FORM_CLASS):
         super(AbstractMultiDsSelectorWidget, self).__init__(parent)
         self.setupUi(self)
         self.widget = self.getMultiDsWidget()
+        self.datasources = []
         self.source = -1 # no source is selected
         if self.widget:
             self.addInputWidgetToLayout(widget=self.widget)

@@ -110,6 +110,13 @@ class AbstractSelectionWidget(QObject):
         abstracDb = self.getDatasource()
         return abstracDb.getDatabaseVersion() if abstracDb else ''
 
+    def getLayersCrs(self):
+        """
+        Gets the CRS from all registered layers.
+        """
+        # to be reimplemented
+        return { l : 'SIRGAS 2000 / UTM zone 23S' for l in self.getLayersDict() }
+
     def getLayersDict(self):
         """
         Gets the list of all layers registered into datasource.
