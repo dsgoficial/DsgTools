@@ -91,7 +91,7 @@ class PostgisDb(AbstractDb):
         """
         if not self.testCredentials(host, port, database, user, password):
             self.getCredentials(host, port, user, database)
-        
+
     def getCredentials(self, host, port, user, database):
         conInfo = 'host='+host+' port='+port+' dbname='+database
         check = False
@@ -106,10 +106,9 @@ class PostgisDb(AbstractDb):
     def testCredentials(self, host, port, database, user, password):
         try:
             self.db.setHostName(host)
-            if type(port) != 'int':
-                self.db.setPort(int(port))
-            else:
-                self.db.setPort(port)
+            if not isinstance(port, int):
+                port = int(port)
+            self.db.setPort(port)
             self.db.setDatabaseName(database)
             self.db.setUserName(user)
             self.db.setPassword(password)
