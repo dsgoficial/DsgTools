@@ -46,6 +46,7 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         self.serverName = ''
         self.dbList = []
         self.exploreServerWidget.serversCombo.currentIndexChanged.connect(self.serverUpdated)
+        self.updateDbList()
 
     def clearGridLayout(self):
         """
@@ -73,38 +74,82 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         """
         # remove all present widgets
         self.clearGridLayout()
+        # get selected server
+        serverName = self.exploreServerWidget.serversCombo.currentText()
+        serverName = serverName.split(' ')[0] if serverName != self.tr('Select Server') else ''
         # get available databases
-        if self.serverName and self.serverName != self.tr('Select Server'):
-            dbList = self.getDbsFromServer(name=self.serverName)
+        if serverName and serverName != self.tr('Select Server'):
+            dbList = self.getDbsFromServer(name=serverName)
         else:
             dbList = []
-        for row, db in enumerate(dbList):
+        for row, (db, edgvVersion) in enumerate(dbList):
             checkbox = QCheckBox()
-            checkbox.setText(db)
+            checkbox.setText("{0} ({1})".format(db, edgvVersion))
             self.gridLayout.addWidget(checkbox, row, 0)
+        # for last, add a vertical spacer
 
     @pyqtSlot(int)
     def serverUpdated(self):
         """
         Sets GUI behavior when server is selected.
         """
-        # and update server name attribute
-        self.serverName = self.exploreServerWidget.serversCombo.currentText()
-        self.serverName = self.serverName.split(' ')[0] if self.serverName != self.tr('Select Server') else ''
         # clear previous database selection
         self.dbList = []
         # update database list
         self.updateDbList()
 
     @pyqtSlot(bool)
+    def on_clearPushButton_clicked(self):
+        """
+        Clears all selected databases.
+        """
+        for row in range(self.gridLayout.rowCount()):
+            # get checkbox
+            checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
+            checkbox.setChecked(False)
+
+    @pyqtSlot(bool)
+    def on_selectAllPushButton_clicked(self):
+        """
+        Selects all databases.
+        """
+        for row in range(self.gridLayout.rowCount()):
+            # get checkbox
+            checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
+            checkbox.setChecked(True)
+
+    @pyqtSlot(bool)
+    def on_togglePushButton_clicked(self):
+        """
+        Inverts databases database selection.
+        """
+        for row in range(self.gridLayout.rowCount()):
+            # get checkbox
+            checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
+            checkbox.setChecked(not checkbox.isChecked())
+
+    @pyqtSlot(bool)
+    def on_cancelPushButton_clicked(self):
+        """
+        Closes dialog.
+        """
+        self.close()
+
+    @pyqtSlot(bool)
     def on_okPushButton_clicked(self):
         """
         When ok is clicked, database list should be set.
         """
+        # update server name attribute
+        self.serverName = self.exploreServerWidget.serversCombo.currentText()
+        self.serverName = self.serverName.split(' ')[0] if self.serverName != self.tr('Select Server') else ''
         for row in range(self.gridLayout.rowCount()):
             # get checkbox
-            checkbox = self.gridLayout.itemAt(row=row, column=0).widget()
-            self.dbList.append(checkbox.text())
+            checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
+            # update dbList
+            if checkbox.isChecked():
+                self.dbList.append(checkbox.text().split(' ')[0].replace('&', '')) # again, no idea why an '&' got in there...
+        self.close()
 
 class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
     """
@@ -159,12 +204,14 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # execute selector dialog
         result = self.selector.exec_()
-        if result:
+        if not result:
             # if ok was selected on multiselector, check for database selection
-            dblList = self.selector.dbList
-            self.datasources = self.getDbListServerInfo(dbList=dbList)
+            dbList = self.selector.dbList
+            if dbList:
+                self.datasources = self.getDbListServerInfo(dbList=dbList)
             if self.datasources:
-                    # there was a selection
-                    return 1
+                print(self.datasources)
+                # there was a selection (operation was successful)
+                return 0
         # no db was selected
-        return 0
+        return 1
