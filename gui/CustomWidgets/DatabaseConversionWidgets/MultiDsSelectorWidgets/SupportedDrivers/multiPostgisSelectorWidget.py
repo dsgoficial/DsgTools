@@ -47,6 +47,7 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         self.dbList = []
         self.exploreServerWidget.serversCombo.currentIndexChanged.connect(self.serverUpdated)
         self.updateDbList()
+        self.groupBox.setTitle(self.tr('Available Databases'))
 
     def clearGridLayout(self):
         """
@@ -57,7 +58,7 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
                 item = self.gridLayout.itemAtPosition(row, col)
                 if not item is None:
                     widget = item.widget()
-                    self.gridLayout.removeWidget()
+                    self.gridLayout.removeWidget(widget)
                     widget.setParent(None)
                     del widget
 
@@ -145,10 +146,12 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         self.serverName = self.serverName.split(' ')[0] if self.serverName != self.tr('Select Server') else ''
         for row in range(self.gridLayout.rowCount()):
             # get checkbox
-            checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
-            # update dbList
-            if checkbox.isChecked():
-                self.dbList.append(checkbox.text().split(' ')[0].replace('&', '')) # again, no idea why an '&' got in there...
+            item = self.gridLayout.itemAtPosition(row, 0)
+            if item:
+                checkbox = self.gridLayout.itemAtPosition(row, 0).widget()
+                # update dbList
+                if checkbox.isChecked():
+                    self.dbList.append(checkbox.text().split(' ')[0].replace('&', '')) # again, no idea why an '&' got in there...
         self.close()
 
 class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
@@ -202,6 +205,8 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         Executes selector dialog and updates selected databases, if any database is selected.
         :return: (int) execution code.
         """
+        # datasources are cleared once dialog is re-opened
+        self.datasources = {}
         # execute selector dialog
         result = self.selector.exec_()
         if not result:
@@ -210,8 +215,8 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
             if dbList:
                 self.datasources = self.getDbListServerInfo(dbList=dbList)
             if self.datasources:
-                print(self.datasources)
                 # there was a selection (operation was successful)
                 return 0
         # no db was selected
+        print(self.datasources)
         return 1
