@@ -516,7 +516,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         if not filepath:
             filepath = os.path.join(os.path.dirname(__file__), 'conversion_map.json')
         with open(filepath, 'w') as fp:
-            print(json.dumps(conversionMap, indent=4, sort_keys=True))
             json.dump(conversionMap, fp, indent=4, sort_keys=True)
 
     def validateJson(self, inputJson):

@@ -23,6 +23,9 @@
 """
 
 from .SupportedDrivers.multiPostgisSelectorWidget import MultiPostgisSelectorWidget
+# from .SupportedDrivers.multiSpatialiteSelectorWidget import MultiSpatialiteSelectorWidget
+# from .SupportedDrivers.multiShapefileSelectorWidget import MultiShapefileSelectorWidget
+# from .SupportedDrivers.multiGeopackageSelectorWidget import multiGeopackageSelectorWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
 class MultiDsWidgetFactory:

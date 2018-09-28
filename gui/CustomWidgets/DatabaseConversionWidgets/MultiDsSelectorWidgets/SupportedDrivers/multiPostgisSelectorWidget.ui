@@ -1,54 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MultiPostgisSelector</class>
- <widget class="QWidget" name="MultiPostgisSelector">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>368</width>
-    <height>79</height>
+    <width>400</width>
+    <height>351</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="ExploreServerWidget" name="serverWidget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-    </widget>
+    <widget class="ExploreServerWidget" name="exploreServerWidget" native="true"/>
    </item>
    <item row="1" column="0">
-    <widget class="CustomTableSelector" name="dbCustomSelector" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>0</height>
-      </size>
-     </property>
-    </widget>
+    <layout class="QGridLayout" name="gridLayout"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>CustomTableSelector</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.customTableSelector.h</header>
-   <container>1</container>
-  </customwidget>
   <customwidget>
    <class>ExploreServerWidget</class>
    <extends>QWidget</extends>
