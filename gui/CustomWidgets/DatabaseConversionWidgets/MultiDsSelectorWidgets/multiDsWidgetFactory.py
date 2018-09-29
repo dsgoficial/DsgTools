@@ -38,6 +38,7 @@ class MultiDsWidgetFactory:
         :param driver: (int) driver enum. 
         """
         dialogDict = {
+            DsgEnums.NoDriver : lambda : None,
             DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget(),
             DsgEnums.SpatiaLite : lambda : MultiSpatialiteSelectorWidget()
             # DsgEnums.Shapefile : lambda : MultiShapefileSelectorWidget(),

@@ -160,33 +160,34 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Adds the widget according to selected datasource on datasource combobox on first page.
         :param source: (str) driver name.
         """
-        # # identify source
-        # source = self.sourceNameDict[self.datasourceComboBox.currentText()]
-        # # get driver's multi selection dialog
-        # dlg = MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS)
-        # result = dlg.exec_()
-        # if result:
-        #     # in case Ok was selected
-        #     datasourceList = dlg.datasources
-        #     for ds in datasourceList:
-        #         # add new widget container for it
-        #         w = self.addDatasourceWidget()
-        #         # set datasource to it
-        #         w.setDatasource(ds)
-        actionDict = {
-            DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
-            DsgEnums.PostGIS : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS).exec_(),
-            DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.SpatiaLite : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.SpatiaLite).exec_(),
-            DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.Shapefile : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.NewShapefile : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.Geopackage : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.NewGeopackage : lambda : print('NADA A FAZER AGORA')
-        }
-        # get current text on datasource techonology selection combobox
-        currentDbSource = self.sourceNameDict[self.datasourceComboBox.currentText()]
-        actionDict[currentDbSource]()
+        # identify source
+        source = self.sourceNameDict[self.datasourceComboBox.currentText()]
+        if source != DsgEnums.NoDriver:
+            # get driver's multi selection dialog
+            dlg = MultiDsWidgetFactory.getMultiDsSelector(driver=source)
+            result = dlg.exec_()
+            if not result:
+                # in case Ok was selected
+                datasourcesDict = dlg.datasources
+                for ds, dsPath in datasourcesDict.items():
+                    # add new widget container for it
+                    container = self.addDatasourceWidget()
+                    # set datasource to it
+                    container.setDatasource({ds : dsPath})
+        # actionDict = {
+        #     DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
+        #     DsgEnums.PostGIS : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS).exec_(),
+        #     DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
+        #     DsgEnums.SpatiaLite : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.SpatiaLite).exec_(),
+        #     DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),
+        #     DsgEnums.Shapefile : lambda : print('NADA A FAZER AGORA'),
+        #     DsgEnums.NewShapefile : lambda : print('NADA A FAZER AGORA'),
+        #     DsgEnums.Geopackage : lambda : print('NADA A FAZER AGORA'),
+        #     DsgEnums.NewGeopackage : lambda : print('NADA A FAZER AGORA')
+        # }
+        # # get current text on datasource techonology selection combobox
+        # currentDbSource = self.sourceNameDict[self.datasourceComboBox.currentText()]
+        # actionDict[currentDbSource]()
 
     def resetWidgetsTitle(self):
         """

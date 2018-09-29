@@ -64,5 +64,4 @@ class MultiSpatialiteSelectorWidget(AbstractMultiDsSelectorWidget):
                                                 filter=self.tr('SpatiaLite Databases (*.sqlite)'))[0]
         for db in dbList:
             self.datasources[self.getDatabaseName(datasourcePath=db)] = db
-        print(self.datasources)
         return int(not self.datasources) # execution code
