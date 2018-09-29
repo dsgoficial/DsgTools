@@ -100,7 +100,8 @@ class AbstractSelectionWidget(QObject):
         Gets the datasource selected on current widget.
         :return: (AbstractDb) the object representing the target datasource according. 
         """
-        return self.selectionWidget.abstractDb if self.selectionWidget else None
+        # to be reimplemented
+        pass
 
     def getDatasourceEdgvVersion(self):
         """
@@ -109,6 +110,13 @@ class AbstractSelectionWidget(QObject):
         """
         abstracDb = self.getDatasource()
         return abstracDb.getDatabaseVersion() if abstracDb else ''
+
+    def setDatasource(self, connectionInfo):
+        """
+        Sets datasource to selection widget.
+        :param connectionInfo: (object) varies according to driver.
+        """
+        # to be reimplemented
 
     def getLayersCrs(self):
         """

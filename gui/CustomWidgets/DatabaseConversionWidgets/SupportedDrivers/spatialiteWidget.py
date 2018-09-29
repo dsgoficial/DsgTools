@@ -78,10 +78,10 @@ class SpatialiteWidget(AbstractSelectionWidget):
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
-        :param newDatasource: (object) new datasource to be set.
+        :param newDatasource: (dict) containing datasource name and its path.
         """
-        # to be reimplemented
-        pass
+        if newDatasource:
+            self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText((list(newDatasource.values())[0]))
 
     def getDatasource(self):
         """

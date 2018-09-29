@@ -104,6 +104,14 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         return self.connectionWidget.abstractDb if self.connectionWidget else None
 
+    def setDatasource(self, connectionInfo):
+        """
+        Sets datasource to selection widget.
+        :param connectionInfo: (object) varies according to driver.
+        """
+        if self.connectionWidget:
+            self.connectionWidget.setDatasource(connectionInfo)
+
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
         """
@@ -125,7 +133,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # in case the python wrapper for a QgsFilterExpressionWidget is deleted before the object
             widget = None
 
-    def getCutRelationParameterWidget(self):
+    def getClipRelationParameterWidget(self):
         """
         Gets the widget for a Cut spatial filter.
         :return: (QWidget) the topological relation parameter widget.        
@@ -160,7 +168,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 # problems with a qgis python wrappers for its widgets... 
             self.clearWidget(widget=self.topologicalRelationWidget)
         widgetDict = {
-            self.tr('Clip') : lambda : self.getCutRelationParameterWidget(), 
+            self.tr('Clip') : lambda : self.getClipRelationParameterWidget(), 
             self.tr('Buffer') : lambda : self.getBufferRelationParameterWidget(), 
             self.tr('Intersects') : lambda : None, # no widget is necessary
             self.tr('Equals (Geometry)') : lambda : None # no widget is necessary
