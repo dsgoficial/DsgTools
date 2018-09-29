@@ -87,7 +87,6 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
             checkbox = QCheckBox()
             checkbox.setText("{0} (EDGV {1})".format(db, edgvVersion))
             self.gridLayout.addWidget(checkbox, row, 0)
-        # for last, add a vertical spacer
 
     @pyqtSlot(int)
     def serverUpdated(self):
