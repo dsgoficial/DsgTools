@@ -76,7 +76,7 @@ class PostgisWidget(AbstractSelectionWidget):
         """
         if self.selectionWidget:
             for db, (host, port, username, password) in newDatasource.items():
-            # set selected host as container's default
+                # set selected host as container's default
                 self.selectionWidget.viewServers.\
                     setDefaultConnectionParameters(host=host, port=port, user=username, password=password)
                 # sel selected db

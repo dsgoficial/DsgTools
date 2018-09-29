@@ -174,20 +174,6 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                     container = self.addDatasourceWidget()
                     # set datasource to it
                     container.setDatasource({ds : dsPath})
-        # actionDict = {
-        #     DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
-        #     DsgEnums.PostGIS : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS).exec_(),
-        #     DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
-        #     DsgEnums.SpatiaLite : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.SpatiaLite).exec_(),
-        #     DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),
-        #     DsgEnums.Shapefile : lambda : print('NADA A FAZER AGORA'),
-        #     DsgEnums.NewShapefile : lambda : print('NADA A FAZER AGORA'),
-        #     DsgEnums.Geopackage : lambda : print('NADA A FAZER AGORA'),
-        #     DsgEnums.NewGeopackage : lambda : print('NADA A FAZER AGORA')
-        # }
-        # # get current text on datasource techonology selection combobox
-        # currentDbSource = self.sourceNameDict[self.datasourceComboBox.currentText()]
-        # actionDict[currentDbSource]()
 
     def resetWidgetsTitle(self):
         """
