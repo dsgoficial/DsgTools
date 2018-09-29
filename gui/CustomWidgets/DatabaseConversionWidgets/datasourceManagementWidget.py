@@ -177,7 +177,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
             DsgEnums.PostGIS : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS).exec_(),
             DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.SpatiaLite : lambda : self.addMultiFile(extensionFilter='SpatiaLite Databases (*.sqlite)'),
+            DsgEnums.SpatiaLite : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.SpatiaLite).exec_(),
             DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),
             DsgEnums.Shapefile : lambda : print('NADA A FAZER AGORA'),
             DsgEnums.NewShapefile : lambda : print('NADA A FAZER AGORA'),
@@ -187,30 +187,6 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # get current text on datasource techonology selection combobox
         currentDbSource = self.sourceNameDict[self.datasourceComboBox.currentText()]
         actionDict[currentDbSource]()
-
-    def addMultiFile(self, extensionFilter=None):
-        """
-        Adds widgets for all selected files.
-        """
-        # get current text on datasource techonology selection combobox
-        fList = self.getMultiFile(extensionFilter=extensionFilter)
-        for dbName in fList:
-            # add new widget to GUI
-            w = self.addDatasourceWidget()
-            # set db (all file-based drivers have a 'lineEdit' object due to their common child 'SelectFileWidget')
-            w.connectionWidget.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
-
-    def getMultiFile(self, extensionFilter=None):
-        """
-        Opens dialog multiple file selection and gets file list.
-        :param extensionFilter: (str) file extensions to be filtered.
-        :return: (list-of-str) list containing all filenames for selected files.
-        """
-        fd = QtWidgets.QFileDialog()
-        # get current text on datasource techonology selection combobox
-        currentDbSource = self.datasourceComboBox.currentText()
-        fileList = fd.getOpenFileNames(caption=self.tr("Select a {0}").format(currentDbSource), filter=extensionFilter)[0]
-        return fileList
 
     def resetWidgetsTitle(self):
         """

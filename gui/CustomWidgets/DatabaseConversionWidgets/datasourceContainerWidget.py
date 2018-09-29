@@ -235,7 +235,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # get index for combo box item that has the topological test
             self.topologicalTestWidget.setCurrentText(self.filters['spatial_filter']['filter_type'])
             if isinstance(self.topologicalRelationWidget, QtWidgets.QDoubleSpinBox):
-                self.topologicalRelationWidget.setValue(self.filters['spatial_filter']['topological_relation'])
+                self.topologicalRelationWidget.setValue(str(self.filters['spatial_filter']['topological_relation']))
             if isinstance(self.topologicalRelationWidget, QtWidgets.QComboBox):
                 # get index for combo box item that has the topological relationship
                 # idx = self.topologicalRelationWidget.findText()

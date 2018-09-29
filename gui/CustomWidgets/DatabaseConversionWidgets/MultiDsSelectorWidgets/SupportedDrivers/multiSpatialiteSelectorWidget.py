@@ -1,4 +1,3 @@
- 
 # -*- coding: utf-8 -*-
 """
 /***************************************************************************
@@ -6,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                              -------------------
-        begin                : 2018-09-26
+        begin                : 2018-09-28
         git sha              : $Format:%H$
         copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
         email                : esperidiao.joao@eb.mil.br
@@ -23,32 +22,47 @@
 """
 
 from qgis.PyQt.QtCore import QObject
+from qgis.PyQt.QtWidgets import QFileDialog
 
-class AbstractMultiDsSelectorWidget(QObject):
+from .abstractMultiDsSelectorWidget import AbstractMultiDsSelectorWidget
+from DsgTools.core.dsgEnums import DsgEnums
+
+import os
+
+class MultiSpatialiteSelectorWidget(AbstractMultiDsSelectorWidget):
     """
-    Class containing minimum structure for multiple datasource selection.
-    Particularities from each driver are settled within its own class (child from this). 
+    Class designed to retrieve a SpatiaLite database list.
     """
     def __init__(self, parent=None):
         """
         Class constructor.
-        :param parent: (QWidget) widget parent to new instance of datasource representative widget.
         """
-        super(AbstractMultiDsSelectorWidget, self).__init__()
-        self.selector = self.getWidget(parent=parent)
-        self.datasources = {}
-        self.source = -1
+        super(MultiSpatialiteSelectorWidget, self).__init__()
+        self.source = DsgEnums.SpatiaLite
 
     def getWidget(self, parent=None):
         """
         Retrieves current datasource selector dialog.
         """
-        # to be reimplemented in each class
-        pass
+        return QFileDialog()
 
-    def validate(self):
+    def getDatabaseName(self, datasourcePath):
         """
-        Validates contents information.
-        :return: (bool) whether contents are a valid selection.
+        Gets the database name from a given datasource.
+        :param datasourcePath: (str) datasource path.
+        :return: (str) datasource name.
         """
-        pass
+        return os.path.basename(datasourcePath).split(".")[0]
+
+    def exec_(self):
+        """
+        Starts dialog.
+        """
+        # clear datasources
+        self.datasources = {}
+        dbList = self.selector.getOpenFileNames(caption=self.tr("Select SpatiaLite Datasources"), \
+                                                filter=self.tr('SpatiaLite Databases (*.sqlite)'))[0]
+        for db in dbList:
+            self.datasources[self.getDatabaseName(datasourcePath=db)] = db
+        print(self.datasources)
+        return int(not self.datasources) # execution code

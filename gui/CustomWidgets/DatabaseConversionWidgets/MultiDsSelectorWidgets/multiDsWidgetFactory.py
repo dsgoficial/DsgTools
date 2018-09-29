@@ -23,7 +23,7 @@
 """
 
 from .SupportedDrivers.multiPostgisSelectorWidget import MultiPostgisSelectorWidget
-# from .SupportedDrivers.multiSpatialiteSelectorWidget import MultiSpatialiteSelectorWidget
+from .SupportedDrivers.multiSpatialiteSelectorWidget import MultiSpatialiteSelectorWidget
 # from .SupportedDrivers.multiShapefileSelectorWidget import MultiShapefileSelectorWidget
 # from .SupportedDrivers.multiGeopackageSelectorWidget import multiGeopackageSelectorWidget
 from DsgTools.core.dsgEnums import DsgEnums
@@ -38,8 +38,8 @@ class MultiDsWidgetFactory:
         :param driver: (int) driver enum. 
         """
         dialogDict = {
-            DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget()
-            # DsgEnums.SpatiaLite : lambda : MultiSpatiaLiteSelectorWidget(),
+            DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget(),
+            DsgEnums.SpatiaLite : lambda : MultiSpatialiteSelectorWidget()
             # DsgEnums.Shapefile : lambda : MultiShapefileSelectorWidget(),
             # DsgEnums.Geopackage : lambda : MultiGeopackageSelectorWidget()
         }
