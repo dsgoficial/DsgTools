@@ -85,7 +85,7 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
             dbList = []
         for row, (db, edgvVersion) in enumerate(dbList):
             checkbox = QCheckBox()
-            checkbox.setText("{0} ({1})".format(db, edgvVersion))
+            checkbox.setText("{0} (EDGV {1})".format(db, edgvVersion))
             self.gridLayout.addWidget(checkbox, row, 0)
         # for last, add a vertical spacer
 
@@ -184,12 +184,13 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         return self.exploreServerWidget.getDbsFromServer(name=serverName)
 
-    def getDbServerInfo(self, dbname):
+    def getDbServerInfo(self, serverName):
         """
         Gets access information from a selected dabatase.
+        :param serverName: (str) server name to have its credentials retrieved.
         :return: (tuple-of-str) host, port, username and password.
         """
-        return self.exploreServerWidget.getServerConfiguration(name=dbname)
+        return self.exploreServerWidget.getServerConfiguration(name=serverName)
 
     def getDbListServerInfo(self, dbList):
         """
@@ -198,7 +199,8 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         if not dbList:
             dbList = self.getAvailableDb(serverName=self.selector.serverName)
-        return { dbname : self.getDbServerInfo(dbname=dbname) for dbname in dbList }
+        serverInfo = self.getDbServerInfo(serverName=self.selector.serverName)
+        return { dbname : serverInfo for dbname in dbList }
 
     def exec_(self):
         """
@@ -218,5 +220,4 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
                 # there was a selection (operation was successful)
                 return 0
         # no db was selected
-        print(self.datasources)
         return 1
