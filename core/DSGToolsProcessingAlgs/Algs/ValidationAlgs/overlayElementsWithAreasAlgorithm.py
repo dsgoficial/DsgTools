@@ -49,9 +49,8 @@ from qgis.core import (QgsProcessing,
 class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    TOLERANCE = 'TOLERANCE'
-    MINAREA = 'MINAREA'
     BEHAVIOR = 'BEHAVIOR'
+    RemoveOutside, RemoveInside, OverlayAndKeep = list(range(3))
 
     def initAlgorithm(self, config):
         """
@@ -70,27 +69,9 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
-        self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE, 
-                self.tr('Snap radius'), 
-                parentParameterName=self.INPUT,                                         
-                minValue=0, 
-                defaultValue=1.0
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MINAREA,
-                self.tr('Minimum area'),
-                minValue=0,
-                defaultValue=0.0001,
-                type=QgsProcessingParameterNumber.Double
-            )
-        )
-        self.modes = [self.tr('Overlay and Keep Elements'),
-                      self.tr('Remove outside elements'),
-                      self.tr('Remove inside elements')
+        self.modes = [self.tr('Remove outside elements'),
+                      self.tr('Remove inside elements'),
+                      self.tr('Overlay and Keep Elements')
                       ]
 
         self.addParameter(
@@ -113,27 +94,37 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
+        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        # 1- check method
+        # 2- if overlay and keep, use clip and symetric difference
+        # 3- if remove outside, use clip
+        # 4- if remove inside, use symetric difference
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running overlay...'))
-        cleanedLyr, error = algRunner.runOverlay(auxLyr, \
-                                                    context, \
-                                                    returnError=True, \
-                                                    snap=snap, \
-                                                    minArea=minArea,
-                                                    feedback=multiStepFeedback)
+        outputLyr = self.runOverlay(auxLyr, behavior, context, multiStepFeedback)
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
-        self.flagIssues(cleanedLyr, error, feedback)
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], outputLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
 
-        return {self.INPUT : inputLyr, self.FLAGS : self.flag_id}
+        return {self.INPUT : inputLyr}
+    
+    def runOverlay(self, lyr, behavior, context, feedback):
+        nSteps = 2 if behavior == 2 else 1
+        localFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        localFeedback.setCurrentStep(0)
+        # 
+        if behavior == RemoveOutside:
+            pass
+        elif behavior == RemoveInside:
+            pass
+        else:
+            pass
+
 
     def name(self):
         """
