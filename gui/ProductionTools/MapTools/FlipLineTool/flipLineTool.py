@@ -66,18 +66,21 @@ class FlipLine(QgsMapTool):
         prevLayer = self.currentLayer
         # update current selected layer
         self.currentLayer = currentLayer
-        if prevLayer:
-            try:
-                # if there was a previous selection, signals must be disconnected from it before connecting to the new layer
+        try:
+            # if there was a previous selection, signals must be disconnected from it before connecting to the new layer
+            if prevLayer is not None:
                 prevLayer.editingStarted.disconnect(self.setToolEnabled)
                 prevLayer.editingStopped.disconnect(self.setToolEnabled)
-            except:
-                # in case signal is not yet connected, somehow
-                pass
+        except:
+            # in case signal is not yet connected, somehow
+            pass
         # connecting signals to new layer
-        if isinstance(self.currentLayer, QgsVectorLayer):
-            self.currentLayer.editingStarted.connect(self.setToolEnabled)
-            self.currentLayer.editingStopped.connect(self.setToolEnabled)
+        try:
+            if self.currentLayer is not None and isinstance(self.currentLayer, QgsVectorLayer):
+                self.currentLayer.editingStarted.connect(self.setToolEnabled)
+                self.currentLayer.editingStopped.connect(self.setToolEnabled)
+        except:
+            pass
 
     def setToolEnabled(self, layer=None):
         """
