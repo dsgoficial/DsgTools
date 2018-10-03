@@ -385,7 +385,7 @@ class PostGISSqlGenerator(SqlGenerator):
             CONSTRAINT settings_pk PRIMARY KEY (id)
         )#
 
-        DROP TABLE IF EXISTS validation.aux_hid_nodes_p;
+        DROP TABLE IF EXISTS validation.aux_hid_nodes_p#
         CREATE TABLE validation.aux_hid_nodes_p (
             id SERIAL NOT NULL,
             layer VARCHAR(40) NOT NULL,
@@ -393,6 +393,7 @@ class PostGISSqlGenerator(SqlGenerator):
             geom geometry('MultiPoint', %s) NOT NULL,
             CONSTRAINT aux_hid_nodes_p_pk PRIMARY KEY (id)
             )#
+        CREATE SCHEMA IF NOT EXISTS dominios#
         CREATE TABLE dominios.node_type (
             code smallint NOT NULL,
             code_name text NOT NULL, CONSTRAINT
