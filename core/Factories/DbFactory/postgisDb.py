@@ -2388,7 +2388,8 @@ class PostgisDb(AbstractDb):
         filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
         filtered = []
         for lyr in layerList:
-            if lyr in filter:
+            clause = lyr['tableName'] if isinstance(lyr, dict) else lyr
+            if clause in filter:
                 filtered.append(lyr)
         return filtered
 
