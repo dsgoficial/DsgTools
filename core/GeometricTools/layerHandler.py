@@ -488,3 +488,53 @@ class LayerHandler(QObject):
             if feedback:
                 feedback.setProgress(size * current)
         return updateDict
+    
+    def filterDangles(self, lyr, searchRadius, feedback = None):
+        deleteList = []
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        spatialIdx, idDict = self.buildSpatialIndexAndIdDict(lyr, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        featSize = len(idDict)
+        size = 100 / featSize if featSize else 0
+        for current, (id, feat) in enumerate(idDict.items()):
+            if feedback:
+                if feedback.isCanceled():
+                    break
+            if id in deleteList:
+                if feedback:
+                    multiStepFeedback.setProgress(size * current)    
+                continue
+            buffer = feat.geometry().buffer(searchRadius, -1)
+            bufferBB = buffer.boundingBox()
+            #gets candidates from spatial index
+            candidateIds = spatialIdx.intersects(bufferBB)
+            for fid in candidateIds:
+                if fid != id and fid not in deleteList and buffer.intersects(feat.geometry()):
+                    deleteList.append(fid)
+            if feedback:
+                multiStepFeedback.setProgress(size * current)
+        
+        lyr.startEditing()
+        lyr.beginEditCommand('Filter dangles')
+        lyr.deleteFeatures(deleteList)
+        lyr.commitChanges()
+
+
+    def buildSpatialIndexAndIdDict(self, inputLyr, feedback = None):
+        """
+        creates a spatial index for the input layer
+        """
+        spatialIdx = QgsSpatialIndex()
+        idDict = {}
+        featCount = inputLyr.featureCount()
+        size = 100/featCount if featCount else 0
+        for current, feat in enumerate(inputLyr.getFeatures()):
+            if feedback:
+                if feedback.isCanceled():
+                    break
+            spatialIdx.insertFeature(feat)
+            idDict[feat.id()] = feat
+            if feedback:
+                feedback.setProgress(size * current)
+        return spatialIdx, idDict
