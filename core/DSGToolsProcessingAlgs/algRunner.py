@@ -29,7 +29,7 @@ class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
 
     def generateGrassOutputAndError(self):
-        uuid_value = uuid.uuid4()
+        uuid_value = str(uuid.uuid4()).replace('-','')
         output = QgsProcessingUtils.generateTempFilename('output_{uuid}.shp'.format(uuid=uuid_value))
         error = QgsProcessingUtils.generateTempFilename('error_{uuid}.shp'.format(uuid=uuid_value))
         return output, error
