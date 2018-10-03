@@ -44,11 +44,14 @@ from qgis.core import (QgsProcessing,
                        QgsGeometry,
                        QgsProject,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingParameterDistance,
+                       QgsProcessingException)
 
 class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
+    OVERLAY = 'OVERLAY'
+    SELECTED_OVERLAY = 'SELECTED_OVERLAY'
     BEHAVIOR = 'BEHAVIOR'
     RemoveOutside, RemoveInside, OverlayAndKeep = list(range(3))
 
@@ -67,6 +70,19 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterBoolean(
                 self.SELECTED,
                 self.tr('Process only selected features')
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.OVERLAY,
+                self.tr('Polygon overlay Layer'),
+                [QgsProcessing.TypeVectorPolygon]
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.SELECTED_OVERLAY,
+                self.tr('Use only selected features from overlay layer')
             )
         )
         self.modes = [self.tr('Remove outside elements'),
@@ -88,42 +104,64 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        algRunner = AlgRunner()
+        self.algRunner = AlgRunner()
 
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+        overlayLyr = self.parameterAsVectorLayer(parameters, self.OVERLAY, context)
+        if overlayLyr is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.OVERLAY))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
+        onlySelectedOverlay = self.parameterAsBool(parameters, self.SELECTED_OVERLAY, context)
         behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
 
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
         auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        if onlySelectedOverlay:
+            overlayLyr = layerHandler.createAndPopulateUnifiedVectorLayer([overlayLyr], geomType=overlayLyr.wkbType(), onlySelected = onlySelectedOverlay, feedback=multiStepFeedback)
+            overlayLyr.startEditing()
+            overlayLyr.renameAttribute(0, 'fid')
+            overlayLyr.renameAttribute(1, 'cl')
+            overlayLyr.commitChanges()
         # 1- check method
         # 2- if overlay and keep, use clip and symetric difference
         # 3- if remove outside, use clip
         # 4- if remove inside, use symetric difference
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Running overlay...'))
-        outputLyr = self.runOverlay(auxLyr, behavior, context, multiStepFeedback)
         multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Running overlay...'))
+        outputLyr = self.runOverlay(auxLyr, overlayLyr, behavior, context, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], outputLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT : inputLyr}
     
-    def runOverlay(self, lyr, behavior, context, feedback):
+    def runOverlay(self, lyr, overlayLyr, behavior, context, feedback):
         nSteps = 2 if behavior == 2 else 1
         localFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         localFeedback.setCurrentStep(0)
-        # 
-        if behavior == RemoveOutside:
-            pass
-        elif behavior == RemoveInside:
-            pass
-        else:
-            pass
+        # Intentional ifs not if else.
+        if behavior in [OverlayElementsWithAreasAlgorithm.RemoveOutside, OverlayElementsWithAreasAlgorithm.OverlayAndKeep]:
+            outputLyr = self.algRunner.runClip(lyr, overlayLyr, context, feedback=localFeedback)
+            if behavior == OverlayElementsWithAreasAlgorithm.RemoveOutside:
+                return outputLyr
+            localFeedback.setCurrentStep(1)
+        if behavior in [OverlayElementsWithAreasAlgorithm.RemoveInside, OverlayElementsWithAreasAlgorithm.OverlayAndKeep]:
+            outputDiffLyr = self.algRunner.runSymDiff(lyr, overlayLyr, context, feedback=localFeedback)
+            if behavior == OverlayElementsWithAreasAlgorithm.RemoveInside:
+                return outputDiffLyr
+        if behavior == OverlayElementsWithAreasAlgorithm.OverlayAndKeep:
+            outsideFeats = [i for i in outputDiffLyr.getFeatures()]
+            outputLyr.startEditing()
+            outputLyr.beginEditCommand('')
+            outputLyr.addFeatures(outsideFeats)
+            outputLyr.endEditCommand()
+            outputLyr.commitChanges()
+            return outputLyr
 
 
     def name(self):

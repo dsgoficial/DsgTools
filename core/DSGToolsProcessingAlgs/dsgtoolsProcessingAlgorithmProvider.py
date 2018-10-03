@@ -49,6 +49,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlaye
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import DissolvePolygonsWithSameAttributesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapToGridAndUpdateAlgorithm import SnapToGridAndUpdateAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeEmptyAndUpdateAlgorithm import RemoveEmptyAndUpdateAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayElementsWithAreasAlgorithm import OverlayElementsWithAreasAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -82,7 +83,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         DissolvePolygonsWithSameAttributesAlgorithm(),
                         SnapToGridAndUpdateAlgorithm(),
                         RemoveEmptyAndUpdateAlgorithm(),
-                        ConvertLayer2LayerAlgorithm()]
+                        ConvertLayer2LayerAlgorithm(),
+                        OverlayElementsWithAreasAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
