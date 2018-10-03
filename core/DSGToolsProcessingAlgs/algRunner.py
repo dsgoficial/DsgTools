@@ -243,3 +243,21 @@ class AlgRunner:
         }
         output = processing.run("native:removenullgeometries", parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runClip(self, inputLayer, overlayLayer, context, feedback = None, outputLyr = 'memory:'):
+        parameters = {
+            'INPUT' : inputLayer,
+            'OVERLAY' : overlayLayer,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:clip", parameters, context = context, feedback = feedback)
+        return output['OUTPUT']
+    
+    def runSymDiff(self, inputLayer, overlayLayer, context, feedback = None, outputLyr = 'memory:'):
+        parameters = {
+            'INPUT' : inputLayer,
+            'OVERLAY' : overlayLayer,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:symmetricaldifference", parameters, context = context, feedback = feedback)
+        return output['OUTPUT']

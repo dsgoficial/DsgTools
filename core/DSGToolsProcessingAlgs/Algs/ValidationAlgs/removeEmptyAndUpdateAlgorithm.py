@@ -44,7 +44,8 @@ from qgis.core import (QgsProcessing,
                        QgsGeometry,
                        QgsProcessingParameterField,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingParameterDistance,
+                       QgsProcessingException)
 
 class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
