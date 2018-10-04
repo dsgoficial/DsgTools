@@ -22,6 +22,7 @@
 """
 from __future__ import absolute_import
 from builtins import range
+from itertools import combinations
 import math
 from math import pi
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
