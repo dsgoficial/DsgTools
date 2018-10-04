@@ -168,8 +168,8 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        layerHandler = LayerHandler()
-        algRunner = AlgRunner()
+        self.layerHandler = LayerHandler()
+        self.algRunner = AlgRunner()
         # get network layer
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
         if networkLayer is None:
@@ -185,7 +185,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        frame = self.createNetworkNodesProcess.getFrameOutterBounds(frameLayer=frameLayer) #mudar
+        frame = self.layerHandler.getFrameOutterBounds(frameLayer, self.algRunner, context, feedback=feedback)
         
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
