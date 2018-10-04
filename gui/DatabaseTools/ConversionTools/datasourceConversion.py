@@ -74,6 +74,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.widgetUpdated.connect(self.updateInputInformation)
         self.datasourceManagementWidgetOut.widgetUpdated.connect(self.updateOutputInformation)
+        # erase all options settled
+        self.refreshPushButton.clicked.connect(self.setTableInitialState)
         # conversion mapping start
         self.button(QtWidgets.QWizard.FinishButton).clicked.connect(self.startConversion)
 
@@ -89,8 +91,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.datasourceManagementWidgetIn.containerFilterSettingsChanged.disconnect(self.updateFilterSettings)
         self.datasourceManagementWidgetOut.containerFilterSettingsChanged.disconnect(self.updateFilterSettings)
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
-        self.datasourceManagementWidgetIn.widgetUpdated.connect(self.updateInputInformation)
-        self.datasourceManagementWidgetOut.widgetUpdated.connect(self.updateOutputInformation)
+        self.datasourceManagementWidgetIn.widgetUpdated.disconnect(self.updateInputInformation)
+        self.datasourceManagementWidgetOut.widgetUpdated.disconnect(self.updateOutputInformation)
+        self.refreshPushButton.clicked.disconnect(self.setTableInitialState)
         self.button(QtWidgets.QWizard.FinishButton).clicked.disconnect(self.startConversion)
 
     def getWidgetNameDict(self, d):
@@ -138,6 +141,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param enabled: (bool) indicates whether table will be enabled.
         """
         # clear possible content in it
+        for row in range(self.tableWidget.rowCount()):
+            self.tableWidget.removeRow(row)
         self.tableWidget.setEnabled(enabled)
         self.tableWidget.setColumnCount(DatasourceConversion.COLUMN_COUNT)
         # if a signal issue comes along, maybe cell shoul've been systematically removed
@@ -307,7 +312,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                             break
                     # the order is the same for all rows
                     dsIdx = outDsCombobox.findText(oldName)
-                print(dsIdx, self.tableWidget.rowCount(), oldName, dsName)
                 outDsCombobox.setItemText(dsIdx, dsName)
                 # update output info, if current selection is the same as before
                 # check if current selection is the one to be removed
@@ -586,15 +590,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         outDsList = [self.tr('Select a datasource')] + sorted(list(map(getNameAlias, self.outDs.values())))
         # input ds dict/list
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
-        inDsList = list(self.inDs.values())
-        # set the table rows # the same as the # of input ds
-        self.tableWidget.setRowCount(len(inDsList))
-        # # prepare widgets control dict
-        # outWidgets = dict()
-        filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
-        crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
-        for containerWidget in inDsList:
-            self.addInputDatasource(containerWidget=containerWidget, resizeColumns=False)
+        for groupTitle in sorted(self.inDs.keys()):
+            self.addInputDatasource(containerWidget=self.inDs[groupTitle], resizeColumns=False)
         self.tableWidget.resizeColumnsToContents()
 
     def getConversionMap(self):
