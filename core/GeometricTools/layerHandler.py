@@ -29,6 +29,7 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsV
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
+from .geometryHandler import GeometryHandler
 
 class LayerHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -538,3 +539,23 @@ class LayerHandler(QObject):
             if feedback:
                 feedback.setProgress(size * current)
         return spatialIdx, idDict
+    
+    def getFrameOutterBounds(self, frameLayer, algRunner, context, feedback = None):
+        """
+        Gets the outter bounds of all frame features composing frame layer.
+        :param frameLayer: (QgsVectorLayer) frame layer.
+        :return: (list-of-QgsGeometry) list of all disjuncts outter bounds of features in frame layer.
+        """
+        frameGeomList = []
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        # dissolve every feature into a single one
+        outputLayer = algRunner.runDissolve(frameLayer, context, feedback = multiStepFeedback)
+        # get all frame outter layer found
+        for feat in outputLayer.getFeatures():
+            geom = feat.geometry()
+            # deaggregate geometry, if necessary
+            geomList = GeometryHandler.deaggregateGeometry(multiGeom=geom)
+            # for every deaggregated node, get only the outter bound as a polyline (for intersection purposes)
+            frameGeomList += [QgsGeometry().fromPolyline(g.asPolygon()[0]) for g in geomList]
+        return frameGeomList
