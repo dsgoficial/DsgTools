@@ -296,3 +296,22 @@ class GeometryHandler(QObject):
     def getStartAndEndPointOnLine(self, geom):
         lineList = geom.asMultiPolyline() if geom.isMultipart() else [geom.asPolyline()]
         return lineList[0], lineList[len(lineList) - 1]
+    
+    def deaggregateGeometry(self, multiGeom):
+        """
+        Deaggregates a multi-part geometry into a its parts and returns all found parts. If no part is found,
+        method returns original geometry.
+        :param multiPartFeat: (QgsGeometry) multi part geometry to be deaggregated.
+        :return: (list-of-QgsGeometry) list of deaggregated geometries
+        """
+        if not multiGeom or not multiGeom.geometry().partCount() > 1:
+            return [multiGeom]
+        # geometry list to be returned
+        geomList = []
+        parts = multiGeom.asGeometryCollection()
+        for part in parts:
+            if part:
+                # asGeometryCollection() reads every part as single-part type geometry 
+                part.convertToMultiType()
+                geomList.append(part)
+        return geomList
