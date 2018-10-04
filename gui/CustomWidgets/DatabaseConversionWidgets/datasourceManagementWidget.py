@@ -30,6 +30,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets.multiDsWidgetFactory import MultiDsWidgetFactory
 
 import os
+from functools import partial
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceManagementWidget.ui'))
@@ -42,9 +43,11 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     3- read filtering info to be applied to data.
     """
     # setting signal to alert conversion tool about any active widgets change
-    activeWidgetsChanged = pyqtSignal()
+    activeWidgetAdded = pyqtSignal(DatasourceContainerWidget)
+    activeWidgetRemoved = pyqtSignal(DatasourceContainerWidget)
     # setting signal to alert conversion tool about any datasource updates
     datasourceChangedSignal = pyqtSignal(AbstractDb)
+    widgetUpdated = pyqtSignal(DatasourceContainerWidget)
     # filtering settings from widget container has changed signal
     containerFilterSettingsChanged = pyqtSignal(DatasourceContainerWidget)
     
@@ -139,7 +142,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
                 # connect datasource change signal to this class datasource signal change
-                w.connectionWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+                emitWidgetAlias = lambda newAbstract : self.datasourceChanged(newAbstract=newAbstract, containerWidget=w)
+                w.connectionWidget.selectionWidget.dbChanged.connect(emitWidgetAlias)
                 # connect datasource change signal to its filters reset method
                 w.connectionWidget.selectionWidget.dbChanged.connect(w.clearFilters)
                 # connect filtering settings changed signal to this class signal on filtering settings change
@@ -150,8 +154,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
                 # reset all driver's groupboxes names
                 self.resetWidgetsTitle()
-                # emit signal advising that there is a new active widget
-                self.activeWidgetsChanged.emit()
+                # emit active widget that has been added
+                self.activeWidgetAdded.emit(w)
                 # returns newly added widget
                 return w
 
@@ -210,18 +214,23 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         except:
             # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
             pass
-        # remove widget from GUI, remove its reference on a parent widget and delete it
         self.datasourceLayout.removeWidget(w)
-        w.setParent(None)
-        del w
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
-        # emit current active widgets changed signal
-        self.activeWidgetsChanged.emit()
+        # emit widget that has been removed
+        self.activeWidgetRemoved.emit(w)
+        # remove widget from GUI, remove its reference on a parent widget and delete it
+        w.setParent(None)
+        del w
 
-    def datasourceChanged(self, newDbAbstract):
+    def datasourceChanged(self, newAbstract, containerWidget):
         """
         Keeps track of every container widget's abstract database change.
         """
         # if any abstractDb changes
-        self.datasourceChangedSignal.emit(newDbAbstract)
+        # keep orignal abstract change signal behavior
+        self.datasourceChangedSignal.emit(newAbstract)
+        # clear widget's filters
+        containerWidget.clearFilters()
+        # advise which widget was updated
+        self.widgetUpdated.emit(containerWidget)
