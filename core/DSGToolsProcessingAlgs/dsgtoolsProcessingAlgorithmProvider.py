@@ -50,6 +50,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWi
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapToGridAndUpdateAlgorithm import SnapToGridAndUpdateAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeEmptyAndUpdateAlgorithm import RemoveEmptyAndUpdateAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayElementsWithAreasAlgorithm import OverlayElementsWithAreasAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.createNetworkNodesAlgorithm import CreateNetworkNodesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import VerifyNetworkDirectioningAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -84,7 +86,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                         SnapToGridAndUpdateAlgorithm(),
                         RemoveEmptyAndUpdateAlgorithm(),
                         ConvertLayer2LayerAlgorithm(),
-                        OverlayElementsWithAreasAlgorithm()]
+                        OverlayElementsWithAreasAlgorithm(),
+                        CreateNetworkNodesAlgorithm(),
+                        VerifyNetworkDirectioningAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
