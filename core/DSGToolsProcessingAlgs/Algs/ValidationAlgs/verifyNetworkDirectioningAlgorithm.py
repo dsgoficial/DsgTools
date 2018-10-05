@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from .validationAlgorithm import ValidationAlgorithm
 from ...algRunner import AlgRunner
@@ -145,31 +146,19 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 self.tr('Line errors on {0}').format(self.displayName())
             )
         )
+        self.layerHandler = LayerHandler()
+        self.networkHandler = NetworkHandler()
+        self.algRunner = AlgRunner()
         self.nodeIdDict = None
         self.nodeDict = None
         self.nodeTypeDict = None
-        self.nodeTypeNameDict = {
-                                    DsgEnums.Flag : self.tr("Flag"),
-                                    DsgEnums.Sink : self.tr("Sink"),
-                                    DsgEnums.WaterwayBegin : self.tr("Waterway Beginning"),
-                                    DsgEnums.UpHillNode : self.tr("Up Hill Node"),
-                                    DsgEnums.DownHillNode : self.tr("Down Hill Node"),
-                                    DsgEnums.Confluence : self.tr("Confluence"),
-                                    DsgEnums.Ramification : self.tr("Ramification"),
-                                    DsgEnums.AttributeChange : self.tr("Attribute Change Node"),
-                                    DsgEnums.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
-                                    DsgEnums.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-                                    DsgEnums.NodeOverload : self.tr("Overloaded Node"),
-                                    DsgEnums.DisconnectedLine : self.tr("Disconnected From Network")
-                                }
+        self.nodeTypeNameDict = self.networkHandler.nodeTypeDict
         self.nodesToPop = []
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        self.layerHandler = LayerHandler()
-        self.algRunner = AlgRunner()
         # get network layer
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
         if networkLayer is None:
@@ -188,17 +177,18 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         frame = self.layerHandler.getFrameOutterBounds(frameLayer, self.algRunner, context, feedback=feedback)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
+        selectValid = self.parameterAsBool(parameters, self.SELECT_ALL_VALID, context)
         networkLayerGeomType = networkLayer.geometryType()
 
-        self.nodeDict = self.layerHandler.identifyAllNodes(networkLayer=networkLayer)
+        self.nodeDict = self.networkHandler.identifyAllNodes(networkLayer=networkLayer)
         # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
-        self.classifyNode = lambda x : self.layerHandler.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
+        self.classifyNode = lambda x : self.networkHandler.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
                                     waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
         
         
 
-        selectValid = self.parameterAsBool(parameters, self.SELECT_ALL_VALID, context)
+        
         
         self.prepareFlagSink(parameters, networkLayer, networkLayer.wkbType(), context)
 
