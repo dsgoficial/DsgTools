@@ -1012,32 +1012,6 @@ class NetworkHandler(QObject):
         # log all features that were merged and/or flipped
         self.logAlteredFeatures(flippedLines=flippedLinesIds, mergedLinesString=mergedLinesString)
         return nodeFlags, invalidLines, validLines
-        
-    def buildFlagList(self, nodeFlags, tableSchema, tableName, geometryColumn):
-        """
-        Builds record list from pointList to raise flags.
-        :param nodeFlags: (dict) dictionary containing invalid node and its reason ( { (QgsPoint) node : (str) reason } )
-        :param tableSchema: (str) name of schema containing hidrography node table.
-        :param tableName: (str) name of hidrography node table.
-        :param geometryColumn: (str) name of geometric column on table.
-        :return: ( list-of- ( (str)feature_identification, (int)feat_id, (str)invalidation_reason, (hex)geometry, (str)geom_column ) ) list of invalidations found.
-        """
-        recordList = []
-        countNodeNotInDb = 0
-        for node, reason in nodeFlags.iteritems():
-            if node in self.nodeIdDict:
-                featid = self.nodeIdDict[node] if self.nodeIdDict[node] is not None else -9999
-            else:
-                # if node is not previously classified on database, but then motivates a flag, it should appear on Flags list
-                featid = -9999
-                countNodeNotInDb += 1
-            geometry = binascii.hexlify(QgsGeometry.fromMultiPoint([node]).asWkb())
-            recordList.append(('{0}.{1}'.format(tableSchema, tableName), featid, reason, geometry, geometryColumn))
-        if countNodeNotInDb:
-            # in case there are flagged nodes that are not loaded in DB, user is notified
-            msg = self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.').format(countNodeNotInDb)
-            QgsMessageLog.logMessage(msg, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
-        return recordList
 
     # method for automatic fix
     def getReasonType(self, reason):
@@ -1284,7 +1258,7 @@ class NetworkHandler(QObject):
             return True
         return False
 
-    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer):
+    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer, feedback = None):
         """
         Get all node info (dictionaries for start/end(ing) lines and node type) from node layer.
         :param networkNodeLayer: (QgsVectorLayer) network node layer.
@@ -1292,13 +1266,19 @@ class NetworkHandler(QObject):
         """
         nodeTypeDict, nodeIdDict = dict(), dict()
         isMulti = QgsWKBTypes.isMultiType(int(networkNodeLayer.wkbType()))
-        for feat in networkNodeLayer.getFeatures():
+        featCount = networkNodeLayer.featureCount()
+        size = 100/featCount if featCount else 0
+        for current, feat in enumerate(networkNodeLayer.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
             if isMulti:
                 node = feat.geometry().asMultiPoint()[0]                    
             else:
                 node = feat.geometry().asPoint()
             nodeTypeDict[node] = feat['node_type']
             nodeIdDict[node] = feat.id()
+            if feedback is not None:
+                feedback.setProgress(size * current)
         return nodeTypeDict, nodeIdDict
 
     def clearAuxiliaryLinesLayer(self, invalidLinesLayer, lineIdList=None, commitToLayer=False):
@@ -1351,22 +1331,16 @@ class NetworkHandler(QObject):
         feat['geometry_column'] = geometry_column
         return feat
 
-    def fillAuxiliaryLinesLayer(self, invalidLinesLayer, invalidLinesDict, nonValidatedLines, networkLayerName, commitToLayer=False):
+    def getAuxiliaryLines(self, fields, invalidLinesDict, nonValidatedLines, networkLayerName):
         """
         Populate from auxiliary lines layer with all invalid lines.
-        :param invalidLinesLayer: (QgsVectorLayer) hidrography nodes layer.
         :param invalidLinesDict: (dict) dictionary containing all invalid lines to be displayed.
         :param nonValidatedLines: (set) set of all non-validated network lines.
         :param commitToLayer: (bool) indicates whether changes should be commited to layer.
         """
-        # if table is going to be filled, then it needs to be cleared first
-        self.clearAuxiliaryLinesLayer(invalidLinesLayer=invalidLinesLayer, commitToLayer=commitToLayer)
-        # get fields from layer in order to create new feature with the same attribute map
-        fields = invalidLinesLayer.fields()
         # prepare generic variables that will be reused
         invalidReason = self.tr('Connected to invalid hidrography node.')
         nonVisitedReason = self.tr('Line not yet visited.')
-        invalidLinesLayer.beginEditCommand('Add invalid lines')
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
         # initiate new features list
@@ -1383,12 +1357,9 @@ class NetworkHandler(QObject):
             # add it to new features list
             featList.append(feat)
         # add invalid lines
-        for lineId, line in invalidLinesDict.iteritems(): 
+        for lineId, line in invalidLinesDict.items(): 
             # create new feture
             feat = newInvalidFeatFunc([line.geometry(), lineId])
             # add it to new features list
             featList.append(feat)
-        invalidLinesLayer.addFeatures(featList)
-        invalidLinesLayer.endEditCommand()
-        if commitToLayer:
-            invalidLinesLayer.commitChanges()
+        return featList
