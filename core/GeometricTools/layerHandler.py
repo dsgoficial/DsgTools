@@ -559,3 +559,43 @@ class LayerHandler(QObject):
             # for every deaggregated node, get only the outter bound as a polyline (for intersection purposes)
             frameGeomList += [QgsGeometry().fromPolyline(g.asPolygon()[0]) for g in geomList]
         return frameGeomList
+    
+    def identifyAllNodes(self, networkLayer):
+        """
+        Identifies all nodes from a given layer (or selected features of it). The result is returned as a dict of dict.
+        :param networkLayer: target layer to which nodes identification is required.
+        :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
+        """
+        nodeDict = dict()
+        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
+        if self.parameters['Only Selected']:
+            features = networkLayer.selectedFeatures()
+        else:
+            features = [feat for feat in networkLayer.getFeatures()]
+        for feat in features:
+            nodes = self.DsgGeometryHandler.getFeatureNodes(networkLayer, feat)
+            if nodes:
+                if isMulti:
+                    if len(nodes) > 1:
+                        # if feat is multipart and has more than one part, a flag should be raised
+                        continue # CHANGE TO RAISE FLAG
+                    elif len(nodes) == 0:
+                        # if no part is found, skip feature
+                        continue
+                    else:
+                        # if feat is multipart, "nodes" is a list of list
+                        nodes = nodes[0]                
+                # initial node
+                pInit, pEnd = nodes[0], nodes[-1]
+                # filling starting node information into dictionary
+                if pInit not in nodeDict:
+                    # if the point is not already started into dictionary, it creates a new item
+                    nodeDict[pInit] = { 'start' : [], 'end' : [] }
+                if feat not in nodeDict[pInit]['start']:
+                    nodeDict[pInit]['start'].append(feat)                            
+                # filling ending node information into dictionary
+                if pEnd not in nodeDict:
+                    nodeDict[pEnd] = { 'start' : [], 'end' : [] }
+                if feat not in nodeDict[pEnd]['end']:
+                    nodeDict[pEnd]['end'].append(feat)
+        return nodeDict
