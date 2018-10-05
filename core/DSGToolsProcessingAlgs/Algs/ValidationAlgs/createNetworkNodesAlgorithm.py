@@ -101,15 +101,6 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterDistance(
-                self.TOLERANCE,
-                self.tr('Snap radius'),
-                parentParameterName=self.INPUT,
-                minValue=0,
-                defaultValue=1.0
-            )
-        )
-        self.addParameter(
             QgsProcessingParameterNumber(
                 self.SEARCH_RADIUS,
                 self.tr('Search radius'),
