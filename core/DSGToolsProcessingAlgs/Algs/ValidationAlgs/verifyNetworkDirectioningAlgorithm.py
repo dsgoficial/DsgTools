@@ -54,7 +54,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
     NODE_LAYER = 'NODE_LAYER'
     SINK_LAYER = 'SINK_LAYER'
     REF_LAYER = 'REF_LAYER'
-    WATER_BODY_LAYER = 'WATER_BODY_LAYER'
+    WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
     MAX_CYCLES = 'MAX_CYCLES'
     SEARCH_RADIUS = 'SEARCH_RADIUS'
     SELECT_ALL_VALID = 'SELECT_ALL_VALID'
@@ -96,7 +96,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
-                self.WATER_BODY_LAYER,
+                self.WATER_BODY_LAYERS,
                 self.tr('Water body layers'),
                 QgsProcessing.TypeVectorPolygon,
                 optional=True
@@ -167,7 +167,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         networkNodeLayer = self.parameterAsLayer(parameters, self.NODE_LAYER, context)
         if networkLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.NODE_LAYER))
-        waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYER, context)
+        waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
         networkNodeLayer.startEditing()
         # get water sink layer
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
@@ -324,7 +324,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Validation Tools (Identification Processes)')
+        return self.tr('Validation Tools (Network Processes)')
 
     def groupId(self):
         """
@@ -334,7 +334,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Validation Tools (Identification Processes)'
+        return 'DSGTools: Validation Tools (Network Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('Processing', string)
