@@ -122,7 +122,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     def getFields(self):
         fields = QgsFields()
         fields.append(QgsField('node_type', QVariant.String))
-        fields.append(QgsField('layer'), QVariant.String)
+        fields.append(QgsField('layer', QVariant.String))
         return fields
 
     def processAlgorithm(self, parameters, context, feedback):
