@@ -673,19 +673,19 @@ class NetworkHandler(QObject):
         # getting flow permitions based on node type
         # reference is the node (e.g. 'in' = lines  are ENDING at analyzed node)
         flowType = {
-                    CreateNetworkNodesProcess.Flag : None, # 0 - Flag (fim de trecho sem 'justificativa espacial')
-                    CreateNetworkNodesProcess.Sink : 'in', # 1 - Sumidouro
-                    CreateNetworkNodesProcess.WaterwayBegin : 'out', # 2 - Fonte D'Água
-                    CreateNetworkNodesProcess.DownHillNode : 'in', # 3 - Interrupção à Jusante
-                    CreateNetworkNodesProcess.UpHillNode : 'out', # 4 - Interrupção à Montante
-                    CreateNetworkNodesProcess.Confluence : 'in and out', # 5 - Confluência
-                    CreateNetworkNodesProcess.Ramification : 'in and out', # 6 - Ramificação
-                    CreateNetworkNodesProcess.AttributeChange : 'in and out', # 7 - Mudança de Atributo
-                    CreateNetworkNodesProcess.NodeNextToWaterBody : 'in or out', # 8 - Nó próximo a corpo d'água
-                    CreateNetworkNodesProcess.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
-                    CreateNetworkNodesProcess.NodeOverload : None, # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
-                    CreateNetworkNodesProcess.DisconnectedLine : None, # 11 - Nó conectado a uma linha perdida na rede (teria dois inícios de rede)
-                    # CreateNetworkNodesProcess.NodeOverload : None # 10 - Mais 
+                    NetworkHandler.Flag : None, # 0 - Flag (fim de trecho sem 'justificativa espacial')
+                    NetworkHandler.Sink : 'in', # 1 - Sumidouro
+                    NetworkHandler.WaterwayBegin : 'out', # 2 - Fonte D'Água
+                    NetworkHandler.DownHillNode : 'in', # 3 - Interrupção à Jusante
+                    NetworkHandler.UpHillNode : 'out', # 4 - Interrupção à Montante
+                    NetworkHandler.Confluence : 'in and out', # 5 - Confluência
+                    NetworkHandler.Ramification : 'in and out', # 6 - Ramificação
+                    NetworkHandler.AttributeChange : 'in and out', # 7 - Mudança de Atributo
+                    NetworkHandler.NodeNextToWaterBody : 'in or out', # 8 - Nó próximo a corpo d'água
+                    NetworkHandler.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
+                    NetworkHandler.NodeOverload : None, # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
+                    NetworkHandler.DisconnectedLine : None, # 11 - Nó conectado a uma linha perdida na rede (teria dois inícios de rede)
+                    # NetworkHandler.NodeOverload : None # 10 - Mais 
                    }
         # to avoid calculations in expense of memory
         nodeType = self.nodeTypeDict[node]
@@ -702,10 +702,10 @@ class NetworkHandler(QObject):
         validLines, invalidLines = dict(), dict()
         if not flow:
             # flags have all lines flagged
-            if nodeType == CreateNetworkNodesProcess.Flag:
+            if nodeType == NetworkHandler.Flag:
                 reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
                 invalidLines = { line.id() : line for line in linesNotValidated }
-            elif nodeType == CreateNetworkNodesProcess.AttributeChangeFlag:
+            elif nodeType == NetworkHandler.AttributeChangeFlag:
                 if nodePointDict['start'] and nodePointDict['end']:
                     # in case manual error is inserted, this would raise an exception
                     line1, line2 = nodePointDict['start'][0], nodePointDict['end'][0]
@@ -718,18 +718,18 @@ class NetworkHandler(QObject):
                     invalidLines[il.id()] = il
                 else:
                     # problem is then, reclassified as a flag
-                    self.nodeTypeDict[node] = CreateNetworkNodesProcess.Flag
+                    self.nodeTypeDict[node] = NetworkHandler.Flag
                     # reclassify node type into layer
-                    self.reclassifyNodeType[node] = CreateNetworkNodesProcess.Flag
+                    self.reclassifyNodeType[node] = NetworkHandler.Flag
                     reason = self.tr('Node was flagged upon classification (probably cannot be an ending hidrography node).')
-            elif nodeType == CreateNetworkNodesProcess.DisconnectedLine:
+            elif nodeType == NetworkHandler.DisconnectedLine:
                 # get line connected to node
                 lines = nodePointDict['start'] + nodePointDict['end']
                 # just in case there's a node wrong manual reclassification so code doesn't raise an error
                 ids = [str(line.id()) for line in lines]
                 invalidLines = { line.id() : line for line in lines }
                 reason = self.tr('Line {0} disconnected from network.').format(", ".join(ids))
-            elif nodeType == CreateNetworkNodesProcess.NodeOverload:
+            elif nodeType == NetworkHandler.NodeOverload:
                 reason = self.tr('Node is overloaded - 4 or more lines are flowing in (>= 2 lines) and out (>= 2 lines).')
                 invalidLines = { line.id() : line for line in linesNotValidated }
             return validLines, invalidLines, reason
@@ -796,7 +796,7 @@ class NetworkHandler(QObject):
         """
         
         if not deltaLinesCheckList:
-            deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
+            deltaLinesCheckList = [NetworkHandler.Confluence, NetworkHandler.Ramification] # nodes that have an unbalaced number ratio of flow in/out
         # check coherence to node type and waterway flow
         val, inval, reason = self.checkNodeTypeValidity(node=node, connectedValidLines=connectedValidLines,\
                                                     networkLayer=networkLayer, geomType=geomType)
@@ -848,8 +848,8 @@ class NetworkHandler(QObject):
         :return:
         """
         # node type granted as right as start conditions
-        inContourConditionTypes = [CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.Sink]
-        outContourConditionTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin]
+        inContourConditionTypes = [NetworkHandler.DownHillNode, NetworkHandler.Sink]
+        outContourConditionTypes = [NetworkHandler.UpHillNode, NetworkHandler.WaterwayBegin]
         if node in inContourConditionTypes + outContourConditionTypes:
             # if node IS a starting condition, method is not necessary
             return False, ''
@@ -908,8 +908,8 @@ class NetworkHandler(QObject):
         :param nodeList: a list of target node points (QgsPoint). If not given, all nodeDict will be read.
         :return: (dict) flag dictionary ( { (QgsPoint) node : (str) reason } ), (dict) dictionaries ( { (int)feat_id : (QgsFeature)feat } ) of invalid and valid lines.
         """
-        startingNodeTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
-        deltaLinesCheckList = [CreateNetworkNodesProcess.Confluence, CreateNetworkNodesProcess.Ramification] # nodes that have an unbalaced number ratio of flow in/out
+        startingNodeTypes = [NetworkHandler.UpHillNode, NetworkHandler.WaterwayBegin] # node types that are over the frame contour and line BEGINNINGS
+        deltaLinesCheckList = [NetworkHandler.Confluence, NetworkHandler.Ramification] # nodes that have an unbalaced number ratio of flow in/out
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
             nodeList = []
@@ -1145,7 +1145,7 @@ class NetworkHandler(QObject):
                 self.nodeDict[nn]['end'].append(line_b)
         # remove attribute change flag node (there are no lines connected to it anymore)
         self.nodesToPop.append(node)
-        self.createNetworkNodesProcess.nodeDict[nn]['end'] = self.nodeDict[nn]['end']
+        self.NetworkHandler.nodeDict[nn]['end'] = self.nodeDict[nn]['end']
         return self.tr('{0} to {1}').format(line_a.id(), line_b.id())
 
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
@@ -1155,9 +1155,9 @@ class NetworkHandler(QObject):
         # getting first and last nodes
         first = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
         last = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
-        changed = self.createNetworkNodesProcess.changeLineDict(nodeList=[first, last], line=line)
-        # update this nodeDict with the one from createNetworkNodesProcess object
-        self.nodeDict[node] = self.createNetworkNodesProcess.nodeDict[node]
+        changed = self.NetworkHandler.changeLineDict(nodeList=[first, last], line=line)
+        # update this nodeDict with the one from NetworkHandler object
+        self.nodeDict[node] = self.NetworkHandler.nodeDict[node]
         return changed
 
     def reclassifyNode(self, node, nodeLayer):
@@ -1166,7 +1166,7 @@ class NetworkHandler(QObject):
         :param node: (QgsPoint) node to be reclassified.
         :return: (bool) whether point was modified.
         """
-        immutableTypes = [CreateNetworkNodesProcess.UpHillNode, CreateNetworkNodesProcess.DownHillNode, CreateNetworkNodesProcess.WaterwayBegin]
+        immutableTypes = [NetworkHandler.UpHillNode, NetworkHandler.DownHillNode, NetworkHandler.WaterwayBegin]
         if self.nodeTypeDict[node] in immutableTypes:
             # if node type is immutable, reclassification is not possible
             return False
