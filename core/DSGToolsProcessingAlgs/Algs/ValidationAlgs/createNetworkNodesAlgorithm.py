@@ -72,7 +72,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.REF_LAYER,
                 self.tr('Reference layer'),
-                [QgsProcessing.TypeVectorPoint]
+                [QgsProcessing.TypeVectorPolygon]
             )
         )
         self.addParameter(
