@@ -38,7 +38,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsFields)
+                       QgsFields,
+                       QgsProcessingException)
 
 class ValidationAlgorithm(QgsProcessingAlgorithm):
     """
@@ -60,11 +61,15 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             return [], 0
     
     def prepareFlagSink(self, parameters, source, wkbType, context):
+        (self.flagSink, self.flag_id) = self.prepareAndReturnFlagSink(parameters, source, wkbType, context, self.FLAGS)
+    
+    def prepareAndReturnFlagSink(self, parameters, source, wkbType, context, UI_FIELD):
         flagFields = self.getFlagFields()
-        (self.flagSink, self.flag_id) = self.parameterAsSink(parameters, self.FLAGS,
+        (flagSink, flag_id) = self.parameterAsSink(parameters, UI_FIELD,
                 context, flagFields, wkbType, source.sourceCrs())
-        if self.flagSink is None:
-            raise QgsProcessingException(self.invalidSinkError(parameters, self.FLAGS))
+        if flagSink is None:
+            raise QgsProcessingException(self.invalidSinkError(parameters, UI_FIELD))
+        return (flagSink, flag_id)
     
     def getFlagFields(self):
         fields = QgsFields()
