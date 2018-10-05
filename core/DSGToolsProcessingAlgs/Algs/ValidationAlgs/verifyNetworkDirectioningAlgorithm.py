@@ -186,14 +186,13 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
         frame = self.layerHandler.getFrameOutterBounds(frameLayer, self.algRunner, context, feedback=feedback)
-        
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         networkLayerGeomType = networkLayer.geometryType()
 
-        self.nodeDict = self.createNetworkNodesProcess.identifyAllNodes(networkLayer=networkLayer)
+        self.nodeDict = self.layerHandler.identifyAllNodes(networkLayer=networkLayer)
         # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
-        self.classifyNode = lambda x : self.createNetworkNodesProcess.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
+        self.classifyNode = lambda x : self.layerHandler.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
                                     waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
         
