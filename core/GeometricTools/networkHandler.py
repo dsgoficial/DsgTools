@@ -33,12 +33,8 @@ from qgis.PyQt.Qt import QObject
 
 class NetworkHandler(QObject):
     Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, NodeOverload, DisconnectedLine = list(range(12))
-    def __init__(self, iface=None, parent=None):
+    def __init__(self):
         super(NetworkHandler, self).__init__()
-        self.parent = parent
-        self.iface = iface
-        if self.iface:
-            self.canvas = iface.mapCanvas()
         self.nodeDict = None
         self.nodeTypeDict = None
         self.nodeTypeNameDict = {
