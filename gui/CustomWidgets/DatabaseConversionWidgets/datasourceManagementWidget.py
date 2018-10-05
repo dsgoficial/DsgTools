@@ -200,14 +200,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         :param w: (QWidget) driver widget to be removed. 
         """
         # disconnect all widget connected signals
-        try:
-            w.removeWidget.disconnect(self.removeWidget)
-        except:
-            pass
-        try:
-            w.connectionWidget.selectionWidget.dbChanged.disconnect(self.datasourceChanged)
-        except:
-            pass
+        w.blockSignals(True)
         # remove from active dict
         try:
             self.activeDrivers[w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)].remove(w)

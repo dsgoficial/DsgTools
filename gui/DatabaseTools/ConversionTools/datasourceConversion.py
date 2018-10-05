@@ -254,21 +254,29 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # update output map
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         # get new datasource info
-        dsName = '{0}: {1}'.format(containerWidget.groupBox.title(), containerWidget.getDatasourceConnectionName())
+        groupTitle = containerWidget.groupBox.title()
+        dsName = '{0}: {1}'.format(groupTitle, containerWidget.getDatasourceConnectionName())
         # initiate its index
         dsIdx = None
         for row in range(self.tableWidget.rowCount()):
             outDsCombobox = self.getRowContents(row=row)[DatasourceConversion.OutDs]
             if outDsCombobox:
                 if dsIdx is None:
+                    # retrive old name
+                    oldName = ''
+                    for i in range(outDsCombobox.count()):
+                        if groupTitle in outDsCombobox.itemText(i):
+                            oldName = outDsCombobox.itemText(i)
+                            # once name is retrieved, cycle is no longer needed
+                            break
                     # the order is the same for all rows
-                    dsIdx = outDsCombobox.findText(dsName)
-                # remove datasource entry
-                outDsCombobox.removeItem(dsIdx)
+                    dsIdx = outDsCombobox.findText(oldName)
                 # check if current selection is the one to be removed
                 if outDsCombobox.currentIndex() == dsIdx:
                     # if current selection is the removed output, set selection to 0 index
                     outDsCombobox.setCurrentIndex(0)
+                # remove datasource entry
+                outDsCombobox.removeItem(dsIdx)
 
     def updateInputInformation(self, containerWidget):
         """
@@ -563,7 +571,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                     # in case no filters are added or if layer is among the filtered ones, set it checked
                     checkbox.setChecked(True)
                 # fill up an edit line containing filtering expression, if any
-                if layerName in filterDict['layer_filter']:
+                if not filterDict['layer_filter'] or layerName in filterDict['layer_filter']:
                     filterExpression.setText(filterDict['layer_filter'][layerName])
                 # fill crs
                 crs.setText(crsDict[layerName])
