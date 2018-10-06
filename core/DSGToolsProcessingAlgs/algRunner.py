@@ -261,3 +261,11 @@ class AlgRunner:
         }
         output = processing.run("native:symmetricaldifference", parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runBoundary(self, inputLayer, context, feedback=None, outputLyr='memory:'):
+        parameters = {
+            'INPUT' : inputLayer,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']

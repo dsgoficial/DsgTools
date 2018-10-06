@@ -46,6 +46,7 @@ from qgis.core import (QgsProcessing,
                        QgsFields)
 from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
 
 class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
@@ -109,8 +110,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double
             )
         )
-        self.addOutput(
-            QgsProcessingOutputVectorLayer(
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
                 self.NETWORK_NODES,
                 self.tr('Node layer')
             )
@@ -132,6 +133,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         #get the network handler
         layerHandler = LayerHandler()
         networkHandler = NetworkHandler()
+        algRunner = AlgRunner()
         self.nodeTypeNameDict = networkHandler.nodeTypeDict
         # get network layer
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
@@ -139,7 +141,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.NETWORK_LAYER))
         # get network node layer
         (nodeSink, dest_id) = self.parameterAsSink(parameters, self.NETWORK_NODES,
-                context, self.getFields(), QgsWkbTypes.Point, networkLayer.sourceCrs())
+                context, self.getFields(), QgsWkbTypes.MultiPoint, networkLayer.sourceCrs())
         
         waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
         # get water sink layer
@@ -148,18 +150,26 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        frame = layerHandler.getFrameOutterBounds(frameLayer, self.algRunner, context)
-        # prepare point flag sink
-        self.prepareFlagSink(parameters, networkLayer, networkLayer.wkbType(), context)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Preparing bounds...'))
+        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer)
-        self.nodeTypeDict = self.classifyAllNodes(
+        multiStepFeedback.setCurrentStep(1)
+        multiStepFeedback.pushInfo(self.tr('Performing node identification...'))
+        self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback)
+        multiStepFeedback.pushInfo(self.tr('{node_count} node(s) identificated...').format(node_count=len(self.nodeDict)))
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Performing node classification...'))
+        networkHandler.nodeDict = self.nodeDict
+        self.nodeTypeDict = networkHandler.classifyAllNodes(
                 networkLayer=networkLayer,
                 frameLyrContourList=frame,
                 waterBodiesLayers=waterBodyClasses,
                 searchRadius=searchRadius,
-                waterSinkLayer=waterSinkLayer
+                waterSinkLayer=waterSinkLayer,
+                feedback=multiStepFeedback
             )
         self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name())
         return {self.NETWORK_NODES : dest_id}

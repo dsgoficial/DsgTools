@@ -39,6 +39,7 @@ class LayerHandler(QObject):
         if iface:
             self.canvas = iface.mapCanvas()
         self.featureHandler = FeatureHandler(iface)
+        self.geometryHandler = GeometryHandler(iface)
     
     def getFeatureList(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
         """
@@ -547,17 +548,29 @@ class LayerHandler(QObject):
         :return: (list-of-QgsGeometry) list of all disjuncts outter bounds of features in frame layer.
         """
         frameGeomList = []
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+            multiStepFeedback.setCurrentStep(0)
+        else:
+            multiStepFeedback = None
         # dissolve every feature into a single one
         outputLayer = algRunner.runDissolve(frameLayer, context, feedback = multiStepFeedback)
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        boundaryLayer = algRunner.runBoundary(outputLayer, context, feedback = multiStepFeedback)
         # get all frame outter layer found
-        for feat in outputLayer.getFeatures():
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(2)
+            featCount = boundaryLayer.featureCount()
+            size = 100/featCount if featCount else 0
+        for current, feat in enumerate(boundaryLayer.getFeatures()):
+            if feedback is not None and feedback.isCanceled():
+                break
             geom = feat.geometry()
             # deaggregate geometry, if necessary
-            geomList = GeometryHandler.deaggregateGeometry(multiGeom=geom)
-            # for every deaggregated node, get only the outter bound as a polyline (for intersection purposes)
-            frameGeomList += [QgsGeometry().fromPolyline(g.asPolygon()[0]) for g in geomList]
+            frameGeomList += self.geometryHandler.deaggregateGeometry(multiGeom=geom)
+            if feedback is not None:
+                multiStepFeedback.setProgress(size * current)
         return frameGeomList
     
     def identifyAllNodes(self, networkLayer):
@@ -567,7 +580,7 @@ class LayerHandler(QObject):
         :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
-        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
         if self.parameters['Only Selected']:
             features = networkLayer.selectedFeatures()
         else:

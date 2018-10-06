@@ -29,7 +29,7 @@ from .geometryHandler import GeometryHandler
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
-                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsWkbTypes, QgsCoordinateReferenceSystem
+                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem
 from qgis.PyQt.Qt import QObject
 
 class NetworkHandler(QObject):
@@ -57,7 +57,7 @@ class NetworkHandler(QObject):
             NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network")
         }
     
-    def identifyAllNodes(self, networkLayer, onlySelected=False):
+    def identifyAllNodes(self, networkLayer, onlySelected=False, feedback=None):
         """
         Identifies all nodes from a given layer (or selected features of it).
         The result is returned as a dict of dict.
@@ -70,10 +70,14 @@ class NetworkHandler(QObject):
             }
         """
         nodeDict = dict()
-        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
         iterator = networkLayer.getFeatures() if not onlySelected else networkLayer.getSelectedFeatures()
         features = [feat for feat in iterator]
-        for feat in features:
+        featCount = networkLayer.featureCount() if not onlySelected else networkLayer.selectedFeatureCount()
+        size = 100/featCount if featCount else 0
+        for current, feat in enumerate(iterator):
+            if feedback is not None and feedback.isCanceled():
+                break
             nodes = self.geometryHandler.getFeatureNodes(networkLayer, feat)
             if nodes:
                 if isMulti:
@@ -99,6 +103,8 @@ class NetworkHandler(QObject):
                     nodeDict[pEnd] = { 'start' : [], 'end' : [] }
                 if feat not in nodeDict[pEnd]['end']:
                     nodeDict[pEnd]['end'].append(feat)
+            if feedback is not None:
+                feedback.setProgress(size * current)
         return nodeDict
 
     def changeLineDict(self, nodeList, line):
@@ -296,7 +302,7 @@ class NetworkHandler(QObject):
         nextNodes = []
         # to reduce calculation time
         nodePointDict = self.nodeDict[node]
-        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
         # get all other nodes connected to lines connected to "node"
         lines = nodePointDict['start'] + nodePointDict['end']
         if len(lines) > 1:
@@ -414,7 +420,7 @@ class NetworkHandler(QObject):
             # case 3 "ramification"
             return NetworkHandler.Ramification
 
-    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None):
+    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None):
         """
         Classifies all identified nodes from the hidrography line layer.
         :param networkLayer: (QgsVectorLayer) network lines layer.
@@ -428,16 +434,19 @@ class NetworkHandler(QObject):
         """
         networkLayerGeomType = networkLayer.geometryType()
         nodeTypeDict = dict()
-        nodeKeys = self.nodeDict.keys()
-        if not nodeList:
-            nodeList = nodeKeys
-        for node in nodeList:
+        nodeCount = len(self.nodeDict)
+        size = 100/nodeCount if nodeCount else 0
+        for current, node in enumerate(self.nodeDict):
+            if feedback is not None and feedback.isCanceled():
+                break
             if node not in nodeKeys:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
                                     waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType)
+            if feedback:
+                feedback.setProgress(size * current)
         return nodeTypeDict
 
     def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=False):
@@ -494,7 +503,7 @@ class NetworkHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.geometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 return
@@ -511,7 +520,7 @@ class NetworkHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.geometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 # process doesn't treat multipart features that does have more than 1 part
@@ -529,7 +538,7 @@ class NetworkHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.geometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 return
@@ -546,7 +555,7 @@ class NetworkHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.geometryHandler.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 return
@@ -1265,7 +1274,7 @@ class NetworkHandler(QObject):
         :return: (tuple-of-dict) node type dict and node id dict, respectively
         """
         nodeTypeDict, nodeIdDict = dict(), dict()
-        isMulti = QgsWKBTypes.isMultiType(int(networkNodeLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(networkNodeLayer.wkbType()))
         featCount = networkNodeLayer.featureCount()
         size = 100/featCount if featCount else 0
         for current, feat in enumerate(networkNodeLayer.getFeatures()):
