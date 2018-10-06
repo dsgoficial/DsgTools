@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
+from PyQt4 import QtGui,QtCore, uic
+from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt, QSettings
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
 from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
@@ -19,8 +19,10 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.rubberBand = None
         self.snapCursorRubberBand = None
         self.initVariable()
-        self.setAction(action)
-        self.distanceToolTip = DistanceToolTip(self.iface)
+        self.setAction(action)        
+        self.minSegmentDistance = self.getMinSegmentDistance()
+        self.distanceToolTip = DistanceToolTip(self.iface, self.minSegmentDistance)
+
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
@@ -33,6 +35,21 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             return False
         else:
             return True
+
+    def getParametersFromConfig(self):
+        #Método para obter as configurações da tool do QSettings
+        #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
+        settings = QtCore.QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        parameters = {
+            u'minSegmentDistance' : settings.value('minSegmentDistance'),
+        }
+        settings.endGroup()
+        return parameters
+
+    def getMinSegmentDistance(self):
+        parameters = self.getParametersFromConfig()
+        return parameters[u'minSegmentDistance']
 
     def setAction(self, action):
         self.toolAction = action

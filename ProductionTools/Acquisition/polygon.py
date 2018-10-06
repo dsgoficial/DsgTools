@@ -51,13 +51,17 @@ class Polygon(GeometricaAcquisition):
             else:
                 if (self.qntPoint >=2):
                     if (self.qntPoint % 2 == 0):
-                        point = QgsPoint(pointMap)
-                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                        if testgeom:
-                            new_geom, pf = self.completePolygon(self.geometry, testgeom)
-                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
-                            self.geometry.append(pf)   
-                        self.endGeometry()                         
+                        point = QgsPoint(pointMap) 
+                        if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
+                            print(self.distanceToolTip.calculateDistance(self.geometry[-1], point))
+                            testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                            if testgeom:
+                                new_geom, pf = self.completePolygon(self.geometry, testgeom)
+                                self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
+                                self.geometry.append(pf)   
+                            self.endGeometry()   
+                        else:
+                            self.iface.messageBar().pushMessage("Observação".decode('utf-8'), "Não é possível digitalizar, segmento com distância menor que a mínima.".decode('utf-8'), level=QgsMessageBar.INFO)                                      
                     else:                        
                         self.iface.messageBar().pushMessage("Observação".decode('utf-8'), "A ferramenta de ângulo reto deve ser utilizada para digitalização de feições retangulares.".decode('utf-8'), level=QgsMessageBar.INFO)                
 
