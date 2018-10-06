@@ -33,7 +33,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
-                       QgsProcessingParameterBoolean)
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingException)
 
 class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
