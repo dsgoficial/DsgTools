@@ -7,13 +7,23 @@
     <x>0</x>
     <y>0</y>
     <width>613</width>
-    <height>541</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DSGTools Options</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_4">
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
      <property name="title">
@@ -152,7 +162,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QgsCollapsibleGroupBox" name="mGroupBox_3">
      <property name="title">
       <string>Raster Info Tool's Parameters</string>
@@ -178,14 +188,27 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="2" column="0">
+    <widget class="QgsCollapsibleGroupBox" name="mGroupBox_4">
+     <property name="title">
+      <string>Right Angle Tool Parameters</string>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Minimum Segment Distance (meters)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QgsSpinBox" name="minSegmentDistanceQgsSpinBox">
+        <property name="value">
+         <number>4</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
