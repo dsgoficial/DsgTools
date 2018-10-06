@@ -79,7 +79,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
         geomDict = dict()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
