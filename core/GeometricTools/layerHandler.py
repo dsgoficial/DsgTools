@@ -358,24 +358,31 @@ class LayerHandler(QObject):
         lyr.endEditCommand()
     
     def buildAttributeFeatureDict(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True):
-        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
         localTotal = 100/size if size != 0 else 0
         attributeFeatDict = dict()
-        pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
-        typeBlackList = [6] if ignoreVirtualFields else []
-        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
+        columns = self.getAttributesFromBlackList(lyr, attributeBlackList=attributeBlackList, ignoreVirtualFields=ignoreVirtualFields, excludePrimaryKeys=excludePrimaryKeys)
         for current, feat in enumerate(iterator):
             if feedback:
                 if feedback.isCanceled():
                     break
-            attrKey = ','.join(['{}'.format(feat[column]) for column in columns])
-            if attrKey not in attributeFeatDict:
-                attributeFeatDict[attrKey] = []
-            attributeFeatDict[attrKey].append(feat)
+            self.appendFeatOnAttrsDict(attributeFeatDict, feat, columns)
             if feedback:
                 feedback.setProgress(localTotal*current)
         return attributeFeatDict
+    
+    def getAttributesFromBlackList(self, lyr, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        pkIndexes = lyr.primaryKeyAttributes() if excludePrimaryKeys else []
+        typeBlackList = [6] if ignoreVirtualFields else []
+        columns = [field.name() for idx, field in enumerate(lyr.fields()) if idx not in pkIndexes and field.type() not in typeBlackList and field.name() not in attributeBlackList]
+        return columns
+    
+    def appendFeatOnAttrsDict(self, inputDict, feat, columns):
+        attrKey = ','.join(['{}'.format(feat[column]) for column in columns])
+        if attrKey not in inputDict:
+            inputDict[attrKey] = []
+        inputDict[attrKey].append(feat)
     
     def buildInitialAndEndPointDict(self, lyr, onlySelected = False, feedback = None):
         """
@@ -396,6 +403,25 @@ class LayerHandler(QObject):
             if feedback:
                 feedback.setProgress(size*current)
         return endVerticesDict
+    
+    def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, feedback = None):
+        geomDict = dict()
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        columns = self.getAttributesFromBlackList(lyr, attributeBlackList=attributeBlackList, ignoreVirtualFields=ignoreVirtualFields, excludePrimaryKeys=excludePrimaryKeys)
+        for current, feat in enumerate(iterator):
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            if isMulti and not geom.isMultipart():
+                geom.convertToMultiType()
+            geomKey = geom.asWkb()
+            if geomKey not in geomDict:
+                geomDict[geomKey] = dict()
+            self.appendFeatOnAttrsDict(geomDict[geomKey], feat, columns)
+            if feedback is not None:
+                feedback.setProgress(size * current)
+        return geomDict
 
     def addFeatToDict(self, endVerticesDict, line, featid):
         self.addPointToDict(line[0], endVerticesDict, featid)
