@@ -144,6 +144,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 context, self.getFields(), QgsWkbTypes.MultiPoint, networkLayer.sourceCrs())
         
         waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
+        waterBodyClasses = waterBodyClasses if waterBodyClasses is not None else []
         # get water sink layer
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         # get frame layer
@@ -190,7 +191,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             # set attribute map
             feat = QgsFeature(fields)
             # set geometry
-            feat.setGeometry(QgsGeometry.fromMultiPoint([node]))
+            feat.setGeometry(QgsGeometry.fromMultiPointXY([node]))
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             featList.append(feat)

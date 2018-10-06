@@ -29,7 +29,8 @@ from .geometryHandler import GeometryHandler
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
-                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem
+                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem,\
+                      QgsDataSourceUri
 from qgis.PyQt.Qt import QObject
 
 class NetworkHandler(QObject):
@@ -139,7 +140,7 @@ class NetworkHandler(QObject):
         :param searchRadius: maximum distance to frame layer such that the feature is considered touching it.
         :return: (bool) whether node is as close as searchRaius to frame contour.
         """
-        qgisPoint = QgsGeometry.fromPoint(node)
+        qgisPoint = QgsGeometry.fromPointXY(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1)
         for frameContour in frameLyrContourList:
@@ -156,7 +157,7 @@ class NetworkHandler(QObject):
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :return: (bool) whether node is as close as searchRaius to a water body element.
         """        
-        qgisPoint = QgsGeometry.fromPoint(node)
+        qgisPoint = QgsGeometry.fromPointXY(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
@@ -182,7 +183,7 @@ class NetworkHandler(QObject):
         """
         if not waterSinkLayer:
             return False
-        qgisPoint = QgsGeometry.fromPoint(node)
+        qgisPoint = QgsGeometry.fromPointXY(node)
         # building bounding box around node for feature requesting
         bbRect = qgisPoint.buffer(searchRadius, -1).boundingBox()
         # check if qgisPoint (node geometry) is over a sink classified point
@@ -199,7 +200,7 @@ class NetworkHandler(QObject):
         :param waterBodiesLayers: (list-of-QgsVectorLayer) list of layers composing the water bodies on map.
         :return: (bool) whether node is as close as searchRaius to a water body element.
         """
-        qgisPoint = QgsGeometry.fromPoint(node)
+        qgisPoint = QgsGeometry.fromPointXY(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
@@ -226,25 +227,16 @@ class NetworkHandler(QObject):
         """
         # fields to be ignored
         ignoreList = []
-        if not fieldNames:
-            # retrieving key column name
-            uri = QgsDataSourceURI(layer.dataProvider().dataSourceUri())
-            keyColumn = uri.keyColumn()
-            # retrieving geometry column name
-            networLayerName = layer.name()
-            for key in self.networkClassesWithElemDict.keys():
-                if key.split(",")[1] in networLayerName:
-                    geomColumn = key.split(",")[2]
-                    break
+        if fieldNames is None:
             # removing attributes that are calculated OTF
-            fieldNames = [f for f in layer.fields() if f.name() not in [keyColumn, geomColumn] and '_otf' not in f.name()]
+            fieldList = [field for idx, field in enumerate(layer.fields()) if idx not in layer.primaryKeyAttributes() and field.type() != 6]
         else:
             # check if all field names given are in fact fields for the layer
             layerFields = layer.fields()
             ignoreList = [field for field in fieldNames if field not in layerFields]
-        return { field.name() : feature[field.name()] for field in fieldNames if field not in ignoreList }
+        return { field.name() : feature[field.name()] for field in fieldList if field not in ignoreList }
 
-    def attributeChangeCheck(self, node, networkLayer):
+    def attributeChangeCheck(self, node, networkLayer, fieldNames=None):
         """
         Checks if attribute change node is in fact an attribute change.
         :param node: (QgsPoint) node to be identified as over the frame layer or not.
@@ -253,9 +245,9 @@ class NetworkHandler(QObject):
         """        
         # assuming that attribute change nodes have only 1-in 1-out lines
         lineIn = self.nodeDict[node]['end'][0]
-        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer)
+        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer, fieldNames=fieldNames)
         lineOut = self.nodeDict[node]['start'][0]
-        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer)
+        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer, fieldNames=fieldNames)
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
@@ -267,7 +259,7 @@ class NetworkHandler(QObject):
         :param searchRadius: (float) limit distance to another line.
         :return: (bool) indication whether node is a dangle.
         """
-        qgisPoint = QgsGeometry.fromPoint(node)
+        qgisPoint = QgsGeometry.fromPointXY(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
@@ -382,7 +374,7 @@ class NetworkHandler(QObject):
                         # a node next to water has to be a lose end
                         return NetworkHandler.NodeNextToWaterBody
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
-                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters['Search Radius']):
+                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
                     # check if node is connected to a disconnected line
                     if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                         return NetworkHandler.DisconnectedLine
@@ -392,7 +384,7 @@ class NetworkHandler(QObject):
                         return NetworkHandler.Sink
                     return NetworkHandler.WaterwayBegin
             # case 1.c: point that legitimately only flows out
-            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=self.parameters['Search Radius']):
+            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
                 if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                     return NetworkHandler.DisconnectedLine
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
@@ -438,7 +430,7 @@ class NetworkHandler(QObject):
         for current, node in enumerate(self.nodeDict):
             if feedback is not None and feedback.isCanceled():
                 break
-            if node not in nodeKeys:
+            if node not in self.nodeDict:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
@@ -484,7 +476,7 @@ class NetworkHandler(QObject):
             # set attribute map
             feat = QgsFeature(fields)
             # set geometry
-            feat.setGeometry(QgsGeometry.fromMultiPoint([node]))
+            feat.setGeometry(QgsGeometry.fromMultiPointXY([node]))
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             featList.append(feat)
