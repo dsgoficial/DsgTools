@@ -28,7 +28,7 @@ from math import pi
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
-                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsWkbTypes, QgsCoordinateReferenceSystem
+                      QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem
 from qgis.PyQt.Qt import QObject
 
 class GeometryHandler(QObject):
@@ -304,7 +304,7 @@ class GeometryHandler(QObject):
         :param multiPartFeat: (QgsGeometry) multi part geometry to be deaggregated.
         :return: (list-of-QgsGeometry) list of deaggregated geometries
         """
-        if not multiGeom or not multiGeom.geometry().partCount() > 1:
+        if not multiGeom or not multiGeom.get().partCount() > 1:
             return [multiGeom]
         # geometry list to be returned
         geomList = []
@@ -328,7 +328,7 @@ class GeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        isMulti = QgsWKBTypes.isMultiType(int(layer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:
@@ -356,7 +356,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 return
@@ -373,7 +373,7 @@ class GeometryHandler(QObject):
         :return: starting node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 # process doesn't treat multipart features that does have more than 1 part
@@ -391,7 +391,7 @@ class GeometryHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 return
@@ -408,7 +408,7 @@ class GeometryHandler(QObject):
         :return: ending node point (QgsPoint).
         """
         n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
-        isMulti = QgsWKBTypes.isMultiType(int(lyr.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         if isMulti:
             if len(n) > 1:
                 return
@@ -528,7 +528,7 @@ class GeometryHandler(QObject):
         :return: { node_id : { start : [feature_which_starts_with_node], end : feature_which_ends_with_node } }.
         """
         nodeDict = dict()
-        isMulti = QgsWKBTypes.isMultiType(int(networkLayer.wkbType()))
+        isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
         if onlySelected:
             features = [feat for feat in networkLayer.getSelectedFeatures()]
         else:
