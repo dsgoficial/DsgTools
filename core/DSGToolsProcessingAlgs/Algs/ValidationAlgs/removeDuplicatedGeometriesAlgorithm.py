@@ -35,7 +35,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingException)
 
 class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
