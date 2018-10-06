@@ -72,14 +72,13 @@ class NetworkHandler(QObject):
         nodeDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(networkLayer.wkbType()))
         iterator = networkLayer.getFeatures() if not onlySelected else networkLayer.getSelectedFeatures()
-        features = [feat for feat in iterator]
         featCount = networkLayer.featureCount() if not onlySelected else networkLayer.selectedFeatureCount()
         size = 100/featCount if featCount else 0
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
             nodes = self.geometryHandler.getFeatureNodes(networkLayer, feat)
-            if nodes:
+            if nodes != []:
                 if isMulti:
                     if len(nodes) > 1:
                         # if feat is multipart and has more than one part, a flag should be raised
@@ -313,14 +312,14 @@ class NetworkHandler(QObject):
         if nodePointDict['start']:            
             # if line starts at target node, the other extremity is a final node
             if isMulti:
-                if n:
+                if n is not None:
                     n = n[0][-1]
-            elif n:
+            elif n is not None:
                 n = n[-1]
         elif nodePointDict['end']:
             # if line starts at target node, the other extremity is a initial node
             if isMulti:
-                if n:
+                if n is not None:
                     n = n[0][0]
             elif n:
                 n = n[0]
@@ -445,7 +444,7 @@ class NetworkHandler(QObject):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
                                     waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType)
-            if feedback:
+            if feedback is not None:
                 feedback.setProgress(size * current)
         return nodeTypeDict
 
@@ -508,7 +507,7 @@ class NetworkHandler(QObject):
             if len(n) > 1:
                 return
             return n[0][0]
-        elif n:
+        elif n is not None:
             return n[0]
 
     def getSecondNode(self, lyr, feat, geomType=None):
@@ -560,7 +559,7 @@ class NetworkHandler(QObject):
             if len(n) > 1:
                 return
             return n[0][-1]
-        elif n:
+        elif n is not None:
             return n[-1]
 
     def calculateAngleDifferences(self, startNode, endNode):
