@@ -115,7 +115,7 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, attributeBlackList=attributeBlackList, excludePrimaryKeys=ignorePK, ignoreVirtualFields=ignoreVirtual, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
