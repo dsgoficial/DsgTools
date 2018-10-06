@@ -7332,7 +7332,7 @@ Camada</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="37"/>
         <source>Identify Out Of Bounds Angles in Coverage</source>
-        <translation>Identificar Ângulos Fora dos Limites na Cobertura Terrestre</translation>
+        <translation>Identificar ângulos fora de limites na Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="47"/>
@@ -7390,7 +7390,7 @@ Camada</translation>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="127"/>
         <source> Process.</source>
-        <translation>.</translation>
+        <translation>Processo.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="129"/>
@@ -7441,17 +7441,17 @@ Camada</translation>
         <translation>Identificar ângulos fora de limites</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="112"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="113"/>
         <source>Starting </source>
         <translation>Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="112"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="113"/>
         <source> Process.</source>
         <translation> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="114"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="115"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
@@ -7471,22 +7471,22 @@ Camada</translation>
         <translation type="obsolete">Não há ângulos fora de limites em {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="144"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="145"/>
         <source>There are features with angles out of bounds. Check log.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="146"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="147"/>
         <source>There are no features with angles out of bounds.</source>
         <translation>Não há feições com ângulos fora de limites.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="119"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="120"/>
         <source>No classes selected!. Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="120"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="121"/>
         <source>No classes selected! Nothing to be done.</source>
         <translation>Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
@@ -7501,22 +7501,22 @@ Camada</translation>
         <translation type="obsolete">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="130"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="131"/>
         <source>Running process on </source>
         <translation>Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="139"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="140"/>
         <source> features from</source>
         <translation> feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="139"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="140"/>
         <source> have out of bounds angle(s). Check flags.</source>
         <translation> tem ângulos fora do limite. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="141"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="142"/>
         <source>There are no out of bounds angles on </source>
         <translation>Não há ângulos fora de limites na camada </translation>
     </message>
@@ -7553,7 +7553,7 @@ Type</source>
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="102"/>
+        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="103"/>
         <source>Angle out of bounds ({0:.2f} deg)</source>
         <translation>Ângulo fora de limites({0:.2f} deg)</translation>
     </message>
@@ -9189,12 +9189,12 @@ Camada</translation>
 <context>
     <name>MultiLayerSelection</name>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="448"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="463"/>
         <source>{0} (Memory Layer)</source>
         <translation>{0} (Camada de Rascunho)</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="497"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="512"/>
         <source>{0} From Class {1}</source>
         <translation>{0} da Camada {1}</translation>
     </message>
@@ -9204,27 +9204,27 @@ Camada</translation>
         <translation type="obsolete">Abrir Todas as Tabelas de Atributos</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="548"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="563"/>
         <source>Select All Features</source>
         <translation>Selecionar Todas as Feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="543"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="558"/>
         <source>Selected Features</source>
         <translation>Feições Selecionadas</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="547"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="562"/>
         <source>Deselect All Features</source>
         <translation>Remover Seleção de Todas as Feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="544"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="559"/>
         <source>Not Selected Features</source>
         <translation>Feições Não Selecionadas</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="533"/>
+        <location filename="../ProductionTools/CopyPasteTool/multiLayerSelect.py" line="548"/>
         <source>Open All Feature Forms</source>
         <translation>Abrir Todos os Formulários de Feição</translation>
     </message>
@@ -9865,7 +9865,7 @@ Camada</translation>
 <context>
     <name>PostGISSqlGenerator</name>
     <message>
-        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1215"/>
+        <location filename="../Factories/SqlFactory/postgisSqlGenerator.py" line="1216"/>
         <source>Setting type not defined!</source>
         <translation>Tipo de ajuste não definido!</translation>
     </message>
@@ -13304,22 +13304,22 @@ Camada</translation>
         <translation>Operação não definida com o tipo geométrico fornecido! </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="527"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="529"/>
         <source>Error! Different geometry primitives!</source>
         <translation>Erro! Primitivas geométricas diferentes!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="548"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="550"/>
         <source>Building unified layers with  </source>
         <translation>Construindo camada unificada com </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="616"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="618"/>
         <source>Elapsed time for process {0} on layer {1}: {2}</source>
         <translation>Tempo decorrido para o processo {0} na camada {1}: {2}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="620"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="622"/>
         <source>Elapsed time for process {0}: {1}</source>
         <translation>Tempo decorrido para o processo {1}: {2}</translation>
     </message>
@@ -13339,7 +13339,7 @@ Camada</translation>
         <translation type="obsolete">Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="649"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="651"/>
         <source>
 Parameters used on this execution of process {}
 </source>
@@ -13353,13 +13353,13 @@ Parâmetros utilizados nesta execução do processo {}
         <translation type="obsolete">Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="655"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="657"/>
         <source>
 Number of flags raised by the process: {}</source>
         <translation>Número de flags apontadas pelo processo: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="660"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="662"/>
         <source>
 Total elapsed time for process {0}: {1}
 </source>
@@ -13368,7 +13368,7 @@ Tempo total de execução para o processo {0}: {1}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="662"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="664"/>
         <source>
 Unable to get total elapsed time.</source>
         <translation>
@@ -13381,19 +13381,19 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Usuário do banco de dados: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="644"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="646"/>
         <source>
 Database username: {0}</source>
         <translation>Usuário do banco de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="646"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="648"/>
         <source>
 Unable to get database username.</source>
         <translation>Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="653"/>
+        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="655"/>
         <source>
 Unable to get database parameters for process {}.</source>
         <translation>Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
@@ -13786,117 +13786,117 @@ Camada</translation>
         <translation type="obsolete">Selecionar Todas as Linhas Válidas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="251"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="253"/>
         <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
         <translation>Linhas id={0} e id={1} possuem direções conflitantes ({2:.2f} graus).</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="263"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="265"/>
         <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
         <translation>Não foi possível inferir o direcionamento para as linhas {0} e {1} (ângulo reto)</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1158"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1176"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="306"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="308"/>
         <source>There are unclassified nodes! Node (re)creation process is recommended before this process.</source>
         <translation>Foram identificados nós não classificados anteriormente! Recomenda-se o executar o processo Criação de Nós de Rede.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="335"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="337"/>
         <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
         <translation>Nó foi marcado como erro na classificação (provavelmente esse nó não pode ser início ou fim de trecho).</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="324"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="326"/>
         <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
         <translation>Nó redundante. Linhas conectadas ({0}, {1}) compartilham o mesmo conjunto de atributos.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="342"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="344"/>
         <source>Line {0} disconnected from network.</source>
         <translation>Linha {0} desconectada da rede.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="344"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="346"/>
         <source>Node is overloaded - 4 or more lines are flowing in (&gt;= 2 lines) and out (&gt;= 2 lines).</source>
         <translation>Nó com sobrecarga de fluxo - 4 ou mais linhas chegam (&gt;= 2 linha) e saem (&gt;= 2 linhas).</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="370"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="372"/>
         <source>Line id={0} does not end at a node with IN flow type (node type is {1}). </source>
         <translation>Linha id={0} não termina em um nó de fluxo exclusivo de ENTRADA (nó do tipo {1}). </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="377"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="379"/>
         <source>Line id={0} does not start at a node with OUT flow type (node type is {1}). </source>
         <translation>Linha id={0} não inicia em um nó de fluxo exclusivo de SAÍDA (nó do tipo {1}). </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="383"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="385"/>
         <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
         <translation>Linhas estão ou saindo ou entrando no nó. A classificação do nó é {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="392"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="394"/>
         <source>Line {0} seems to be invalid (unable to point specific reason).</source>
         <translation>Linha {0} aparenta ser inválida (motivo não claro).</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="535"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="537"/>
         <source>No network starting point was found</source>
         <translation>Não foi encontrado nós de início de rede</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="653"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="655"/>
         <source>There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.</source>
         <translation>Há {0} nós que foram inseridos na rede. É indicado que os nós sejam reclassificação.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="665"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="667"/>
         <source>does not end at a node with IN flow type</source>
         <translation>não termina em um nó de fluxo exclusivo de ENTRADA</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="666"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="668"/>
         <source>does not start at a node with OUT flow type</source>
         <translation>não inicia em um nó de fluxo exclusivo de SAÍDA</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="667"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="669"/>
         <source>have conflicting directions</source>
         <translation>possuem direções conflitantes</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="668"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="670"/>
         <source>Redundant node.</source>
         <translation>Nó redundante.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="669"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="671"/>
         <source>Node was flagged upon classification</source>
         <translation>Nó foi marcado como erro na classificação</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="693"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="695"/>
         <source>id=</source>
         <translation>id=</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="698"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="700"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="754"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="766"/>
         <source>{0} to {1}</source>
         <translation>{0} à {1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="884"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="896"/>
         <source>Lines that were flipped while directioning hidrography lines: {0}
 
 </source>
@@ -13905,7 +13905,7 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="886"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="898"/>
         <source>Lines that were merged while directioning hidrography lines: {0}
 
 </source>
@@ -13914,7 +13914,7 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="889"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="901"/>
         <source>
 {0}: Flipped/Merged Lines
 </source>
@@ -13923,62 +13923,62 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="974"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="986"/>
         <source>Connected to invalid hidrography node.</source>
         <translation>Conectada a nó inválido.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="975"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="987"/>
         <source>Line not yet visited.</source>
         <translation>Linha não visitada.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1008"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1020"/>
         <source>Starting </source>
         <translation>Iniciando o processo </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1008"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1020"/>
         <source> Process.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1013"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1025"/>
         <source>Running</source>
         <translation>Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1047"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1059"/>
         <source>Select Layer</source>
         <translation>Selecione as camadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1109"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1121"/>
         <source>Cycle {0} completed (maximum of {1}).</source>
         <translation>Ciclo {0} concluído (máximo de {1}).</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1140"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1152"/>
         <source>Invalid lines were exposed in layer {0}).</source>
         <translation>Linhas inválidas registradas na camada {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1158"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1176"/>
         <source>No initial node was found!</source>
         <translation>Não foi possível encontrar nós de início!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1172"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1190"/>
         <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
         <translation>{0} nós inválidos ({1:.2f}% da rede está corretamente direcionada). Verifique os nós e/ou linhas inválidos.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1175"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1193"/>
         <source>{1:.2f}% of network is well directed.</source>
         <translation>1:.2f}% da rede está corretamente direcionada. Verifique linhas inválidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1184"/>
+        <location filename="../ValidationTools/ValidationProcesses/verifyNetworkDirectioningProcess.py" line="1202"/>
         <source>Network has coherent directions.</source>
         <translation>A rede está corretamente direcionada.</translation>
     </message>

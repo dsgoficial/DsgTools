@@ -5,6 +5,7 @@
 					ValidationTools/ValidationProcesses/topologicalCleanProcess.py \
 					ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py \
 					ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py \
+					ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py \
 					ValidationTools/ValidationProcesses/recursiveSnapProcess.py \
 					ValidationTools/ValidationProcesses/removeSmallAreasProcess.py \
 					ValidationTools/ValidationProcesses/removeDuplicatesProcess.py \
