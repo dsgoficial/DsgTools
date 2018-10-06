@@ -166,7 +166,7 @@ class AlgRunner:
         output = processing.run('dsgtools:identifyduplicatedgeometries', parameters, context = context, feedback = feedback)
         return output['FLAGS']
     
-    def runIdentifyDuplicatedFeatures(self, inputLyr, context, onlySelected=False, attributeBlackList=None, excludePrimaryKeys=True, ignoreVirtualFields=True, feedback = None, flagLyr = 'memory:', onlySelected = False):
+    def runIdentifyDuplicatedFeatures(self, inputLyr, context, onlySelected=False, attributeBlackList=None, excludePrimaryKeys=True, ignoreVirtualFields=True, feedback = None, flagLyr = 'memory:'):
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         parameters = {
             'INPUT' : inputLyr,
