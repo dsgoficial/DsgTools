@@ -943,7 +943,7 @@ class NetworkHandler(QObject):
                     visitedNodes.append(node)
                     continue
                 nodeLines = startLines + endLines
-                validLinesList = validLines.values()
+                validLinesList = list(validLines.values())
                 if len(set(nodeLines) - set(validLinesList)) > 1:
                     hasStartCondition, flippedLines = self.checkForStartConditions(node=node, validLines=validLinesList, networkLayer=networkLayer, nodeLayer=nodeLayer, geomType=geomType)
                     if hasStartCondition:
@@ -1342,7 +1342,7 @@ class NetworkHandler(QObject):
         invalidReason = self.tr('Connected to invalid hidrography node.')
         nonVisitedReason = self.tr('Line not yet visited.')
         # to avoid unnecessary calculation inside loop
-        nodeTypeKeys = self.nodeTypeDict.keys()
+        nodeTypeKeys = list(self.nodeTypeDict.keys())
         # initiate new features list
         featList = []
         # pre-declaring method to make it faster

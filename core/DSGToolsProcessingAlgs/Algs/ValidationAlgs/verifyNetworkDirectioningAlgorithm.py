@@ -149,6 +149,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         #get the network handler
         layerHandler = LayerHandler()
         networkHandler = NetworkHandler()
+        algRunner = AlgRunner()
         self.nodeTypeNameDict = networkHandler.nodeTypeDict
         # get network layer
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
@@ -166,7 +167,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        frame = layerHandler.getFrameOutterBounds(frameLayer, self.algRunner, context, feedback=feedback)
+        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=feedback)
         # prepare point flag sink
         self.prepareFlagSink(parameters, networkLayer, networkLayer.wkbType(), context)
         # get search radius
@@ -182,12 +183,13 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         # update createNetworkNodesProcess object node dictionary
         networkHandler.nodeDict = self.nodeDict
         self.nodeTypeDict, self.nodeIdDict = networkHandler.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
+        networkHandler.nodeTypeDict = self.nodeTypeDict
         # initiate nodes, invalid/valid lines dictionaries
         nodeFlags, inval, val = dict(), dict(), dict()
         # cycle count start
         cycleCount = 0
         # get max amount of orientation cycles
-        MAX_AMOUNT_CYCLES = self.parameterAsInteger(parameters, self.MAX_CYCLES, context)
+        MAX_AMOUNT_CYCLES = self.parameterAsInt(parameters, self.MAX_CYCLES, context)
         MAX_AMOUNT_CYCLES = MAX_AMOUNT_CYCLES if MAX_AMOUNT_CYCLES > 0 else 1
         # validation method FINALLY starts...
         # to speed up modifications made to layers
