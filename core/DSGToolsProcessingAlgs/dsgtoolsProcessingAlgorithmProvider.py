@@ -61,36 +61,38 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
-        self.algList = [DeaggregatorAlgorithm(), 
-                        IdentifySmallPolygonsAlgorithm(), 
-                        IdentifySmallLinesAlgorithm(), 
-                        IdentifyDuplicatedGeometriesAlgorithm(),
-                        IdentifyOutOfBoundsAnglesAlgorithm(),
-                        IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
-                        IdentifyOverlapsAlgorithm(),
-                        IdentifyGapsAndOverlapsInCoverageAlgorithm(),
-                        IdentifyDanglesAlgorithm(),
-                        IdentifyGapsAlgorithm(),
-                        DonutHoleExtractorAlgorithm(),
-                        UpdateOriginalLayerAlgorithm(),
-                        TopologicalCleanAlgorithm(),
-                        TopologicalDouglasSimplificationAlgorithm(),
-                        RemoveDuplicatedGeometriesAlgorithm(),
-                        RemoveSmallLinesAlgorithm(),
-                        RemoveSmallPolygonsAlgorithm(),
-                        CleanGeometriesAlgorithm(),
-                        MergeLinesAlgorithm(),
-                        TopologicalCleanLinesAlgorithm(),
-                        SnapLayerOnLayerAndUpdateAlgorithm(),
-                        LineOnLineOverlayerAlgorithm(),
-                        DissolvePolygonsWithSameAttributesAlgorithm(),
-                        SnapToGridAndUpdateAlgorithm(),
-                        RemoveEmptyAndUpdateAlgorithm(),
-                        ConvertLayer2LayerAlgorithm(),
-                        OverlayElementsWithAreasAlgorithm(),
-                        CreateNetworkNodesAlgorithm(),
-                        VerifyNetworkDirectioningAlgorithm(),
-                        IdentifyDuplicatedFeaturesAlgorithm()]
+    
+    def getAlgList(self):
+        return [DeaggregatorAlgorithm(), 
+                IdentifySmallPolygonsAlgorithm(), 
+                IdentifySmallLinesAlgorithm(), 
+                IdentifyDuplicatedGeometriesAlgorithm(),
+                IdentifyOutOfBoundsAnglesAlgorithm(),
+                IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
+                IdentifyOverlapsAlgorithm(),
+                IdentifyGapsAndOverlapsInCoverageAlgorithm(),
+                IdentifyDanglesAlgorithm(),
+                IdentifyGapsAlgorithm(),
+                DonutHoleExtractorAlgorithm(),
+                UpdateOriginalLayerAlgorithm(),
+                TopologicalCleanAlgorithm(),
+                TopologicalDouglasSimplificationAlgorithm(),
+                RemoveDuplicatedGeometriesAlgorithm(),
+                RemoveSmallLinesAlgorithm(),
+                RemoveSmallPolygonsAlgorithm(),
+                CleanGeometriesAlgorithm(),
+                MergeLinesAlgorithm(),
+                TopologicalCleanLinesAlgorithm(),
+                SnapLayerOnLayerAndUpdateAlgorithm(),
+                LineOnLineOverlayerAlgorithm(),
+                DissolvePolygonsWithSameAttributesAlgorithm(),
+                SnapToGridAndUpdateAlgorithm(),
+                RemoveEmptyAndUpdateAlgorithm(),
+                ConvertLayer2LayerAlgorithm(),
+                OverlayElementsWithAreasAlgorithm(),
+                CreateNetworkNodesAlgorithm(),
+                VerifyNetworkDirectioningAlgorithm(),
+                IdentifyDuplicatedFeaturesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
@@ -149,5 +151,5 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         even if the list does not change, since the self.algs list is
         cleared before calling this method.
         """
-        for alg in self.algList:
+        for alg in self.getAlgList():
             self.addAlgorithm(alg)
