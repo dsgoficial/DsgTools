@@ -407,7 +407,8 @@ class LayerHandler(QObject):
     def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, feedback = None):
         geomDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
-        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        iterator, featCount = self.getFeatureList(lyr, onlySelected=onlySelected)
+        size = 100/featCount if featCount else 0
         columns = self.getAttributesFromBlackList(lyr, attributeBlackList=attributeBlackList, ignoreVirtualFields=ignoreVirtualFields, excludePrimaryKeys=excludePrimaryKeys)
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
