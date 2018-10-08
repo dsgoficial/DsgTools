@@ -25,7 +25,8 @@ from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
                       QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback
+                      QgsProcessingMultiStepFeedback, QgsGeometrySnapper, QgsInternalGeometrySnapper,\
+                      QgsGeometrySnapperSingleSource 
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
@@ -639,3 +640,37 @@ class LayerHandler(QObject):
                 if feat not in nodeDict[pEnd]['end']:
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
+    
+    def snapToLayer(self, inputLyr, refLyr, tol, behavior, snapToGridValue, onlySelected=False, feedback=None, minArea=None):
+        """
+        Snaps and updates inpytLyr
+        """
+        snapper = QgsGeometrySnapper(refLyr) if inputLyr != refLyr and behavior != 7 else QgsInternalGeometrySnapper(tol, behavior)
+        iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
+        size = 100/featCount if featCount else 0
+        deleteList = []
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand('Snapping Features')
+        for current, feat in enumerate(iterator):
+            featid = feat.id()
+            geom = feat.geometry()
+            if feedback is not None and feedback.isCanceled():
+                break
+            elif not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
+                deleteList.append(featid)
+            elif geom.type() == QgsWkbTypes.LineGeometry and geom.length() < tol:
+                deleteList.append(featid)
+            elif geom.type() == QgsWkbTypes.PolygonGeometry and minArea is not None and geom.area() < minArea:
+                deleteList.append(featid)
+            else:
+                # remove duplicate nodes to avoid problem in snapping
+                geom.removeDuplicateNodes(epsilon = snap_value)
+                outputGeom = snapper.snapGeometry(geom, tol, behavior) if behavior != 7 else snapper.snapFeature(feat)
+                if geom is None:
+                    deleteList.append(featid)
+                else:
+                    inputLyr.changeGeometry(id, outputGeom)
+            if feedback is not None and feedback.isCanceled():
+                feedback.setProgress(size * current)
+        inputLyr.deleteFeatures(deleteList)
+        inputLyr.endEditCommand()

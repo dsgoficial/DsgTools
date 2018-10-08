@@ -44,7 +44,8 @@ from qgis.core import (QgsProcessing,
                        QgsGeometry,
                        QgsProcessingParameterField,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingParameterDistance,
+                       QgsProcessingException)
 
 class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -52,6 +53,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     REFERENCE_LAYER = 'REFERENCE_LAYER'
     TOLERANCE = 'TOLERANCE'
     BEHAVIOR = 'BEHAVIOR'
+    SNAP_TO_GRID_TOL = 'SNAP_TO_GRID_TOL'
 
     def initAlgorithm(self, config):
         """
@@ -78,19 +80,15 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 [QgsProcessing.TypeVectorAnyGeometry ]
             )
         )
-
         self.addParameter(
             QgsProcessingParameterDistance(
                 self.TOLERANCE, 
-                self.tr('Tolerance'), 
+                self.tr('Snap radius'), 
                 parentParameterName=self.INPUT,                                         
                 minValue=0, 
-                maxValue=9999999999, 
-                defaultValue=4
+                defaultValue=1.0
             )
         )
-
-
         self.modes = [self.tr('Prefer aligning nodes, insert extra vertices where required'),
                       self.tr('Prefer closest point, insert extra vertices where required'),
                       self.tr('Prefer aligning nodes, don\'t insert new vertices'),
@@ -107,13 +105,21 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 defaultValue=0
             )
         )
+        self.addParameter(
+            QgsProcessingParameterNumber(
+                self.SNAP_TO_GRID_TOL,
+                self.tr('Coordinate precision'),
+                minValue=0,
+                defaultValue=0.00001,
+                type=QgsProcessingParameterNumber.Double
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
@@ -122,20 +128,9 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         if refLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REFERENCE_LAYER))
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        snapToGridValue = self.parameterAsDouble(parameters, self.SNAP_TO_GRID_TOL, context)
         behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
-        
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
-        
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Snapping geometries from layer {input} to {reference}...').format(input=inputLyr.name(), reference=refLyr.name()))
-        snappedLayer = algRunner.runSnapGeometriesToLayer(auxLyr, refLyr, tol, context, feedback=multiStepFeedback, behavior=behavior)
-
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], snappedLayer, feedback=multiStepFeedback, onlySelected=onlySelected)
+        layerHandler.snapToLayer(inputLyr, refLyr, tol, behavior, snapToGridValue, onlySelected=onlySelected, feedback=feedback)
 
         return {self.INPUT: inputLyr}
 
