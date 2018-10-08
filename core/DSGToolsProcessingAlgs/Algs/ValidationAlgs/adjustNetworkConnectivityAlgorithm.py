@@ -44,15 +44,12 @@ from qgis.core import (QgsProcessing,
                        QgsGeometry,
                        QgsProcessingParameterField,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingException)
+                       QgsProcessingParameterDistance)
 
-class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
+class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
-    REFERENCE_LAYER = 'REFERENCE_LAYER'
     TOLERANCE = 'TOLERANCE'
-    BEHAVIOR = 'BEHAVIOR'
 
     def initAlgorithm(self, config):
         """
@@ -62,7 +59,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                [QgsProcessing.TypeVectorLine ]
             )
         )
         self.addParameter(
@@ -71,37 +68,13 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
-
-        self.addParameter(
-            QgsProcessingParameterVectorLayer(
-                self.REFERENCE_LAYER,
-                self.tr('Reference layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
-            )
-        )
         self.addParameter(
             QgsProcessingParameterDistance(
-                self.TOLERANCE, 
-                self.tr('Snap radius'), 
-                parentParameterName=self.INPUT,                                         
-                minValue=0, 
+                self.TOLERANCE,
+                self.tr('Snap radius'),
+                parentParameterName=self.INPUT,
+                minValue=0,
                 defaultValue=1.0
-            )
-        )
-        self.modes = [self.tr('Prefer aligning nodes, insert extra vertices where required'),
-                      self.tr('Prefer closest point, insert extra vertices where required'),
-                      self.tr('Prefer aligning nodes, don\'t insert new vertices'),
-                      self.tr('Prefer closest point, don\'t insert new vertices'),
-                      self.tr('Move end points only, prefer aligning nodes'),
-                      self.tr('Move end points only, prefer closest point'),
-                      self.tr('Snap end points to end points only')]
-
-        self.addParameter(
-            QgsProcessingParameterEnum(
-                self.BEHAVIOR,
-                self.tr('Behavior'),
-                options=self.modes,
-                defaultValue=0
             )
         )
 
@@ -110,16 +83,22 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
+        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        refLyr = self.parameterAsVectorLayer(parameters, self.REFERENCE_LAYER, context)
-        if refLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.REFERENCE_LAYER))
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
-        layerHandler.snapToLayer(inputLyr, refLyr, tol, behavior, onlySelected=onlySelected, feedback=feedback)
+
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=inputLyr.name()))
+        dangleLyr = algRunner.runIdentifyDangles(inputLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+
+        multiStepFeedback.setCurrentStep(1)
+        layerHandler.filterDangles(dangleLyr, tol, feedback=multiStepFeedback)
+
+        multiStepFeedback.setCurrentStep(2)
+        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
+        algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
 
         return {self.INPUT: inputLyr}
 
@@ -131,14 +110,14 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'snaplayeronlayer'
+        return 'adjustnetworkconnectivity'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Snap layer on layer')
+        return self.tr('Adjust Network Connectivity')
 
     def group(self):
         """
@@ -161,4 +140,4 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         return QCoreApplication.translate('Processing', string)
 
     def createInstance(self):
-        return SnapLayerOnLayerAndUpdateAlgorithm()
+        return AdjustNetworkConnectivityAlgorithm()
