@@ -664,7 +664,7 @@ class LayerHandler(QObject):
                 deleteList.append(featid)
             else:
                 # remove duplicate nodes to avoid problem in snapping
-                geom.removeDuplicateNodes(epsilon = snap_value)
+                geom.removeDuplicateNodes(epsilon = snapToGridValue)
                 outputGeom = snapper.snapGeometry(geom, tol, behavior) if behavior != 7 else snapper.snapFeature(feat)
                 if geom is None:
                     deleteList.append(featid)
