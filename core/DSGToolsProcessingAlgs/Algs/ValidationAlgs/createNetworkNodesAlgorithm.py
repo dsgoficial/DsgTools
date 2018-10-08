@@ -41,6 +41,7 @@ from qgis.core import (QgsProcessing,
                        QgsProject,
                        QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDistance,
+                       QgsProcessingParameterField,
                        QgsProcessingException,
                        QgsField,
                        QgsFields)
@@ -51,12 +52,16 @@ from .validationAlgorithm import ValidationAlgorithm
 
 class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = 'NETWORK_LAYER'
+    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
+    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     SINK_LAYER = 'SINK_LAYER'
     REF_LAYER = 'REF_LAYER'
     WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
     MAX_CYCLES = 'MAX_CYCLES'
     SEARCH_RADIUS = 'SEARCH_RADIUS'
     NETWORK_NODES = 'NETWORK_NODES'
+    FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -67,6 +72,31 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 self.NETWORK_LAYER,
                 self.tr('Network layer'),
                 [QgsProcessing.TypeVectorLine]
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr('Fields to ignore'),
+                None,
+                'NETWORK_LAYER',
+                QgsProcessingParameterField.Any,
+                allowMultiple=True,
+                optional = True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_VIRTUAL_FIELDS,
+                self.tr('Ignore virtual fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_PK_FIELDS,
+                self.tr('Ignore primary key fields'),
+                defaultValue=True
             )
         )
         self.addParameter(
@@ -116,6 +146,12 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 self.tr('Node layer')
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS,
+                self.tr('Network flags')
+            )
+        )
         self.nodeIdDict = None
         self.nodeDict = None
         self.nodeTypeDict = None
@@ -139,9 +175,14 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
         if networkLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.NETWORK_LAYER))
+        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
+        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
         # get network node layer
         (nodeSink, dest_id) = self.parameterAsSink(parameters, self.NETWORK_NODES,
                 context, self.getFields(), QgsWkbTypes.MultiPoint, networkLayer.sourceCrs())
+        #prepairs flag sink for raising errors
+        self.prepareFlagSink(parameters, networkHandler, QgsWkbTypes.MultiPoint, context)
         
         waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
         waterBodyClasses = waterBodyClasses if waterBodyClasses is not None else []
@@ -159,7 +200,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Performing node identification...'))
-        self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback)
+        self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback) #zoado, mudar lógica
         multiStepFeedback.pushInfo(self.tr('{node_count} node(s) identificated...').format(node_count=len(self.nodeDict)))
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Performing node classification...'))
@@ -170,7 +211,10 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 waterBodiesLayers=waterBodyClasses,
                 searchRadius=searchRadius,
                 waterSinkLayer=waterSinkLayer,
-                feedback=multiStepFeedback
+                feedback=multiStepFeedback,
+                attributeBlackList=attributeBlackList,
+                excludePrimaryKeys=ignorePK,
+                ignoreVirtualFields=ignoreVirtual
             )
         self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name())
         return {self.NETWORK_NODES : dest_id}
@@ -196,6 +240,14 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             feat['layer'] = networkLineLayerName
             featList.append(feat)
         nodeSink.addFeatures(featList, QgsFeatureSink.FastInsert)
+    
+    def flagNetworkProblems(self, nodeTypeDict):
+        """
+        Raises problems in network as flags.
+        :param nodeTypeDict: (dict) network problems
+        """
+        for node in nodeTypeDict:
+            pass
 
     def name(self):
         """
