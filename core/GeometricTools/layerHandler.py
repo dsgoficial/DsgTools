@@ -641,7 +641,7 @@ class LayerHandler(QObject):
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
     
-    def snapToLayer(self, inputLyr, refLyr, tol, behavior, snapToGridValue, onlySelected=False, feedback=None, minArea=None):
+    def snapToLayer(self, inputLyr, refLyr, tol, behavior, onlySelected=False, feedback=None):
         """
         Snaps and updates inpytLyr
         """
@@ -651,6 +651,7 @@ class LayerHandler(QObject):
         deleteList = []
         inputLyr.startEditing()
         inputLyr.beginEditCommand('Snapping Features')
+        outputList = []
         for current, feat in enumerate(iterator):
             featid = feat.id()
             geom = feat.geometry()
@@ -660,17 +661,19 @@ class LayerHandler(QObject):
                 deleteList.append(featid)
             elif geom.type() == QgsWkbTypes.LineGeometry and geom.length() < tol:
                 deleteList.append(featid)
-            elif geom.type() == QgsWkbTypes.PolygonGeometry and minArea is not None and geom.area() < minArea:
-                deleteList.append(featid)
             else:
                 # remove duplicate nodes to avoid problem in snapping
-                geom.removeDuplicateNodes(epsilon = snapToGridValue)
-                outputGeom = snapper.snapGeometry(geom, tol, behavior) if behavior != 7 else snapper.snapFeature(feat)
+                geom.removeDuplicateNodes()
+                outputGeom = snapper.snapGeometry(geom, tol, behavior) if inputLyr != refLyr and behavior != 7 else snapper.snapFeature(feat)
                 if geom is None:
                     deleteList.append(featid)
                 else:
-                    inputLyr.changeGeometry(id, outputGeom)
+                    # inputLyr.changeGeometry(id, outputGeom)
+                    feat.setGeometry(outputGeom)
+                    outputList += [feat]
             if feedback is not None and feedback.isCanceled():
                 feedback.setProgress(size * current)
+        return outputList
         inputLyr.deleteFeatures(deleteList)
+        inputLyr.updateFeatures(outputList)
         inputLyr.endEditCommand()
