@@ -26,6 +26,7 @@ from itertools import combinations
 import math
 from math import pi
 from .geometryHandler import GeometryHandler
+from .layerHandler import LayerHandler
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
@@ -41,6 +42,7 @@ class NetworkHandler(QObject):
     def __init__(self):
         super(NetworkHandler, self).__init__()
         self.geometryHandler = GeometryHandler()
+        self.layerHandler = LayerHandler()
         self.nodeDict = None
         self.nodeTypeDict = None
         self.nodeTypeNameDict = {
@@ -56,6 +58,11 @@ class NetworkHandler(QObject):
             NetworkHandler.AttributeChangeFlag : self.tr("Attribute Change Flag"),
             NetworkHandler.NodeOverload : self.tr("Overloaded Node"),
             NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network")
+        }
+        self.flagTextDict = {
+            NetworkHandler.Flag : self.tr('Network connection problem. Segments must be connected.'),
+            NetworkHandler.AttributeChangeFlag : self.tr('Segments with same attribute set must be merged.'),
+            NetworkHandler.DisconnectedLine : self.tr("Line disconnected From Network")
         }
     
     def identifyAllNodes(self, networkLayer, onlySelected=False, feedback=None):
@@ -242,7 +249,7 @@ class NetworkHandler(QObject):
         :param node: (QgsPoint) node to be identified as over the frame layer or not.
         :param networkLayer: (QgsVectorLayer) layer containing network lines.
         :return: (bool) if lines connected to node do change attributes.
-        """        
+        """
         # assuming that attribute change nodes have only 1-in 1-out lines
         lineIn = self.nodeDict[node]['end'][0]
         atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer, fieldNames=fieldNames)
@@ -328,7 +335,7 @@ class NetworkHandler(QObject):
         # in case next node is not yet classified, method is ineffective
         return False
 
-    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None):
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldNames=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
@@ -341,6 +348,7 @@ class NetworkHandler(QObject):
         :param networkLayerGeomType: (int) network layer geometry type code.
         :return: returns the (int) point type.
         """
+        fieldNames = [] if fieldNames is None else fieldNames
         # to reduce calculation time in expense of memory, which is cheap
         nodePointDict = self.nodeDict[nodePoint]
         sizeFlowOut = len(nodePointDict['start'])
@@ -363,7 +371,7 @@ class NetworkHandler(QObject):
                     return NetworkHandler.DownHillNode
                 # case 1.a.ii: waterway is flowing to mapped area (point over the frame has one line starting line)
                 elif hasStartLine:
-                    return NetworkHandler.UpHillNode                
+                    return NetworkHandler.UpHillNode
             # case 1.b: point that legitimately only flows from
             elif hasEndLine:
                 # case 1.b.i
@@ -400,8 +408,8 @@ class NetworkHandler(QObject):
             if sizeFlowIn > 1:
                 # case 4.c: there's a constant flow through node, but there are more than 1 line
                 return NetworkHandler.NodeOverload
-            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer):
-                # case 4.a: lines do change their attribute set
+            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldNames=fieldNames):
+                # case 4.a: lines do change their attribute set. Must use fieldNames due to black list items.
                 return NetworkHandler.AttributeChange
             else:
                 # case 4.b: nodes inside the network that are there as an attribute change node but lines connected
@@ -411,7 +419,7 @@ class NetworkHandler(QObject):
             # case 3 "ramification"
             return NetworkHandler.Ramification
 
-    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None):
+    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True):
         """
         Classifies all identified nodes from the hidrography line layer.
         :param networkLayer: (QgsVectorLayer) network lines layer.
@@ -427,6 +435,10 @@ class NetworkHandler(QObject):
         nodeTypeDict = dict()
         nodeCount = len(self.nodeDict)
         size = 100/nodeCount if nodeCount else 0
+        fieldNames = self.layerHandler.getAttributesFromBlackList(networkLayer, \
+                                                            attributeBlackList=attributeBlackList,\
+                                                            ignoreVirtualFields=ignoreVirtualFields,\
+                                                            excludePrimaryKeys=excludePrimaryKeys)
         for current, node in enumerate(self.nodeDict):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -435,7 +447,8 @@ class NetworkHandler(QObject):
                 continue
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
                                     waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
-                                    nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType)
+                                    nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType, \
+                                    fieldNames=fieldNames)
             if feedback is not None:
                 feedback.setProgress(size * current)
         return nodeTypeDict
