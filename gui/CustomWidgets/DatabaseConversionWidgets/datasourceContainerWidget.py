@@ -294,7 +294,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     widgets[layerName]['checkBox'].setText(msg.format(layerName, featCount))
                     if not self.filters['layer'] or layerName in self.filters['layer']:
                         # in case no filters are added or if layer is among the filtered ones, set it checked
-                        widgets[layerName]['checkBox'].setChecked(True)
+                        widgets[layerName]['checkBox'].setChecked(widgets[layerName]['checkBox'].isChecked())
                     if layerName in self.filters['layer_filter']:
                         # if a layer feature filter was set, refill it back to UI
                         widgets[layerName]['fieldExpression'].setExpression(self.filters['layer_filter'][layerName])
@@ -307,6 +307,9 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.setupSpatialFilterWidgets()
             self.fillSpatialFilterInformation()
             # connect cancel push button to close method
+            if not self.filters:
+                # if no filters dict was set, set it to initial state
+                self.resetLayerFilters()
             closeAlias = lambda : self.filterDlg.close()
             self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
             # connect Ok push button from Filter Dialog to filter dict update method
