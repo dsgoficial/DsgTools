@@ -53,7 +53,6 @@ class Polygon(GeometricaAcquisition):
                     if (self.qntPoint % 2 == 0):
                         point = QgsPoint(pointMap) 
                         if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
-                            print(self.distanceToolTip.calculateDistance(self.geometry[-1], point))
                             testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                             if testgeom:
                                 new_geom, pf = self.completePolygon(self.geometry, testgeom)
@@ -61,9 +60,9 @@ class Polygon(GeometricaAcquisition):
                                 self.geometry.append(pf)   
                             self.endGeometry()   
                         else:
-                            self.iface.messageBar().pushMessage("Observação".decode('utf-8'), "Não é possível digitalizar, segmento com distância menor que a mínima.".decode('utf-8'), level=QgsMessageBar.INFO)                                      
+                            self.iface.messageBar().pushMessage(self.tr("Observation:"), self.tr("Not possible to digitalize, segment smaller than minimun distance."), level=QgsMessageBar.INFO)   
                     else:                        
-                        self.iface.messageBar().pushMessage("Observação".decode('utf-8'), "A ferramenta de ângulo reto deve ser utilizada para digitalização de feições retangulares.".decode('utf-8'), level=QgsMessageBar.INFO)                
+                        self.iface.messageBar().pushMessage(self.tr("Observation:"), self.tr("The right angle tool should be used only for rectangular shapes."), level=QgsMessageBar.INFO)
 
         elif self.free:
             self.geometry.append(pointMap)
@@ -79,9 +78,10 @@ class Polygon(GeometricaAcquisition):
                     self.geometry.append(point)
                 else:
                     point = QgsPoint(pointMap)
-                    testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                    if testgeom:
-                        self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
+                    if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
+                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if testgeom:
+                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
                 self.qntPoint += 1
                
     def canvasMoveEvent(self, event):
