@@ -25,9 +25,9 @@ from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
                       QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback, QgsGeometrySnapper, QgsInternalGeometrySnapper,\
-                      QgsGeometrySnapperSingleSource 
+                      QgsProcessingMultiStepFeedback
 from qgis.PyQt.Qt import QObject, QVariant
+from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
