@@ -571,7 +571,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                     # in case no filters are added or if layer is among the filtered ones, set it checked
                     checkbox.setChecked(True)
                 # fill up an edit line containing filtering expression, if any
-                if not filterDict['layer_filter'] or layerName in filterDict['layer_filter']:
+                if layerName in filterDict['layer_filter']:
                     filterExpression.setText(filterDict['layer_filter'][layerName])
                 # fill crs
                 crs.setText(crsDict[layerName])
