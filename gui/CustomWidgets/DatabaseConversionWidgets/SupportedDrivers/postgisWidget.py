@@ -80,7 +80,10 @@ class PostgisWidget(AbstractSelectionWidget):
                 self.selectionWidget.viewServers.\
                     setDefaultConnectionParameters(host=host, port=port, user=username, password=password)
                 # sel selected db
+                # in order to emit datasource changed signal, force a change of index
+                idx = self.selectionWidget.connectionSelectorComboBox.findText(db)
                 self.selectionWidget.connectionSelectorComboBox.setCurrentText(db)
+                self.selectionWidget.loadDatabase(idx)
 
     def getDatasource(self):
         """
