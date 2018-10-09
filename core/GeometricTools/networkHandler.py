@@ -38,7 +38,8 @@ class NetworkHandler(QObject):
     Flag, Sink, WaterwayBegin, UpHillNode, \
     DownHillNode, Confluence, Ramification, \
     AttributeChange, NodeNextToWaterBody, \
-    AttributeChangeFlag, NodeOverload, DisconnectedLine = list(range(12))
+    AttributeChangeFlag, NodeOverload, DisconnectedLine, \
+    DitchNode = list(range(13))
     def __init__(self):
         super(NetworkHandler, self).__init__()
         self.geometryHandler = GeometryHandler()
@@ -57,7 +58,8 @@ class NetworkHandler(QObject):
             NetworkHandler.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
             NetworkHandler.AttributeChangeFlag : self.tr("Attribute Change Flag"),
             NetworkHandler.NodeOverload : self.tr("Overloaded Node"),
-            NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network")
+            NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network"),
+            NetworkHandler.DitchNode : self.tr("Node next to ditch")
         }
         self.flagTextDict = {
             NetworkHandler.Flag : self.tr('Network connection problem. Segments must be connected.'),
@@ -334,6 +336,26 @@ class NetworkHandler(QObject):
             #     return True
         # in case next node is not yet classified, method is ineffective
         return False
+    
+    def isNodeNextToDitch(self, node, ditchLayer, searchRadius):
+        """
+        Checks if node is next to a ditch.
+        ::param node: (QgsPoint) node to be identified as next to a water ditch feature.
+        :param ditchLayer: layer composing the ditches on map.
+        :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :return: (bool) whether node is as close as searchRaius to a water body element.
+        """
+        qgisPoint = QgsGeometry.fromPointXY(node)
+        # building a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1)
+        # building bounding box around node for feature requesting
+        bbRect = buf.boundingBox()
+        # check if buffer intersects features from water bodies layers
+        for feat in ditchLayer.getFeatures(QgsFeatureRequest(bbRect)):
+            if buf.intersects(feat.geometry()):
+                # any feature component of a water body intersected is enough
+                return True
+        return False
 
     def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldNames=None):
         """
@@ -386,6 +408,9 @@ class NetworkHandler(QObject):
                     # check if node is connected to a disconnected line
                     if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                         return NetworkHandler.DisconnectedLine
+                    elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                        # if point is not disconnected and is connected to a ditch
+                        return NetworkHandler.DitchNode
                     # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
                     elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
                         # if a node is indeed a water sink (operator has set it to a sink)
@@ -406,13 +431,16 @@ class NetworkHandler(QObject):
             return NetworkHandler.Confluence
         elif sizeFlowIn == sizeFlowOut:
             if sizeFlowIn > 1:
-                # case 4.c: there's a constant flow through node, but there are more than 1 line
+                # case 4.a: there's a constant flow through node, but there are more than 1 line
                 return NetworkHandler.NodeOverload
             elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldNames=fieldNames):
-                # case 4.a: lines do change their attribute set. Must use fieldNames due to black list items.
+                # case 4.b: lines do change their attribute set. Must use fieldNames due to black list items.
                 return NetworkHandler.AttributeChange
+            elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                # case 4.c: lines next to ditches.
+                return NetworkHandler.DitchNode
             else:
-                # case 4.b: nodes inside the network that are there as an attribute change node but lines connected
+                # case 4.d: nodes inside the network that are there as an attribute change node but lines connected
                 #           to it have the same set of attributes
                 return NetworkHandler.AttributeChangeFlag
         else:
@@ -909,7 +937,7 @@ class NetworkHandler(QObject):
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else False
-            map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
+            map(reclassifyNodeAlias, list(map(initialNode, flippedLines)) + list(map(lastNode, flippedLines)))
         return hasStartCondition, flippedLinesIds
 
     def directNetwork(self, networkLayer, nodeLayer, nodeList=None):
@@ -1245,7 +1273,7 @@ class NetworkHandler(QObject):
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else None
-            map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
+            map(reclassifyNodeAlias, list(map(initialNode, flippedLines)) + list(map(lastNode, flippedLines)))
             # check if node is fixed and update its dictionaries and invalidation reason
             valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
                                             networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
