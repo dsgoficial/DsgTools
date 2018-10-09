@@ -25,6 +25,7 @@ from qgis.PyQt.QtWidgets import QWidget
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postgisWidget import PostgisWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newSpatialiteWidget import NewSpatialiteWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import ShapefileWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
 from DsgTools.core.dsgEnums import DsgEnums
@@ -46,7 +47,7 @@ class DatasourceSelectionWidgetFactory():
             DsgEnums.PostGIS : lambda : PostgisWidget(parent=parent),
             DsgEnums.NewPostGIS : lambda : PostgisWidget(parent=parent),
             DsgEnums.SpatiaLite : lambda : SpatialiteWidget(parent=parent),
-            DsgEnums.NewSpatiaLite : lambda : SpatialiteWidget(parent=parent),
+            DsgEnums.NewSpatiaLite : lambda : NewSpatialiteWidget(parent=parent),
             DsgEnums.Shapefile : lambda : ShapefileWidget(parent=parent),
             DsgEnums.NewShapefile : lambda : ShapefileWidget(parent=parent),
             DsgEnums.Geopackage : lambda : GeopackageWidget(parent=parent),
