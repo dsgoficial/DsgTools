@@ -192,6 +192,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             currStep += 1
         else:
             multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+            frame = None
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         # get ditch layer
