@@ -27,7 +27,7 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 from DsgTools.gui.ServerTools.viewServers import ViewServers
