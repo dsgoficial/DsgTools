@@ -58,10 +58,9 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     SINK_LAYER = 'SINK_LAYER'
     REF_LAYER = 'REF_LAYER'
     WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
-    MAX_CYCLES = 'MAX_CYCLES'
+    DITCH_LAYER = 'DITCH_LAYER'
     SEARCH_RADIUS = 'SEARCH_RADIUS'
     NETWORK_NODES = 'NETWORK_NODES'
-    FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -103,7 +102,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.REF_LAYER,
                 self.tr('Reference layer'),
-                [QgsProcessing.TypeVectorPolygon]
+                [QgsProcessing.TypeVectorPolygon],
+                optional=True
             )
         )
         self.addParameter(
@@ -123,12 +123,11 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MAX_CYCLES,
-                self.tr('Maximum cycles'),
-                minValue=1,
-                defaultValue=2,
-                type=QgsProcessingParameterNumber.Integer
+            QgsProcessingParameterVectorLayer(
+                self.DITCH_LAYER,
+                self.tr('Ditch layer'),
+                [QgsProcessing.TypeVectorLine],
+                optional=True
             )
         )
         self.addParameter(
@@ -144,12 +143,6 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterFeatureSink(
                 self.NETWORK_NODES,
                 self.tr('Node layer')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('Network flags')
             )
         )
         self.nodeIdDict = None
@@ -182,7 +175,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         (nodeSink, dest_id) = self.parameterAsSink(parameters, self.NETWORK_NODES,
                 context, self.getFields(), QgsWkbTypes.MultiPoint, networkLayer.sourceCrs())
         #prepairs flag sink for raising errors
-        self.prepareFlagSink(parameters, networkHandler, QgsWkbTypes.MultiPoint, context)
+        # self.prepareFlagSink(parameters, networkHandler, QgsWkbTypes.MultiPoint, context)
         
         waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
         waterBodyClasses = waterBodyClasses if waterBodyClasses is not None else []
@@ -198,6 +191,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
+        # get ditch layer
+        ditchLayer = self.parameterAsLayer(parameters, self.DITCH_LAYER, context)
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Performing node identification...'))
         self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback) #zoado, mudar lógica
@@ -214,7 +209,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
                 attributeBlackList=attributeBlackList,
                 excludePrimaryKeys=ignorePK,
-                ignoreVirtualFields=ignoreVirtual
+                ignoreVirtualFields=ignoreVirtual,
+                ditchLayer=ditchLayer
             )
         self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name())
         return {self.NETWORK_NODES : dest_id}
