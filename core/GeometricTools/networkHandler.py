@@ -236,7 +236,7 @@ class NetworkHandler(QObject):
         """
         # fields to be ignored
         fieldList = [] if fieldList is None else fieldList
-        return {field.name() : feature[field.name()] for field in fieldList}
+        return {field : feature[field] for field in fieldList}
 
     def attributeChangeCheck(self, node, networkLayer, fieldList=None):
         """
