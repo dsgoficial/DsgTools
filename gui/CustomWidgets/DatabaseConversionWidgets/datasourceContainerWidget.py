@@ -285,6 +285,9 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 if layerName:
                     widgets[layerName] = dict()
                     widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
+                    # set current check box status based on previous filters, if any
+                    previousFilters = not self.filters['layer'] or layerName in self.filters['layer']
+                    widgets[layerName]['checkBox'].setChecked(previousFilters)
                     # allow filtering option only when layer is marked to be filtered
                     widgets[layerName]['checkBox'].toggled.connect(widgets[layerName]['fieldExpression'].setEnabled)
                     # add a new checkbox widget to layout for each layer found and a field expression widget
@@ -292,9 +295,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     # widgets[layerName]['fieldExpression'] = QgsFieldExpressionWidget()
                     msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
                     widgets[layerName]['checkBox'].setText(msg.format(layerName, featCount))
-                    if not self.filters['layer'] or layerName in self.filters['layer']:
+                    if previousFilters:
+                        # if layer is among the filtered ones, or if there are no previous filters, set it checked.__init__(self, *args, **kwargs):
+                        widgets[layerName]['checkBox'].setChecked(True)
                         # in case no filters are added or if layer is among the filtered ones, set it checked
-                        widgets[layerName]['checkBox'].setChecked(widgets[layerName]['checkBox'].isChecked())
                     if layerName in self.filters['layer_filter']:
                         # if a layer feature filter was set, refill it back to UI
                         widgets[layerName]['fieldExpression'].setExpression(self.filters['layer_filter'][layerName])
