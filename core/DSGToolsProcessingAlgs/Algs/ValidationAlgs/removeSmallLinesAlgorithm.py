@@ -29,7 +29,8 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingException)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -49,7 +50,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                [QgsProcessing.TypeVectorLine ]
             )
         )
 
@@ -99,8 +100,11 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Identifying remaining small lines in layer {0}...').format(inputLyr.name()))
         flagLyr = algRunner.runIdentifySmallLines(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.MultiPoint, context)
+        for feat in flagLyr.getFeatures():
+            self.flagFeature(feat.geometry(), feat['reason'])
 
-        return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
+        return {self.INPUT: inputLyr, self.FLAGS : self.flag_id}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
