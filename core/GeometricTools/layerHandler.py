@@ -663,13 +663,13 @@ class LayerHandler(QObject):
                 deleteList.append(featid)
             else:
                 # remove duplicate nodes to avoid problem in snapping
-                geom.removeDuplicateNodes()
+                # geom.removeDuplicateNodes()
                 outputGeom = snapper.snapGeometry(geom, tol, behavior) if inputLyr != refLyr and behavior != 7 else snapper.snapFeature(feat)
                 if geom is None:
                     deleteList.append(featid)
                 else:
-                    # inputLyr.changeGeometry(id, outputGeom)
-                    feat.setGeometry(outputGeom)
+                    inputLyr.changeGeometry(featid, outputGeom)
+                    # feat.setGeometry(outputGeom)
                     outputList += [feat]
             if feedback is not None and feedback.isCanceled():
                 feedback.setProgress(size * current)
