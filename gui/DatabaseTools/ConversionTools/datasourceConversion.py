@@ -254,13 +254,15 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # update output map
         self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         # get new datasource info
+        getNewDsNames = lambda widget : '{0}: {1}'.format(widget.groupBox.title(), widget.getDatasourceConnectionName())
+        newDsNames = [self.tr('Select a datasource')] + sorted(list(map(getNewDsNames, self.outDs.values())))
         groupTitle = containerWidget.groupBox.title()
-        dsName = '{0}: {1}'.format(groupTitle, containerWidget.getDatasourceConnectionName())
         # initiate its index
         dsIdx = None
         for row in range(self.tableWidget.rowCount()):
             outDsCombobox = self.getRowContents(row=row)[DatasourceConversion.OutDs]
             if outDsCombobox:
+                # retrieve replaced datasource old index
                 if dsIdx is None:
                     # retrive old name
                     oldName = ''
@@ -271,12 +273,22 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                             break
                     # the order is the same for all rows
                     dsIdx = outDsCombobox.findText(oldName)
+                # identify whether previous selection was the same as the one that changed
+                currentSelectionChanged = outDsCombobox.currentIndex() == dsIdx
+                if not currentSelectionChanged:
+                    currentText = outDsCombobox.currentText()
+                # update list of output comboboxes
+                outDsCombobox.blockSignals(True)
+                outDsCombobox.clear()
+                outDsCombobox.addItems(newDsNames)
+                outDsCombobox.blockSignals(False)
                 # check if current selection is the one to be removed
-                if outDsCombobox.currentIndex() == dsIdx:
+                if currentSelectionChanged:
+                    dsName = getNewDsNames(containerWidget)
                     # if current selection is the removed output, set selection to 0 index
-                    outDsCombobox.setCurrentIndex(0)
-                # remove datasource entry
-                outDsCombobox.removeItem(dsIdx)
+                    outDsCombobox.setCurrentText(dsName)
+                else:
+                    outDsCombobox.setCurrentText(currentText)
 
     def updateInputInformation(self, containerWidget):
         """
@@ -301,6 +313,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Updates input information.
         :param containerWidget: (DatasourceContainerWidget) output container widget. 
         """
+        # update output map
+        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
         # get new datasource info
         groupTitle = containerWidget.groupBox.title()
         dsName = '{0}: {1}'.format(groupTitle, containerWidget.getDatasourceConnectionName())
@@ -310,6 +324,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         for row in range(self.tableWidget.rowCount()):
             outDsCombobox = self.getRowContents(row=row)[DatasourceConversion.OutDs]
             if outDsCombobox:
+                # retrieve replaced datasource old index
                 if dsIdx is None:
                     # retrive old name
                     oldName = ''
@@ -325,10 +340,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 # check if current selection is the one to be removed
                 if outDsCombobox.currentIndex() == dsIdx:
                     # if current selection is the removed output, set selection to 0 index
-                    outDsCombobox.setCurrentIndex(0)
                     outDsCombobox.setCurrentIndex(dsIdx)
-        # update output map
-        self.outDs = self.getWidgetNameDict(self.datasourceManagementWidgetOut.activeDrivers)
 
     def getRowContents(self, row):
         """
