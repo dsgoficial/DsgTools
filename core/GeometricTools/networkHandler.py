@@ -235,15 +235,8 @@ class NetworkHandler(QObject):
         :return: (dict-of-object) attribute values for each attribute mapped.
         """
         # fields to be ignored
-        ignoreList = []
-        if fieldList is None:
-            # removing attributes that are calculated OTF
-            fieldList = [field for idx, field in enumerate(layer.fields()) if idx not in layer.primaryKeyAttributes() and field.type() != 6]
-        else:
-            # check if all field names given are in fact fields for the layer
-            layerFields = layer.fields()
-            ignoreList = [field for field in fieldList if field not in layerFields]
-        return { field.name() : feature[field.name()] for field in fieldList if field not in ignoreList }
+        fieldList = [] if fieldList is None else fieldList
+        return {field.name() : feature[field.name()] for field in fieldList}
 
     def attributeChangeCheck(self, node, networkLayer, fieldList=None):
         """
