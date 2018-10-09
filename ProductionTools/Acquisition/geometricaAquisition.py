@@ -133,11 +133,11 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             
     def lineIntersection(self, p1, p2, p3, p4):    
         p3Projected = p4       
-        if(p1.y() == p2.y()):                     
+        if((p1.y() == p2.y()) or (p3.x()==p4.x())):                                     
             y = p3Projected.y()
             x = p2.x() 
             return QgsPoint(x,y)
-        if(p1.x() == p2.x()):         
+        if((p1.x() == p2.x()) or (p3.y() == p4.y())):    
             y = p2.y()
             x = p3Projected.x() 
             return QgsPoint(x,y)
