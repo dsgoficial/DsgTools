@@ -98,7 +98,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
-        algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected, behavior=0)
 
         return {self.INPUT: inputLyr}
 
