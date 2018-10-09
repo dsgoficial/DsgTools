@@ -183,21 +183,28 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         # get frame layer
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
-        if frameLayer is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Preparing bounds...'))
-        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
+        currStep = 0
+        if frameLayer is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+            multiStepFeedback.setCurrentStep(currStep)
+            multiStepFeedback.pushInfo(self.tr('Preparing bounds...'))
+            frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
+            currStep += 1
+        else:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         # get ditch layer
         ditchLayer = self.parameterAsLayer(parameters, self.DITCH_LAYER, context)
-        multiStepFeedback.setCurrentStep(1)
+
+        #new step
+        multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Performing node identification...'))
         self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback) #zoado, mudar lógica
         multiStepFeedback.pushInfo(self.tr('{node_count} node(s) identificated...').format(node_count=len(self.nodeDict)))
-        multiStepFeedback.setCurrentStep(2)
+        currStep += 1
+        #new step
+        multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Performing node classification...'))
         networkHandler.nodeDict = self.nodeDict
         self.nodeTypeDict = networkHandler.classifyAllNodes(
