@@ -102,8 +102,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.REF_LAYER,
                 self.tr('Reference layer'),
-                [QgsProcessing.TypeVectorPolygon],
-                optional=True
+                [QgsProcessing.TypeVectorPolygon]
             )
         )
         self.addParameter(
@@ -184,15 +183,13 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         # get frame layer
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         currStep = 0
-        if frameLayer is not None:
-            multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-            multiStepFeedback.setCurrentStep(currStep)
-            multiStepFeedback.pushInfo(self.tr('Preparing bounds...'))
-            frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
-            currStep += 1
-        else:
-            multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-            frame = None
+        if frameLayer is None:
+            raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(currStep)
+        multiStepFeedback.pushInfo(self.tr('Preparing bounds...'))
+        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
+        currStep += 1
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         # get ditch layer

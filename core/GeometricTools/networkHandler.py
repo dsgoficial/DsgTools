@@ -47,19 +47,19 @@ class NetworkHandler(QObject):
         self.nodeDict = None
         self.nodeTypeDict = None
         self.nodeTypeNameDict = {
-            NetworkHandler.Flag : self.tr("Flag"),
-            NetworkHandler.Sink : self.tr("Sink"),
-            NetworkHandler.WaterwayBegin : self.tr("Waterway Beginning"),
-            NetworkHandler.UpHillNode : self.tr("Up Hill Node"),
-            NetworkHandler.DownHillNode : self.tr("Down Hill Node"),
-            NetworkHandler.Confluence : self.tr("Confluence"),
-            NetworkHandler.Ramification : self.tr("Ramification"),
-            NetworkHandler.AttributeChange : self.tr("Attribute Change Node"),
-            NetworkHandler.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
-            NetworkHandler.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-            NetworkHandler.NodeOverload : self.tr("Overloaded Node"),
-            NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network"),
-            NetworkHandler.DitchNode : self.tr("Node next to ditch")
+            NetworkHandler.Flag : self.tr("Flag"),#0
+            NetworkHandler.Sink : self.tr("Sink"),#1
+            NetworkHandler.WaterwayBegin : self.tr("Waterway Beginning"),#2
+            NetworkHandler.UpHillNode : self.tr("Up Hill Node"),#3
+            NetworkHandler.DownHillNode : self.tr("Down Hill Node"),#4
+            NetworkHandler.Confluence : self.tr("Confluence"),#5
+            NetworkHandler.Ramification : self.tr("Ramification"),#6
+            NetworkHandler.AttributeChange : self.tr("Attribute Change Node"),#7
+            NetworkHandler.NodeNextToWaterBody : self.tr("Node Next to Water Body"),#8
+            NetworkHandler.AttributeChangeFlag : self.tr("Attribute Change Flag"),#9
+            NetworkHandler.NodeOverload : self.tr("Overloaded Node"),#10
+            NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network"),#11
+            NetworkHandler.DitchNode : self.tr("Node next to ditch")#12
         }
         self.flagTextDict = {
             NetworkHandler.Flag : self.tr('Network connection problem. Segments must be connected.'),
@@ -223,7 +223,7 @@ class NetworkHandler(QObject):
                         return True
         return False
 
-    def getAttributesFromFeature(self, feature, layer, fieldNames=None):
+    def getAttributesFromFeature(self, feature, layer, fieldList=None):
         """
         Retrieves the attributes from a given feature, except for
         their geometry and ID column values. If a list of
@@ -231,21 +231,21 @@ class NetworkHandler(QObject):
         if found. In case no attribute is found, None will be returned.
         :param feature: (QgsFeature) feature from which attibutes will be retrieved.
         :param layer: (QgsVectorLayer) layer containing target feature.
-        :param fieldNames: (list-of-str) list of field names to be exposed.
+        :param fieldList: (list-of-str) list of field names to be exposed.
         :return: (dict-of-object) attribute values for each attribute mapped.
         """
         # fields to be ignored
         ignoreList = []
-        if fieldNames is None:
+        if fieldList is None:
             # removing attributes that are calculated OTF
             fieldList = [field for idx, field in enumerate(layer.fields()) if idx not in layer.primaryKeyAttributes() and field.type() != 6]
         else:
             # check if all field names given are in fact fields for the layer
             layerFields = layer.fields()
-            ignoreList = [field for field in fieldNames if field not in layerFields]
+            ignoreList = [field for field in fieldList if field not in layerFields]
         return { field.name() : feature[field.name()] for field in fieldList if field not in ignoreList }
 
-    def attributeChangeCheck(self, node, networkLayer, fieldNames=None):
+    def attributeChangeCheck(self, node, networkLayer, fieldList=None):
         """
         Checks if attribute change node is in fact an attribute change.
         :param node: (QgsPoint) node to be identified as over the frame layer or not.
@@ -254,9 +254,9 @@ class NetworkHandler(QObject):
         """
         # assuming that attribute change nodes have only 1-in 1-out lines
         lineIn = self.nodeDict[node]['end'][0]
-        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer, fieldNames=fieldNames)
+        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer, fieldList=fieldList)
         lineOut = self.nodeDict[node]['start'][0]
-        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer, fieldNames=fieldNames)
+        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer, fieldList=fieldList)
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
@@ -345,6 +345,8 @@ class NetworkHandler(QObject):
         :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
         :return: (bool) whether node is as close as searchRaius to a water body element.
         """
+        if not ditchLayer:
+            return False
         qgisPoint = QgsGeometry.fromPointXY(node)
         # building a buffer around node with search radius for intersection with Layer Frame
         buf = qgisPoint.buffer(searchRadius, -1)
@@ -357,7 +359,7 @@ class NetworkHandler(QObject):
                 return True
         return False
 
-    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldNames=None):
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldList=None, ditchLayer=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
@@ -370,7 +372,7 @@ class NetworkHandler(QObject):
         :param networkLayerGeomType: (int) network layer geometry type code.
         :return: returns the (int) point type.
         """
-        fieldNames = [] if fieldNames is None else fieldNames
+        fieldList = [] if fieldList is None else fieldList
         # to reduce calculation time in expense of memory, which is cheap
         nodePointDict = self.nodeDict[nodePoint]
         sizeFlowOut = len(nodePointDict['start'])
@@ -433,8 +435,8 @@ class NetworkHandler(QObject):
             if sizeFlowIn > 1:
                 # case 4.a: there's a constant flow through node, but there are more than 1 line
                 return NetworkHandler.NodeOverload
-            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldNames=fieldNames):
-                # case 4.b: lines do change their attribute set. Must use fieldNames due to black list items.
+            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldList=fieldList):
+                # case 4.b: lines do change their attribute set. Must use fieldList due to black list items.
                 return NetworkHandler.AttributeChange
             elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
                 # case 4.c: lines next to ditches.
@@ -447,7 +449,7 @@ class NetworkHandler(QObject):
             # case 3 "ramification"
             return NetworkHandler.Ramification
 
-    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True):
+    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True, ditchLayer=None):
         """
         Classifies all identified nodes from the hidrography line layer.
         :param networkLayer: (QgsVectorLayer) network lines layer.
@@ -457,13 +459,14 @@ class NetworkHandler(QObject):
         :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
                          to be classified. Node MUST be in dict given, if not, it'll be ignored.
         :param waterSinkLayer: (QgsVectorLayer) water sink layer.
+        :param ditchLayer: (QgsVectorLayer) ditch layer.
         :return: a (dict) dictionary of node and its node type ( { (QgsPoint)node : (int)nodeType } ). 
         """
         networkLayerGeomType = networkLayer.geometryType()
         nodeTypeDict = dict()
         nodeCount = len(self.nodeDict)
         size = 100/nodeCount if nodeCount else 0
-        fieldNames = self.layerHandler.getAttributesFromBlackList(networkLayer, \
+        fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
                                                             attributeBlackList=attributeBlackList,\
                                                             ignoreVirtualFields=ignoreVirtualFields,\
                                                             excludePrimaryKeys=excludePrimaryKeys)
@@ -476,7 +479,7 @@ class NetworkHandler(QObject):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
                                     waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType, \
-                                    fieldNames=fieldNames)
+                                    fieldList=fieldList, ditchLayer=ditchLayer)
             if feedback is not None:
                 feedback.setProgress(size * current)
         return nodeTypeDict
@@ -726,7 +729,7 @@ class NetworkHandler(QObject):
                     NetworkHandler.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
                     NetworkHandler.NodeOverload : None, # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
                     NetworkHandler.DisconnectedLine : None, # 11 - Nó conectado a uma linha perdida na rede (teria dois inícios de rede)
-                    # NetworkHandler.NodeOverload : None # 10 - Mais 
+                    NetworkHandler.DitchNode : 'in and out' # 12 - Nó de vala 
                    }
         # to avoid calculations in expense of memory
         nodeType = self.nodeTypeDict[node]
