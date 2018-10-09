@@ -219,10 +219,14 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 ignoreVirtualFields=ignoreVirtual,
                 ditchLayer=ditchLayer
             )
-        self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name())
+        currStep += 1
+        #new step
+        multiStepFeedback.setCurrentStep(currStep)
+        multiStepFeedback.pushInfo(self.tr('Writing nodes...'))
+        self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name(), feedback=multiStepFeedback)
         return {self.NETWORK_NODES : dest_id}
 
-    def fillNodeSink(self, nodeSink, networkLineLayerName):
+    def fillNodeSink(self, nodeSink, networkLineLayerName, feedback=None):
         """
         Populate hidrography node layer with all nodes.
         :param nodeSink: (QgsFeatureSink) hidrography nodes layer.
@@ -230,11 +234,13 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         """
         # get fields from layer in order to create new feature with the same attribute map
         fields = self.getFields()
+        nPoints = len(self.nodeTypeDict)
+        size = 100/nPoints if nPoints else 0
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
         # initiate new features list
         featList = []
-        for node in self.nodeDict:
+        for current, node in enumerate(self.nodeDict):
             # set attribute map
             feat = QgsFeature(fields)
             # set geometry
@@ -242,6 +248,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             featList.append(feat)
+            if feedback is not None:
+                feedback.setProgress(size * current)
         nodeSink.addFeatures(featList, QgsFeatureSink.FastInsert)
     
     def flagNetworkProblems(self, nodeTypeDict):
