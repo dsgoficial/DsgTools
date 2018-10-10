@@ -31,7 +31,7 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
                       QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem,\
-                      QgsDataSourceUri, QgsFields
+                      QgsDataSourceUri, QgsFields, QgsProcessingMultiStepFeedback
 from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import QVariant
 
@@ -1378,13 +1378,14 @@ class NetworkHandler(QObject):
         self.reclassifyNodeType = dict()
         self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
         networkLayerGeomType = networkLayer.geometryType()
-        networkNodeLayer.startEditing()
+        networkLayer.startEditing()
         networkNodeLayer.startEditing()
         # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
         self.classifyNode = lambda x : self.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
                                     waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
         # update createNetworkNodesProcess object node dictionary
+        cycleCount = 0
         if feedback is not None:
             multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
             multiStepFeedback.setCurrentStep(cycleCount)
@@ -1394,7 +1395,6 @@ class NetworkHandler(QObject):
         # initiate nodes, invalid/valid lines dictionaries
         nodeFlags, inval, val = dict(), dict(), dict()
         # cycle count start
-        cycleCount = 0
         # get max amount of orientation cycles
         max_amount_cycles = max_amount_cycles if max_amount_cycles > 0 else 1
         # validation method FINALLY starts...
@@ -1421,9 +1421,10 @@ class NetworkHandler(QObject):
                 networkNodeLayer.endEditCommand()
                 # try to load auxiliary line layer to fill it with invalid lines
                 featList = self.getFlagLines(networkLayer, val, inval)
-                invalidLinesLog = self.tr("Invalid lines were exposed in layer {0}).").format(self.tr('{0} line errors').format(self.displayName()))
+                invalidLinesLog = self.tr("Invalid lines were exposed in line flags layer.")
                 if feedback is not None:
-                    multiStepFeedback.setCurrentStep(invalidLinesLog)
+                    multiStepFeedback.pushInfo(invalidLinesLog)
+                    multiStepFeedback.setCurrentStep(cycleCount)
                 vLines = list(val.keys())
                 iLines = list(inval.keys())
                 intersection = list(set(vLines) & set(iLines))
