@@ -20,25 +20,20 @@
  ***************************************************************************/
 """
 
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingException,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -97,21 +92,49 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
-        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
-        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+                )
+        onlySelected = self.parameterAsBool(
+            parameters, 
+            self.SELECTED, 
+            context
+            )
+        attributeBlackList = self.parameterAsFields(
+            parameters,
+            self.ATTRIBUTE_BLACK_LIST,
+            context
+            )
+        ignoreVirtual = self.parameterAsBool(
+            parameters,
+            self.IGNORE_VIRTUAL_FIELDS,
+            context
+            )
+        ignorePK = self.parameterAsBool(
+            parameters,
+            self.IGNORE_PK_FIELDS,
+            context
+            )
         # Compute the number of steps to display within the progress bar and
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, attributeBlackList=attributeBlackList, excludePrimaryKeys=ignorePK, ignoreVirtualFields=ignoreVirtual, feedback=multiStepFeedback)
+        geomDict = layerHandler.getDuplicatedFeaturesDict(
+            inputLyr,
+            onlySelected=onlySelected,
+            attributeBlackList=attributeBlackList,
+            excludePrimaryKeys=ignorePK,
+            ignoreVirtualFields=ignoreVirtual,
+            feedback=multiStepFeedback
+            )
         multiStepFeedback.setCurrentStep(1)
-        self.deleteDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
+        self.deleteDuplicatedFeaturesFlags(
+            inputLyr,
+            geomDict,
+            multiStepFeedback
+            )
 
         return {self.INPUT: inputLyr}
 
