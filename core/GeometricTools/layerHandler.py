@@ -42,7 +42,7 @@ class LayerHandler(QObject):
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
     
-    def getFeatureList(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
+    def getFeatureList(self, lyr, onlySelected=False, returnIterator=True, returnSize=True):
         """
         Gets the features from lyr acording to parameters.
         :param (QgsVectorLayer) lyr: layer;
@@ -121,29 +121,29 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
-    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType = None, epsg = None, attributeTupple = False, attributeBlackList = '', onlySelected = False, feedback = None):
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType=None, epsg=None, attributeTupple=False, attributeBlackList='', onlySelected=False, feedback=None):
         if not epsg:
             epsg = layerList[0].crs().authid().split(':')[-1]
         if not geomType:
             geomType = layerList[0].geometryType()
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
-                                                      attributeTupple = attributeTupple)
+                                                      attributeTupple=attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
         featList = self.getUnifiedLayerFeatures(unified_layer, layerList, \
                                                       attributeTupple=attributeTupple, \
                                                       attributeBlackList=attributeBlackList, \
                                                       onlySelected=onlySelected, \
                                                       parameterDict=parameterDict, \
-                                                      feedback = feedback)
+                                                      feedback=feedback)
         self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
         return unified_layer
 
-    def createUnifiedVectorLayer(self, geomType, srid, attributeTupple = False):
+    def createUnifiedVectorLayer(self, geomType, srid, attributeTupple=False):
         """
         Creates a unified vector layer for validation purposes.
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType),srid)
+        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType), srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
@@ -151,7 +151,7 @@ class LayerHandler(QObject):
         lyr.updateFields()
         return lyr
     
-    def getUnifiedVectorFields(self, attributeTupple = False):
+    def getUnifiedVectorFields(self, attributeTupple=False):
         if not attributeTupple:
             fields = [QgsField('featid', QVariant.Int), 
                       QgsField('layer', QVariant.String)
@@ -165,7 +165,7 @@ class LayerHandler(QObject):
         return fields
     
 
-    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = None, feedback = None):
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple=False, attributeBlackList='', onlySelected=False, parameterDict=None, feedback=None):
         parameterDict = {} if parameterDict is None else parameterDict
         featList = []
         blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
@@ -194,7 +194,7 @@ class LayerHandler(QObject):
                     multiStepFeedback.setProgress(current*size)
         return featList
 
-    def addFeaturesToLayer(self, lyr, featList, commitChanges = True, msg = ''):
+    def addFeaturesToLayer(self, lyr, featList, commitChanges=True, msg=''):
         lyr.startEditing()
         lyr.beginEditCommand(msg)
         res = lyr.addFeatures(featList)
@@ -211,7 +211,7 @@ class LayerHandler(QObject):
         for lyr in lyrList:
             self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
     
-    def buildInputDict(self, inputLyr, pk = None, feedback = None, onlySelected = False):
+    def buildInputDict(self, inputLyr, pk=None, feedback=None, onlySelected=False):
         """
         Maps inputLyr into a dict with its attributes.
         """
@@ -235,7 +235,7 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
         return inputDict
     
-    def populateInputDictFeatList(self, lyr, inputDict, pk = None, request = None, feedback = None):
+    def populateInputDictFeatList(self, lyr, inputDict, pk=None, request=None, feedback=None):
         iterator = lyr.getFeatures(request) if request else lyr.getFeatures()
         localTotal = 100/lyr.featureCount() if lyr.featureCount() else 0
         for current, feat in enumerate(iterator):

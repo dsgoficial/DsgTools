@@ -159,7 +159,7 @@ class NetworkHandler(QObject):
                 return True
         return False
 
-    def nodeNextToWaterBodies(self, node, waterBodiesLayers, searchRadius):
+    def nodeNextToWaterBodies(self, node, waterBodiesLayers, searchRadius, auxIndexStructure=None):
         """
         Identify whether or not node is next to a water body feature.
         :param node: (QgsPoint) node to be identified as next to a water body feature.
@@ -172,18 +172,25 @@ class NetworkHandler(QObject):
         buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
         bbRect = buf.boundingBox()
-        # check if buffer intersects features from water bodies layers
-        for lyr in waterBodiesLayers:
-            if lyr.geometryType() == 0:
-                # ignore point primitive layers
-                continue
-            for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
-                if buf.intersects(feat.geometry()):
-                    # any feature component of a water body intersected is enough
-                    return True
+        # use aux spatial index if provided
+        if auxIndexStructure is not None and 'waterBodiesLayers' in auxIndexStructure:
+            for auxDict in auxIndexStructure['waterBodiesLayers']:
+                for featid in auxDict['spatialIdx'].intersects(bbRect):
+                    if buf.intersects(auxDict['idDict'][featid].geometry()):
+                        # any feature component of a water body intersected is enough
+                        return True
+        else:
+            for lyr in waterBodiesLayers:
+                if lyr.geometryType() == 0:
+                    # ignore point primitive layers
+                    continue
+                for feat in lyr.getFeatures(QgsFeatureRequest(bbRect)):
+                    if buf.intersects(feat.geometry()):
+                        # any feature component of a water body intersected is enough
+                        return True
         return False
 
-    def nodeIsWaterSink(self, node, waterSinkLayer, searchRadius):
+    def nodeIsWaterSink(self, node, waterSinkLayer, searchRadius, auxIndexStructure=None):
         """
         Identify whether or not node is next to a water body feature. If no water sink layer is given, method returns False
         :param node: (QgsPoint) node to be identified as coincident with a water sink feature.
@@ -196,11 +203,17 @@ class NetworkHandler(QObject):
         qgisPoint = QgsGeometry.fromPointXY(node)
         # building bounding box around node for feature requesting
         bbRect = qgisPoint.buffer(searchRadius, -1).boundingBox()
-        # check if qgisPoint (node geometry) is over a sink classified point
-        for feat in waterSinkLayer.getFeatures(QgsFeatureRequest(bbRect)):
-            if qgisPoint.distance(feat.geometry()) <= searchRadius:
-                # any feature component of a water body intersected is enough
-                return True
+        if auxIndexStructure is not None and 'waterSinkLayer' in auxIndexStructure:
+            for featid in auxIndexStructure['waterSinkLayer']['spatialIdx'].intersects(bbRect):
+                if qgisPoint.distance(auxIndexStructure['waterSinkLayer']['idDict'][featid].geometry()) <= searchRadius:
+                    # any feature component of a water body intersected is enough
+                    return True
+        else:
+            # check if qgisPoint (node geometry) is over a sink classified point
+            for feat in waterSinkLayer.getFeatures(QgsFeatureRequest(bbRect)):
+                if qgisPoint.distance(feat.geometry()) <= searchRadius:
+                    # any feature component of a water body intersected is enough
+                    return True
         return False
 
     def checkIfHasLineInsideWaterBody(self, node, waterBodiesLayers, searchRadius=1.0):
@@ -254,7 +267,7 @@ class NetworkHandler(QObject):
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
-    def isFirstOrderDangle(self, node, networkLayer, searchRadius):
+    def isFirstOrderDangle(self, node, networkLayer, searchRadius, auxIndexStructure=None):
         """
         Checks whether node is a dangle into network (connected to a first order line).
         :param node: (QgsPoint) node to be validated.
@@ -267,15 +280,21 @@ class NetworkHandler(QObject):
         buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
         bbRect = buf.boundingBox()
-        # check if buffer intersects features from water bodies layers
-        count = 0
-        for feat in networkLayer.getFeatures(QgsFeatureRequest(bbRect)):
-            if buf.intersects(feat.geometry()):
-                count += 1
-                res = (count > 1)
-                if res:
-                    # to avoid as many iterations as possible
+        if auxIndexStructure is not None and 'networkLayer' in auxIndexStructure:
+            for featid in auxIndexStructure['networkLayer']['spatialIdx'].intersects(bbRect):
+                if buf.intersects(auxIndexStructure['networkLayer']['idDict'][featid].geometry()):
+                    # any feature component of a water body intersected is enough
                     return False
+        else:
+            # check if buffer intersects features from water bodies layers
+            count = 0
+            for feat in networkLayer.getFeatures(QgsFeatureRequest(bbRect)):
+                if buf.intersects(feat.geometry()):
+                    count += 1
+                    res = (count > 1)
+                    if res:
+                        # to avoid as many iterations as possible
+                        return False
         return True
 
     def checkIfLineIsDisconnected(self, node, networkLayer, nodeTypeDict, geomType=None):
@@ -331,7 +350,7 @@ class NetworkHandler(QObject):
         # in case next node is not yet classified, method is ineffective
         return False
     
-    def isNodeNextToDitch(self, node, ditchLayer, searchRadius):
+    def isNodeNextToDitch(self, node, ditchLayer, searchRadius, auxIndexStructure=None):
         """
         Checks if node is next to a ditch.
         ::param node: (QgsPoint) node to be identified as next to a water ditch feature.
@@ -346,14 +365,20 @@ class NetworkHandler(QObject):
         buf = qgisPoint.buffer(searchRadius, -1)
         # building bounding box around node for feature requesting
         bbRect = buf.boundingBox()
-        # check if buffer intersects features from water bodies layers
-        for feat in ditchLayer.getFeatures(QgsFeatureRequest(bbRect)):
-            if buf.intersects(feat.geometry()):
-                # any feature component of a water body intersected is enough
-                return True
+        if auxIndexStructure is not None and 'ditchLayer' in auxIndexStructure:
+            for featid in auxIndexStructure['ditchLayer']['spatialIdx'].intersects(bbRect):
+                if buf.intersects(auxIndexStructure['networkLayer']['idDict'][featid].geometry()):
+                    # any feature component of a water body intersected is enough
+                    return True
+        else:
+            # check if buffer intersects features from water bodies layers
+            for feat in ditchLayer.getFeatures(QgsFeatureRequest(bbRect)):
+                if buf.intersects(feat.geometry()):
+                    # any feature component of a water body intersected is enough
+                    return True
         return False
 
-    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldList=None, ditchLayer=None):
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldList=None, ditchLayer=None, auxIndexStructure={}):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
@@ -393,33 +418,33 @@ class NetworkHandler(QObject):
             # case 1.b: point that legitimately only flows from
             elif hasEndLine:
                 # case 1.b.i
-                if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius):
+                if self.nodeNextToWaterBodies(node=nodePoint, waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                     # it is considered that every free node on map is a starting node. The only valid exceptions are nodes that are
                     # next to water bodies and water sink holes.
                     if sizeFlowIn == 1:
                         # a node next to water has to be a lose end
                         return NetworkHandler.NodeNextToWaterBody
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
-                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
-                    if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
+                    if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                         # if point is not disconnected and is connected to a ditch
                         return NetworkHandler.DitchNode
                     # check if node is connected to a disconnected line
                     elif self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                         return NetworkHandler.DisconnectedLine
                     # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
-                    elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
+                    elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                         # if a node is indeed a water sink (operator has set it to a sink)
                         return NetworkHandler.Sink
                     return NetworkHandler.WaterwayBegin
             # case 1.c: point that legitimately only flows out
-            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
-                if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+            elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
+                if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                     # if point is not disconnected and is connected to a ditch
                     return NetworkHandler.DitchNode
                 elif self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                     return NetworkHandler.DisconnectedLine
-                elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
+                elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                     # in case there's a wrongly acquired line connected to a water sink
                     return NetworkHandler.Sink
                 return NetworkHandler.WaterwayBegin
@@ -435,7 +460,7 @@ class NetworkHandler(QObject):
             elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldList=fieldList):
                 # case 4.b: lines do change their attribute set. Must use fieldList due to black list items.
                 return NetworkHandler.AttributeChange
-            elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+            elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                 # case 4.c: lines next to ditches.
                 return NetworkHandler.DitchNode
             else:
@@ -461,14 +486,25 @@ class NetworkHandler(QObject):
         """
         networkLayerGeomType = networkLayer.geometryType()
         nodeTypeDict = dict()
-        nodeCount = len(self.nodeDict)
-        size = 100/nodeCount if nodeCount else 0
         fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
                                                             attributeBlackList=attributeBlackList,\
                                                             ignoreVirtualFields=ignoreVirtualFields,\
                                                             excludePrimaryKeys=excludePrimaryKeys)
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+            multiStepFeedback.setCurrentStep(0)
+        auxIndexStructure = self.getAuxIndexStructure(
+            networkLayer,
+            waterBodiesLayers=waterBodiesLayers,
+            waterSinkLayer=waterSinkLayer,
+            ditchLayer=ditchLayer,
+            feedback=multiStepFeedback)
+        nodeCount = len(self.nodeDict)
+        size = 100/nodeCount if nodeCount else 0
+        if feedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         for current, node in enumerate(self.nodeDict):
-            if feedback is not None and feedback.isCanceled():
+            if multiStepFeedback is not None and multiStepFeedback.isCanceled():
                 break
             if node not in self.nodeDict:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
@@ -476,10 +512,44 @@ class NetworkHandler(QObject):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
                                     waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType, \
-                                    fieldList=fieldList, ditchLayer=ditchLayer)
-            if feedback is not None:
-                feedback.setProgress(size * current)
+                                    fieldList=fieldList, ditchLayer=ditchLayer, auxIndexStructure=auxIndexStructure)
+            if multiStepFeedback is not None:
+                multiStepFeedback.setProgress(size * current)
         return nodeTypeDict
+    
+    def getAuxIndexStructure(self, networkLayer, waterBodiesLayers=None, waterSinkLayer=None, ditchLayer=None, feedback=None):
+        auxStructDict = dict()
+        steps = 1
+        if waterBodiesLayers is not None:
+            steps += len(waterBodiesLayers)
+        if waterSinkLayer is not None:
+            steps += 1
+        if ditchLayer is not None:
+            steps += 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(steps, feedback)
+        currStep = 0
+        multiStepFeedback.setCurrentStep(currStep)
+        spatialIdx, idDict = self.layerHandler.buildSpatialIndexAndIdDict(networkLayer, feedback=multiStepFeedback)
+        auxStructDict['networkLayer']={'spatialIdx':spatialIdx, 'idDict':idDict}
+        currStep += 1
+        if waterBodiesLayers is not None:
+            auxStructDict['waterBodies'] = []
+            multiStepFeedback.setCurrentStep(currStep)
+            for lyr in waterBodiesLayers:
+                spatialIdx, idDict = self.layerHandler.buildSpatialIndexAndIdDict(lyr, feedback=multiStepFeedback)
+                auxStructDict['waterBodies'].append({'spatialIdx':spatialIdx, 'idDict':idDict})
+            currStep += 1
+        if waterSinkLayer is not None:
+            multiStepFeedback.setCurrentStep(currStep)
+            spatialIdx, idDict = self.layerHandler.buildSpatialIndexAndIdDict(waterSinkLayer, feedback=multiStepFeedback)
+            auxStructDict['waterSinkLayer'] = {'spatialIdx':spatialIdx, 'idDict':idDict}
+            currStep += 1
+        if ditchLayer is not None:
+            multiStepFeedback.setCurrentStep(currStep)
+            spatialIdx, idDict = self.layerHandler.buildSpatialIndexAndIdDict(ditchLayer, feedback=multiStepFeedback)
+            auxStructDict['ditchLayer'] = {'spatialIdx':spatialIdx, 'idDict':idDict}
+            currStep += 1
+        return auxStructDict
 
     def clearHidNodeLayer(self, nodeLayer, nodeIdList=None, commitToLayer=False):
         """
