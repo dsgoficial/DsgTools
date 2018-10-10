@@ -42,7 +42,8 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingUtils,
                        QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingException)
 
 class IdentifyGapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'

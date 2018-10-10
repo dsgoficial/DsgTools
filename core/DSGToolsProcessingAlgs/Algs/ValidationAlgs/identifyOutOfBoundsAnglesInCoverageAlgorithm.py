@@ -36,7 +36,8 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers)
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingException)
 
 class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
