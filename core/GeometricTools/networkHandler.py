@@ -367,7 +367,7 @@ class NetworkHandler(QObject):
         bbRect = buf.boundingBox()
         if auxIndexStructure is not None and 'ditchLayer' in auxIndexStructure:
             for featid in auxIndexStructure['ditchLayer']['spatialIdx'].intersects(bbRect):
-                if buf.intersects(auxIndexStructure['networkLayer']['idDict'][featid].geometry()):
+                if buf.intersects(auxIndexStructure['ditchLayer']['idDict'][featid].geometry()):
                     # any feature component of a water body intersected is enough
                     return True
         else:
