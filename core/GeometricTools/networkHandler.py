@@ -31,8 +31,9 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
                       QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem,\
-                      QgsDataSourceUri
+                      QgsDataSourceUri, QgsFields
 from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QVariant
 
 class NetworkHandler(QObject):
     Flag, Sink, WaterwayBegin, UpHillNode, \
@@ -1355,10 +1356,8 @@ class NetworkHandler(QObject):
         # initiate new features list
         featList = []
         # pre-declaring method to make it faster
-        newInvalidFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], networkLayerName=networkLayerName, \
-                                            fid=x[1], reason=invalidReason, fields=fields)
-        newNonVisitedFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], networkLayerName=networkLayerName, \
-                                            fid=x[1], reason=nonVisitedReason, fields=fields)
+        newInvalidFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], reason=invalidReason, fields=fields)
+        newNonVisitedFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], reason=nonVisitedReason, fields=fields)
         # add all non-validated features
         for line in nonValidatedLines:
             # create new feture
@@ -1379,6 +1378,8 @@ class NetworkHandler(QObject):
         self.reclassifyNodeType = dict()
         self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
         networkLayerGeomType = networkLayer.geometryType()
+        networkNodeLayer.startEditing()
+        networkNodeLayer.startEditing()
         # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
         self.classifyNode = lambda x : self.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
                                     waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
@@ -1496,3 +1497,22 @@ class NetworkHandler(QObject):
             layer.updateFeature(line_a)
             return True
         return False
+    
+    def getFlagFields(self):
+        fields = QgsFields()
+        fields.append(QgsField('reason',QVariant.String))
+        return fields
+
+    def createNewInvalidLineFeature(self, feat_geom, reason, fields):
+        """
+        Creates a new feature to be added to invalid lines layer.
+        :param feat_geom: (QgsGeometry) 
+        :param reason: (str) reason of line invalidation.
+        :param fields: (QgsFields) object containing all fields from layer.
+        :return: (QgsFeature) new feature.
+        """
+        # set attribute map and create new feture
+        feat = QgsFeature(fields)
+        # set geometry
+        feat.setGeometry(feat_geom)
+        return feat
