@@ -41,7 +41,6 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingMultiStepFeedback)
 
 class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
-    FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
     ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
@@ -93,13 +92,6 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
-            )
-        )
-
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -113,7 +105,6 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
         ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
         ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
-        self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
@@ -121,10 +112,8 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, attributeBlackList=attributeBlackList, excludePrimaryKeys=ignorePK, ignoreVirtualFields=ignoreVirtual, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
         self.deleteDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
-        multiStepFeedback.setCurrentStep(2)
-        flagLyr = algRunner.runIdentifyDuplicatedFeatures(inputLyr, context, onlySelected=onlySelected, attributeBlackList=attributeBlackList, excludePrimaryKeys=ignorePK, ignoreVirtualFields=ignoreVirtual, feedback=multiStepFeedback)
 
-        return {self.FLAGS: flagLyr}
+        return {self.INPUT: inputLyr}
 
     def deleteDuplicatedFeaturesFlags(self, inputLyr, geomDict, feedback):
         size = 100/len(geomDict) if geomDict else 0
