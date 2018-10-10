@@ -216,7 +216,7 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
                             if "'" in uriString:
                                 splitToken = "'" 
                                 idx = 1
-                            elif "|" in uriString
+                            elif "|" in uriString:
                                 splitToken = "|"
                                 idx = 1
                             else:
