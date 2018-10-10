@@ -20,33 +20,30 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
                        QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType)
+                       QgsProcessingParameterDistance,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterType,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes, QgsProcessingException)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     INPUTLYRLIST = 'INPUTLYRLIST'
@@ -59,7 +56,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         Parameter setting.
         """
 
-        hierarchy = hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(self.SNAP_HIERARCHY,
+        hierarchy = HierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(self.SNAP_HIERARCHY,
                                                              description=self.tr('Snap hierarchy'))
         hierarchy.setMetadata({
             'widget_wrapper': 'DsgTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'
@@ -162,10 +159,10 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     class ParameterSnapHierarchyType(QgsProcessingParameterType):
 
         def __init__(self):
-            super(QgsProcessingParameterType).__init__()
+            super(QgsProcessingParameterType, self).__init__()
 
         def create(self, name):
-            return hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(name) #mudar
+            return HierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(name) #mudar
 
         def metadata(self):
             return {'widget_wrapper': 'processing.algs.qgis.ui.FieldsMappingPanel.FieldsMappingWidgetWrapper'} #mudar
@@ -185,7 +182,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
             super(QgsProcessingParameterDefinition).__init__(name, description)
 
         def clone(self):
-            copy = hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterFieldsMapping(self.name(), self.description())
+            copy = HierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterFieldsMapping(self.name(), self.description())
             return copy
 
         def type(self):
