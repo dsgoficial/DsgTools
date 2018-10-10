@@ -53,6 +53,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayElementsWit
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.createNetworkNodesAlgorithm import CreateNetworkNodesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import IdentifyDuplicatedFeaturesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedFeaturesAlgorithm import RemoveDuplicatedFeaturesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import AdjustNetworkConnectivityAlgorithm
 from qgis.PyQt.QtGui import QIcon
 
@@ -94,7 +95,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 CreateNetworkNodesAlgorithm(),
                 VerifyNetworkDirectioningAlgorithm(),
                 IdentifyDuplicatedFeaturesAlgorithm(),
-                AdjustNetworkConnectivityAlgorithm()]
+                AdjustNetworkConnectivityAlgorithm(),
+                RemoveDuplicatedFeaturesAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
