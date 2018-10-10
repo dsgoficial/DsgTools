@@ -401,12 +401,12 @@ class NetworkHandler(QObject):
                         return NetworkHandler.NodeNextToWaterBody
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
                 elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
-                    # check if node is connected to a disconnected line
-                    if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
-                        return NetworkHandler.DisconnectedLine
-                    elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                    if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
                         # if point is not disconnected and is connected to a ditch
                         return NetworkHandler.DitchNode
+                    # check if node is connected to a disconnected line
+                    elif self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
+                        return NetworkHandler.DisconnectedLine
                     # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
                     elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
                         # if a node is indeed a water sink (operator has set it to a sink)
@@ -414,7 +414,10 @@ class NetworkHandler(QObject):
                     return NetworkHandler.WaterwayBegin
             # case 1.c: point that legitimately only flows out
             elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
-                if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
+                if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                    # if point is not disconnected and is connected to a ditch
+                    return NetworkHandler.DitchNode
+                elif self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                     return NetworkHandler.DisconnectedLine
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
                     # in case there's a wrongly acquired line connected to a water sink
@@ -1372,7 +1375,11 @@ class NetworkHandler(QObject):
             featList.append(feat)
         return featList
     
-    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, searchRadius, waterBodyClasses=None, waterSinkLayer=None, max_amount_cycles=1, feedback=None, selectValid=False):
+    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, searchRadius, waterBodyClasses=None, waterSinkLayer=None, ditchLayer=None, max_amount_cycles=1, attributeBlackList=None, feedback=None, selectValid=False, excludePrimaryKeys=True, ignoreVirtualFields=True):
+        fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
+                                                            attributeBlackList=attributeBlackList,\
+                                                            ignoreVirtualFields=ignoreVirtualFields,\
+                                                            excludePrimaryKeys=excludePrimaryKeys)
         waterBodyClasses = [] if waterBodyClasses is None else waterBodyClasses
         self.nodesToPop = []
         self.reclassifyNodeType = dict()
@@ -1383,7 +1390,7 @@ class NetworkHandler(QObject):
         # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
         self.classifyNode = lambda x : self.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
                                     waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
-                                    nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
+                                    nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType, ditchLayer=ditchLayer, fieldList=fieldList)
         # update createNetworkNodesProcess object node dictionary
         cycleCount = 0
         if feedback is not None:
