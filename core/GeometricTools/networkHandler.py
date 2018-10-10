@@ -281,10 +281,15 @@ class NetworkHandler(QObject):
         # building bounding box around node for feature requesting
         bbRect = buf.boundingBox()
         if auxIndexStructure is not None and 'networkLayer' in auxIndexStructure:
+            # check if buffer intersects features from water bodies layers
+            count = 0
             for featid in auxIndexStructure['networkLayer']['spatialIdx'].intersects(bbRect):
                 if buf.intersects(auxIndexStructure['networkLayer']['idDict'][featid].geometry()):
-                    # any feature component of a water body intersected is enough
-                    return False
+                    count += 1
+                    res = (count > 1)
+                    if res:
+                        # to avoid as many iterations as possible
+                        return False
         else:
             # check if buffer intersects features from water bodies layers
             count = 0
