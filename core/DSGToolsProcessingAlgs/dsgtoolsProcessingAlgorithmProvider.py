@@ -42,6 +42,12 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
     IdentifyDuplicatedFeaturesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import \
     IdentifyDuplicatedGeometriesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedLinesOnCoverageAlgorithm import \
+    IdentifyDuplicatedLinesOnCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPointsOnCoverageAlgorithm import \
+    IdentifyDuplicatedPointsOnCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPolygonsOnCoverageAlgorithm import \
+    IdentifyDuplicatedPolygonsOnCoverageAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import \
     IdentifyGapsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import \
@@ -128,7 +134,10 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 VerifyNetworkDirectioningAlgorithm(),
                 IdentifyDuplicatedFeaturesAlgorithm(),
                 AdjustNetworkConnectivityAlgorithm(),
-                RemoveDuplicatedFeaturesAlgorithm()]
+                RemoveDuplicatedFeaturesAlgorithm(),
+                IdentifyDuplicatedPolygonsOnCoverageAlgorithm(),
+                IdentifyDuplicatedLinesOnCoverageAlgorithm(),
+                IdentifyDuplicatedPointsOnCoverageAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
