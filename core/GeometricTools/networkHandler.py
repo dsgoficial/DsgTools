@@ -1147,7 +1147,7 @@ class NetworkHandler(QObject):
         line_a = self.nodeDict[node]['end'][0]
         line_b = self.nodeDict[node]['start'][0]
         # lines have their order changed so that the deleted line is the intial one
-        self.geometryHandler.mergeLines(line_a=line_b, line_b=line_a, layer=networkLayer)
+        self.mergeNetworkLines(line_a=line_b, line_b=line_a, layer=networkLayer)
         # the updated feature should be updated into node dict for the NEXT NODE!
         nn = self.getLastNode(lyr=networkLayer, feat=line_b, geomType=1)
         for line in self.nodeDict[nn]['end']:
@@ -1156,7 +1156,6 @@ class NetworkHandler(QObject):
                 self.nodeDict[nn]['end'].append(line_b)
         # remove attribute change flag node (there are no lines connected to it anymore)
         self.nodesToPop.append(node)
-        self.NetworkHandler.nodeDict[nn]['end'] = self.nodeDict[nn]['end']
         return self.tr('{0} to {1}').format(line_a.id(), line_b.id())
 
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
@@ -1166,9 +1165,7 @@ class NetworkHandler(QObject):
         # getting first and last nodes
         first = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
         last = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
-        changed = self.NetworkHandler.changeLineDict(nodeList=[first, last], line=line)
-        # update this nodeDict with the one from NetworkHandler object
-        self.nodeDict[node] = self.NetworkHandler.nodeDict[node]
+        changed = self.changeLineDict(nodeList=[first, last], line=line)
         return changed
 
     def reclassifyNode(self, node, nodeLayer):
@@ -1296,7 +1293,7 @@ class NetworkHandler(QObject):
             return True
         return False
 
-    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer, feedback = None):
+    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer, feedback=None):
         """
         Get all node info (dictionaries for start/end(ing) lines and node type) from node layer.
         :param networkNodeLayer: (QgsVectorLayer) network node layer.
@@ -1313,7 +1310,7 @@ class NetworkHandler(QObject):
                 node = feat.geometry().asMultiPoint()[0]                    
             else:
                 node = feat.geometry().asPoint()
-            nodeTypeDict[node] = feat['node_type']
+            nodeTypeDict[node] = int(feat['node_type'])
             nodeIdDict[node] = feat.id()
             if feedback is not None:
                 feedback.setProgress(size * current)
@@ -1376,7 +1373,10 @@ class NetworkHandler(QObject):
             featList.append(feat)
         return featList
     
-    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, waterBodyClasses, searchRadius, waterSinkLayer, max_amount_cycles=1, feedback=None):
+    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, searchRadius, waterBodyClasses=None, waterSinkLayer=None, max_amount_cycles=1, feedback=None, selectValid=False):
+        waterBodyClasses = [] if waterBodyClasses is None else waterBodyClasses
+        self.nodesToPop = []
+        self.reclassifyNodeType = dict()
         self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
         networkLayerGeomType = networkLayer.geometryType()
         # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
@@ -1384,7 +1384,12 @@ class NetworkHandler(QObject):
                                     waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
         # update createNetworkNodesProcess object node dictionary
-        self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
+            multiStepFeedback.setCurrentStep(cycleCount)
+        else:
+            multiStepFeedback = None
+        self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer, feedback=multiStepFeedback)
         # initiate nodes, invalid/valid lines dictionaries
         nodeFlags, inval, val = dict(), dict(), dict()
         # cycle count start
@@ -1393,8 +1398,6 @@ class NetworkHandler(QObject):
         max_amount_cycles = max_amount_cycles if max_amount_cycles > 0 else 1
         # validation method FINALLY starts...
         # to speed up modifications made to layers
-        multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
-        multiStepFeedback.setCurrentStep(cycleCount)
         networkNodeLayer.beginEditCommand('Reclassify Nodes')
         networkLayer.beginEditCommand('Flip/Merge Lines')
         while True:
@@ -1402,8 +1405,9 @@ class NetworkHandler(QObject):
             cycleCount += 1
             # Log amount of cycles completed
             cycleCountLog = self.tr("Cycle {0}/{1} completed.").format(cycleCount, max_amount_cycles)
-            multiStepFeedback.pushInfo(cycleCountLog)
-            multiStepFeedback.setCurrentStep(cycleCount)
+            if feedback is not None:
+                multiStepFeedback.pushInfo(cycleCountLog)
+                multiStepFeedback.setCurrentStep(cycleCount)
             self.reclassifyNodeType = dict()
             # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues) and no change
             # change to valid lines list was made (meaning that the algorithm did not change network state) or no flags found
@@ -1417,7 +1421,8 @@ class NetworkHandler(QObject):
                 # try to load auxiliary line layer to fill it with invalid lines
                 featList = self.getFlagLines(networkLayer, val, inval)
                 invalidLinesLog = self.tr("Invalid lines were exposed in layer {0}).").format(self.tr('{0} line errors').format(self.displayName()))
-                multiStepFeedback.setCurrentStep(invalidLinesLog)
+                if feedback is not None:
+                    multiStepFeedback.setCurrentStep(invalidLinesLog)
                 vLines = list(val.keys())
                 iLines = list(inval.keys())
                 intersection = list(set(vLines) & set(iLines))
@@ -1435,15 +1440,16 @@ class NetworkHandler(QObject):
                 self.nodeDict.pop(node, None)
             self.nodesToPop = []
         if selectValid:
-            self.setSelectedFeatures(list(val.keys()))
-        percValid = float(len(val))*100.0/float(networkLayer.featureCount()) if networkLayer.featureCount() else 0
-        if nodeFlags:
-            msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '% of network is well directed). Check flags.')\
-                        .format(len(nodeFlags), percValid)
-        else:
-            msg = self.tr('{1:.2f}' + '% of network is well directed.')\
-                        .format(len(nodeFlags), percValid)
-        multiStepFeedback.pushInfo(msg)
+            networkLayer.setSelectedFeatures(list(val.keys()))
+        if feedback is not None:
+            percValid = float(len(val))*100.0/float(networkLayer.featureCount()) if networkLayer.featureCount() else 0
+            if nodeFlags:
+                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '% of network is well directed). Check flags.')\
+                            .format(len(nodeFlags), percValid)
+            else:
+                msg = self.tr('{1:.2f}' + '% of network is well directed.')\
+                            .format(len(nodeFlags), percValid)
+            multiStepFeedback.pushInfo(msg)
         return nodeFlags, featList, self.nodeIdDict
     
     def getFlagLines(self, networkLayer, val, inval):
@@ -1458,3 +1464,35 @@ class NetworkHandler(QObject):
         featList = self.getAuxiliaryLines(fields=self.getFlagFields(), invalidLinesDict=inval,\
                                         nonValidatedLines=nonValidatedLines, networkLayerName=networkLayer.name())
         return featList
+    
+    def mergeNetworkLines(self, line_a, line_b, layer):
+        """
+        Merge 2 lines of the same layer (it is assumed that they share the same set od attributes - except for ID and geometry).
+        In case sets are different, the set of attributes from line_a will be kept. If geometries don't touch, method is not applicable.
+        :param line_a: (QgsFeature) main line of merging process.
+        :param line_b: (QgsFeature) line to be merged to line_a.
+        :param layer: (QgsVectorLayer) layer containing given lines.
+        :return: (bool) True if method runs OK or False, if lines do not touch.
+        """
+        # check if original layer is a multipart
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        # retrieve lines geometries
+        geometry_a = line_a.geometry()
+        geometry_b = line_b.geometry()
+        # checking the spatial predicate touches
+        if geometry_a.touches(geometry_b):
+            # this generates a multi geometry
+            geometry_a = geometry_a.combine(geometry_b)
+            # this make a single line string if the multi geometries are neighbors
+            geometry_a = geometry_a.mergeLines()
+            if isMulti:
+                # making a "single" multi geometry (EDGV standard)
+                geometry_a.convertToMultiType()
+            # updating feature
+            line_a.setGeometry(geometry_a)
+            # remove the aggregated line to avoid overlapping
+            layer.deleteFeature(line_b.id())
+            # updating layer
+            layer.updateFeature(line_a)
+            return True
+        return False

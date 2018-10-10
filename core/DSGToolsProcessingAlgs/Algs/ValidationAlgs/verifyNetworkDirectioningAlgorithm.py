@@ -163,16 +163,26 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
         # prepare point flag sink
         self.prepareFlagSink(parameters, networkLayer, networkLayer.wkbType(), context)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         selectValid = self.parameterAsBool(parameters, self.SELECT_ALL_VALID, context)
         max_amount_cycles = self.parameterAsInt(parameters, self.MAX_CYCLES, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        nodeFlags, featList, nodeIdDict = networkHandler.verifyNetworkDirectioning(networkLayer, networkNodeLayer, frame, waterBodyClasses, searchRadius, waterSinkLayer, max_amount_cycles, feedback=multiStepFeedback)
+        nodeFlags, featList, nodeIdDict = networkHandler.verifyNetworkDirectioning(
+            networkLayer,
+            networkNodeLayer,
+            frame,
+            searchRadius,
+            waterBodyClasses=waterBodyClasses,
+            waterSinkLayer=waterSinkLayer,
+            max_amount_cycles=max_amount_cycles,
+            feedback=multiStepFeedback,
+            selectValid=selectValid
+        )
         multiStepFeedback.setCurrentStep(1)
         #these two are counted as one set of operations
         flag_line_sink_id = self.addFeaturesToFlagLineSink(featList, parameters, networkLayer, context)
