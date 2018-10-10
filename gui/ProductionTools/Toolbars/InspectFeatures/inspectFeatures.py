@@ -286,7 +286,7 @@ class InspectFeatures(QWidget,Ui_Form):
             lyr.selectByIds(selectIdList)
 
         if self.getIterateLayer().geometryType() == QgsWkbTypes.PointGeometry:
-            self.iface.mapCanvas().zoomScale(float(1/zoom))
+            self.iface.mapCanvas().zoomScale(float(zoom))
         
     @pyqtSlot(bool, name = 'on_inspectPushButton_toggled')
     def toggleBar(self, toggled=None):

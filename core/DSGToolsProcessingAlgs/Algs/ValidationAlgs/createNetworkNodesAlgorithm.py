@@ -58,10 +58,9 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     SINK_LAYER = 'SINK_LAYER'
     REF_LAYER = 'REF_LAYER'
     WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
-    MAX_CYCLES = 'MAX_CYCLES'
+    DITCH_LAYER = 'DITCH_LAYER'
     SEARCH_RADIUS = 'SEARCH_RADIUS'
     NETWORK_NODES = 'NETWORK_NODES'
-    FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -123,12 +122,11 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.MAX_CYCLES,
-                self.tr('Maximum cycles'),
-                minValue=1,
-                defaultValue=2,
-                type=QgsProcessingParameterNumber.Integer
+            QgsProcessingParameterVectorLayer(
+                self.DITCH_LAYER,
+                self.tr('Ditch layer'),
+                [QgsProcessing.TypeVectorLine],
+                optional=True
             )
         )
         self.addParameter(
@@ -144,12 +142,6 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterFeatureSink(
                 self.NETWORK_NODES,
                 self.tr('Node layer')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('Network flags')
             )
         )
         self.nodeIdDict = None
@@ -182,7 +174,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         (nodeSink, dest_id) = self.parameterAsSink(parameters, self.NETWORK_NODES,
                 context, self.getFields(), QgsWkbTypes.MultiPoint, networkLayer.sourceCrs())
         #prepairs flag sink for raising errors
-        self.prepareFlagSink(parameters, networkHandler, QgsWkbTypes.MultiPoint, context)
+        # self.prepareFlagSink(parameters, networkHandler, QgsWkbTypes.MultiPoint, context)
         
         waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
         waterBodyClasses = waterBodyClasses if waterBodyClasses is not None else []
@@ -190,19 +182,27 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
         # get frame layer
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
+        currStep = 0
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        multiStepFeedback = QgsProcessingMultiStepFeedback(5, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Preparing bounds...'))
         frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
+        currStep += 1
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
-        multiStepFeedback.setCurrentStep(1)
+        # get ditch layer
+        ditchLayer = self.parameterAsLayer(parameters, self.DITCH_LAYER, context)
+
+        #new step
+        multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Performing node identification...'))
         self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback) #zoado, mudar lógica
         multiStepFeedback.pushInfo(self.tr('{node_count} node(s) identificated...').format(node_count=len(self.nodeDict)))
-        multiStepFeedback.setCurrentStep(2)
+        currStep += 1
+        #new step
+        multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Performing node classification...'))
         networkHandler.nodeDict = self.nodeDict
         self.nodeTypeDict = networkHandler.classifyAllNodes(
@@ -214,12 +214,17 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 feedback=multiStepFeedback,
                 attributeBlackList=attributeBlackList,
                 excludePrimaryKeys=ignorePK,
-                ignoreVirtualFields=ignoreVirtual
+                ignoreVirtualFields=ignoreVirtual,
+                ditchLayer=ditchLayer
             )
-        self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name())
+        currStep += 1
+        #new step
+        multiStepFeedback.setCurrentStep(currStep)
+        multiStepFeedback.pushInfo(self.tr('Writing nodes...'))
+        self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name(), feedback=multiStepFeedback)
         return {self.NETWORK_NODES : dest_id}
 
-    def fillNodeSink(self, nodeSink, networkLineLayerName):
+    def fillNodeSink(self, nodeSink, networkLineLayerName, feedback=None):
         """
         Populate hidrography node layer with all nodes.
         :param nodeSink: (QgsFeatureSink) hidrography nodes layer.
@@ -227,11 +232,13 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         """
         # get fields from layer in order to create new feature with the same attribute map
         fields = self.getFields()
+        nPoints = len(self.nodeTypeDict)
+        size = 100/nPoints if nPoints else 0
         # to avoid unnecessary calculation inside loop
         nodeTypeKeys = self.nodeTypeDict.keys()
         # initiate new features list
         featList = []
-        for node in self.nodeDict:
+        for current, node in enumerate(self.nodeDict):
             # set attribute map
             feat = QgsFeature(fields)
             # set geometry
@@ -239,6 +246,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
             featList.append(feat)
+            if feedback is not None:
+                feedback.setProgress(size * current)
         nodeSink.addFeatures(featList, QgsFeatureSink.FastInsert)
     
     def flagNetworkProblems(self, nodeTypeDict):

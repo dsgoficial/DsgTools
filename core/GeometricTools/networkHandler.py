@@ -31,14 +31,16 @@ from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
                       QgsWkbTypes, QgsProject, QgsVertexId, Qgis, QgsCoordinateReferenceSystem,\
-                      QgsDataSourceUri
+                      QgsDataSourceUri, QgsFields, QgsProcessingMultiStepFeedback
 from qgis.PyQt.Qt import QObject
+from qgis.PyQt.QtCore import QVariant
 
 class NetworkHandler(QObject):
     Flag, Sink, WaterwayBegin, UpHillNode, \
     DownHillNode, Confluence, Ramification, \
     AttributeChange, NodeNextToWaterBody, \
-    AttributeChangeFlag, NodeOverload, DisconnectedLine = list(range(12))
+    AttributeChangeFlag, NodeOverload, DisconnectedLine, \
+    DitchNode = list(range(13))
     def __init__(self):
         super(NetworkHandler, self).__init__()
         self.geometryHandler = GeometryHandler()
@@ -46,18 +48,19 @@ class NetworkHandler(QObject):
         self.nodeDict = None
         self.nodeTypeDict = None
         self.nodeTypeNameDict = {
-            NetworkHandler.Flag : self.tr("Flag"),
-            NetworkHandler.Sink : self.tr("Sink"),
-            NetworkHandler.WaterwayBegin : self.tr("Waterway Beginning"),
-            NetworkHandler.UpHillNode : self.tr("Up Hill Node"),
-            NetworkHandler.DownHillNode : self.tr("Down Hill Node"),
-            NetworkHandler.Confluence : self.tr("Confluence"),
-            NetworkHandler.Ramification : self.tr("Ramification"),
-            NetworkHandler.AttributeChange : self.tr("Attribute Change Node"),
-            NetworkHandler.NodeNextToWaterBody : self.tr("Node Next to Water Body"),
-            NetworkHandler.AttributeChangeFlag : self.tr("Attribute Change Flag"),
-            NetworkHandler.NodeOverload : self.tr("Overloaded Node"),
-            NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network")
+            NetworkHandler.Flag : self.tr("Flag"),#0
+            NetworkHandler.Sink : self.tr("Sink"),#1
+            NetworkHandler.WaterwayBegin : self.tr("Waterway Beginning"),#2
+            NetworkHandler.UpHillNode : self.tr("Up Hill Node"),#3
+            NetworkHandler.DownHillNode : self.tr("Down Hill Node"),#4
+            NetworkHandler.Confluence : self.tr("Confluence"),#5
+            NetworkHandler.Ramification : self.tr("Ramification"),#6
+            NetworkHandler.AttributeChange : self.tr("Attribute Change Node"),#7
+            NetworkHandler.NodeNextToWaterBody : self.tr("Node Next to Water Body"),#8
+            NetworkHandler.AttributeChangeFlag : self.tr("Attribute Change Flag"),#9
+            NetworkHandler.NodeOverload : self.tr("Overloaded Node"),#10
+            NetworkHandler.DisconnectedLine : self.tr("Disconnected From Network"),#11
+            NetworkHandler.DitchNode : self.tr("Node next to ditch")#12
         }
         self.flagTextDict = {
             NetworkHandler.Flag : self.tr('Network connection problem. Segments must be connected.'),
@@ -221,7 +224,7 @@ class NetworkHandler(QObject):
                         return True
         return False
 
-    def getAttributesFromFeature(self, feature, layer, fieldNames=None):
+    def getAttributesFromFeature(self, feature, layer, fieldList=None):
         """
         Retrieves the attributes from a given feature, except for
         their geometry and ID column values. If a list of
@@ -229,21 +232,14 @@ class NetworkHandler(QObject):
         if found. In case no attribute is found, None will be returned.
         :param feature: (QgsFeature) feature from which attibutes will be retrieved.
         :param layer: (QgsVectorLayer) layer containing target feature.
-        :param fieldNames: (list-of-str) list of field names to be exposed.
+        :param fieldList: (list-of-str) list of field names to be exposed.
         :return: (dict-of-object) attribute values for each attribute mapped.
         """
         # fields to be ignored
-        ignoreList = []
-        if fieldNames is None:
-            # removing attributes that are calculated OTF
-            fieldList = [field for idx, field in enumerate(layer.fields()) if idx not in layer.primaryKeyAttributes() and field.type() != 6]
-        else:
-            # check if all field names given are in fact fields for the layer
-            layerFields = layer.fields()
-            ignoreList = [field for field in fieldNames if field not in layerFields]
-        return { field.name() : feature[field.name()] for field in fieldList if field not in ignoreList }
+        fieldList = [] if fieldList is None else fieldList
+        return {field : feature[field] for field in fieldList}
 
-    def attributeChangeCheck(self, node, networkLayer, fieldNames=None):
+    def attributeChangeCheck(self, node, networkLayer, fieldList=None):
         """
         Checks if attribute change node is in fact an attribute change.
         :param node: (QgsPoint) node to be identified as over the frame layer or not.
@@ -252,9 +248,9 @@ class NetworkHandler(QObject):
         """
         # assuming that attribute change nodes have only 1-in 1-out lines
         lineIn = self.nodeDict[node]['end'][0]
-        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer, fieldNames=fieldNames)
+        atrLineIn = self.getAttributesFromFeature(feature=lineIn, layer=networkLayer, fieldList=fieldList)
         lineOut = self.nodeDict[node]['start'][0]
-        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer, fieldNames=fieldNames)
+        atrLineOut = self.getAttributesFromFeature(feature=lineOut, layer=networkLayer, fieldList=fieldList)
         # comparing their dictionary of attributes, it is decided whether they share the exact same set of attributes (fields and values)
         return atrLineIn != atrLineOut
 
@@ -334,8 +330,30 @@ class NetworkHandler(QObject):
             #     return True
         # in case next node is not yet classified, method is ineffective
         return False
+    
+    def isNodeNextToDitch(self, node, ditchLayer, searchRadius):
+        """
+        Checks if node is next to a ditch.
+        ::param node: (QgsPoint) node to be identified as next to a water ditch feature.
+        :param ditchLayer: layer composing the ditches on map.
+        :param searchRadius: (float) maximum distance to frame layer such that the feature is considered touching it.
+        :return: (bool) whether node is as close as searchRaius to a water body element.
+        """
+        if not ditchLayer:
+            return False
+        qgisPoint = QgsGeometry.fromPointXY(node)
+        # building a buffer around node with search radius for intersection with Layer Frame
+        buf = qgisPoint.buffer(searchRadius, -1)
+        # building bounding box around node for feature requesting
+        bbRect = buf.boundingBox()
+        # check if buffer intersects features from water bodies layers
+        for feat in ditchLayer.getFeatures(QgsFeatureRequest(bbRect)):
+            if buf.intersects(feat.geometry()):
+                # any feature component of a water body intersected is enough
+                return True
+        return False
 
-    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldNames=None):
+    def nodeType(self, nodePoint, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, nodeTypeDict, waterSinkLayer=None, networkLayerGeomType=None, fieldList=None, ditchLayer=None):
         """
         Get the node type given all lines that flows from/to it.
         :param nodePoint: (QgsPoint) point to be classified.
@@ -348,7 +366,7 @@ class NetworkHandler(QObject):
         :param networkLayerGeomType: (int) network layer geometry type code.
         :return: returns the (int) point type.
         """
-        fieldNames = [] if fieldNames is None else fieldNames
+        fieldList = [] if fieldList is None else fieldList
         # to reduce calculation time in expense of memory, which is cheap
         nodePointDict = self.nodeDict[nodePoint]
         sizeFlowOut = len(nodePointDict['start'])
@@ -383,8 +401,11 @@ class NetworkHandler(QObject):
                         return NetworkHandler.NodeNextToWaterBody
                 # force all lose ends to be waterway beginnings if they're not dangles (which are flags)
                 elif self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
+                    if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                        # if point is not disconnected and is connected to a ditch
+                        return NetworkHandler.DitchNode
                     # check if node is connected to a disconnected line
-                    if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
+                    elif self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                         return NetworkHandler.DisconnectedLine
                     # case 1.b.ii: node is in fact a water sink and should be able to take an 'in' flow
                     elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
@@ -393,7 +414,10 @@ class NetworkHandler(QObject):
                     return NetworkHandler.WaterwayBegin
             # case 1.c: point that legitimately only flows out
             elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius):
-                if self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
+                if self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                    # if point is not disconnected and is connected to a ditch
+                    return NetworkHandler.DitchNode
+                elif self.checkIfLineIsDisconnected(node=nodePoint, networkLayer=networkLayer, nodeTypeDict=nodeTypeDict, geomType=networkLayerGeomType):
                     return NetworkHandler.DisconnectedLine
                 elif self.nodeIsWaterSink(node=nodePoint, waterSinkLayer=waterSinkLayer, searchRadius=searchRadius):
                     # in case there's a wrongly acquired line connected to a water sink
@@ -406,20 +430,23 @@ class NetworkHandler(QObject):
             return NetworkHandler.Confluence
         elif sizeFlowIn == sizeFlowOut:
             if sizeFlowIn > 1:
-                # case 4.c: there's a constant flow through node, but there are more than 1 line
+                # case 4.a: there's a constant flow through node, but there are more than 1 line
                 return NetworkHandler.NodeOverload
-            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldNames=fieldNames):
-                # case 4.a: lines do change their attribute set. Must use fieldNames due to black list items.
+            elif self.attributeChangeCheck(node=nodePoint, networkLayer=networkLayer, fieldList=fieldList):
+                # case 4.b: lines do change their attribute set. Must use fieldList due to black list items.
                 return NetworkHandler.AttributeChange
+            elif self.isNodeNextToDitch(node=nodePoint, ditchLayer=ditchLayer, searchRadius=searchRadius):
+                # case 4.c: lines next to ditches.
+                return NetworkHandler.DitchNode
             else:
-                # case 4.b: nodes inside the network that are there as an attribute change node but lines connected
+                # case 4.d: nodes inside the network that are there as an attribute change node but lines connected
                 #           to it have the same set of attributes
                 return NetworkHandler.AttributeChangeFlag
         else:
             # case 3 "ramification"
             return NetworkHandler.Ramification
 
-    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True):
+    def classifyAllNodes(self, networkLayer, frameLyrContourList, waterBodiesLayers, searchRadius, waterSinkLayer=None, nodeList=None, feedback=None, attributeBlackList=None, ignoreVirtualFields=True, excludePrimaryKeys=True, ditchLayer=None):
         """
         Classifies all identified nodes from the hidrography line layer.
         :param networkLayer: (QgsVectorLayer) network lines layer.
@@ -429,13 +456,14 @@ class NetworkHandler(QObject):
         :param nodeList: a list of nodes (QgsPoint) to be classified. If not given, whole dict is going 
                          to be classified. Node MUST be in dict given, if not, it'll be ignored.
         :param waterSinkLayer: (QgsVectorLayer) water sink layer.
+        :param ditchLayer: (QgsVectorLayer) ditch layer.
         :return: a (dict) dictionary of node and its node type ( { (QgsPoint)node : (int)nodeType } ). 
         """
         networkLayerGeomType = networkLayer.geometryType()
         nodeTypeDict = dict()
         nodeCount = len(self.nodeDict)
         size = 100/nodeCount if nodeCount else 0
-        fieldNames = self.layerHandler.getAttributesFromBlackList(networkLayer, \
+        fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
                                                             attributeBlackList=attributeBlackList,\
                                                             ignoreVirtualFields=ignoreVirtualFields,\
                                                             excludePrimaryKeys=excludePrimaryKeys)
@@ -448,7 +476,7 @@ class NetworkHandler(QObject):
             nodeTypeDict[node] = self.nodeType(nodePoint=node, networkLayer=networkLayer, frameLyrContourList=frameLyrContourList, \
                                     waterBodiesLayers=waterBodiesLayers, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
                                     nodeTypeDict=nodeTypeDict, networkLayerGeomType=networkLayerGeomType, \
-                                    fieldNames=fieldNames)
+                                    fieldList=fieldList, ditchLayer=ditchLayer)
             if feedback is not None:
                 feedback.setProgress(size * current)
         return nodeTypeDict
@@ -698,7 +726,7 @@ class NetworkHandler(QObject):
                     NetworkHandler.AttributeChangeFlag : None, # 9 - Nó de mudança de atributos conectado em linhas que não mudam de atributos
                     NetworkHandler.NodeOverload : None, # 10 - Há igual número de linhas (>1 para cada fluxo) entrando e saindo do nó
                     NetworkHandler.DisconnectedLine : None, # 11 - Nó conectado a uma linha perdida na rede (teria dois inícios de rede)
-                    # NetworkHandler.NodeOverload : None # 10 - Mais 
+                    NetworkHandler.DitchNode : 'in and out' # 12 - Nó de vala 
                    }
         # to avoid calculations in expense of memory
         nodeType = self.nodeTypeDict[node]
@@ -909,7 +937,7 @@ class NetworkHandler(QObject):
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else False
-            map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
+            map(reclassifyNodeAlias, list(map(initialNode, flippedLines)) + list(map(lastNode, flippedLines)))
         return hasStartCondition, flippedLinesIds
 
     def directNetwork(self, networkLayer, nodeLayer, nodeList=None):
@@ -1123,7 +1151,7 @@ class NetworkHandler(QObject):
         line_a = self.nodeDict[node]['end'][0]
         line_b = self.nodeDict[node]['start'][0]
         # lines have their order changed so that the deleted line is the intial one
-        self.geometryHandler.mergeLines(line_a=line_b, line_b=line_a, layer=networkLayer)
+        self.mergeNetworkLines(line_a=line_b, line_b=line_a, layer=networkLayer)
         # the updated feature should be updated into node dict for the NEXT NODE!
         nn = self.getLastNode(lyr=networkLayer, feat=line_b, geomType=1)
         for line in self.nodeDict[nn]['end']:
@@ -1132,7 +1160,6 @@ class NetworkHandler(QObject):
                 self.nodeDict[nn]['end'].append(line_b)
         # remove attribute change flag node (there are no lines connected to it anymore)
         self.nodesToPop.append(node)
-        self.NetworkHandler.nodeDict[nn]['end'] = self.nodeDict[nn]['end']
         return self.tr('{0} to {1}').format(line_a.id(), line_b.id())
 
     def updateNodeDict(self, node, line, networkLayer, geomType=None):
@@ -1142,9 +1169,7 @@ class NetworkHandler(QObject):
         # getting first and last nodes
         first = self.getFirstNode(lyr=networkLayer, feat=line, geomType=geomType)
         last = self.getLastNode(lyr=networkLayer, feat=line, geomType=geomType)
-        changed = self.NetworkHandler.changeLineDict(nodeList=[first, last], line=line)
-        # update this nodeDict with the one from NetworkHandler object
-        self.nodeDict[node] = self.NetworkHandler.nodeDict[node]
+        changed = self.changeLineDict(nodeList=[first, last], line=line)
         return changed
 
     def reclassifyNode(self, node, nodeLayer):
@@ -1245,13 +1270,13 @@ class NetworkHandler(QObject):
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else None
-            map(reclassifyNodeAlias, map(initialNode, flippedLines) + map(lastNode, flippedLines))
+            map(reclassifyNodeAlias, list(map(initialNode, flippedLines)) + list(map(lastNode, flippedLines)))
             # check if node is fixed and update its dictionaries and invalidation reason
             valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
                                             networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
         return flippedLinesIds, mergedLinesString
 
-    def logAlteredFeatures(self, flippedLines, mergedLinesString):
+    def logAlteredFeatures(self, flippedLines, mergedLinesString, feedback=None):
         """
         Logs the list of flipped/merged lines, if any.
         :param flippedLines: (list-of-int) list of flipped lines.
@@ -1266,12 +1291,13 @@ class NetworkHandler(QObject):
             warning = "".join([warning, self.tr("Lines that were merged while directioning hidrography lines: {0}\n\n").format(mergedLinesString)])
         if warning:
             # warning is only raised when there were flags fixed
-            warning = "".join([self.tr('\n{0}: Flipped/Merged Lines\n').format(self.processAlias), warning])
-            QgsMessageLog.logMessage(warning, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if feedback is not None:
+                warning = "".join([self.tr('\nVerify Network Directioning: Flipped/Merged Lines\n'), warning])
+                feedback.pushInfo(warning)
             return True
         return False
 
-    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer, feedback = None):
+    def getNodeTypeDictFromNodeLayer(self, networkNodeLayer, feedback=None):
         """
         Get all node info (dictionaries for start/end(ing) lines and node type) from node layer.
         :param networkNodeLayer: (QgsVectorLayer) network node layer.
@@ -1288,7 +1314,7 @@ class NetworkHandler(QObject):
                 node = feat.geometry().asMultiPoint()[0]                    
             else:
                 node = feat.geometry().asPoint()
-            nodeTypeDict[node] = feat['node_type']
+            nodeTypeDict[node] = int(feat['node_type'])
             nodeIdDict[node] = feat.id()
             if feedback is not None:
                 feedback.setProgress(size * current)
@@ -1318,32 +1344,6 @@ class NetworkHandler(QObject):
         if commitToLayer:
             invalidLinesLayer.commitChanges()
 
-    def createNewInvalidLineFeature(self, feat_geom, networkLayerName, fid, reason, fields, dimension=1, user_fixed='f', geometry_column='geom'):
-        """
-        Creates a new feature to be added to invalid lines layer.
-        :param feat_geom: (QgsGeometry) 
-        :param networkLayerName: (str) network layer name.
-        :param fid: (int) invalid line ID.
-        :param reason: (str) reason of line invalidation.
-        :param fields: (QgsFields) object containing all fields from layer.
-        :param dimension: (int) invalidation geometry type code.
-        :param user_fixed: (str) 't' or 'f' indicating whether user has fixed issue.
-        :param geometry_column: (str) name for geometry column persisted in database.
-        :return: (QgsFeature) new feature.
-        """
-        # set attribute map and create new feture
-        feat = QgsFeature(fields)
-        # set geometry
-        feat.setGeometry(feat_geom)
-        feat['layer'] = networkLayerName
-        feat['process_name'] = self.processAlias
-        feat['feat_id'] = fid
-        feat['reason'] = reason
-        feat['dimension'] = dimension
-        feat['user_fixed'] = user_fixed
-        feat['geometry_column'] = geometry_column
-        return feat
-
     def getAuxiliaryLines(self, fields, invalidLinesDict, nonValidatedLines, networkLayerName):
         """
         Populate from auxiliary lines layer with all invalid lines.
@@ -1359,10 +1359,8 @@ class NetworkHandler(QObject):
         # initiate new features list
         featList = []
         # pre-declaring method to make it faster
-        newInvalidFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], networkLayerName=networkLayerName, \
-                                            fid=x[1], reason=invalidReason, fields=fields)
-        newNonVisitedFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], networkLayerName=networkLayerName, \
-                                            fid=x[1], reason=nonVisitedReason, fields=fields)
+        newInvalidFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], reason=invalidReason, fields=fields)
+        newNonVisitedFeatFunc = lambda x : self.createNewInvalidLineFeature(feat_geom=x[0], reason=nonVisitedReason, fields=fields)
         # add all non-validated features
         for line in nonValidatedLines:
             # create new feture
@@ -1376,3 +1374,153 @@ class NetworkHandler(QObject):
             # add it to new features list
             featList.append(feat)
         return featList
+    
+    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, searchRadius, waterBodyClasses=None, waterSinkLayer=None, ditchLayer=None, max_amount_cycles=1, attributeBlackList=None, feedback=None, selectValid=False, excludePrimaryKeys=True, ignoreVirtualFields=True):
+        fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
+                                                            attributeBlackList=attributeBlackList,\
+                                                            ignoreVirtualFields=ignoreVirtualFields,\
+                                                            excludePrimaryKeys=excludePrimaryKeys)
+        waterBodyClasses = [] if waterBodyClasses is None else waterBodyClasses
+        self.nodesToPop = []
+        self.reclassifyNodeType = dict()
+        self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
+        networkLayerGeomType = networkLayer.geometryType()
+        networkLayer.startEditing()
+        networkNodeLayer.startEditing()
+        # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
+        self.classifyNode = lambda x : self.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
+                                    waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
+                                    nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType, ditchLayer=ditchLayer, fieldList=fieldList)
+        # update createNetworkNodesProcess object node dictionary
+        cycleCount = 0
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
+            multiStepFeedback.setCurrentStep(cycleCount)
+        else:
+            multiStepFeedback = None
+        self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer, feedback=multiStepFeedback)
+        # initiate nodes, invalid/valid lines dictionaries
+        nodeFlags, inval, val = dict(), dict(), dict()
+        # cycle count start
+        # get max amount of orientation cycles
+        max_amount_cycles = max_amount_cycles if max_amount_cycles > 0 else 1
+        # validation method FINALLY starts...
+        # to speed up modifications made to layers
+        networkNodeLayer.beginEditCommand('Reclassify Nodes')
+        networkLayer.beginEditCommand('Flip/Merge Lines')
+        while True:
+            nodeFlags_, inval_, val_ = self.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
+            cycleCount += 1
+            # Log amount of cycles completed
+            cycleCountLog = self.tr("Cycle {0}/{1} completed.").format(cycleCount, max_amount_cycles)
+            if feedback is not None:
+                multiStepFeedback.pushInfo(cycleCountLog)
+                multiStepFeedback.setCurrentStep(cycleCount)
+            self.reclassifyNodeType = dict()
+            # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues) and no change
+            # change to valid lines list was made (meaning that the algorithm did not change network state) or no flags found
+            if (cycleCount == max_amount_cycles) or (not nodeFlags_) or \
+            (set(nodeFlags.keys()) == set(nodeFlags_.keys()) and val == val_):
+                # copy values to final dict
+                nodeFlags, inval, val = nodeFlags_, inval_, val_
+                # no more modifications to those layers will be done
+                networkLayer.endEditCommand()
+                networkNodeLayer.endEditCommand()
+                # try to load auxiliary line layer to fill it with invalid lines
+                featList = self.getFlagLines(networkLayer, val, inval)
+                invalidLinesLog = self.tr("Invalid lines were exposed in line flags layer.")
+                if feedback is not None:
+                    multiStepFeedback.pushInfo(invalidLinesLog)
+                    multiStepFeedback.setCurrentStep(cycleCount)
+                vLines = list(val.keys())
+                iLines = list(inval.keys())
+                intersection = list(set(vLines) & set(iLines))
+                if intersection:
+                    map(val.pop, intersection)
+                    # remove unnecessary variables
+                    del vLines, iLines, intersection
+                break
+            # for the next iterations
+            nodeFlags, inval, val = nodeFlags_, inval_, val_
+            # pop all nodes to be popped and reset list
+            for node in self.nodesToPop:
+                # those were nodes connected to lines that were merged and now are no longer to be used
+                self.nodeDict.pop(node, None)
+                self.nodeDict.pop(node, None)
+            self.nodesToPop = []
+        if selectValid:
+            networkLayer.setSelectedFeatures(list(val.keys()))
+        if feedback is not None:
+            percValid = float(len(val))*100.0/float(networkLayer.featureCount()) if networkLayer.featureCount() else 0
+            if nodeFlags:
+                msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '% of network is well directed). Check flags.')\
+                            .format(len(nodeFlags), percValid)
+            else:
+                msg = self.tr('{1:.2f}' + '% of network is well directed.')\
+                            .format(len(nodeFlags), percValid)
+            multiStepFeedback.pushInfo(msg)
+        return nodeFlags, featList, self.nodeIdDict
+    
+    def getFlagLines(self, networkLayer, val, inval):
+        # get non-validated lines and add it to invalid lines layer as well
+        nonValidatedLines = set()
+        for line in networkLayer.getFeatures():
+            lineId = line.id()
+            if lineId in val or lineId in inval:
+                # ignore if line are validated
+                continue
+            nonValidatedLines.add(line)
+        featList = self.getAuxiliaryLines(fields=self.getFlagFields(), invalidLinesDict=inval,\
+                                        nonValidatedLines=nonValidatedLines, networkLayerName=networkLayer.name())
+        return featList
+    
+    def mergeNetworkLines(self, line_a, line_b, layer):
+        """
+        Merge 2 lines of the same layer (it is assumed that they share the same set od attributes - except for ID and geometry).
+        In case sets are different, the set of attributes from line_a will be kept. If geometries don't touch, method is not applicable.
+        :param line_a: (QgsFeature) main line of merging process.
+        :param line_b: (QgsFeature) line to be merged to line_a.
+        :param layer: (QgsVectorLayer) layer containing given lines.
+        :return: (bool) True if method runs OK or False, if lines do not touch.
+        """
+        # check if original layer is a multipart
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        # retrieve lines geometries
+        geometry_a = line_a.geometry()
+        geometry_b = line_b.geometry()
+        # checking the spatial predicate touches
+        if geometry_a.touches(geometry_b):
+            # this generates a multi geometry
+            geometry_a = geometry_a.combine(geometry_b)
+            # this make a single line string if the multi geometries are neighbors
+            geometry_a = geometry_a.mergeLines()
+            if isMulti:
+                # making a "single" multi geometry (EDGV standard)
+                geometry_a.convertToMultiType()
+            # updating feature
+            line_a.setGeometry(geometry_a)
+            # remove the aggregated line to avoid overlapping
+            layer.deleteFeature(line_b.id())
+            # updating layer
+            layer.updateFeature(line_a)
+            return True
+        return False
+    
+    def getFlagFields(self):
+        fields = QgsFields()
+        fields.append(QgsField('reason',QVariant.String))
+        return fields
+
+    def createNewInvalidLineFeature(self, feat_geom, reason, fields):
+        """
+        Creates a new feature to be added to invalid lines layer.
+        :param feat_geom: (QgsGeometry) 
+        :param reason: (str) reason of line invalidation.
+        :param fields: (QgsFields) object containing all fields from layer.
+        :return: (QgsFeature) new feature.
+        """
+        # set attribute map and create new feture
+        feat = QgsFeature(fields)
+        # set geometry
+        feat.setGeometry(feat_geom)
+        return feat

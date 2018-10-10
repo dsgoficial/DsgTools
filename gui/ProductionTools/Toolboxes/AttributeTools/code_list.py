@@ -212,7 +212,17 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
                             self.classesFieldDict[layer] = []
                             # in case more tha a db is loaded and they have the same layer
                             # name for some class. 
-                            db_name = layer.dataProvider().dataSourceUri().split("'")[1]
+                            uriString = layer.dataProvider().dataSourceUri()
+                            if "'" in uriString:
+                                splitToken = "'" 
+                                idx = 1
+                            elif "|" in uriString:
+                                splitToken = "|"
+                                idx = 1
+                            else:
+                                splitToken = ""
+                                idx = 0
+                            db_name = uriString.split(splitToken)[idx] if splitToken != "" else uriString
                             self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
                         if field not in self.classesFieldDict[layer]:
                             self.classesFieldDict[layer].append(field)
