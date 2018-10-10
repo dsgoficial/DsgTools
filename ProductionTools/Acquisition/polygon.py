@@ -35,7 +35,16 @@ class Polygon(GeometricaAcquisition):
                 geom = QgsGeometry.fromPolyline(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, None)
             self.createGeometry(geom)
-  
+    
+    def distance_acceptable(self, p1, p_n, p_n_1, p_n_2):
+        d_n = self.distanceToolTip.calculateDistance(p_n, p1)
+        d_n_1 = self.distanceToolTip.calculateDistance(p_n, p_n_1)
+        d_n_2 = self.distanceToolTip.calculateDistance(p_n_1, p_n_2)
+        if (d_n>self.minSegmentDistance) and (d_n>self.minSegmentDistance) and (d_n>self.minSegmentDistance):
+            return True
+        else:
+            return False  
+
     def canvasReleaseEvent(self, event):
         event.snapPoint(QgsMapMouseEvent.SnapProjectConfig) #snap!!!
         if self.snapCursorRubberBand:
@@ -52,13 +61,15 @@ class Polygon(GeometricaAcquisition):
                 if (self.qntPoint >=2):
                     if (self.qntPoint % 2 == 0):
                         point = QgsPoint(pointMap) 
-                        if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
-                            testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                            if testgeom:
-                                new_geom, pf = self.completePolygon(self.geometry, testgeom)
-                                self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
-                                self.geometry.append(pf)   
-                            self.endGeometry()   
+                        projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if projectedMousePoint:                            
+                            new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)
+                            if self.distance_acceptable(self.geometry[0], last_point, projectedMousePoint,self.geometry[-1]):
+                                self.geometry.append(QgsPoint(projectedMousePoint.x(), projectedMousePoint.y()))        
+                                self.geometry.append(last_point)   
+                                self.endGeometry()   
+                            else: 
+                                self.iface.messageBar().pushMessage(self.tr("Observation:"), self.tr("Not possible to digitalize, segment smaller than minimun distance."), level=QgsMessageBar.INFO)   
                         else:
                             self.iface.messageBar().pushMessage(self.tr("Observation:"), self.tr("Not possible to digitalize, segment smaller than minimun distance."), level=QgsMessageBar.INFO)   
                     else:                        
@@ -73,16 +84,24 @@ class Polygon(GeometricaAcquisition):
                     self.rubberBand = self.getRubberBand()
                     point = QgsPoint(pointMap)
                     self.geometry.append(point)
+                    self.qntPoint += 1
                 elif self.qntPoint == 1:
                     point = QgsPoint(pointMap)
-                    self.geometry.append(point)
+                    if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
+                        self.geometry.append(point)
+                        self.qntPoint += 1
+                    else: 
+                        self.iface.messageBar().pushMessage(self.tr("Observation:"), self.tr("Not possible to digitalize, segment smaller than minimun distance."), level=QgsMessageBar.INFO)                           
                 else:
                     point = QgsPoint(pointMap)
-                    if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
-                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                        if testgeom:
-                            self.geometry.append(QgsPoint(testgeom.x(), testgeom.y()))        
-                self.qntPoint += 1
+                    projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                    if projectedMousePoint:
+                        if self.distanceToolTip.calculateDistance(self.geometry[-1], projectedMousePoint) > self.minSegmentDistance:
+                            self.geometry.append(QgsPoint(projectedMousePoint.x(), projectedMousePoint.y()))        
+                            self.qntPoint += 1
+                        else:
+                            self.iface.messageBar().pushMessage(self.tr("Observation:"), self.tr("Not possible to digitalize, segment smaller than minimun distance."), level=QgsMessageBar.INFO)                           
+
                
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
