@@ -41,7 +41,8 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingUtils,
                        QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingException)
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
