@@ -20,37 +20,36 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-from ....dsgEnums import DsgEnums
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDistance,
-                       QgsProcessingException)
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ....dsgEnums import DsgEnums
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = 'NETWORK_LAYER'
+    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
+    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     NODE_LAYER = 'NODE_LAYER'
     SINK_LAYER = 'SINK_LAYER'
     REF_LAYER = 'REF_LAYER'
@@ -60,6 +59,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
     SELECT_ALL_VALID = 'SELECT_ALL_VALID'
     FLAGS = 'FLAGS'
     LINE_FLAGS = 'LINE_FLAGS'
+    DITCH_LAYER = 'DITCH_LAYER'
 
     def initAlgorithm(self, config):
         """
@@ -70,6 +70,31 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 self.NETWORK_LAYER,
                 self.tr('Network layer'),
                 [QgsProcessing.TypeVectorLine]
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr('Fields to ignore'),
+                None,
+                'NETWORK_LAYER',
+                QgsProcessingParameterField.Any,
+                allowMultiple=True,
+                optional = True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_VIRTUAL_FIELDS,
+                self.tr('Ignore virtual fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_PK_FIELDS,
+                self.tr('Ignore primary key fields'),
+                defaultValue=True
             )
         )
         self.addParameter(
@@ -99,6 +124,14 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 self.WATER_BODY_LAYERS,
                 self.tr('Water body layers'),
                 QgsProcessing.TypeVectorPolygon,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.DITCH_LAYER,
+                self.tr('Ditch layer'),
+                [QgsProcessing.TypeVectorLine],
                 optional=True
             )
         )
@@ -163,6 +196,11 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
+        # get ditch layer
+        ditchLayer = self.parameterAsLayer(parameters, self.DITCH_LAYER, context)
+        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
+        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
@@ -179,7 +217,11 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
             waterSinkLayer=waterSinkLayer,
             max_amount_cycles=max_amount_cycles,
             feedback=multiStepFeedback,
-            selectValid=selectValid
+            selectValid=selectValid,
+            ditchLayer=ditchLayer,
+            attributeBlackList=attributeBlackList,
+            excludePrimaryKeys=ignorePK,
+            ignoreVirtualFields=ignoreVirtual
         )
         multiStepFeedback.setCurrentStep(1)
         #these are counted as one set of operations

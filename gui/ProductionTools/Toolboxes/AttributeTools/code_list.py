@@ -222,7 +222,7 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
                             else:
                                 splitToken = ""
                                 idx = 0
-                            db_name = uriString.split(splitToken)[idx]
+                            db_name = uriString.split(splitToken)[idx] if splitToken != "" else uriString
                             self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
                         if field not in self.classesFieldDict[layer]:
                             self.classesFieldDict[layer].append(field)
