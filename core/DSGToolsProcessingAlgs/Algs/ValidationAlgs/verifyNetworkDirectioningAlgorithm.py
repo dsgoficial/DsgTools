@@ -166,8 +166,6 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
-        # prepare point flag sink
-        self.prepareFlagSink(parameters, networkLayer, networkLayer.wkbType(), context)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         selectValid = self.parameterAsBool(parameters, self.SELECT_ALL_VALID, context)
@@ -184,9 +182,10 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
             selectValid=selectValid
         )
         multiStepFeedback.setCurrentStep(1)
-        #these two are counted as one set of operations
+        #these are counted as one set of operations
         flag_line_sink_id = self.addFeaturesToFlagLineSink(featList, parameters, networkLayer, context)
-        self.buildFlagList(nodeFlags, networkLayer, multiStepFeedback, nodeIdDict)
+        self.prepareFlagSink(parameters, networkLayer, QgsWkbTypes.Point, context)
+        self.buildFlagList(nodeFlags, networkLayer, nodeIdDict, multiStepFeedback)
 
         return {self.NETWORK_LAYER : networkLayer, self.FLAGS : self.flag_id, self.LINE_FLAGS : flag_line_sink_id}
 
@@ -197,7 +196,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         flag_line_sink, flag_line_sink_id = self.prepareAndReturnFlagSink(
                                                                             parameters,
                                                                             source,
-                                                                            QgsWkbTypes.Line,
+                                                                            QgsWkbTypes.LineString,
                                                                             context,
                                                                             self.LINE_FLAGS
                                                                         )
@@ -210,6 +209,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         :param nodeFlags: (dict) dictionary containing invalid node 
                             and its reason ( { (QgsPoint) node : (str) reason } )
         """
+        # prepare point flag sink
         recordList = []
         countNodeNotInDb = 0
         nodeNumber = len(nodeFlags)
@@ -228,7 +228,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 lyrName=source.name(),
                 msg=reason
             )
-            flagGeom = QgsGeometry.fromMultiPoint([node])
+            flagGeom = QgsGeometry.fromMultiPointXY([node])
             self.flagFeature(flagGeom, flagText)
             feedback.setProgress(size * current)
         if countNodeNotInDb:
