@@ -1275,7 +1275,7 @@ class NetworkHandler(QObject):
                                             networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
         return flippedLinesIds, mergedLinesString
 
-    def logAlteredFeatures(self, flippedLines, mergedLinesString):
+    def logAlteredFeatures(self, flippedLines, mergedLinesString, feedback=None):
         """
         Logs the list of flipped/merged lines, if any.
         :param flippedLines: (list-of-int) list of flipped lines.
@@ -1290,8 +1290,9 @@ class NetworkHandler(QObject):
             warning = "".join([warning, self.tr("Lines that were merged while directioning hidrography lines: {0}\n\n").format(mergedLinesString)])
         if warning:
             # warning is only raised when there were flags fixed
-            warning = "".join([self.tr('\n{0}: Flipped/Merged Lines\n').format(self.processAlias), warning])
-            QgsMessageLog.logMessage(warning, "DSG Tools Plugin", QgsMessageLog.CRITICAL)
+            if feedback is not None:
+                warning = "".join([self.tr('\nVerify Network Directioning: Flipped/Merged Lines\n'), warning])
+                feedback.pushInfo(warning)
             return True
         return False
 
@@ -1342,32 +1343,6 @@ class NetworkHandler(QObject):
         if commitToLayer:
             invalidLinesLayer.commitChanges()
 
-    def createNewInvalidLineFeature(self, feat_geom, networkLayerName, fid, reason, fields, dimension=1, user_fixed='f', geometry_column='geom'):
-        """
-        Creates a new feature to be added to invalid lines layer.
-        :param feat_geom: (QgsGeometry) 
-        :param networkLayerName: (str) network layer name.
-        :param fid: (int) invalid line ID.
-        :param reason: (str) reason of line invalidation.
-        :param fields: (QgsFields) object containing all fields from layer.
-        :param dimension: (int) invalidation geometry type code.
-        :param user_fixed: (str) 't' or 'f' indicating whether user has fixed issue.
-        :param geometry_column: (str) name for geometry column persisted in database.
-        :return: (QgsFeature) new feature.
-        """
-        # set attribute map and create new feture
-        feat = QgsFeature(fields)
-        # set geometry
-        feat.setGeometry(feat_geom)
-        feat['layer'] = networkLayerName
-        feat['process_name'] = self.processAlias
-        feat['feat_id'] = fid
-        feat['reason'] = reason
-        feat['dimension'] = dimension
-        feat['user_fixed'] = user_fixed
-        feat['geometry_column'] = geometry_column
-        return feat
-
     def getAuxiliaryLines(self, fields, invalidLinesDict, nonValidatedLines, networkLayerName):
         """
         Populate from auxiliary lines layer with all invalid lines.
@@ -1399,4 +1374,87 @@ class NetworkHandler(QObject):
             feat = newInvalidFeatFunc([line.geometry(), lineId])
             # add it to new features list
             featList.append(feat)
+        return featList
+    
+    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, waterBodyClasses, searchRadius, waterSinkLayer, max_amount_cycles=1, feedback=None):
+        self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
+        networkLayerGeomType = networkLayer.geometryType()
+        # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
+        self.classifyNode = lambda x : self.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
+                                    waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
+                                    nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
+        # update createNetworkNodesProcess object node dictionary
+        self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
+        # initiate nodes, invalid/valid lines dictionaries
+        nodeFlags, inval, val = dict(), dict(), dict()
+        # cycle count start
+        cycleCount = 0
+        # get max amount of orientation cycles
+        max_amount_cycles = max_amount_cycles if max_amount_cycles > 0 else 1
+        # validation method FINALLY starts...
+        # to speed up modifications made to layers
+        multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
+        multiStepFeedback.setCurrentStep(cycleCount)
+        networkNodeLayer.beginEditCommand('Reclassify Nodes')
+        networkLayer.beginEditCommand('Flip/Merge Lines')
+        while True:
+            nodeFlags_, inval_, val_ = self.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
+            cycleCount += 1
+            # Log amount of cycles completed
+            cycleCountLog = self.tr("Cycle {0}/{1} completed.").format(cycleCount, max_amount_cycles)
+            multiStepFeedback.pushInfo(cycleCountLog)
+            multiStepFeedback.setCurrentStep(cycleCount)
+            self.reclassifyNodeType = dict()
+            # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues) and no change
+            # change to valid lines list was made (meaning that the algorithm did not change network state) or no flags found
+            if (cycleCount == max_amount_cycles) or (not nodeFlags_) or \
+            (set(nodeFlags.keys()) == set(nodeFlags_.keys()) and val == val_):
+                # copy values to final dict
+                nodeFlags, inval, val = nodeFlags_, inval_, val_
+                # no more modifications to those layers will be done
+                networkLayer.endEditCommand()
+                networkNodeLayer.endEditCommand()
+                # try to load auxiliary line layer to fill it with invalid lines
+                featList = self.getFlagLines(networkLayer, val, inval)
+                invalidLinesLog = self.tr("Invalid lines were exposed in layer {0}).").format(self.tr('{0} line errors').format(self.displayName()))
+                multiStepFeedback.setCurrentStep(invalidLinesLog)
+                vLines = list(val.keys())
+                iLines = list(inval.keys())
+                intersection = list(set(vLines) & set(iLines))
+                if intersection:
+                    map(val.pop, intersection)
+                    # remove unnecessary variables
+                    del vLines, iLines, intersection
+                break
+            # for the next iterations
+            nodeFlags, inval, val = nodeFlags_, inval_, val_
+            # pop all nodes to be popped and reset list
+            for node in self.nodesToPop:
+                # those were nodes connected to lines that were merged and now are no longer to be used
+                self.nodeDict.pop(node, None)
+                self.nodeDict.pop(node, None)
+            self.nodesToPop = []
+        if selectValid:
+            self.setSelectedFeatures(list(val.keys()))
+        percValid = float(len(val))*100.0/float(networkLayer.featureCount()) if networkLayer.featureCount() else 0
+        if nodeFlags:
+            msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '% of network is well directed). Check flags.')\
+                        .format(len(nodeFlags), percValid)
+        else:
+            msg = self.tr('{1:.2f}' + '% of network is well directed.')\
+                        .format(len(nodeFlags), percValid)
+        multiStepFeedback.pushInfo(msg)
+        return nodeFlags, featList, self.nodeIdDict
+    
+    def getFlagLines(self, networkLayer, val, inval):
+        # get non-validated lines and add it to invalid lines layer as well
+        nonValidatedLines = set()
+        for line in networkLayer.getFeatures():
+            lineId = line.id()
+            if lineId in val or lineId in inval:
+                # ignore if line are validated
+                continue
+            nonValidatedLines.add(line)
+        featList = self.getAuxiliaryLines(fields=self.getFlagFields(), invalidLinesDict=inval,\
+                                        nonValidatedLines=nonValidatedLines, networkLayerName=networkLayer.name())
         return featList
