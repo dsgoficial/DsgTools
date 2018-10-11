@@ -1500,7 +1500,7 @@ class NetworkHandler(QObject):
             featList.append(feat)
         return featList
     
-    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, searchRadius, waterBodyClasses=None, waterSinkLayer=None, spillwayLayer=None ditchLayer=None, max_amount_cycles=1, attributeBlackList=None, feedback=None, selectValid=False, excludePrimaryKeys=True, ignoreVirtualFields=True):
+    def verifyNetworkDirectioning(self, networkLayer, networkNodeLayer, frame, searchRadius, waterBodyClasses=None, waterSinkLayer=None, spillwayLayer=None, ditchLayer=None, max_amount_cycles=1, attributeBlackList=None, feedback=None, selectValid=False, excludePrimaryKeys=True, ignoreVirtualFields=True):
         fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
                                                             attributeBlackList=attributeBlackList,\
                                                             ignoreVirtualFields=ignoreVirtualFields,\
