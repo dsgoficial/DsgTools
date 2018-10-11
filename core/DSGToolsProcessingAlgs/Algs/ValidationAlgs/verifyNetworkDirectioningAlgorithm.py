@@ -52,6 +52,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
     IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     NODE_LAYER = 'NODE_LAYER'
     SINK_LAYER = 'SINK_LAYER'
+    SPILLWAY_LAYER = 'SPILLWAY_LAYER'
     REF_LAYER = 'REF_LAYER'
     WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
     MAX_CYCLES = 'MAX_CYCLES'
@@ -115,6 +116,14 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.SINK_LAYER,
                 self.tr('Water sink layer'),
+                [QgsProcessing.TypeVectorPoint],
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.SPILLWAY_LAYER,
+                self.tr('Spillway layer'),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True
             )
@@ -192,6 +201,8 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         networkNodeLayer.startEditing()
         # get water sink layer
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        # get spillway layer
+        spillwayLayer = self.parameterAsLayer(parameters, self.SPILLWAY_LAYER, context)
         # get frame layer
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
@@ -215,6 +226,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
             searchRadius,
             waterBodyClasses=waterBodyClasses,
             waterSinkLayer=waterSinkLayer,
+            spillwayLayer=spillwayLayer,
             max_amount_cycles=max_amount_cycles,
             feedback=multiStepFeedback,
             selectValid=selectValid,
@@ -252,7 +264,6 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                             and its reason ( { (QgsPoint) node : (str) reason } )
         """
         # prepare point flag sink
-        recordList = []
         countNodeNotInDb = 0
         nodeNumber = len(nodeFlags)
         size = 100/nodeNumber if nodeNumber else 0
