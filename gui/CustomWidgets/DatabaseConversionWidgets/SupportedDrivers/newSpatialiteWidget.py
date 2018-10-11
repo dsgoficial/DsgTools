@@ -59,7 +59,7 @@ class NewSpatialiteWidget(AbstractSelectionWidget):
         Gets the SpatiaLite connection name.
         :return: (str) datasource connection name.
         """
-        n = self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+        n = self.selectionWidget.dsLineEdit.text()
         # n is a path and so it'll be something like /PATH/TO/datasource.sqlite or C:\PATH\TO\datasource.sqlite
         splitChar = '/' if '/' in n else '\\'
         ret = n.split(splitChar)[-1].split('.')[0] if n else ''
@@ -70,10 +70,7 @@ class NewSpatialiteWidget(AbstractSelectionWidget):
         Gets the SpatiaLite database path.
         :return: (str) datasource path name.
         """
-        if self.getDatasource():
-            # just return a datasource path if a valid one was loaded
-            return self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
-        return ''
+        return self.selectionWidget.currentDb()
 
     def setDatasource(self, newDatasource):
         """
@@ -81,7 +78,7 @@ class NewSpatialiteWidget(AbstractSelectionWidget):
         :param newDatasource: (dict) containing datasource name and its path.
         """
         if newDatasource:
-            self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText((list(newDatasource.values())[0]))
+            self.selectionWidget.dsLineEdit.setText((list(newDatasource.values())[0]))
 
     def getDatasource(self):
         """
