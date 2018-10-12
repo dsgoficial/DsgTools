@@ -21,34 +21,28 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication, QVariant
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance,
-                       QgsProcessingParameterField,
-                       QgsProcessingException,
-                       QgsField,
-                       QgsFields)
-from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsField,
+                       QgsFields, QgsGeometry, QgsProcessing,
+                       QgsProcessingAlgorithm, QgsProcessingException,
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
 from .validationAlgorithm import ValidationAlgorithm
+
 
 class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = 'NETWORK_LAYER'

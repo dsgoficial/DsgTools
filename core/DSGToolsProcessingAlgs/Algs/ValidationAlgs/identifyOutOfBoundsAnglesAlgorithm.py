@@ -20,23 +20,20 @@
  *                                                                         *
  ***************************************************************************/
 """
+from PyQt5.QtCore import QCoreApplication
+
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
 from .validationAlgorithm import ValidationAlgorithm
 
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterNumber,
-                       QgsWkbTypes)
 
 class IdentifyOutOfBoundsAnglesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
