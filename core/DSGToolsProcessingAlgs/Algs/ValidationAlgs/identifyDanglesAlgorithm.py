@@ -136,7 +136,11 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         currentStep = 0
         multiStep.setCurrentStep(currentStep)
         multiStep.pushInfo(self.tr('Building search structure...'))
-        endVerticesDict = self.layerHandler.buildInitialAndEndPointDict(inputLyr, onlySelected = onlySelected, feedback=multiStep)
+        endVerticesDict = self.layerHandler.buildInitialAndEndPointDict(
+            inputLyr,
+            onlySelected=onlySelected,
+            feedback=multiStep
+            )
 
         #search for dangles candidates
         currentStep += 1
@@ -147,14 +151,25 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         currentStep += 1
         multiStep.setCurrentStep(currentStep)
         multiStep.pushInfo(self.tr('Filtering dangles candidates...'))
-        filterLayer = self.buildFilterLayer(lineFilterLyrList, polygonFilterLyrList, context, multiStep, onlySelected=onlySelected)
+        filterLayer = self.buildFilterLayer(
+            lineFilterLyrList,
+            polygonFilterLyrList,
+            context,
+            multiStep,
+            onlySelected=onlySelected
+            )
         #filter pointList with filterLayer
         
         if filterLayer:
             currentStep += 1
             multiStep.setCurrentStep(currentStep)
             multiStep.pushInfo(self.tr('Filtering dangles candidates with filter...'))
-            filteredPointList = self.filterPointListWithFilterLayer(pointList, filterLayer, searchRadius, multiStep)
+            filteredPointList = self.filterPointListWithFilterLayer(
+                pointList,
+                filterLayer,
+                searchRadius,
+                multiStep
+                )
         else:
             filteredPointList = pointList
         #filter with own layer
@@ -162,7 +177,14 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             currentStep += 1
             multiStep.setCurrentStep(currentStep)
             multiStep.pushInfo(self.tr('Filtering inner dangles...'))
-            filteredPointList = self.filterPointListWithFilterLayer(filteredPointList, inputLyr, searchRadius, feedback, isRefLyr = True, ignoreNotSplit = ignoreNotSplit, progressDelta=20)
+            filteredPointList = self.filterPointListWithFilterLayer(
+                filteredPointList,
+                inputLyr,
+                searchRadius,
+                multiStep,
+                isRefLyr=True,
+                ignoreNotSplit=ignoreNotSplit
+                )
         #build flag list with filtered points
         currentStep += 1
         multiStep.setCurrentStep(currentStep)
@@ -171,20 +193,23 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             # currentValue = feedback.progress()
             currentTotal = 100/len(filteredPointList)
             for current, point in enumerate(filteredPointList):
-                if feedback.isCanceled():
+                if multiStep.isCanceled():
                     break
-                self.flagFeature(QgsGeometry.fromPointXY(point), self.tr('Dangle on {0}').format(inputLyr.name()))
+                self.flagFeature(
+                    QgsGeometry.fromPointXY(point),
+                    self.tr('Dangle on {0}').format(inputLyr.name())
+                    )
                 multiStep.setProgress(current*currentTotal)      
         # feedback.setProgress(100)
         return {self.FLAGS: self.flag_id}
     
-    def searchDanglesOnPointDict(self, endVerticesDict, feedback, progressDelta = 100):
+    def searchDanglesOnPointDict(self, endVerticesDict, feedback):
         """
         Counts the number of points on each endVerticesDict's key and returns a list of QgsPoint built from key candidate.
         """
         pointList = []
-        currentProgress = feedback.progress()
-        localTotal = progressDelta/len(endVerticesDict)
+        nVertexes = len(endVerticesDict)
+        localTotal = 100/nVertexes if nVertexes else 0
         # actual search for dangles
         for current, point in enumerate(endVerticesDict):
             if feedback.isCanceled():
@@ -192,7 +217,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             # this means we only have one occurrence of point, therefore it is a dangle
             if len(endVerticesDict[point]) <= 1:
                 pointList.append(point)
-            feedback.setProgress(currentProgress + int(localTotal*current))
+            feedback.setProgress(localTotal*current)
         return pointList
 
     def buildFilterLayer(self, lineLyrList, polygonLyrList, context, feedback, onlySelected = False):
@@ -210,7 +235,11 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
             lineLyrs += [self.makeBoundaries(polygonLyr, context, feedback)]
         if not lineLyrs:
             return None
-        unifiedLinesLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(lineLyrs, QgsWkbTypes.MultiLineString, onlySelected = onlySelected)
+        unifiedLinesLyr = self.layerHandler.createAndPopulateUnifiedVectorLayer(
+            lineLyrs,
+            QgsWkbTypes.MultiLineString,
+            onlySelected=onlySelected
+            )
         filterLyr = self.cleanLayer(unifiedLinesLyr, [0,6], context)
         return filterLyr
     
@@ -246,12 +275,12 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
         return lyr
 
-    def filterPointListWithFilterLayer(self, pointList, filterLayer, searchRadius, feedback, progressDelta = 100, isRefLyr = False, ignoreNotSplit = False):
+    def filterPointListWithFilterLayer(self, pointList, filterLayer, searchRadius, feedback, isRefLyr=False, ignoreNotSplit=False):
         """
         Builds buffer areas from each point and evaluates the intersecting lines. If there are more than two intersections, it is a dangle.
         """
-        currentProgress = feedback.progress()
-        localTotal = progressDelta/len(pointList)
+        nPoints = len(pointList)
+        localTotal = 100/nPoints if nPoints else 0
         spatialIdx, allFeatureDict = self.buildSpatialIndexAndIdDict(filterLayer)
         notDangleList = []
         for current, point in enumerate(pointList):
@@ -284,7 +313,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                             candidateCount += 1
                     if candidateCount == bufferCount:
                         notDangleList.append(point)
-            feedback.setProgress(currentProgress + localTotal*current)
+            feedback.setProgress(localTotal*current)
         filteredDangleList = [point for point in pointList if point not in notDangleList]
         return filteredDangleList
     

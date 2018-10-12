@@ -64,9 +64,10 @@ class NetworkHandler(QObject):
             NetworkHandler.SpillwayNode : self.tr("Spillway")
         }
         self.flagTextDict = {
-            NetworkHandler.Flag : self.tr('Network connection problem. Segments must be connected.'),
+            NetworkHandler.Flag : self.tr('Segments must be connected and with correct flow.'),
             NetworkHandler.AttributeChangeFlag : self.tr('Segments with same attribute set must be merged.'),
-            NetworkHandler.DisconnectedLine : self.tr("Line disconnected From Network")
+            NetworkHandler.DisconnectedLine : self.tr("Line disconnected From Network"),
+            NetworkHandler.NodeOverload : self.tr("Node with flow problem")
         }
     
     def identifyAllNodes(self, networkLayer, onlySelected=False, feedback=None):
@@ -470,7 +471,7 @@ class NetworkHandler(QObject):
                         return NetworkHandler.Sink
                     elif self.nodeIsSpillway(node=nodePoint, spillwayLayer=spillwayLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                         # if node is a spillway
-                        return NewtworkHandler.Spillway
+                        return NetworkHandler.SpillwayNode
                     return NetworkHandler.WaterwayBegin
             # case 1.c: point that legitimately only flows out
             elif hasStartLine and self.isFirstOrderDangle(node=nodePoint, networkLayer=networkLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
@@ -484,7 +485,7 @@ class NetworkHandler(QObject):
                     return NetworkHandler.Sink
                 elif self.nodeIsSpillway(node=nodePoint, spillwayLayer=spillwayLayer, searchRadius=searchRadius, auxIndexStructure=auxIndexStructure):
                         # if node is a spillway
-                        return NewtworkHandler.Spillway
+                        return NetworkHandler.SpillwayNode
                 return NetworkHandler.WaterwayBegin
             # case 1.d: points that are not supposed to have one way flow (flags)
             return NetworkHandler.Flag
@@ -524,6 +525,7 @@ class NetworkHandler(QObject):
         """
         networkLayerGeomType = networkLayer.geometryType()
         nodeTypeDict = dict()
+        flagNodeDict = dict()
         fieldList = self.layerHandler.getAttributesFromBlackList(networkLayer, \
                                                             attributeBlackList=attributeBlackList,\
                                                             ignoreVirtualFields=ignoreVirtualFields,\
@@ -548,7 +550,7 @@ class NetworkHandler(QObject):
             if node not in self.nodeDict:
                 # in case user decides to use a list of nodes to work on, given nodes that are not identified will be ignored
                 continue
-            nodeTypeDict[node] = self.nodeType(
+            nodeClassification = self.nodeType(
                 nodePoint=node,
                 networkLayer=networkLayer,
                 frameLyrContourList=frameLyrContourList,
@@ -562,9 +564,12 @@ class NetworkHandler(QObject):
                 ditchLayer=ditchLayer,
                 auxIndexStructure=auxIndexStructure
                 )
+            nodeTypeDict[node] = nodeClassification
+            if nodeClassification in self.flagTextDict:
+                flagNodeDict[node] = self.flagTextDict[nodeClassification]
             if multiStepFeedback is not None:
                 multiStepFeedback.setProgress(size * current)
-        return nodeTypeDict
+        return nodeTypeDict, flagNodeDict
     
     def getAuxIndexStructure(self, networkLayer, waterBodiesLayers=None, waterSinkLayer=None, spillwayLayer=None, ditchLayer=None, feedback=None):
         auxStructDict = dict()
