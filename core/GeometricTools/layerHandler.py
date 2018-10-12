@@ -651,7 +651,6 @@ class LayerHandler(QObject):
         deleteList = []
         inputLyr.startEditing()
         inputLyr.beginEditCommand('Snapping Features')
-        outputList = []
         for current, feat in enumerate(iterator):
             featid = feat.id()
             geom = feat.geometry()
@@ -669,11 +668,7 @@ class LayerHandler(QObject):
                     deleteList.append(featid)
                 else:
                     inputLyr.changeGeometry(featid, outputGeom)
-                    # feat.setGeometry(outputGeom)
-                    outputList += [feat]
-            if feedback is not None and feedback.isCanceled():
+            if feedback is not None:
                 feedback.setProgress(size * current)
-        return outputList
         inputLyr.deleteFeatures(deleteList)
-        inputLyr.updateFeatures(outputList)
         inputLyr.endEditCommand()
