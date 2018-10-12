@@ -36,6 +36,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometr
     DeaggregatorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import \
     DissolvePolygonsWithSameAttributesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import \
+    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
     IdentifyDanglesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
@@ -128,7 +130,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 VerifyNetworkDirectioningAlgorithm(),
                 IdentifyDuplicatedFeaturesAlgorithm(),
                 AdjustNetworkConnectivityAlgorithm(),
-                RemoveDuplicatedFeaturesAlgorithm()]
+                RemoveDuplicatedFeaturesAlgorithm(),
+                HierarchicalSnapLayerOnLayerAndUpdateAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
