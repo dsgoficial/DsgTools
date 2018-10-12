@@ -59,9 +59,15 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             return iterator, total
         except:
             return [], 0
-    
+
     def prepareFlagSink(self, parameters, source, wkbType, context):
-        (self.flagSink, self.flag_id) = self.prepareAndReturnFlagSink(parameters, source, wkbType, context, self.FLAGS)
+        (self.flagSink, self.flag_id) = self.prepareAndReturnFlagSink(
+            parameters,
+            source,
+            wkbType,
+            context,
+            self.FLAGS
+            )
     
     def prepareAndReturnFlagSink(self, parameters, source, wkbType, context, UI_FIELD):
         flagFields = self.getFlagFields()

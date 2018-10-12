@@ -56,6 +56,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     DITCH_LAYER = 'DITCH_LAYER'
     SEARCH_RADIUS = 'SEARCH_RADIUS'
     NETWORK_NODES = 'NETWORK_NODES'
+    FLAGS = 'FLAGS'
 
     def initAlgorithm(self, config):
         """
@@ -147,6 +148,12 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 self.tr('Node layer')
             )
         )
+        self.addParameter(
+            QgsProcessingParameterFeatureSink(
+                self.FLAGS,
+                self.tr('Flags')
+            )
+        )
         self.nodeIdDict = None
         self.nodeDict = None
         self.nodeTypeDict = None
@@ -177,7 +184,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         (nodeSink, dest_id) = self.parameterAsSink(parameters, self.NETWORK_NODES,
                 context, self.getFields(), QgsWkbTypes.MultiPoint, networkLayer.sourceCrs())
         #prepairs flag sink for raising errors
-        # self.prepareFlagSink(parameters, networkHandler, QgsWkbTypes.MultiPoint, context)
+        self.prepareFlagSink(parameters, networkLayer, QgsWkbTypes.MultiPoint, context)
         
         waterBodyClasses = self.parameterAsLayer(parameters, self.WATER_BODY_LAYERS, context)
         waterBodyClasses = waterBodyClasses if waterBodyClasses is not None else []
@@ -210,7 +217,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Performing node classification...'))
         networkHandler.nodeDict = self.nodeDict
-        self.nodeTypeDict = networkHandler.classifyAllNodes(
+        self.nodeTypeDict, nodeFlagDict = networkHandler.classifyAllNodes(
                 networkLayer=networkLayer,
                 frameLyrContourList=frame,
                 waterBodiesLayers=waterBodyClasses,
@@ -227,10 +234,14 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         #new step
         multiStepFeedback.setCurrentStep(currStep)
         multiStepFeedback.pushInfo(self.tr('Writing nodes...'))
-        self.fillNodeSink(nodeSink=nodeSink, networkLineLayerName=networkLayer.name(), feedback=multiStepFeedback)
-        return {self.NETWORK_NODES : dest_id}
+        self.fillNodeSink(
+            nodeSink=nodeSink,
+            networkLineLayerName=networkLayer.name(),
+            nodeFlagDict=nodeFlagDict,
+            feedback=multiStepFeedback)
+        return {self.NETWORK_NODES : dest_id, self.FLAGS : self.flag_id}
 
-    def fillNodeSink(self, nodeSink, networkLineLayerName, feedback=None):
+    def fillNodeSink(self, nodeSink, networkLineLayerName, nodeFlagDict, feedback=None):
         """
         Populate hidrography node layer with all nodes.
         :param nodeSink: (QgsFeatureSink) hidrography nodes layer.
@@ -248,9 +259,12 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             # set attribute map
             feat = QgsFeature(fields)
             # set geometry
-            feat.setGeometry(QgsGeometry.fromMultiPointXY([node]))
+            nodeGeom = QgsGeometry.fromMultiPointXY([node])
+            feat.setGeometry(nodeGeom)
             feat['node_type'] = self.nodeTypeDict[node] if node in nodeTypeKeys else None
             feat['layer'] = networkLineLayerName
+            if node in nodeFlagDict:
+                self.flagFeature(nodeGeom, nodeFlagDict[node])
             featList.append(feat)
             if feedback is not None:
                 feedback.setProgress(size * current)
