@@ -20,22 +20,20 @@
  ***************************************************************************/
 """
 
+from PyQt5.QtCore import QCoreApplication
+
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
 from .validationAlgorithm import ValidationAlgorithm
 
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingException, QgsProcessingParameterMultipleLayers,
-                       QgsProcessingMultiStepFeedback)
 
 class IdentifyDuplicatedPointsOnCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'

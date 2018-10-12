@@ -52,7 +52,6 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
     TYPE = 'TYPE'
     IGNOREINNER = 'IGNOREINNER'
     FLAGS = 'FLAGS'
-    
 
     def initAlgorithm(self, config):
         """

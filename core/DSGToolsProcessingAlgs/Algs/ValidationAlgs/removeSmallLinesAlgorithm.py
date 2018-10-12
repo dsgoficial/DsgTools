@@ -39,6 +39,7 @@ from .validationAlgorithm import ValidationAlgorithm
 class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
+    OUTPUT = 'OUTPUT'
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
 
@@ -78,6 +79,13 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             )
         )
 
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer without small lines')
+            )
+        )
+
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
@@ -85,26 +93,54 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+                )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Identifying small lines in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallLines(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Identifying small lines in layer {0}...'
+                ).format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifySmallLines(
+            inputLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Removing small lines from layer {0}...').format(inputLyr.name()))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Removing small lines from layer {0}...'
+                ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Identifying remaining small lines in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallLines(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
-        self.prepareFlagSink(parameters, inputLyr, QgsWkbTypes.MultiPoint, context)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Identifying remaining small lines in layer {0}...'
+                ).format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifySmallLines(
+            inputLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
+        self.prepareFlagSink(
+            parameters,
+            inputLyr,
+            QgsWkbTypes.MultiPoint,
+            context
+            )
         for feat in flagLyr.getFeatures():
             self.flagFeature(feat.geometry(), feat['reason'])
 
-        return {self.INPUT: inputLyr, self.FLAGS : self.flag_id}
+        return {self.OUTPUT: inputLyr, self.FLAGS : self.flag_id}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)

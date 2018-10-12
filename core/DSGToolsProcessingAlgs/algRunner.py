@@ -20,10 +20,11 @@
  *                                                                         *
  ***************************************************************************/
 """
-import processing
-
-from qgis.core import QgsProcessingUtils
 import uuid
+
+import processing
+from qgis.core import QgsProcessingUtils
+
 
 class AlgRunner:
     Break, Snap, RmDangle, ChDangle, RmBridge, ChBridge, RmDupl, RmDac, BPol, Prune, RmArea, RmLine, RMSA = range(13)
@@ -122,7 +123,7 @@ class AlgRunner:
             'FLAGS' : flags
         }
         output = processing.run('dsgtools:cleangeometries', parameters, context = context, feedback = feedback)
-        return output['INPUT']
+        return output['OUTPUT']
     
     def runDouglasSimplification(self, inputLyr, threshold, context, feedback = None, snap=-1, minArea=0.0001, iterations=1, type=None, returnError=False):
         algType = [0,1,2] if type is None else type
@@ -219,7 +220,7 @@ class AlgRunner:
             'BEHAVIOR' : behavior
         }
         output = processing.run('dsgtools:snaplayeronlayer', parameters, context = context, feedback = feedback)
-        return output['INPUT']
+        return output['OUTPUT']
     
     def runIdentifyDangles(self, inputLayer, searchRadius, context, feedback = None, onlySelected=False, lineFilter = None, polygonFilter = None, ignoreUnsegmented = False, ignoreInner = False, flagLyr = 'memory:'):
         lineFilter = [] if lineFilter is None else lineFilter

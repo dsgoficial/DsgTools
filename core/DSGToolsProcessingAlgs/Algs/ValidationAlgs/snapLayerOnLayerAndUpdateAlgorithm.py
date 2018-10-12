@@ -20,32 +20,28 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDistance,
-                       QgsProcessingException)
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -53,6 +49,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
     REFERENCE_LAYER = 'REFERENCE_LAYER'
     TOLERANCE = 'TOLERANCE'
     BEHAVIOR = 'BEHAVIOR'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -104,6 +101,12 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 defaultValue=0
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer with snapped features')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -112,16 +115,49 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        refLyr = self.parameterAsVectorLayer(parameters, self.REFERENCE_LAYER, context)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                )
+            )
+        onlySelected = self.parameterAsBool(
+            parameters,
+            self.SELECTED,
+            context
+            )
+        refLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.REFERENCE_LAYER,
+            context
+            )
         if refLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.REFERENCE_LAYER))
-        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
-        layerHandler.snapToLayer(inputLyr, refLyr, tol, behavior, onlySelected=onlySelected, feedback=feedback)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.REFERENCE_LAYER
+                    )
+                )
+        tol = self.parameterAsDouble(
+            parameters,
+            self.TOLERANCE,
+            context
+            )
+        behavior = self.parameterAsEnum(
+            parameters,
+            self.BEHAVIOR,
+            context
+            )
+        layerHandler.snapToLayer(
+            inputLyr,
+            refLyr,
+            tol,
+            behavior,
+            onlySelected=onlySelected,
+            feedback=feedback
+            )
 
-        return {self.INPUT: inputLyr}
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """

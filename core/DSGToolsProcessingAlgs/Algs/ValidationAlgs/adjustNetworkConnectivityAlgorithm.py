@@ -20,36 +20,34 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -77,6 +75,12 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
                 defaultValue=1.0
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Adjusted original network layer')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -100,7 +104,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
         algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected, behavior=0)
 
-        return {self.INPUT: inputLyr}
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """
