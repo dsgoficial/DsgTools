@@ -56,6 +56,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
     IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
     IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     SINK_LAYER = 'SINK_LAYER'
+    SPILLWAY_LAYER = 'SPILLWAY_LAYER'
     REF_LAYER = 'REF_LAYER'
     WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
     DITCH_LAYER = 'DITCH_LAYER'
@@ -109,6 +110,14 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.SINK_LAYER,
                 self.tr('Water sink layer'),
+                [QgsProcessing.TypeVectorPoint],
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.SPILLWAY_LAYER,
+                self.tr('Spillway layer'),
                 [QgsProcessing.TypeVectorPoint],
                 optional=True
             )
@@ -180,6 +189,8 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         waterBodyClasses = waterBodyClasses if waterBodyClasses is not None else []
         # get water sink layer
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        # get spillway layer
+        spillwayLayer = self.parameterAsLayer(parameters, self.SPILLWAY_LAYER, context)
         # get frame layer
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         currStep = 0
@@ -211,6 +222,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
                 waterBodiesLayers=waterBodyClasses,
                 searchRadius=searchRadius,
                 waterSinkLayer=waterSinkLayer,
+                spillwayLayer=spillwayLayer,
                 feedback=multiStepFeedback,
                 attributeBlackList=attributeBlackList,
                 excludePrimaryKeys=ignorePK,
