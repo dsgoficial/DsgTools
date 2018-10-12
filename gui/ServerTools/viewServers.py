@@ -72,7 +72,8 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Not Saved')))
             else:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
-            radio = QRadioButton()
+            radio = QRadioButton(self.tableWidget)
+            radio.setAutoExclusive(True)
             if isDefault:
                 radio.setChecked(True)
             self.tableWidget.setCellWidget(i, 5, radio)
