@@ -193,7 +193,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             pass
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
-            return self.tr('Invalid EDGV vesion.')
+            return self.tr('Invalid EDGV version.')
         # check if a valid projection was selected
         if not self.crs() or 'EPSG' not in self.authId():
             return self.tr('Invalid CRS.')

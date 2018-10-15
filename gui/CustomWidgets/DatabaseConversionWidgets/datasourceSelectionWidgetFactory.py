@@ -24,11 +24,13 @@
 from qgis.PyQt.QtWidgets import QWidget
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postgisWidget import PostgisWidget
+# from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newPostgisWidget import NewPostgisWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newSpatialiteWidget import NewSpatialiteWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import ShapefileWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newShapefileWidget import NewShapefileWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newGeopackageWidget import NewGeopackageWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
 class DatasourceSelectionWidgetFactory():
@@ -52,6 +54,6 @@ class DatasourceSelectionWidgetFactory():
             DsgEnums.Shapefile : lambda : ShapefileWidget(parent=parent),
             DsgEnums.NewShapefile : lambda : NewShapefileWidget(parent=parent),
             DsgEnums.Geopackage : lambda : GeopackageWidget(parent=parent),
-            DsgEnums.NewGeopackage : lambda : GeopackageWidget(parent=parent)
+            DsgEnums.NewGeopackage : lambda : NewGeopackageWidget(parent=parent)
         }
         return sourceDict[source]()
