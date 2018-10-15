@@ -63,3 +63,4 @@ tags
 # =========================
 Styles/
 LayerTools/CustomFormTools/formsCustom
+gui/DatabaseTools/ConversionTools/conversion_map.json
