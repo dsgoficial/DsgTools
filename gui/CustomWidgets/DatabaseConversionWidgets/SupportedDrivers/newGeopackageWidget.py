@@ -21,9 +21,6 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
-
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newDatabaseLineEdit import NewDatabaseLineEdit
 from DsgTools.core.dsgEnums import DsgEnums
