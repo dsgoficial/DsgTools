@@ -22,12 +22,12 @@
 """
 
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.abstractSelectionWidget import AbstractSelectionWidget
-from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newDatabaseFileEdit import NewDatabaseFileEdit
+from DsgTools.gui.CustomWidgets.ConnectionWidgets.AdvancedConnectionWidgets.newConnectionLineEdit import NewConnectionLineEdit
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
-class PostgisWidget(AbstractSelectionWidget):
+class NewPostgisWidget(AbstractSelectionWidget):
     """
     Widget resposinble for adequating GUI to chosen data driver.
     """
@@ -35,21 +35,21 @@ class PostgisWidget(AbstractSelectionWidget):
     def __init__(self, parent=None):
         """
         Class contructor.
-        :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
+        :param parent: (QWidget) widget parent to newly instantiated new PostGIS widget.
         """
-        super(PostgisWidget, self).__init__(parent=parent)
+        super(NewPostgisWidget, self).__init__(parent=parent)
         # reset source attribute value as now it is defined as a PostGIS
-        self.source = DsgEnums.PostGIS
+        self.source = DsgEnums.NewPostGIS
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
 
     def getNewSelectionWidget(self, parent=None):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.
-        :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
+        :param parent: (QWidget) widget parent to newly instantiated new PostGIS widget.
         :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
-        return NewDatabaseFileEdit(parent=parent)
+        return NewConnectionLineEdit(parent=parent)
 
     def getDatasourceConnectionName(self):
         """
@@ -68,6 +68,12 @@ class PostgisWidget(AbstractSelectionWidget):
             host, port, username, _ = abstractDb.getDatabaseParameters()
             return '{2}@{0}:{1}.{3}'.format(host, port, username, self.getDatasourceConnectionName())
         return ''
+
+    def getDatasourceEdgvVersion(self):
+        """
+        Gets EDGV version selected.
+        """
+        return self.selectionWidget.edgvVersion()
 
     def setDatasource(self, newDatasource):
         """
