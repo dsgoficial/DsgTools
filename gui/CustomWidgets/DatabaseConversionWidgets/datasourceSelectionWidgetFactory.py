@@ -27,6 +27,7 @@ from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.postg
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.spatialiteWidget import SpatialiteWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newSpatialiteWidget import NewSpatialiteWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.shapefileWidget import ShapefileWidget
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.newShapefileWidget import NewShapefileWidget
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.SupportedDrivers.geopackageWidget import GeopackageWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
@@ -49,7 +50,7 @@ class DatasourceSelectionWidgetFactory():
             DsgEnums.SpatiaLite : lambda : SpatialiteWidget(parent=parent),
             DsgEnums.NewSpatiaLite : lambda : NewSpatialiteWidget(parent=parent),
             DsgEnums.Shapefile : lambda : ShapefileWidget(parent=parent),
-            DsgEnums.NewShapefile : lambda : ShapefileWidget(parent=parent),
+            DsgEnums.NewShapefile : lambda : NewShapefileWidget(parent=parent),
             DsgEnums.Geopackage : lambda : GeopackageWidget(parent=parent),
             DsgEnums.NewGeopackage : lambda : GeopackageWidget(parent=parent)
         }

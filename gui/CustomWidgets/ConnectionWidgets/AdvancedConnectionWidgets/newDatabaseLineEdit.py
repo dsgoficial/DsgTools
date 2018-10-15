@@ -52,7 +52,14 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         self.caption = ''
         self.filter = ''
         self.fillEdgvVersions()
-        # self.reset()
+        self.reset()
+
+    def connectSignals(self):
+        """
+        Connects all signals.
+        """
+        self.selectFilePushButton.clicked.connect(self.selectDatasource)
+        self.dsLineEdit.textChanged.connect(self.loadDatabase)
 
     def fillEdgvVersions(self):
         """
@@ -106,6 +113,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         self.dsLineEdit.setText(self.tr("New Database"))
         self.edgvComboBox.setCurrentIndex(0)
         # self.mQgsProjectionSelectionWidget.setCrs(0)
+        self.connectSignals()
 
     def setAbstractDb(self):
         """
@@ -134,8 +142,16 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             return bool(l)
         except FileNotFoundError:
             return False
+        except IsADirectoryError:
+            # in case datasource is a directory (shapefiles)
+            if len(os.listdir(ds)) > 0:
+                # if directory is not empty, check if there are shapefiles in it
+                for f in os.listdir(ds):
+                    if len(f) > 4:
+                        if '.shp' == f[-4:].lower():
+                            return True
+            return False
 
-    @pyqtSlot(str, name = 'on_dsLineEdit_textChanged')
     def loadDatabase(self, currentText):
         """
         Loads the selected database
@@ -146,10 +162,10 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
                 return
             self.setAbstractDb()
             msg = self.validate()
-            if msg:
-                raise Exception(msg)
             self.dbChanged.emit(self.abstractDb)
             self.connectionChanged.emit()
+            if msg:
+                raise Exception(msg)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
@@ -196,8 +212,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
         return msg == ''
 
-    @pyqtSlot(bool)
-    def on_selectFilePushButton_clicked(self):
+    def selectDatasource(self):
         """
         Opens dialog for file/directory selection.
         """
@@ -207,3 +222,4 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         filename, __ = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         if filename:
             self.dsLineEdit.setText(filename)
+        self.loadDatabase(currentText=filename)
