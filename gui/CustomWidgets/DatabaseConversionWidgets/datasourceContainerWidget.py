@@ -391,7 +391,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # fill spatial filter info
         layer, spatialExpression, topologicalTest, topologyParameter = self.getSpatialFilterInformation()
         if layer:
-            # there's only a spatial filter if a layer is selected for it
+            # a spatial filter is only available if a layer is selected for it
             self.filters['spatial_filter'] = {
                 'layer_name' : layer,
                 'layer_filter' : spatialExpression,

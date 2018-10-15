@@ -739,11 +739,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         except:
             pass
         # remove every widget added to interface (in and output) and, consequently, disconnect all signals
-        for d in [self.datasourceManagementWidgetIn.activeDrivers, self.datasourceManagementWidgetOut.activeDrivers]:
-            for driverName, wList in d.items():
+        for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
+            for driverName, wList in d.activeDrivers.items():
                 for w in wList:
                     # removeWidget method disconnects all widget signals
-                    self.datasourceManagementWidgetIn.removeWidget(w)
-        # for last, removes itself
-        self.setParent(None)
-        del self
+                    obj.removeWidget(w)
