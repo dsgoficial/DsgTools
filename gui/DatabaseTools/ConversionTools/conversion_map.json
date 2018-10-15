@@ -1,88 +1,11 @@
 {
-    "": [
+    "postgres@localhost:5432.banco_capacitacao": [
         {
             "conversionMode": "Map No Data",
-            "createDb": "False",
+            "createDb": "True",
             "filter": {
                 "layer": {},
                 "layer_filter": {},
-                "spatial_filter": {}
-            },
-            "outDs": "",
-            "spatialFanOut": "False"
-        },
-        {
-            "conversionMode": "Map No Data",
-            "createDb": "False",
-            "filter": {
-                "layer": {},
-                "layer_filter": {},
-                "spatial_filter": {}
-            },
-            "outDs": "",
-            "spatialFanOut": "False"
-        },
-        {
-            "conversionMode": "Map No Data",
-            "createDb": "False",
-            "filter": {
-                "layer": {},
-                "layer_filter": {},
-                "spatial_filter": {}
-            },
-            "outDs": "",
-            "spatialFanOut": "False"
-        },
-        {
-            "conversionMode": "Map No Data",
-            "createDb": "False",
-            "filter": {
-                "layer": {},
-                "layer_filter": {},
-                "spatial_filter": {}
-            },
-            "outDs": "",
-            "spatialFanOut": "False"
-        }
-    ],
-    "postgres@localhost:5432.pid_harrison": [
-        {
-            "conversionMode": "Map No Data",
-            "createDb": "False",
-            "filter": {
-                "layer": {
-                    "cb.adm_edif_pub_civil_p": 1,
-                    "cb.asb_dep_abast_agua_p": 3,
-                    "cb.eco_deposito_geral_p": 1,
-                    "cb.eco_ext_mineral_p": 1,
-                    "cb.edu_edif_ensino_p": 6,
-                    "cb.hid_corredeira_a": 5,
-                    "cb.hid_corredeira_l": 9,
-                    "cb.hid_ilha_a": 252,
-                    "cb.hid_queda_dagua_l": 19,
-                    "cb.hid_queda_dagua_p": 8,
-                    "cb.hid_sumidouro_vertedouro_p": 2,
-                    "cb.hid_terreno_suj_inundacao_a": 490,
-                    "cb.hid_trecho_drenagem_l": 17331,
-                    "cb.hid_trecho_massa_dagua_a": 16,
-                    "cb.loc_hab_indigena_p": 119,
-                    "cb.loc_nome_local_p": 33,
-                    "cb.rel_curva_nivel_l": 28286,
-                    "cb.rel_ponto_cotado_altimetrico_p": 22233,
-                    "cb.tra_ponte_l": 2,
-                    "cb.tra_ponte_p": 1,
-                    "cb.tra_trecho_hidroviario_l": 10,
-                    "cb.tra_trecho_rodoviario_l": 3,
-                    "cb.tra_trilha_picada_l": 1,
-                    "cb.veg_campo_a": 647,
-                    "cb.veg_floresta_a": 330,
-                    "cb.veg_vegetacao_a": 9,
-                    "public.aux_moldura_a": 17,
-                    "public.aux_ponto_p": 6126
-                },
-                "layer_filter": {
-                    "cb.hid_terreno_suj_inundacao_a": "123"
-                },
                 "spatial_filter": {
                     "filter_type": "",
                     "layer_filter": "",
@@ -90,27 +13,17 @@
                     "topological_relation": ""
                 }
             },
-            "outDs": "",
+            "outDs": "/home/esperidiao/Documents/exemplos_dados/shape/2216-1-NE",
             "spatialFanOut": "False"
         }
     ],
-    "postgres@localhost:5432.testes": [
+    "postgres@localhost:5432.consolidado_harrison": [
         {
             "conversionMode": "Map No Data",
-            "createDb": "False",
+            "createDb": "True",
             "filter": {
-                "layer": {
-                    "cb.adm_area_pub_civil_a": 3,
-                    "cb.adm_edif_pub_civil_a": 3,
-                    "cb.adm_posto_fiscal_p": 5,
-                    "cb.adm_posto_pol_rod_p": 7,
-                    "cb.edu_pista_competicao_l": 1,
-                    "cb.hid_trecho_drenagem_l": 14,
-                    "public.aux_moldura_a": 1
-                },
-                "layer_filter": {
-                    "cb.adm_edif_pub_civil_a": "453"
-                },
+                "layer": {},
+                "layer_filter": {},
                 "spatial_filter": {
                     "filter_type": "",
                     "layer_filter": "",
@@ -118,7 +31,7 @@
                     "topological_relation": ""
                 }
             },
-            "outDs": "",
+            "outDs": "/home/esperidiao/Documents/exemplos_dados/bancos/qwe.sqlite",
             "spatialFanOut": "False"
         }
     ]
