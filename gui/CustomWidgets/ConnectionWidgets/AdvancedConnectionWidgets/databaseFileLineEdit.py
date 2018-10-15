@@ -89,7 +89,45 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
             dirSplit = '/' if '/' in text else '\\'
             text = text.split(dirSplit)[-1].split('.')[0] if text else ''
             return text
-    
+
+    def serverIsValid(self):
+        """
+        Checks if connection to server is valid.
+        """
+        # for files, server check is not necessary
+        return True
+
+    def databaseExists(self):
+        """
+        Checks if database exists.
+        """
+        # for files, it is only necessary to check if file exists and is not empty.
+        return bool(self.abstractDb)
+
+    def edgvVersion(self):
+        """
+        Returns current selected EDGV version.
+        :return: (str) EDGV version.
+        """
+        edgv = self.edgvComboBox.currentText()
+        return edgv if not edgv is None and edgv != self.tr("EDGV Version...") else ''
+
+    def authId(self):
+        """
+        Returns current selected EDGV version.
+        :return: (str) EDGV version.
+        """
+        crs = self.crs()
+        return crs.authid() if not crs is None and crs.isValid() else ''
+
+    def crs(self):
+        """
+        Returns current selected EDGV version.
+        :return: (QgsCoordinateReferenceSystem) current selected CRS.
+        """
+        crs = self.mQgsProjectionSelectionWidget.crs()
+        return crs if not crs is None and crs.isValid() else None
+
     @pyqtSlot(str, name = 'on_lineEdit_textChanged')
     def loadDatabase(self, currentText):
         """
@@ -109,7 +147,40 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
             self.closeDatabase()
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-    
+
+    def validate(self):
+        """
+        Validates current widget. To be validated, it is necessary:
+        - a valid datasource selection; and
+        - a valid database structure.
+        :return: (str) invalidation reason.
+        """
+        # check a valid server name
+        # check if datasource is a valid name and if it already exists into selected server
+        if not self.currentDb():
+            return self.tr('Invalid datasource.')
+        else:
+            # check if the connection is a valid connection
+            if not self.serverIsValid():
+                return self.tr('Invalid connection to server.')
+            # check if it exists
+            if self.databaseExists():
+                return self.tr('Database does not exist (maybe you want the \'Create new datasource\' driver?).')
+        # if all tests were positive, widget has a valid selection
+        return ''
+
+    def isValid(self):
+        """
+        Validates selection.
+        :return: (bool) validation status.
+        """
+        # return self.validate() == ''
+        msg = self.validate()
+        if msg:
+            # if an invalidation reason was given, warn user and nothing else.
+            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        return msg == ''
+
     @pyqtSlot(bool)
     def on_infoPushButton_clicked(self):
         """
