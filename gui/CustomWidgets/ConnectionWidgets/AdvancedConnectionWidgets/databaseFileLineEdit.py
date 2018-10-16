@@ -25,14 +25,10 @@
 
 import os
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtSql import QSqlDatabase
-from qgis.PyQt.QtWidgets import QApplication, QMessageBox
-from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.core import QgsMessageLog, Qgis
 from qgis.utils import iface
 
-from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
@@ -58,6 +54,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         self.displayDict = {'2.1.3':'EDGV 2.1.3', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
         self.instantiateAbstractDb = False
         self.connectionSelectorLineEdit.lineEdit.setText(self.tr('Select datasource'))
+        self.connectionSelectorLineEdit.lineEdit.setReadOnly(True)
 
     def closeDatabase(self):
         """

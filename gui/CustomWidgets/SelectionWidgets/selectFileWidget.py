@@ -26,7 +26,7 @@ from qgis.core import QgsMessageLog
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, QDir
 from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QFileDialog
 
@@ -52,6 +52,7 @@ class SelectFileWidget(QtWidgets.QWidget, FORM_CLASS):
         Selects the correct way to choose files according to the type
         """
         fd = QFileDialog()
+        fd.setDirectory(QDir.homePath())
         if self.type == 'multi':
             self.fileNameList = fd.getOpenFileNames(caption=self.caption, filter=self.filter)
             selectedFiles = ', '.join(self.fileNameList[0])

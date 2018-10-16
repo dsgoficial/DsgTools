@@ -47,7 +47,7 @@ class NewShapefileWidget(AbstractSelectionWidget):
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
         self.selectionWidget.caption = self.tr('Select a Directory for Shapes to be Saved At')
-        self.selectionWidget.filter = self.tr('Shapefile Database (*.shp)')
+        self.selectionWidget.filter = self.tr('Shapefile Database')
         # connect datasource selection to this ones
         self.selectionWidget.selectFilePushButton.clicked.disconnect(self.selectionWidget.selectDatasource)
         self.selectionWidget.selectFilePushButton.clicked.connect(self.selectDatasource)

@@ -42,6 +42,8 @@ class ShapefileWidget(AbstractSelectionWidget):
         self.source = DsgEnums.Shapefile
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
+        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr('Select a Directory Containing Shapefiles')
+        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr('Shapefile Database')
 
     def getNewSelectionWidget(self, parent=None):
         """
