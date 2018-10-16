@@ -45,7 +45,7 @@ class NewSpatialiteWidget(AbstractSelectionWidget):
         self.source = DsgEnums.NewSpatiaLite
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
-        self.selectionWidget.caption = self.tr('Select a SpatiaLite Database for Creation')
+        self.selectionWidget.caption = self.tr('Create a SpatiaLite Database')
         self.selectionWidget.filter = self.tr('SpatiaLite Database (*.sqlite)')
 
     def getNewSelectionWidget(self, parent=None):

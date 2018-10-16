@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt.QtWidgets import QWidget, QFileDialog
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QDir
 from qgis.PyQt import uic
 from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog
@@ -155,7 +155,8 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
 
     def loadDatabase(self, currentText):
         """
-        Loads the selected database
+        Loads the selected database.
+        currentText: (str) text as shown on datasource combo box.
         """
         try:
             if not self.currentDb():
@@ -219,6 +220,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         """
         # model of implementation for reimplementation
         fd = QFileDialog()
+        fd.setDirectory(QDir.homePath())
         fd.setFileMode(QFileDialog.AnyFile)
         filename, __ = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         if filename:
