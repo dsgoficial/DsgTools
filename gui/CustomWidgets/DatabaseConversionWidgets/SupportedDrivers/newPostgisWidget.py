@@ -56,16 +56,15 @@ class NewPostgisWidget(AbstractSelectionWidget):
         Gets the datasource connection name.
         :return: (str) datasource connection name.
         """
-        return self.selectionWidget.connectionSelectorComboBox.currentText() if self.selectionWidget else ''
+        return self.selectionWidget.currentDb() if self.selectionWidget else ''
 
     def getDatasourcePath(self):
         """
         Gets the PostGIS connection path (server:port).
         :return: (str) datasource connection name.
         """
-        abstractDb = self.getDatasource()
-        if abstractDb:
-            host, port, username, _ = abstractDb.getDatabaseParameters()
+        if self.selectionWidget:
+            host, port, user, _ = self.selectionWidget.viewServers.getDefaultConnectionParameters()
             return '{2}@{0}:{1}.{3}'.format(host, port, username, self.getDatasourceConnectionName())
         return ''
 
@@ -86,10 +85,9 @@ class NewPostgisWidget(AbstractSelectionWidget):
                 self.selectionWidget.viewServers.\
                     setDefaultConnectionParameters(host=host, port=port, user=username, password=password)
                 # sel selected db
-                # in order to emit datasource changed signal, force a change of index
-                idx = self.selectionWidget.connectionSelectorComboBox.findText(db)
-                self.selectionWidget.connectionSelectorComboBox.setCurrentText(db)
-                self.selectionWidget.loadDatabase(idx)
+                self.selectionWidget.dsLineEdit.setText(db)
+                # there should only one entry
+                break
 
     def getDatasource(self):
         """

@@ -28,12 +28,13 @@ from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.gui.ServerTools.viewServers import ViewServers
 
 import os
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'newDatabaseLineEdit.ui'))
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'newConnectionLineEdit.ui'))
 
-class NewDatabaseLineEdit(QWidget, FORM_CLASS):
+class NewConnectionLineEdit(QWidget, FORM_CLASS):
     """
     Class designed to control generic behaviors of a widget able to
     retrieve parameters for a PostGIS database creation.
@@ -47,10 +48,9 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         """
         Class contructor.
         """
-        super(NewDatabaseLineEdit, self).__init__()
+        super(NewConnectionLineEdit, self).__init__()
         self.setupUi(self)
-        self.caption = ''
-        self.filter = ''
+        self.viewServers = ViewServers()
         self.fillEdgvVersions()
         self.reset()
 
@@ -58,7 +58,6 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         """
         Connects all signals.
         """
-        self.selectFilePushButton.clicked.connect(self.selectDatasource)
         self.dsLineEdit.textChanged.connect(self.loadDatabase)
 
     def fillEdgvVersions(self):
@@ -127,30 +126,19 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         Checks if connection to server is valid.
         """
         # for files, server check is not necessary
-        return True
+        h = self.viewServers.getDefaultConnectionParameters()[0]
+        return self.viewServers.testServer(h)
 
     def databaseExists(self):
         """
         Checks if database exists.
         """
         # for files, it is only necessary to check if file exists and is not empty.
-        ds = self.currentDb()
-        try:
-            with open(ds, 'rb') as f:
-                # read paths
-                l = f.readlines()
-            return bool(l)
-        except FileNotFoundError:
-            return False
-        except IsADirectoryError:
-            # in case datasource is a directory (shapefiles)
-            if len(os.listdir(ds)) > 0:
-                # if directory is not empty, check if there are shapefiles in it
-                for f in os.listdir(ds):
-                    if len(f) > 4:
-                        if '.shp' == f[-4:].lower():
-                            return True
-            return False
+        if self.abstractDb:
+            host, port, user, password = self.viewServers.getDefaultConnectionParameters()
+            database = self.currentDb()
+            return self.abstractDb.testCredentials(host, port, database, user, password)
+        return False
 
     def loadDatabase(self, currentText):
         """
@@ -173,10 +161,10 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
     def validate(self):
         """
         Validates current widget. To be validated, it is necessary:
-        - a valid NEW datasource name;
-        - a valid server selection;
-        - a valid EDGV version selection; and
-        - a valid projection selection.
+        - a valid datasource selection;
+        - a NEW database name;
+        - a valid EDGV selection; and
+        - a valid CRS selection.
         :return: (str) invalidation reason.
         """
         # check a valid server name
@@ -189,8 +177,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
                 return self.tr('Invalid connection to server.')
             # check if it exists
             if self.databaseExists():
-                return self.tr('Database already exists.')
-            pass
+                return self.tr('Database does not exist.')
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
             return self.tr('Invalid EDGV version.')
@@ -222,4 +209,5 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         filename, __ = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         if filename:
             self.dsLineEdit.setText(filename)
+            print(self.isValid())
         self.loadDatabase(currentText=filename)
