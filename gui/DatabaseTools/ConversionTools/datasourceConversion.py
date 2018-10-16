@@ -24,6 +24,7 @@
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
+from qgis.utils import iface
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 
@@ -678,11 +679,69 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         conversionMap = json.loads(inputJson)
         pass
 
+    @staticmethod
+    def checkEdgvConversion(edgvIn, edgvOut):
+        """
+        Checks if the mapping conversion is available. It is an static method as one
+        might want to check conversion maps availability regardless to be executing it.
+        :param edgvIn: (str) input EDGV version.
+        :param edgvOut: (str) output EDGV version.
+        """
+        # TO DO
+        return '' not in [edgvIn, edgvOut]
+
+    def validateMapTable(self):
+        """
+        Verifies contents displayed on mapping table in order to infer its validity
+        as datasource conversion map.
+        :return: (str) invalidation reason.
+        """
+        # lists of inputs/outputs already checked
+        inChecked, outChecked = [], []
+        # it is assumed that containers' contents were already checked previously
+        for row in range(self.tableWidget.rowCount()):
+            # get row contents
+            inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
+            # check if a conversion mode was selected
+            if conversionMode == self.tr('Choose Conversion Mode'):
+                return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row)
+            # check if EDGV versions are compatible
+            if not checkEdgvConversion(edgvIn=inEdgv, edgvOut=outEdgv):
+                return self.tr('Conversion map unavailable for {0} to {1} (row {2})').format(inEdgv, outEdgv, row)
+            # # add input to the checked ones list
+            # inChecked.append(inDsName)
+            # add output to checked ones list, if it's not 'select a datasource'
+            outDsName = outDs.currentText()
+            if outDsName.split(': ') == self.tr('Select a datasource'):
+                return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row)
+            outChecked.append(outDsName)
+        # last check: if all chosen outputs are listed
+        splitAlias = lambda x : x.split(':')[0]
+        if len(outChecked) != len(self.outDs):
+            # if not all outputs were used, user should remove it (or may have wrongfully chosen a different dataset again)
+            notUsed = set(self.outDs.keys()) - set(map(splitAlias, outChecked))
+            return self.tr('Output datasources {0} were not used.').format(", ".join(notUsed))
+        return ''
+
+    def mapTableIsValid(self):
+        """
+        Verifies contents displayed on mapping table in order to infer its validity
+        as datasource conversion map.
+        :return: (bool) map validity status.
+        """
+        msg = self.validateMapTable()
+        if msg:
+            # if an invalidation reason was given, warn user and nothing else.
+            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        return msg == ''
+
     def validate(self):
         """
         Validates interface parameters.
         """
-        pass
+        if self.mapTableIsValid():
+            return False
+        return True
 
     def invalidatedReason(self):
         """
