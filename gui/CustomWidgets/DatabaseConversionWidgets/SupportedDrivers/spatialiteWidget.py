@@ -48,7 +48,7 @@ class SpatialiteWidget(AbstractSelectionWidget):
 
     def getNewSelectionWidget(self, parent=None):
         """
-        Gets the widget according to selected datasource on datasource combobox on first page.
+        Gets the widget according to selected datasource.
         :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
         :return: (QWidget) driver widget supported by conversion tool.
         """
