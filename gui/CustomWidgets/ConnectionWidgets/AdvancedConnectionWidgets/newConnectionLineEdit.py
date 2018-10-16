@@ -29,6 +29,7 @@ from qgis.core import Qgis, QgsMessageLog
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 
 import os
 
@@ -59,6 +60,9 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         Connects all signals.
         """
         self.dsLineEdit.textChanged.connect(self.loadDatabase)
+        dsChangedAlias = lambda : self.dbChanged.emit(None)
+        self.edgvComboBox.currentIndexChanged.connect(dsChangedAlias)
+        self.mQgsProjectionSelectionWidget.crsChanged.connect(dsChangedAlias)
 
     def fillEdgvVersions(self):
         """
@@ -133,12 +137,11 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         """
         Checks if database exists.
         """
-        # for files, it is only necessary to check if file exists and is not empty.
-        if self.abstractDb:
-            host, port, user, password = self.viewServers.getDefaultConnectionParameters()
-            database = self.currentDb()
-            return self.abstractDb.testCredentials(host, port, database, user, password)
-        return False
+        host, port, user, password = self.viewServers.getDefaultConnectionParameters()
+        database = self.currentDb()
+        # get a PostGIS database instance to check if database exists
+        abstractDb = DbFactory().createDbFactory('QPSQL')
+        return abstractDb.testCredentials(host, port, database, user, password)
 
     def loadDatabase(self, currentText):
         """
@@ -177,7 +180,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
                 return self.tr('Invalid connection to server.')
             # check if it exists
             if self.databaseExists():
-                return self.tr('Database does not exist.')
+                return self.tr('Database already exists into selected server.')
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
             return self.tr('Invalid EDGV version.')
@@ -211,3 +214,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
             self.dsLineEdit.setText(filename)
             print(self.isValid())
         self.loadDatabase(currentText=filename)
+
+    @pyqtSlot(bool)
+    def on_serverPushButton_clicked(self):
+        self.viewServers.exec_()
