@@ -105,30 +105,6 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         # for files, it is only necessary to check if file exists and is not empty.
         return bool(self.abstractDb)
 
-    def edgvVersion(self):
-        """
-        Returns current selected EDGV version.
-        :return: (str) EDGV version.
-        """
-        edgv = self.edgvComboBox.currentText()
-        return edgv if not edgv is None and edgv != self.tr("EDGV Version...") else ''
-
-    def authId(self):
-        """
-        Returns current selected EDGV version.
-        :return: (str) EDGV version.
-        """
-        crs = self.crs()
-        return crs.authid() if not crs is None and crs.isValid() else ''
-
-    def crs(self):
-        """
-        Returns current selected EDGV version.
-        :return: (QgsCoordinateReferenceSystem) current selected CRS.
-        """
-        crs = self.mQgsProjectionSelectionWidget.crs()
-        return crs if not crs is None and crs.isValid() else None
-
     @pyqtSlot(str, name = 'on_lineEdit_textChanged')
     def loadDatabase(self, currentText):
         """
@@ -158,7 +134,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         """
         # check a valid server name
         # check if datasource is a valid name and if it already exists into selected server
-        if not self.currentDb():
+        if not self.currentDb() or not self.abstractDb:
             return self.tr('Invalid datasource.')
         else:
             # check if the connection is a valid connection
@@ -166,7 +142,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
                 return self.tr('Invalid connection to server.')
             # check if it exists
             if not self.databaseExists():
-                return self.tr('Database does not exist (maybe you want the \'Create new datasource\' driver?).')
+                return self.tr('Database {0} does not exist.').format(self.currentDb())
         # if all tests were positive, widget has a valid selection
         return ''
 

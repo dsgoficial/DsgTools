@@ -173,7 +173,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         # check a valid server name
         # check if datasource is a valid name and if it already exists into selected server
-        if not self.currentDb():
+        if not self.currentDb() or not self.abstractDb:
             return self.tr('Invalid datasource.')
         else:
             # check if the connection is a valid connection
@@ -181,7 +181,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 return self.tr('Invalid connection to server.')
             # check if it exists
             if not self.databaseExists():
-                return self.tr('Database does not exist.')
+                return self.tr('Database {0} does not exist.').format(self.currentDb())
         # if all tests were positive, widget has a valid selection
         return ''
 
