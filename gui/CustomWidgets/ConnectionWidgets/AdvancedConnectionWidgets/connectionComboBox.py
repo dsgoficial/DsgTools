@@ -26,7 +26,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
-
+from qgis.utils import iface
 from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
@@ -66,7 +66,6 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             serverAbstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
             serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
             self.setServerDb(serverAbstractDb)
-
     
     def closeDatabase(self):
         try:
@@ -115,10 +114,10 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         self.connectionSelectorComboBox.addItems(itemList)
     
     def currentDb(self):
-        if self.currentIndex() == 0:
-            return None
+        if self.connectionSelectorComboBox.currentIndex() == 0:
+            return ''
         else:
-            return self.currentText().split(' (')[0]
+            return self.connectionSelectorComboBox.currentText().split(' (')[0]
     
     @pyqtSlot(int, name = 'on_connectionSelectorComboBox_currentIndexChanged')
     def loadDatabase(self, idx):
@@ -145,3 +144,62 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
     @pyqtSlot(bool)
     def on_serverPushButton_clicked(self):
         self.viewServers.exec_()
+
+    def serverIsValid(self):
+        """
+        Checks if connection to server is valid.
+        """
+        # for files, server check is not necessary
+        h = self.viewServers.getDefaultConnectionParameters()[0]
+        return self.viewServers.testServer(h)
+
+    def databaseExists(self):
+        """
+        Checks if database exists.
+        """
+        # for files, it is only necessary to check if file exists and is not empty.
+        if self.abstractDb:
+            host, port, user, password = self.viewServers.getDefaultConnectionParameters()
+            database = self.currentDb()
+            return self.abstractDb.testCredentials(host, port, database, user, password)
+        return False
+
+    def validate(self):
+        """
+        Validates current widget. To be validated, it is necessary:
+        - a valid datasource selection; and
+        - a valid database structure.
+        :return: (str) invalidation reason.
+        """
+        # check a valid server name
+        # check if datasource is a valid name and if it already exists into selected server
+        if not self.currentDb():
+            return self.tr('Invalid datasource.')
+        else:
+            # check if the connection is a valid connection
+            if not self.serverIsValid():
+                return self.tr('Invalid connection to server.')
+            # check if it exists
+            if not self.databaseExists():
+                return self.tr('Database does not exist.')
+        # if all tests were positive, widget has a valid selection
+        return ''
+
+    def isValid(self):
+        """
+        Validates selection.
+        :return: (bool) validation status.
+        """
+        # return self.validate() == ''
+        msg = self.validate()
+        if msg:
+            # if an invalidation reason was given, warn user and nothing else.
+            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        return msg == ''
+
+    @pyqtSlot(bool)
+    def on_infoPushButton_clicked(self):
+        """
+        Exhibits information about selected database.
+        """
+        print(self.isValid())
