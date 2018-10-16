@@ -190,7 +190,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
                 return self.tr('Invalid connection to server.')
             # check if it exists
             if self.databaseExists():
-                return self.tr('Database already exists.')
+                return self.tr('Database {0} already exists.').format(self.currentDb())
             pass
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
