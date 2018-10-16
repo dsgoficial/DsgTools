@@ -29,7 +29,9 @@ from qgis.PyQt.QtWidgets import QWidget, QCheckBox, QDialog
 from .abstractMultiDsSelectorWidget import AbstractMultiDsSelectorWidget
 from DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget import ExploreServerWidget
 from DsgTools.core.dsgEnums import DsgEnums
+
 import os
+from operator import itemgetter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'multiPostgisSelectorWidget.ui'))
 
@@ -83,10 +85,13 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
             dbList = self.getDbsFromServer(name=serverName)
         else:
             dbList = []
-        for row, (db, edgvVersion) in enumerate(dbList):
-            checkbox = QCheckBox()
-            checkbox.setText("{0} (EDGV {1})".format(db, edgvVersion))
-            self.gridLayout.addWidget(checkbox, row, 0)
+        if dbList:
+            # to order db lists
+            dbList.sort(key=itemgetter(0))
+            for row, (db, edgvVersion) in enumerate(dbList):
+                checkbox = QCheckBox()
+                checkbox.setText("{0} (EDGV {1})".format(db, edgvVersion))
+                self.gridLayout.addWidget(checkbox, row, 0)
 
     @pyqtSlot(int)
     def serverUpdated(self):
