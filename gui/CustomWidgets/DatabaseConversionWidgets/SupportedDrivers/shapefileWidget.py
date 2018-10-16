@@ -46,7 +46,7 @@ class ShapefileWidget(AbstractSelectionWidget):
     def getNewSelectionWidget(self, parent=None):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.
-        :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
+        :param parent: (QWidget) widget parent to newly instantiated shapefile widget.
         :return: (QWidget) driver widget supported by conversion tool.
         """
         return DatabaseFileLineEdit(parent=parent)

@@ -30,6 +30,7 @@ from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 from qgis.core import QgsMessageLog, Qgis
+from qgis.utils import iface
 
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -164,7 +165,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
             if not self.serverIsValid():
                 return self.tr('Invalid connection to server.')
             # check if it exists
-            if self.databaseExists():
+            if not self.databaseExists():
                 return self.tr('Database does not exist (maybe you want the \'Create new datasource\' driver?).')
         # if all tests were positive, widget has a valid selection
         return ''
@@ -186,4 +187,4 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         """
         Exhibits information about selected database.
         """
-        pass
+        print(self.isValid())
