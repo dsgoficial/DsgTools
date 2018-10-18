@@ -22,8 +22,10 @@
 """
 
 from qgis.PyQt.QtCore import QObject
+from qgis.utils import iface
 
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 class AbstractSelectionWidget(QObject):
     """
@@ -111,19 +113,28 @@ class AbstractSelectionWidget(QObject):
         abstracDb = self.getDatasource()
         return abstracDb.getDatabaseVersion() if abstracDb else ''
 
-    def setDatasource(self, connectionInfo):
+    def getLayerLoader(self):
         """
-        Sets datasource to selection widget.
-        :param connectionInfo: (object) varies according to driver.
+        Returns the layer loader for given datasource.
+        :return: (EDGVLayerLoader) layer loader.
         """
-        # to be reimplemented
+        abstracDb = self.getDatasource()
+        return LayerLoaderFactory().makeLoader(iface=iface, abstractDb=abstracDb) if abstracDb else None
 
     def getLayersCrs(self):
         """
         Gets the CRS from all registered layers.
         """
-        # to be reimplemented
-        return { l : 'SIRGAS 2000 / UTM zone 23S' for l in self.getLayersDict() }
+        # may be reimplemented into children class, if needed
+        abstracDb = self.getDatasource()
+        crs = dict()
+        if abstracDb:
+            layerLoader = self.getLayerLoader()
+            # alias for retrieving layer CRS and inserting it to out dict
+            getCrsAlias = lambda x : crs.update({ x : layerLoader.getLayerByName(layer=x).crs().description() })
+            # update crs dict
+            list(map(getCrsAlias, self.getLayersDict()))
+        return crs
 
     def getLayersDict(self):
         """

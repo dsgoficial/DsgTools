@@ -204,7 +204,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # self.filterDlg.outHLayout.removeWidget(self.layersComboBox)
             # clear layer selection combo box, if it exists 
             self.clearWidget(widget=self.layersComboBox)
-        self.layersComboBox = QtWidgets.QComboBox()
+        try:
+            self.layersComboBox = QtWidgets.QComboBox()
+        except:
+            # no idea why, but the C++ object gets deleted only after you try using it...
+            self.layersComboBox = QtWidgets.QComboBox()
         layerList = [self.tr('Select a layer...')] + sorted([l.name() for l in iface.mapCanvas().layers()])
         self.layersComboBox.addItems(layerList)
         # prepare layer feature filter widget
@@ -218,7 +222,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # self.filterDlg.outHLayout.removeWidget(self.topologicalTestWidget)
             # clear layer selection combo box, if it exists 
             self.clearWidget(widget=self.topologicalTestWidget)
-        self.topologicalTestWidget = QtWidgets.QComboBox()
+        try:
+            self.topologicalTestWidget = QtWidgets.QComboBox()
+        except:
+            # no idea why, but the C++ object gets deleted only after you try using it...
+            self.topologicalTestWidget = QtWidgets.QComboBox()
         # current supported topological relations
         topoRelList = sorted([self.tr('Clip'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals (Geometry)')])
         self.topologicalTestWidget.addItems(topoRelList)

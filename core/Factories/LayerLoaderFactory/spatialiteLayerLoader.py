@@ -224,3 +224,17 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 valueRelationDict['Layer'] = domLayer.id()
                 vlayer.setEditorWidgetSetup(i, valueRelationDict)
         return vlayer
+
+    def getLayerByName(self, layer):
+        """
+        Return the layer layer from a given layer name.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer. 
+        """
+        # parent class reimplementation
+        schema = layer.split('_')[0]
+        table = layer[len(schema) + 1:]
+        lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
+        table = layer[len(schema) + 1:]
+        self.setDataSource('', layer, geomColumn, '')
+        return QgsVectorLayer(self.uri.uri(), tableName, self.provider)
