@@ -378,3 +378,16 @@ class PostGISLayerLoader(EDGVLayerLoader):
         else:
             initCode = self.generatorCustomInitCode.getInitCodeNotFilter(rules)
             return initCode
+
+    def getLayerByName(self, layer):
+        """
+        Return the layer layer from a given layer name.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer. 
+        """
+        # parent class reimplementation
+        table = layer.split('.')[1]
+        lyrName, schema, geomColumn, tableName, srid = self.getParams(inputParam=table)
+        pkColumn = self.abstractDb.getPrimaryKeyColumn(layer)
+        self.setDataSource(schema, tableName, geomColumn, '', pkColumn=pkColumn)
+        return QgsVectorLayer(self.uri.uri(), table, self.provider)

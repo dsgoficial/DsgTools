@@ -588,7 +588,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 if layerName in filterDict['layer_filter']:
                     filterExpression.setText(filterDict['layer_filter'][layerName])
                 # fill crs
-                crs.setText(crsDict[layerName])
+                if layerName in crsDict:
+                    crs.setText(crsDict[layerName])
                 # add widgets to their layouts
                 checkBoxLayout.addWidget(checkbox)
                 filterExpressionLayout.addWidget(filterExpression)
@@ -731,7 +732,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # last check: if all chosen outputs are listed
         splitAlias = lambda x : x.split(':')[0]
         if len(outChecked) != len(self.outDs):
-            # if not all outputs were used, user should remove it (or may have wrongfully chosen a different dataset again)
+            # if not all outputs were used, user should remove it (or may have wrongfully chosen a different dataset)
             notUsed = set(self.outDs.keys()) - set(map(splitAlias, outChecked))
             msg = self.tr('Output datasource {0} was not used.') if len(notUsed) == 1 else self.tr('Output datasources {0} were not used.')
             return msg.format(", ".join(notUsed))
