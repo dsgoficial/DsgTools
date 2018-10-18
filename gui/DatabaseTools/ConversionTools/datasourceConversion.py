@@ -25,6 +25,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
+from qgis.core import Qgis
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 
@@ -690,7 +691,19 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # TO DO
         return '' not in [edgvIn, edgvOut]
 
-    def validateMapTable(self):
+    def validate(self):
+        """
+        Verifies contents displayed on mapping table in order to infer its validity
+        as datasource conversion map.
+        :return: (bool) map validity status.
+        """
+        msg = self.invalidatedReason()
+        if msg:
+            # if an invalidation reason was given, warn user and nothing else.
+            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        return msg == ''
+
+    def invalidatedReason(self):
         """
         Verifies contents displayed on mapping table in order to infer its validity
         as datasource conversion map.
@@ -703,51 +716,26 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # get row contents
             inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
             # check if a conversion mode was selected
-            if conversionMode == self.tr('Choose Conversion Mode'):
-                return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row)
+            if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
+                return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
             # check if EDGV versions are compatible
-            if not checkEdgvConversion(edgvIn=inEdgv, edgvOut=outEdgv):
-                return self.tr('Conversion map unavailable for {0} to {1} (row {2})').format(inEdgv, outEdgv, row)
+            if not self.checkEdgvConversion(edgvIn=inEdgv, edgvOut=outEdgv):
+                return self.tr('Conversion map unavailable for {0} to {1} (row {2})').format(inEdgv, outEdgv, row + 1)
             # # add input to the checked ones list
             # inChecked.append(inDsName)
             # add output to checked ones list, if it's not 'select a datasource'
             outDsName = outDs.currentText()
-            if outDsName.split(': ') == self.tr('Select a datasource'):
-                return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row)
+            if outDsName == self.tr('Select a datasource'):
+                return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row + 1)
             outChecked.append(outDsName)
         # last check: if all chosen outputs are listed
         splitAlias = lambda x : x.split(':')[0]
         if len(outChecked) != len(self.outDs):
             # if not all outputs were used, user should remove it (or may have wrongfully chosen a different dataset again)
             notUsed = set(self.outDs.keys()) - set(map(splitAlias, outChecked))
-            return self.tr('Output datasources {0} were not used.').format(", ".join(notUsed))
+            msg = self.tr('Output datasource {0} was not used.') if len(notUsed) == 1 else self.tr('Output datasources {0} were not used.')
+            return msg.format(", ".join(notUsed))
         return ''
-
-    def mapTableIsValid(self):
-        """
-        Verifies contents displayed on mapping table in order to infer its validity
-        as datasource conversion map.
-        :return: (bool) map validity status.
-        """
-        msg = self.validateMapTable()
-        if msg:
-            # if an invalidation reason was given, warn user and nothing else.
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-        return msg == ''
-
-    def validate(self):
-        """
-        Validates interface parameters.
-        """
-        if self.mapTableIsValid():
-            return False
-        return True
-
-    def invalidatedReason(self):
-        """
-        Identifies invalidation reason for user advising.
-        """
-        pass
 
     def run(self, conversionMap):
         """
@@ -760,13 +748,13 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         Starts the conversion process.
         """
-        # get conversion map
-        conversionMap = self.getConversionMap()
-        self.exportConversionJson()
         # validate interface parameters
-        self.validate()
-        # call conversion method taking the mapping json
-        self.run(conversionMap=conversionMap)
+        if self.validate():
+            # get conversion map
+            conversionMap = self.getConversionMap()
+            self.exportConversionJson()
+            # call conversion method taking the mapping json
+            self.run(conversionMap=conversionMap)
 
     def populateInterface(self, parameterDict):
         """
