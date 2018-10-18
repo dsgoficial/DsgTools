@@ -409,3 +409,19 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # advise about filtering settings change
         self.filterSettingsChanged.emit(self)
         self.filterDlg.close()
+
+    def validate(self):
+        """
+        Validates container GUI parameters.
+        :return: (str) invalidation reason.
+        """
+        # validate selection widget
+        return self.connectionWidget.validate()
+
+    def isValid(self):
+        """
+        Validates selection widgets contents.
+        :return: (bool) invalidation status.
+        """
+        msg = self.validate()
+        return msg == ''

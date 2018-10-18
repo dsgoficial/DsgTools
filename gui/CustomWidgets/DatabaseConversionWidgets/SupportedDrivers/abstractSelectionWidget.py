@@ -145,3 +145,18 @@ class AbstractSelectionWidget(QObject):
         if abstracDb:
             return abstracDb.listClassesWithElementsFromDatabase(useComplex = True, primitiveFilter = [])
         return {}
+
+    def validate(self):
+        """
+        Validates selection widgets contents.
+        :return: (str) invalidation reason.
+        """
+        return self.selectionWidget.validate() if self.selectionWidget else self.tr('Selection widget not available.')
+
+    def isValid(self):
+        """
+        Validates selection widgets contents.
+        :return: (bool) invalidation status.
+        """
+        msg = self.validate()
+        return msg == ''

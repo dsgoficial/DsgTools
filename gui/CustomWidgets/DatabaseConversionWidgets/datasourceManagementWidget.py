@@ -227,3 +227,31 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         containerWidget.clearFilters()
         # advise which widget was updated
         self.widgetUpdated.emit(containerWidget)
+
+    def validate(self):
+        """
+        Validates container GUI parameters.
+        :return: (str) invalidation reason.
+        """
+        if self.objectName() == 'datasourceManagementWidgetIn':
+            pageError = self.tr('Input Error!')
+        else:
+            pageError = self.tr('Output Error!')
+        for containers in self.activeDrivers.values():
+            for container in containers:
+                if not container.isValid():
+                    return '{0} {1}: {2}'.format(pageError, container.groupBox.title(), container.validate())
+        # validate selection widget
+        return ''
+
+    def isValid(self):
+        """
+        Validates selection widgets contents.
+        :return: (bool) invalidation status.
+        """
+        for containers in self.activeDrivers.values():
+            for container in containers:
+                if not container.isValid():
+                    return False
+        # validate selection widget
+        return True
