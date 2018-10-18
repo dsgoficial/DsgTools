@@ -698,13 +698,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         as datasource conversion map.
         :return: (bool) map validity status.
         """
-        for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
-            # validate in/ouput
-            msg = obj.validate()
-            if msg:
-                # if an invalidation reason was given, warn user and nothing else.
-                iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-                return msg == ''
         # validate map
         msg = self.invalidatedReason()
         if msg:
@@ -718,6 +711,11 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         as datasource conversion map.
         :return: (str) invalidation reason.
         """
+        for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
+            # validate in/ouput
+            msg = obj.validate()
+            if msg:
+                return msg
         # lists of inputs/outputs already checked
         inChecked, outChecked = [], []
         # it is assumed that containers' contents were already checked previously
