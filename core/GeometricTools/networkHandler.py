@@ -22,7 +22,7 @@
 """
 from __future__ import absolute_import
 from builtins import range
-from itertools import combinations
+from itertools import combinations, chain
 import math
 from math import pi
 from .geometryHandler import GeometryHandler
@@ -868,7 +868,7 @@ class NetworkHandler(QObject):
         flow = flowType[int(nodeType)]
         nodePointDict = self.nodeDict[node]
         # getting all connected lines to node that are not already validated
-        linesNotValidated = list( set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines) )
+        linesNotValidated = set( nodePointDict['start']  + nodePointDict['end'] ) - set(connectedValidLines)
         # starting dicts of valid and invalid lines
         validLines, invalidLines = dict(), dict()
         if not flow:
@@ -1020,7 +1020,7 @@ class NetworkHandler(QObject):
         """
         # node type granted as right as start conditions
         inContourConditionTypes = [NetworkHandler.DownHillNode, NetworkHandler.Sink]
-        outContourConditionTypes = [NetworkHandler.UpHillNode, NetworkHandler.WaterwayBegin]
+        outContourConditionTypes = [NetworkHandler.UpHillNode, NetworkHandler.WaterwayBegin, NetworkHandler.SpillwayNode]
         if node in inContourConditionTypes + outContourConditionTypes:
             # if node IS a starting condition, method is not necessary
             return False, ''
@@ -1067,7 +1067,7 @@ class NetworkHandler(QObject):
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else False
-            map(reclassifyNodeAlias, list(map(initialNode, flippedLines)) + list(map(lastNode, flippedLines)))
+            map(reclassifyNodeAlias, chain(map(initialNode, flippedLines), map(lastNode, flippedLines)))
         return hasStartCondition, flippedLinesIds
 
     def directNetwork(self, networkLayer, nodeLayer, nodeList=None):
@@ -1083,10 +1083,7 @@ class NetworkHandler(QObject):
         deltaLinesCheckList = [NetworkHandler.Confluence, NetworkHandler.Ramification] # nodes that have an unbalaced number ratio of flow in/out
         if not nodeList:
             # 'nodeList' must start with all nodes that are on the frame (assumed to be well directed)
-            nodeList = []
-            for node in self.nodeTypeDict.keys():
-                if self.nodeTypeDict[node] in startingNodeTypes:
-                    nodeList.append(node)
+            nodeList = [node for node, nodeType in self.nodeTypeDict.items() if nodeType in startingNodeTypes]
             # if no node to start the process is found, process ends here
             if not nodeList:
                 return None, None, self.tr("No network starting point was found")
@@ -1098,7 +1095,7 @@ class NetworkHandler(QObject):
         # starting dict of (in)valid lines to be returned by the end of method
         validLines, invalidLines = dict(), dict()
         # initiate relation of modified features
-        flippedLinesIds, mergedLinesString = [], ""
+        flippedLinesIds, mergedLinesString = set([]), ""
         while nodeList:
             for node in nodeList:
                 # first thing to be done: check if there are more than one non-validated line (hence, enough information for a decision)
@@ -1114,11 +1111,11 @@ class NetworkHandler(QObject):
                     visitedNodes.append(node)
                     continue
                 nodeLines = startLines + endLines
-                validLinesList = list(validLines.values())
+                validLinesList = validLines.values()
                 if len(set(nodeLines) - set(validLinesList)) > 1:
                     hasStartCondition, flippedLines = self.checkForStartConditions(node=node, validLines=validLinesList, networkLayer=networkLayer, nodeLayer=nodeLayer, geomType=geomType)
                     if hasStartCondition:
-                        flippedLinesIds += flippedLines
+                        flippedLinesIds |= set(flippedLines)
                     else:
                         # if it is not connected to a start condition, check if node has a valid line connected to it
                         if (set(nodeLines) & set(validLinesList)):
@@ -1149,7 +1146,7 @@ class NetworkHandler(QObject):
                         addIds = set(flippedLinesIds_) - set(flippedLinesIds)
                         # IDs that are registered will be removed (flipping a flipped line returns to original state)
                         removeIds = set(flippedLinesIds_) - addIds
-                        flippedLinesIds = list( (set(flippedLinesIds) - removeIds) ) + list( addIds  )
+                        flippedLinesIds = (set(flippedLinesIds) - removeIds) | addIds
                     if mergedLinesString_:
                         if not mergedLinesString:
                             mergedLinesString = mergedLinesString_
@@ -1198,7 +1195,7 @@ class NetworkHandler(QObject):
                                     self.tr('Redundant node.') : 4,
                                     self.tr('Node was flagged upon classification') : 5
                                    }
-        for r in fixableReasonExcertsDict.keys():
+        for r in fixableReasonExcertsDict:
             if r in reason:
                 return fixableReasonExcertsDict[r]
         # if reason is not one of the fixables
@@ -1284,10 +1281,11 @@ class NetworkHandler(QObject):
         self.mergeNetworkLines(line_a=line_b, line_b=line_a, layer=networkLayer)
         # the updated feature should be updated into node dict for the NEXT NODE!
         nn = self.getLastNode(lyr=networkLayer, feat=line_b, geomType=1)
-        for line in self.nodeDict[nn]['end']:
-            if line.id() == line_b.id():
-                self.nodeDict[nn]['end'].remove(line)
-                self.nodeDict[nn]['end'].append(line_b)
+        if nn in self.nodeDict: # TODO: @jpesperidiao verifica isso por favor
+            for line in self.nodeDict[nn]['end']:
+                if line.id() == line_b.id():
+                    self.nodeDict[nn]['end'].remove(line)
+                    self.nodeDict[nn]['end'].append(line_b)
         # remove attribute change flag node (there are no lines connected to it anymore)
         self.nodesToPop.append(node)
         return self.tr('{0} to {1}').format(line_a.id(), line_b.id())
@@ -1400,10 +1398,15 @@ class NetworkHandler(QObject):
             reclassifyNodeAlias = lambda x : nodeLayer.changeAttributeValue(self.nodeIdDict[x], 2, int(self.reclassifyNodeType[x])) \
                                                 if self.reclassifyNode(node=x, nodeLayer=nodeLayer) \
                                                 else None
-            map(reclassifyNodeAlias, list(map(initialNode, flippedLines)) + list(map(lastNode, flippedLines)))
+            map(reclassifyNodeAlias, chain(map(initialNode, flippedLines), map(lastNode, flippedLines)))
             # check if node is fixed and update its dictionaries and invalidation reason
-            valDict, invalidDict, reason = self.checkNodeValidity(node=node, connectedValidLines=connectedValidLines, \
-                                            networkLayer=networkLayer, geomType=geomType, deltaLinesCheckList=deltaLinesCheckList)
+            valDict, invalidDict, reason = self.checkNodeValidity(
+                node=node,
+                connectedValidLines=connectedValidLines,
+                networkLayer=networkLayer,
+                geomType=geomType,
+                deltaLinesCheckList=deltaLinesCheckList
+                )
         return flippedLinesIds, mergedLinesString
 
     def logAlteredFeatures(self, flippedLines, mergedLinesString, feedback=None):
@@ -1484,8 +1487,6 @@ class NetworkHandler(QObject):
         # prepare generic variables that will be reused
         invalidReason = self.tr('Connected to invalid hidrography node.')
         nonVisitedReason = self.tr('Line not yet visited.')
-        # to avoid unnecessary calculation inside loop
-        nodeTypeKeys = list(self.nodeTypeDict.keys())
         # initiate new features list
         featList = []
         # pre-declaring method to make it faster
@@ -1511,9 +1512,32 @@ class NetworkHandler(QObject):
                                                             ignoreVirtualFields=ignoreVirtualFields,\
                                                             excludePrimaryKeys=excludePrimaryKeys)
         waterBodyClasses = [] if waterBodyClasses is None else waterBodyClasses
+        # update createNetworkNodesProcess object node dictionary
+        stepCount = 0
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
+            multiStepFeedback.setCurrentStep(stepCount)
+        else:
+            multiStepFeedback = None
         self.nodesToPop = []
         self.reclassifyNodeType = dict()
-        self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer)
+        if feedback is not None:
+            multiStepFeedback.pushInfo('Identifying nodes...')
+            multiStepFeedback.setCurrentStep(stepCount)
+            stepCount += 1
+        self.nodeDict = self.identifyAllNodes(networkLayer=networkLayer, feedback=multiStepFeedback)
+        if feedback is not None:
+            multiStepFeedback.pushInfo('Getting auxiliar spatial indexes...')
+            multiStepFeedback.setCurrentStep(stepCount)
+            stepCount += 1
+        auxIndexStructure = self.getAuxIndexStructure(
+            networkLayer,
+            waterBodiesLayers=waterBodyClasses,
+            waterSinkLayer=waterSinkLayer,
+            spillwayLayer=spillwayLayer,
+            ditchLayer=ditchLayer,
+            feedback=multiStepFeedback
+        )
         networkLayerGeomType = networkLayer.geometryType()
         networkLayer.startEditing()
         networkNodeLayer.startEditing()
@@ -1528,15 +1552,14 @@ class NetworkHandler(QObject):
             spillwayLayer=spillwayLayer,
             nodeTypeDict=x[1],
             networkLayerGeomType=networkLayerGeomType,
-            ditchLayer=ditchLayer, fieldList=fieldList
+            ditchLayer=ditchLayer,
+            fieldList=fieldList,
+            auxIndexStructure=auxIndexStructure
             )
-        # update createNetworkNodesProcess object node dictionary
-        cycleCount = 0
         if feedback is not None:
-            multiStepFeedback = QgsProcessingMultiStepFeedback(max_amount_cycles, feedback)
-            multiStepFeedback.setCurrentStep(cycleCount)
-        else:
-            multiStepFeedback = None
+            multiStepFeedback.pushInfo('Getting node type dictionary...')
+            multiStepFeedback.setCurrentStep(stepCount)
+            stepCount += 1
         self.nodeTypeDict, self.nodeIdDict = self.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer, feedback=multiStepFeedback)
         # initiate nodes, invalid/valid lines dictionaries
         nodeFlags, inval, val = dict(), dict(), dict()
@@ -1547,7 +1570,12 @@ class NetworkHandler(QObject):
         # to speed up modifications made to layers
         networkNodeLayer.beginEditCommand('Reclassify Nodes')
         networkLayer.beginEditCommand('Flip/Merge Lines')
+        cycleCount = 0
         while True:
+            if feedback is not None:
+                multiStepFeedback.pushInfo('Starting cycle {0}...'.format(cycleCount))
+                multiStepFeedback.setCurrentStep(stepCount)
+                stepCount += 1
             nodeFlags_, inval_, val_ = self.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
             cycleCount += 1
             # Log amount of cycles completed
@@ -1570,10 +1598,10 @@ class NetworkHandler(QObject):
                 invalidLinesLog = self.tr("Invalid lines were exposed in line flags layer.")
                 if feedback is not None:
                     multiStepFeedback.pushInfo(invalidLinesLog)
-                    multiStepFeedback.setCurrentStep(cycleCount)
-                vLines = list(val.keys())
-                iLines = list(inval.keys())
-                intersection = list(set(vLines) & set(iLines))
+                    multiStepFeedback.setCurrentStep(max_amount_cycles)
+                vLines = val.keys()
+                iLines = inval.keys()
+                intersection = set(vLines) & set(iLines)
                 if intersection:
                     map(val.pop, intersection)
                     # remove unnecessary variables
