@@ -32,6 +32,7 @@ import os, codecs
 from .genericThread import GenericThread
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ..DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 class PostgisDbMessages(QObject):
     def __init__(self, thread):
@@ -80,7 +81,7 @@ class PostgisDbThread(GenericThread):
 
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
-        self.gen = self.factory.createSqlGenerator(False)
+        self.gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.messenger = PostgisDbMessages(self)
         self.dbFactory = DbFactory()
         self.parent = parent

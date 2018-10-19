@@ -47,7 +47,7 @@ class AbstractSelectionWidget(QObject):
     def getSelectionWidgetName(self, source=None):
         """
         Gets selection widget to be returned to user as selectionWidget attribute.
-        :param source: (DsgEnum.int) driver enum to have its name exposed.
+        :param source: (DsgEnums.int) driver enum to have its name exposed.
         :return: (str) selection widget user-friendly name for selected driver.
         """
         if not source:

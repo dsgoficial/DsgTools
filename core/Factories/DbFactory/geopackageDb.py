@@ -40,7 +40,7 @@ class GeopackageDb(SpatialiteDb):
         """
         Constructor.
         """
-        super(GeopackageDb,self).__init__()
+        super(GeopackageDb, self).__init__()
     
     def getDatabaseName(self):
         """

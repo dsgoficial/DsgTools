@@ -31,3 +31,5 @@ class DsgEnums(object):
     PermissionProperty, FieldToolboxProperty, EarthCoverageProperty, AttributeRuleProperty, SpatialRuleProperty, ValidationWorkflowProperty = list(range(6))
     # datasource selection widgets enum
     NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite, Shapefile, NewShapefile, Geopackage, NewGeopackage = list(range(9))
+    # available drivers enum
+    DriverPostGIS, DriverSpatiaLite, DriverGeopackage, DriverShapefile, DriverOthers = list(range(5))
