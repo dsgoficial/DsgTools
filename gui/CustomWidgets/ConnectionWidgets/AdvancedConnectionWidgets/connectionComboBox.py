@@ -20,19 +20,20 @@
  *                                                                         *
  ***************************************************************************/
 """
-import os
+
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtSql import QSqlDatabase
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
-from qgis.utils import iface
+# from qgis.utils import iface
 from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+
+import os
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionComboBox.ui'))
@@ -192,9 +193,9 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         # return self.validate() == ''
         msg = self.validate()
-        if msg:
-            # if an invalidation reason was given, warn user and nothing else.
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        # if msg:
+        #     # if an invalidation reason was given, warn user and nothing else.
+        #     iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
         return msg == ''
 
     @pyqtSlot(bool)

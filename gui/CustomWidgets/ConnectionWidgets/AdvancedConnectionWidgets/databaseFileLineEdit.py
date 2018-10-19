@@ -27,7 +27,7 @@ import os
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.core import QgsMessageLog, Qgis
-from qgis.utils import iface
+# from qgis.utils import iface
 
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
@@ -150,9 +150,9 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         """
         # return self.validate() == ''
         msg = self.validate()
-        if msg:
-            # if an invalidation reason was given, warn user and nothing else.
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        # if msg:
+        #     # if an invalidation reason was given, warn user and nothing else.
+        #     iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
         return msg == ''
 
     @pyqtSlot(bool)

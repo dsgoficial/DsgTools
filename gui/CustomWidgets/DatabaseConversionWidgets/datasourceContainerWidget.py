@@ -319,8 +319,9 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             self.setupSpatialFilterWidgets()
             self.fillSpatialFilterInformation()
             # connect cancel push button to close method
-            if not self.filters:
+            if not self.filters['layer_filter']:
                 # if no filters dict was set, set it to initial state
+                # this method is suppoded to be replaced by a filling one
                 self.resetLayerFilters()
             closeAlias = lambda : self.filterDlg.close()
             self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
