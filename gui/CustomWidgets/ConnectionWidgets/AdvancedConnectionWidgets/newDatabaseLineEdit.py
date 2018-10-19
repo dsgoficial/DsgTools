@@ -24,7 +24,7 @@
 from qgis.PyQt.QtWidgets import QWidget, QFileDialog
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QDir
 from qgis.PyQt import uic
-from qgis.utils import iface
+# from qgis.utils import iface
 from qgis.core import Qgis, QgsMessageLog
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
@@ -209,9 +209,9 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         """
         # return self.validate() == ''
         msg = self.validate()
-        if msg:
-            # if an invalidation reason was given, warn user and nothing else.
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+        # if msg:
+        #     # if an invalidation reason was given, warn user and nothing else.
+        #     iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
         return msg == ''
 
     def selectDatasource(self):
