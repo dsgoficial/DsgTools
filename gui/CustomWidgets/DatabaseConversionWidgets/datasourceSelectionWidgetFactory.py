@@ -42,7 +42,7 @@ class DatasourceSelectionWidgetFactory():
         """
         Gets selection widget to be returned to user as selectionWidget attribute.
         :param parent: (QWidget) widget parent to newly instantiated selection widget.
-        :param source: (DsgEnum.int) driver enum to have its widget produced.
+        :param source: (DsgEnums.int) driver enum to have its widget produced.
         :return: (QWidget) selection widget for selected driver.
         """
         sourceDict = {

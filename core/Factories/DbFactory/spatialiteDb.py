@@ -28,6 +28,7 @@ from qgis.PyQt.QtWidgets import QFileDialog
 
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.core.dsgEnums import DsgEnums
 from osgeo import ogr, osr
 from qgis.core import QgsCoordinateReferenceSystem 
 
@@ -39,7 +40,7 @@ class SpatialiteDb(AbstractDb):
         '''
         super(SpatialiteDb,self).__init__()
         self.db = QSqlDatabase('QSQLITE')
-        self.gen = SqlGeneratorFactory().createSqlGenerator(True)
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverPostGIS)
     
     def getDatabaseName(self):
         '''

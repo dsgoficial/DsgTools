@@ -101,7 +101,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         if canLoad:
             progress = ProgressWidget(1,len(dbList),self.tr('Loading databases from server... '), parent = self)
             progress.initBar()
-            gen = self.factory.createSqlGenerator(False)
+            gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
             edvgDbList = []
             for database in dbList:
                 postgisDb = self.dbFactory.createDbFactory('QPSQL')
@@ -123,7 +123,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         Gets server databases
         name: server name
         """
-        gen = self.factory.createSqlGenerator(False)
+        gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         
         (host, port, user, password) = self.getServerConfiguration(name)
         database = 'postgres'

@@ -31,6 +31,7 @@ from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeatur
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 from osgeo import ogr
 from uuid import uuid4
@@ -47,7 +48,7 @@ class PostgisDb(AbstractDb):
         #setting database type to postgresql
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
-        self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.databaseEncoding = 'utf-8'
 
     def getDatabaseParameters(self):
