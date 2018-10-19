@@ -521,28 +521,28 @@ class LayerHandler(QObject):
     
     def filterDangles(self, lyr, searchRadius, feedback = None):
         deleteList = []
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+            multiStepFeedback.setCurrentStep(0)
+        else:
+            multiStepFeedback = None
         spatialIdx, idDict = self.buildSpatialIndexAndIdDict(lyr, feedback=multiStepFeedback)
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         featSize = len(idDict)
         size = 100 / featSize if featSize else 0
         for current, (id, feat) in enumerate(idDict.items()):
-            if feedback:
-                if feedback.isCanceled():
-                    break
-            if id in deleteList:
-                if feedback:
-                    multiStepFeedback.setProgress(size * current)    
-                continue
-            buffer = feat.geometry().buffer(searchRadius, -1)
-            bufferBB = buffer.boundingBox()
-            #gets candidates from spatial index
-            candidateIds = spatialIdx.intersects(bufferBB)
-            for fid in candidateIds:
-                if fid != id and fid not in deleteList and buffer.intersects(feat.geometry()):
-                    deleteList.append(fid)
-            if feedback:
+            if feedback is not None and feedback.isCanceled():
+                break
+            if id not in deleteList:
+                buffer = feat.geometry().buffer(searchRadius, -1)
+                bufferBB = buffer.boundingBox()
+                #gets candidates from spatial index
+                candidateIds = spatialIdx.intersects(bufferBB)
+                for fid in candidateIds:
+                    if fid != id and fid not in deleteList and buffer.intersects(feat.geometry()):
+                        deleteList.append(fid)
+            if feedback is not None:
                 multiStepFeedback.setProgress(size * current)
         
         lyr.startEditing()
@@ -560,12 +560,11 @@ class LayerHandler(QObject):
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
         for current, feat in enumerate(inputLyr.getFeatures()):
-            if feedback:
-                if feedback.isCanceled():
-                    break
+            if feedback is not None and feedback.isCanceled():
+                break
             spatialIdx.insertFeature(feat)
             idDict[feat.id()] = feat
-            if feedback:
+            if feedback is not None:
                 feedback.setProgress(size * current)
         return spatialIdx, idDict
     
@@ -672,3 +671,12 @@ class LayerHandler(QObject):
                 feedback.setProgress(size * current)
         inputLyr.deleteFeatures(deleteList)
         inputLyr.endEditCommand()
+    
+    def getContourLineOutOfThreshold(self, contourLyr, terrainPolygonLyr, threshold, refLyr=None, feedback=None):
+        """
+        todo
+        """
+        #1. Build contour spatial index
+
+        #2. 
+        pass
