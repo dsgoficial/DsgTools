@@ -175,7 +175,7 @@ class ParameterSnapHierarchyType(QgsProcessingParameterType):
         super().__init__()
 
     def create(self, name):
-        return HierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(name) #mudar
+        return ParameterSnapHierarchy(name) #mudar
 
     def metadata(self):
         return {'widget_wrapper': 'DSGTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'} #mudar

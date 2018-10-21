@@ -20,6 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
+from PyQt5.QtCore import QCoreApplication
+from qgis.core import QgsProcessingProvider, QgsApplication
+from qgis.PyQt.QtGui import QIcon
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import \
     DonutHoleExtractorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
@@ -37,7 +41,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometr
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import \
     DissolvePolygonsWithSameAttributesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import \
-    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm
+    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm, ParameterSnapHierarchyType
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
     IdentifyDanglesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
@@ -93,14 +97,13 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglas
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
-from qgis.core import QgsProcessingProvider
-from qgis.PyQt.QtGui import QIcon
 
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     Constructor
     """
+    snapHierarchyParameterName = QCoreApplication.translate('Processing', 'Snap Hierarchy')
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
     
@@ -149,6 +152,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                                             'Activate', True))
         ProcessingConfig.readSettings()
         self.refreshAlgorithms()
+        self.parameterTypeSnapHierarchy = ParameterSnapHierarchyType()
+        QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
         return True
 
     def unload(self):
@@ -156,6 +161,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         Removes setting when the plugin is unloaded.
         """
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
+        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
 
     def isActive(self):
         """
