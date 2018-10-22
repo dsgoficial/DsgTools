@@ -66,7 +66,7 @@ class GenericDbManager(QObject):
         """
         if dbName not in list(self.dbDict.keys()):
             (host, port, user, password) = self.serverAbstractDb.getParamsFromConectedDb()
-            abstractDb = DbFactory().createDbFactory('QPSQL')
+            abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
             abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
         else:
             abstractDb = self.dbDict[dbName]
@@ -78,7 +78,7 @@ class GenericDbManager(QObject):
         If dsgtools_admindb does not exists, instantiateAdminDb calls createAdminDb
         """
         (host, port, user, password) = serverAbstractDb.getParamsFromConectedDb()
-        adminDb = DbFactory().createDbFactory('QPSQL')
+        adminDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
         if not serverAbstractDb.hasAdminDb():
             return self.createAdminDb(serverAbstractDb, adminDb, host, port, user, password)
         adminDb.connectDatabaseWithParameters(host, port, 'dsgtools_admindb', user, password)
