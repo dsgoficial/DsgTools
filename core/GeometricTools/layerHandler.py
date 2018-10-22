@@ -551,7 +551,7 @@ class LayerHandler(QObject):
         lyr.commitChanges()
 
 
-    def buildSpatialIndexAndIdDict(self, inputLyr, feedback = None):
+    def buildSpatialIndexAndIdDict(self, inputLyr, feedback = None, featureRequest=None):
         """
         creates a spatial index for the input layer
         """
@@ -559,13 +559,14 @@ class LayerHandler(QObject):
         idDict = {}
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
-        for current, feat in enumerate(inputLyr.getFeatures()):
+        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
+        for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
-            spatialIdx.insertFeature(feat)
             idDict[feat.id()] = feat
             if feedback is not None:
                 feedback.setProgress(size * current)
+        map(spatialIdx.insertFeature, idDict.values())
         return spatialIdx, idDict
     
     def getFrameOutterBounds(self, frameLayer, algRunner, context, feedback = None):
