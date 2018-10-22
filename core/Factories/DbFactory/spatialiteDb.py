@@ -81,7 +81,7 @@ class SpatialiteDb(AbstractDb):
         while query.next():
             tableName = str(query.value(0))
             layerName = tableName
-            if tableName[-2:] in ["_p", "_l", "_a"]:
+            if tableName[-2:].lower() in ["_p", "_l", "_a"]:
                 classList.append(layerName)
         return classList
     

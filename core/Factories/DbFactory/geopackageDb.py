@@ -80,7 +80,7 @@ class GeopackageDb(SpatialiteDb):
         
     def getTablesFromDatabase(self):
         """
-        Gets all tables from database
+        Gets all tables from database except for configuration tables.
         """
         # reimplementation
         self.checkAndOpenDb()
@@ -137,15 +137,15 @@ class GeopackageDb(SpatialiteDb):
         geomDict = dict()
         while query.next():
             if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-                type = query.value(0)
+                type_ = query.value(0)
             else:
-                type = self.getResolvedGeomType(query.value(0))
+                type_ = self.getResolvedGeomType(query.value(0))
             tableName = query.value(1)
             layerName = '_'.join(tableName.split('_')[1::])
-            if type not in list(geomDict.keys()):
-                geomDict[type] = []
-            if layerName not in geomDict[type]:
-                geomDict[type].append(layerName)
+            if type_ not in list(geomDict.keys()):
+                geomDict[type_] = []
+            if layerName not in geomDict[type_]:
+                geomDict[type_].append(layerName)
         return geomDict
 
     def getGeomDict(self, getCentroids = False):

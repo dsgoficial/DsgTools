@@ -20,10 +20,10 @@
  *                                                                         *
  ***************************************************************************/
 """
-from .sqlGenerator import SqlGenerator
+from .spatialiteSqlGenerator import SpatialiteSqlGenerator
 from ...dsgEnums import DsgEnums
 
-class GeopackageSqlGenerator(SqlGenerator):
+class GeopackageSqlGenerator(SpatialiteSqlGenerator):
 
     def getSrid(self, parameters = dict()):
         """
@@ -53,11 +53,25 @@ class GeopackageSqlGenerator(SqlGenerator):
 
     def getGeomColumnTupleList(self, edgvVersion, showViews = False):
         if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-            sql = """select table_name, column_name, type from gpkg_geometry_columns"""
+            sql = """select table_name, column_name, geometry_type_name from gpkg_geometry_columns"""
         else:
             sql = """select table_name, column_name, geometry_type_name from gpkg_geometry_columns"""
         return sql
 
     def getTablesFromDatabase(self):
-        sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
+        sql = "SELECT tbl_name as name, type FROM sqlite_master WHERE type='table' ORDER BY name"
+        return sql
+
+    def getStructure(self,edgvVersion):
+        sql = ''
+        if edgvVersion == '2.1.3':
+            sql = 'select tbl_name as name, sql from sqlite_master where type = \'table\' and (name like \'cb_%\' or name like \'complexos_%\' or name like \'public_%\')'
+        elif edgvVersion == 'FTer_2a_Ed':
+            sql = 'select tbl_name as name, sql from sqlite_master where type = \'table\' and (name like \'ge_%\' or name like \'pe_%\' or name like \'complexos_%\' or name like \'public_%\')' 
+        elif edgvVersion == '3.0':
+            sql = sql = 'select tbl_name as name, sql from sqlite_master where type = \'table\' and (name like \'edgv_%\' or name like \'complexos_%\' or name like \'public_%\')'
+        return sql
+
+    def getComplexTablesFromDatabase(self):
+        sql = "SELECT tbl_name as name FROM sqlite_master WHERE type='table' AND name LIKE 'complexos_%' ORDER BY name"
         return sql
