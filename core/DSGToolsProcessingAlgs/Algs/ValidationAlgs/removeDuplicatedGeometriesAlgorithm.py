@@ -91,7 +91,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             self.SELECTED,
             context
             )
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
             self.tr(
@@ -111,19 +111,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
                 ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying remaining duplicated geometries in layer {0}...'
-                ).format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifyDuplicatedGeometries(
-            inputLyr,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
-
-        return {self.OUTPUT: inputLyr, self.FLAGS : flagLyr}
+        return {self.OUTPUT: inputLyr}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
