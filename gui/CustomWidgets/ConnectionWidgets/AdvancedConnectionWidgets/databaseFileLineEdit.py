@@ -49,6 +49,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         super(DatabaseFileLineEdit, self).__init__(parent)
         self.setupUi(self)
         self.parent = parent
+        self.driver = DsgEnums.NoDriver
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.serverAbstractDb = None
@@ -113,7 +114,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
                 # in case no datasource was selected
                 self.closeDatabase()
             elif not self.instantiateAbstractDb:
-                self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
+                self.abstractDb = self.abstractDbFactory.createDbFactory(self.driver)
                 self.abstractDb.connectDatabase(conn=currentText)
                 self.abstractDb.checkAndOpenDb()
                 self.dbChanged.emit(self.abstractDb)

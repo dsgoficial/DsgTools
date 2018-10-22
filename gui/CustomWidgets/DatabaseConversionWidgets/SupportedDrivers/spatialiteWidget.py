@@ -45,6 +45,7 @@ class SpatialiteWidget(AbstractSelectionWidget):
         self.source = DsgEnums.SpatiaLite
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
+        self.selectionWidget.driver = DsgEnums.DriverSpatiaLite
         self.selectionWidget.connectionSelectorLineEdit.caption = self.tr('Select a SpatiaLite Database')
         self.selectionWidget.connectionSelectorLineEdit.filter = self.tr('SpatiaLite Database (*.sqlite)')
 

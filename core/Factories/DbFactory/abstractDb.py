@@ -94,8 +94,8 @@ class AbstractDb(QObject):
         self.checkAndOpenDb()
         listaQuantidades = []
         for layer in layers:
-            (table,schema)=self.getTableSchema(layer)
-            if layer.split('_')[-1] in ['p','l','a'] or schema == 'complexos':
+            (schema, className) = self.getTableSchema(layer)
+            if layer.split('_')[-1].lower() in ['p','l','a'] or schema == 'complexos':
                 sql = self.gen.getElementCountFromLayer(layer)
                 query = QSqlQuery(sql,self.db)
                 query.next()
