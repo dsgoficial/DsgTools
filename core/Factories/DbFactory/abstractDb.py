@@ -149,6 +149,7 @@ class AbstractDb(QObject):
         srid = -1
         while query.next():
             srid = query.value(0)
+            break
         return srid
 
     def listWithElementsFromDatabase(self, classList):
