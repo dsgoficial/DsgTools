@@ -36,6 +36,7 @@ from .....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFacto
 from .....core.Factories.DbFactory.abstractDb import AbstractDb
 from .....core.Factories.DbFactory.dbFactory import DbFactory
 from ....CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreServerWidget.ui'))
@@ -104,7 +105,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
             gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
             edvgDbList = []
             for database in dbList:
-                postgisDb = self.dbFactory.createDbFactory('QPSQL')
+                postgisDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
                 postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
                 if not postgisDb.db.open():
                     qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+postgisDb.db.lastError().databaseText(), level=Qgis.Critical)
@@ -127,7 +128,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         
         (host, port, user, password) = self.getServerConfiguration(name)
         database = 'postgres'
-        postgisDb = self.dbFactory.createDbFactory('QPSQL')
+        postgisDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
         if not postgisDb.db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", Qgis.Critical)
@@ -169,7 +170,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         self.clearWidgets.emit()
         if self.serversCombo.currentIndex() != 0:
-            self.abstractDb = self.dbFactory.createDbFactory('QPSQL')
+            self.abstractDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             if not self.abstractDb:
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
                 return

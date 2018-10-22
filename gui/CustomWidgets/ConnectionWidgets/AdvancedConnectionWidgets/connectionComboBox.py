@@ -32,6 +32,7 @@ from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import D
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
@@ -64,7 +65,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         else:
             self.connectionSelectorComboBox.setEnabled(True)
             (host, port, user, password) = self.viewServers.getDefaultConnectionParameters()
-            serverAbstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+            serverAbstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
             self.setServerDb(serverAbstractDb)
     
@@ -130,7 +131,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 self.closeDatabase()
             if self.serverAbstractDb is not None and idx > 0:
                 if not self.instantiateAbstractDb:
-                    self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+                    self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()
                     dbName = self.connectionSelectorComboBox.currentText().split(' (')[0]
                     self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)

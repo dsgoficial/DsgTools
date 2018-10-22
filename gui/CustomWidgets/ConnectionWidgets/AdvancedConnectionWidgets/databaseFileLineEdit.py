@@ -31,6 +31,7 @@ from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'databaseFileLineEdit.ui'))
@@ -112,7 +113,7 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
                 # in case no datasource was selected
                 self.closeDatabase()
             elif not self.instantiateAbstractDb:
-                self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+                self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
                 self.abstractDb.connectDatabase(conn=currentText)
                 self.abstractDb.checkAndOpenDb()
                 self.dbChanged.emit(self.abstractDb)

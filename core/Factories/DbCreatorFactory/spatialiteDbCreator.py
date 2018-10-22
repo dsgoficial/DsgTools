@@ -27,6 +27,7 @@ from os.path import expanduser
 from ..DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbCreatorFactory.dbCreator import DbCreator
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 class SpatialiteDbCreator(DbCreator):
     
@@ -35,7 +36,7 @@ class SpatialiteDbCreator(DbCreator):
         self.parentWidget = parentWidget
     
     def instantiateNewDb(self, dbPath):
-        newDb = self.dbFactory.createDbFactory('QSQLITE')
+        newDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
         newDb.connectDatabase(dbPath)
         return newDb
     

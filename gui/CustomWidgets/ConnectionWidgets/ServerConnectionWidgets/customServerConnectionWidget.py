@@ -30,6 +30,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from .....core.Utils.utils import Utils
 from .....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from .....core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -77,7 +78,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             for dbName in dbList:
                 if dbName not in list(self.selectedDbsDict.keys()):
                     if host and port and user:
-                        localDb = self.dbFactory.createDbFactory('QPSQL')
+                        localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
                         localDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                         self.selectedDbsDict[dbName] = localDb
                         #do get dicts
@@ -114,7 +115,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         if type == 'added':
             for dbName in dbList:
                 if dbName not in list(self.selectedDbsDict.keys()):
-                    localDb = self.dbFactory.createDbFactory('QSQLITE')
+                    localDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
                     localDb.connectDatabase(conn = self.spatialiteDict[dbName])
                     self.selectedDbsDict[dbName] = localDb
                     #do get dicts
@@ -190,7 +191,7 @@ class CustomServerConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         try:
             fileNameList = self.customFileSelector.fileNameList[0] if self.customFileSelector.fileNameList else []
             for dbPath in fileNameList:
-                auxAbstractDb = self.dbFactory.createDbFactory('QSQLITE')
+                auxAbstractDb = self.dbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
                 dbName = os.path.basename(dbPath).split('.')[0]
                 self.path = os.path.dirname(dbPath)
                 auxAbstractDb.connectDatabase(conn = dbPath)

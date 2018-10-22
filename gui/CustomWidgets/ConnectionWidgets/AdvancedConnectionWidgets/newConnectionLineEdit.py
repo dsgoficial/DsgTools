@@ -30,6 +30,7 @@ from qgis.core import Qgis, QgsMessageLog
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 import os
 
@@ -140,7 +141,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         host, port, user, password = self.viewServers.getDefaultConnectionParameters()
         database = self.currentDb()
         # get a PostGIS database instance to check if database exists
-        abstractDb = DbFactory().createDbFactory('QPSQL')
+        abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
         return abstractDb.testCredentials(host, port, database, user, password)
 
     def loadDatabase(self, currentText):

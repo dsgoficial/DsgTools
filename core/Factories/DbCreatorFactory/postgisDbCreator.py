@@ -23,6 +23,7 @@
 
 from .dbCreator import DbCreator
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 class PostgisDbCreator(DbCreator):
     
@@ -35,7 +36,7 @@ class PostgisDbCreator(DbCreator):
         port = self.abstractDb.db.port()
         user = self.abstractDb.db.userName()
         password = self.abstractDb.db.password()
-        newDb = self.dbFactory.createDbFactory('QPSQL')
+        newDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         newDb.connectDatabaseWithParameters(host, port, dbName, user, password)
         return newDb
     
