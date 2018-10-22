@@ -23,12 +23,13 @@
 
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.core import QgsCoordinateReferenceSystem 
 
 from .spatialiteDb import SpatialiteDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from osgeo import ogr, osr
-from qgis.core import QgsCoordinateReferenceSystem 
+from DsgTools.core.dsgEnums import DsgEnums
 
+from osgeo import ogr, osr
 import os
 
 class GeopackageDb(SpatialiteDb):
@@ -41,6 +42,7 @@ class GeopackageDb(SpatialiteDb):
         Constructor.
         """
         super(GeopackageDb, self).__init__()
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverGeopackage)
     
     def getDatabaseName(self):
         """

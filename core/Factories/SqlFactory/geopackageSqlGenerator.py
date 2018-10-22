@@ -26,34 +26,38 @@ from ...dsgEnums import DsgEnums
 class GeopackageSqlGenerator(SqlGenerator):
 
     def getSrid(self, parameters = dict()):
-        sql = "SELECT srid from geometry_columns"
+        """
+        Gets SRID for selected database (it is assumed all tables have the same SRID).
+        """
+        sql = "SELECT srs_id FROM gpkg_geometry_columns"
         return sql
 
     def getGeomTablesFromGeometryColumns(self, edgvVersion):
-        if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-            sql = 'select srid, f_geometry_column, type, f_table_name from geometry_columns'
-        else:
-            sql = 'select srid, f_geometry_column, geometry_type, f_table_name from geometry_columns'
+        """
+        Gets a dict for tables and their geometry columns.
+        """
+        sql = 'select srs_id, column_name, geometry_type_name, table_name from gpkg_geometry_columns'
         return sql
 
     def getGeomByPrimitive(self, edgvVersion):
-        if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-            sql = """select type, f_table_name from geometry_columns"""
-        else:
-            sql = """select geometry_type, f_table_name from geometry_columns"""
+        sql = """select geometry_type_name, table_name from gpkg_geometry_columns"""
         return sql
 
     def getGeomColumnDict(self):
-        sql = """select f_geometry_column, f_table_name from geometry_columns"""
+        sql = """select column_name, table_name from gpkg_geometry_columns"""
         return sql
 
     def getFullTablesName(self, name):
-        sql = "SELECT f_table_name as name FROM geometry_columns WHERE f_table_name LIKE '%{0}%' ORDER BY name".format(name)
+        sql = "SELECT table_name as name FROM gpkg_geometry_columns WHERE table_name LIKE '%{0}%' ORDER BY name".format(name)
         return sql
 
     def getGeomColumnTupleList(self, edgvVersion, showViews = False):
         if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-            sql = """select f_table_name, f_geometry_column, type from geometry_columns"""
+            sql = """select table_name, column_name, type from gpkg_geometry_columns"""
         else:
-            sql = """select f_table_name, f_geometry_column, geometry_type from geometry_columns"""
+            sql = """select table_name, column_name, geometry_type_name from gpkg_geometry_columns"""
+        return sql
+
+    def getTablesFromDatabase(self):
+        sql = "SELECT name FROM sqlite_master WHERE type='table' ORDER BY name"
         return sql

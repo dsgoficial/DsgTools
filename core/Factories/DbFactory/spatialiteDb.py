@@ -40,7 +40,7 @@ class SpatialiteDb(AbstractDb):
         '''
         super(SpatialiteDb,self).__init__()
         self.db = QSqlDatabase('QSQLITE')
-        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverPostGIS)
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverSpatiaLite)
     
     def getDatabaseName(self):
         '''
