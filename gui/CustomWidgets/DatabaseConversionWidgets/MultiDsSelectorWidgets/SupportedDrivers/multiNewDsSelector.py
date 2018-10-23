@@ -45,6 +45,8 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         self.crs = None
         self.numberOfDs = 0
         self.fillEdgvVersions()
+        # to keep parallel with the other drivers
+        self.datasources = dict()
 
     def fillEdgvVersions(self):
         """
@@ -60,7 +62,7 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         ]
         self.edgvComboBox.addItems(versions)
 
-    def datasources(self):
+    def amount(self):
         """
         Gets the amount of datasources to be created.
         :return: (int) amount of datasources to be created.
@@ -97,10 +99,13 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         Validates widget's contents and updates its attributes, if valid.
         :return: (int) execution's code.
         """
+        # to keep parallel with the other drivers - clear previous info if Ok is pressed
+        self.datasources = dict()
         if self.isValid():
-            self.edgv = self.edgvVersion()
-            self.crs = self.getCrs()
-            self.numberOfDs = self.datasources()
+            for i in range(self.amount()):
+                # add an entry for each desired datasource
+                # in here, we may change for an automatic datasource name to be passed on as dict key
+                self.datasources[i] = { 'edgv' : self.edgvVersion(), 'crs' : self.getCrs() }
             self.close()
             return 0
         QMessageBox.warning(self, self.tr('Warning!'), self.validate())
@@ -124,7 +129,7 @@ class MultiNewDsSelector(QDialog, FORM_CLASS):
         :return: (str) invalidation reason.
         """
         # check amount of servers selection
-        if self.datasources() == 0:
+        if self.amount() == 0:
             return self.tr('Select the amount of datasources to be created.')
         # check if a valid EDGV version was selected
         if not self.edgvVersion():
