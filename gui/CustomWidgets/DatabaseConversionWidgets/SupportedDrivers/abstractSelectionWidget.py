@@ -92,10 +92,14 @@ class AbstractSelectionWidget(QObject):
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
-        :param newDatasource: (object) new datasource to be set.
+        :param newDatasource: (dict) new datasource info to be set.
         """
-        # to be reimplemented
-        pass
+        # implementation for new datasources, but may be reimplemented into ALL children classes
+        # for new datasources, entry is alwasy { int : { 'edgv' : (str)edgv, 'crs' : (QgsCoordinateReferenceSystem)crs } }
+        edgv = list(newDatasource.values())[0]['edgv']
+        crs = list(newDatasource.values())[0]['crs']
+        self.selectionWidget.edgvComboBox.setCurrentText(edgv)
+        self.selectionWidget.mQgsProjectionSelectionWidget.setCrs(crs)
 
     def getDatasource(self):
         """

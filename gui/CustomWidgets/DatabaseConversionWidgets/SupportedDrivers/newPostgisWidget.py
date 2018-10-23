@@ -74,21 +74,6 @@ class NewPostgisWidget(AbstractSelectionWidget):
         """
         return self.selectionWidget.edgvVersion()
 
-    def setDatasource(self, newDatasource):
-        """
-        Sets the datasource selected on current widget.
-        :param newDatasource: (dict) { db : (host, port, username, password) }.
-        """
-        if self.selectionWidget:
-            for db, (host, port, username, password) in newDatasource.items():
-                # set selected host as container's default
-                self.selectionWidget.viewServers.\
-                    setDefaultConnectionParameters(host=host, port=port, user=username, password=password)
-                # sel selected db
-                self.selectionWidget.dsLineEdit.setText(db)
-                # there should only one entry
-                break
-
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.

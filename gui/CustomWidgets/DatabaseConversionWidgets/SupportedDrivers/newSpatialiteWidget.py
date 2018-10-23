@@ -80,14 +80,6 @@ class NewSpatialiteWidget(AbstractSelectionWidget):
         """
         return self.selectionWidget.edgvVersion()
 
-    def setDatasource(self, newDatasource):
-        """
-        Sets the datasource selected on current widget.
-        :param newDatasource: (dict) containing datasource name and its path.
-        """
-        if newDatasource:
-            self.selectionWidget.dsLineEdit.setText((list(newDatasource.values())[0]))
-
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
