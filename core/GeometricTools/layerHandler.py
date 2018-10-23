@@ -292,7 +292,7 @@ class LayerHandler(QObject):
             innerFeedback.setCurrentStep(2)
             self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, feedback=innerFeedback)
     
-    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = None, coordinateTransformer = None, keepFeatures = False, feedback = None):
+    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict=None, coordinateTransformer=None, keepFeatures=False, feedback=None):
         """
         Updates lyr using inputDict
         """
@@ -560,14 +560,24 @@ class LayerHandler(QObject):
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
         iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        for current, feat in enumerate(iterator):
-            if feedback is not None and feedback.isCanceled():
-                break
-            idDict[feat.id()] = feat
-            if feedback is not None:
-                feedback.setProgress(size * current)
-        map(spatialIdx.insertFeature, idDict.values())
+        addFeatureAlias = lambda x : self.addFeatureToSpatialIndex(
+            current=x[0],
+            feat=x[1],
+            spatialIdx=spatialIdx,
+            idDict=idDict,
+            size=size,
+            feedback=feedback
+        )
+        list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict
+    
+    def addFeatureToSpatialIndex(self, current, feat, spatialIdx, idDict, size, feedback):
+        if feedback is not None and feedback.isCanceled():
+            return
+        idDict[feat.id()] = feat
+        spatialIdx.insertFeature(feat)
+        if feedback is not None:
+            feedback.setProgress(size * current)
     
     def getFrameOutterBounds(self, frameLayer, algRunner, context, feedback = None):
         """
