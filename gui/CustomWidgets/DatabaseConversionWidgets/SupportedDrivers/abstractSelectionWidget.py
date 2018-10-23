@@ -147,7 +147,18 @@ class AbstractSelectionWidget(QObject):
         """
         abstracDb = self.getDatasource()
         if abstracDb:
-            return abstracDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = [])
+            return abstracDb.listClassesWithElementsFromDatabase(useComplex=False, primitiveFilter=[])
+        return {}
+
+    def getComplexDict(self):
+        """
+        Gets the dict of all complex layers present in the database.
+        :return: (dict) dictionaty for every (filled) complex layer contained by the selected datasource and its feature count.
+        """
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            complexes = abstracDb.listComplexClassesFromDatabase()
+            return abstracDb.listWithElementsFromDatabase(complexes)
         return {}
 
     def validate(self):
