@@ -147,7 +147,7 @@ class AbstractSelectionWidget(QObject):
         """
         abstracDb = self.getDatasource()
         if abstracDb:
-            return abstracDb.listClassesWithElementsFromDatabase(useComplex = True, primitiveFilter = [])
+            return abstracDb.listClassesWithElementsFromDatabase(useComplex = False, primitiveFilter = [])
         return {}
 
     def validate(self):
