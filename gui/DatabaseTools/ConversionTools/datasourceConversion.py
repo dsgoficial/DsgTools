@@ -61,6 +61,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
         # set table to its initial state
         self.resetTable(enabled=True)
+        # set pages titles
+        self.page(0).setTitle(self.tr('Input Datasources'))
+        self.page(1).setTitle(self.tr('Output Datasources'))
+        self.page(2).setTitle(self.tr('Conversion Map and Summary'))
+        # set policy to make cell size adjust to content
+        self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         
     def connectToolSignals(self):
         """
@@ -150,8 +156,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # if a signal issue comes along, maybe cell shoul've been systematically removed
         # and signals disconnect for each row along. So that's where shit might be re-coded (=
         self.tableWidget.setRowCount(0)
-        # set policy to make cell size adjust to content
-        self.tableWidget.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustToContents)
         # map header to its enum
         headerDict = {
             DatasourceConversion.InDs : self.tr("Input"),
