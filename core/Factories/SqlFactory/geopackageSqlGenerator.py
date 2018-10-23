@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2014-11-08
+        begin                : 2018-10-23
         git sha              : $Format:%H$
-        copyright            : (C) 2014 by Luiz Andrade - Cartographic Engineer @ Brazilian Army
-        email                : luiz.claudio@dsg.eb.mil.br
+        copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
+        email                : esperidiao.joao@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************
@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 from .spatialiteSqlGenerator import SpatialiteSqlGenerator
-from ...dsgEnums import DsgEnums
+from DsgTools.core.dsgEnums import DsgEnums
 
 class GeopackageSqlGenerator(SpatialiteSqlGenerator):
 

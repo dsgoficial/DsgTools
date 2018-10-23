@@ -5,10 +5,10 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2015-10-21
+        begin                : 2018-10-23
         git sha              : $Format:%H$
-        copyright            : (C) 2015 by Philipe Borba - Cartographic Engineer @ Brazilian Army
-        email                : borba.philipe@eb.mil.br
+        copyright            : (C) 2018 by João P. Esperidião - Cartographic Engineer @ Brazilian Army
+        email                : esperidiao.joao@eb.mil.br
  ***************************************************************************/
 
 /***************************************************************************

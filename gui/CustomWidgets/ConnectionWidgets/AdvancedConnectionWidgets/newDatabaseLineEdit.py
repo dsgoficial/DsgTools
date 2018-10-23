@@ -52,6 +52,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         self.caption = ''
         self.filter = ''
         self.fillEdgvVersions()
+        self.connectSignals()
         self.reset()
 
     def connectSignals(self):
@@ -114,7 +115,6 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         self.dsLineEdit.setText(self.tr("New Database"))
         self.edgvComboBox.setCurrentIndex(0)
         # self.mQgsProjectionSelectionWidget.setCrs(0)
-        self.connectSignals()
 
     def setAbstractDb(self):
         """
