@@ -104,13 +104,13 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         return self.connectionWidget.abstractDb if self.connectionWidget else None
 
-    def setDatasource(self, connectionInfo):
+    def setDatasource(self, newDatasource):
         """
         Sets datasource to selection widget.
-        :param connectionInfo: (object) varies according to driver.
+        :param newDatasource: (object) varies according to driver.
         """
         if self.connectionWidget:
-            self.connectionWidget.setDatasource(connectionInfo)
+            self.connectionWidget.setDatasource(newDatasource)
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
