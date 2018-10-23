@@ -173,8 +173,8 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         """
         # check a valid server name
         # check if datasource is a valid name and if it already exists into selected server
-        if not self.currentDb():
-            return self.tr('Invalid datasource.')
+        if not self.currentDb() or " " in self.currentDb():
+            return self.tr('Invalid datasource (is there a blank space on it?).')
         else:
             # check if the connection is a valid connection
             if not self.serverIsValid():
