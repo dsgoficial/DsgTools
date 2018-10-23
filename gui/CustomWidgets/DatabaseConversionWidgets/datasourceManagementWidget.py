@@ -138,7 +138,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             # in case a valid driver is selected, add its widget to the interface
             source = self.sourceNameDict[currentDbSource]
             if source != DsgEnums.NoDriver:
-                w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
+                w = DatasourceContainerWidget(source=source, isInput=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
                 # connect datasource change signal to this class datasource signal change

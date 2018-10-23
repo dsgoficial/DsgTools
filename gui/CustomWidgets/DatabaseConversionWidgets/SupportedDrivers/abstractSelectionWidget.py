@@ -125,6 +125,30 @@ class AbstractSelectionWidget(QObject):
         abstracDb = self.getDatasource()
         return LayerLoaderFactory().makeLoader(iface=iface, abstractDb=abstracDb) if abstracDb else None
 
+    def getLayerByName(self, layer):
+        """
+        Gets the vector layer for a given layer.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer.
+        """
+        # may be reimplemented into children class, if needed
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            layerLoader = self.getLayerLoader()
+            return layerLoader.getLayerByName(layer=layer)
+
+    def getComplexLayerByName(self, layer):
+        """
+        Gets the vector layer for a given complex layer.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer.
+        """
+        # may be reimplemented into children class, if needed
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            layerLoader = self.getLayerLoader()
+            return layerLoader.getComplexLayerByName(layer=layer)
+
     def getLayersCrs(self):
         """
         Gets the CRS from all registered layers.
