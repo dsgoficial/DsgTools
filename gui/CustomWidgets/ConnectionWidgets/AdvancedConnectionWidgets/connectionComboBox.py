@@ -204,5 +204,5 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         Exhibits information about selected database.
         """
-        DatasourceInfoTable(contents=[]).exec_()
-        print(self.isValid())
+        contents = self.abstractDb.databaseInfo() if self.abstractDb else []
+        DatasourceInfoTable(contents=contents).exec_()
