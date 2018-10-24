@@ -131,7 +131,7 @@
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="SelectFileWidget" name="customFileSelector" native="true">
+        <widget class="SelectFileWidget" name="spatialiteCustomFileSelector" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -178,21 +178,84 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Geopackage</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="SelectFileWidget" name="gpkgCustomFileSelector" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QComboBox" name="gpkgEdgvComboFilter">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Load Database Model EDGV Version 2.1.3</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Load Database Model EDGV Version 3.0</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Load Database Model EDGV Version FTer_2a_Ed</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Load Other Database Models</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="CustomSelector" name="gpkgCustomSelector" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ExploreServerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SelectFileWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ExploreServerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
