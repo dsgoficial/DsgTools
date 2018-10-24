@@ -219,3 +219,10 @@ class GeopackageDb(SpatialiteDb):
                     13:'CURVE',
                     14:'SURFACE'}
         return geomDict[geometryType]
+
+    def getType(self):
+        """
+        Gets the driver name.
+        :return: (str) driver name.
+        """
+        return 'GPKG'

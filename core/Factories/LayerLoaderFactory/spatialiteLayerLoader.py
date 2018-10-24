@@ -38,7 +38,7 @@ from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressW
 class SpatialiteLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
-        super(self.__class__, self).__init__(iface, abstractDb, loadCentroids)
+        super(SpatialiteLayerLoader, self).__init__(iface, abstractDb, loadCentroids)
         
         self.provider = 'spatialite'
         
