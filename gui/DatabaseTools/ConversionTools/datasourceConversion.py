@@ -674,6 +674,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['spatialFanOut'] = str(spatialFanOut.isChecked())
             # parameter indicating whether it is a new datasource
             rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
+            if rowMapping['createDb']:
+                # if a new datasource will be created, EDGV version and CRS will be needed
+                rowMapping['crs'] = containerWidget.connectionWidget.selectionWidget.edgvVersion()
+                rowMapping['edgv'] = containerWidget.connectionWidget.selectionWidget.authId()
             rowMapping['conversionMode'] = conversionMode.currentText()
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
             # more than once, map it all to the same dict entry and control layer/feature flux through filter entry
