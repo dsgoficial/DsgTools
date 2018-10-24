@@ -673,8 +673,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['filter'] = inputFilteredLayers
             rowMapping['spatialFanOut'] = str(spatialFanOut.isChecked())
             # parameter indicating whether it is a new datasource
-            rowMapping['createDb'] = str(self.tr('new') in outDs.currentText())
-            if rowMapping['createDb']:
+            rowMapping['createDs'] = str(self.tr('new') in outDs.currentText())
+            if rowMapping['createDs']:
                 # if a new datasource will be created, EDGV version and CRS will be needed
                 rowMapping['crs'] = containerWidget.connectionWidget.selectionWidget.edgvVersion()
                 rowMapping['edgv'] = containerWidget.connectionWidget.selectionWidget.authId()
