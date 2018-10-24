@@ -25,13 +25,13 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
-# from qgis.utils import iface
 from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
 from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceInfoTable import DatasourceInfoTable
 from DsgTools.core.dsgEnums import DsgEnums
 
 import os
@@ -192,16 +192,17 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         Validates selection.
         :return: (bool) validation status.
         """
-        # return self.validate() == ''
-        msg = self.validate()
+        return self.validate() == ''
+        # msg = self.validate()
         # if msg:
         #     # if an invalidation reason was given, warn user and nothing else.
         #     iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-        return msg == ''
+        # return msg == ''
 
     @pyqtSlot(bool)
     def on_infoPushButton_clicked(self):
         """
         Exhibits information about selected database.
         """
+        DatasourceInfoTable(contents=[]).exec_()
         print(self.isValid())
