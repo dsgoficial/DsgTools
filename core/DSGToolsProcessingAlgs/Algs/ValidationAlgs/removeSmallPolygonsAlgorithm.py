@@ -71,12 +71,6 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
-            )
-        )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
                 self.OUTPUT,
@@ -99,7 +93,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
                 )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
             self.tr(
@@ -120,20 +114,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
                 ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying remaining small polygons in layer {0}...'
-                ).format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallPolygons(
-            inputLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
-
-        return {self.OUTPUT: inputLyr, self.FLAGS : flagLyr}
+        return {self.OUTPUT: inputLyr}
 
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         """

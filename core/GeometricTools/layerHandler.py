@@ -554,6 +554,9 @@ class LayerHandler(QObject):
     def buildSpatialIndexAndIdDict(self, inputLyr, feedback = None, featureRequest=None):
         """
         creates a spatial index for the input layer
+        :param inputLyr: (QgsVectorLayer) input layer;
+        :param feedback: (QgsProcessingFeedback) processing feedback;
+        :param featureRequest: (QgsFeatureRequest) optional feature request;
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
@@ -572,6 +575,16 @@ class LayerHandler(QObject):
         return spatialIdx, idDict
     
     def addFeatureToSpatialIndex(self, current, feat, spatialIdx, idDict, size, feedback):
+        """
+        Adds feature to spatial index. Used along side with a python map operator
+        to improve performance.
+        :param current : (int) current index
+        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param size: (int) size to be used to update feedback
+        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        """
         if feedback is not None and feedback.isCanceled():
             return
         idDict[feat.id()] = feat
