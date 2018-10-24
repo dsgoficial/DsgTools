@@ -99,7 +99,7 @@ class DatabaseGuiManager(QObject):
         :param isBatchCreation: (bool) indicates whether creation is in batch or not.
         """
         try:
-            self.stackButton.setDefaultAction(self.toolbar.sender())
+            self.stackButton.setDefaultAction(self.sender())
         except:
             pass
         if not isBatchCreation:
