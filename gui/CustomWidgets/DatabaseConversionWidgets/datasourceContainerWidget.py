@@ -405,22 +405,23 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         spatialLayout = self.filterDlg.vLayout.itemAt(0).widget().layout()
         complexLayout = self.filterDlg.vLayout.itemAt(1).widget().layout() if self.filterDlg.vLayout.itemAt(1) else None
         # retrieve spatial and complex layers filter info
-        for row in range(spatialLayout.rowCount()):
-            checkBox = spatialLayout.itemAtPosition(row, 0).widget()
-            filterExpression = spatialLayout.itemAtPosition(row, 1).widget()
-            if checkBox.isChecked():
-                # filters will be applicable only if layer is supposed to be converted 
-                # label format is: layer_name (feat_count feature's')
-                # for some reason the char '&' got into the labels... i honestly don't know how/why
-                label = checkBox.text().replace('&', '')
-                featCount = label.split(' (')[1].split(' ')[0]
-                layerName = label.split(' (')[0]
-                # fill layer selection filter info
-                self.filters['layer'].update({ layerName : int(featCount) })
-                expression = filterExpression.currentText()
-                if expression:
-                    # fill layer features filter expression info only if an expression is found
-                    self.filters['layer_filter'].update({ layerName : expression })
+        if spatialLayout.rowCount() > 1:
+            for row in range(spatialLayout.rowCount()):
+                checkBox = spatialLayout.itemAtPosition(row, 0).widget()
+                filterExpression = spatialLayout.itemAtPosition(row, 1).widget()
+                if checkBox.isChecked():
+                    # filters will be applicable only if layer is supposed to be converted 
+                    # label format is: layer_name (feat_count feature's')
+                    # for some reason the char '&' got into the labels... i honestly don't know how/why
+                    label = checkBox.text().replace('&', '')
+                    featCount = label.split(' (')[1].split(' ')[0]
+                    layerName = label.split(' (')[0]
+                    # fill layer selection filter info
+                    self.filters['layer'].update({ layerName : int(featCount) })
+                    expression = filterExpression.currentText()
+                    if expression:
+                        # fill layer features filter expression info only if an expression is found
+                        self.filters['layer_filter'].update({ layerName : expression })
         # retrieve complex layers filter info
         if complexLayout is not None:
             for row in range(complexLayout.rowCount()):

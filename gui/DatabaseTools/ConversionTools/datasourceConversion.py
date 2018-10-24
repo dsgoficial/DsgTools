@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
 from qgis.core import Qgis
+from qgis.gui import QgsCollapsibleGroupBox
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 
@@ -540,6 +541,65 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 w.setEnabled(False)
                 filterDlg.outHLayout.addWidget(w)
 
+    def setupGroupBoxFilters(self, container, filterDlg, isSpatial):
+        """
+        Sets up the part the complex layers' GUI part.
+        :param container: (DatasourceContainerWidget) datasource container to have its filters set up.
+        :para filterDlg: (QDialog) filter dialog on filters summary will be setup.
+        :param isSpatial: (bool) indicates whether groupbox is spatial (or complex).
+        """
+        filterDict = container.filters
+        if isSpatial:
+            layers = container.connectionWidget.getLayersDict()
+            title = self.tr('Spatial Layers')
+            getLayerAlias = lambda layerName : container.connectionWidget.getLayerByName(layerName)
+            # if it's spatial, CRS will be requested
+            crsDict = container.connectionWidget.getLayersCrs()
+        else:
+            layers = container.connectionWidget.getComplexDict()
+            title = self.tr('Complex Layers')
+            getLayerAlias = lambda layerName : container.connectionWidget.getComplexLayerByName(layerName)
+        # spatial box should always be exposed whilst complexes are only when layers are found
+        if isSpatial or layers:
+            # create groupbox and add it to the vertical layout
+            gb = QgsCollapsibleGroupBox()
+            gb.setTitle(title)
+            filterDlg.vLayout.addWidget(gb)
+            # add a grid layout to add the widgets
+            layout = QtWidgets.QGridLayout(gb)
+            # gb.addLayout(layout)
+            # initiate row counter
+            row = 0
+            for layerName, featCount in layers.items():
+                if layerName:
+                    # initiate widgets
+                    checkbox = QtWidgets.QCheckBox()
+                    filterExpression = QtWidgets.QLineEdit()
+                    # since it is only for reading and confirmation purposes, widgets are all disabled
+                    checkbox.setEnabled(False)
+                    filterExpression.setEnabled(False)
+                    # add a new checkbox widget to layout for each layer found
+                    msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
+                    checkbox.setText(msg.format(layerName, featCount))
+                    if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
+                        # in case no filters are added or if layer is among the filtered ones, set it checked
+                        checkbox.setChecked(True)
+                    # fill up an edit line containing filtering expression, if any
+                    if layerName in filterDict['layer_filter']:
+                        filterExpression.setText(filterDict['layer_filter'][layerName])
+                    # add widgets to the layouts
+                    layout.addWidget(checkbox, row, 0)
+                    layout.addWidget(filterExpression, row, 1)
+                    # CRS is only necessary for spatial layers
+                    if isSpatial:
+                        crs = QtWidgets.QLineEdit()
+                        crs.setEnabled(False)
+                        # fill crs
+                        if layerName in crsDict:
+                            crs.setText(crsDict[layerName])
+                        layout.addWidget(crs, row, 2)
+                    row += 1
+
     def prepareRowFilterDialog(self, row):
         """
         Prepares filter dialog for current dataset in a given row.
@@ -559,46 +619,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                                      inWidget.connectionWidget.getDatasourceConnectionName())
         # set dialog title to current datasource path
         filterDlg.setWindowTitle(title)
-        # get layers dict
-        layers = inWidget.connectionWidget.getLayersDict()
-        # get layouts for checkboxes and filter expression widgets
-        checkBoxLayout, filterExpressionLayout, crsLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
-        filterDlg.hLayout.addLayout(checkBoxLayout)
-        filterDlg.hLayout.addLayout(filterExpressionLayout)
-        filterDlg.hLayout.addLayout(crsLayout)
-        # # initiate a widget creation control dict
-        # widgets = dict()
+        # setup spatial layers filters
+        self.setupGroupBoxFilters(container=inWidget, filterDlg=filterDlg, isSpatial=True)
+        # setup complex layers filters
+        self.setupGroupBoxFilters(container=inWidget, filterDlg=filterDlg, isSpatial=False)
         # retrieve filter dict
         filterDict = inWidget.filters
-        # get dict with layers crs
-        crsDict = inWidget.connectionWidget.getLayersCrs()
-        for layerName, featCount in layers.items():
-            if layerName:
-                # initiate dict and widgets
-                # widgets[layerName] = dict()
-                checkbox = QtWidgets.QCheckBox()
-                filterExpression = QtWidgets.QLineEdit()
-                crs = QtWidgets.QLineEdit()
-                # since it is only for reading and confirmation purposes, widgets are all disabled
-                checkbox.setEnabled(False)
-                filterExpression.setEnabled(False)
-                crs.setEnabled(False)
-                # add a new checkbox widget to layout for each layer found
-                msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-                checkbox.setText(msg.format(layerName, featCount))
-                if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
-                    # in case no filters are added or if layer is among the filtered ones, set it checked
-                    checkbox.setChecked(True)
-                # fill up an edit line containing filtering expression, if any
-                if layerName in filterDict['layer_filter']:
-                    filterExpression.setText(filterDict['layer_filter'][layerName])
-                # fill crs
-                if layerName in crsDict:
-                    crs.setText(crsDict[layerName])
-                # add widgets to their layouts
-                checkBoxLayout.addWidget(checkbox)
-                filterExpressionLayout.addWidget(filterExpression)
-                crsLayout.addWidget(crs)
         # setup spatial filtering settings
         self.setupSpatialSummaryGui(spatialFilterDict=filterDict['spatial_filter'], filterDlg=filterDlg)
         # connect filter pushbutton signal to newly created dialog
