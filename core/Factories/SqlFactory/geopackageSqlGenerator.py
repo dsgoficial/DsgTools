@@ -75,3 +75,14 @@ class GeopackageSqlGenerator(SpatialiteSqlGenerator):
     def getComplexTablesFromDatabase(self):
         sql = "SELECT tbl_name as name FROM sqlite_master WHERE type='table' AND name LIKE 'complexos_%' ORDER BY name"
         return sql
+
+    def databaseInfo(self):
+        """
+        Gets database information to be displayed.
+        :return: (str) SQL to executed.
+        """
+        sql = """
+            SELECT table_name, column_name, geometry_type_name, srs_id
+                FROM gpkg_geometry_columns
+                ORDER BY table_name ASC"""
+        return sql

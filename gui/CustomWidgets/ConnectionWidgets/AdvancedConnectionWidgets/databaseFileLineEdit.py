@@ -27,11 +27,11 @@ import os
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 from qgis.core import QgsMessageLog, Qgis
-# from qgis.utils import iface
 
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceInfoTable import DatasourceInfoTable
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'databaseFileLineEdit.ui'))
@@ -150,16 +150,12 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         Validates selection.
         :return: (bool) validation status.
         """
-        # return self.validate() == ''
-        msg = self.validate()
-        # if msg:
-        #     # if an invalidation reason was given, warn user and nothing else.
-        #     iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-        return msg == ''
+        return self.validate() == ''
 
     @pyqtSlot(bool)
     def on_infoPushButton_clicked(self):
         """
         Exhibits information about selected database.
         """
-        print(self.isValid())
+        contents = self.abstractDb.databaseInfo() if self.abstractDb else []
+        DatasourceInfoTable(contents=contents).exec_()
