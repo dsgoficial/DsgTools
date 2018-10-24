@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import pyqtSlot, Qt
 
 import os
 
@@ -46,13 +46,22 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
             # if contents were given on initialization, fill table
             self.setTable(contents=contents)
 
+    @pyqtSlot(int)
     def orderByColumn(self, col):
         """
         Displays information as ordered by given column.
         :param col: (int) column index to be used as reference.
         """
         # TO DO
-        print('Just consider it ordered, ok?')
+        headers = {
+            self.Schema : self.tr("Schema"),
+            self.Layer : self.tr("Layer"),
+            self.GeomCol : self.tr("Geometry Column"),
+            self.GeomType : self.tr("Geometry Type"),
+            self.Srid : self.tr("SRID")
+        }
+        if col in headers:
+            print('Just consider it ordered by {0}, ok?'.format(headers[col]))
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -117,5 +126,6 @@ class DatasourceInfoTable(QtWidgets.QDialog, FORM_CLASS):
         Fills table with all given contents.
         :param contents: (list-of-dict) rows contents to be displayed.
         """
+        self.tableWidget.setRowCount(len(contents))
         for row, content in enumerate(contents):
             self.addRow(row=row, content=content)

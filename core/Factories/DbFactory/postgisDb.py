@@ -3742,3 +3742,25 @@ class PostgisDb(AbstractDb):
             if domainTable.split('.')[-1] in attrList:
                 filterDict[tableName] = jsonDict[domainTable.split('.')[-1]]
         return filterDict
+
+    def databaseInfo(self):
+        """
+        Gives information about all tables present in the database. Output is composed by
+        schema, layer, geometry column, geometry type and srid, in that order.
+        :return: (list-of-dict) database information.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.databaseInfo()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        out = []
+        while query.next():
+            rowDict = dict()
+            rowDict['schema'] = query.value(0)
+            rowDict['layer'] = query.value(1)
+            rowDict['geomCol'] = query.value(2)
+            rowDict['geomType'] = query.value(3)
+            rowDict['srid'] = str(query.value(4))
+            out.append(rowDict)
+        return out
