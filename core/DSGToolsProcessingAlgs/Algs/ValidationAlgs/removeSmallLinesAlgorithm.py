@@ -72,13 +72,6 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
-            )
-        )
-
         self.addOutput(
             QgsProcessingOutputVectorLayer(
                 self.OUTPUT,
@@ -98,7 +91,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
                 )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(
             self.tr(
@@ -119,28 +112,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
                 ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(
-            self.tr(
-                'Identifying remaining small lines in layer {0}...'
-                ).format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallLines(
-            inputLyr,
-            tol,
-            context,
-            feedback=multiStepFeedback,
-            onlySelected=onlySelected
-            )
-        self.prepareFlagSink(
-            parameters,
-            inputLyr,
-            QgsWkbTypes.MultiPoint,
-            context
-            )
-        for feat in flagLyr.getFeatures():
-            self.flagFeature(feat.geometry(), feat['reason'])
-
-        return {self.OUTPUT: inputLyr, self.FLAGS : self.flag_id}
+        return {self.OUTPUT: inputLyr}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)

@@ -126,7 +126,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
             )
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         geomDict = layerHandler.getDuplicatedFeaturesDict(
             inputLyr,
