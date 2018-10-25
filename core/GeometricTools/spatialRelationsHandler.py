@@ -83,6 +83,7 @@ class SpatialRelationsHandler(QObject):
 
     def buildIntersectionDict(self, drainageLyr, drainageIdDict, drainageSpatialIdx, contourIdDict, contourSpatialIdx):
         intersectionDict = dict()
+        flagDict = dict()
         firstNode = lambda x:self.geometryHandler.getFirstNode(drainageLyr, x)
         lastNode = lambda x:self.geometryHandler.getLastNode(drainageLyr, x)
         addItemsToIntersectionDict = lambda x:self.addItemsToIntersectionDict(
@@ -91,13 +92,14 @@ class SpatialRelationsHandler(QObject):
             contourIdDict=contourIdDict,
             intersectionDict=intersectionDict,
             firstNode=firstNode,
-            lastNode=lastNode
+            lastNode=lastNode,
+            flagDict=flagDict
         )
         # map for, this means: for item in drainageIdDict.items() ...
         list(map(addItemsToIntersectionDict, drainageIdDict.items()))
         return intersectionDict
     
-    def addItemsToIntersectionDict(self, dictItem, contourSpatialIdx, contourIdDict, intersectionDict, firstNode, lastNode):
+    def addItemsToIntersectionDict(self, dictItem, contourSpatialIdx, contourIdDict, intersectionDict, firstNode, lastNode, flagDict):
         gid, feat = dictItem
         featBB = feat.geometry().boundingBox()
         featid = feat.id()
@@ -109,9 +111,42 @@ class SpatialRelationsHandler(QObject):
             }
         for candidateId in contourSpatialIdx.intersects(featBB):
             candidate = contourIdDict[candidateId]
-            if candidate.geometry().intersects(featGeom):
-                intersectionDict[featid]['intersection_list'].append(candidate)
-
+            candidateGeom = candidate.geometry()
+            if candidateGeom.intersects(featGeom): #add intersection
+                intersectionGeom = candidateGeom.intersection(featGeom)
+                intersectionList += [intersectionGeom.asPoint()] if not intersectionGeom.asMultiPoint() else intersectionGeom.asMultiPoint()
+                flagFeature = True if len(intersectionList) > 1 else False
+                for inter in intersectionList:
+                    if flagFeature:
+                        flagDict[inter] = self.tr('Contour id={c_id} intersects drainage id={d_id} in more than one point').format(
+                            c_id=candidateId,
+                            d_id=gid
+                        )
+                    newIntersection = {
+                    'contour_id' : candidateId,
+                    'intersection_point' : inter
+                    }
+                    intersectionDict[featid]['intersection_list'].append(newIntersection)
     
-    def validateIntersections(self, drainageIdDict, drainageSpatialIdx, contourIdDict, contourSpatialIdx):
-        
+    def validateIntersections(self, intersectionDict, heightFieldName, threshold):
+        """
+        1- Sort list
+        2- 
+        """
+        validatedIds = dict()
+        invalidatedIds = dict()
+        for id, values in intersectionDict.items():
+            interList = values['intersection_list']
+            if len(interList) <= 1:
+                continue
+            #sort list by distance from start point
+            interList.sort(key=lambda x: x['intersection_point'].geometry().distance(values['start_point']))
+            referenceElement = interList[0]
+            for idx, elem in enumerate(interList[1::], start=1):
+                elemen_id = elem.id()
+                if int(elem[heightFieldName]) != threshold*idx + int(referenceElement[heightFieldName]):
+                    invalidatedIds[elemen_id] = elem
+                else:
+                    if elemen_id not in invalidatedIds:
+                        validatedIds[elemen_id] = elem
+            
