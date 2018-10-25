@@ -133,8 +133,8 @@ class SpatialRelationsHandler(QObject):
         1- Sort list
         2- 
         """
-        validatedIds = dict()
-        invalidatedIds = dict()
+        validatedIdsDict = dict()
+        invalidatedIdsDict = dict()
         for id, values in intersectionDict.items():
             interList = values['intersection_list']
             if len(interList) <= 1:
@@ -145,8 +145,13 @@ class SpatialRelationsHandler(QObject):
             for idx, elem in enumerate(interList[1::], start=1):
                 elemen_id = elem.id()
                 if int(elem[heightFieldName]) != threshold*idx + int(referenceElement[heightFieldName]):
-                    invalidatedIds[elemen_id] = elem
+                    invalidatedIdsDict[elemen_id] = elem
                 else:
-                    if elemen_id not in invalidatedIds:
-                        validatedIds[elemen_id] = elem
+                    if elemen_id not in invalidatedIdsDict:
+                        validatedIdsDict[elemen_id] = elem
+        for id in validatedIdsDict:
+            if id in invalidatedIdsDict:
+                validatedIdsDict.pop(id)
+        return validatedIdsDict, invalidatedIdsDict
+
             
