@@ -82,7 +82,7 @@ class SpatialRelationsHandler(QObject):
                 return []
             multiStepFeedback.setCurrentStep(1)
             multiStepFeedback.pushInfo(self.tr('Building contour spatial index...'))
-        contourSpatialIdx, contourIdDict = self.featureHandler.buildSpatialIndexAndIdDict
+        contourSpatialIdx, contourIdDict, contourNodeDict = self.featureHandler.buildSpatialIndexAndIdDictAndRelateNodes
         (
             inputLyr=contourLyr,
             feedback=multiStepFeedback
