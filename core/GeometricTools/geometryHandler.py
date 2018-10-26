@@ -416,6 +416,23 @@ class GeometryHandler(QObject):
         elif n:
             return n[-1]
 
+    def getFirstAndLastNode(self, lyr, feat, geomType=None):
+        """
+        Returns the first node and the last node of a line.
+        :param lyr: layer containing target feature.
+        :param feat: feature which initial node is requested.
+        :param geomType: (int) layer geometry type (1 for lines).
+        :return: starting node point (QgsPoint).
+        """
+        n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][0], n[0][-1]
+        elif n:
+            return n[0], n[-1]
+
     def calculateAngleDifferences(self, startNode, endNode):
         """
         Calculates the angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 
