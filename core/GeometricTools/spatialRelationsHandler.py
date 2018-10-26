@@ -51,49 +51,180 @@ class SpatialRelationsHandler(QObject):
     
     def relateDrainagesWithContours(self, drainageLyr, contourLyr, frameLinesLyr, heightFieldName, threshold, topologyRadius, feedback=None):
         """
-        Checks the conformity between directed drainages and contours. Drainages must be propperly directed.
-        :param drainageLyr: QgsVectorLayer (line) with drainage lines. This must have a primary key field;
-        :param contourLyr: QgsVectorLayer (line) with contour lines. This must have a primary key field;
+        Checks the conformity between directed drainages and contours.
+        Drainages must be propperly directed.
+        :param drainageLyr: QgsVectorLayer (line) with drainage lines.
+        This must have a primary key field;
+        :param contourLyr: QgsVectorLayer (line) with contour lines.
+        This must have a primary key field;
         :param frameLinesLyrLyr: QgsVectorLayer (line) with frame lines;
-        :param heightFieldName: (str) name of the field that stores contour's height;
+        :param heightFieldName: (str) name of the field that stores
+        contour's height;
         :param threshold: (int) equidistance between contour lines;
         :param threshold: (float) topology radius;
         Process steps:
         1- Build spatial indexes;
         2- Compute intersections between drainages and contours;
-        3- Relate intersections grouping by drainages: calculate the distance between the start point and 
-        each intersection, then order the points by distance. If the height of each point does not follow
-        this order, flag the intersection.
-        4- After relating everything, 
+        3- Relate intersections grouping by drainages: calculate the
+        distance between the start point and each intersection, then
+        order the points by distance. If the height of each point does
+        not follow this order, flag the intersection.
+        4- After relating everything,
         """
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+        maxSteps = 4
+        multiStepFeedback = QgsProcessingMultiStepFeedback(maxSteps, feedback) if feedback is not None else None
+        currentStep = 0
         if multiStepFeedback is not None:
             if multiStepFeedback.isCanceled():
                 return []
-            multiStepFeedback.setCurrentStep(0)
-            multiStepFeedback.pushInfo(self.tr('Building drainage spatial index...'))
-        drainageSpatialIdx, drainageIdDict, drainageNodeDict = self.buildSpatialIndexAndIdDictAndRelateNodes(drainageLyr)
-        (
-            inputLyr=drainageLyr,
-            feedback=multiStepFeedback
-        )
-        if multiStepFeedback is not None:
-            if multiStepFeedback.isCanceled():
-                return []
-            multiStepFeedback.setCurrentStep(1)
-            multiStepFeedback.pushInfo(self.tr('Building contour spatial index...'))
-        contourSpatialIdx, contourIdDict, contourNodeDict = self.featureHandler.buildSpatialIndexAndIdDictAndRelateNodes
-        (
+            multiStepFeedback.setCurrentStep(currentStep)
+            currentStep += 1
+            multiStepFeedback.pushInfo(
+                self.tr('Building contour structures...')
+                )
+        contourSpatialIdx, contourIdDict, contourNodeDict = self.featureHandler.buildSpatialIndexAndIdDictAndRelateNodes(
             inputLyr=contourLyr,
             feedback=multiStepFeedback
         )
         if multiStepFeedback is not None:
             if multiStepFeedback.isCanceled():
                 return []
-            multiStepFeedback.setCurrentStep(2)
-            multiStepFeedback.pushInfo(self.tr('Relating contours with drainages...'))
-        intersectionDict = self.buildIntersectionDict(drainageLyr, drainageIdDict, drainageSpatialIdx, contourIdDict, contourIdDict)
+            multiStepFeedback.setCurrentStep(currentStep)
+            currentStep += 1
+            multiStepFeedback.pushInfo(
+                self.tr('Validating contour structures. Check 1/4...')
+                )
+        invalidDict = self.validateContourRelations(
+            contourNodeDict,
+            feedback=multiStepFeedback
+            )
+        if invalidDict:
+            multiStepFeedback.setCurrentStep(maxSteps-1)
+            return invalidDict
 
+        if multiStepFeedback is not None:
+            if multiStepFeedback.isCanceled():
+                return []
+            multiStepFeedback.setCurrentStep(currentStep)
+            currentStep += 1
+            multiStepFeedback.pushInfo(
+                self.tr('Building drainage spatial index...')
+                )
+        drainageSpatialIdx, drainageIdDict, drainageNodeDict = self.buildSpatialIndexAndIdDictAndRelateNodes(
+            inputLyr=drainageLyr,
+            feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            if multiStepFeedback.isCanceled():
+                return []
+            multiStepFeedback.setCurrentStep(currentStep)
+            currentStep += 1
+            multiStepFeedback.pushInfo(
+                self.tr('Relating contours with drainages...')
+                )
+        intersectionDict = self.buildIntersectionDict(
+            drainageLyr,
+            drainageIdDict,
+            drainageSpatialIdx,
+            contourIdDict,
+            contourIdDict
+            )
+
+    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback = None, featureRequest=None):
+        """
+        creates a spatial index for the input layer
+        :param inputLyr: (QgsVectorLayer) input layer;
+        :param feedback: (QgsProcessingFeedback) processing feedback;
+        :param featureRequest: (QgsFeatureRequest) optional feature request;
+        """
+        spatialIdx = QgsSpatialIndex()
+        idDict = {}
+        nodeDict = {}
+        featCount = inputLyr.featureCount()
+        size = 100/featCount if featCount else 0
+        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
+        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
+        addFeatureAlias = lambda x : self.addFeatureToSpatialIndexAndNodeDict(
+            current=x[0],
+            feat=x[1],
+            spatialIdx=spatialIdx,
+            idDict=idDict,
+            nodeDict=nodeDict,
+            size=size,
+            firstAndLastNode=firstAndLastNode,
+            feedback=feedback
+        )
+        list(map(addFeatureAlias, enumerate(iterator)))
+        return spatialIdx, idDict, nodeDict
+    
+    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback):
+        """
+        Adds feature to spatial index. Used along side with a python map operator
+        to improve performance.
+        :param current : (int) current index
+        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param size: (int) size to be used to update feedback
+        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
+        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        """
+        firstNode, lastNode = firstAndLastNode(feat)
+        if firstNode not in nodeDict:
+            nodeDict[firstNode] = []
+        nodeDict[firstNode] += [firstNode]
+        if lastNode not in nodeDict:
+            nodeDict[lastNode] = []
+        nodeDict[lastNode] += [lastNode]
+        self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
+    
+    def validateContourRelations(self, contourNodeDict, frameLinesDict, frameLinesSpatialIdx, heightFieldName, feedback=None):
+        """
+        param: contourNodeDict: (dict) dictionary with contour nodes
+        Invalid contours:
+        - Contours that relates to more than 2 other contours;
+        - Contours that do not relate to any other contour and does not touch frame lines;
+        """
+        invalidDict = dict()
+        contourId = lambda x : x.id()
+        contoursNumber = len(contourNodeDict)
+        step = 100/contoursNumber if contoursNumber else 0
+        for current, (node, contourList) in enumerate(contourNodeDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            if len(contourList) == 1:
+                if self.isDangle(node, frameLinesDict, frameLinesSpatialIdx):
+                    invalidDict[node] = self.tr(
+                        'Contour lines id=({ids}) touch each other and have different height values!'
+                        ).format(ids=', '.join(map(contourId, contourList)))
+            if len(contourList) == 2 and contourList[0][heightFieldName] != contourList[1][heightFieldName]:
+                invalidDict[node] = self.tr(
+                    'Contour lines id=({ids}) touch each other and have different height values!'
+                    ).format(ids=', '.join(map(contourId, contourList)))
+            if len(contourList) > 2:
+                invalidDict[node] = self.tr(
+                    'Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.'
+                    ).format(ids=', '.join(map(contourId, contourList)))
+            if feedback is not None:
+                feedback.setProgress(step * current)
+        return invalidDict
+    
+    def isDangle(self, point, featureDict, spatialIdx, searchRadius=10**-15):
+        """
+        :param point: (QgsPointXY) node tested as dangle;
+        :param featureDict: (dict) dict {featid:feat};
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        of features from featureDict;
+        :param searchRadius: (float) search radius.
+        """
+        qgisPoint = QgsGeometry.fromPointXY(point)
+        buffer = qgisPoint.buffer(searchRadius, -1)
+        bufferBB = buffer.boundingBox()
+        for featid in spatialIdx.intersects(bufferBB):
+            if buffer.intersects(featureDict[featid].geometry()) and \
+                qgisPoint.distance(featureDict[featid].geometry()) < 10**-9:
+                return True
+        return False
 
     def buildIntersectionDict(self, drainageLyr, drainageIdDict, drainageSpatialIdx, contourIdDict, contourSpatialIdx, feedback=None):
         intersectionDict = dict()
@@ -170,51 +301,3 @@ class SpatialRelationsHandler(QObject):
     
     def relateContours(self, contourDict, validatedIdsDict, invalidatedIdsDict):
         pass
-    
-    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback = None, featureRequest=None):
-        """
-        creates a spatial index for the input layer
-        :param inputLyr: (QgsVectorLayer) input layer;
-        :param feedback: (QgsProcessingFeedback) processing feedback;
-        :param featureRequest: (QgsFeatureRequest) optional feature request;
-        """
-        spatialIdx = QgsSpatialIndex()
-        idDict = {}
-        nodeDict = {}
-        featCount = inputLyr.featureCount()
-        size = 100/featCount if featCount else 0
-        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
-        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
-        addFeatureAlias = lambda x : self.addFeatureToSpatialIndexAndNodeDict(
-            current=x[0],
-            feat=x[1],
-            spatialIdx=spatialIdx,
-            idDict=idDict,
-            nodeDict=nodeDict,
-            size=size,
-            firstAndLastNode=firstAndLastNode,
-            feedback=feedback
-        )
-        list(map(addFeatureAlias, enumerate(iterator)))
-        return spatialIdx, idDict, nodeDict
-    
-    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback):
-        """
-        Adds feature to spatial index. Used along side with a python map operator
-        to improve performance.
-        :param current : (int) current index
-        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
-        :param spatialIdx: (QgsSpatialIndex) spatial index
-        :param idDict: (dict) dictionary with format {feat.id(): feat}
-        :param size: (int) size to be used to update feedback
-        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
-        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
-        """
-        firstNode, lastNode = firstAndLastNode(feat)
-        if firstNode not in nodeDict:
-            nodeDict[firstNode] = []
-        nodeDict[firstNode] += [firstNode]
-        if lastNode not in nodeDict:
-            nodeDict[lastNode] = []
-        nodeDict[lastNode] += [lastNode]
-        self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
