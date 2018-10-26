@@ -21,16 +21,22 @@
  ***************************************************************************/
 """
 from __future__ import absolute_import
+
 from builtins import range
-from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback
-from qgis.PyQt.Qt import QObject, QVariant
+
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
+from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
+                       QgsCoordinateTransform, QgsExpression, QgsFeature,
+                       QgsFeatureRequest, QgsField, QgsGeometry, QgsMessageLog,
+                       QgsProcessingMultiStepFeedback, QgsProject,
+                       QgsSpatialIndex, QgsVectorDataProvider, QgsVectorLayer,
+                       QgsWkbTypes, edit)
+from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
+from .layerHandler import LayerHandler
+
 
 class SpatialRelationsHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -39,6 +45,7 @@ class SpatialRelationsHandler(QObject):
         self.iface = iface
         if iface:
             self.canvas = iface.mapCanvas()
+        self.layerHandler = LayerHandler(iface)
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
     
@@ -65,7 +72,7 @@ class SpatialRelationsHandler(QObject):
                 return []
             multiStepFeedback.setCurrentStep(0)
             multiStepFeedback.pushInfo(self.tr('Building drainage spatial index...'))
-        drainageSpatialIdx, drainageIdDict = self.featureHandler.buildSpatialIndexAndIdDict
+        drainageSpatialIdx, drainageIdDict, drainageNodeDict = self.buildSpatialIndexAndIdDictAndRelateNodes(drainageLyr)
         (
             inputLyr=drainageLyr,
             feedback=multiStepFeedback
@@ -80,8 +87,15 @@ class SpatialRelationsHandler(QObject):
             inputLyr=contourLyr,
             feedback=multiStepFeedback
         )
+        if multiStepFeedback is not None:
+            if multiStepFeedback.isCanceled():
+                return []
+            multiStepFeedback.setCurrentStep(2)
+            multiStepFeedback.pushInfo(self.tr('Relating contours with drainages...'))
+        intersectionDict = self.buildIntersectionDict(drainageLyr, drainageIdDict, drainageSpatialIdx, contourIdDict, contourIdDict)
 
-    def buildIntersectionDict(self, drainageLyr, drainageIdDict, drainageSpatialIdx, contourIdDict, contourSpatialIdx):
+
+    def buildIntersectionDict(self, drainageLyr, drainageIdDict, drainageSpatialIdx, contourIdDict, contourSpatialIdx, feedback=None):
         intersectionDict = dict()
         flagDict = dict()
         firstNode = lambda x:self.geometryHandler.getFirstNode(drainageLyr, x)
@@ -153,5 +167,54 @@ class SpatialRelationsHandler(QObject):
             if id in invalidatedIdsDict:
                 validatedIdsDict.pop(id)
         return validatedIdsDict, invalidatedIdsDict
-
-            
+    
+    def relateContours(self, contourDict, validatedIdsDict, invalidatedIdsDict):
+        pass
+    
+    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback = None, featureRequest=None):
+        """
+        creates a spatial index for the input layer
+        :param inputLyr: (QgsVectorLayer) input layer;
+        :param feedback: (QgsProcessingFeedback) processing feedback;
+        :param featureRequest: (QgsFeatureRequest) optional feature request;
+        """
+        spatialIdx = QgsSpatialIndex()
+        idDict = {}
+        nodeDict = {}
+        featCount = inputLyr.featureCount()
+        size = 100/featCount if featCount else 0
+        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
+        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
+        addFeatureAlias = lambda x : self.addFeatureToSpatialIndexAndNodeDict(
+            current=x[0],
+            feat=x[1],
+            spatialIdx=spatialIdx,
+            idDict=idDict,
+            nodeDict=nodeDict,
+            size=size,
+            firstAndLastNode=firstAndLastNode,
+            feedback=feedback
+        )
+        list(map(addFeatureAlias, enumerate(iterator)))
+        return spatialIdx, idDict, nodeDict
+    
+    def addFeatureToSpatialIndexAndNodeDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback):
+        """
+        Adds feature to spatial index. Used along side with a python map operator
+        to improve performance.
+        :param current : (int) current index
+        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param size: (int) size to be used to update feedback
+        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
+        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        """
+        firstNode, lastNode = firstAndLastNode(feat)
+        if firstNode not in nodeDict:
+            nodeDict[firstNode] = []
+        nodeDict[firstNode] += [firstNode]
+        if lastNode not in nodeDict:
+            nodeDict[lastNode] = []
+        nodeDict[lastNode] += [lastNode]
+        self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
