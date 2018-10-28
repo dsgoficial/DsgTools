@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-05-01
+        begin                : 2018-10-22
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 
 from builtins import range
+from itertools import tee
 
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
@@ -82,8 +83,9 @@ class SpatialRelationsHandler(QObject):
             multiStepFeedback.pushInfo(
                 self.tr('Building contour structures...')
                 )
-        contourSpatialIdx, contourIdDict, contourNodeDict = self.featureHandler.buildSpatialIndexAndIdDictAndRelateNodes(
+        contourSpatialIdx, contourIdDict, contourNodeDict, heightsDict = self.buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(
             inputLyr=contourLyr,
+            attributeName=heightFieldName,
             feedback=multiStepFeedback
         )
         if multiStepFeedback is not None:
@@ -130,7 +132,7 @@ class SpatialRelationsHandler(QObject):
             contourIdDict
             )
 
-    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback = None, featureRequest=None):
+    def buildSpatialIndexAndIdDictAndRelateNodes(self, inputLyr, feedback=None, featureRequest=None):
         """
         creates a spatial index for the input layer
         :param inputLyr: (QgsVectorLayer) input layer;
@@ -177,6 +179,51 @@ class SpatialRelationsHandler(QObject):
             nodeDict[lastNode] = []
         nodeDict[lastNode] += [lastNode]
         self.layerHandler.addFeatureToSpatialIndex(current, feat, spatialIdx, idDict, size, feedback)
+
+    def buildSpatialIndexAndIdDictRelateNodesAndAttributeGroupDict(self, inputLyr, attributeName, feedback=None, featureRequest=None):
+        """
+
+        """
+        spatialIdx = QgsSpatialIndex()
+        idDict = {}
+        nodeDict = {}
+        attributeGroupDict = {}
+        featCount = inputLyr.featureCount()
+        size = 100/featCount if featCount else 0
+        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
+        firstAndLastNode = lambda x:self.geometryHandler.getFirstAndLastNode(inputLyr, x)
+        addFeatureAlias = lambda x : self.addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(
+            current=x[0],
+            feat=x[1],
+            spatialIdx=spatialIdx,
+            idDict=idDict,
+            nodeDict=nodeDict,
+            size=size,
+            firstAndLastNode=firstAndLastNode,
+            attributeGroupDict=attributeGroupDict,
+            attributeName=attributeName,
+            feedback=feedback
+        )
+        list(map(addFeatureAlias, enumerate(iterator)))
+        return spatialIdx, idDict, nodeDict, attributeGroupDict
+    
+    def addFeatureToSpatialIndexNodeDictAndAttributeGroupDict(self, current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, attributeGroupDict, attributeName, feedback):
+        """
+        Adds feature to spatial index. Used along side with a python map operator
+        to improve performance.
+        :param current : (int) current index
+        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param size: (int) size to be used to update feedback
+        :param firstAndLastNode: (dict) dictionary used to relate nodes of features
+        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        """
+        attrValue = feat[attributeName]
+        if attrValue not in attributeGroupDict:
+            attributeGroupDict[attrValue] = set()
+        attributeGroupDict[attrValue].add(feat.geometry())
+        self.addFeatureToSpatialIndexAndNodeDict(current, feat, spatialIdx, idDict, nodeDict, size, firstAndLastNode, feedback)
     
     def validateContourRelations(self, contourNodeDict, frameLinesDict, frameLinesSpatialIdx, heightFieldName, feedback=None):
         """
@@ -299,5 +346,64 @@ class SpatialRelationsHandler(QObject):
                 validatedIdsDict.pop(id)
         return validatedIdsDict, invalidatedIdsDict
     
-    def relateContours(self, contourDict, validatedIdsDict, invalidatedIdsDict):
-        pass
+    def validateContourPolygons(self, contourPolygonDict, contourPolygonIdx, threshold, heightFieldName, depressionValueDict=None):
+        hilltopDict = self.buildHilltopDict(
+            contourPolygonDict,
+            contourPolygonIdx
+            )
+        invalidDict = dict()
+        for hilltopGeom, hilltop in hilltopDict.items():
+            localFlagList = []
+            polygonList = hilltop['downhill']
+            feat = hilltop['feat']
+            if len(polygonList) < 2:
+                break
+            # sort polygons by area, from minimum to max
+            polygonList.sort(key=lambda x: x.geometry().area())
+            #pair comparison
+            a, b = tee([feat]+polygonList)
+            next(b, None)
+            for elem1, elem2 in zip(a, b):
+                if abs(elem1[heightFieldName]-elem2[heightFieldName]) != threshold:
+                    elem1GeomKey = elem1.geometry().asWkb()
+                    if elem1GeomKey not in invalidDict:
+                        invalidDict[elem1GeomKey] = []
+                    invalidDict[elem1GeomKey] += [self.tr(
+                        'Difference between contour with values {id1} \
+                        and {id2} do not match equidistance {equidistance}.\
+                        Probably one contour is \
+                        missing or one of the contours have wrong value.\n'
+                    ).format(
+                        id1=elem1[heightFieldName],
+                        id2=elem2[heightFieldName],
+                        equidistance=threshold
+                    )]
+        return invalidDict
+    
+    def buildHilltopDict(self, contourPolygonDict, contourPolygonIdx):
+        hilltopDict = dict()
+        buildDictAlias = lambda x: self.initiateHilltopDict(x, hilltopDict)
+        # c loop to build contourPolygonDict
+        list(map(buildDictAlias, contourPolygonDict.values()))
+        # iterate over contour polygon dict and build hilltopDict
+        for idx, feat in contourPolygonDict.items():
+            geom = feat.geometry()
+            bbox = geom.boundingBox()
+            geomWkb = geom.asWkb()
+            for candId in contourPolygonIdx.intersects(bbox):
+                candFeat = contourPolygonDict[candId]
+                candGeom = candFeat.geometry()
+                if candId != idx and candGeom.within(geom):
+                    hilltopDict.pop(geomWkb.asWkb())
+                    break
+                if candId != idx and candGeom.contains(geom) \
+                    and candFeat not in hilltopDict[geomWkb]['donwhill']:
+                    hilltopDict[geomWkb]['donwhill'].append(candFeat)
+            return hilltopDict
+    
+    def initiateHilltopDict(self, feat, hilltopDict):
+        hilltopDict[feat.geometry().asWkb()] = {
+                'feat' : feat,
+                'downhill': []
+            }
+
