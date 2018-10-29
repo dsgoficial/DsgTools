@@ -34,6 +34,7 @@ from .....core.Factories.DbFactory.dbFactory import DbFactory
 from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from .....core.Utils.utils import Utils
 from .....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'styleManagerTool.ui'))
@@ -158,10 +159,14 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbParameters['port'] = candidateUri.port()
             dbParameters['user'] = candidateUri.username()
             dbParameters['password'] = candidateUri.password()
-            return dbParameters, 'QPSQL'
-        if currLyr.providerType() == 'spatialite':
+            return dbParameters, DsgEnums.DriverPostGIS
+        elif currLyr.providerType() == 'spatialite':
             dbParameters['dbPath'] = candidateUri.database()
-            return dbParameters, 'QSQLITE'
+            return dbParameters, DsgEnums.DriverSpatiaLite
+        elif currLyr.providerType() == 'ogr':
+            # geopackage provider type is ogr
+            dbParameters['dbPath'] = candidateUri.database()
+            return dbParameters, DsgEnums.DriverGeopackage
         else:
             raise Exception(self.tr('Feature only implemented for PostGIS and Spatialite'))
     

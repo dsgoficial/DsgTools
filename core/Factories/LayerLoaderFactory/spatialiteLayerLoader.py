@@ -154,7 +154,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         if stylePath:
             fullPath = self.getStyle(stylePath, tableName)
             if fullPath:
-                vlayer.importNamedStyle(fullPath)
+                vlayer.loadNamedStyle(fullPath, True)
         parentNode.addLayer(vlayer) 
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
