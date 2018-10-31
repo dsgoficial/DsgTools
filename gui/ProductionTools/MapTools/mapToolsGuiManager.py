@@ -25,6 +25,9 @@ from builtins import object
 import os.path
 import sys
 
+from qgis.PyQt.QtCore import pyqtSignal
+from qgis.core import QgsVectorLayer
+
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
 from .Acquisition.acquisition import Acquisition
 from .FlipLineTool.flipLineTool import FlipLine
@@ -32,6 +35,9 @@ from .FreeHandTool.freeHandMain import FreeHandMain
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
+    # signals to replicate current layer's editing started/stopped
+    editingStarted = pyqtSignal()
+    editingStopped = pyqtSignal()
 
     def __init__(self, manager, iface, parentMenu = None, toolbar = None):
         """Constructor.
@@ -42,6 +48,9 @@ class MapToolsGuiManager(QObject):
         self.parentMenu = parentMenu
         self.toolbar = toolbar
         self.iconBasePath = ':/plugins/DsgTools/icons/'
+        # initiate current layer and make sure signals are connected
+        self.resetCurrentLayerSignals()
+        self.iface.currentLayerChanged.connect(self.resetCurrentLayerSignals)
     
     def initGui(self):
         #adding generic selection tool
@@ -57,8 +66,34 @@ class MapToolsGuiManager(QObject):
         #adding free hand tool
         self.freeHandAcquisiton = FreeHandMain(self.iface)
         self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
-        
-    
+        self.initiateToolsSignals()
+
+    def resetCurrentLayerSignals(self):
+        """
+        Resets all signals used from current layer connected to maptools to current selection.
+        """
+        if isinstance(self.currentLayer, QgsVectorLayer):
+            # disconnect previous selection's signals, if any
+            self.currentLayer.editingStarted.disconnect(self.editingStarted)
+            self.currentLayer.editingStopped.disconnect(self.editingStopped)
+        # now retrieve current selection and reset signal connection
+        self.currentLayer = self.iface.mapCanvas().currentLayer()
+        if isinstance(self.currentLayer, QgsVectorLayer):
+            self.currentLayer.editingStarted.connect(self.editingStarted)
+            self.currentLayer.editingStopped.connect(self.editingStopped)
+
+    def initiateToolsSignals(self):
+        """
+        Initiates all tools' signals.
+        """
+        # connect current layer changed signal to all tools that use it
+        self.iface.currentLayerChanged.connect(self.flipLineTool.setToolEnabled)
+        # connect editing started/stopped signals to all tools that use it
+        self.editingStarted.connect(self.flipLineTool.setToolEnabled)
+        self.editingStarted.connect(self.flipLineTool.setToolEnabled)
+        # connect edit button toggling signal to all tools that use it
+        self.iface.actionToggleEditing().triggered.connect(self.flipLineTool.setToolEnabled)
+
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
     
