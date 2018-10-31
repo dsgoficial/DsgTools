@@ -47,7 +47,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.serverAbstractDb = None
-        self.displayDict = {'2.1.3':'EDGV 2.1.3', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
+        self.displayDict = {'2.1.3':'EDGV 2.1.3', '2.1.3 Pro':'EDGV 2.1.3 Pro','FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
         self.instantiateAbstractDb = False
         self.viewServers = ViewServers()
         self.viewServers.defaultChanged.connect(self.loadServerAbstractDb)

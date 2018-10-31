@@ -25,7 +25,7 @@
 import os, sqlite3
 import json
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
@@ -114,7 +114,6 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             dbDict[parameterDict['dbBaseName']] = newDb
         except Exception as e:
             errorDict[parameterDict['dbBaseName']] = ':'.join(map(str, e.args))
-        dbDict[parameterDict['dbBaseName']] = newDb
         QApplication.restoreOverrideCursor()        
         return dbDict, errorDict
 
