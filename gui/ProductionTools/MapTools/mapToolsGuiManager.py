@@ -49,6 +49,7 @@ class MapToolsGuiManager(QObject):
         self.toolbar = toolbar
         self.iconBasePath = ':/plugins/DsgTools/icons/'
         # initiate current layer and make sure signals are connected
+        self.currentLayer = None
         self.resetCurrentLayerSignals()
         self.iface.currentLayerChanged.connect(self.resetCurrentLayerSignals)
     
@@ -88,11 +89,15 @@ class MapToolsGuiManager(QObject):
         """
         # connect current layer changed signal to all tools that use it
         self.iface.currentLayerChanged.connect(self.flipLineTool.setToolEnabled)
+        self.iface.currentLayerChanged.connect(self.acquisition.checkToDeactivate)
         # connect editing started/stopped signals to all tools that use it
         self.editingStarted.connect(self.flipLineTool.setToolEnabled)
+        self.editingStopped.connect(self.acquisition.setToolEnabled)
         self.editingStarted.connect(self.flipLineTool.setToolEnabled)
+        self.editingStopped.connect(self.acquisition.setToolEnabled)
         # connect edit button toggling signal to all tools that use it
         self.iface.actionToggleEditing().triggered.connect(self.flipLineTool.setToolEnabled)
+        self.iface.actionToggleEditing().triggered.connect(self.acquisition.setToolEnabled)
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
