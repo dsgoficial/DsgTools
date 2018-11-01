@@ -64,7 +64,6 @@ class FreeHandMain(QObject):
     def registerActionOnController(self, action):
         acquisitionFreeController = self.getAcquisitionFreeController()
         acquisitionFreeController.setActionAcquisitionFree(action)
-        acquisitionFreeController.connectToolSignals()
 
     def setAction(self, action):
         self.registerActionOnController(action)

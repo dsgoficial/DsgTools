@@ -38,8 +38,6 @@ class FlipLine(QgsMapTool):
         self.toolAction = None
         QgsMapTool.__init__(self, self.canvas)
         self.DsgGeometryHandler = GeometryHandler(iface)
-        self.iface.currentLayerChanged.connect(self.setToolEnabled)
-        self.iface.actionToggleEditing().triggered.connect(self.setToolEnabled)
         self.currentLayer = None
     
     def addTool(self, manager, callback, parentMenu, iconBasePath):
@@ -57,41 +55,14 @@ class FlipLine(QgsMapTool):
         )
         self.setAction(action)
 
-    def resetEditingSignals(self, currentLayer):
-        """
-        Disconnects editing signal from previously selected layer and connects it to newly selected layer.
-        Method is called whenever currentlLayerChanged signal is emitted.
-        """
-        # get previous selected layer
-        prevLayer = self.currentLayer
-        # update current selected layer
-        self.currentLayer = currentLayer
-        try:
-            # if there was a previous selection, signals must be disconnected from it before connecting to the new layer
-            if prevLayer is not None:
-                prevLayer.editingStarted.disconnect(self.setToolEnabled)
-                prevLayer.editingStopped.disconnect(self.setToolEnabled)
-        except:
-            # in case signal is not yet connected, somehow
-            pass
-        # connecting signals to new layer
-        try:
-            if self.currentLayer is not None and isinstance(self.currentLayer, QgsVectorLayer):
-                self.currentLayer.editingStarted.connect(self.setToolEnabled)
-                self.currentLayer.editingStopped.connect(self.setToolEnabled)
-        except:
-            pass
-
     def setToolEnabled(self, layer=None):
         """
         Checks if it is possible to use tool given layer editting conditions and type.
         :param layer: (QgsVectorLayer) layer that may have its lines flipped.
         :return: (bool) whether tool may be used.
         """
-        if not layer:
+        if not isinstance(layer, QgsVectorLayer):
             layer = self.iface.mapCanvas().currentLayer()
-        if layer != self.currentLayer:
-            self.resetEditingSignals(currentLayer=layer)
         if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() != QgsWkbTypes.LineGeometry or not layer.isEditable():
             enabled = False
         else:
