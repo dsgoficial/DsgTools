@@ -10,6 +10,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence, QCursor, QPixmap, QColor
 from PyQt4.QtCore import QSettings
 from distanceToolTip import DistanceToolTip
+import math
 
 class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def __init__(self, canvas, iface, action):
@@ -153,7 +154,22 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
                 y = -x/m1 + a1
                 return QgsPoint(x,y)
             return False
-    
+
+
+    def distanceBetweenLinesTest(self, geom, p):             
+        teste_answer = True
+        for i in range(len(geom)-1):
+            p1 = geom[i]
+            p2 = geom[i+1]   
+            projected_point = self.projectPoint(p1,p2,p)
+            distance = self.distanceToolTip.calculateDistance(projected_point,p2)            
+            if distance > self.minSegmentDistance:
+                continue
+            else:
+                teste_answer = False
+                break
+        return teste_answer
+
     def projectPoint(self, p1, p2, p3):        
         #reta P1 P2
         try:
