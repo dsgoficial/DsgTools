@@ -85,9 +85,9 @@ class MapToolsGuiManager(QObject):
 
     def initiateToolsSignals(self):
         """
-        Initiates all tools' signals.
+        Connects all tools' signals.
         """
-        for tool in [self.flipLineTool, self.acquisition]:
+        for tool in [self.flipLineTool, self.acquisition, self.freeHandAcquisiton.acquisitionFreeController]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
             # connect editing started/stopped signals to all tools that use it
@@ -95,6 +95,14 @@ class MapToolsGuiManager(QObject):
             self.editingStopped.connect(tool.setToolEnabled)
             # connect edit button toggling signal to all tools that use it
             self.iface.actionToggleEditing().triggered.connect(tool.setToolEnabled)
+        # free hand has its own signal connected when started
+        self.freeHandAcquisiton.acquisitionFreeController.actionAcquisitionFree.triggered.connect(\
+                                    self.freeHandAcquisiton.acquisitionFreeController.activateTool)
+        self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.acquisitionFinished.connect(\
+                self.freeHandAcquisiton.acquisitionFreeController.createFeature)
+        self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.reshapeLineCreated.connect(\
+                self.freeHandAcquisiton.acquisitionFreeController.reshapeSimplify)
+
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
