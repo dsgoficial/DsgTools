@@ -68,7 +68,7 @@ class MapToolsGuiManager(QObject):
         #adding free hand tool
         self.freeHandAcquisiton = FreeHandMain(self.iface)
         self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
-        self.freeHandAcquisiton.setToolEnabled()
+        self.freeHandAcquisiton.acquisitionFreeController.setToolEnabled()
         self.initiateToolsSignals()
 
     def resetCurrentLayerSignals(self):
