@@ -369,7 +369,7 @@ class SpatialRelationsHandler(QObject):
                     if elem1GeomKey not in invalidDict:
                         invalidDict[elem1GeomKey] = []
                     invalidDict[elem1GeomKey] += [self.tr(
-                        'Difference between contour with values {id1} \
+                        'Difference between contour with values {id1} \
                         and {id2} do not match equidistance {equidistance}.\
                         Probably one contour is \
                         missing or one of the contours have wrong value.\n'
@@ -406,4 +406,15 @@ class SpatialRelationsHandler(QObject):
                 'feat' : feat,
                 'downhill': []
             }
+    
+    def buildTerrainPolygons(self, featList):
+        pass
 
+    def validateContourLines(self, contourLyr, contourAttrName, refLyr, feedback=None):
+        """
+        1. Validate contour connectivity;
+        2. Build terrain polygons by contour value;
+        3. Build terrain dict;
+        4. Validate contours.
+        """
+        
