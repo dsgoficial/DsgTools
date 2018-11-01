@@ -64,7 +64,7 @@ class Polygon(GeometricaAcquisition):
                         projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                         if projectedMousePoint:                            
                             new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)
-                            if self.distance_acceptable(self.geometry[0], last_point, projectedMousePoint,self.geometry[-1]):
+                            if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
                                 self.geometry.append(QgsPoint(projectedMousePoint.x(), projectedMousePoint.y()))        
                                 self.geometry.append(last_point)   
                                 self.endGeometry() 
@@ -85,7 +85,7 @@ class Polygon(GeometricaAcquisition):
                     self.qntPoint += 1
                 elif self.qntPoint == 1:                    
                     point = QgsPoint(pointMap)
-                    if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
+                    if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:                        
                         self.geometry.append(point)
                         self.qntPoint += 1
                     else:
@@ -94,7 +94,7 @@ class Polygon(GeometricaAcquisition):
                     point = QgsPoint(pointMap)
                     projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if projectedMousePoint:
-                        if self.distanceToolTip.calculateDistance(self.geometry[-1], projectedMousePoint) > self.minSegmentDistance:
+                        if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
                             self.geometry.append(QgsPoint(projectedMousePoint.x(), projectedMousePoint.y()))        
                             self.qntPoint += 1
                         else:
