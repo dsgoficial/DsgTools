@@ -20,30 +20,26 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .topologicalCleanAlgorithm import TopologicalCleanAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .topologicalCleanAlgorithm import TopologicalCleanAlgorithm
+
 
 class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
@@ -111,7 +107,7 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological Clean Linestring Geometries')
+        return self.tr('Topological Clean Linestrings')
 
     def group(self):
         """

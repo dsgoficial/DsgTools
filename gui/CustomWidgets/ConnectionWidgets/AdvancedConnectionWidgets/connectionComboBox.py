@@ -47,7 +47,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         self.abstractDb = None
         self.abstractDbFactory = DbFactory()
         self.serverAbstractDb = None
-        self.displayDict = {'2.1.3':'EDGV 2.1.3', 'FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
+        self.displayDict = {'2.1.3':'EDGV 2.1.3', '2.1.3 Pro':'EDGV 2.1.3 Pro','FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
         self.instantiateAbstractDb = False
         self.viewServers = ViewServers()
         self.viewServers.defaultChanged.connect(self.loadServerAbstractDb)
@@ -126,7 +126,9 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         Loads the selected database
         """
         try:
-            if self.serverAbstractDb and idx > 0:
+            if self.abstractDb is not None:
+                self.closeDatabase()
+            if self.serverAbstractDb is not None and idx > 0:
                 if not self.instantiateAbstractDb:
                     self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()

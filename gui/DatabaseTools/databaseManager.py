@@ -26,6 +26,7 @@ from qgis.PyQt.QtCore import QObject
 
 from DsgTools.gui.DatabaseTools.DbTools.SingleDbCreator.singleDbCreator import CreateSingleDatabase
 from DsgTools.gui.DatabaseTools.DbTools.BatchDbCreator.batchDbCreator import BatchDbCreator
+from DsgTools.gui.DatabaseTools.ConversionTools.datasourceConversion import DatasourceConversion
 
 class DatabaseGuiManager(QObject):
 
@@ -56,7 +57,7 @@ class DatabaseGuiManager(QObject):
         :param parentButton: (QButton) button to which action will be associated.
         :param defaultButton: (bool) considering it is a stack button (button overloaded with >1 actions associated), it indicates
                               whether the included action will be the default one (e.g. if it will the action representative and 
-                              1st to be displayed). 
+                              1st to be displayed).
         """
         icon_path = self.iconBasePath + icon
         action = self.manager.add_action(
@@ -81,6 +82,8 @@ class DatabaseGuiManager(QObject):
         self.singleDbCreator.initGui()
         self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.batchCreator.initGui()
+        self.datasourceSelectionWidget = DatasourceConversion(manager=self, parentMenu=self.menu)
+        self.datasourceSelectionWidget.initGui()
 
     def unload(self):
         """
@@ -88,6 +91,7 @@ class DatabaseGuiManager(QObject):
         """
         self.singleDbCreator.unload()
         self.batchCreator.unload()
+        self.datasourceSelectionWidget.unload()
 
     def createDatabase(self, isBatchCreation):
         """

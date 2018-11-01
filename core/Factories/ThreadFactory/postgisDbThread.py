@@ -129,6 +129,8 @@ class PostgisDbThread(GenericThread):
         currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
         if self.version == '2.1.3':
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif self.version == '2.1.3 Pro':
+            edgvPath = os.path.join(currentPath, 'sqls', '213_Pro', 'edgv213_pro.sql')
         elif self.version == '3.0':
             edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
         elif self.version == 'FTer_2a_Ed':
@@ -194,6 +196,8 @@ class PostgisDbThread(GenericThread):
             self.db.commit()
             if self.version == '2.1.3':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
+            elif self.version == '2.1.3 Pro':
+                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'dominios\';' % self.db.databaseName()
             elif self.version == 'FTer_2a_Ed':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
             elif self.version == '3.0':

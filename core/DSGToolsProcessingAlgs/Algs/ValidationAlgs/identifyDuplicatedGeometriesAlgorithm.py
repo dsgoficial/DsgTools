@@ -20,20 +20,18 @@
  ***************************************************************************/
 """
 
+from PyQt5.QtCore import QCoreApplication
+
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
 from .validationAlgorithm import ValidationAlgorithm
 
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean)
 
 class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -79,7 +77,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
         geomDict = dict()
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked

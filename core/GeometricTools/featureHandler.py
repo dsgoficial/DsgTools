@@ -62,7 +62,9 @@ class FeatureHandler(QObject):
             newFeatureList.append(newFeature)
         return newFeatureList
 
-    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = [], attributeTupple = False, coordinateTransformer = None, parameterDict = {}):
+    def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = None, attributeTupple = False, coordinateTransformer = None, parameterDict = None):
+        parameterDict = {} if parameterDict is None else parameterDict
+        bList = [] if bList is None else bList
         newFeats = []
         for geom in self.geometryHandler.handleGeometry(feature.geometry(), parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):
             newfeat = QgsFeature(unifiedLyr.fields())
@@ -81,7 +83,8 @@ class FeatureHandler(QObject):
             newFeat.setAttribute(idx, None)
         return newFeat
     
-    def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = {}, coordinateTransformer = None):
+    def handleFeature(self, featList, featureWithoutGeom, lyr, parameterDict = None, coordinateTransformer = None):
+        parameterDict = {} if parameterDict is None else parameterDict
         geomList = []
         for feat in featList:
             geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict)
@@ -116,21 +119,35 @@ class FeatureHandler(QObject):
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
     
-    def mergeLineFeatures(self, featList, lyr, idsToRemove, parameterDict = {}):
-        for feat_a in featList:
-            if feat_a.id() in idsToRemove:
+    def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict = None, feedback = None, ignoreNetwork = False):
+        parameterDict = {} if parameterDict is None else parameterDict
+        changeDict = dict()
+        size = 100 / len(featList)
+        for current, feat_a in enumerate(featList):
+            if feedback:
+                if feedback.isCanceled():
+                    break
+            id_a = feat_a.id()
+            if id_a in idsToRemove:
                 continue
-            geom = feat_a.geometry()
             for feat_b in featList:
-                if feat_a.id() == feat_b.id():
+                if feedback:
+                    if feedback.isCanceled():
+                        break
+                id_b = feat_b.id()
+                if id_a == id_b or id_b in idsToRemove:
                     continue
-                if feat_b.id() in idsToRemove:
-                    continue
-                if geom.touches(feat_b.geometry()):
-                    newGeom = geom.combine(feat_b.geometry())
-                    newGeom = newGeom.mergeLines()
-                    newGeom = self.geometryHandler.handleGeometry(newGeom, parameterDict)[0] #only one candidate is possible because features are touching
-                    feat_a.setGeometry(newGeom)
-                    idsToRemove.append(feat_b.id())
-                    lyr.updateFeature(feat_a)    
+                geom_a = feat_a.geometry()
+                geom_b = feat_b.geometry()
+                if geom_a.touches(geom_b):
+                    point = geom_a.intersection(geom_b).asPoint()
+                    if ignoreNetwork or (point in networkDict and len(networkDict[point]) == 2):
+                        newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(), parameterDict)[0] #only one candidate is possible because features are touching
+                        feat_a.setGeometry(newGeom)
+                        idsToRemove.append(id_b)
+                        changeDict[id_a] = newGeom
+            if feedback:
+                feedback.setProgress(size*current)
+        for id, geom in changeDict.items():
+            lyr.changeGeometry(id, geom)
     

@@ -20,57 +20,130 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.core import QgsProcessingProvider
-from processing.core.ProcessingConfig import Setting, ProcessingConfig
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import DeaggregatorAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallPolygonsAlgorithm import IdentifySmallPolygonsAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallLinesAlgorithm import IdentifySmallLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import IdentifyDuplicatedGeometriesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesAlgorithm import IdentifyOutOfBoundsAnglesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesInCoverageAlgorithm import IdentifyOutOfBoundsAnglesInCoverageAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOverlapsAlgorithm import IdentifyOverlapsAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import IdentifyGapsAndOverlapsInCoverageAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import IdentifyDanglesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import IdentifyGapsAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import DonutHoleExtractorAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import UpdateOriginalLayerAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import TopologicalCleanLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAlgorithm import TopologicalCleanAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import TopologicalDouglasSimplificationAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedGeometriesAlgorithm import RemoveDuplicatedGeometriesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallLinesAlgorithm import RemoveSmallLinesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallPolygonsAlgorithm import RemoveSmallPolygonsAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import CleanGeometriesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.mergeLinesAlgorithm import MergeLinesAlgorithm
+from PyQt5.QtCore import QCoreApplication
+from qgis.core import QgsProcessingProvider, QgsApplication
 from qgis.PyQt.QtGui import QIcon
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import \
+    DonutHoleExtractorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
+    ConvertLayer2LayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import \
+    UpdateOriginalLayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import \
+    AdjustNetworkConnectivityAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.cleanGeometriesAlgorithm import \
+    CleanGeometriesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.createNetworkNodesAlgorithm import \
+    CreateNetworkNodesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometriesAlgorithm import \
+    DeaggregatorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import \
+    DissolvePolygonsWithSameAttributesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import \
+    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm, ParameterSnapHierarchyType
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
+    IdentifyDanglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
+    IdentifyDuplicatedFeaturesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import \
+    IdentifyDuplicatedGeometriesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedLinesOnCoverageAlgorithm import \
+    IdentifyDuplicatedLinesOnCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPointsOnCoverageAlgorithm import \
+    IdentifyDuplicatedPointsOnCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPolygonsOnCoverageAlgorithm import \
+    IdentifyDuplicatedPolygonsOnCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import \
+    IdentifyGapsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import \
+    IdentifyGapsAndOverlapsInCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesAlgorithm import \
+    IdentifyOutOfBoundsAnglesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOutOfBoundsAnglesInCoverageAlgorithm import \
+    IdentifyOutOfBoundsAnglesInCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyOverlapsAlgorithm import \
+    IdentifyOverlapsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallLinesAlgorithm import \
+    IdentifySmallLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifySmallPolygonsAlgorithm import \
+    IdentifySmallPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.lineOnLineOverlayerAlgorithm import \
+    LineOnLineOverlayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.mergeLinesAlgorithm import \
+    MergeLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.overlayElementsWithAreasAlgorithm import \
+    OverlayElementsWithAreasAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedFeaturesAlgorithm import \
+    RemoveDuplicatedFeaturesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeDuplicatedGeometriesAlgorithm import \
+    RemoveDuplicatedGeometriesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeEmptyAndUpdateAlgorithm import \
+    RemoveEmptyAndUpdateAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallLinesAlgorithm import \
+    RemoveSmallLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.removeSmallPolygonsAlgorithm import \
+    RemoveSmallPolygonsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapLayerOnLayerAndUpdateAlgorithm import \
+    SnapLayerOnLayerAndUpdateAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.snapToGridAndUpdateAlgorithm import \
+    SnapToGridAndUpdateAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanAlgorithm import \
+    TopologicalCleanAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLinesAlgorithm import \
+    TopologicalCleanLinesAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import \
+    TopologicalDouglasSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
+    VerifyNetworkDirectioningAlgorithm
+from processing.core.ProcessingConfig import ProcessingConfig, Setting
+
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     """
     Constructor
     """
+    snapHierarchyParameterName = QCoreApplication.translate('Processing', 'Snap Hierarchy')
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
-        self.algList = [DeaggregatorAlgorithm(), 
-                        IdentifySmallPolygonsAlgorithm(), 
-                        IdentifySmallLinesAlgorithm(), 
-                        IdentifyDuplicatedGeometriesAlgorithm(),
-                        IdentifyOutOfBoundsAnglesAlgorithm(),
-                        IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
-                        IdentifyOverlapsAlgorithm(),
-                        IdentifyGapsAndOverlapsInCoverageAlgorithm(),
-                        IdentifyDanglesAlgorithm(),
-                        IdentifyGapsAlgorithm(),
-                        DonutHoleExtractorAlgorithm(),
-                        UpdateOriginalLayerAlgorithm(),
-                        TopologicalCleanAlgorithm(),
-                        TopologicalDouglasSimplificationAlgorithm(),
-                        RemoveDuplicatedGeometriesAlgorithm(),
-                        RemoveSmallLinesAlgorithm(),
-                        RemoveSmallPolygonsAlgorithm(),
-                        CleanGeometriesAlgorithm(),
-                        MergeLinesAlgorithm(),
-                        TopologicalCleanLinesAlgorithm()]
+    
+    def getAlgList(self):
+        return [DeaggregatorAlgorithm(), 
+                IdentifySmallPolygonsAlgorithm(), 
+                IdentifySmallLinesAlgorithm(), 
+                IdentifyDuplicatedGeometriesAlgorithm(),
+                IdentifyOutOfBoundsAnglesAlgorithm(),
+                IdentifyOutOfBoundsAnglesInCoverageAlgorithm(),
+                IdentifyOverlapsAlgorithm(),
+                IdentifyGapsAndOverlapsInCoverageAlgorithm(),
+                IdentifyDanglesAlgorithm(),
+                IdentifyGapsAlgorithm(),
+                DonutHoleExtractorAlgorithm(),
+                UpdateOriginalLayerAlgorithm(),
+                TopologicalCleanAlgorithm(),
+                TopologicalDouglasSimplificationAlgorithm(),
+                RemoveDuplicatedGeometriesAlgorithm(),
+                RemoveSmallLinesAlgorithm(),
+                RemoveSmallPolygonsAlgorithm(),
+                CleanGeometriesAlgorithm(),
+                MergeLinesAlgorithm(),
+                TopologicalCleanLinesAlgorithm(),
+                SnapLayerOnLayerAndUpdateAlgorithm(),
+                LineOnLineOverlayerAlgorithm(),
+                DissolvePolygonsWithSameAttributesAlgorithm(),
+                SnapToGridAndUpdateAlgorithm(),
+                RemoveEmptyAndUpdateAlgorithm(),
+                ConvertLayer2LayerAlgorithm(),
+                OverlayElementsWithAreasAlgorithm(),
+                CreateNetworkNodesAlgorithm(),
+                VerifyNetworkDirectioningAlgorithm(),
+                IdentifyDuplicatedFeaturesAlgorithm(),
+                AdjustNetworkConnectivityAlgorithm(),
+                RemoveDuplicatedFeaturesAlgorithm(),
+                HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(),
+                IdentifyDuplicatedPolygonsOnCoverageAlgorithm(),
+                IdentifyDuplicatedLinesOnCoverageAlgorithm(),
+                IdentifyDuplicatedPointsOnCoverageAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
@@ -79,6 +152,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                                             'Activate', True))
         ProcessingConfig.readSettings()
         self.refreshAlgorithms()
+        self.parameterTypeSnapHierarchy = ParameterSnapHierarchyType()
+        QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
         return True
 
     def unload(self):
@@ -86,6 +161,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         Removes setting when the plugin is unloaded.
         """
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
+        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
 
     def isActive(self):
         """
@@ -129,5 +205,5 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         even if the list does not change, since the self.algs list is
         cleared before calling this method.
         """
-        for alg in self.algList:
+        for alg in self.getAlgList():
             self.addAlgorithm(alg)

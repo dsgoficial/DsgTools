@@ -20,30 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class CleanGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -51,7 +48,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
     TOLERANCE = 'TOLERANCE'
     MINAREA = 'MINAREA'
     FLAGS = 'FLAGS'
-    
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -71,12 +68,12 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
-            QgsProcessingParameterNumber(
-                self.TOLERANCE,
-                self.tr('Snap radius'),
-                minValue=0,
-                defaultValue=1.0000000000000000000000000,
-                type=QgsProcessingParameterNumber.Double
+            QgsProcessingParameterDistance(
+                self.TOLERANCE, 
+                self.tr('Snap radius'), 
+                parentParameterName=self.INPUT,                                         
+                minValue=0, 
+                defaultValue=1.0
             )
         )
         self.addParameter(
@@ -95,6 +92,12 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 self.tr('{0} Flags').format(self.displayName())
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Cleaned original layer')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -108,6 +111,8 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+        # if snap < 0 and snap != -1:
+        #     raise QgsProcessingException(self.invalidParameterError(parameters, self.TOLERANCE))
         minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
 
@@ -126,10 +131,10 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                                                     feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback)
+        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
         self.flagIssues(cleanedLyr, error, feedback)
 
-        return {self.INPUT : inputLyr, self.FLAGS : self.flagSink}
+        return {self.OUTPUT : inputLyr, self.FLAGS : self.flag_id}
 
     def flagIssues(self, cleanedLyr, error, feedback):
         overlapDict = dict()

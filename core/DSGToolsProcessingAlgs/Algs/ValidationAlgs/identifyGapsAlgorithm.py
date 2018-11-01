@@ -20,29 +20,25 @@
  ***************************************************************************/
 """
 
-from .validationAlgorithm import ValidationAlgorithm
+from PyQt5.QtCore import QCoreApplication
+
+import processing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from ...algRunner import AlgRunner
-
-from PyQt5.QtCore import QCoreApplication
-import processing
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes,
-                       QgsProcessingUtils,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class IdentifyGapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
