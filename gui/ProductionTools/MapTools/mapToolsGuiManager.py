@@ -87,17 +87,14 @@ class MapToolsGuiManager(QObject):
         """
         Initiates all tools' signals.
         """
-        # connect current layer changed signal to all tools that use it
-        self.iface.currentLayerChanged.connect(self.flipLineTool.setToolEnabled)
-        self.iface.currentLayerChanged.connect(self.acquisition.checkToDeactivate)
-        # connect editing started/stopped signals to all tools that use it
-        self.editingStarted.connect(self.flipLineTool.setToolEnabled)
-        self.editingStopped.connect(self.acquisition.setToolEnabled)
-        self.editingStarted.connect(self.flipLineTool.setToolEnabled)
-        self.editingStopped.connect(self.acquisition.setToolEnabled)
-        # connect edit button toggling signal to all tools that use it
-        self.iface.actionToggleEditing().triggered.connect(self.flipLineTool.setToolEnabled)
-        self.iface.actionToggleEditing().triggered.connect(self.acquisition.setToolEnabled)
+        for tool in [self.flipLineTool, self.acquisition]:
+            # connect current layer changed signal to all tools that use it
+            self.iface.currentLayerChanged.connect(tool.setToolEnabled)
+            # connect editing started/stopped signals to all tools that use it
+            self.editingStarted.connect(tool.setToolEnabled)
+            self.editingStopped.connect(tool.setToolEnabled)
+            # connect edit button toggling signal to all tools that use it
+            self.iface.actionToggleEditing().triggered.connect(tool.setToolEnabled)
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
