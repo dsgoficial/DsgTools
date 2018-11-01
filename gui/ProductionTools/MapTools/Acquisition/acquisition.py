@@ -14,8 +14,6 @@ class Acquisition(QObject):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool = None
-        # self.iface.currentLayerChanged.connect(self.checkToDeactivate)
-        # self.iface.actionToggleEditing().triggered.connect(self.setToolEnabled)
         self.polygonAction = None
         self.circleAction = None
     
@@ -56,18 +54,15 @@ class Acquisition(QObject):
 
     def acquisitionCircle(self):
         self.run(Circle, self.circleAction)
-
-    def checkToDeactivate(self):
-        enabled = self.setToolEnabled()
-        if not enabled and self.tool:
-            self.tool.deactivate()
     
     def setToolEnabled(self):
-        layer = self.iface.mapCanvas().currentLayer()
-        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QgsWkbTypes.PointGeometry or not layer.isEditable():
+        layer = self.iface.activeLayer()  
+        if not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QgsWkbTypes.PointGeometry or not layer.isEditable():
             enabled = False
         else:
             enabled = True
+        if not enabled and self.tool:
+            self.tool.deactivate()
         if self.polygonAction:
             self.polygonAction.setEnabled(enabled)
         if self.circleAction:

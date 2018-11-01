@@ -40,7 +40,7 @@ from qgis.core import QgsApplication
 
 try:
     import ptvsd
-    ptvsd.enable_attach(secret='my_secret', address = ('localhost', 5679))
+    ptvsd.enable_attach(address = ('localhost', 5679))
 except Exception as e:
     pass
 
