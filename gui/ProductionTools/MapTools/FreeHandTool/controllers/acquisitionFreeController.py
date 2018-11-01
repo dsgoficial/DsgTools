@@ -22,7 +22,7 @@ from builtins import range
 from builtins import object
 from qgis.PyQt import QtGui, QtCore
 from qgis import core, gui
-from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsWkbTypes
+from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsWkbTypes, QgsProject
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import AcquisitionFree
 
@@ -156,7 +156,7 @@ class AcquisitionFreeController(object):
         crsDest = core.QgsCoordinateReferenceSystem(srid) #here we have to put authid, not srid
         if srid != epsg:
             # Creating a transformer
-            coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest)
+            coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
             lyrType = iface.activeLayer().geometryType()
             # Transforming the points
             if lyrType == core.QgsWkbTypes.LineGeometry:
@@ -173,7 +173,7 @@ class AcquisitionFreeController(object):
                         point = line[i]
                         newGeom.append(coordinateTransformer.transform(point))
             if lyrType == core.QgsWkbTypes.LineGeometry:
-                return core.QgsGeometry.fromPolyline(newGeom)
+                return core.QgsGeometry.fromPolylineXY(newGeom)
             elif lyrType == core.QgsWkbTypes.PolygonGeometry:
                 return core.QgsGeometry.fromPolygonXY([newGeom])
         return geom        
@@ -208,9 +208,8 @@ class AcquisitionFreeController(object):
         canvas = self.getIface().mapCanvas()
         layer = canvas.currentLayer()
         tolerance = self.getTolerance(layer)
-        
-        rsLine = self.simplifyGeometry(reshapeLine, tolerance)
-
+        reshapeLine_ = self.reprojectGeometry(reshapeLine)
+        rsLine = self.simplifyGeometry(reshapeLine_, tolerance)
         request = core.QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
         
         for feat in layer.getFeatures(request):
