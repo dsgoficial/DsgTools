@@ -232,7 +232,7 @@ class AcquisitionFreeController(object):
         #Método para adicionar a feição com formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
-        attrDialog.setMode(gui.QgsAttributeForm.AddFeatureMode)
+        attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
         result = attrDialog.exec_()
 
     def addFeatureWithoutForm(self, layer, feature):
