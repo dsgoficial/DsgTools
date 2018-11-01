@@ -38,7 +38,8 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterVectorLayer,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsFields)
+                       QgsFields,
+                       QgsProcessingException)
 
 class ValidationAlgorithm(QgsProcessingAlgorithm):
     """
@@ -58,20 +59,30 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
             return iterator, total
         except:
             return [], 0
-    
+
     def prepareFlagSink(self, parameters, source, wkbType, context):
+        (self.flagSink, self.flag_id) = self.prepareAndReturnFlagSink(
+            parameters,
+            source,
+            wkbType,
+            context,
+            self.FLAGS
+            )
+    
+    def prepareAndReturnFlagSink(self, parameters, source, wkbType, context, UI_FIELD):
         flagFields = self.getFlagFields()
-        (self.flagSink, self.flag_id) = self.parameterAsSink(parameters, self.FLAGS,
+        (flagSink, flag_id) = self.parameterAsSink(parameters, UI_FIELD,
                 context, flagFields, wkbType, source.sourceCrs())
-        if self.flagSink is None:
-            raise QgsProcessingException(self.invalidSinkError(parameters, self.FLAGS))
+        if flagSink is None:
+            raise QgsProcessingException(self.invalidSinkError(parameters, UI_FIELD))
+        return (flagSink, flag_id)
     
     def getFlagFields(self):
         fields = QgsFields()
         fields.append(QgsField('reason',QVariant.String))
         return fields
     
-    def flagFeature(self, flagGeom, flagText):
+    def flagFeature(self, flagGeom, flagText, fromWkb=False):
         """
         Creates and adds to flagSink a new flag with the reason.
         :param flagGeom: (QgsGeometry) geometry of the flag;
@@ -79,6 +90,8 @@ class ValidationAlgorithm(QgsProcessingAlgorithm):
         """
         newFeat = QgsFeature(self.getFlagFields())
         newFeat['reason'] = flagText
+        if fromWkb:
+            flagGeom = QgsGeometry.fromWkb(flagGeom)
         newFeat.setGeometry(flagGeom)
         self.flagSink.addFeature(newFeat, QgsFeatureSink.FastInsert)
     

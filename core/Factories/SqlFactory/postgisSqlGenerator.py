@@ -1113,6 +1113,8 @@ class PostGISSqlGenerator(SqlGenerator):
     def alterSearchPath(self, dbName, version):
         if version == '2.1.3':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';'.format(dbName)
+        elif version == '2.1.3 Pro':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'edgv\',\'dominios\';'.format(dbName)
         elif version == '3.0':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';'.format(dbName)
         elif version == 'FTer_2a_Ed':

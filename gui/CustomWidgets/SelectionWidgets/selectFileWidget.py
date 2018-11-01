@@ -63,6 +63,7 @@ class SelectFileWidget(QtWidgets.QWidget, FORM_CLASS):
              selectedFiles = fd.getExistingDirectory(directory=os.path.expanduser('~'), caption=self.caption, options=QFileDialog.ShowDirsOnly)
              if selectedFiles != '':
                  self.fileNameList = [selectedFiles]
+        selectedFiles = selectedFiles[0] if isinstance(selectedFiles, tuple) else selectedFiles
         self.lineEdit.setText(selectedFiles)
         self.filesSelected.emit()
     

@@ -305,6 +305,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         except:
             pass
         self.iface.unregisterMainWindowAction(self.activateToolAction)
+        self.iface.unregisterMainWindowAction(self.valueSetterButtonAction)
         self.iface.unregisterMainWindowAction(self.bandTooltipButtonAction)
         self.iface.unregisterMainWindowAction(self.dynamicHistogramButtonAction)
 

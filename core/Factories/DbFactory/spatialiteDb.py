@@ -63,6 +63,7 @@ class SpatialiteDb(AbstractDb):
         '''
         fd = QFileDialog()
         filename = fd.getOpenFileName(caption=self.tr('Select a DSGTools Spatialite file'),filter=self.tr('Spatialite file databases (*.sqlite)'))
+        filename = filename[0] if isinstance(filename, tuple) else filename
         self.db.setDatabaseName(filename)
     
     def listGeomClassesFromDatabase(self, primitiveFilter = []):
@@ -79,8 +80,7 @@ class SpatialiteDb(AbstractDb):
         while query.next():
             tableName = str(query.value(0))
             layerName = tableName
-            if tableName.split("_")[-1] == "p" or tableName.split("_")[-1] == "l" \
-                or tableName.split("_")[-1] == "a":
+            if tableName[-2:] in ["_p", "_l", "_a"]:
                 classList.append(layerName)
         return classList
     

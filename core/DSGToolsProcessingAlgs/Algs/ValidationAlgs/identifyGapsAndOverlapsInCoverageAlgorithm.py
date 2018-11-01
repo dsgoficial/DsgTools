@@ -21,28 +21,23 @@
  ***************************************************************************/
 """
 
-from .validationAlgorithm import ValidationAlgorithm
+from PyQt5.QtCore import QCoreApplication
+
+import processing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
-from PyQt5.QtCore import QCoreApplication
-import processing
-from qgis.core import (QgsProject, 
-                       QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes,
-                       QgsProcessingUtils,
-                       QgsProcessingException)
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsWkbTypes)
+
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
