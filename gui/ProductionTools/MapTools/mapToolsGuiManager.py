@@ -35,7 +35,7 @@ from .FreeHandTool.freeHandMain import FreeHandMain
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
-    # signals to replicate current layer's editing started/stopped
+    # signals to replicate current layer's editing started/stopped signal
     editingStarted = pyqtSignal()
     editingStopped = pyqtSignal()
 
@@ -52,7 +52,7 @@ class MapToolsGuiManager(QObject):
         self.currentLayer = None
         self.resetCurrentLayerSignals()
         self.iface.currentLayerChanged.connect(self.resetCurrentLayerSignals)
-    
+
     def initGui(self):
         #adding generic selection tool
         self.genericTool = GenericSelectionTool(self.iface)
@@ -64,9 +64,11 @@ class MapToolsGuiManager(QObject):
         #adding acquisition
         self.acquisition = Acquisition(self.iface)
         self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.acquisition.setToolEnabled()
         #adding free hand tool
         self.freeHandAcquisiton = FreeHandMain(self.iface)
         self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.freeHandAcquisiton.setToolEnabled()
         self.initiateToolsSignals()
 
     def resetCurrentLayerSignals(self):
@@ -97,15 +99,14 @@ class MapToolsGuiManager(QObject):
             self.iface.actionToggleEditing().triggered.connect(tool.setToolEnabled)
         # free hand has its own signal connected when started
         self.freeHandAcquisiton.acquisitionFreeController.actionAcquisitionFree.triggered.connect(\
-                                    self.freeHandAcquisiton.acquisitionFreeController.activateTool)
+                self.freeHandAcquisiton.acquisitionFreeController.activateTool)
         self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.acquisitionFinished.connect(\
                 self.freeHandAcquisiton.acquisitionFreeController.createFeature)
         self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.reshapeLineCreated.connect(\
                 self.freeHandAcquisiton.acquisitionFreeController.reshapeSimplify)
 
-
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
-    
+
     def unload(self):
         self.genericTool.unload()
