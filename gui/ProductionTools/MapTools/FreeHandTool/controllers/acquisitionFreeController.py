@@ -22,7 +22,7 @@ from builtins import range
 from builtins import object
 from qgis.PyQt import QtGui, QtCore
 from qgis import core, gui
-from qgis.core import QgsPoint, QgsLineString
+from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsWkbTypes
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import AcquisitionFree
 
@@ -81,14 +81,6 @@ class AcquisitionFreeController(object):
         #Método para obter estado da tool (ativada ou desativada)
         #Parâmetro de retorno: state (boleano)
         return self.active
-    
-    def connectToolSignals(self):
-        #Método para iniciar sinais do plugin 
-        self.iface.actionToggleEditing().triggered.connect(self.checkToActiveAction)
-        self.iface.currentLayerChanged.connect(self.checkToActiveAction)
-        # self.iface.currentLayerChanged.connect(self.deactivateTool)
-        self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
-        self.actionAcquisitionFree.triggered.connect(self.activateTool)
 
     def checkToActiveAction(self):
         #Método para testar se a camada ativa é valida para ativar a ferramenta
@@ -101,6 +93,18 @@ class AcquisitionFreeController(object):
             self.actionAcquisitionFree.setEnabled(False)
             self.deactivateTool(checkActivationtatus=False)
         return False
+
+    def setToolEnabled(self):
+        layer = self.iface.activeLayer()  
+        if not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QgsWkbTypes.PointGeometry or not layer.isEditable():
+            enabled = False
+        else:
+            enabled = True
+        if not enabled and self.acquisitionFree:
+            self.acquisitionFree.deactivate()
+            self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
+        self.actionAcquisitionFree.setEnabled(enabled)
+        return enabled
 
     def getParametersFromConfig(self):
         #Método para obter as configurações da tool do QSettings
@@ -228,7 +232,7 @@ class AcquisitionFreeController(object):
         #Método para adicionar a feição com formulário
         #Parâmetro de entrada: layer (Camada ativa), feature (Feição adquirida)
         attrDialog = gui.QgsAttributeDialog(layer, feature, False)
-        attrDialog.setMode(gui.QgsAttributeEditorContext.AddFeatureMode)
+        attrDialog.setMode(int(gui.QgsAttributeForm.AddFeatureMode))
         result = attrDialog.exec_()
 
     def addFeatureWithoutForm(self, layer, feature):
@@ -239,30 +243,11 @@ class AcquisitionFreeController(object):
 
     def activateTool(self):
         #Método para iniciar a ferramenta
-        # if not self.getActiveState():
-        self.acquisitionFree.acquisitionFinished.connect(self.createFeature)
-        self.acquisitionFree.reshapeLineCreated.connect( self.reshapeSimplify ) 
-        self.iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
-        self.actionAcquisitionFree.setChecked(True)
-        self.iface.mapCanvas().setMapTool(self.acquisitionFree)
-        self.setActiveState(True)
-        self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
-
-                        
-    def deactivateTool(self, newTool=None, oldTool=None, checkActivationtatus=True):
-        #Método para desativar a ferramenta
-        if checkActivationtatus:
-            self.checkToActiveAction()
-        if self.getActiveState():
-            try:
-                self.acquisitionFree.acquisitionFinished.disconnect(self.createFeature)
-            except:
-                pass
-        self.iface.mapCanvas().mapToolSet.disconnect(self.deactivateTool)
-        self.acquisitionFree.deactivate()
-        actionAcquisitionFree = self.getActionAcquisitionFree()
-        actionAcquisitionFree.setChecked(False)
-        self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
-        self.setActiveState(False)
-        self.iface.mapCanvas().mapToolSet.connect(self.deactivateTool)
-      
+        state = self.actionAcquisitionFree.isChecked()
+        self.actionAcquisitionFree.setChecked(not state)
+        self.setActiveState(state)
+        if not state:
+            self.iface.mapCanvas().setMapTool(self.acquisitionFree)
+        else:
+            self.iface.mapCanvas().unsetMapTool(self.acquisitionFree)
+        self.setToolEnabled()

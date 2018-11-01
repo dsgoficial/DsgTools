@@ -224,7 +224,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
                 if defaultClauseCandidate:
                     feature.setAttribute(i, defaultClauseCandidate)                
             form = QgsAttributeDialog(layer, feature, False)
-            form.setMode(QgsAttributeForm.AddFeatureMode)
+            form.setMode(int(QgsAttributeForm.AddFeatureMode))
             formSuppress = layer.editFormConfig().suppress()
             if formSuppress == QgsEditFormConfig.SuppressDefault:
                 if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
