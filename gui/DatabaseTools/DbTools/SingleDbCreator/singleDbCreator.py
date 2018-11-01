@@ -102,6 +102,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             logMsg += self.tr('Check log for more details.')
         msg = [i for i in (creationMsg, errorMsg, logMsg) if i != '']
         QMessageBox.warning(self, self.tr('Info!'), self.tr('Process finished.')+'\n'+'\n'.join(msg))
+        self.close()
         return True
     
     def createDatabases(self, parameterDict):
