@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui, uic
-from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt
+from PyQt4 import QtGui,QtCore, uic
+from PyQt4.QtCore import pyqtSignal, pyqtSlot, SIGNAL, Qt, QSettings
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
 from qgis.utils import iface
 from qgis.core import QgsPoint, QgsFeature, QgsGeometry, QGis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig
@@ -10,6 +10,7 @@ from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import QShortcut, QKeySequence, QCursor, QPixmap, QColor
 from PyQt4.QtCore import QSettings
 from distanceToolTip import DistanceToolTip
+import math
 
 class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def __init__(self, canvas, iface, action):
@@ -19,8 +20,10 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.rubberBand = None
         self.snapCursorRubberBand = None
         self.initVariable()
-        self.setAction(action)
-        self.distanceToolTip = DistanceToolTip(self.iface)
+        self.setAction(action)        
+        self.minSegmentDistance = self.getMinSegmentDistance()
+        self.distanceToolTip = DistanceToolTip(self.iface, self.minSegmentDistance)
+
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
@@ -33,6 +36,21 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             return False
         else:
             return True
+
+    def getParametersFromConfig(self):
+        #Método para obter as configurações da tool do QSettings
+        #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
+        settings = QtCore.QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        parameters = {
+            u'minSegmentDistance' : settings.value('minSegmentDistance'),
+        }
+        settings.endGroup()
+        return parameters
+
+    def getMinSegmentDistance(self):
+        parameters = self.getParametersFromConfig()
+        return parameters[u'minSegmentDistance']
 
     def setAction(self, action):
         self.toolAction = action
@@ -116,11 +134,11 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             
     def lineIntersection(self, p1, p2, p3, p4):    
         p3Projected = p4       
-        if(p1.y() == p2.y()):                     
+        if((p1.y() == p2.y()) or (p3.x()==p4.x())):                                     
             y = p3Projected.y()
             x = p2.x() 
             return QgsPoint(x,y)
-        if(p1.x() == p2.x()):         
+        if((p1.x() == p2.x()) or (p3.y() == p4.y())):    
             y = p2.y()
             x = p3Projected.x() 
             return QgsPoint(x,y)
@@ -136,7 +154,22 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
                 y = -x/m1 + a1
                 return QgsPoint(x,y)
             return False
-    
+
+
+    def distanceBetweenLinesTest(self, geom, p):             
+        teste_answer = True
+        for i in range(len(geom)-1):
+            p1 = geom[i]
+            p2 = geom[i+1]   
+            projected_point = self.projectPoint(p1,p2,p)
+            distance = self.distanceToolTip.calculateDistance(projected_point,p2)            
+            if distance > self.minSegmentDistance:
+                continue
+            else:
+                teste_answer = False
+                break
+        return teste_answer
+
     def projectPoint(self, p1, p2, p3):        
         #reta P1 P2
         try:
