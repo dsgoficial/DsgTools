@@ -27,13 +27,13 @@ from PyQt4.QtGui import QToolTip, QColor, QFont
 from PyQt4.QtCore import QPoint
 
 class DistanceToolTip(ToolTip):
-	def __init__(self, iface):
+	def __init__(self, iface, minSegmentDistance):
 		super(DistanceToolTip, self).__init__(iface)
 		self.iface = iface
 		self.canvas = iface.mapCanvas()      
 		self.last_distance = 0  
 		self.showing = False	
-			
+		self.minSegmentDistance = minSegmentDistance			
 
 	def calculateDistance(self, p1, p2):
 		distance = QgsDistanceArea()
@@ -50,7 +50,7 @@ class DistanceToolTip(ToolTip):
 		if self.showing:
 			if m != self.last_distance:
 				color = 'red'
-				if m >= 4:
+				if m >= self.minSegmentDistance:
 					color = 'green'				
 				txt = "<p style='color:{color}'><b>{distance}</b></p>".format(color=color, distance=str(m))
 				super(DistanceToolTip, self).show(txt, current_p)		
@@ -58,7 +58,7 @@ class DistanceToolTip(ToolTip):
 		else:
 			if m > 1:
 				color = 'red'
-				if m >= 4:
+				if m >= self.minSegmentDistance:
 					color = 'green'				
 				txt = "<p style='color:{color}'><b>{distance}</b></p>".format(color=color, distance=str(m))
 				super(DistanceToolTip, self).show(txt, current_p)		  	
