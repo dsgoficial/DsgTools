@@ -1616,7 +1616,7 @@ class NetworkHandler(QObject):
                 self.nodeDict.pop(node, None)
             self.nodesToPop = []
         if selectValid:
-            networkLayer.setSelectedFeatures(list(val.keys()))
+            networkLayer.selectByIds(list(val.keys()))
         if feedback is not None:
             percValid = float(len(val))*100.0/float(networkLayer.featureCount()) if networkLayer.featureCount() else 0
             if nodeFlags:
