@@ -72,11 +72,11 @@ class ServerToolsGuiManager(QObject):
         self.viewServersGui = ViewServersGui(manager=self, parentMenu=self.menu, toolbar=self.toolbar)
         self.viewServersGui.initGui()
         self.batchDbManagerGui = BatchDbManagerGui(manager=self, parentMenu=self.menu, toolbar=self.toolbar)
-        # self.batchDbManagerGui.initGui()
+        self.batchDbManagerGui.initGui()
 
     def unload(self):
         """
         Unloads all loaded GUI.
         """
-        # self.ViewServersGui.unload()
-        # self.BatchDbManagerGui.unload()
+        self.ViewServersGui.unload()
+        self.BatchDbManagerGui.unload()
