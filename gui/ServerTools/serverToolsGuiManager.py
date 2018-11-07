@@ -69,9 +69,9 @@ class ServerToolsGuiManager(QObject):
         """
         Instantiates all available database creation GUI. 
         """
-        self.viewServersGui = ViewServersGui(manager=self, parentMenu=self.menu, toolbar=self.toolbar)
+        self.viewServersGui = ViewServersGui(manager=self, parentMenu=self.menu)
         self.viewServersGui.initGui()
-        self.batchDbManagerGui = BatchDbManagerGui(manager=self, parentMenu=self.menu, toolbar=self.toolbar)
+        self.batchDbManagerGui = BatchDbManagerGui(manager=self, parentMenu=self.menu)
         self.batchDbManagerGui.initGui()
 
     def unload(self):

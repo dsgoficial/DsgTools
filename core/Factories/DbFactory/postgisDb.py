@@ -2850,7 +2850,7 @@ class PostgisDb(AbstractDb):
     
     def deletePermissionProfile(self, name, edgvversion):
         """
-        Deletes profile from from public.permission_profiles
+        Deletes profile from public.permission_profiles
         """
         self.checkAndOpenDb()
         sql = self.gen.deletePermissionProfile(name, edgvversion)
@@ -3189,7 +3189,7 @@ class PostgisDb(AbstractDb):
     
     def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
         """
-        Deletes profile from from public.permission_profiles
+        Deletes profile from public.permission_profiles
         """
         self.checkAndOpenDb()
         sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)

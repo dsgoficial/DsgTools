@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 #DsgTools Imports
-from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
 class NewDomainTableCustomization(DbCustomization):
     def __init__(self, customJson):

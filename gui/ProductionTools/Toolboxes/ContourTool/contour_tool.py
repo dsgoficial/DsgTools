@@ -24,7 +24,7 @@
 from builtins import range
 from builtins import object
 from qgis.core import QgsFeatureRequest, QgsGeometry, Qgis, QgsSpatialIndex, QgsCoordinateTransform
-from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
+from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.contour_value import ContourValue
 
 class ContourTool(object):
     def updateReference(self, referenceLayer):

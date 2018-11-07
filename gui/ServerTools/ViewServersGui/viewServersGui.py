@@ -27,7 +27,7 @@ from DsgTools.gui.ServerTools.viewServers import ViewServers
 
 class ViewServersGui(QObject):
     
-    def __init__(self, manager, parentMenu, toolbar, iface=None, parent=None):
+    def __init__(self, manager, parentMenu, iface=None, parent=None):
         """
         Class constructor.
         :param iface: (QgsInterface) interface to be used to send commands to QGIS
@@ -38,7 +38,6 @@ class ViewServersGui(QObject):
         self.manager = manager
         self.iface = iface
         self.parentMenu = parentMenu
-        self.toolbar = toolbar
         self.viewServers = ViewServers(iface=iface, parent=parent)
 
     def initGui(self):

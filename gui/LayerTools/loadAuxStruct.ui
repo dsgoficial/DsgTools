@@ -119,13 +119,13 @@
   <customwidget>
    <class>ConnectionWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.connectionWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.connectionWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>EarthCoverageWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.earthCoverageWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.earthCoverageWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

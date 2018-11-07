@@ -33,8 +33,8 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.core import QgsMessageLog
 
 # DSGTools imports
-from DsgTools.UserTools.createProfileWithProfileManager import CreateProfileWithProfileManager
-from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
+from DsgTools.gui.DatabaseTools.UserTools.createProfileWithProfileManager import CreateProfileWithProfileManager
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericParameterSetter import GenericParameterSetter
 
 import json
 

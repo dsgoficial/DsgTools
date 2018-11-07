@@ -29,12 +29,12 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
-from DsgTools.ServerManagementTools.fieldToolBoxConfigManager import FieldToolBoxConfigManager
-from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
-from DsgTools.CustomWidgets.genericManagerWidget import GenericManagerWidget
-from DsgTools.ProductionTools.FieldToolBox.field_setup import FieldSetup
-from DsgTools.Utils.utils import Utils
-from DsgTools.dsgEnums import DsgEnums
+from DsgTools.core.ServerManagementTools.fieldToolBoxConfigManager import FieldToolBoxConfigManager
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericParameterSetter import GenericParameterSetter
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericManagerWidget import GenericManagerWidget
+from DsgTools.gui.ProductionTools.Toolboxes.FieldToolBox.field_setup import FieldSetup
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
