@@ -417,4 +417,4 @@ class SpatialRelationsHandler(QObject):
         3. Build terrain dict;
         4. Validate contours.
         """
-        
+        pass
