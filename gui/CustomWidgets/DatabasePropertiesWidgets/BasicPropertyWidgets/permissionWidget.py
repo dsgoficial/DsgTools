@@ -59,6 +59,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.permissionTreeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.permissionTreeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
 
+    # @pyqtSlot(bool, name='on_manageProfilesPushButton_clicked')
     @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
     @pyqtSlot(bool, name='on_userPerspectivePushButton_clicked')
     def refresh(self):
@@ -101,7 +102,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.permissionTreeWidget.expandAll()
     
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
     
@@ -130,7 +131,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_manageProfilesPushButton_clicked(self):
         try:
             dlg = ServerProfilesManager(self.permissionManager)
-            dlg.profilesChanged.connect(self.refresh)
+            # dlg.profilesChanged.connect(self.refresh)
             dlg.exec_()
         except Exception as e:
             QMessageBox.warning(self, self.tr('Error!'), ':'.join(e.args))
@@ -276,7 +277,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + ':'.join(e.args))
-        self.refreshProfileList()
+        # self.refreshProfileList()
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):

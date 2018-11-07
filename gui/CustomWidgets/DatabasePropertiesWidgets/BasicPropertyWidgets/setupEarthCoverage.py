@@ -161,7 +161,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
         self.treeWidget.clear()
         selectedAreaClasses = self.areasCustomSelector.toLs
         for i in range(len(selectedAreaClasses)):
-            treeItem = QtGui.QTreeWidgetItem()
+            treeItem = QtWidgets.QTreeWidgetItem()
             treeItem.setText(0,selectedAreaClasses[i])
             self.treeWidget.insertTopLevelItem(0,treeItem)
 
@@ -174,7 +174,7 @@ class SetupEarthCoverage(QtWidgets.QWizard, FORM_CLASS):
             delimiterList.append(self.linesCustomSelector.toList.item(i).text())
         for i in range(self.treeWidget.invisibleRootItem().childCount()):
             for delimiter in delimiterList:
-                treeItem = QtGui.QTreeWidgetItem(self.treeWidget.invisibleRootItem().child(i))
+                treeItem = QtWidgets.QTreeWidgetItem(self.treeWidget.invisibleRootItem().child(i))
                 treeItem.setText(1,delimiter)
                 treeItem.setFlags(Qt.ItemIsUserCheckable | Qt.ItemIsEnabled)
                 treeItem.setCheckState(1,Qt.Checked)

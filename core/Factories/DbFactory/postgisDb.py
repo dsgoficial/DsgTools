@@ -93,7 +93,7 @@ class PostgisDb(AbstractDb):
             self.getCredentials(host, port, user, database)
         
     def getCredentials(self, host, port, user, database):
-        conInfo = 'host='+host+' port='+port+' dbname='+database
+        conInfo = "host={0} port={1} dbname={2}".format(host, port, database)
         check = False
         while not check:
             (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)

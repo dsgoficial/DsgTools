@@ -78,5 +78,5 @@ class ServerToolsGuiManager(QObject):
         """
         Unloads all loaded GUI.
         """
-        self.ViewServersGui.unload()
-        self.BatchDbManagerGui.unload()
+        self.viewServersGui.unload()
+        self.batchDbManagerGui.unload()

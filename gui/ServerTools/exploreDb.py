@@ -115,7 +115,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         '''
         Creates a tree widget item
         '''
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled)
         item.setText(column, text)
         return item

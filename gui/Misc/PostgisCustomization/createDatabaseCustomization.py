@@ -183,7 +183,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
         return groupBox
     
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
     
