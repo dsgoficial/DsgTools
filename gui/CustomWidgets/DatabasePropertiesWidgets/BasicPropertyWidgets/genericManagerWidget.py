@@ -137,7 +137,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         fd = QFileDialog()
         widgetType = self.getWhoAmI()
-        filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])
+        filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])[0]
         if filename == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
