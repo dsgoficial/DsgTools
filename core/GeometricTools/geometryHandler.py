@@ -126,7 +126,8 @@ class GeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        # if layer is in editing mode, feature geometry is always SINGLE
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType())) and not layer.isEditable()
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:
@@ -150,7 +151,7 @@ class GeometryHandler(QObject):
             else:
                 nodes = geom.asPolyline()
                 nodes = nodes[::-1]
-                flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)         
+                flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)
         elif geomType == 2:
             if isMulti:
                 nodes = geom.asMultiPolygon()                
