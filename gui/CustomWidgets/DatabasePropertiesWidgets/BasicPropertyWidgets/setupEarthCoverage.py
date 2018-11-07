@@ -27,7 +27,7 @@ import json
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog
-from DsgTools.Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'setupEarthCoverage.ui'))

@@ -30,14 +30,14 @@ from qgis.PyQt.QtGui import QCursor
 
 from qgis.core import QgsMessageLog
 
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.UserTools.permission_properties import PermissionProperties
-from DsgTools.UserTools.manageServerUsers import ManageServerUsers
-from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
-from DsgTools.UserTools.profileUserManager import ProfileUserManager
-from DsgTools.UserTools.dbProfileManager import DbProfileManager
-from DsgTools.ServerManagementTools.permissionManager import PermissionManager
-from DsgTools.UserTools.serverProfilesManager import ServerProfilesManager
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.DatabaseTools.UserTools.manageServerUsers import ManageServerUsers
+from DsgTools.gui.DatabaseTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
+from DsgTools.gui.DatabaseTools.UserTools.profileUserManager import ProfileUserManager
+from DsgTools.gui.DatabaseTools.UserTools.dbProfileManager import DbProfileManager
+from DsgTools.core.ServerManagementTools.permissionManager import PermissionManager
+from DsgTools.gui.DatabaseTools.UserTools.serverProfilesManager import ServerProfilesManager
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(

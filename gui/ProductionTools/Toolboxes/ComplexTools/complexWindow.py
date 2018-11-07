@@ -35,8 +35,8 @@ from qgis.core import QgsDataSourceUri, QgsCredentials, QgsMessageLog, QgsRectan
 
 #DsgTools imports
 from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))

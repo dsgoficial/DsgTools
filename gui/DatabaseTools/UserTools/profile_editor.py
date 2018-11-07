@@ -29,7 +29,7 @@ from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot
 
 # DSGTools imports
-from DsgTools.UserTools.create_profile import CreateProfile
+from DsgTools.gui.DatabaseTools.UserTools.create_profile import CreateProfile
 
 import json
 
