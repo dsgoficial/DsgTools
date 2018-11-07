@@ -24,7 +24,7 @@
 from qgis.PyQt.QtCore import Qt, QSettings, pyqtSignal
 from qgis.PyQt.QtGui import QColor
 from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import QgsGeometry, Qgis
+from qgis.core import QgsGeometry, QgsWkbTypes
 
 class DsgLineTool(QgsMapTool):
 
@@ -65,7 +65,7 @@ class DsgLineTool(QgsMapTool):
         Resets the tool
         """
         if self.rubberBand:
-            self.rubberBand.reset(Qgis.Line)
+            self.rubberBand.reset(QgsWkbTypes.LineGeometry)
         self.isEmittingPoint = False
         self.defineRubberBand()
 
