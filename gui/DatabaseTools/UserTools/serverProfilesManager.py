@@ -61,7 +61,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         """
         Creates tree widget items
         """
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
         item.setCheckState(1, QtCore.Qt.Unchecked)
         item.setCheckState(2, QtCore.Qt.Unchecked)

@@ -66,7 +66,7 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
             userNameItem.setText(1,self.userTypeDict[type])
     
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
     
