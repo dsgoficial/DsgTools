@@ -126,8 +126,8 @@ class GeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        # if layer is in editing mode, feature geometry is always SINGLE
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType())) and not layer.isEditable()
+        # features not yet commited to layer always have SINGLE geometry
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType())) and feature.id() > 0
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:
