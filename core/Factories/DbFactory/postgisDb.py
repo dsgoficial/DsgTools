@@ -1929,7 +1929,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Style ')+styleFolder+self.tr(' does not match the version of database ') + self.db.databaseName())
         path = os.path.join(os.path.dirname(__file__),'..', '..','Styles')
         stylePath = os.path.join(path,styleFolder)
-        availableStyles = os.walk(stylePath).next()[2]
+        availableStyles = next(os.walk(stylePath))[2]
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
             #filtering and checking file names for special characters
