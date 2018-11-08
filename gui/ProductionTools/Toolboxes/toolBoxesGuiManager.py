@@ -30,6 +30,7 @@ from qgis.PyQt.QtCore import QObject, Qt
 from .AttributeTools.code_list import CodeList
 from .FieldToolBox.field_toolbox import FieldToolbox
 from .ValidationToolbox.validation_toolbox import ValidationToolbox
+from .ContourTool.calc_contour import CalcContour
 
 class ToolBoxesGuiManager(QObject):
 
@@ -47,6 +48,8 @@ class ToolBoxesGuiManager(QObject):
     def initGui(self):
         self.validationToolbox = ValidationToolbox(self.iface)
         self.validationToolbox.addTool(self.manager, self.showValidationToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
+        self.calcContour = CalcContour(self.iface)
+        self.calcContour.addTool(self.manager, self.showCalcContourToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
         self.fieldToolbox = FieldToolbox(self.iface)
         self.fieldToolbox.addTool(self.manager, self.showFieldToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
         self.codeList = CodeList(self.iface)
@@ -82,3 +85,13 @@ class ToolBoxesGuiManager(QObject):
         else:
             self.validationToolbox = ValidationToolbox(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+
+    def showCalcContourToolbox(self):
+        """
+        Shows contour calculation dock.
+        """
+        if self.calcContour:
+            self.iface.removeDockWidget(self.calcContour)
+        else:
+            self.calcContour = CalcContour(self.iface)
+        self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.calcContour)

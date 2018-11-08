@@ -31,9 +31,9 @@ from qgis.PyQt.QtWidgets import QMessageBox, QApplication, QFileDialog, QMenu, Q
 from qgis.PyQt.QtGui import QCursor
 
 #DsgTools imports
-from DsgTools.CustomWidgets.listSelector import ListSelector
-from DsgTools.Utils.utils import Utils
-from DsgTools.dsgEnums import DsgEnums
+from DsgTools.gui.CustomWidgets.SelectionWidgets.listSelector import ListSelector
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.dsgEnums import DsgEnums
 
 from qgis.core import QgsMessageLog
 import json
@@ -137,7 +137,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         fd = QFileDialog()
         widgetType = self.getWhoAmI()
-        filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])
+        filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])[0]
         if filename == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
@@ -398,7 +398,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         fromLs, toLs = dlg.getInputAndOutputLists()
         #build install list: elements from toLs that were not in uiParameterDict['parameterList']
         installList = [i for i in toLs if i not in uiParameterDict['parameterList']]
-        #build uninstall list: : elements from fromLs that were not in availableConfig
+        #build uninstall list: : elements fromLs that were not in availableConfig
         uninstallList = [i for i in fromLs if i in uiParameterDict['parameterList']]
         if (installList == [] and uninstallList == []):
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration to manage!'))
@@ -428,7 +428,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         fromLs, toLs = dlg.getInputAndOutputLists()
         #build install list: elements from toLs that were not in uiParameterDict['parameterList']
         installList = [i for i in toLs if i not in uiParameterDict['databaseList']]
-        #build uninstall list: : elements from fromLs that were not in availableConfig
+        #build uninstall list: : elements fromLs that were not in availableConfig
         uninstallList = [i for i in fromLs if i in uiParameterDict['databaseList']]
         if (installList == [] and uninstallList == []):
             QMessageBox.warning(self, self.tr('Error!'), self.tr('Select at least one configuration database to manage!'))

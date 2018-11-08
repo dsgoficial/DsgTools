@@ -31,7 +31,7 @@ from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, Qt
 
 # DSGTools imports
-from DsgTools.UserTools.profile_editor import ProfileEditor
+from DsgTools.gui.DatabaseTools.UserTools.profile_editor import ProfileEditor
 
 import json
 

@@ -403,31 +403,31 @@
   <customwidget>
    <class>ExploreServerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.exploreServerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>CustomSelector</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.customSelector.h</header>
+   <header>DsgTools.gui.CustomWidgets.SelectionWidgets.customSelector.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>PermissionWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.permissionWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.permissionWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>EarthCoverageManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.earthCoverageManagerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.earthCoverageManagerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>FieldToolBoxConfigManagerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.fieldToolBoxConfigManagerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.fieldToolBoxConfigManagerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
