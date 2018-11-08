@@ -23,10 +23,10 @@
 #Qt Imports
 from qgis.PyQt.Qt import QObject
 #DsgTools Imports
-from DsgTools.Utils.utils import Utils 
-from DsgTools.Factories.DbFactory.postgisDb import PostgisDb
-from DsgTools.PostgisCustomization.CustomJSONTools.customJSONValidator import CustomJSONValidator
-from DsgTools.Factories.DbCustomizationFactory.dbCustomizationFactory import DbCustomizationFactory
+from DsgTools.core.Utils.utils import Utils 
+from DsgTools.core.Factories.DbFactory.postgisDb import PostgisDb
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONValidator import CustomJSONValidator
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomizationFactory import DbCustomizationFactory
 
 class DbCustomizer(QObject):
     def __init__(self):

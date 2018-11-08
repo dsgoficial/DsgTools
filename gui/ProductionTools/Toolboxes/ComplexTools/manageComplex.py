@@ -36,7 +36,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 #DsgTools imports
 from DsgTools.QmlTools.qmlParser import QmlParser
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_manageComplex.ui'))

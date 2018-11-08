@@ -25,7 +25,7 @@ from builtins import range
 import os
 from os.path import expanduser
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
@@ -35,15 +35,15 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 
-from DsgTools.UserTools.profile_editor import ProfileEditor
-from DsgTools.ServerTools.createView import CreateView
-from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
-from DsgTools.ServerTools.selectStyles import SelectStyles
+from DsgTools.gui.DatabaseTools.UserTools.profile_editor import ProfileEditor
+from DsgTools.gui.ServerTools.createView import CreateView
+from DsgTools.gui.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
+from DsgTools.gui.ServerTools.selectStyles import SelectStyles
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
@@ -152,7 +152,8 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb].decode('utf-8'), "DSG Tools Plugin", Qgis.Critical)
+                msg = self.tr("Error for database {0}: ").format(errorDb, exceptionDict[errorDb])
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", Qgis.Critical)
         return msg 
 
     @pyqtSlot(bool)
@@ -256,7 +257,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         else:
             parentFolder = os.path.dirname(styleDir)
             version = os.path.basename(parentFolder)
-        for style in os.walk(styleDir).next()[1]:
+        for style in next(os.walk(styleDir))[1]:
             styleList.append('/'.join([version,style]))
         if len(styleList) == 0:
             styleList = [version+'/'+os.path.basename(styleDir)]
@@ -282,8 +283,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         return successList, exceptionDict
     
     def getStyleDir(self, versionList):
-        currentPath = os.path.join(os.path.dirname(__file__),'..','Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
-        return currentPath
+        return os.path.join(os.path.dirname(__file__),'..', '..', 'core', 'Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
     
     def getStylesFromDbs(self, perspective = 'style'):
         '''
@@ -305,7 +305,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         return allStylesDict
 
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
 

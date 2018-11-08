@@ -93,7 +93,7 @@ class PostgisDb(AbstractDb):
             self.getCredentials(host, port, user, database)
         
     def getCredentials(self, host, port, user, database):
-        conInfo = 'host='+host+' port='+port+' dbname='+database
+        conInfo = "host={0} port={1} dbname={2}".format(host, port, database)
         check = False
         while not check:
             (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
@@ -1929,7 +1929,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Style ')+styleFolder+self.tr(' does not match the version of database ') + self.db.databaseName())
         path = os.path.join(os.path.dirname(__file__),'..', '..','Styles')
         stylePath = os.path.join(path,styleFolder)
-        availableStyles = os.walk(stylePath).next()[2]
+        availableStyles = next(os.walk(stylePath))[2]
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
             #filtering and checking file names for special characters
@@ -2850,7 +2850,7 @@ class PostgisDb(AbstractDb):
     
     def deletePermissionProfile(self, name, edgvversion):
         """
-        Deletes profile from from public.permission_profiles
+        Deletes profile from public.permission_profiles
         """
         self.checkAndOpenDb()
         sql = self.gen.deletePermissionProfile(name, edgvversion)
@@ -3189,7 +3189,7 @@ class PostgisDb(AbstractDb):
     
     def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
         """
-        Deletes profile from from public.permission_profiles
+        Deletes profile from public.permission_profiles
         """
         self.checkAndOpenDb()
         sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)

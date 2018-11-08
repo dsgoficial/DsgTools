@@ -22,7 +22,7 @@
 """
 #DsgTools Imports
 from builtins import map
-from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
 class FilterCustomization(DbCustomization):
     def __init__(self, customJson):

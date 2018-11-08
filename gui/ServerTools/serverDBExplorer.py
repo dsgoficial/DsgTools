@@ -32,9 +32,9 @@ from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.gui.ServerTools.viewServers import ViewServers
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_serverDBExplorer.ui'))

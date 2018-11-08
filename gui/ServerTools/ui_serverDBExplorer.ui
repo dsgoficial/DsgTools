@@ -55,7 +55,7 @@
   <customwidget>
    <class>ExploreServerWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.exploreServerWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -196,7 +196,7 @@
   <customwidget>
    <class>AttributeConditionWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.AttributeValidityWidgets.attributeConditionWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.AttributeValidityWidgets.attributeConditionWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

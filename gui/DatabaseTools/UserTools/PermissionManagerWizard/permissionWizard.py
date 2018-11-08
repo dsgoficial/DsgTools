@@ -26,9 +26,9 @@ import json
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QWizard
 from fileinput import filename
-from DsgTools.Utils.utils import Utils
+from DsgTools.core.Utils.utils import Utils
 
-from DsgTools.UserTools.PermissionManagerWizard.permissionWizardProfile import PermissionWizardProfile
+from DsgTools.gui.DatabaseTools.UserTools.PermissionManagerWizard.permissionWizardProfile import PermissionWizardProfile
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'permissionWizard.ui'))

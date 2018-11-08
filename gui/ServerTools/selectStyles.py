@@ -33,13 +33,13 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.UserTools.permission_properties import PermissionProperties
-from DsgTools.ServerTools.createView import CreateView
-from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.ServerTools.createView import CreateView
+from DsgTools.gui.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
