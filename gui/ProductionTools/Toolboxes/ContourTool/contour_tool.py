@@ -23,8 +23,8 @@
 
 from builtins import range
 from builtins import object
-from qgis.core import QgsFeatureRequest, QgsGeometry, Qgis, QgsSpatialIndex, QgsCoordinateTransform
-from DsgTools.ProductionTools.ContourTool.contour_value import ContourValue
+from qgis.core import QgsFeatureRequest, QgsGeometry, QgsWkbTypes, QgsSpatialIndex, QgsCoordinateTransform
+from DsgTools.gui.ProductionTools.Toolboxes.ContourTool.contour_value import ContourValue
 
 class ContourTool(object):
     def updateReference(self, referenceLayer):
@@ -85,11 +85,11 @@ class ContourTool(object):
         distances = []
         
         firstPoint = geom.asPolyline()[0]
-        pointGeom = QgsGeometry.fromPoint(firstPoint)
+        pointGeom = QgsGeometry.fromPointXY(firstPoint)
 
         for intersected in features:
             intersection = geom.intersection(intersected.geometry())
-            if intersection.type() == Qgis.Point:
+            if intersection.type() == QgsWkbTypes.PointGeometry:
                 distance = intersection.distance(pointGeom)
                 distances.append((distance, intersected))
         
@@ -126,7 +126,7 @@ class ContourTool(object):
         #the first feature must have the initial value already assigned
         first_feature = ordered[0][1]
         #getting the filed index that must be updated
-        fieldIndex = self.reference.fieldNameIndex(attribute)
+        fieldIndex = self.reference.fields().indexFromName(attribute)
         #getting the initial value
         first_value = first_feature.attribute(attribute)
         if not first_value:

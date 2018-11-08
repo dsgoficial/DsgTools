@@ -203,7 +203,7 @@ class GenericDbManager(QObject):
         2. Import each using importSetting;
         """
         importList = []
-        for profile in os.walk(profilesDir).next()[2]:
+        for profile in next(os.walk(profilesDir))[2]:
             if self.extensionDict[self.getManagerType()] in os.path.basename(profile):
                 importList.append(os.path.join(profilesDir,profile))
         for profileFile in importList:

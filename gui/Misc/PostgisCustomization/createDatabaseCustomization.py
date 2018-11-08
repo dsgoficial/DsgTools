@@ -34,19 +34,19 @@ from qgis.PyQt.QtWidgets import QFormLayout, QMessageBox, QFileDialog, QApplicat
 from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainWidget import NewDomainWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.newDomainValueWidget import NewDomainValueWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.codeNameCustomizationWidget import CodeNameCustomizationWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeNullityWidget import ChangeNullityWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import ChangeFilterWidget
-from DsgTools.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import AlterDefaultWidget
-from DsgTools.CustomWidgets.selectFileWidget import SelectFileWidget
-from DsgTools.PostgisCustomization.dbCustomizer import DbCustomizer
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.newClassWidget import NewClassWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.newAttributeWidget import NewAttributeWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.newDomainWidget import NewDomainWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.newDomainValueWidget import NewDomainValueWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.codeNameCustomizationWidget import CodeNameCustomizationWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.changeNullityWidget import ChangeNullityWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.changeFilterWidget import ChangeFilterWidget
+from DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.alterDefaultWidget import AlterDefaultWidget
+from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
+from DsgTools.gui.Misc.PostgisCustomization.dbCustomizer import DbCustomizer
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.Utils.utils import Utils
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Utils.utils import Utils
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'createDatabaseCustomization.ui'))
@@ -183,7 +183,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
         return groupBox
     
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
     

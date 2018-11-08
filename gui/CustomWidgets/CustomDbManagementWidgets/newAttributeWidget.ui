@@ -66,7 +66,7 @@
   <customwidget>
    <class>AddAttributeWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.CustomDbManagementWidgets.addAttributeWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

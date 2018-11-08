@@ -33,8 +33,8 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.core import QgsMessageLog
 
 # DSGTools imports
-from DsgTools.UserTools.createProfileWithProfileManager import CreateProfileWithProfileManager
-from DsgTools.CustomWidgets.genericParameterSetter import GenericParameterSetter
+from DsgTools.gui.DatabaseTools.UserTools.createProfileWithProfileManager import CreateProfileWithProfileManager
+from DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.BasicPropertyWidgets.genericParameterSetter import GenericParameterSetter
 
 import json
 
@@ -61,7 +61,7 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
         """
         Creates tree widget items
         """
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setFlags(QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsTristate | QtCore.Qt.ItemIsUserCheckable)
         item.setCheckState(1, QtCore.Qt.Unchecked)
         item.setCheckState(2, QtCore.Qt.Unchecked)

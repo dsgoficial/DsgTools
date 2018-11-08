@@ -62,7 +62,7 @@ def createReprojectedLayer(layer, crs):
 
 def reprojectLayer(fromLayer, toLayer):
     """
-    Reprojects all features from fromLayer crs to toLayer crs
+    Reprojects all features fromLayer crs to toLayer crs
     fromLayer: origin layer
     toLayer: destination layer
     """

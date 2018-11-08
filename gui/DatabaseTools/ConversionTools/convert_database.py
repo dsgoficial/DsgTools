@@ -36,9 +36,9 @@ from qgis.PyQt.QtWidgets import QApplication, QDialog
 from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.UserTools.create_profile import CreateProfile
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.gui.DatabaseTools.UserTools.create_profile import CreateProfile
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'convert_database.ui'))
