@@ -33,9 +33,9 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
-from DsgTools.UserTools.create_user import CreateUser
-from DsgTools.UserTools.alter_user_password import AlterUserPassword
-from DsgTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.DatabaseTools.UserTools.create_user import CreateUser
+from DsgTools.gui.DatabaseTools.UserTools.alter_user_password import AlterUserPassword
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -66,7 +66,7 @@ class ManageServerUsers(QtWidgets.QDialog, FORM_CLASS):
             userNameItem.setText(1,self.userTypeDict[type])
     
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
     

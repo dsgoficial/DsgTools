@@ -28,7 +28,7 @@ from qgis._core import QgsAction
 
 import sip
 
-from DsgTools.Factories.ThreadFactory.threadFactory import ThreadFactory
+from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
 
 class ProcessManager(QObject):
     def __init__(self, iface):
