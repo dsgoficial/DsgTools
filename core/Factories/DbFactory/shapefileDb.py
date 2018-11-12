@@ -116,10 +116,11 @@ class ShapefileDb(AbstractDb):
         # if fileList == []:
         #     self.db.close()
         #     raise Exception(self.tr("Problem listing geom classes: ")+query.lastError().text())
-        for layerName in fileList:
-            if os.path.splitext(layerName)[1].lower() != '.shp':
+        for f in fileList:
+            layerName, ext = os.path.splitext(f)
+            if ext.lower() != '.shp':
                 continue
-            if os.path.splitext(layerName)[0][-2:].lower() in ["_p", "_l", "_a"]:
+            if layerName.lower()[-2:] in ["_p", "_l", "_a"]:
                 classList.append(layerName)
         return classList
 
@@ -130,8 +131,9 @@ class ShapefileDb(AbstractDb):
         self.checkAndOpenDb()
         classList = []
         fileList = next(os.walk(self.databaseName()))[2]
-        for layerName in fileList:
-            if os.path.splitext(layerName)[1].lower() != '.shp':
+        for f in fileList:
+            layerName, ext = os.path.splitext(f)
+            if ext.lower() != '.shp':
                 continue
             classList.append(layerName)
         return classList
@@ -182,94 +184,15 @@ class ShapefileDb(AbstractDb):
                     classDict[className]['OGC_FID'] = 'id'
 
         return classDict
-
-    def validateWithOutputDatabaseSchema(self, outputAbstractDb):
-        """
-        Validates the conversion with the output database.
-        It generates a dictionary (invalidated) that stores conversion problems
-        """
-        self.checkAndOpenDb()
-        invalidated = self.buildInvalidatedDict()
-        inputdbStructure = self.getStructureDict()
-        outputdbStructure = outputAbstractDb.getStructureDict()
-        domainDict = outputAbstractDb.getDomainDict()
-        classes =  self.listClassesWithElementsFromDatabase()
-        notNullDict = outputAbstractDb.getNotNullDict()
-        
-        for inputClass in list(classes.keys()):
-            outputClass = self.translateAbstractDbLayerNameToOutputFormat(inputClass,outputAbstractDb)
-            (schema,className) = self.getTableSchema(inputClass)
-            if outputClass in list(outputdbStructure.keys()):
-                outputAttrList = self.reorderTupleList(list(outputdbStructure[outputClass].keys()))
-                inputAttrList = self.reorderTupleList(list(inputdbStructure[inputClass].keys()))
-                            
-                sql = self.gen.getFeaturesWithSQL(inputClass,inputAttrList) 
-                query = QSqlQuery(sql, self.db)
-                if not query.isActive():
-                    self.db.close()
-                    raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
-                
-                while query.next():
-                    id = query.value(0)
-                    #detects null lines
-                    for i in range(len(inputAttrList)):
-                        nullLine = True
-                        value = query.value(i)
-                        if value != None:
-                            nullLine = False
-                            break
-                    if nullLine:
-                        if cl not in list(invalidated['nullLine'].keys()):
-                            invalidated['nullLine'][inputClass]=0
-                        invalidated['nullLine'][inputClass]+=1
-                    
-                    #validates pks
-                    if id == None and (not nullLine):
-                        if cl not in list(invalidated['nullPk'].keys()):
-                            invalidated['nullPk'][inputClass]=0
-                        invalidated['nullPk'][inputClass]+=1
-                    
-                    for i in range(len(inputAttrList)):
-                        value = query.value(i)
-                        #validates domain
-                        if outputClass in list(domainDict.keys()):    
-                            if inputAttrList[i] in list(domainDict[outputClass].keys()):
-                                if value not in domainDict[outputClass][inputAttrList[i]] and (not nullLine):
-                                    invalidated = self.utils.buildNestedDict(invalidated, ['notInDomain',inputClass,id,inputAttrList[i]], value)
-                        #validates not nulls
-                        if outputClass in list(notNullDict.keys()):
-                            if outputClass in list(domainDict.keys()):
-                                if inputAttrList[i] in notNullDict[outputClass] and inputAttrList[i] not in list(domainDict[outputClass].keys()):
-                                    if (value == None) and (not nullLine) and (inputAttrList[i] not in list(domainDict[outputClass].keys())):
-                                        invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)             
-                            else:
-                                if inputAttrList[i] in notNullDict[outputClass]:
-                                    try:
-                                        if value.isNull():
-                                            invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
-                                    except:
-                                        if (value == None) and (not nullLine) and (inputAttrList[i] not in list(domainDict[outputClass].keys())):
-                                            invalidated = self.utils.buildNestedDict(invalidated, ['nullAttribute',inputClass,id,inputAttrList[i]], value)
-                        if outputClass in list(domainDict.keys()):
-                            if (inputAttrList[i] not in ['geom','GEOMETRY','geometry','id','OGC_FID'] and schema != 'complexos') or (schema == 'complexos' and inputAttrList[i] != 'id'):
-                                if inputAttrList[i] not in list(outputdbStructure[outputClass].keys()):
-                                    invalidated = self.utils.buildNestedDict(invalidated, ['attributeNotFoundInOutput',inputClass], [inputAttrList[i]])
-                        #validates fk field
-                        if 'id_' == inputAttrList[0:3]:
-                            if not self.validateUUID(value):
-                                if inputAttrList[i] not in list(outputdbStructure[outputClass].keys()):
-                                    invalidated = self.utils.buildNestedDict(invalidated, ['nullComplexFk',inputClass], [inputAttrList[i]])
-            else:
-                invalidated['classNotFoundInOutput'].append(inputAttrList)
-        return invalidated
     
     def getTableSchema(self,lyr):
         """
-        Gets the table schema
-        lyr: layer name
+        Gets the table schema.
+        :param lyr: (str) layer name.
+        :return: (tuple-of-str) layer schema and name, in that order.
         """
         schema = lyr.split('_')[0]
-        className = '_'.join(lyr.split('_')[1::])
+        className = lyr[len(schema) + 1:]
         return (schema, className)
     
     def getDatabaseVersion(self):
@@ -363,22 +286,14 @@ class ShapefileDb(AbstractDb):
                     associatedDict = self.utils.buildNestedDict(associatedDict, [name, complex_uuid, aggregated_class], [ogc_fid])
         return associatedDict
     
-    def isComplexClass(self, className):
+    def isComplexClass(self, layer):
         """
-        Checks if a class is a complex class
-        className: class name to be checked
+        Checks if a class is a complex class.
+        :param layer: (str) class/layer name to be checked.
+        :return: (bool) whether class is complex.
         """
         self.checkAndOpenDb()
-        #getting all complex tables
-        query = QSqlQuery(self.gen.getComplexTablesFromDatabase(), self.db)
-        if not query.isActive():
-            self.db.close()
-            raise Exception(self.tr("Problem executing query: ")+query.lastError().text())
-
-        while query.next():
-            if query.value(0) == 'complexos_'+className:
-                return True
-        return False
+        return layer in self.listComplexClassesFromDatabase()
 
     def disassociateComplexFromComplex(self, aggregated_class, link_column, id):
         """
@@ -387,16 +302,17 @@ class ShapefileDb(AbstractDb):
         link_column: link column between complex and its aggregated class
         id: complex id (uid) to be disassociated
         """
-        sql = self.gen.disassociateComplexFromComplex('complexos_'+aggregated_class, link_column, id)
-        query = QSqlQuery(self.db)
-        if not query.exec_(sql):
-            self.db.close()
-            raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
+        pass
+        # sql = self.gen.disassociateComplexFromComplex('complexos_'+aggregated_class, link_column, id)
+        # query = QSqlQuery(self.db)
+        # if not query.exec_(sql):
+        #     self.db.close()
+        #     raise Exception(self.tr('Problem disassociating complex from complex: ') + '\n' + query.lastError().text())
 
-        while query.next():
-            #table name
-            ret.append(query.value(0))
-        return ret
+        # while query.next():
+        #     #table name
+        #     ret.append(query.value(0))
+        # return ret
 
     def getFrameLayerName(self):
         """

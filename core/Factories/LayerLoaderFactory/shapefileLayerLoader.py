@@ -37,18 +37,20 @@ from .edgvLayerLoader import EDGVLayerLoader
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class ShapefileLayerLoader(EDGVLayerLoader):
-    def __init__(self, iface, abstractDb, loadCentroids):
-        """Constructor."""
-        super(ShapefileLayerLoader, self).__init__(iface, abstractDb, loadCentroids)
-        
-        self.provider = 'spatialite'
-        
+    def __init__(self, iface, abstractDb):
+        """
+        Class constructor.
+        :param iface: (QgsInterface) QGIS interface to be used to get runtime access to layers/features.
+        :param abstractDb: (AbstractDb) database object as designed in DSGTools plugin. Check driver concordance.
+        """
+        # no reason for centroids to be used, so it'll be set to False always (parent requirement to init)
+        super(ShapefileLayerLoader, self).__init__(iface, abstractDb, False)
+        self.provider = 'shapefile'
         try:
             dbVersion = abstractDb.getDatabaseVersion()
         except Exception as e:
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
             return
-
         self.buildUri()
 
     def buildUri(self):
@@ -233,9 +235,5 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         :return: (QgsVectorLayer) vector layer. 
         """
         # parent class reimplementation
-        schema = layer.split('_')[0]
-        table = layer[len(schema) + 1:]
-        lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
-        table = layer[len(schema) + 1:]
-        self.setDataSource('', layer, geomColumn, '')
-        return QgsVectorLayer(self.uri.uri(), tableName, self.provider)
+        path = os.path.join(self.abstractDb.fullpath, layer, '.shp')
+        return QgsVectorLayer(path)

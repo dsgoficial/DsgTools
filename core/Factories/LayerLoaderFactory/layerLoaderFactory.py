@@ -41,6 +41,6 @@ class LayerLoaderFactory(object):
             'GPKG' : lambda : GeopackageLayerLoader(iface, abstractDb, loadCentroids),
             'QSQLITE' : lambda : SpatialiteLayerLoader(iface, abstractDb, loadCentroids),
             'QPSQL' : lambda : PostGISLayerLoader(iface, abstractDb, loadCentroids),
-            'SHP' : lambda : ShapefileLayerLoader(iface, abstractDb, loadCentroids)
+            'SHP' : lambda : ShapefileLayerLoader(iface, abstractDb)
         }
         return loaders[driverName]() if driverName in loaders else None
