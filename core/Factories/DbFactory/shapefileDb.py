@@ -462,12 +462,11 @@ class ShapefileDb(AbstractDb):
     
     def getTableSchemaFromDb(self, table):
         self.checkAndOpenDb()
-        sql = self.gen.getFullTablesName(table)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting full table name: ")+query.lastError().text())
-        while query.next():
-            return query.value(0).split('_')[0]
+        for shpLayer in self.getTablesFromDatabase():
+            schema, layer = self.getTableSchema(lyr=shpLayer)
+            if table.lower() == layer.lower():
+                return schema
+        raise Exception(self.tr("Unable to locate file '[SCHEMA]_{}.shp'.").format(table))
     
     def getGeomColumnTupleList(self, showViews = False):
         pass
@@ -488,7 +487,21 @@ class ShapefileDb(AbstractDb):
         #     else:
         #         geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), self.getResolvedGeomType(int(query.value(2))), 'BASE TABLE'))
         # return geomList
-    
+
+    def getQgisResolvideGeomType(self, geometryType):
+        """
+        Gets the geometry type name of a given geometry type code, considering
+        geometry type as given by QgsVectorLayer().geometryType().
+        :param geometryType: (int) geometry type code.
+        :return: (str) geometry type name.
+        """
+        geomDict = {
+            0 : 'POINT',
+            1 : 'LINESTRING',
+            2 : 'POLYGON'
+        }
+        return geomDict[geometryType] if geometryType in geomDict else ''
+
     def getResolvedGeomType(self, geometryType):
         geomDict = {0:'GEOMETRY',
                     1:'POINT',
@@ -514,18 +527,19 @@ class ShapefileDb(AbstractDb):
         :return: (list-of-dict) database information.
         """
         self.checkAndOpenDb()
-        sql = self.gen.databaseInfo()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
         out = []
-        while query.next():
+        layerByNameAlias = lambda l : self.getLayerLoader().getLayerByName(layer=l)
+        for shpLayer in self.getTablesFromDatabase():
+            # run through all .SHP files found (to include complexes and others non-EDGV filenames)
+            schema, table = self.getTableSchema(lyr=shpLayer)
+            vl = layerByNameAlias(l=shpLayer)
             rowDict = dict()
-            rowDict['schema'] = query.value(0).split('_')[0]
-            rowDict['layer'] = query.value(0)[len(rowDict['schema']) + 1 :]
-            rowDict['geomCol'] = query.value(1)
-            rowDict['geomType'] = query.value(2)
-            rowDict['srid'] = str(query.value(3))
+            rowDict['schema'] = schema
+            rowDict['layer'] = table
+            rowDict['geomCol'] = 'N/A' # shape doesn't have geom column
+            # TODO: check geometry type for shapefile - such as in getResolvedGeomType, for SpatiaLite, for instance
+            rowDict['geomType'] = self.getQgisResolvideGeomType(geometryType=vl.geometryType())
+            rowDict['srid'] = vl.crs().authid().split(':')[-1]
             out.append(rowDict)
         return out
 
