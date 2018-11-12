@@ -23,10 +23,12 @@
 
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
-from qgis.core import QgsCoordinateReferenceSystem 
+from qgis.core import QgsCoordinateReferenceSystem
+from qgis.utils import iface
 
 from .abstractDb import AbstractDb
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 from osgeo import ogr, osr
 import os, json
@@ -39,6 +41,15 @@ class ShapefileDb(AbstractDb):
         """
         super(ShapefileDb, self).__init__()
         self.fullpath = path
+
+    def getLayerLoader(self):
+        """
+        Gets the shapefile layer loader as designed in DSGTools plugin.
+        LAYER LOADERS SHOULD NOT be imported in abstract db. (Shapefile AbstractDb)s are
+        a concept extrapolation, and this is specific for this case.
+        :return: (ShapefileLayerLoader) shapefile layer loader object. 
+        """
+        return LayerLoaderFactory().makeLoader(iface, self)
 
     def __del__(self):
         """
@@ -153,35 +164,36 @@ class ShapefileDb(AbstractDb):
                     classList.append(layerName)
         return classList   
 
+    def getAttributesFromDbf(self, layer):
+        """
+        :param layer: (str) layer name to have its fields retrieved.
+        """
+        # it is considered that layer name is its base name stripped from its extension (e.g. '.shp')
+        with open(os.path.join(self.databaseName(), "{0}.dbf".format(layer)), 'r') as f:
+            dbf = f.readlines()
+
     def getStructureDict(self):
         """
-        Gets database structure according to the edgv version
+        Gets database structure according to the edgv version.
         """
         self.checkAndOpenDb()
         classDict = dict()
-        sql = self.gen.getStructure(self.getDatabaseVersion())        
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            self.db.close()
-            raise Exception(self.tr("Problem getting database structure: ")+query.lastError().text())
-        while query.next():
-            className = str(query.value(0))
-            classSql = str(query.value(1))
-            if className.split('_')[0] == 'complexos' or className.split('_')[-1] in ['p','l','a']:
-                if className not in list(classDict.keys()):
-                    classDict[className]=dict()
-                classSql = classSql.split(className)[1]
-                sqlList = classSql.replace('(','').replace(')','').replace('\"','').replace('\'','').split(',')
-                for s in sqlList:
-                     fieldName = str(s.strip().split(' ')[0])
-                     classDict[className][fieldName]=fieldName
+        for shpLayer in self.getTablesFromDatabase():
+            schema, className = self.getTableSchema(lyr=shpLayer)
+            if schema == 'complexos' or className[-2:].lower() in ['_p','_l','_a']:
+                if shpLayer not in list(classDict.keys()):
+                    classDict[shpLayer] = dict()
+                # read attributes from .dbf file
+                attributes = []
+                for att in attributes:
+                    classDict[shpLayer][att]=att
 
-                if 'GEOMETRY' in list(classDict[className].keys()):
-                    classDict[className]['GEOMETRY'] = 'geom'
-                if 'geometry' in list(classDict[className].keys()):
-                    classDict[className]['geometry'] = 'geom'
-                if 'OGC_FID' in list(classDict[className].keys()):
-                    classDict[className]['OGC_FID'] = 'id'
+                if 'GEOMETRY' in list(classDict[shpLayer].keys()):
+                    classDict[shpLayer]['GEOMETRY'] = 'geom'
+                elif 'geometry' in list(classDict[shpLayer].keys()):
+                    classDict[shpLayer]['geometry'] = 'geom'
+                if 'OGC_FID' in list(classDict[shpLayer].keys()):
+                    classDict[shpLayer]['OGC_FID'] = 'id'
 
         return classDict
     
@@ -203,7 +215,7 @@ class ShapefileDb(AbstractDb):
         self.checkAndOpenDb()
         edgvVersion = 'Non EDGV'
         if 'DSGTools.edgv' in next(os.walk(self.databaseName()))[2]:
-            with open(os.path.join(self.databaseName(), 'dsgtools.info'), 'r') as cf:
+            with open(os.path.join(self.databaseName(), 'DSGTools.edgv'), 'r') as cf:
                 config = json.loads(cf.read())
                 edgvVersion = config['edgv']
         return edgvDict[edgvVersion] if edgvVersion in edgvDict else 'Non EDGV'
@@ -333,79 +345,82 @@ class ShapefileDb(AbstractDb):
         return None
 
     def getGeomTypeDict(self, loadCentroids=False):
-        self.checkAndOpenDb()
-        edgvVersion = self.getDatabaseVersion()
-        sql = self.gen.getGeomByPrimitive(edgvVersion)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
-        geomDict = dict()
-        while query.next():
-            if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-                type = query.value(0)
-            else:
-                type = self.getResolvedGeomType(query.value(0))
-            tableName = query.value(1)
-            layerName = '_'.join(tableName.split('_')[1::])
-            if type not in list(geomDict.keys()):
-                geomDict[type] = []
-            if layerName not in geomDict[type]:
-                geomDict[type].append(layerName)
-        return geomDict
+        pass
+        # self.checkAndOpenDb()
+        # edgvVersion = self.getDatabaseVersion()
+        # sql = self.gen.getGeomByPrimitive(edgvVersion)
+        # query = QSqlQuery(sql, self.db)
+        # if not query.isActive():
+        #     raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
+        # geomDict = dict()
+        # while query.next():
+        #     if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+        #         type = query.value(0)
+        #     else:
+        #         type = self.getResolvedGeomType(query.value(0))
+        #     tableName = query.value(1)
+        #     layerName = '_'.join(tableName.split('_')[1::])
+        #     if type not in list(geomDict.keys()):
+        #         geomDict[type] = []
+        #     if layerName not in geomDict[type]:
+        #         geomDict[type].append(layerName)
+        # return geomDict
     
     def getGeomDict(self, getCentroids = False):
-        """
-        returns a dict like this:
-        {'tablePerspective' : {
-            'layerName' :
-        """
-        self.checkAndOpenDb()
-        edgvVersion = self.getDatabaseVersion()
-        sql = self.gen.getGeomTablesFromGeometryColumns(edgvVersion)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
-        geomDict = dict()
-        geomDict['primitivePerspective'] = self.getGeomTypeDict()
-        geomDict['tablePerspective'] = dict()
-        while query.next():
-            isCentroid = False
-            srid = query.value(0)
-            if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-                geometryType = query.value(2)
-            else:
-                geometryType = self.getResolvedGeomType(query.value(2))
-            tableName = query.value(3)
-            tableSchema = tableName.split('_')[0]
-            geometryColumn = query.value(1)
-            layerName = '_'.join(tableName.split('_')[1::])
-            if layerName not in list(geomDict['tablePerspective'].keys()):
-                geomDict['tablePerspective'][layerName] = dict()
-                geomDict['tablePerspective'][layerName]['schema'] = tableSchema
-                geomDict['tablePerspective'][layerName]['srid'] = str(srid)
-                geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
-                geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
-                geomDict['tablePerspective'][layerName]['tableName'] = tableName
-        return geomDict
+        pass
+        # """
+        # returns a dict like this:
+        # {'tablePerspective' : {
+        #     'layerName' :
+        # """
+        # self.checkAndOpenDb()
+        # edgvVersion = self.getDatabaseVersion()
+        # sql = self.gen.getGeomTablesFromGeometryColumns(edgvVersion)
+        # query = QSqlQuery(sql, self.db)
+        # if not query.isActive():
+        #     raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
+        # geomDict = dict()
+        # geomDict['primitivePerspective'] = self.getGeomTypeDict()
+        # geomDict['tablePerspective'] = dict()
+        # while query.next():
+        #     isCentroid = False
+        #     srid = query.value(0)
+        #     if edgvVersion in ('2.1.3','FTer_2a_Ed'):
+        #         geometryType = query.value(2)
+        #     else:
+        #         geometryType = self.getResolvedGeomType(query.value(2))
+        #     tableName = query.value(3)
+        #     tableSchema = tableName.split('_')[0]
+        #     geometryColumn = query.value(1)
+        #     layerName = '_'.join(tableName.split('_')[1::])
+        #     if layerName not in list(geomDict['tablePerspective'].keys()):
+        #         geomDict['tablePerspective'][layerName] = dict()
+        #         geomDict['tablePerspective'][layerName]['schema'] = tableSchema
+        #         geomDict['tablePerspective'][layerName]['srid'] = str(srid)
+        #         geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
+        #         geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
+        #         geomDict['tablePerspective'][layerName]['tableName'] = tableName
+        # return geomDict
     
     def getGeomColumnDict(self):
-        """
-        Dict in the form 'geomName':[-list of table names-]
-        """
-        self.checkAndOpenDb()
-        sql = self.gen.getGeomColumnDict()
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
-        geomDict = dict()
-        while query.next():
-            geomColumn = query.value(0)
-            tableName = query.value(1)
-            lyrName = '_'.join(tableName.split('_')[1::])
-            if geomColumn not in list(geomDict.keys()):
-                geomDict[geomColumn] = []
-            geomDict[geomColumn].append(lyrName)
-        return geomDict
+        pass
+        # """
+        # Dict in the form 'geomName':[-list of table names-]
+        # """
+        # self.checkAndOpenDb()
+        # sql = self.gen.getGeomColumnDict()
+        # query = QSqlQuery(sql, self.db)
+        # if not query.isActive():
+        #     raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
+        # geomDict = dict()
+        # while query.next():
+        #     geomColumn = query.value(0)
+        #     tableName = query.value(1)
+        #     lyrName = '_'.join(tableName.split('_')[1::])
+        #     if geomColumn not in list(geomDict.keys()):
+        #         geomDict[geomColumn] = []
+        #     geomDict[geomColumn].append(lyrName)
+        # return geomDict
 
     def createFrame(self, type, scale, param, paramDict = dict()):
         mi, inom, frame = self.prepareCreateFrame(type, scale, param)
@@ -446,23 +461,24 @@ class ShapefileDb(AbstractDb):
             return query.value(0).split('_')[0]
     
     def getGeomColumnTupleList(self, showViews = False):
-        """
-        list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
-        centroids are hidden by default
-        """
-        self.checkAndOpenDb()
-        edgvVersion = self.getDatabaseVersion()
-        sql = self.gen.getGeomColumnTupleList(edgvVersion)
-        query = QSqlQuery(sql, self.db)
-        if not query.isActive():
-            raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
-        geomList = []
-        while query.next():
-            if edgvVersion in ['2.1.3','FTer_2a_Ed']:
-                geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
-            else:
-                geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), self.getResolvedGeomType(int(query.value(2))), 'BASE TABLE'))
-        return geomList
+        pass
+        # """
+        # list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
+        # centroids are hidden by default
+        # """
+        # self.checkAndOpenDb()
+        # edgvVersion = self.getDatabaseVersion()
+        # sql = self.gen.getGeomColumnTupleList(edgvVersion)
+        # query = QSqlQuery(sql, self.db)
+        # if not query.isActive():
+        #     raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
+        # geomList = []
+        # while query.next():
+        #     if edgvVersion in ['2.1.3','FTer_2a_Ed']:
+        #         geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
+        #     else:
+        #         geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), self.getResolvedGeomType(int(query.value(2))), 'BASE TABLE'))
+        # return geomList
     
     def getResolvedGeomType(self, geometryType):
         geomDict = {0:'GEOMETRY',

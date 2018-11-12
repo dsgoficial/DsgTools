@@ -30,7 +30,6 @@ from qgis.PyQt.Qt import QObject
 
 # QGIS imports
 from qgis.core import QgsVectorLayer, QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject, QgsEditorWidgetSetup
-from qgis.utils import iface
 
 #DsgTools imports
 from .edgvLayerLoader import EDGVLayerLoader
@@ -58,7 +57,7 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         Builds the database uri
         :return:
         """
-        self.uri.setDatabase(self.abstractDb.db.databaseName())
+        self.uri.setDatabase(self.abstractDb.databaseName())
     
     def checkLoaded(self, name):
         """
@@ -235,5 +234,5 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         :return: (QgsVectorLayer) vector layer. 
         """
         # parent class reimplementation
-        path = os.path.join(self.abstractDb.fullpath, layer, '.shp')
-        return QgsVectorLayer(path)
+        path = os.path.join(self.abstractDb.databaseName(), "{0}.shp".format(layer))
+        return QgsVectorLayer(path, layer, "ogr")
