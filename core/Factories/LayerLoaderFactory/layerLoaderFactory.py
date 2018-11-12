@@ -26,6 +26,7 @@ import os
 from .postgisLayerLoader import PostGISLayerLoader
 from .spatialiteLayerLoader import SpatialiteLayerLoader
 from .geopackageLayerLoader import GeopackageLayerLoader
+from .shapefileLayerLoader import ShapefileLayerLoader 
 
 class LayerLoaderFactory(object):
     def makeLoader(self, iface, abstractDb, loadCentroids=False):
@@ -39,6 +40,7 @@ class LayerLoaderFactory(object):
         loaders = {
             'GPKG' : lambda : GeopackageLayerLoader(iface, abstractDb, loadCentroids),
             'QSQLITE' : lambda : SpatialiteLayerLoader(iface, abstractDb, loadCentroids),
-            'QPSQL' : lambda : PostGISLayerLoader(iface, abstractDb, loadCentroids)
+            'QPSQL' : lambda : PostGISLayerLoader(iface, abstractDb, loadCentroids),
+            'SHP' : lambda : ShapefileLayerLoader(iface, abstractDb, loadCentroids)
         }
         return loaders[driverName]() if driverName in loaders else None
