@@ -49,6 +49,7 @@ class ShapefileDb(AbstractDb):
         a concept extrapolation, and this is specific for this case.
         :return: (ShapefileLayerLoader) shapefile layer loader object. 
         """
+        # DIAMOND PROBLEM ALERT: this method requires care to be used; similar methods should be avoided!
         return LayerLoaderFactory().makeLoader(iface, self)
 
     def __del__(self):
@@ -61,13 +62,14 @@ class ShapefileDb(AbstractDb):
     def isOpen(self):
         """
         Checks if there is a loaded shapefile dataset (directory).
+        :return: (bool) whether there is a valid dataset open. 
         """
         dn = self.databaseName()
         return dn is None or dn == ''
 
     def checkAndOpenDb(self):
         """
-        Check and open the database
+        Checks and opens the database (in this case, simply checks whether a valid path was chosen).
         """
         fullpath = self.databaseName()
         if fullpath is None or fullpath == '':
@@ -79,12 +81,14 @@ class ShapefileDb(AbstractDb):
     def databaseName(self):
         """
         Gets full path for selected dataset.
+        :return: (str) fullpath as selected.
         """
         return self.fullpath if self.fullpath is not None else ''
 
     def getDatabaseName(self):
         """
-        Gets the database name
+        Gets the database name (the inner directory from dataset fullpath).
+        :return: (str) dataset name.
         """
         fullpath = self.databaseName()
         splitChar = '/' if '/' in fullpath else '\\'
@@ -120,6 +124,7 @@ class ShapefileDb(AbstractDb):
     def listGeomClassesFromDatabase(self, primitiveFilter = []):
         """
         Gets a list with geometry classes from database.
+        :return: (list-of-str) a list with all spatial SHP found, according to EDGV filing name standards.
         """
         self.checkAndOpenDb()
         classList = []
@@ -164,20 +169,26 @@ class ShapefileDb(AbstractDb):
                     classList.append(layerName)
         return classList   
 
-    def getAttributesFromDbf(self, layer):
+    def getAttributesFromDbf(self, layer, layerLoader):
         """
+        Gets all layer's attributes.
         :param layer: (str) layer name to have its fields retrieved.
+        :param layerLoader: (ShapefileLayerLoader) shapefile layer loader.
+        :return: (list-of-str) list of field names found.
         """
-        # it is considered that layer name is its base name stripped from its extension (e.g. '.shp')
-        with open(os.path.join(self.databaseName(), "{0}.dbf".format(layer)), 'r') as f:
-            dbf = f.readlines()
+        # it is considered that layer name is its basename stripped from its extension (e.g. '.shp')
+        vl = layerLoader.getLayerByName(layer=layer)
+        return [f.name() for f in vl.fields()]
 
     def getStructureDict(self):
         """
         Gets database structure according to the edgv version.
+        :return: (dict) attribute map for each available layer.
         """
         self.checkAndOpenDb()
         classDict = dict()
+        # get layer loader - this might be re-thought as it is not a great idea to have a loader here...
+        layerLoader = self.getLayerLoader()
         for shpLayer in self.getTablesFromDatabase():
             schema, className = self.getTableSchema(lyr=shpLayer)
             if schema == 'complexos' or className[-2:].lower() in ['_p','_l','_a']:
@@ -185,16 +196,14 @@ class ShapefileDb(AbstractDb):
                     classDict[shpLayer] = dict()
                 # read attributes from .dbf file
                 attributes = []
-                for att in attributes:
+                for att in self.getAttributesFromDbf(layer=shpLayer, layerLoader=layerLoader):
                     classDict[shpLayer][att]=att
-
                 if 'GEOMETRY' in list(classDict[shpLayer].keys()):
                     classDict[shpLayer]['GEOMETRY'] = 'geom'
                 elif 'geometry' in list(classDict[shpLayer].keys()):
                     classDict[shpLayer]['geometry'] = 'geom'
                 if 'OGC_FID' in list(classDict[shpLayer].keys()):
                     classDict[shpLayer]['OGC_FID'] = 'id'
-
         return classDict
     
     def getTableSchema(self,lyr):
