@@ -354,26 +354,18 @@ class ShapefileDb(AbstractDb):
         return None
 
     def getGeomTypeDict(self, loadCentroids=False):
-        pass
-        # self.checkAndOpenDb()
-        # edgvVersion = self.getDatabaseVersion()
-        # sql = self.gen.getGeomByPrimitive(edgvVersion)
-        # query = QSqlQuery(sql, self.db)
-        # if not query.isActive():
-        #     raise Exception(self.tr("Problem getting geom types from db: ")+query.lastError().text())
-        # geomDict = dict()
-        # while query.next():
-        #     if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-        #         type = query.value(0)
-        #     else:
-        #         type = self.getResolvedGeomType(query.value(0))
-        #     tableName = query.value(1)
-        #     layerName = '_'.join(tableName.split('_')[1::])
-        #     if type not in list(geomDict.keys()):
-        #         geomDict[type] = []
-        #     if layerName not in geomDict[type]:
-        #         geomDict[type].append(layerName)
-        # return geomDict
+        self.checkAndOpenDb()
+        geomDict = dict()
+        for shpLayer in self.getTablesFromDatabase():
+            lastChars = shpLayer[-2:].lower()
+            # this is not elegant and it only work for EDGV names... but that's what it is for now
+            g = 0 if lastChars == '_p' else 1 if lastChars == '_l' else 2 if lastChars == '_a' else -1
+            geomType = self.getQgisResolvideGeomType(geometryType=g)
+            schema, layer = self.getTableSchema(lyr=shpLayer)
+            if geomType not in geomDict:
+                geomDict[geomType] = []
+            geomDict[geomType].append(layer)
+        return geomDict
     
     def getGeomDict(self, getCentroids = False):
         pass
@@ -431,8 +423,8 @@ class ShapefileDb(AbstractDb):
         #     geomDict[geomColumn].append(lyrName)
         # return geomDict
 
-    def createFrame(self, type, scale, param, paramDict = dict()):
-        mi, inom, frame = self.prepareCreateFrame(type, scale, param)
+    def createFrame(self, type_, scale, param, paramDict = dict()):
+        mi, inom, frame = self.prepareCreateFrame(type_, scale, param)
         self.insertFrame(scale, mi, inom, frame.asWkb())
         return frame
     
@@ -441,8 +433,8 @@ class ShapefileDb(AbstractDb):
         srid = self.findEPSG()
         geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
         ogr.UseExceptions()
-        outputDS = self.buildOgrDatabase()
-        outputLayer=outputDS.GetLayerByName('public_aux_moldura_a')
+        # outputDS = self.buildOgrDatabase()
+        outputLayer=outputDS.GetLayerByName(self.getFrameLayerName())
         newFeat=ogr.Feature(outputLayer.GetLayerDefn())
         auxGeom = ogr.CreateGeometryFromWkb(frame)
         #set geographic srid from frame
