@@ -36,10 +36,10 @@ from qgis.utils import iface
 from .edgvLayerLoader import EDGVLayerLoader
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
-class SpatialiteLayerLoader(EDGVLayerLoader):
+class ShapefileLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
-        super(SpatialiteLayerLoader, self).__init__(iface, abstractDb, loadCentroids)
+        super(ShapefileLayerLoader, self).__init__(iface, abstractDb, loadCentroids)
         
         self.provider = 'spatialite'
         

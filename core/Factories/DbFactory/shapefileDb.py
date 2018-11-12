@@ -29,7 +29,7 @@ from .abstractDb import AbstractDb
 from DsgTools.core.dsgEnums import DsgEnums
 
 from osgeo import ogr, osr
-import os
+import os, json
 
 class ShapefileDb(AbstractDb):
 
@@ -263,28 +263,6 @@ class ShapefileDb(AbstractDb):
                 invalidated['classNotFoundInOutput'].append(inputAttrList)
         return invalidated
     
-    def translateAbstractDbLayerNameToOutputFormat(self, lyr, outputAbstractDb):
-        """
-        Translates abstractdb layer name to output format
-        lyr: layer name that will be translated
-        outputAbstractDb: output database
-        """
-        if outputAbstractDb.db.driverName() == 'QSQLITE':
-            return lyr
-        if outputAbstractDb.db.driverName() == 'QPSQL':
-            return str(lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::]))
-    
-    def translateOGRLayerNameToOutputFormat(self, lyr, ogrOutput):
-        """
-        Translates ogr layer name to output format
-        lyr: layer name that will be translated
-        ogrOutput: ogr output
-        """
-        if ogrOutput.GetDriver().name == 'SQLite':
-            return lyr
-        if ogrOutput.GetDriver().name == 'PostgreSQL':
-            return str(lyr.split('_')[0]+'.'+'_'.join(lyr.split('_')[1::]))
-    
     def getTableSchema(self,lyr):
         """
         Gets the table schema
@@ -294,39 +272,19 @@ class ShapefileDb(AbstractDb):
         className = '_'.join(lyr.split('_')[1::])
         return (schema, className)
     
-    def convertToPostgis(self, outputAbstractDb, type=None):
-        """
-        Converts this to a postgis database
-        outputAbstractDb: postgis output
-        type: conversion type
-        """
-        (inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict) = self.prepareForConversion(outputAbstractDb)
-        invalidated = self.validateWithOutputDatabaseSchema(outputAbstractDb)
-        hasErrors = self.makeValidationSummary(invalidated)
-        if type == 'untouchedData':
-            if hasErrors:
-                self.signals.updateLog.emit('\n\n\n'+self.tr('Conversion not perfomed due to validation errors! Check log above for more information.'))
-                return False
-            else:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
-                return status
-        if type == 'fixData':
-            if hasErrors:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict, invalidated)
-                return status
-            else:
-                status = self.translateDS(inputOgrDb, outputOgrDb, fieldMap, inputLayerList, errorDict)
-                return status
-        return False
-    
     def getDatabaseVersion(self):
         """
-        Gets the database version
+        Gets the database EDGV version.
         """
+        edgvDict = {'213' : '2.1.3', '213pro' : '2.1.3 Pro', '213fter' : '2.1.3 FTer', '30' : '3.0', '30pro' : '3.0 Pro'}
         self.checkAndOpenDb()
-        version = '2.1.3'
-        sql = self.gen.getEDGVVersion()
-        query = QSqlQuery(sql, self.db)
+        edgvVersion = 'Non EDGV'
+        if 'DSGTools.edgv' in next(os.walk(self.databaseName()))[2]:
+            with open(os.path.join(self.databaseName(), 'dsgtools.info'), 'r') as cf:
+                config = json.loads(cf.read())
+                edgvVersion = config['edgv']
+        return edgvDict[edgvVersion] if edgvVersion in edgvDict else 'Non EDGV'
+
         # if not query.isActive():
         #     raise Exception(self.tr("Problem getting database version: ")+query.lastError().text())
         while query.next():
