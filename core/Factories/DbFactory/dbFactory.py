@@ -28,6 +28,7 @@ from qgis.core import QgsMessageLog, Qgis
 from .spatialiteDb import SpatialiteDb
 from .postgisDb import PostgisDb
 from .geopackageDb import GeopackageDb
+from .shapefileDb import ShapefileDb
 from DsgTools.core.dsgEnums import DsgEnums
 
 from builtins import object
@@ -43,6 +44,7 @@ class DbFactory(object):
         dbs = {
             DsgEnums.DriverSpatiaLite : lambda : SpatialiteDb(),
             DsgEnums.DriverPostGIS : lambda : PostgisDb(),
-            DsgEnums.DriverGeopackage : lambda : GeopackageDb()
+            DsgEnums.DriverGeopackage : lambda : GeopackageDb(),
+            DsgEnums.DriverShapefile : lambda : ShapefileDb()
         }
         return dbs[driver]() if driver in dbs else None

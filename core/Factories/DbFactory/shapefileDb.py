@@ -110,15 +110,15 @@ class ShapefileDb(AbstractDb):
         splitChar = '/' if '/' in fullpath else '\\'
         return fullpath.split(splitChar)[-1] if fullpath else ''
     
-    def connectDatabase(self, path=None):
+    def connectDatabase(self, conn=None):
         """
         Connects to database.
-        :para path: (str) path to directory containing shapefiles.
+        :para conn: (str) path to directory containing shapefiles.
         """
-        if path is None:
+        if conn is None:
             self.connectDatabaseWithGui()
         else:
-            self.setDatabaseName(path)
+            self.setDatabaseName(conn)
     
     def connectDatabaseWithGui(self):
         """
@@ -188,7 +188,7 @@ class ShapefileDb(AbstractDb):
                     classList.append(layerName)
         return classList   
 
-    def getAttributesFromDbf(self, layer, layerLoader):
+    def getAttributesFromLayer(self, layer, layerLoader):
         """
         Gets all layer's attributes.
         :param layer: (str) layer name to have its fields retrieved.
@@ -215,7 +215,7 @@ class ShapefileDb(AbstractDb):
                     classDict[shpLayer] = dict()
                 # read attributes from .dbf file
                 attributes = []
-                for att in self.getAttributesFromDbf(layer=shpLayer, layerLoader=layerLoader):
+                for att in self.getAttributesFromLayer(layer=shpLayer, layerLoader=layerLoader):
                     classDict[shpLayer][att]=att
                 if 'GEOMETRY' in list(classDict[shpLayer].keys()):
                     classDict[shpLayer]['GEOMETRY'] = 'geom'
@@ -279,7 +279,7 @@ class ShapefileDb(AbstractDb):
         """
         self.checkAndOpenDb()
         associatedDict = dict()
-        #query to get the possible links to the selected complex in the combobox
+        # query to get the possible links to the selected complex in the combobox
         complexName = complex.replace('complexos_', '')
         sql = self.gen.getComplexLinks(complexName)
         query = QSqlQuery(sql, self.db)
@@ -466,6 +466,34 @@ class ShapefileDb(AbstractDb):
             geomType = self.getQgisResolvideGeomType(geometryType=self.layerGeomCrsDict[shpLayer]['geomType'])
             geomList.append((schema, table, 'N/A', geomType, 'ESRI SHAPEFILE'))
         return geomList
+
+    def countElements(self, layers):
+        """
+        Counts the number of elements in each layer present in layers.
+        :param layers: (list-of-str) list of layers to be checked.
+        :return: (list-of-obj) layer name and feature count for each layer.
+        """
+        self.checkAndOpenDb()
+        listaQuantidades = []
+        ll = lambda l : self.getLayerLoader().getLayerByName(layer=l)
+        for layer in layers:
+            vl = ll(l=layer)
+            listaQuantidades.append([layer, vl.featureCount()])
+        return listaQuantidades
+
+    def getLayersWithElements(self, layerList):
+        """
+        Gets only layers containing features in it. Works like a filter for non-empty layer.
+        :param layerList: (list-of-str) list of layers to be checked.
+        :return: (list-of-str) list of layers that do have features in them.
+        """
+        self.checkAndOpenDb()
+        lyrWithElemList = []
+        featCountList = self.countElements(layers=layerList)
+        for lyr, featCount in featCountList:
+            if featCount >= 1:
+                lyrWithElemList.append(lyr)
+        return lyrWithElemList
 
     def getQgisResolvideGeomType(self, geometryType):
         """
