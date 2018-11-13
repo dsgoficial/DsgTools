@@ -495,6 +495,17 @@ class ShapefileDb(AbstractDb):
                 lyrWithElemList.append(lyr)
         return lyrWithElemList
 
+    def findEPSG(self, parameters=dict()):
+        """
+        Finds the database EPSG. Parent reimplentation. Method assumes all layers have the same SRID.
+        :return: (int) dataset (assumed to be all the same) SRID.
+        """
+        srid = None
+        for shp in self.layerGeomCrsDict:
+            srid = self.layerGeomCrsDict[shp]['crs'].authid().split(':')[1]
+            break
+        return int(srid)
+
     def getQgisResolvideGeomType(self, geometryType):
         """
         Gets the geometry type name of a given geometry type code, considering
