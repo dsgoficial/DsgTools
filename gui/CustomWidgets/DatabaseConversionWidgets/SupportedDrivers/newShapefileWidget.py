@@ -80,7 +80,7 @@ class NewShapefileWidget(AbstractSelectionWidget):
         Gets the Shapefile database path.
         :return: (str) datasource path name.
         """
-        return self.selectionWidget.currentDb()
+        return "shp:{0}".format(self.selectionWidget.currentDb())
 
     def getDatasource(self):
         """

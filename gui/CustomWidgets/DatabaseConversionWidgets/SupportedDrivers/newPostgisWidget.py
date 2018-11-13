@@ -65,7 +65,7 @@ class NewPostgisWidget(AbstractSelectionWidget):
         """
         if self.selectionWidget:
             host, port, user, _ = self.selectionWidget.viewServers.getDefaultConnectionParameters()
-            return '{2}@{0}:{1}.{3}'.format(host, port, user, self.getDatasourceConnectionName())
+            return 'pg:{2}@{0}:{1}.{3}'.format(host, port, user, self.getDatasourceConnectionName())
         return ''
 
     def getDatasourceEdgvVersion(self):

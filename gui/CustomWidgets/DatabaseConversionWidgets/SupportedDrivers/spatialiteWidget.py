@@ -75,7 +75,7 @@ class SpatialiteWidget(AbstractSelectionWidget):
         """
         if self.getDatasource():
             # just return a datasource path if a valid one was loaded
-            return self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+            return "sqlite:{0}".format(self.selectionWidget.connectionSelectorLineEdit.lineEdit.text())
         return ''
 
     def setDatasource(self, newDatasource):

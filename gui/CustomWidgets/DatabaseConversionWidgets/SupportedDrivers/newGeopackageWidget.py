@@ -69,7 +69,7 @@ class NewGeopackageWidget(AbstractSelectionWidget):
         Gets the Geopackage database path.
         :return: (str) datasource path name.
         """
-        return self.selectionWidget.currentDb()
+        return "gpkg:{0}".format(self.selectionWidget.currentDb())
 
     def getDatasourceEdgvVersion(self):
         """
