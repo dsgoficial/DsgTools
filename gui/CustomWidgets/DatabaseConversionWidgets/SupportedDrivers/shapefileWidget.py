@@ -91,7 +91,7 @@ class ShapefileWidget(AbstractSelectionWidget):
         :return: (str) datasource connection name.
         """
         abstractDb = self.getDatasource()
-        return abstractDb.databaseName() if abstractDb else ''
+        return "shp:{0}".format(abstractDb.databaseName()) if abstractDb else ''
 
     def selectDatasource(self):
         """

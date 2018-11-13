@@ -72,7 +72,7 @@ class NewSpatialiteWidget(AbstractSelectionWidget):
         Gets the SpatiaLite database path.
         :return: (str) datasource path name.
         """
-        return self.selectionWidget.currentDb()
+        return "sqlite:{0}".format(self.selectionWidget.currentDb())
 
     def getDatasourceEdgvVersion(self):
         """

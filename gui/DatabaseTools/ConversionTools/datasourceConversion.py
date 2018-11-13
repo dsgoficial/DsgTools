@@ -453,7 +453,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outCrs.setIcon(crsIcon)
             # get new text item to add output datasource
             edgvOut = containerWidget.connectionWidget.getDatasourceEdgvVersion()
-            edgvOut = edgvOut[5:] if edgvOut else ''
+            edgvOut = edgvOut[5:] if 'EDGV' in edgvOut else edgvOut
             itemEdgvOut = QtWidgets.QTableWidgetItem()
             itemEdgvOut.setText(edgvOut)
             itemEdgvOut.setFlags(Qt.ItemIsEditable) # not editable
