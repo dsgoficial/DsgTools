@@ -41,6 +41,7 @@ class ShapefileDb(AbstractDb):
         """
         super(ShapefileDb, self).__init__()
         self.fullpath = path
+        self.setDatabaseName(path=path)
 
     def getLayerLoader(self):
         """
@@ -51,6 +52,21 @@ class ShapefileDb(AbstractDb):
         """
         # DIAMOND PROBLEM ALERT: this method requires care to be used; similar methods should be avoided!
         return LayerLoaderFactory().makeLoader(iface, self)
+
+    def setLayersDict(self):
+        """
+        Creates the CRS and geometry dict attribute and populates it.
+        """
+        self.layerGeomCrsDict, temp = dict(), dict()
+        if self.databaseName():
+            ll = self.getLayerLoader()
+            layerByNameAlias = lambda l : ll.getLayerByName(layer=l)
+            for shpLayer in self.getTablesFromDatabase():
+                temp[shpLayer] = dict()
+                vl = layerByNameAlias(l=shpLayer)
+                temp[shpLayer]['crs'] = vl.crs()
+                temp[shpLayer]['geomType'] = vl.geometryType()
+            self.layerGeomCrsDict = temp
 
     def __del__(self):
         """
@@ -119,6 +135,12 @@ class ShapefileDb(AbstractDb):
         :para path: (str) path to directory containing shapefiles.
         """
         self.fullpath = path
+        if path != '':
+            # update layers dict
+            self.setLayersDict()
+        else:
+            self.layerGeomCrsDict = dict()
+
         # MUDAR AQUI O QUE FAZER QUANDO ALTERAR O NOME DA BASE DE DADOS
 
     def listGeomClassesFromDatabase(self, primitiveFilter = []):
@@ -160,9 +182,6 @@ class ShapefileDb(AbstractDb):
         """
         self.checkAndOpenDb()
         classList = []
-        # if not query.isActive():
-        #     self.db.close()
-        #     raise Exception(self.tr("Problem listing complex classes: ")+query.lastError().text())
         for layerName in self.getTablesFromDatabase():
                 tableSchema = layerName.split('_')[0]
                 if tableSchema.lower() == 'complexos': 
@@ -356,72 +375,47 @@ class ShapefileDb(AbstractDb):
     def getGeomTypeDict(self, loadCentroids=False):
         self.checkAndOpenDb()
         geomDict = dict()
-        for shpLayer in self.getTablesFromDatabase():
-            lastChars = shpLayer[-2:].lower()
-            # this is not elegant and it only work for EDGV names... but that's what it is for now
-            g = 0 if lastChars == '_p' else 1 if lastChars == '_l' else 2 if lastChars == '_a' else -1
-            geomType = self.getQgisResolvideGeomType(geometryType=g)
-            schema, layer = self.getTableSchema(lyr=shpLayer)
-            if geomType not in geomDict:
-                geomDict[geomType] = []
-            geomDict[geomType].append(layer)
+        if self.databaseName() != '' and self.layerGeomCrsDict != dict():
+            for shpLayer in self.getTablesFromDatabase():
+                geomType = self.getQgisResolvideGeomType(geometryType=self.layerGeomCrsDict[shpLayer]['geomType'])
+                schema, layer = self.getTableSchema(lyr=shpLayer)
+                if geomType not in geomDict:
+                    geomDict[geomType] = []
+                geomDict[geomType].append(layer)
         return geomDict
     
     def getGeomDict(self, getCentroids = False):
         pass
-        # """
-        # returns a dict like this:
-        # {'tablePerspective' : {
-        #     'layerName' :
-        # """
-        # self.checkAndOpenDb()
-        # edgvVersion = self.getDatabaseVersion()
-        # sql = self.gen.getGeomTablesFromGeometryColumns(edgvVersion)
-        # query = QSqlQuery(sql, self.db)
-        # if not query.isActive():
-        #     raise Exception(self.tr("Problem getting geom tables from db: ")+query.lastError().text())
-        # geomDict = dict()
-        # geomDict['primitivePerspective'] = self.getGeomTypeDict()
-        # geomDict['tablePerspective'] = dict()
-        # while query.next():
-        #     isCentroid = False
-        #     srid = query.value(0)
-        #     if edgvVersion in ('2.1.3','FTer_2a_Ed'):
-        #         geometryType = query.value(2)
-        #     else:
-        #         geometryType = self.getResolvedGeomType(query.value(2))
-        #     tableName = query.value(3)
-        #     tableSchema = tableName.split('_')[0]
-        #     geometryColumn = query.value(1)
-        #     layerName = '_'.join(tableName.split('_')[1::])
-        #     if layerName not in list(geomDict['tablePerspective'].keys()):
-        #         geomDict['tablePerspective'][layerName] = dict()
-        #         geomDict['tablePerspective'][layerName]['schema'] = tableSchema
-        #         geomDict['tablePerspective'][layerName]['srid'] = str(srid)
-        #         geomDict['tablePerspective'][layerName]['geometryColumn'] = geometryColumn
-        #         geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
-        #         geomDict['tablePerspective'][layerName]['tableName'] = tableName
-        # return geomDict
+        """
+        returns a dict like this:
+        {'tablePerspective' : {
+            'layerName' :
+        """
+        self.checkAndOpenDb()
+        geomDict = dict()
+        geomDict['primitivePerspective'] = self.getGeomTypeDict()
+        geomDict['tablePerspective'] = dict()
+        if self.databaseName() != '' and self.layerGeomCrsDict != dict():
+            for shpLayer in self.getTablesFromDatabase():
+                srid = self.layerGeomCrsDict[shpLayer]['crs'].authid().split(':')[-1]
+                geometryType = self.layerGeomCrsDict[shpLayer]['geomType']
+                schema, layerName = self.getTableSchema(lyr=shpLayer)
+                # start this layer's dict and fill it up
+                geomDict['tablePerspective'][layerName] = dict()
+                geomDict['tablePerspective'][layerName]['schema'] = schema
+                geomDict['tablePerspective'][layerName]['srid'] = str(srid)
+                geomDict['tablePerspective'][layerName]['geometryColumn'] = 'N/A'
+                geomDict['tablePerspective'][layerName]['geometryType'] = geometryType
+                geomDict['tablePerspective'][layerName]['tableName'] = shpLayer
+        return geomDict
     
     def getGeomColumnDict(self):
         pass
-        # """
-        # Dict in the form 'geomName':[-list of table names-]
-        # """
-        # self.checkAndOpenDb()
-        # sql = self.gen.getGeomColumnDict()
-        # query = QSqlQuery(sql, self.db)
-        # if not query.isActive():
-        #     raise Exception(self.tr("Problem getting geom column dict: ")+query.lastError().text())
-        # geomDict = dict()
-        # while query.next():
-        #     geomColumn = query.value(0)
-        #     tableName = query.value(1)
-        #     lyrName = '_'.join(tableName.split('_')[1::])
-        #     if geomColumn not in list(geomDict.keys()):
-        #         geomDict[geomColumn] = []
-        #     geomDict[geomColumn].append(lyrName)
-        # return geomDict
+        """
+        Dict in the form 'geomName':[-list of table names-]
+        """
+        self.checkAndOpenDb()
+        return { 'N/A' : self.listGeomClassesFromDatabase() }
 
     def createFrame(self, type_, scale, param, paramDict = dict()):
         mi, inom, frame = self.prepareCreateFrame(type_, scale, param)
@@ -433,7 +427,7 @@ class ShapefileDb(AbstractDb):
         srid = self.findEPSG()
         geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
         ogr.UseExceptions()
-        # outputDS = self.buildOgrDatabase()
+        outputDS = self.buildOgrDatabase()
         outputLayer=outputDS.GetLayerByName(self.getFrameLayerName())
         newFeat=ogr.Feature(outputLayer.GetLayerDefn())
         auxGeom = ogr.CreateGeometryFromWkb(frame)
@@ -461,24 +455,17 @@ class ShapefileDb(AbstractDb):
         raise Exception(self.tr("Unable to locate file '[SCHEMA]_{}.shp'.").format(table))
     
     def getGeomColumnTupleList(self, showViews = False):
-        pass
-        # """
-        # list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
-        # centroids are hidden by default
-        # """
-        # self.checkAndOpenDb()
-        # edgvVersion = self.getDatabaseVersion()
-        # sql = self.gen.getGeomColumnTupleList(edgvVersion)
-        # query = QSqlQuery(sql, self.db)
-        # if not query.isActive():
-        #     raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
-        # geomList = []
-        # while query.next():
-        #     if edgvVersion in ['2.1.3','FTer_2a_Ed']:
-        #         geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), query.value(2), 'BASE TABLE'))
-        #     else:
-        #         geomList.append((query.value(0).split('_')[0], '_'.join(query.value(0).split('_')[1::]), query.value(1), self.getResolvedGeomType(int(query.value(2))), 'BASE TABLE'))
-        # return geomList
+        """
+        list in the format [(table_schema, table_name, geometryColumn, geometryType, tableType)]
+        centroids are hidden by default
+        """
+        self.checkAndOpenDb()
+        geomList = []
+        for shpLayer in self.getTablesFromDatabase():
+            schema, table = self.getTableSchema(lyr=shpLayer)
+            geomType = self.getQgisResolvideGeomType(geometryType=self.layerGeomCrsDict[shpLayer]['geomType'])
+            geomList.append((schema, table, 'N/A', geomType, 'ESRI SHAPEFILE'))
+        return geomList
 
     def getQgisResolvideGeomType(self, geometryType):
         """
@@ -520,7 +507,8 @@ class ShapefileDb(AbstractDb):
         """
         self.checkAndOpenDb()
         out = []
-        layerByNameAlias = lambda l : self.getLayerLoader().getLayerByName(layer=l)
+        ll = self.getLayerLoader()
+        layerByNameAlias = lambda l : ll.getLayerByName(layer=l)
         for shpLayer in self.getTablesFromDatabase():
             # run through all .SHP files found (to include complexes and others non-EDGV filenames)
             schema, table = self.getTableSchema(lyr=shpLayer)
@@ -541,3 +529,16 @@ class ShapefileDb(AbstractDb):
         :return: (str) driver name.
         """
         return 'SHP'
+
+    def untouchedMethods(self):
+        """
+        List of all methods not yet translated or thought for .SHP drivers.
+        """
+        methods = [
+            obtainLinkColumn,
+            loadAssociatedFeaturesisComplexClass,
+            disassociateComplexFromComplex,
+            createFrame,
+            insertFrame,
+            getResolvedGeomType
+        ]
