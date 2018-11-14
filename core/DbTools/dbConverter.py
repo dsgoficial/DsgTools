@@ -22,6 +22,7 @@
 """
 
 from qgis.PyQt.QtCore import QObject
+from qgis.core import QgsFeatureRequest
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -218,7 +219,7 @@ class DbConverter(QObject):
             inputLayerMap[ds].update(complexMap)
         return inputLayerMap
 
-    def applySpatialFilters(self, layers, spatialFilter, fanOut):
+    def applySpatialFilters(self, featuresMap, spatialFilter, fanOut):
         """
         Applies the spatial filter to given layers.
         :param layers: (list-of-QgsVectorLayer) layers to be spatially filtered.
@@ -229,19 +230,19 @@ class DbConverter(QObject):
         if spatialFilter['layer_name'] != "":
             # spatial filter is only applicable if a layer was chosen as reference to topological tests
             # TODO
-            pass
-        return [layers]
+            print(self.tr("Consider it spatially filtered!"))
+        return [featuresMap]
 
     def prepareLayers(self, layers, filters, fanOut):
         """
         Prepare layers for each translation unit (step) to be executed (e.g. applies filters).
-        :param layers: (dict)(list-of-QgsVectorLayer) layers to be filtered.
+        :param layers: (dict) layers (list-of-QgsVectorLayer) to be filtered.
         :param filters: (dict) filtering option from a conversion map.
         :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
-        :return: (list) a list of list of filtered layers (list-of-QgsVectorLayer) to be mapped organized
-                 by output name. In case of fan-out, output name will be used as basis for all new output
-                 names. (list has length larger than 1 if and only if a fan-out was applied)
+        :return: (list) a list of dict, mapping the layers to be translated to their filtered features.
         """
+        # initiate output
+        outFeatureMap = dict()
         # apply layer selection filter
         if filters['layer']:
             # in case a selection of layers was executed, only selected layers should pass
@@ -252,9 +253,16 @@ class DbConverter(QObject):
             # in case no selection was made, all layers should be translated
             filteredLayers = layers
         # apply the filtering expression, if provided
-        for exp in filters['layer_filter']:
-            # find out how to apply expression to layers and get the result as a layer
-            pass
+        for l, exp in filters['layer_filter'].items():
+            # mouting request
+            req = QgsFeatureRequest().setFilterExpression(exp)
+            outFeatureMap[l] = filteredLayers[l].getFeatures(req)
+        for l, vl in filteredLayers.items():
+            # add all features from non-filtered layers (by expression)
+            if l in outFeatureMap:
+                # ignore the ones that were filtered by expression
+                continue
+            outFeatureMap[l] = [f for f in vl.getFeatures()]
         # apply spatial filters
-        filteredLayers = self.applySpatialFilters(layers=filteredLayers, spatialFilter=filters['spatial_filter'], fanOut=fanOut)
-        return filteredLayers
+        outFeatureMap = self.applySpatialFilters(featuresMap=outFeatureMap, spatialFilter=filters['spatial_filter'], fanOut=fanOut)
+        return outFeatureMap
