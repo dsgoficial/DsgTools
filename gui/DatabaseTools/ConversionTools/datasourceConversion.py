@@ -673,8 +673,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['filter'] = inputFilteredLayers
             rowMapping['spatialFanOut'] = str(spatialFanOut.isChecked())
             # parameter indicating whether it is a new datasource
-            rowMapping['createDs'] = str(self.tr('new') in outDs.currentText())
-            if rowMapping['createDs']:
+            rowMapping['createDs'] = str(self.tr('new') in outDs.currentText().split(':')[0])
+            if self.tr('new') in outDs.currentText().split(':')[0]:
                 # if a new datasource will be created, EDGV version and CRS will be needed
                 rowMapping['crs'] = containerWidget.connectionWidget.selectionWidget.edgvVersion()
                 rowMapping['edgv'] = containerWidget.connectionWidget.selectionWidget.authId()
@@ -769,7 +769,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             outDsName = outDs.currentText()
             if outDsName == self.tr('Select a datasource'):
                 return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row + 1)
-            outChecked.append(outDsName)
+            if outDsName not in outChecked:
+                outChecked.append(outDsName)
         # last check: if all chosen outputs are listed
         splitAlias = lambda x : x.split(':')[0]
         if len(outChecked) != len(self.outDs):

@@ -109,12 +109,12 @@ class AbstractDb(QObject):
         self.checkAndOpenDb()
         lyrWithElemList = []
         for lyr in layerList:
-            schema=self.getTableSchemaFromDb(lyr)
-            sql = self.gen.getElementCountFromLayer(schema,lyr)
+            # schema=self.getTableSchemaFromDb(lyr)
+            sql = self.gen.getElementCountFromLayer(lyr)
             query = QSqlQuery(sql,self.db)
             query.next()
-            if query.value(0) > 1:
-                lyrWithElemList.appen(lyr)
+            if query.value(0) is not None and query.value(0) > 1:
+                lyrWithElemList.append(lyr)
         return lyrWithElemList
 
     def getLayersWithElementsV2(self, layerList, useInheritance = False):
