@@ -33,6 +33,7 @@ class DbConverter(QObject):
     What it should be doing:
     1- read map;
     2- get layers ready;
+        * in this step, layers are just supposed to be read, no filters applied, in order to be reused, if needed.
     3- prepare each conversion as 1 separately;
         3.a- apply filters for each layer - layer level;
         3.b- apply feature map to destination - feature level; and
@@ -210,6 +211,50 @@ class DbConverter(QObject):
                 continue
             # read layers
             layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
-            layers = abstractDb.listGeomClassesFromDatabase() + abstractDb.listComplexClassesFromDatabase()
-            inputLayerMap[ds] = list(map(layerLoader.getLayerByName, abstractDb.getLayersWithElements(layers)))
+            layers = abstractDb.listClassesWithElementsFromDatabase(useComplex=False).keys()
+            inputLayerMap[ds] = {l : layerLoader.getLayerByName(l) for l in layers}
+            complexLayers = abstractDb.listComplexClassesFromDatabase()
+            complexMap = {l : layerLoader.getComplexLayerByName(l) for l in complexLayers}
+            inputLayerMap[ds].update(complexMap)
         return inputLayerMap
+
+    def applySpatialFilters(self, layers, spatialFilter, fanOut):
+        """
+        Applies the spatial filter to given layers.
+        :param layers: (list-of-QgsVectorLayer) layers to be spatially filtered.
+        :param spatialFilter: (dict) spatial filtering options from a conversion map.
+        :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
+        :return: (list) list of layers (list-of-QgsVectorLayer) after the spatial filter.
+        """
+        if spatialFilter['layer_name'] != "":
+            # spatial filter is only applicable if a layer was chosen as reference to topological tests
+            # TODO
+            pass
+        return [layers]
+
+    def prepareLayers(self, layers, filters, fanOut):
+        """
+        Prepare layers for each translation unit (step) to be executed (e.g. applies filters).
+        :param layers: (dict)(list-of-QgsVectorLayer) layers to be filtered.
+        :param filters: (dict) filtering option from a conversion map.
+        :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
+        :return: (list) a list of list of filtered layers (list-of-QgsVectorLayer) to be mapped organized
+                 by output name. In case of fan-out, output name will be used as basis for all new output
+                 names. (list has length larger than 1 if and only if a fan-out was applied)
+        """
+        # apply layer selection filter
+        if filters['layer']:
+            # in case a selection of layers was executed, only selected layers should pass
+            filteredLayers = dict()
+            for l in filters['layer']:
+                filteredLayers[l] = layers[l]
+        else:
+            # in case no selection was made, all layers should be translated
+            filteredLayers = layers
+        # apply the filtering expression, if provided
+        for exp in filters['layer_filter']:
+            # find out how to apply expression to layers and get the result as a layer
+            pass
+        # apply spatial filters
+        filteredLayers = self.applySpatialFilters(layers=filteredLayers, spatialFilter=filters['spatial_filter'], fanOut=fanOut)
+        return filteredLayers
