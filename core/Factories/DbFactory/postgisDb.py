@@ -712,7 +712,7 @@ class PostgisDb(AbstractDb):
 
         while query.next():
             #table name
-            ret.append(query.value(0))
+            ret.append("{0}.{1}".format(query.value(0), query.value(1)))
 
         return ret
 
