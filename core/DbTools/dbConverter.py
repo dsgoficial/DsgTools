@@ -219,7 +219,7 @@ class DbConverter(QObject):
             inputLayerMap[ds].update(complexMap)
         return inputLayerMap
 
-    def applySpatialFilters(self, featuresMap, spatialFilter, fanOut):
+    def applySpatialFilters(self, layers, spatialFilter, fanOut):
         """
         Applies the spatial filter to given layers.
         :param layers: (list-of-QgsVectorLayer) layers to be spatially filtered.
@@ -227,6 +227,7 @@ class DbConverter(QObject):
         :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
         :return: (list) list of layers (list-of-QgsVectorLayer) after the spatial filter.
         """
+        # move all spatial operation to handlers (layer, feature, etc)
         if spatialFilter['layer_name'] != "":
             # spatial filter is only applicable if a layer was chosen as reference to topological tests
             # TODO
@@ -252,17 +253,16 @@ class DbConverter(QObject):
         else:
             # in case no selection was made, all layers should be translated
             filteredLayers = layers
-        # apply the filtering expression, if provided
-        for l, exp in filters['layer_filter'].items():
-            # mouting request
-            req = QgsFeatureRequest().setFilterExpression(exp)
-            outFeatureMap[l] = filteredLayers[l].getFeatures(req)
+        # apply spatial filters
+        outFeatureMap = self.applySpatialFilters(layers=list(filteredLayers.values()),\
+                            spatialFilter=filters['spatial_filter'], fanOut=fanOut)
         for l, vl in filteredLayers.items():
             # add all features from non-filtered layers (by expression)
-            if l in outFeatureMap:
+            if l in filters['layer_filter']:
+                # apply the filtering expression, if provided
+                req = QgsFeatureRequest().setFilterExpression(exp)
+                outFeatureMap[l] = filteredLayers[l].getFeatures(req)
                 # ignore the ones that were filtered by expression
-                continue
-            outFeatureMap[l] = [f for f in vl.getFeatures()]
-        # apply spatial filters
-        outFeatureMap = self.applySpatialFilters(featuresMap=outFeatureMap, spatialFilter=filters['spatial_filter'], fanOut=fanOut)
+            else:
+                outFeatureMap[l] = [f for f in vl.getFeatures()]
         return outFeatureMap
