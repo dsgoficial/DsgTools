@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt.QtCore import QObject
-from qgis.core import QgsFeatureRequest
+from qgis.core import QgsFeatureRequest, QgsProject
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -228,11 +228,20 @@ class DbConverter(QObject):
         :return: (list) list of layers (list-of-QgsVectorLayer) after the spatial filter.
         """
         # move all spatial operation to handlers (layer, feature, etc)
-        if spatialFilter['layer_name'] != "":
+        layerName = spatialFilter['layer_name']
+        if layerName != "":
+            layer = QgsProject.instance().mapLayersByName(layerName)[0]
+            if spatialFilter['layer_filter']:
+                req = QgsFeatureRequest().setFilterExpression(spatialFilter['layer_filter'])
+                features = layer.getFeatures(req)
+            else:
+                features = layer.getFeatures()
+            predicate = spatialFilter["topological_relation"]
+            
             # spatial filter is only applicable if a layer was chosen as reference to topological tests
             # TODO
             print(self.tr("Consider it spatially filtered!"))
-        return [featuresMap]
+        return {}
 
     def prepareLayers(self, layers, filters, fanOut):
         """
@@ -254,7 +263,7 @@ class DbConverter(QObject):
             # in case no selection was made, all layers should be translated
             filteredLayers = layers
         # apply spatial filters
-        outFeatureMap = self.applySpatialFilters(layers=list(filteredLayers.values()),\
+        outFeatureMap = self.applySpatialFilters(layers=filteredLayers,\
                             spatialFilter=filters['spatial_filter'], fanOut=fanOut)
         for l, vl in filteredLayers.items():
             # add all features from non-filtered layers (by expression)
