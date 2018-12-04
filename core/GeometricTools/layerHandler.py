@@ -489,14 +489,50 @@ class LayerHandler(QObject):
                 feedback.setProgress(size * current)
         return updateDict
 
-    def spatialFilter(self, reference, target, predicate, parameter):
+    def clipLayer(self, reference, target, parameter):
         """
-        Spatially filters a target layer by a given spatial predicate regarding
-        a given reference feature. 
+        Clips a given target layer and keeps inside, outside or both (?) sides.
         :param reference: (QgsFeature) reference feature.
-        :param target: (QgsVectorLayer?) target layer.
+        :param target: (QgsVectorLayer) target layer.
+        :param parameter: (str) indication of which part should be kept.
+        :return: (QgsVectorLayer) spatially filtered layer.
+        """
+        results = None
+        return results
+
+    def bufferLayer(self, reference, target, parameter):
+        """
+        Clips a given target layer and keeps inside, outside or both (?) sides.
+        :param reference: (QgsFeature) reference feature.
+        :param target: (QgsVectorLayer) target layer.
+        :param parameter: (float) buffer size.
+        :return: (QgsVectorLayer) spatially filtered layer.
+        """
+        results = None
+        return results
+
+    def intersectsLayer(self, reference, target):
+        """
+        Gets all features from a target layer that intersects reference feature.
+        :param reference: (QgsFeature) reference feature.
+        :param target: (QgsVectorLayer) target layer.
+        :return: (QgsVectorLayer) spatially filtered layer.
+        """
+        results = None
+        return results
+
+    def spatialFilter(self, reference, target, predicate, parameter=None):
+        """
+        Spatially filters a target layer by a given spatial predicate regarding a given reference feature. 
+        :param reference: (QgsFeature) reference feature.
+        :param target: (QgsVectorLayer) target layer.
         :param predicate: (str) spatial predicate to be applied.
         :param parameter: (object) predicate's application parameter.
-        :return: (?) spatial filtering results.
+        :return: (QgsVectorLayer) spatially filtered layer.
         """
-        pass
+        methods = {
+            self.tr('Clip') : lambda : self.clipLayer(reference=reference, target=target, parameter=parameter),
+            self.tr('Buffer') : lambda : self.bufferLayer(reference=reference, target=target, parameter=parameter),
+            self.tr('Intersects') : lambda : self.intersectsLayer(reference=reference, target=target)
+        }
+        return methods[predicate]() if predicate in methods else None
