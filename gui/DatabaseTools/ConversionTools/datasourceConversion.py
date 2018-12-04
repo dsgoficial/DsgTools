@@ -515,7 +515,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             if spatialFilterDict['filter_type']:
                 topologyTestWidget = QtWidgets.QLineEdit()
                 topologyTestWidget.setText(spatialFilterDict['filter_type'])
-            if spatialFilterDict['topological_relation']:
+            if not isinstance(spatialFilterDict['topological_relation'], int):
                 topologyParameter = QtWidgets.QLineEdit()
                 topologyParameter.setText(str(spatialFilterDict['topological_relation']))
         return layerNameWidget, layerFilterWidget, topologyTestWidget, topologyParameter
