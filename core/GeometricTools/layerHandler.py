@@ -488,3 +488,15 @@ class LayerHandler(QObject):
             if feedback:
                 feedback.setProgress(size * current)
         return updateDict
+
+    def spatialFilter(self, reference, target, predicate, parameter):
+        """
+        Spatially filters a target layer by a given spatial predicate regarding
+        a given reference feature. 
+        :param reference: (QgsFeature) reference feature.
+        :param target: (QgsVectorLayer?) target layer.
+        :param predicate: (str) spatial predicate to be applied.
+        :param parameter: (object) predicate's application parameter.
+        :return: (?) spatial filtering results.
+        """
+        pass

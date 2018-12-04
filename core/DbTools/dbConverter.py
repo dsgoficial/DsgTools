@@ -27,6 +27,7 @@ from qgis.core import QgsFeatureRequest, QgsProject
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 class DbConverter(QObject):
     """
@@ -227,21 +228,37 @@ class DbConverter(QObject):
         :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
         :return: (list) list of layers (list-of-QgsVectorLayer) after the spatial filter.
         """
+        out = dict()
         # move all spatial operation to handlers (layer, feature, etc)
-        layerName = spatialFilter['layer_name']
-        if layerName != "":
-            layer = QgsProject.instance().mapLayersByName(layerName)[0]
+        referenceLayerName = spatialFilter['layer_name']
+        # spatial filter is only applicable if a layer was chosen as reference to topological tests
+        if referenceLayerName != "":
+            # get a layer handler for spatial predicate operation
+            lh = LayerHandler()
+            referenceLayer = QgsProject.instance().mapLayersByName(referenceLayerName)[0]
             if spatialFilter['layer_filter']:
                 req = QgsFeatureRequest().setFilterExpression(spatialFilter['layer_filter'])
-                features = layer.getFeatures(req)
+                features = referenceLayer.getFeatures(req)
             else:
-                features = layer.getFeatures()
-            predicate = spatialFilter["topological_relation"]
-            
-            # spatial filter is only applicable if a layer was chosen as reference to topological tests
-            # TODO
-            print(self.tr("Consider it spatially filtered!"))
-        return {}
+                features = referenceLayer.getFeatures()
+            predicate = spatialFilter["filter_type"]
+            parameter = spatialFilter["topological_relation"]
+            if fanOut:
+                for feature in features:
+                    # for each feature requested from reference layer, an output dataset is expected
+                    feat_id = feature.id()
+                    out[feat_id] = dict()
+                    for ln, vl in layers:
+                        out[feat_id][ln] = lh.spatialFilter(feature, vl, predicate, parameter)
+            else:
+                # for all feature requested from reference layer, ONE output dataset is expected
+                out[0] = dict()
+                for feature in features:
+                    for ln, vl in layers:
+                        if ln not in out[0]:
+                            out[0][ln] = []
+                        out[0][ln] += lh.spatialFilter(feature, vl, predicate, parameter)
+        return out
 
     def prepareLayers(self, layers, filters, fanOut):
         """
@@ -270,7 +287,7 @@ class DbConverter(QObject):
             if l in filters['layer_filter']:
                 # apply the filtering expression, if provided
                 req = QgsFeatureRequest().setFilterExpression(exp)
-                outFeatureMap[l] = filteredLayers[l].getFeatures(req)
+                outFeatureMap[l] = [f for f in vl.getFeatures(req)]
                 # ignore the ones that were filtered by expression
             else:
                 outFeatureMap[l] = [f for f in vl.getFeatures()]
