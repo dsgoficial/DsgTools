@@ -248,7 +248,7 @@ class DbConverter(QObject):
                     # for each feature requested from reference layer, an output dataset is expected
                     feat_id = feature.id()
                     out[feat_id] = dict()
-                    for ln, vl in layers:
+                    for ln, vl in layers.items():
                         out[feat_id][ln] = lh.spatialFilter(feature, vl, predicate, parameter)
             else:
                 # for all feature requested from reference layer, ONE output dataset is expected
@@ -282,13 +282,13 @@ class DbConverter(QObject):
         # apply spatial filters
         outFeatureMap = self.applySpatialFilters(layers=filteredLayers,\
                             spatialFilter=filters['spatial_filter'], fanOut=fanOut)
-        for l, vl in filteredLayers.items():
-            # add all features from non-filtered layers (by expression)
-            if l in filters['layer_filter']:
-                # apply the filtering expression, if provided
-                req = QgsFeatureRequest().setFilterExpression(exp)
-                outFeatureMap[l] = [f for f in vl.getFeatures(req)]
-                # ignore the ones that were filtered by expression
-            else:
-                outFeatureMap[l] = [f for f in vl.getFeatures()]
+        # for l, vl in filteredLayers.items():
+        #     # add all features from non-filtered layers (by expression)
+        #     if l in filters['layer_filter']:
+        #         # apply the filtering expression, if provided
+        #         req = QgsFeatureRequest().setFilterExpression(exp)
+        #         outFeatureMap[l] = [f for f in vl.getFeatures(req)]
+        #         # ignore the ones that were filtered by expression
+        #     else:
+        #         outFeatureMap[l] = [f for f in vl.getFeatures()]
         return outFeatureMap
