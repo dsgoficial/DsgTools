@@ -721,8 +721,8 @@ class LayerHandler(QObject):
         :return: (list-of-QgsFeature) spatially filtered layer.
         """
         outMap = dict()
-        # cortar camada com camada
-        result = AlgRunner().runSnapLayerOnLayer(target, reference, 0.1, QgsProcessingContext(), feedback=feedback)
+        # clip layer
+        result = AlgRunner().runClip(target, reference, QgsProcessingContext(), feedback=feedback)
         refFeatList = list(reference.getFeatures()) if request is None else list(reference.getFeatures(request))
         if fanOut:
             for feat in result.getFeatures():
