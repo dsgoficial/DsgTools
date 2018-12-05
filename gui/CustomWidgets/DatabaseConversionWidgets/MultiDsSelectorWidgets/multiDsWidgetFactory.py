@@ -23,6 +23,10 @@
 """
 
 from .SupportedDrivers.multiPostgisSelectorWidget import MultiPostgisSelectorWidget
+from .SupportedDrivers.multiSpatialiteSelectorWidget import MultiSpatialiteSelectorWidget
+from .SupportedDrivers.multiShapefileSelectorWidget import MultiShapefileSelectorWidget
+from .SupportedDrivers.multiGeopackageSelectorWidget import MultiGeopackageSelectorWidget
+from .SupportedDrivers.multiNewDsSelector import MultiNewDsSelector
 from DsgTools.core.dsgEnums import DsgEnums
 
 class MultiDsWidgetFactory:
@@ -35,9 +39,14 @@ class MultiDsWidgetFactory:
         :param driver: (int) driver enum. 
         """
         dialogDict = {
-            DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget()
-            # DsgEnums.SpatiaLite : lambda : MultiSpatiaLiteSelectorWidget(),
-            # DsgEnums.Shapefile : lambda : MultiShapefileSelectorWidget(),
-            # DsgEnums.Geopackage : lambda : MultiGeopackageSelectorWidget()
+            DsgEnums.NoDriver : lambda : None,
+            DsgEnums.PostGIS : lambda : MultiPostgisSelectorWidget(),
+            DsgEnums.NewPostGIS : lambda : MultiNewDsSelector(),
+            DsgEnums.SpatiaLite : lambda : MultiSpatialiteSelectorWidget(),
+            DsgEnums.NewSpatiaLite : lambda : MultiNewDsSelector(),
+            DsgEnums.Shapefile : lambda : MultiShapefileSelectorWidget(),
+            DsgEnums.NewShapefile : lambda : MultiNewDsSelector(),
+            DsgEnums.Geopackage : lambda : MultiGeopackageSelectorWidget(),
+            DsgEnums.NewGeopackage : lambda : MultiNewDsSelector()
         }
         return dialogDict[driver]()

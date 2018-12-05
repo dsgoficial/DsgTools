@@ -42,6 +42,9 @@ class GeopackageWidget(AbstractSelectionWidget):
         self.source = DsgEnums.Geopackage
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
+        self.selectionWidget.driver = DsgEnums.DriverGeopackage
+        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr('Select a Geopackage Database')
+        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr('Geopackage Database (*.gpkg)')
 
     def getNewSelectionWidget(self, parent=None):
         """
@@ -62,13 +65,23 @@ class GeopackageWidget(AbstractSelectionWidget):
         ret = n.split(splitChar)[-1].split('.')[0] if n else ''
         return ret
 
+    def getDatasourcePath(self):
+        """
+        Gets the SpatiaLite database path.
+        :return: (str) datasource path name.
+        """
+        if self.getDatasource():
+            # just return a datasource path if a valid one was loaded
+            return "gpkg:{0}".format(self.selectionWidget.connectionSelectorLineEdit.lineEdit.text())
+        return ''
+
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
-        :param newDatasource: (object) new datasource to be set.
+        :param newDatasource: (dict) containing datasource name and its path.
         """
-        # to be reimplemented
-        pass
+        if newDatasource:
+            self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText((list(newDatasource.values())[0]))
 
     def getDatasource(self):
         """

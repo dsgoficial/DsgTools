@@ -37,6 +37,7 @@ from qgis.core import QgsDataSourceUri, QgsCredentials, QgsMessageLog, QgsRectan
 from DsgTools.ComplexTools.manageComplex import ManageComplexDialog
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'complexWindow_base.ui'))
@@ -129,10 +130,10 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
         (dataSourceUri, credentials) = self.databases[dbName]
         #verifying the connection type
         if self.isSpatialiteDatabase(dbName):
-            self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+            self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
             self.abstractDb.connectDatabase(dataSourceUri.database())
         else:
-            self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+            self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             
             database = dbName
             host = dataSourceUri.host()

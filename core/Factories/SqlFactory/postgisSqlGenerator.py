@@ -1746,3 +1746,14 @@ class PostGISSqlGenerator(SqlGenerator):
     def getFilterJsonList(self, domainName):
         sql = """select row_to_json(a) from (select * from dominios.{0}) as a """.format(domainName)
         return sql
+
+    def databaseInfo(self):
+        """
+        Gets database information to be displayed.
+        :return: (str) SQL to executed.
+        """
+        sql = """
+            SELECT f_table_schema, f_table_name, f_geometry_column, type, srid
+                FROM public.geometry_columns
+                ORDER BY f_table_schema, f_table_name ASC"""
+        return sql

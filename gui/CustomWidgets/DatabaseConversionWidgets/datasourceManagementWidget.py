@@ -30,6 +30,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.MultiDsSelectorWidgets.multiDsWidgetFactory import MultiDsWidgetFactory
 
 import os
+from functools import partial
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceManagementWidget.ui'))
@@ -42,9 +43,11 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     3- read filtering info to be applied to data.
     """
     # setting signal to alert conversion tool about any active widgets change
-    activeWidgetsChanged = pyqtSignal()
+    activeWidgetAdded = pyqtSignal(DatasourceContainerWidget)
+    activeWidgetRemoved = pyqtSignal(DatasourceContainerWidget)
     # setting signal to alert conversion tool about any datasource updates
     datasourceChangedSignal = pyqtSignal(AbstractDb)
+    widgetUpdated = pyqtSignal(DatasourceContainerWidget)
     # filtering settings from widget container has changed signal
     containerFilterSettingsChanged = pyqtSignal(DatasourceContainerWidget)
     
@@ -108,7 +111,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         """
         Adds widget to a dict composed by list as values and driver names as key.
         :param k: (str) new widget's driver name.
-        :param e: (QWidget) widget to be added to the dict.
+        :param e: (DatasourceContainerWidget) widget to be added to the dict.
         :param d: (dict) dictionary to be updated.
         :return: (bool) operation success status.
         """
@@ -135,13 +138,14 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             # in case a valid driver is selected, add its widget to the interface
             source = self.sourceNameDict[currentDbSource]
             if source != DsgEnums.NoDriver:
-                w = DatasourceContainerWidget(source=source, inputContainer=inputPage)
+                w = DatasourceContainerWidget(source=source, isInput=inputPage)
                 # connect removal widget signal to new widget
                 w.removeWidget.connect(self.removeWidget)
                 # connect datasource change signal to this class datasource signal change
-                w.connWidget.selectionWidget.dbChanged.connect(self.datasourceChanged)
+                emitWidgetAlias = lambda newAbstract : self.datasourceChanged(newAbstract=newAbstract, containerWidget=w)
+                w.connectionWidget.selectionWidget.dbChanged.connect(emitWidgetAlias)
                 # connect datasource change signal to its filters reset method
-                w.connWidget.selectionWidget.dbChanged.connect(w.clearFilters)
+                w.connectionWidget.selectionWidget.dbChanged.connect(w.clearFilters)
                 # connect filtering settings changed signal to this class signal on filtering settings change
                 w.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
                 # add new driver container to GUI 
@@ -150,8 +154,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
                 self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
                 # reset all driver's groupboxes names
                 self.resetWidgetsTitle()
-                # emit signal advising that there is a new active widget
-                self.activeWidgetsChanged.emit()
+                # emit active widget that has been added
+                self.activeWidgetAdded.emit(w)
                 # returns newly added widget
                 return w
 
@@ -160,44 +164,20 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Adds the widget according to selected datasource on datasource combobox on first page.
         :param source: (str) driver name.
         """
-        actionDict = {
-            DsgEnums.NoDriver : lambda : None, # no action is executed in case a driver is not selected
-            DsgEnums.PostGIS : lambda : MultiDsWidgetFactory.getMultiDsSelector(driver=DsgEnums.PostGIS).exec_(),
-            DsgEnums.NewPostGIS : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.SpatiaLite : lambda : self.addMultiFile(extensionFilter='SpatiaLite Databases (*.sqlite)'),
-            DsgEnums.NewSpatiaLite : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.Shapefile : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.NewShapefile : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.Geopackage : lambda : print('NADA A FAZER AGORA'),
-            DsgEnums.NewGeopackage : lambda : print('NADA A FAZER AGORA')
-        }
-        # get current text on datasource techonology selection combobox
-        currentDbSource = self.sourceNameDict[self.datasourceComboBox.currentText()]
-        actionDict[currentDbSource]()
-
-    def addMultiFile(self, extensionFilter=None):
-        """
-        Adds widgets for all selected files.
-        """
-        # get current text on datasource techonology selection combobox
-        fList = self.getMultiFile(extensionFilter=extensionFilter)
-        for dbName in fList:
-            # add new widget to GUI
-            w = self.addDatasourceWidget()
-            # set db (all file-based drivers have a 'lineEdit' object due to their common child 'SelectFileWidget')
-            w.connWidget.selectionWidget.connectionSelectorLineEdit.lineEdit.setText(dbName)
-
-    def getMultiFile(self, extensionFilter=None):
-        """
-        Opens dialog multiple file selection and gets file list.
-        :param extensionFilter: (str) file extensions to be filtered.
-        :return: (list-of-str) list containing all filenames for selected files.
-        """
-        fd = QtWidgets.QFileDialog()
-        # get current text on datasource techonology selection combobox
-        currentDbSource = self.datasourceComboBox.currentText()
-        fileList = fd.getOpenFileNames(caption=self.tr("Select a {0}").format(currentDbSource), filter=extensionFilter)[0]
-        return fileList
+        # identify source
+        source = self.sourceNameDict[self.datasourceComboBox.currentText()]
+        if source != DsgEnums.NoDriver:
+            # get driver's multi selection dialog
+            dlg = MultiDsWidgetFactory.getMultiDsSelector(driver=source)
+            result = dlg.exec_()
+            if not result:
+                # in case Ok was selected
+                datasourcesDict = dlg.datasources
+                for ds, dsPath in datasourcesDict.items():
+                    # add new widget container for it
+                    container = self.addDatasourceWidget()
+                    # set datasource to it
+                    container.setDatasource({ds : dsPath})
 
     def resetWidgetsTitle(self):
         """
@@ -220,32 +200,58 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         :param w: (QWidget) driver widget to be removed. 
         """
         # disconnect all widget connected signals
-        try:
-            w.removeWidget.disconnect(self.removeWidget)
-        except:
-            pass
-        try:
-            w.connWidget.selectionWidget.dbChanged.disconnect(self.datasourceChanged)
-        except:
-            pass
+        w.blockSignals(True)
         # remove from active dict
         try:
-            self.activeDrivers[w.connWidget.getSelectionWidgetName(source=w.connWidget.source)].remove(w)
+            self.activeDrivers[w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)].remove(w)
         except:
             # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
             pass
-        # remove widget from GUI, remove its reference on a parent widget and delete it
         self.datasourceLayout.removeWidget(w)
-        w.setParent(None)
-        del w
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
-        # emit current active widgets changed signal
-        self.activeWidgetsChanged.emit()
+        # emit widget that has been removed
+        self.activeWidgetRemoved.emit(w)
+        # remove widget from GUI, remove its reference on a parent widget and delete it
+        w.setParent(None)
+        del w
 
-    def datasourceChanged(self, newDbAbstract):
+    def datasourceChanged(self, newAbstract, containerWidget):
         """
         Keeps track of every container widget's abstract database change.
         """
         # if any abstractDb changes
-        self.datasourceChangedSignal.emit(newDbAbstract)
+        # keep orignal abstract change signal behavior
+        self.datasourceChangedSignal.emit(newAbstract)
+        # clear widget's filters
+        containerWidget.clearFilters()
+        # advise which widget was updated
+        self.widgetUpdated.emit(containerWidget)
+
+    def validate(self):
+        """
+        Validates container GUI parameters.
+        :return: (str) invalidation reason.
+        """
+        if self.objectName() == 'datasourceManagementWidgetIn':
+            pageError = self.tr('Input Error!')
+        else:
+            pageError = self.tr('Output Error!')
+        for containers in self.activeDrivers.values():
+            for container in containers:
+                if not container.isValid():
+                    return '{0} {1}: {2}'.format(pageError, container.groupBox.title(), container.validate())
+        # validate selection widget
+        return ''
+
+    def isValid(self):
+        """
+        Validates selection widgets contents.
+        :return: (bool) invalidation status.
+        """
+        for containers in self.activeDrivers.values():
+            for container in containers:
+                if not container.isValid():
+                    return False
+        # validate selection widget
+        return True

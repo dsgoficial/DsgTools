@@ -33,6 +33,7 @@ from .serverConfigurator import ServerConfigurator
 from qgis.core import QgsMessageLog
 
 from ...core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
@@ -213,7 +214,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         '''
         Tests if the server is online
         '''
-        abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+        abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         if not abstractDb:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             return False

@@ -36,6 +36,7 @@ from .....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFacto
 from .....core.Factories.DbFactory.abstractDb import AbstractDb
 from .....core.Factories.DbFactory.dbFactory import DbFactory
 from ....CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreServerWidget.ui'))
@@ -50,6 +51,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.setupUi(self)
         self.superNeeded = False
         self.dbFactory = DbFactory()
+        self.factory = SqlGeneratorFactory()
         self.abstractDb = None
 
     def getServers(self):
@@ -100,16 +102,17 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         if canLoad:
             progress = ProgressWidget(1,len(dbList),self.tr('Loading databases from server... '), parent = self)
             progress.initBar()
-            gen = self.factory.createSqlGenerator(False)
+            gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
             edvgDbList = []
             for database in dbList:
-                db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
-                if not db.open():
-                    qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+db.lastError().databaseText(), level=Qgis.Critical)
+                postgisDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
+                postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
+                if not postgisDb.db.open():
+                    qgis.utils.iface.messageBar().pushMessage('DB :'+database+'| msg: '+postgisDb.db.lastError().databaseText(), level=Qgis.Critical)
     
-                query = QSqlQuery(db)
+                query = QSqlQuery(postgisDb.db)
                 if query.exec_(gen.getEDGVVersion()):
-                    while next(query):
+                    while query.next():
                         version = query.value(0)
                         if version:
                             edvgDbList.append((database, version))
@@ -121,22 +124,22 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         Gets server databases
         name: server name
         """
-        gen = self.factory.createSqlGenerator(False)
+        gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         
         (host, port, user, password) = self.getServerConfiguration(name)
         database = 'postgres'
-        
-        db = self.getPostGISDatabaseWithParams(database, host, port, user, password)
-        if not db.open():
+        postgisDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
+        postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
+        if not postgisDb.db.open():
             QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", Qgis.Critical)
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
         
-        query = QSqlQuery(gen.getDatabasesFromServer(), db)
+        query = QSqlQuery(gen.getDatabasesFromServer(), postgisDb.db)
         if not query.isActive():
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr("Problem executing query: ")+query.lastError().text())
             
         dbList = []
-        while next(query):
+        while query.next():
             dbList.append(query.value(0))
         return self.browseServer(dbList, host, port, user, password)
     
@@ -167,7 +170,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         self.clearWidgets.emit()
         if self.serversCombo.currentIndex() != 0:
-            self.abstractDb = self.dbFactory.createDbFactory('QPSQL')
+            self.abstractDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             if not self.abstractDb:
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
                 return

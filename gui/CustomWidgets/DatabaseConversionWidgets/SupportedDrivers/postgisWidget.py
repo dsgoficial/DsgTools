@@ -66,16 +66,24 @@ class PostgisWidget(AbstractSelectionWidget):
         abstractDb = self.getDatasource()
         if abstractDb:
             host, port, username, _ = abstractDb.getDatabaseParameters()
-            return '{2}@{0}:{1}.{3}'.format(host, port, username, self.getDatasourceConnectionName())
+            return 'pg:{2}@{0}:{1}.{3}'.format(host, port, username, self.getDatasourceConnectionName())
         return ''
 
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
-        :param newDatasource: (object) new datasource to be set.
+        :param newDatasource: (dict) { db : (host, port, username, password) }.
         """
-        # to be reimplemented
-        pass
+        if self.selectionWidget:
+            for db, (host, port, username, password) in newDatasource.items():
+                # set selected host as container's default
+                self.selectionWidget.viewServers.\
+                    setDefaultConnectionParameters(host=host, port=port, user=username, password=password)
+                # sel selected db
+                # in order to emit datasource changed signal, force a change of index
+                idx = self.selectionWidget.connectionSelectorComboBox.findText(db)
+                self.selectionWidget.connectionSelectorComboBox.setCurrentText(db)
+                self.selectionWidget.loadDatabase(idx)
 
     def getDatasource(self):
         """

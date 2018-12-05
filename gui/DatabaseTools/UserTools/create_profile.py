@@ -30,6 +30,7 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # DSGTools imports
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 import json
 
@@ -75,7 +76,7 @@ class CreateProfile(QtWidgets.QDialog, FORM_CLASS):
         elif self.versionCombo.currentText() == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath, '..', 'DbTools', 'SpatialiteTool', 'template', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
 
-        self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+        self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
         if not self.abstractDb:
             QtWidgets.QMessageBox.warning(self, self.tr('Warning!'), self.tr('A problem occurred! Check log for details.'))
             return
