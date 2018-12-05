@@ -247,29 +247,11 @@ class DbConverter(QObject):
             applySpatialFilter = lambda layer : lh.spatialFilter(referenceLayer, layer, predicate, parameter, req, fanOut)
             for ln, vl in layers.items():
                 for ref_if, featList in applySpatialFilter(vl).items():
-                    if vl.name() == referenceLayerName:
-                        continue
                     if ref_if not in out:
                         out[ref_if] = dict()
                     if ln not in out[ref_if]:
                         out[ref_if][ln] = []
                     out[ref_if][ln] += featList
-            # if fanOut:
-            #     for feature in features:
-            #         # for each feature requested from reference layer, an output dataset is expected
-            #         feat_id = feature.id()
-            #         out[feat_id] = dict()
-            #         # create a memory layer with a single feature, set 
-            #         for ln, vl in layers.items():
-            #             out[feat_id][ln] = lh.spatialFilter(feature, vl, predicate, parameter, fanOut)
-            # else:
-            #     # for all feature requested from reference layer, ONE output dataset is expected
-            #     out[0] = dict()
-            #     for feature in features:
-            #         for ln, vl in layers:
-            #             if ln not in out[0]:
-            #                 out[0][ln] = []
-                        # out[0][ln] += lh.spatialFilter(feature, vl, predicate, parameter)
         return out
 
     def prepareLayers(self, layers, filters, fanOut):
