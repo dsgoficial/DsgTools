@@ -34,6 +34,7 @@ from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
 from DsgTools.gui.ServerTools.createView import CreateView
 from DsgTools.gui.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'exploreDb.ui'))
@@ -128,7 +129,7 @@ class ExploreDb(QtWidgets.QDialog, FORM_CLASS):
         self.treeWidget.clear()
         if not current:
             return
-        self.localDb = self.dbFactory.createDbFactory('QPSQL')
+        self.localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         originalCon = self.serverWidget.abstractDb.makeOgrConn()
         self.localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), current.text().split(' ')[0], self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
 

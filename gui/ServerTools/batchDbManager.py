@@ -44,6 +44,7 @@ from DsgTools.gui.DatabaseTools.UserTools.profile_editor import ProfileEditor
 from DsgTools.gui.ServerTools.createView import CreateView
 from DsgTools.gui.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
 from DsgTools.gui.ServerTools.selectStyles import SelectStyles
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
@@ -122,7 +123,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
                     if templateName != 'dsgtools_admindb':
                         selectedDbNameList.append(templateName)
         for dbName in selectedDbNameList:
-            localDb = self.dbFactory.createDbFactory('QPSQL')
+            localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), dbName, self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
             dbsDict[dbName] = localDb
         return dbsDict

@@ -45,10 +45,13 @@ class SpatialiteWidget(AbstractSelectionWidget):
         self.source = DsgEnums.SpatiaLite
         # initiate new instance of actual class widget
         self.selectionWidget = self.getNewSelectionWidget(parent=parent)
+        self.selectionWidget.driver = DsgEnums.DriverSpatiaLite
+        self.selectionWidget.connectionSelectorLineEdit.caption = self.tr('Select a SpatiaLite Database')
+        self.selectionWidget.connectionSelectorLineEdit.filter = self.tr('SpatiaLite Database (*.sqlite)')
 
     def getNewSelectionWidget(self, parent=None):
         """
-        Gets the widget according to selected datasource on datasource combobox on first page.
+        Gets the widget according to selected datasource.
         :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
         :return: (QWidget) driver widget supported by conversion tool.
         """
@@ -70,15 +73,18 @@ class SpatialiteWidget(AbstractSelectionWidget):
         Gets the SpatiaLite database path.
         :return: (str) datasource path name.
         """
-        return self.selectionWidget.connectionSelectorLineEdit.lineEdit.text()
+        if self.getDatasource():
+            # just return a datasource path if a valid one was loaded
+            return "sqlite:{0}".format(self.selectionWidget.connectionSelectorLineEdit.lineEdit.text())
+        return ''
 
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
-        :param newDatasource: (object) new datasource to be set.
+        :param newDatasource: (dict) containing datasource name and its path.
         """
-        # to be reimplemented
-        pass
+        if newDatasource:
+            self.selectionWidget.connectionSelectorLineEdit.lineEdit.setText((list(newDatasource.values())[0]))
 
     def getDatasource(self):
         """

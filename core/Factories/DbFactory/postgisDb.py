@@ -31,6 +31,7 @@ from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeatur
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 from osgeo import ogr
 from uuid import uuid4
@@ -47,7 +48,7 @@ class PostgisDb(AbstractDb):
         #setting database type to postgresql
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
-        self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.databaseEncoding = 'utf-8'
 
     def getDatabaseParameters(self):
@@ -91,7 +92,7 @@ class PostgisDb(AbstractDb):
         """
         if not self.testCredentials(host, port, database, user, password):
             self.getCredentials(host, port, user, database)
-        
+
     def getCredentials(self, host, port, user, database):
         conInfo = "host={0} port={1} dbname={2}".format(host, port, database)
         check = False
@@ -106,10 +107,9 @@ class PostgisDb(AbstractDb):
     def testCredentials(self, host, port, database, user, password):
         try:
             self.db.setHostName(host)
-            if type(port) != 'int':
-                self.db.setPort(int(port))
-            else:
-                self.db.setPort(port)
+            if not isinstance(port, int):
+                port = int(port)
+            self.db.setPort(port)
             self.db.setDatabaseName(database)
             self.db.setUserName(user)
             self.db.setPassword(password)
@@ -712,7 +712,7 @@ class PostgisDb(AbstractDb):
 
         while query.next():
             #table name
-            ret.append(query.value(0))
+            ret.append("{0}.{1}".format(query.value(0), query.value(1)))
 
         return ret
 
@@ -3743,3 +3743,25 @@ class PostgisDb(AbstractDb):
             if domainTable.split('.')[-1] in attrList:
                 filterDict[tableName] = jsonDict[domainTable.split('.')[-1]]
         return filterDict
+
+    def databaseInfo(self):
+        """
+        Gives information about all tables present in the database. Output is composed by
+        schema, layer, geometry column, geometry type and srid, in that order.
+        :return: (list-of-dict) database information.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.databaseInfo()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        out = []
+        while query.next():
+            rowDict = dict()
+            rowDict['schema'] = query.value(0)
+            rowDict['layer'] = query.value(1)
+            rowDict['geomCol'] = query.value(2)
+            rowDict['geomType'] = query.value(3)
+            rowDict['srid'] = str(query.value(4))
+            out.append(rowDict)
+        return out

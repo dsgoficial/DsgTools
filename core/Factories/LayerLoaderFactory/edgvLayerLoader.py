@@ -248,3 +248,27 @@ class EDGVLayerLoader(QObject):
             geomColumn = self.geomDict['tablePerspective'][lyrName]['geometryColumn']
             srid =  self.geomDict['tablePerspective'][lyrName]['srid']
         return lyrName, schema, geomColumn, tableName, srid
+
+    def getLayerByName(self, layer):
+        """
+        Return the layer layer from a given layer name.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer. 
+        """
+        try:
+            # self.provider is added on children classes
+            return QgsVectorLayer(self.uri.uri(), layer, self.provider)
+        except:
+            return None
+
+    def getComplexLayerByName(self, layer):
+        """
+        Return the layer layer from a given layer name.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer. 
+        """
+        try:
+            # self.provider is added on children classes
+            return QgsVectorLayer(self.uri.uri(), layer, self.provider)
+        except:
+            return None

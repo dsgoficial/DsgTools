@@ -22,8 +22,10 @@
 """
 
 from qgis.PyQt.QtCore import QObject
+from qgis.utils import iface
 
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 class AbstractSelectionWidget(QObject):
     """
@@ -45,7 +47,7 @@ class AbstractSelectionWidget(QObject):
     def getSelectionWidgetName(self, source=None):
         """
         Gets selection widget to be returned to user as selectionWidget attribute.
-        :param source: (DsgEnum.int) driver enum to have its name exposed.
+        :param source: (DsgEnums.int) driver enum to have its name exposed.
         :return: (str) selection widget user-friendly name for selected driver.
         """
         if not source:
@@ -90,17 +92,22 @@ class AbstractSelectionWidget(QObject):
     def setDatasource(self, newDatasource):
         """
         Sets the datasource selected on current widget.
-        :param newDatasource: (object) new datasource to be set.
+        :param newDatasource: (dict) new datasource info to be set.
         """
-        # to be reimplemented
-        pass
+        # implementation for new datasources, but may be reimplemented into ALL children classes
+        # for new datasources, entry is always { int : { 'edgv' : (str)edgv, 'crs' : (QgsCoordinateReferenceSystem)crs } }
+        edgv = list(newDatasource.values())[0]['edgv']
+        crs = list(newDatasource.values())[0]['crs']
+        self.selectionWidget.edgvComboBox.setCurrentText(edgv)
+        self.selectionWidget.mQgsProjectionSelectionWidget.setCrs(crs)
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
         :return: (AbstractDb) the object representing the target datasource according. 
         """
-        return self.selectionWidget.abstractDb if self.selectionWidget else None
+        # to be reimplemented
+        pass
 
     def getDatasourceEdgvVersion(self):
         """
@@ -110,6 +117,53 @@ class AbstractSelectionWidget(QObject):
         abstracDb = self.getDatasource()
         return abstracDb.getDatabaseVersion() if abstracDb else ''
 
+    def getLayerLoader(self):
+        """
+        Returns the layer loader for given datasource.
+        :return: (EDGVLayerLoader) layer loader.
+        """
+        abstracDb = self.getDatasource()
+        return LayerLoaderFactory().makeLoader(iface=iface, abstractDb=abstracDb) if abstracDb else None
+
+    def getLayerByName(self, layer):
+        """
+        Gets the vector layer for a given layer.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer.
+        """
+        # may be reimplemented into children class, if needed
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            layerLoader = self.getLayerLoader()
+            return layerLoader.getLayerByName(layer=layer)
+
+    def getComplexLayerByName(self, layer):
+        """
+        Gets the vector layer for a given complex layer.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer.
+        """
+        # may be reimplemented into children class, if needed
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            layerLoader = self.getLayerLoader()
+            return layerLoader.getComplexLayerByName(layer=layer)
+
+    def getLayersCrs(self):
+        """
+        Gets the CRS from all registered layers.
+        """
+        # may be reimplemented into children class, if needed
+        abstracDb = self.getDatasource()
+        crs = dict()
+        if abstracDb:
+            layerLoader = self.getLayerLoader()
+            # alias for retrieving layer CRS and inserting it to out dict
+            getCrsAlias = lambda x : crs.update({ x : layerLoader.getLayerByName(layer=x).crs().description() })
+            # update crs dict
+            list(map(getCrsAlias, self.getLayersDict()))
+        return crs
+
     def getLayersDict(self):
         """
         Gets the list of all layers registered into datasource.
@@ -117,5 +171,31 @@ class AbstractSelectionWidget(QObject):
         """
         abstracDb = self.getDatasource()
         if abstracDb:
-            return abstracDb.listClassesWithElementsFromDatabase(useComplex = True, primitiveFilter = [])
+            return abstracDb.listClassesWithElementsFromDatabase(useComplex=False, primitiveFilter=[])
         return {}
+
+    def getComplexDict(self):
+        """
+        Gets the dict of all complex layers present in the database.
+        :return: (dict) dictionaty for every (filled) complex layer contained by the selected datasource and its feature count.
+        """
+        abstracDb = self.getDatasource()
+        if abstracDb:
+            complexes = abstracDb.listComplexClassesFromDatabase()
+            return abstracDb.listWithElementsFromDatabase(complexes)
+        return {}
+
+    def validate(self):
+        """
+        Validates selection widgets contents.
+        :return: (str) invalidation reason.
+        """
+        return self.selectionWidget.validate() if self.selectionWidget else self.tr('Selection widget not available.')
+
+    def isValid(self):
+        """
+        Validates selection widgets contents.
+        :return: (bool) invalidation status.
+        """
+        msg = self.validate()
+        return msg == ''

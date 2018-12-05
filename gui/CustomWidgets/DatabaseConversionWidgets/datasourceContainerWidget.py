@@ -23,7 +23,7 @@
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
-from qgis.gui import QgsFieldExpressionWidget
+from qgis.gui import QgsFieldExpressionWidget, QgsCollapsibleGroupBox
 from qgis.utils import iface
 from qgis.core import QgsProject
 
@@ -45,27 +45,23 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
     filterSettingsChanged = pyqtSignal(QtWidgets.QWidget)
 
 
-    def __init__(self, source, inputContainer, parent=None):
+    def __init__(self, source, isInput, parent=None):
         """
         Class constructor.
         :param parent: (QWidget) widget parent to newly instantiated DataSourceManagementWidget object.
         :param source: (str) driver codename to have its widget produced.
-        :param inputContainer: (bool) indicates whether the chosen database is supposed to be a reading/input widget or writting/output one.
+        :param isInput: (bool) indicates whether the chosen database is supposed to be a reading/input widget or writting/output one.
         """
         super(DatasourceContainerWidget, self).__init__()
         self.setupUi(self)
         self.source = source
         self.addDatasourceSelectionWidget()
-        if not inputContainer:
+        if not isInput:
             # output widget should not have filtering options
             self.filterPushButton.hide()
         # set filtering config
         self.filterDlg = None
-        self.filters = {
-            'layer' : dict(),
-            'layer_filter' : dict(),
-            'spatial_filter' : dict()
-            }
+        self.clearFilters()
         self.filterPushButton.setToolTip(self.tr('Click to set datasource filter options'))
         self.removePushButton.setToolTip(self.tr('Remove this datasource widget'))
         self.layersComboBox = None
@@ -86,8 +82,8 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :param source: (str) driver name.
         """
         # in case a valid driver is selected, add its widget to the interface
-        self.connWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
-        self.driverLayout.addWidget(self.connWidget.selectionWidget)
+        self.connectionWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
+        self.driverLayout.addWidget(self.connectionWidget.selectionWidget)
 
     def getDatasourceConnectionName(self):
         """
@@ -95,14 +91,22 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         :return: (str) datasource connection name.
         """
         # temporarily, it'll be set to current db name
-        return self.connWidget.getDatasourceConnectionName()
+        return self.connectionWidget.getDatasourceConnectionName()
 
     def getDatasource(self):
         """
         Gets the datasource selected on current widget.
         :return: (object) the object representing the target datasource according to its driver. 
         """
-        return self.connWidget.abstractDb if self.connWidget else None
+        return self.connectionWidget.abstractDb if self.connectionWidget else None
+
+    def setDatasource(self, newDatasource):
+        """
+        Sets datasource to selection widget.
+        :param newDatasource: (object) varies according to driver.
+        """
+        if self.connectionWidget:
+            self.connectionWidget.setDatasource(newDatasource)
 
     @pyqtSlot(bool)
     def on_removePushButton_clicked(self):
@@ -125,7 +129,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # in case the python wrapper for a QgsFilterExpressionWidget is deleted before the object
             widget = None
 
-    def getCutRelationParameterWidget(self):
+    def getClipRelationParameterWidget(self):
         """
         Gets the widget for a Cut spatial filter.
         :return: (QWidget) the topological relation parameter widget.        
@@ -160,10 +164,9 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 # problems with a qgis python wrappers for its widgets... 
             self.clearWidget(widget=self.topologicalRelationWidget)
         widgetDict = {
-            self.tr('Cut') : lambda : self.getCutRelationParameterWidget(), 
+            self.tr('Clip') : lambda : self.getClipRelationParameterWidget(), 
             self.tr('Buffer') : lambda : self.getBufferRelationParameterWidget(), 
             self.tr('Intersects') : lambda : None, # no widget is necessary
-            self.tr('Equals (Geometry)') : lambda : None # no widget is necessary
         }
         try:
             if isinstance(idx, int):
@@ -196,7 +199,11 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # self.filterDlg.outHLayout.removeWidget(self.layersComboBox)
             # clear layer selection combo box, if it exists 
             self.clearWidget(widget=self.layersComboBox)
-        self.layersComboBox = QtWidgets.QComboBox()
+        try:
+            self.layersComboBox = QtWidgets.QComboBox()
+        except:
+            # no idea why, but the C++ object gets deleted only after you try using it...
+            self.layersComboBox = QtWidgets.QComboBox()
         layerList = [self.tr('Select a layer...')] + sorted([l.name() for l in iface.mapCanvas().layers()])
         self.layersComboBox.addItems(layerList)
         # prepare layer feature filter widget
@@ -210,9 +217,13 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # self.filterDlg.outHLayout.removeWidget(self.topologicalTestWidget)
             # clear layer selection combo box, if it exists 
             self.clearWidget(widget=self.topologicalTestWidget)
-        self.topologicalTestWidget = QtWidgets.QComboBox()
+        try:
+            self.topologicalTestWidget = QtWidgets.QComboBox()
+        except:
+            # no idea why, but the C++ object gets deleted only after you try using it...
+            self.topologicalTestWidget = QtWidgets.QComboBox()
         # current supported topological relations
-        topoRelList = sorted([self.tr('Cut'), self.tr('Buffer'), self.tr('Intersects'), self.tr('Equals (Geometry)')])
+        topoRelList = sorted([self.tr('Clip'), self.tr('Buffer'), self.tr('Intersects')])
         self.topologicalTestWidget.addItems(topoRelList)
         # topological parameter is adjusted accordingly chosen topological relation
         self.topologicalTestWidget.currentIndexChanged.connect(self.setTopologicalParameter)
@@ -235,11 +246,67 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # get index for combo box item that has the topological test
             self.topologicalTestWidget.setCurrentText(self.filters['spatial_filter']['filter_type'])
             if isinstance(self.topologicalRelationWidget, QtWidgets.QDoubleSpinBox):
-                self.topologicalRelationWidget.setValue(self.filters['spatial_filter']['topological_relation'])
+                try:
+                    self.topologicalRelationWidget.setValue(float(self.filters['spatial_filter']['topological_relation']))
+                except:
+                    self.topologicalRelationWidget.setValue(0.)
             if isinstance(self.topologicalRelationWidget, QtWidgets.QComboBox):
                 # get index for combo box item that has the topological relationship
                 # idx = self.topologicalRelationWidget.findText()
                 self.topologicalRelationWidget.setCurrentText(self.filters['spatial_filter']['topological_relation'])
+
+    def setupGroupBoxFilters(self, isSpatial):
+        """
+        Sets up the part the complex layers' GUI part.
+        :param isSpatial: (bool) indicates whether groupbox is spatial (or complex).
+        """
+        if isSpatial:
+            layers = self.connectionWidget.getLayersDict()
+            title = self.tr('Spatial Layers')
+            getLayerAlias = lambda layerName : self.connectionWidget.getLayerByName(layerName)
+        else:
+            layers = self.connectionWidget.getComplexDict()
+            title = self.tr('Complex Layers')
+            getLayerAlias = lambda layerName : self.connectionWidget.getComplexLayerByName(layerName)
+        # spatial box should always be exposed whilst complexes are only when layers are found
+        if isSpatial or layers:
+            # create groupbox and add it to the vertical layout
+            gb = QgsCollapsibleGroupBox()
+            gb.setTitle(title)
+            self.filterDlg.vLayout.addWidget(gb)
+            # add a grid layout to add the widgets
+            layout = QtWidgets.QGridLayout(gb)
+            # gb.addLayout(layout)
+            # initiate row counter
+            row = 0
+            for layerName, featCount in layers.items():
+                if layerName:
+                    # add a new checkbox widget to layout for each layer found and a field expression widget
+                    checkBoxWidget, fieldExpressionWidget = QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
+                    # set current check box status based on previous filters, if any
+                    previousFilters = not self.filters['layer'] or layerName in self.filters['layer']
+                    checkBoxWidget.setChecked(previousFilters)
+                    # allow filtering option only when layer is marked to be filtered
+                    checkBoxWidget.toggled.connect(fieldExpressionWidget.setEnabled)
+                    msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
+                    checkBoxWidget.setText(msg.format(layerName, featCount))
+                    if previousFilters:
+                        # if layer is among the filtered ones, or if there are no previous filters, set it checked.__init__(self, *args, **kwargs):
+                        checkBoxWidget.setChecked(True)
+                        # in case no filters are added or if layer is among the filtered ones, set it checked
+                    if layerName in self.filters['layer_filter']:
+                        # if a layer feature filter was set, refill it back to UI
+                        fieldExpressionWidget.setExpression(self.filters['layer_filter'][layerName])
+                    # set layer to filter expression
+                    layer = getLayerAlias(layerName)
+                    if layer is not None and layer.isValid():
+                        fieldExpressionWidget.setLayer(layer)
+                    else:
+                        checkBoxWidget.toggled.disconnect(fieldExpressionWidget.setEnabled)
+                        fieldExpressionWidget.setEnabled(False)
+                    layout.addWidget(checkBoxWidget, row, 0)
+                    layout.addWidget(fieldExpressionWidget, row, 1)
+                    row += 1
 
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
@@ -253,49 +320,28 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.filterDlg.blockSignals(True)
                 # and clear it
                 self.filterDlg = None
-        if self.connWidget:
-            if not self.connWidget.getDatasourcePath():
+        if self.connectionWidget:
+            if not self.connectionWidget.getDatasourcePath():
                 # in case a connection path is not found, a connection was not made ('generic text' is selected)
                 return
             # instantiate a new filter dialog
             filterDlg = GenericDialogLayout()
             # set dialog title to current datasource path
-            title = '{0}: {1}'.format(self.groupBox.title(), self.connWidget.getDatasourcePath())
+            title = '{0}: {1}'.format(self.groupBox.title(), self.connectionWidget.getDatasourcePath())
             filterDlg.setWindowTitle(title)
-            # get layers dict
-            layers = self.connWidget.getLayersDict()
-            # get layouts for checkboxes and filter expression widgets
-            checkBoxLayout, filterExpressionLayout = QtWidgets.QVBoxLayout(), QtWidgets.QVBoxLayout()
-            filterDlg.hLayout.addLayout(checkBoxLayout)
-            filterDlg.hLayout.addLayout(filterExpressionLayout)
-            # control dict for each new checkbox added
-            widgets = dict()
-            for layerName, featCount in layers.items():
-                if layerName:
-                    widgets[layerName] = dict()
-                    widgets[layerName]['checkBox'], widgets[layerName]['fieldExpression'] = QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
-                    # allow filtering option only when layer is marked to be filtered
-                    widgets[layerName]['checkBox'].toggled.connect(widgets[layerName]['fieldExpression'].setEnabled)
-                    # add a new checkbox widget to layout for each layer found and a field expression widget
-                    # widgets[layerName]['checkBox'] = QtWidgets.QCheckBox()
-                    # widgets[layerName]['fieldExpression'] = QgsFieldExpressionWidget()
-                    msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-                    widgets[layerName]['checkBox'].setText(msg.format(layerName, featCount))
-                    if not self.filters['layer'] or layerName in self.filters['layer']:
-                        # in case no filters are added or if layer is among the filtered ones, set it checked
-                        widgets[layerName]['checkBox'].setChecked(True)
-                    if layerName in self.filters['layer_filter']:
-                        # if a layer feature filter was set, refill it back to UI
-                        widgets[layerName]['fieldExpression'].setExpression(self.filters['layer_filter'][layerName])
-                    # # set layer to filter expression
-                    # widgets[layerName]['fieldExpression'].setLayer(self.getDatasource().getLayerByName(layerName))
-                    checkBoxLayout.addWidget(widgets[layerName]['checkBox'])
-                    filterExpressionLayout.addWidget(widgets[layerName]['fieldExpression'])
             self.filterDlg = filterDlg
+            # setup the interface regarding spatial layers (e.g. layer with one and only one geometric primitive)
+            self.setupGroupBoxFilters(isSpatial=True)            
+            # setup the interface regarding complex layers (e.g. aggregates more than a geometric primitive, hence it does not have spatial)
+            self.setupGroupBoxFilters(isSpatial=False)
             # setup spatial filter part
             self.setupSpatialFilterWidgets()
             self.fillSpatialFilterInformation()
             # connect cancel push button to close method
+            if not self.filters['layer_filter']:
+                # if no filters dict was set, set it to initial state
+                # this method is suppoded to be replaced by a filling one
+                self.resetLayerFilters()
             closeAlias = lambda : self.filterDlg.close()
             self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
             # connect Ok push button from Filter Dialog to filter dict update method
@@ -329,8 +375,17 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         self.filters = {
             'layer' : dict(),
+            'complex_layers' : {
+                'layer' : dict(),
+                'layer_filter' : dict()
+            },
             'layer_filter' : dict(),
-            'spatial_filter' : dict()
+            'spatial_filter' : {
+                'layer_name' : '',
+                'layer_filter' : '',
+                'filter_type' : '',
+                'topological_relation' : ''
+            }
                 # spatial filter dictionaty form
                 # {
                 #     'layer_name' : (str) reference layer_name,
@@ -347,28 +402,49 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # reset filters already set
         self.clearFilters()
         # retrieve layouts
-        checkBoxLayout = self.filterDlg.hLayout.itemAt(0).layout()
-        filterExpressionLayout = self.filterDlg.hLayout.itemAt(1).layout()
-        for widgetIdx in range(checkBoxLayout.count()):
-            checkBox = checkBoxLayout.itemAt(widgetIdx).widget()
-            filterExpression = filterExpressionLayout.itemAt(widgetIdx).widget()
-            if checkBox.isChecked():
-                # filters will be applicable only if layer is supposed to be converted 
-                # label format is: layer_name (feat_count feature's')
-                # for some reason the char '&' got into the labels... i honestly don't know how/why
-                label = checkBox.text().replace('&', '')
-                featCount = label.split(' (')[1].split(' ')[0]
-                layerName = label.split(' (')[0]
-                # fill layer selection filter info
-                self.filters['layer'].update({ layerName : int(featCount) })
-                expression = filterExpression.currentText()
-                if expression:
-                    # fill layer features filter expression info only if an expression is found
-                    self.filters['layer_filter'].update({ layerName : expression })
+        spatialLayout = self.filterDlg.vLayout.itemAt(0).widget().layout()
+        complexLayout = self.filterDlg.vLayout.itemAt(1).widget().layout() if self.filterDlg.vLayout.itemAt(1) else None
+        # retrieve spatial and complex layers filter info
+        if spatialLayout.rowCount() > 1:
+            for row in range(spatialLayout.rowCount()):
+                checkBox = spatialLayout.itemAtPosition(row, 0).widget()
+                filterExpression = spatialLayout.itemAtPosition(row, 1).widget()
+                if checkBox.isChecked():
+                    # filters will be applicable only if layer is supposed to be converted 
+                    # label format is: layer_name (feat_count feature's')
+                    # for some reason the char '&' got into the labels... i honestly don't know how/why
+                    label = checkBox.text().replace('&', '')
+                    featCount = label.split(' (')[1].split(' ')[0]
+                    layerName = label.split(' (')[0]
+                    # fill layer selection filter info
+                    self.filters['layer'].update({ layerName : int(featCount) })
+                    expression = filterExpression.currentText()
+                    if expression:
+                        # fill layer features filter expression info only if an expression is found
+                        self.filters['layer_filter'].update({ layerName : expression })
+        # retrieve complex layers filter info
+        if complexLayout is not None:
+            for row in range(complexLayout.rowCount()):
+                checkBox = complexLayout.itemAtPosition(row, 0).widget()
+                filterExpression = complexLayout.itemAtPosition(row, 1).widget()
+                d = self.filters['complex_layers']
+                if checkBox.isChecked():
+                    # filters will be applicable only if layer is supposed to be converted 
+                    # label format is: layer_name (feat_count feature's')
+                    # for some reason the char '&' got into the labels... i honestly don't know how/why
+                    label = checkBox.text().replace('&', '')
+                    featCount = label.split(' (')[1].split(' ')[0]
+                    layerName = label.split(' (')[0]
+                    # fill layer selection filter info
+                    d['layer'].update({ layerName : int(featCount) })
+                    expression = filterExpression.currentText()
+                    if expression:
+                        # fill layer features filter expression info only if an expression is found
+                        d['layer_filter'].update({ layerName : expression })
         # fill spatial filter info
         layer, spatialExpression, topologicalTest, topologyParameter = self.getSpatialFilterInformation()
         if layer:
-            # there's only a spatial filter if a layer is selected for it
+            # a spatial filter is only available if a layer is selected for it
             self.filters['spatial_filter'] = {
                 'layer_name' : layer,
                 'layer_filter' : spatialExpression,
@@ -378,3 +454,19 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # advise about filtering settings change
         self.filterSettingsChanged.emit(self)
         self.filterDlg.close()
+
+    def validate(self):
+        """
+        Validates container GUI parameters.
+        :return: (str) invalidation reason.
+        """
+        # validate selection widget
+        return self.connectionWidget.validate()
+
+    def isValid(self):
+        """
+        Validates selection widgets contents.
+        :return: (bool) invalidation status.
+        """
+        msg = self.validate()
+        return msg == ''

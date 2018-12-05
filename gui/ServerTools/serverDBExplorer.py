@@ -35,6 +35,7 @@ from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_serverDBExplorer.ui'))
@@ -53,7 +54,7 @@ class ServerDBExplorer(QtWidgets.QDialog, FORM_CLASS):
         self.utils = Utils()
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
-        self.gen = self.factory.createSqlGenerator(False)
+        self.gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.serverWidget.populateServersCombo()
         self.serverWidget.abstractDbLoaded.connect(self.populateListWithDatabasesFromServer)
     
