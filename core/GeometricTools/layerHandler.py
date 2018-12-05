@@ -20,15 +20,18 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 from builtins import range
+
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
                       QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback
+                      QgsProcessingMultiStepFeedback, QgsProcessingContext
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .featureHandler import FeatureHandler
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 class LayerHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -489,50 +492,73 @@ class LayerHandler(QObject):
                 feedback.setProgress(size * current)
         return updateDict
 
-    def clipLayer(self, reference, target, parameter):
+    def clipLayer(self, reference, target, parameter, request, fanOut, feedback=None):
         """
         Clips a given target layer and keeps inside, outside or both (?) sides.
-        :param reference: (QgsFeature) reference feature.
+        :param reference: (QgsVectorLayer) reference feature.
         :param target: (QgsVectorLayer) target layer.
         :param parameter: (str) indication of which part should be kept.
-        :return: (QgsVectorLayer) spatially filtered layer.
+        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
+        :param fanOut: (bool) indicates whether output should be fanned-out.
+        :return: (list-of-QgsFeature) spatially filtered layer.
         """
-        results = None
-        return results
+        outMap = dict()
+        # cortar camada com camada
+        result = AlgRunner().runSnapLayerOnLayer(target, reference, 0.1, QgsProcessingContext(), feedback=feedback)
+        refFeatList = list(reference.getFeatures()) if request is None else list(reference.getFeatures(request))
+        if fanOut:
+            for feat in result.getFeatures():
+                for ref_feat in refFeatList:
+                    if ref_feat.id() not in outMap:
+                        outMap[ref_feat.id()] = []
+                    if ref_feat.geometry().contains(feat.geometry()):
+                        # separete features by their respective 'reference layer feature'
+                        outMap[ref_feat.id()].append(feat)
+                        break
+        else:
+            outMap[0] = []
+            { outMap[0].append[feat] for feat in result.getFeatures() }
+        return outMap
 
-    def bufferLayer(self, reference, target, parameter):
+    def bufferLayer(self, reference, target, parameter, request, fanOut):
         """
         Clips a given target layer and keeps inside, outside or both (?) sides.
         :param reference: (QgsFeature) reference feature.
         :param target: (QgsVectorLayer) target layer.
         :param parameter: (float) buffer size.
+        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
+        :param fanOut: (bool) indicates whether output should be fanned-out.
         :return: (QgsVectorLayer) spatially filtered layer.
         """
-        results = None
-        return results
+        result = None
+        return result
 
-    def intersectsLayer(self, reference, target):
+    def intersectsLayer(self, reference, target, request, fanOut):
         """
         Gets all features from a target layer that intersects reference feature.
         :param reference: (QgsFeature) reference feature.
         :param target: (QgsVectorLayer) target layer.
+        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
+        :param fanOut: (bool) indicates whether output should be fanned-out.
         :return: (QgsVectorLayer) spatially filtered layer.
         """
-        results = None
-        return results
+        result = None
+        return result
 
-    def spatialFilter(self, reference, target, predicate, parameter=None):
+    def spatialFilter(self, reference, target, predicate, parameter=None, request=None, fanOut=False):
         """
         Spatially filters a target layer by a given spatial predicate regarding a given reference feature. 
         :param reference: (QgsFeature) reference feature.
         :param target: (QgsVectorLayer) target layer.
         :param predicate: (str) spatial predicate to be applied.
+        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
         :param parameter: (object) predicate's application parameter.
+        :param fanOut: (bool) indicates whether output should be fanned-out.
         :return: (QgsVectorLayer) spatially filtered layer.
         """
         methods = {
-            self.tr('Clip') : lambda : self.clipLayer(reference=reference, target=target, parameter=parameter),
-            self.tr('Buffer') : lambda : self.bufferLayer(reference=reference, target=target, parameter=parameter),
-            self.tr('Intersects') : lambda : self.intersectsLayer(reference=reference, target=target)
+            self.tr('Clip') : lambda : self.clipLayer(reference=reference, target=target, parameter=parameter, request=request, fanOut=fanOut),
+            self.tr('Buffer') : lambda : self.bufferLayer(reference=reference, target=target, parameter=parameter, request=request, fanOut=fanOut),
+            self.tr('Intersects') : lambda : self.intersectsLayer(reference=reference, target=target, request=request, fanOut=fanOut)
         }
         return methods[predicate]() if predicate in methods else None
