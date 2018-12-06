@@ -283,3 +283,18 @@ class AlgRunner:
         }
         output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
+
+    def runBuffer(self, inputLayer, distance, context, dissolve=False, endCapStyle=0, joinStyle=0, segments=5,\
+                 mitterLimit=2, feedback = None, outputLyr = 'memory:'):
+        parameters = {
+            'INPUT' : inputLayer,
+            'DISTANCE' : distance,
+            'DISSOLVE' : dissolve, 
+            'END_CAP_STYLE' : endCapStyle,
+            'JOIN_STYLE' : endCapStyle,
+            'SEGMENTS' : segments,
+            'MITER_LIMIT' : mitterLimit,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:buffer", parameters, context = context, feedback = feedback)
+        return output['OUTPUT']
