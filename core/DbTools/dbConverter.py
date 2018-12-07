@@ -246,12 +246,15 @@ class DbConverter(QObject):
             parameter = spatialFilter["topological_relation"]
             applySpatialFilter = lambda layer : lh.spatialFilter(referenceLayer, layer, predicate, parameter, req, fanOut)
             for ln, vl in layers.items():
-                for ref_if, featList in applySpatialFilter(vl).items():
-                    if ref_if not in out:
-                        out[ref_if] = dict()
-                    if ln not in out[ref_if]:
-                        out[ref_if][ln] = []
-                    out[ref_if][ln] += featList
+                if fanOut:
+                    for ref_if, featList in applySpatialFilter(vl).items():
+                        if ref_if not in out:
+                            out[ref_if] = dict()
+                        if ln not in out[ref_if]:
+                            out[ref_if][ln] = []
+                        out[ref_if][ln] += featList
+                else:
+                    pass
         return out
 
     def prepareLayers(self, layers, filters, fanOut):

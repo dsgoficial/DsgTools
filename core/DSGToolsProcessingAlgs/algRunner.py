@@ -298,3 +298,25 @@ class AlgRunner:
         }
         output = processing.run("native:buffer", parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runIntersection(self, inputLyr, context, inputFields=None, outputLyr='memory:', overlayLyr=None, overlayFields=None, feedback=None):
+        inputFields = [] if inputFields is None else inputFields
+        overlayFields = [] if overlayFields is None else overlayFields
+        parameters = { 
+            'INPUT' : inputLyr, 
+            'INPUT_FIELDS' : inputFields, 
+            'OUTPUT' : outputLyr,
+            'OVERLAY' : overlayLyr,
+            'OVERLAY_FIELDS' : overlayFields 
+            }
+        output = processing.run("native:intersection", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']
+    
+    def runFilterExpression(self, inputLyr, expression, context, outputLyr='memory:', feedback=None):
+        parameters = {
+            'EXPRESSION' : expression,
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+            }
+        output = processing.run("native:extractbyexpression", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']

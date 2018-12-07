@@ -748,8 +748,23 @@ class LayerHandler(QObject):
         :param fanOut: (bool) indicates whether output should be fanned-out.
         :return: (QgsVectorLayer) spatially filtered layer.
         """
-        result = None
-        return result
+        outMap = dict()
+        # buffer layer
+        result = AlgRunner().runBuffer(target, reference, QgsProcessingContext(), feedback=feedback)
+        refFeatList = list(reference.getFeatures()) if request is None else list(reference.getFeatures(request))
+        if fanOut:
+            for feat in result.getFeatures():
+                for ref_feat in refFeatList:
+                    if ref_feat.id() not in outMap:
+                        outMap[ref_feat.id()] = []
+                    if ref_feat.geometry().contains(feat.geometry()):
+                        # separete features by their respective 'reference layer feature'
+                        outMap[ref_feat.id()].append(feat)
+                        break
+        else:
+            outMap[0] = []
+            { outMap[0].append[feat] for feat in result.getFeatures() }
+        return outMap
 
     def intersectsLayer(self, reference, target, request, fanOut):
         """
@@ -780,3 +795,40 @@ class LayerHandler(QObject):
             self.tr('Intersects') : lambda : self.intersectsLayer(reference=reference, target=target, request=request, fanOut=fanOut)
         }
         return methods[predicate]() if predicate in methods else None
+
+    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None, behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
+        algRunner = AlgRunner()
+        multiStepFeedback = feedback
+        if feedback is not None:
+            count = 0
+            if inputExpression is not None:
+                count += 1
+            if filterLyr is not None:
+                count += 1
+                if behavior == 3:
+                    count += 1
+            elif not count:
+                return inputLyr
+            multiStepFeedback = QgsProcessingMultiStepFeedback(count, feedback)
+        else:
+            multiStepFeedback = None
+        localLyr = inputLyr
+        currentStep = 0
+        if inputExpression is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            localLyr = algRunner.runFilterExpression(
+                inputLyr=localLyr,
+                context=context,
+                expression = inputExpression,
+                feedback=multiStepFeedback
+            )
+            currentStep+=1
+        if filterLyr is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            if behavior == 2:
+                filterLyr = algRunner.runBuffer(filterLyr, bufferRadius, context, feedback=multiStepFeedback)
+                currentStep+=1
+            localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
+        return localLyr         
