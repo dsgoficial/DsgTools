@@ -77,8 +77,11 @@ class MapToolsGuiManager(QObject):
         """
         if isinstance(self.currentLayer, QgsVectorLayer):
             # disconnect previous selection's signals, if any
-            self.currentLayer.editingStarted.disconnect(self.editingStarted)
-            self.currentLayer.editingStopped.disconnect(self.editingStopped)
+            try:
+                self.currentLayer.editingStarted.disconnect(self.editingStarted)
+                self.currentLayer.editingStopped.disconnect(self.editingStopped)
+            except:
+                pass
         # now retrieve current selection and reset signal connection
         self.currentLayer = self.iface.mapCanvas().currentLayer()
         if isinstance(self.currentLayer, QgsVectorLayer):
