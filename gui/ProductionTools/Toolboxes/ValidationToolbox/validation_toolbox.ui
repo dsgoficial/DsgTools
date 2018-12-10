@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>437</width>
-    <height>815</height>
+    <width>426</width>
+    <height>610</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,12 @@
    <layout class="QGridLayout" name="gridLayout_15">
     <item row="0" column="0">
      <widget class="QTabWidget" name="validationTabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="toolTip">
        <string>Configure </string>
       </property>
@@ -27,16 +33,41 @@
        <attribute name="title">
         <string>Processes</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_14">
+       <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0" colspan="2">
-         <widget class="ConnectionComboBox" name="connectionSelectorComboBox" native="true"/>
+         <widget class="ConnectionComboBox" name="connectionSelectorComboBox" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+         </widget>
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QgsCollapsibleGroupBox" name="ProcessesGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>200</height>
+           </size>
+          </property>
           <property name="title">
            <string>Validation Processes</string>
           </property>
-          <property name="saveCollapsedState" stdset="0">
+          <property name="saveCollapsedState">
            <bool>false</bool>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -79,10 +110,16 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="title">
            <string>Validation Workflow</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_13">
+          <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
             <widget class="ValidationWorkflowCompactPropertyManagerWidget" name="validationWorkflowPropertyManagerWidget" native="true"/>
            </item>
@@ -169,7 +206,7 @@
        <attribute name="title">
         <string>Flags</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="gridLayout_7">
         <item row="0" column="0">
          <widget class="QComboBox" name="filterTypeComboBox">
           <item>
@@ -189,6 +226,12 @@
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QTableView" name="tableView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
@@ -231,7 +274,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
+        <item row="3" column="0">
          <widget class="QPushButton" name="historyButton">
           <property name="text">
            <string>Open History</string>
@@ -248,13 +291,16 @@
        <attribute name="title">
         <string>Settings</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_7">
+       <layout class="QGridLayout" name="gridLayout_8">
         <item row="0" column="0">
          <widget class="QGroupBox" name="groupBox">
           <property name="title">
            <string>Spatial Rules</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_5">
+           <property name="margin">
+            <number>0</number>
+           </property>
            <item row="0" column="0">
             <widget class="QRadioButton" name="spatialRuleEnforcerRadio">
              <property name="text">
@@ -273,10 +319,19 @@
         </item>
         <item row="1" column="0">
          <widget class="QGroupBox" name="groupBox_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title">
            <string>Attribute Rules</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
+           <property name="margin">
+            <number>0</number>
+           </property>
            <item row="0" column="0">
             <widget class="QRadioButton" name="attributeRuleEnforcerRadio">
              <property name="text">
@@ -295,6 +350,12 @@
         </item>
         <item row="2" column="0">
          <widget class="QGroupBox" name="groupBox_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="title">
            <string>Validation Workflows</string>
           </property>
@@ -306,10 +367,13 @@
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
+          <property name="sizeType">
+           <enum>QSizePolicy::MinimumExpanding</enum>
+          </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>119</height>
+            <height>20</height>
            </size>
           </property>
          </spacer>
@@ -325,7 +389,7 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgscollapsiblegroupbox.h</header>
+   <header>qgis.gui</header>
    <container>1</container>
   </customwidget>
   <customwidget>
