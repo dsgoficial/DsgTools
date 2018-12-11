@@ -19,7 +19,7 @@
      <property name="title">
       <string>Free Hand's Parameters</string>
      </property>
-     <property name="saveCollapsedState" stdset="0">
+     <property name="saveCollapsedState">
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout">
@@ -102,10 +102,14 @@
       <string>Generic Selector's Parameters</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="0" column="0">
+      <item row="1" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QLineEdit" name="addParameterLineEdit"/>
+         <widget class="QLineEdit" name="addParameterLineEdit">
+          <property name="placeholderText">
+           <string>New black list entry</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="addPushButton">
@@ -137,7 +141,7 @@
         </item>
        </layout>
       </item>
-      <item row="1" column="0">
+      <item row="3" column="0">
        <widget class="QListWidget" name="blackListWidget">
         <property name="selectionMode">
          <enum>QAbstractItemView::MultiSelection</enum>
@@ -147,6 +151,13 @@
           <string>moldura</string>
          </property>
         </item>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>Layer Name black list</string>
+        </property>
        </widget>
       </item>
      </layout>
