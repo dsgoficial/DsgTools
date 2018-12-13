@@ -96,6 +96,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglas
     TopologicalDouglasSimplificationAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
+    RunRemoteFMEAlgorithm
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -143,7 +145,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(),
                 IdentifyDuplicatedPolygonsOnCoverageAlgorithm(),
                 IdentifyDuplicatedLinesOnCoverageAlgorithm(),
-                IdentifyDuplicatedPointsOnCoverageAlgorithm()]
+                IdentifyDuplicatedPointsOnCoverageAlgorithm(),
+                RunRemoteFMEAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
