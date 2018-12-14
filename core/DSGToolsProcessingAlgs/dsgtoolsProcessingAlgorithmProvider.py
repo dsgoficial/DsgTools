@@ -97,7 +97,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglas
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
-    RunRemoteFMEAlgorithm
+    RunRemoteFMEAlgorithm, ParameterFMEManagerType
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -106,6 +106,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
     Constructor
     """
     snapHierarchyParameterName = QCoreApplication.translate('Processing', 'Snap Hierarchy')
+    fmeManagerParameterName = QCoreApplication.translate('Processing', 'FME Manager Parameters')
     def __init__(self):
         super(DSGToolsProcessingAlgorithmProvider, self).__init__()
     
@@ -154,9 +155,11 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         ProcessingConfig.addSetting(Setting(self.name(), 'ACTIVATE_DSGTools',
                                             'Activate', True))
         ProcessingConfig.readSettings()
-        self.refreshAlgorithms()
         self.parameterTypeSnapHierarchy = ParameterSnapHierarchyType()
         QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeSnapHierarchy)
+        self.parameterTypeFMEManager = ParameterFMEManagerType()
+        QgsApplication.instance().processingRegistry().addParameterType(self.parameterTypeFMEManager)
+        self.refreshAlgorithms()
         return True
 
     def unload(self):
@@ -165,6 +168,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
         """
         ProcessingConfig.removeSetting('ACTIVATE_DSGTools')
         QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeSnapHierarchy)
+        QgsApplication.instance().processingRegistry().removeParameterType(self.parameterTypeFMEManager)
 
     def isActive(self):
         """
