@@ -178,7 +178,7 @@ class ParameterSnapHierarchyType(QgsProcessingParameterType):
         return ParameterSnapHierarchy(name) #mudar
 
     def metadata(self):
-        return {'widget_wrapper': 'DSGTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'} #mudar
+        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'} #mudar
 
     def name(self):
         return QCoreApplication.translate('Processing', 'Snap Hierarchy')

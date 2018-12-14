@@ -47,27 +47,13 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFile,
                        QgsProcessingParameterExpression,
                        QgsProcessingException,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterString,
+                       QgsProcessingParameterDefinition,
+                       QgsProcessingParameterType)
 
 class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
-    SERVER = 'SERVER'
-    JOB = 'JOB'
-    DBAREA = 'DBAREA'
-    DBNAME = 'DBNAME'
-    DBPORT = 'DBPORT'
-    DBHOST = 'DBHOST'
+    FME_MANAGER = 'FME_MANAGER'
 
-
-    def get(self, host, url, header={}):
-        try:
-            os.environ['NO_PROXY'] = host
-            response = requests.get(url, headers=header)
-            return response
-        except requests.exceptions.InvalidURL:
-            return 1
-        except requests.exceptions.ConnectionError:
-            return 2
-    
     def getStatus(self, server, url):
         try:
             os.environ['NO_PROXY'] = server
@@ -76,111 +62,56 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
             return response.json()['data']
         except Exception as e:
             return e 
-    
-    def get_post_data(self, rotine_data, geomUnit, db_data):
-        postData = {}
-        for parameter in rotine_data['parameters']:
-            if 'dbarea' in parameter:
-                postData[parameter] = geomUnit
-            elif 'dbname' in parameter:
-                postData[parameter] = db_data['dbname']
-            elif 'dbport' in parameter:
-                postData[parameter] = db_data['port']
-            elif 'dbhost' in parameter:
-                postData[parameter] = db_data['host']
-            else:
-                postData[parameter] = ''
-        return postData
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.SERVER,
-                self.tr('Server address')
+        managerParameter = ParameterFMEManager(
+            self.FME_MANAGER,
+            description=self.tr('FME Manager Parameters')
             )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.JOB,
-                self.tr('Job')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.DBHOST,
-                self.tr('Output database host')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.DBPORT,
-                self.tr('Output database port')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.DBNAME,
-                self.tr('Output database name')
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterString(
-                self.DBAREA,
-                self.tr('Wkt Spatial Area'),
-                optional=True
-            )
-        )
+        managerParameter.setMetadata({
+            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper'
+        })
+        self.addParameter(managerParameter)
+
+    def parameterAsFMEManager(self, parameters, name, context):
+        return parameters[name]
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        server = self.parameterAsString(parameters, self.SERVER, context)
-        if server is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.SERVER))
-        rotineId = self.parameterAsString(parameters, self.JOB, context)
-        if rotineId is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.JOB))
-        dbhost = self.parameterAsString(parameters, self.DBHOST, context)
-        if rotineId is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.DBHOST))
-        dbport = self.parameterAsString(parameters, self.DBPORT, context)
-        if dbport is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.DBPORT))
-        dbname = self.parameterAsString(parameters, self.DBNAME, context)
-        if rotineId is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.DBNAME))
-        dbarea = self.parameterAsString(parameters, self.DBAREA, context)
-        dbarea = dbarea if not dbarea else ''
-        os.environ["NO_PROXY"] = server
-        url = 'http://{0}/versions/{1}/jobs'.format(
-                server,
-                rotineId
-            )
-        postData = {
-            'parameters' : {
-                'dbport' : dbport,
-                'dbhost' : dbhost,
-                'dbname' : dbname,
-                'dbarea' : dbarea
-            }
-        }
-        response = requests.post(url, json=postData)
+        fmeDict = self.parameterAsFMEManager(parameters, self.FME_MANAGER, context)
 
-        url_to_status = 'http://{0}/jobs/{1}'.format(
-            server, 
-            response.json()['data']['job_uuid']
+        url = '{server}/versions/{workspace_id}/jobs'.format(
+                server=fmeDict['server'],
+                workspace_id=fmeDict['workspace_id']
+            )
+        
+        response = requests.post(
+            url,
+            json=fmeDict['parameters'],
+            proxies=fmeDict['proxy_dict'],
+            auth=fmeDict['auth']
+            )
+
+        url_to_status = '{server}/jobs/{uuid}'.format(
+            server=fmeDict['server'], 
+            uuid=response.json()['data']['job_uuid']
         )
         while True:
             if feedback.isCanceled():
                 feedback.pushInfo(self.tr('Canceled by user.\n'))
                 break
             sleep(3)
-            response = requests.get(url_to_status)
-            if response.json()['data']['status']== 2:
+            response = requests.get(
+                url_to_status,
+                proxies=fmeDict['proxy_dict'],
+                auth=fmeDict['auth']
+                )
+            if response.json()['data']['status'] == 2:
                 feedback.pushInfo(self.tr('Workspace {0} completed with success.\n').format(response['workspace_name']))
                 for flags in response.json()['log'].split('|'):
                     feedback.pushInfo(self.tr('Number of flags: {0}\n').format(flags))
@@ -206,7 +137,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Run Remote FME')
+        return self.tr('Run Remote FME Workspace')
 
     def group(self):
         """
@@ -230,3 +161,52 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return RunRemoteFMEAlgorithm()
+
+class ParameterFMEManagerType(QgsProcessingParameterType):
+
+    def __init__(self):
+        super().__init__()
+
+    def create(self, name):
+        return ParameterFMEManager(name)
+
+    def metadata(self):
+        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.fmeManagerWrapper.FMEManagerWrapper'}
+
+    def name(self):
+        return QCoreApplication.translate('Processing', 'FME Manager Parameters')
+
+    def id(self):
+        return 'fme_manager'
+
+    def description(self):
+        return QCoreApplication.translate('Processing', 'FME Manager parameters. Used on Run Remote FME Workspace')
+
+class ParameterFMEManager(QgsProcessingParameterDefinition):
+
+    def __init__(self, name, description=''):
+        super().__init__(name, description)
+
+    def clone(self):
+        copy = ParameterFMEManager(self.name(), self.description())
+        return copy
+
+    def type(self):
+        return self.typeName()
+
+    @staticmethod
+    def typeName():
+        return 'fme_manager'
+
+    def checkValueIsAcceptable(self, value, context=None):
+        return True
+
+    def valueAsPythonString(self, value, context):
+        return str(value)
+
+    def asScriptCode(self):
+        raise NotImplementedError()
+
+    @classmethod
+    def fromScriptCode(cls, name, description, isOptional, definition):
+        raise NotImplementedError()
