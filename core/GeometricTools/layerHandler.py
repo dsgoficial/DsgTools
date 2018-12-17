@@ -796,9 +796,9 @@ class LayerHandler(QObject):
         }
         return methods[predicate]() if predicate in methods else None
 
-    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None, behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
+    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None, spatialLayerExpression=None,\
+                         behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
         algRunner = AlgRunner()
-        multiStepFeedback = feedback
         if feedback is not None:
             count = 0
             if inputExpression is not None:
@@ -807,7 +807,9 @@ class LayerHandler(QObject):
                 count += 1
                 if behavior == 3:
                     count += 1
-            elif not count:
+                if spatialLayerExpression is not None:
+                    count += 1
+            elif count == 0:
                 return inputLyr
             multiStepFeedback = QgsProcessingMultiStepFeedback(count, feedback)
         else:
@@ -825,10 +827,20 @@ class LayerHandler(QObject):
             )
             currentStep+=1
         if filterLyr is not None:
+            if spatialLayerExpression is not None:
+                if multiStepFeedback is not None:
+                    multiStepFeedback.setCurrentStep(currentStep)
+                filterLyr = algRunner.runFilterExpression(
+                    inputLyr=filterLyr,
+                    context=context,
+                    expression = spatialLayerExpression,
+                    feedback=multiStepFeedback
+                )
+                currentStep+=1
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
-            if behavior == 2:
+            if behavior == 3:
                 filterLyr = algRunner.runBuffer(filterLyr, bufferRadius, context, feedback=multiStepFeedback)
-                currentStep+=1
+                currentStep += 1
             localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
         return localLyr         
