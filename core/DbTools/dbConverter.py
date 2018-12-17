@@ -58,7 +58,6 @@ class DbConverter(QObject):
         :return: (int) number of conversion cycles.
         """
         if conversionMap is None:
-            # to allow this module to be instantiated without a map prepared
             conversionMap = self.conversionMap
         count = 0
         for outMaps in conversionMap.values():
@@ -72,7 +71,6 @@ class DbConverter(QObject):
         :return: (list-of-str) list of all input connections necessary.
         """
         if conversionMap is None:
-            # to allow this module to be instantiated without a map prepared
             conversionMap = self.conversionMap
         dsList = []
         for ds in conversionMap:
@@ -88,7 +86,6 @@ class DbConverter(QObject):
         :return: (list-of-str) list of all output connections necessary.
         """
         if conversionMap is None:
-            # to allow this module to be instantiated without a map prepared
             conversionMap = self.conversionMap
         dsList = []
         for ds, convMaps in conversionMap.items():
@@ -198,20 +195,16 @@ class DbConverter(QObject):
         """
         # STILL TO DECIDE WHAT TO DO IN CASE OF READING ERRORS (ignore? raise alert at the end? raise exception?)
         if conversionMap is None:
-            # to allow this module to be instantiated without a map prepared
             conversionMap = self.conversionMap
         inputList = self.getAllUniqueInputDb(conversionMap=conversionMap)
         inputLayerMap = dict()
         failedInputs = []
         for ds in inputList:
             parameters = self.parseDatasourcePath(ds)
-            # read datasource abstract
             abstractDb = self.connectToDb(parameters=parameters)
             if abstractDb is None:
-                # if connection wasn't successfull, add it to failed list and skip cycle 
                 failedInputs.append(ds)
                 continue
-            # read layers
             layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
             layers = abstractDb.listClassesWithElementsFromDatabase(useComplex=False).keys()
             inputLayerMap[ds] = {l : layerLoader.getLayerByName(l) for l in layers}
@@ -220,72 +213,27 @@ class DbConverter(QObject):
             inputLayerMap[ds].update(complexMap)
         return inputLayerMap
 
-    def applySpatialFilters(self, layers, spatialFilter, fanOut):
-        """
-        Applies the spatial filter to given layers.
-        :param layers: (list-of-QgsVectorLayer) layers to be spatially filtered.
-        :param spatialFilter: (dict) spatial filtering options from a conversion map.
-        :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
-        :return: (list) list of layers (list-of-QgsVectorLayer) after the spatial filter.
-        """
-        out = dict()
-        # move all spatial operation to handlers (layer, feature, etc)
-        referenceLayerName = spatialFilter['layer_name']
-        # spatial filter is only applicable if a layer was chosen as reference to topological tests
-        if referenceLayerName != "":
-            # get a layer handler for spatial predicate operation
-            lh = LayerHandler()
-            referenceLayer = QgsProject.instance().mapLayersByName(referenceLayerName)[0]
-            # if spatialFilter['layer_filter']:
-            #     req = QgsFeatureRequest().setFilterExpression(spatialFilter['layer_filter'])
-            #     features = referenceLayer.getFeatures(req)
-            # else:
-            #     features = referenceLayer.getFeatures()
-            req = QgsFeatureRequest().setFilterExpression(spatialFilter['layer_filter']) if spatialFilter['layer_filter'] == '' else None
-            predicate = spatialFilter["filter_type"]
-            parameter = spatialFilter["topological_relation"]
-            applySpatialFilter = lambda layer : lh.spatialFilter(referenceLayer, layer, predicate, parameter, req, fanOut)
-            for ln, vl in layers.items():
-                if fanOut:
-                    for ref_if, featList in applySpatialFilter(vl).items():
-                        if ref_if not in out:
-                            out[ref_if] = dict()
-                        if ln not in out[ref_if]:
-                            out[ref_if][ln] = []
-                        out[ref_if][ln] += featList
-                else:
-                    pass
-        return out
-
-    def prepareLayers(self, layers, filters, fanOut):
+    def prepareLayers(self, conversionMap=None):
         """
         Prepare layers for each translation unit (step) to be executed (e.g. applies filters).
-        :param layers: (dict) layers (list-of-QgsVectorLayer) to be filtered.
-        :param filters: (dict) filtering option from a conversion map.
-        :param fanOut: (bool) indicates whether a fanOut will be applied in case of spatial filtering.
-        :return: (list) a list of dict, mapping the layers to be translated to their filtered features.
+        :param conversionMap: (dict) conversion map generated by Datasource Conversion tool.
+        :return: (dict) map of layers to have its feature mapped to output format.
         """
-        # initiate output
+        if conversionMap is None:
+            conversionMap = self.conversionMap
         outFeatureMap = dict()
-        # apply layer selection filter
-        if filters['layer']:
-            # in case a selection of layers was executed, only selected layers should pass
-            filteredLayers = dict()
-            for l in filters['layer']:
-                filteredLayers[l] = layers[l]
-        else:
-            # in case no selection was made, all layers should be translated
-            filteredLayers = layers
-        # apply spatial filters
-        outFeatureMap = self.applySpatialFilters(layers=filteredLayers,\
-                            spatialFilter=filters['spatial_filter'], fanOut=fanOut)
-        # for l, vl in filteredLayers.items():
-        #     # add all features from non-filtered layers (by expression)
-        #     if l in filters['layer_filter']:
-        #         # apply the filtering expression, if provided
-        #         req = QgsFeatureRequest().setFilterExpression(exp)
-        #         outFeatureMap[l] = [f for f in vl.getFeatures(req)]
-        #         # ignore the ones that were filtered by expression
-        #     else:
-        #         outFeatureMap[l] = [f for f in vl.getFeatures()]
+        lh = LayerHandler()
+        for inputDb, conversionSteps in conversionMap.items():
+            for conversionStep in conversionSteps:
+                "{0}::{1}".format(inputDb, conversionStepMap["outDs"]) : lh.prepareConversion(
+                    inputLyr=layer,
+                    context=QgsProcessingContext(),
+                    inputExpression=inputExpression,
+                    filterLyr=moldura,
+                    spatialLayerExpression=spatialLayerExpression,
+                    behavior=None,
+                    bufferRadius=0,
+                    conversionMap=conversionStepMap,
+                    feedback=None
+                )
         return outFeatureMap
