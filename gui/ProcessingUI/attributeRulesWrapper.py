@@ -1,11 +1,11 @@
-W# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 /***************************************************************************
  DsgTools
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2018-02-19
+        begin                : 2018-12-10
         git sha              : $Format:%H$
         copyright            : (C) 2018 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -20,28 +20,36 @@ W# -*- coding: utf-8 -*-
  *                                                                         *
  ***************************************************************************/
 """
-import os
-from collections import OrderedDict
-# Qt imports
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
-from qgis.PyQt.QtWidgets import QTableWidgetItem
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedAttributeRulesWidget import \
+    OrderedAttributeRulesWidget
+from processing.gui.wrappers import WidgetWrapper
 
-from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedStructureWidget import OrderedStructureWidget
-from DsgTools.gui.CustomWidgets.AttributeValidityWidgets.attributeRuleWidget import AttributeRuleWidget
-
-class OrderedAttributeRulesWidget(OrderedStructureWidget):
-
-    def __init__(self, parent=None):
-        """
-        Initializates OrderedAttributeRulesWidget
-        """
-        super(OrderedAttributeRulesWidget, self).__init__(parent)
-        self.args = None
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('Attribute Rules')])
-        self.widgetKey = 'attributeRuleWidgetList'
+class AttributeRulesWrapper(WidgetWrapper):
+    def __init__(self, *args, **kwargs):
+        super(AttributeRulesWrapper, self).__init__(*args, **kwargs)
     
-    def instantiateWidgetItem(self):
-        return AttributeRuleWidget(*self.args)
+    def createPanel(self):
+        return OrderedAttributeRulesWidget()
     
-
+    def createWidget(self):
+        self.panel = self.createPanel()
+        self.panel.dialogType = self.dialogType
+        return self.panel
+    
+    def parentLayerChanged(self, layer=None):
+        pass
+    
+    def setLayer(self, layer):
+        pass
+    
+    def setValue(self, value):
+        pass
+    
+    def value(self):
+        return self.panel.getHierarchicalSnapDict()
+    
+    def postInitialize(self, wrappers):
+        pass
+        # for wrapper in wrappers:
+        #     if wrapper.parameterDefinition().name() == self.parameterDefinition().parentLayerParameter():
+        #         pass

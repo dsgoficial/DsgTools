@@ -54,6 +54,7 @@ class ValidationManager(QObject):
         self.lastParameters = None
         self.taskManager = QgsApplication.taskManager() if not application else application.taskManager()
         self.workflowQueue = []
+        self.algList = QgsApplication.processingRegistry().providerById('dsgtools').algorithms()
         try:
             #creating validation structure
             self.postgisDb.checkAndCreateValidationStructure()
