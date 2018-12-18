@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>314</width>
-    <height>202</height>
+    <height>272</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -208,7 +208,7 @@
   <customwidget>
    <class>ConnectionWidget</class>
    <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.connectionWidget.h</header>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.connectionWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

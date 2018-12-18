@@ -31,7 +31,7 @@ from osgeo import ogr, osr
 # DsgTools imports
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ...Utils.utils import Utils
-from ....gui.LayerTools.CreateFrameTool.map_index import UtmGrid
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
 #PyQt imports
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
@@ -690,7 +690,7 @@ class AbstractDb(QObject):
     def insertFrame(self, scale, mi, inom, frame, paramDict = dict()):
         self.checkAndOpenDb()
         srid = self.findEPSG()
-        geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCRSAuthId().split(':')[-1]
+        geoSrid = QgsCoordinateReferenceSystem(int(srid)).geographicCrsAuthId().split(':')[-1]
         sql = self.gen.insertFrame(scale, mi, inom, frame, srid, geoSrid, paramDict = paramDict)
         self.db.transaction()
         query = QSqlQuery(self.db)

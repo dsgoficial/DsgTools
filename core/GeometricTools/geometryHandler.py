@@ -578,3 +578,45 @@ class GeometryHandler(QObject):
                 if feat not in nodeDict[pEnd]['end']:
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
+    
+    def makeQgsPolygonFromBounds(self, xmin, ymin, xmax, ymax, isMulti=True):
+        """
+        Creating a polygon for the given coordinates
+        """
+        dx = (xmax - xmin)/3
+        dy = (ymax - ymin)/3
+        
+        polyline = []
+
+        point = QgsPointXY(xmin, ymin)
+        polyline.append(point)
+        point = QgsPointXY(xmin+dx, ymin)
+        polyline.append(point)
+        point = QgsPointXY(xmax-dx, ymin) 
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymin)
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymin+dy)
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymax-dy)
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmax-dx, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmin+dx, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymax-dy)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymin+dy)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymin)
+        polyline.append(point)
+
+        if isMulti:
+            qgsPolygon = QgsGeometry.fromMultiPolygonXY([[polyline]])
+        else:
+            qgsPolygon = QgsGeometry.fromPolygonXY([polyline])
+        return qgsPolygon
