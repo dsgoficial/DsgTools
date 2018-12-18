@@ -1082,7 +1082,7 @@ class PostGISSqlGenerator(SqlGenerator):
             geomType = paramDict['geomType']
 
         if geomType == 'MULTIPOLYGON':
-            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_SetSRID(ST_Multi('{2}'),{3}), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
+            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_Multi(ST_GeomFromWKB({2},{3})), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         else:
             sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform((ST_SetSRID( (ST_Dump('{2}')).geom,{3})), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         return sql

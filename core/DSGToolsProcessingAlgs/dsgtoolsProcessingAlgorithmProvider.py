@@ -98,6 +98,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirec
     VerifyNetworkDirectioningAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
     RunRemoteFMEAlgorithm, ParameterFMEManagerType
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
+    CreateFrameAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -147,7 +150,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 IdentifyDuplicatedPolygonsOnCoverageAlgorithm(),
                 IdentifyDuplicatedLinesOnCoverageAlgorithm(),
                 IdentifyDuplicatedPointsOnCoverageAlgorithm(),
-                RunRemoteFMEAlgorithm()]
+                RunRemoteFMEAlgorithm(),
+                CreateFrameAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()

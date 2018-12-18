@@ -27,6 +27,7 @@ import sys
 
 from qgis.PyQt.QtCore import QObject
 from .LoadLayersFromServer.loadLayersFromServer import LoadLayersFromServer
+from .CreateFrameTool.ui_create_inom_dialog import CreateInomDialog
 
 class LayerToolsGuiManager(QObject):
 
@@ -61,6 +62,7 @@ class LayerToolsGuiManager(QObject):
     def initGui(self):
         #adding minimum area tool
         self.addTool(self.tr('Load Layers'), self.loadLayersFromServer, self.menu, 'category.png', defaultButton=True)
+        self.addTool(self.tr('Create Frame'), self.createFrame, self.menu, 'frame.png', defaultButton=False)
     
     def unload(self):
         pass
@@ -70,6 +72,17 @@ class LayerToolsGuiManager(QObject):
         Shows the dialog that loads layers from server
         """
         dlg = LoadLayersFromServer(self.iface)
+        dlg.show()
+        result = dlg.exec_()
+        if result:
+            pass
+
+    def createFrame(self):
+        """
+        Shows the create frame dialog
+        """
+
+        dlg = CreateInomDialog(self.iface)
         dlg.show()
         result = dlg.exec_()
         if result:

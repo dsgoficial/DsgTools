@@ -151,3 +151,7 @@ class FeatureHandler(QObject):
         for id, geom in changeDict.items():
             lyr.changeGeometry(id, geom)
     
+    def getSystematicGridFeatures(self, featureList, index, stopScale, crs, feedback=None):
+        if feedback is not None and feedback.isCanceled:
+            return
+        

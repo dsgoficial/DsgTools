@@ -2691,7 +2691,7 @@ class PostgisDb(AbstractDb):
 
     def createFrame(self, type, scale, param, paramDict = dict()):
         mi, inom, frame = self.prepareCreateFrame(type, scale, param)
-        self.insertFrame(scale, mi, inom, binascii.hexlify(frame.asWkb()), paramDict = paramDict)
+        self.insertFrame(scale, mi, inom, frame.asWkb(), paramDict = paramDict)
         return frame
     
     def getUsersFromServer(self):

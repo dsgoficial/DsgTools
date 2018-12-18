@@ -36,6 +36,7 @@ from .featureHandler import FeatureHandler
 from .geometryHandler import GeometryHandler
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
 class LayerHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -780,3 +781,12 @@ class LayerHandler(QObject):
             self.tr('Intersects') : lambda : self.intersectsLayer(reference=reference, target=target, request=request, fanOut=fanOut)
         }
         return methods[predicate]() if predicate in methods else None
+    
+    def createFrame(self, layer, indexAttr, index, feedback=None):
+        """
+        Creates frame on layer and stores index on indexAttr.
+        """
+        if feedback is not None and feedback.isCanceled():
+            return
+        
+

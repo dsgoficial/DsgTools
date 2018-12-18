@@ -25,7 +25,7 @@ from __future__ import print_function
 from builtins import str
 from builtins import range
 from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
-from qgis.PyQt import QtWidgets, QtCore, uic
+from qgis.PyQt import QtWidgets, QtCore, uic, QtGui
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import pyqtSlot
 
@@ -34,7 +34,7 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_create_inom_dialog_base.ui'))
 
 #DsgTools imports
-from DsgTools.LayerTools.CreateFrameTool.map_index import UtmGrid
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 #qgis imports
@@ -183,7 +183,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         """
         Reprojects the frame to the correspondent CRS (geographic CRS to the actual CRS).
         """
-        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.geographicCRSAuthId())
+        crsSrc = QgsCoordinateReferenceSystem(self.widget.crs.geographicCrsAuthId())
         coordinateTransformer = QgsCoordinateTransform(crsSrc, self.widget.crs)
         polyline = poly.asMultiPolygon()[0][0]
         newPolyline = []
