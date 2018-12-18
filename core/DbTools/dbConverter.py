@@ -22,7 +22,7 @@
 """
 
 from qgis.PyQt.QtCore import QObject
-from qgis.core import QgsFeatureRequest, QgsProject, QgsProcessingContext
+from qgis.core import QgsFeatureRequest, QgsProject, QgsProcessingContext, QgsProcessingMultiStepFeedback
 
 from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
@@ -194,11 +194,12 @@ class DbConverter(QObject):
         :param spatialFilter: (dict) spatial filter set of options.
         :return: (int) behaviour code.
         """
-        return {
+        predicates = {
             "Intersects" : 1,
             "Clip" : 2,
             "Buffer" : 3
-        }[spatialFilter["filter_type"]]
+        }
+        return predicates[spatialFilter["filter_type"]] if spatialFilter["filter_type"] in predicates else None
 
     def readInputLayers(self, conversionMap=None):
         """
@@ -238,26 +239,43 @@ class DbConverter(QObject):
         allInputLayers = self.readInputLayers(conversionMap=conversionMap)
         lh = LayerHandler()
         context = context if context is not None else QgsProcessingContext()
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(len(conversionMap), feedback)
+            currentInputStep = 0
+        else:
+            multiStepFeedback = None
         for inputDb, conversionSteps in conversionMap.items():
             inputLayers = allInputLayers[inputDb]
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentInputStep)
+                currentInputStep += 1
             for conversionStep in conversionSteps:
                 filters = conversionStep["filter"]
                 # conversion map may be empty, in that case no filters should be applied
                 # e.g. all layers to be translated
-                layers = filters["layer"] if filters["layer"] \
-                                                        else inputLayers
+                layers = filters["layer"] if filters["layer"] else inputLayers
+                if multiStepFeedback is not None:
+                    currentFeedback = QgsProcessingMultiStepFeedback(len(layers), multiStepFeedback)
+                    layerStep = 0
                 # spatial filtering behaviour is set based on the modes defined in convertLayer2LayerAlgorithm
                 behaviour = self.getSpatialFilterBehaviour(filters["spatial_filter"])
                 spatialFilterlLayer = QgsProject.instance().mapLayersByName(filters["spatial_filter"]["layer_name"])
                 spatialFilterlLayer = spatialFilterlLayer[0] if spatialFilterlLayer != [] else None
+                if filters["spatial_filter"]["layer_filter"]:
+                    spatialFilterlLayer = lh.filterByExpression(layer=spatialFilterlLayer,\
+                                                            expression=filters["spatial_filter"]["layer_filter"],\
+                                                            context=context, feedback=feedback)
+                outFeatureMap["{0}::{1}".format(inputDb, conversionStep["outDs"])] = {}
                 for layer in layers:
-                    outFeatureMap["{0}::{1}".format(inputDb, conversionStep["outDs"])] = \
+                    if multiStepFeedback is not None:
+                        multiStepFeedback.setCurrentStep(layerStep)
+                        layerStep += 1
+                    outFeatureMap["{0}::{1}".format(inputDb, conversionStep["outDs"])][layer] = \
                         lh.prepareConversion(
                             inputLyr=inputLayers[layer],
                             context=context,
-                            inputExpression=filters["layer_filter"][layer] if layer in filters and filters != {} else None,
+                            inputExpression=filters["layer_filter"][layer] if layer in filters["layer_filter"] else None,
                             filterLyr=spatialFilterlLayer,
-                            spatialLayerExpression=filters["spatial_filter"]["layer_filter"], # CONTINUAR DAQUI
                             behavior=behaviour,
                             conversionMap=conversionStep,
                             feedback=feedback

@@ -796,7 +796,23 @@ class LayerHandler(QObject):
         }
         return methods[predicate]() if predicate in methods else None
 
-    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None, spatialLayerExpression=None,\
+    def filterByExpression(self, layer, expression, context, feedback=None):
+        """
+        Filters a given layer using a filtering expression. The original layer is not modified.
+        :param layer: (QgsVectorLayer) layer to be filtered.
+        :param expression: (str) expression to be used as filter.
+        :param context: (QgsProcessingContext) processing context in which algorithm should be executed.
+        :param feedback: (QgsFeedback) QGIS feedback component (progress bar).
+        :return: (QgsVectorLayer) filtered layer.
+        """
+        return AlgRunner().runFilterExpression(
+                inputLyr=layer,
+                context=context,
+                expression = expression,
+                feedback=feedback
+            )
+
+    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None,\
                          behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
         algRunner = AlgRunner()
         if feedback is not None:
@@ -806,8 +822,6 @@ class LayerHandler(QObject):
             if filterLyr is not None:
                 count += 1
                 if behavior == 3:
-                    count += 1
-                if spatialLayerExpression is not None:
                     count += 1
             elif count == 0:
                 return inputLyr
@@ -827,20 +841,10 @@ class LayerHandler(QObject):
             )
             currentStep+=1
         if filterLyr is not None:
-            if spatialLayerExpression is not None:
-                if multiStepFeedback is not None:
-                    multiStepFeedback.setCurrentStep(currentStep)
-                filterLyr = algRunner.runFilterExpression(
-                    inputLyr=filterLyr,
-                    context=context,
-                    expression = spatialLayerExpression,
-                    feedback=multiStepFeedback
-                )
-                currentStep+=1
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
             if behavior == 3:
                 filterLyr = algRunner.runBuffer(filterLyr, bufferRadius, context, feedback=multiStepFeedback)
                 currentStep += 1
             localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
-        return localLyr         
+        return localLyr
