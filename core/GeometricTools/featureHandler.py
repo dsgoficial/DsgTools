@@ -24,8 +24,9 @@ from __future__ import absolute_import
 from builtins import range
 import itertools
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
-from qgis.PyQt.Qt import QObject
+                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
+                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback
+from qgis.PyQt.Qt import QObject, QVariant
 
 from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler
@@ -154,24 +155,28 @@ class FeatureHandler(QObject):
         for id, geom in changeDict.items():
             lyr.changeGeometry(id, geom)
     
-    def getNewGridFeat(self, index, geom):
-        pass
+    def getNewGridFeat(self, index, geom, fields):
+        feat = QgsFeature(fields)
+        feat['inom'] = index
+        feat['mi'] = self.utmGrid.get_MI_MIR_from_inom(index)
+        feat.setGeometry(geom)
+        return feat
     
-    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer, feedback=None):
+    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer, fields, feedback=None):
         if feedback is not None and feedback.isCanceled():
             return
         scale = self.utmGrid.getScale(index)
         if scale == stopScale:
-            poly = self.utmGrid.getQgsPolygonFrame(scale)
-            frameGeom = poly.transform(coordinateTransformer)
-            newFeat = self.getNewGridFeat(index, geom)
+            frameGeom = self.utmGrid.getQgsPolygonFrame(index)
+            frameGeom.transform(coordinateTransformer)
+            newFeat = self.getNewGridFeat(index, frameGeom, fields)
             featureList.append(newFeat)
         else:
             scaleId = self.utmGrid.getScaleIdFromiNomen(index)
-            sufixList = list(itertools.chain.from_iterable(self.scaleText[scaleId+1])) #flatten list into one single list
+            sufixList = list(itertools.chain.from_iterable(self.utmGrid.scaleText[scaleId+1])) #flatten list into one single list
             nElements = len(sufixList)
             currentFeedbackSize = 100/nElements if nElements else 0
-            multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback) if feedback else None
+            multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback) if feedback is not None else None
             if feedback is not None:
                 multiStepFeedback.setCurrentStep(0)
             for current, line in enumerate(sufixList):
@@ -179,6 +184,6 @@ class FeatureHandler(QObject):
                     if feedback.isCanceled():
                         break
                 inomen2 = '{oldInomem}-{newPart}'.format(oldInomem=index, newPart=line)
-                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, feedback=multiStepFeedback)
+                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, fields, feedback=multiStepFeedback)
                 multiStepFeedback.setProgress(currentFeedbackSize * current)
 

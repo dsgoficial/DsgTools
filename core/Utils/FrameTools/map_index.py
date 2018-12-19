@@ -342,3 +342,9 @@ class UtmGrid(QObject):
         for k,v in miDict.items():
             if v == hundredInom:
                 return '-'.join([k]+remains)
+    
+    def get_MI_MIR_from_inom(self, inom):
+        if len(inom.split('-')) > 4:
+            return self.getMIfromInom(inom)
+        else:
+            return self.getINomenFromMIR(inom)
