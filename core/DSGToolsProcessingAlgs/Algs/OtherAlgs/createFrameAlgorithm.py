@@ -25,6 +25,7 @@ from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 from ...algRunner import AlgRunner
 import processing, os, requests
 from time import sleep
+from qgis.PyQt.Qt import QVariant
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -53,7 +54,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterType,
                        QgsProcessingParameterCrs,
                        QgsCoordinateTransform,
-                       QgsProject)
+                       QgsProject,
+                       QgsCoordinateReferenceSystem,
+                       QgsField,
+                       QgsFields)
 
 class CreateFrameAlgorithm(QgsProcessingAlgorithm):
     START_SCALE = 'START_SCALE'
@@ -61,12 +65,13 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
     INDEX_TYPE = 'INDEX_TYPE'
     INDEX = 'INDEX'
     CRS = 'CRS'
-    FRAME_OUTPUT = 'FRAME_OUTPUT'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
         Parameter setting.
         """
+        self.setValidCharacters()
         self.scales = ['1000k',
                       '250k',
                       '100k',
@@ -75,19 +80,19 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
                       '10k',
                       '5k',
                       '1k']
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.START_SCALE,
+                self.tr('Base scale'),
+                options=self.scales,
+                defaultValue=0
+            )
+        )
 
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.STOP_SCALE,
                 self.tr('Desired scale'),
-                options=self.scales,
-                defaultValue=0
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterEnum(
-                self.START_SCALE,
-                self.tr('Base scale'),
                 options=self.scales,
                 defaultValue=0
             )
@@ -118,7 +123,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterFeatureSink(
-                self.FRAME_OUTPUT,
+                self.OUTPUT,
                 self.tr('Created Frames')
             )
         )
@@ -129,31 +134,37 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         """
         featureHandler = FeatureHandler()
         startScaleIdx = self.parameterAsEnum(parameters, self.START_SCALE, context)
-        startScale = self.scales[startScaleIdx]
         stopScaleIdx = self.parameterAsEnum(parameters, self.STOP_SCALE, context)
         stopScale = self.scales[stopScaleIdx]
-        if startScaleIdx < stopScaleIdx:
+        stopScale = int(stopScale.replace('k', ''))
+        if startScaleIdx > stopScaleIdx:
             raise QgsProcessingException(self.tr('The desired scale denominator must not be bigger than the base scale denominator.'))
-        indexTypeIdx = self.parameterAsEnum(parameters, self.INDEX_TYPE)
+        indexTypeIdx = self.parameterAsEnum(parameters, self.INDEX_TYPE, context)
         inputIndex = self.parameterAsString(parameters, self.INDEX, context)
-        if inputIndex is None or index == '':
+        if inputIndex is None or inputIndex == '':
             raise QgsProcessingException(self.tr('Invalid {index}').format(index=self.indexTypes[indexTypeIdx]))
-        index, mi = self.getIndexAndMI(inputIndex, indexType, startScaleIdx)
+        index = self.getIndex(inputIndex, indexTypeIdx, startScaleIdx)
         if not self.validateIndex(index):
             raise QgsProcessingException(self.tr('Invalid {index} format.').format(index=self.indexTypes[indexTypeIdx]))
         crs = self.parameterAsCrs(parameters, self.CRS, context)
-        if crs is none or not crs.isValid():
+        if crs is None or not crs.isValid():
             raise QgsProcessingException(self.tr('Invalid CRS.'))
+        fields = QgsFields()
+        fields.append(QgsField('inom', QVariant.String))
+        fields.append(QgsField('mi', QVariant.String))
+        (output_sink, output_sink_id) = self.parameterAsSink(parameters, self.OUTPUT,
+                context, fields, QgsWkbTypes.Polygon, crs)
         featureList = []
         coordinateTransformer = QgsCoordinateTransform(
-            crs,
             QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
+            crs,
             QgsProject.instance()
             )
-        featureHandler.getSystematicGridFeatures(featureList, index, stopScale, coordinateTransformer, feedback=feedback)
-        
+        featureHandler.getSystematicGridFeatures(featureList, index, stopScale, coordinateTransformer, fields, feedback=feedback)
+        for feat in featureList:
+            output_sink.addFeature(feat, QgsFeatureSink.FastInsert)
 
-        return {}
+        return {'OUTPUT':output_sink_id}
 
     def name(self):
         """
@@ -195,19 +206,52 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
     def createInstance(self):
         return CreateFrameAlgorithm()
     
-    def getIndex(self, inputIndex, indexType, scale):
+    def getIndex(self, inputIndex, indexType, scaleType):
         """
-        Returns map_index, mi
+        Returns map_index
         """
         if indexType == 0:
-            if scale == 0:
-                return UtmGrid().getINomenFromMIR(inputIndex), inputIndex
+            if scaleType == 1:
+                return UtmGrid().getINomenFromMIR(inputIndex)
             else:
-                return UtmGrid().getINomenFromMI(inputIndex), inputIndex
-        else:
-            if scale == 0:
-                return inputIndex, UtmGrid().getMIR(inputIndex) #not done yet
-        return index
+                return UtmGrid().getINomenFromMI(inputIndex)
+        return inputIndex
+    
+    def setValidCharacters(self):
+        """
+        Method to define the valid characters
+        """
+        self.chars = []
+
+        chars = 'NS'
+        self.chars.append(chars)
+        chars = 'ABCDEFGHIJKLMNOPQRSTUVZ'
+        self.chars.append(chars)
+        chars = ['01','02','03','04','05','06','07','08','09','10',
+                   '11','12','13','14','15','16','17','18','19','20',
+                   '21','22','23','24','25','26','27','28','29','30',
+                   '31','32','33','34','35','36','37','38','39','40',
+                   '41','42','43','44','45','46','47','48','49','50',
+                   '51','52','53','54','55','56','57','58','59','60']
+        self.chars.append(chars)
+        chars = 'VXYZ'
+        self.chars.append(chars)
+        chars = 'ABCD'
+        self.chars.append(chars)
+        chars = ['I','II','III','IV','V','VI']
+        self.chars.append(chars)
+        chars = '1234'
+        self.chars.append(chars)
+        chars = ['NO','NE','SO','SE']
+        self.chars.append(chars)
+        chars = 'ABCDEF'
+        self.chars.append(chars)
+        chars = ['I','II','III','IV']
+        self.chars.append(chars)
+        chars = '123456'
+        self.chars.append(chars)
+        chars = 'ABCD'
+        self.chars.append(chars)
     
     def validateIndex(self, index):
         """
