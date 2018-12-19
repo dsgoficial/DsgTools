@@ -42,6 +42,7 @@ class FeatureHandler(QObject):
         self.geometryHandler = GeometryHandler(iface)
         self.attributeHandler = AttributeHandler(iface)
         self.utmGrid = UtmGrid()
+        self.stepsTotal = 0
     
     def reclassifyFeatures(self, featureList, destinationLayer, reclassificationDict, coordinateTransformer, parameterDict):
         newFeatList = []
@@ -166,24 +167,24 @@ class FeatureHandler(QObject):
         if feedback is not None and feedback.isCanceled():
             return
         scale = self.utmGrid.getScale(index)
+        if (self.stepsTotal == 0):
+            self.stepsTotal = self.utmGrid.computeNumberOfSteps(self.utmGrid.getScaleIdFromScale(scale), self.utmGrid.getScaleIdFromScale(stopScale))
+            self.stepsDone = 0
+            self.stepPerc = 100/self.stepsTotal
         if scale == stopScale:
             frameGeom = self.utmGrid.getQgsPolygonFrame(index)
             frameGeom.transform(coordinateTransformer)
             newFeat = self.getNewGridFeat(index, frameGeom, fields)
             featureList.append(newFeat)
+            self.stepsDone += 1
+            feedback.setProgress(self.stepPerc * self.stepsDone)
         else:
             scaleId = self.utmGrid.getScaleIdFromiNomen(index)
-            sufixList = list(itertools.chain.from_iterable(self.utmGrid.scaleText[scaleId+1])) #flatten list into one single list
-            nElements = len(sufixList)
-            currentFeedbackSize = 100/nElements if nElements else 0
-            multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback) if feedback is not None else None
-            if feedback is not None:
-                multiStepFeedback.setCurrentStep(0)
-            for current, line in enumerate(sufixList):
+            sufixIterator = itertools.chain.from_iterable(self.utmGrid.scaleText[scaleId+1]) #flatten list into one single list
+            for line in sufixIterator:
                 if feedback is not None:
                     if feedback.isCanceled():
                         break
                 inomen2 = '{oldInomem}-{newPart}'.format(oldInomem=index, newPart=line)
-                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, fields, feedback=multiStepFeedback)
-                multiStepFeedback.setProgress(currentFeedbackSize * current)
+                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, fields, feedback=feedback)
 
