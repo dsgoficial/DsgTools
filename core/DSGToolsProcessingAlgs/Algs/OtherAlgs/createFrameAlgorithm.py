@@ -174,14 +174,14 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'createframe'
+        return 'gridzonegenerator'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Create Frame')
+        return self.tr('Generate Systematic Grid')
 
     def group(self):
         """
