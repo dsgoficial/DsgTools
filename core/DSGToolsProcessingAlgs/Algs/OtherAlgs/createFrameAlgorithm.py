@@ -51,7 +51,9 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterString,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterType,
-                       QgsProcessingParameterCrs)
+                       QgsProcessingParameterCrs,
+                       QgsCoordinateTransform,
+                       QgsProject)
 
 class CreateFrameAlgorithm(QgsProcessingAlgorithm):
     START_SCALE = 'START_SCALE'
@@ -143,7 +145,12 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         if crs is none or not crs.isValid():
             raise QgsProcessingException(self.tr('Invalid CRS.'))
         featureList = []
-        featureHandler.getSystematicGridFeatures(featureList, index)
+        coordinateTransformer = QgsCoordinateTransform(
+            crs,
+            QgsCoordinateReferenceSystem(crs.geographicCrsAuthId()),
+            QgsProject.instance()
+            )
+        featureHandler.getSystematicGridFeatures(featureList, index, stopScale, coordinateTransformer, feedback=feedback)
         
 
         return {}

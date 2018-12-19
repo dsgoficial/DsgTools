@@ -22,12 +22,14 @@
 """
 from __future__ import absolute_import
 from builtins import range
+import itertools
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
 from qgis.PyQt.Qt import QObject
 
 from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
 class FeatureHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -38,6 +40,7 @@ class FeatureHandler(QObject):
             self.canvas = iface.mapCanvas()
         self.geometryHandler = GeometryHandler(iface)
         self.attributeHandler = AttributeHandler(iface)
+        self.utmGrid = UtmGrid()
     
     def reclassifyFeatures(self, featureList, destinationLayer, reclassificationDict, coordinateTransformer, parameterDict):
         newFeatList = []
@@ -151,7 +154,31 @@ class FeatureHandler(QObject):
         for id, geom in changeDict.items():
             lyr.changeGeometry(id, geom)
     
-    def getSystematicGridFeatures(self, featureList, index, stopScale, crs, feedback=None):
-        if feedback is not None and feedback.isCanceled:
+    def getNewGridFeat(self, index, geom):
+        pass
+    
+    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer, feedback=None):
+        if feedback is not None and feedback.isCanceled():
             return
-        
+        scale = self.utmGrid.getScale(index)
+        if scale == stopScale:
+            poly = self.utmGrid.getQgsPolygonFrame(scale)
+            frameGeom = poly.transform(coordinateTransformer)
+            newFeat = self.getNewGridFeat(index, geom)
+            featureList.append(newFeat)
+        else:
+            scaleId = self.utmGrid.getScaleIdFromiNomen(index)
+            sufixList = list(itertools.chain.from_iterable(self.scaleText[scaleId+1])) #flatten list into one single list
+            nElements = len(sufixList)
+            currentFeedbackSize = 100/nElements if nElements else 0
+            multiStepFeedback = QgsProcessingMultiStepFeedback(1, feedback) if feedback else None
+            if feedback is not None:
+                multiStepFeedback.setCurrentStep(0)
+            for current, line in enumerate(sufixList):
+                if feedback is not None:
+                    if feedback.isCanceled():
+                        break
+                inomen2 = '{oldInomem}-{newPart}'.format(oldInomem=index, newPart=line)
+                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, feedback=multiStepFeedback)
+                multiStepFeedback.setProgress(currentFeedbackSize * current)
+
