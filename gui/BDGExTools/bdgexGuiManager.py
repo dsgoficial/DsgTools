@@ -213,6 +213,15 @@ class BDGExGuiManager(QObject):
         if not urlWithParams:
             return
         self.iface.addRasterLayer(urlWithParams, 'Landsat7', 'wms')
+    
+    def loadMultiScaleLayer(self):
+        """
+        Loads landsat layer
+        """
+        urlWithParams = self.BDGExTools.getTileCache('1:MultiScale')
+        if not urlWithParams:
+            return
+        self.iface.addRasterLayer(urlWithParams, 'MultiScale', 'wms')
 
     def load250kLayer(self):
         """

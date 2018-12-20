@@ -41,6 +41,7 @@ class BDGExTools(QObject):
         super(BDGExTools, self).__init__()
 
         self.wmtsDict = dict()
+        self.wmtsDict['MultiScale']='ctm250'
         self.wmtsDict['1:250k']='ctm250'
         self.wmtsDict['1:100k']='ctm100'
         self.wmtsDict['1:50k']='ctm50'
