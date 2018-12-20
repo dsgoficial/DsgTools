@@ -31,6 +31,7 @@ from .AttributeTools.code_list import CodeList
 from .FieldToolBox.field_toolbox import FieldToolbox
 from .ValidationToolbox.validation_toolbox import ValidationToolbox
 from .ContourTool.calc_contour import CalcContour
+from .ComplexTools.complexWindow import ComplexWindow
 
 class ToolBoxesGuiManager(QObject):
 
@@ -54,6 +55,8 @@ class ToolBoxesGuiManager(QObject):
         self.fieldToolbox.addTool(self.manager, self.showFieldToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
         self.codeList = CodeList(self.iface)
         self.codeList.addTool(self.manager, self.showCodeList, self.parentMenu, self.iconBasePath, self.stackButton)
+        self.complexWindow = ComplexWindow(self.iface)
+        self.complexWindow.addTool(self.manager, self.showComplexDock, self.parentMenu, self.iconBasePath, self.stackButton)
     
     def unload(self):
         pass
@@ -95,3 +98,13 @@ class ToolBoxesGuiManager(QObject):
         else:
             self.calcContour = CalcContour(self.iface)
         self.iface.addDockWidget(Qt.BottomDockWidgetArea, self.calcContour)
+    
+    def showComplexDock(self):
+        """
+        Shows the Manage Complex features Dock
+        """
+        if self.complexWindow:
+            self.iface.removeDockWidget(self.complexWindow)
+        else:
+            self.complexWindow = ComplexWindow(self.iface)
+        self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.complexWindow)

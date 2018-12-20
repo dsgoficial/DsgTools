@@ -30,12 +30,12 @@ from qgis.core import QgsMessageLog
 
 # Import the PyQt and QGIS libraries
 from qgis.PyQt import uic, QtGui, QtCore
-from qgis.PyQt.QtCore import Qt
+from qgis.PyQt.QtCore import Qt, pyqtSignal
 from qgis.PyQt.QtWidgets import QStyledItemDelegate, QComboBox, QItemDelegate, QDialog, QMessageBox, QListWidget, QListWidgetItem
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel
 
 #DsgTools imports
-from DsgTools.QmlTools.qmlParser import QmlParser
+from DsgTools.core.Misc.QmlTools.qmlParser import QmlParser
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -120,7 +120,10 @@ class CustomTableModel(QSqlTableModel):
         if column in self.dict:
             if isinstance(self.dict[column], dict):
                 valueMap = self.dict[column]
-                newValue = int(valueMap[value])
+                if value in valueMap:
+                    newValue = int(valueMap[value])
+                else:
+                    newValue = value
             elif isinstance(self.dict[column], tuple):
                 tupla = self.dict[column]
                 valueMap = self.makeValueRelationDict(tupla[0], tupla[1])
@@ -236,6 +239,8 @@ class ListWidgetDelegate(QStyledItemDelegate):
             QItemDelegate.setModelData(self, editor, model, index)
 
 class ManageComplexDialog(QDialog, FORM_CLASS):
+    tableUpdated = pyqtSignal()
+    markedToRemove = pyqtSignal(list)
     def __init__(self, iface, abstractDb, table):
         """
         Constructor.
