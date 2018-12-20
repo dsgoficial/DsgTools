@@ -24,7 +24,8 @@
 from __future__ import print_function
 from builtins import str
 from builtins import range
-from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform
+from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, \
+                        QgsProcessingContext, QgsFeature
 from qgis.PyQt import QtWidgets, QtCore, uic, QtGui
 from qgis.PyQt.QtWidgets import QMessageBox
 from qgis.PyQt.QtCore import pyqtSlot
@@ -39,6 +40,7 @@ from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerL
 
 #qgis imports
 import qgis as qgis
+import processing
 
 class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
     def __init__(self, iface, parent=None):
@@ -68,17 +70,45 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         if not self.validateMI():
             QMessageBox.warning(self, self.tr("Warning!"), self.tr('Map name index not valid!'))
             return
-        layer = self.loadFrameLayer()
-        inom = self.inomLineEdit.text()
-        scale = self.scaleCombo.currentText()
         try:
-            frame = self.widget.abstractDb.createFrame('inom', scale, inom)
+            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            layer = self.loadFrameLayer()
+            self.runCreateFrameAndAddFeaturesToFrame(layer)
+            QtWidgets.QApplication.restoreOverrideCursor()
         except Exception as e:
-            QMessageBox.warning(self, self.tr("Critical!"), ':'.join(e.args))
-            return
-        reprojected = self.reprojectFrame(frame)
-        self.zoomToLayer(layer, reprojected)
+            QtWidgets.QApplication.restoreOverrideCursor()
+            raise e
         self.done(1)
+    
+    def runCreateFrameAndAddFeaturesToFrame(self, layer):
+        crs = self.widget.crs
+        inom = self.inomLineEdit.text()
+        scaleIdx = self.scaleCombo.currentIndex()
+        context = QgsProcessingContext()
+        processingOutput = processing.run(
+            'dsgtools:gridzonegenerator',
+            {
+                'START_SCALE' : scaleIdx,
+                'STOP_SCALE' : scaleIdx,
+                'INDEX_TYPE' : 1,
+                'INDEX' : inom,
+                'CRS' : crs,
+                'OUTPUT' : 'memory:'
+            },
+            context = context)
+        featList = []
+        for feat in processingOutput['OUTPUT'].getFeatures():
+            newFeat = QgsFeature(layer.fields())
+            newFeat['mi'] = feat['mi']
+            newFeat['inom'] = feat['inom']
+            newFeat['escala'] = self.scaleCombo.currentText()
+            newFeat.setGeometry(feat.geometry())
+            newFeat.geometry().convertToMultiType()
+            featList.append(newFeat)
+        layer.startEditing()
+        layer.addFeatures(featList)
+        layer.commitChanges()
+        self.zoomToLayer(layer, featList[0].geometry())
     
     def zoomToLayer(self, layer, frame):
         """

@@ -73,6 +73,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         """
         self.setValidCharacters()
         self.scales = ['1000k',
+                      '500k',
                       '250k',
                       '100k',
                       '50k',
