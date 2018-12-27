@@ -23,7 +23,8 @@
 from __future__ import absolute_import
 from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
+                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
+                      QgsCoordinateTransform, QgsWkbTypes, QgsVectorLayerUtils
 from qgis.PyQt.Qt import QObject
 
 from .geometryHandler import GeometryHandler
@@ -78,7 +79,7 @@ class FeatureHandler(QObject):
     
     def getNewFeatureWithoutGeom(self, referenceFeature, lyr):
         newFeat = QgsFeature(referenceFeature)
-        provider = lyr.dataProvider()
+        # provider = lyr.dataProvider()
         for idx in lyr.primaryKeyAttributes():
             newFeat.setAttribute(idx, None)
         return newFeat
@@ -87,7 +88,7 @@ class FeatureHandler(QObject):
         parameterDict = {} if parameterDict is None else parameterDict
         geomList = []
         for feat in featList:
-            geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict)
+            geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
         geomToUpdate = None
         newFeatList = []
         if not geomList:
@@ -101,7 +102,17 @@ class FeatureHandler(QObject):
                 newFeat.setGeometry(geom)
                 newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
-    
+
+    def handleConvertedFeature(self, feat, lyr, parameterDict = None, coordinateTransformer = None):
+        parameterDict = {} if parameterDict is None else parameterDict
+        geomList = self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
+        newFeatSet = set()
+        for geom in geomList:
+            attrMap = { idx : feat[field.name()] for idx, field in enumerate(feat.fields()) if idx not in lyr.primaryKeyAttributes()}
+            newFeat = QgsVectorLayerUtils.createFeature(lyr, geom, attrMap)
+            newFeatSet.add(newFeat)
+        return newFeatSet
+
     def getFeatureOuterShellAndHoles(self, feat, isMulti):
         geom = feat.geometry()
         
