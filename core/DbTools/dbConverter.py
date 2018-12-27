@@ -29,6 +29,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 from DsgTools.core.Factories.DbCreatorFactory.dbCreatorFactory import DbCreatorFactory
 
 class DbConverter(QObject):
@@ -52,6 +53,7 @@ class DbConverter(QObject):
         super(DbConverter, self).__init__()
         self.iface = iface
         self.conversionMap = conversionMap
+        self.coordinateTransformers = {}
 
     def getConversionCount(self, conversionMap=None):
         """
@@ -361,7 +363,9 @@ class DbConverter(QObject):
                     spatialFilterlLayer = lh.filterByExpression(layer=spatialFilterlLayer,\
                                                             expression=filters["spatial_filter"]["layer_filter"],\
                                                             context=context, feedback=feedback)
-                inputLayersMap["{0}::{1}".format(inputDb, conversionStep["outDs"])] = {}
+                key = "{0}::{1}".format(inputDb, conversionStep["outDs"])
+                if key not in inputLayersMap:
+                    inputLayersMap[key] = {}
                 for layer in layers:
                     if multiStepFeedback is not None:
                         multiStepFeedback.setCurrentStep(layerStep)
@@ -386,15 +390,14 @@ class DbConverter(QObject):
                         translatedLayer.deleteAttributes(removeFields)
                         translatedLayer.updateFields()
                         translatedLayer.commitChanges()
-                        inputLayersMap["{0}::{1}".format(inputDb, conversionStep["outDs"])][layer] = translatedLayer
+                        inputLayersMap[key][layer] = translatedLayer
         return inputLayersMap
 
-    
-
-    def mapFeatures(self, layersMap, featureConversionMap=None):
+    def mapFeatures(self, layersMap, outputMapLayer, featureConversionMap=None):
         """
         Maps features from a given set of layers to a different set of layers (including attributes).
         :param layersMap: (dict) map of layers to be translated.
+        :param outputMapLayer: (dict) map of layers to be filled.
         :param featureConversionMap: (dict) map of features based on given input.
         :return: (dict) map of (list-of-QgsFeature) features to be added to a (str) layer.
         """
@@ -402,7 +405,26 @@ class DbConverter(QObject):
             # do the conversion in here using the map - NOT YET SUPPORTED
             pass
         else:
-            return {layer : [f for f in vl.getFeatures()] for layer, vl in layersMap.items() if vl.featureCount() != 0}
+            featuresMap = collections.defaultdict(set)
+            lh = LayerHandler()
+            fh = FeatureHandler()
+            ctMap = {}
+            for layer, vl in layersMap.items():
+                if vl.featureCount() == 0:
+                    continue
+                k = "{0}->{1}".format(vl.crs().authid(), outputMapLayer[layer].crs().authid())
+                if k not in self.coordinateTransformers:
+                    self.coordinateTransformers[k] = lh.getCoordinateTransformer(inputLyr=vl, outputLyr=outputMapLayer[layer])
+                coordinateTransformer = self.coordinateTransformers[k]
+                param = lh.getDestinationParameters(vl)
+                for feature in vl.getFeatures(QgsFeatureRequest()):
+                    featuresMap[layer] += fh.handleConvertedFeature(
+                                                feat=feature,
+                                                lyr=vl,
+                                                parameterDict=param,
+                                                coordinateTransformer=coordinateTransformer
+                                                )
+            return featuresMap
 
     def fanOut(self, inputLayers, preparedLayers, referenceLayer, fanOutFieldName, context=None, feedback=None):
         """
@@ -449,9 +471,9 @@ class DbConverter(QObject):
         """
         if conversionMap is None:
             conversionMap = self.conversionMap
-        for layer, featureList in self.mapFeatures(layersMap, featureConversionMap).items():
+        for layer, featureList in self.mapFeatures(layersMap, outputLayers, featureConversionMap).items():
             outputLayers[layer].startEditing()
-            outputLayers[layer].dataProvider().addFeatures(featureList)
+            outputLayers[layer].addFeatures(featureList)
             outputLayers[layer].commitChanges()
             outputLayers[layer].updateExtents()
 
