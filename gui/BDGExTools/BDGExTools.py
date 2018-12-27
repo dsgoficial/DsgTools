@@ -94,14 +94,11 @@ class BDGExTools(QObject):
         settings.endGroup()
         return (enabled, host, port, user, password, type, urlsList)
 
-    def getTileCache(self,layerName):
+    def getCapabilities(self, url):
         """
-        Makes the requisition to the tile cache service
+        Gets url capabilities
         """
-        url = "http://www.geoportal.eb.mil.br/mapcache?request=GetCapabilities"
-        # set proxy
         self.setUrllibProxy(url)
-
         try:
             getCapa = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"})
             resp = urllib.request.urlopen(getCapa)
@@ -112,12 +109,25 @@ class BDGExTools(QObject):
         except urllib.error.HTTPError as e:
             QMessageBox.critical(None, self.tr("HTTP Error!"), '{0}\nReason: {1}'.format(e.code, e.msg))
             return None
-
         try:
             myDom=parseString(response)
         except:
             QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response: \n{0}').format(response))
             return None
+        return myDom
+    
+    def parseCapabilitiesXML(self, capabilitiesDom):
+        jsonList = []
+        # for tileMap in capabilitiesDom.getElementsByTagName("Layer"):
+        pass
+
+
+    def getTileCache(self,layerName):
+        """
+        Makes the requisition to the tile cache service
+        """
+        url = "http://www.geoportal.eb.mil.br/mapcache?request=GetCapabilities"
+        myDom = self.getCapabilities(url)
 
         qgsIndexDict = dict()
         count = 0
