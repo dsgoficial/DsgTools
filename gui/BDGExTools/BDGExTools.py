@@ -118,8 +118,14 @@ class BDGExTools(QObject):
     
     def parseCapabilitiesXML(self, capabilitiesDom):
         jsonList = []
-        # for tileMap in capabilitiesDom.getElementsByTagName("Layer"):
-        pass
+        for node in capabilitiesDom.getElementsByTagName("Layer")[1::]:
+            newItem = {}
+            for tag in node.childNodes:
+                tagName = tag.tagName
+                if tag.childNodes:
+                    newItem[tagName] = tag.childNodes[0].nodeValue
+            jsonList.append(newItem)
+        return jsonList
 
 
     def getTileCache(self,layerName):
