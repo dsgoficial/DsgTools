@@ -48,7 +48,7 @@ class BDGExTools(QObject):
         self.wmtsDict['1:25k']='ctm25'
         self.wmtsDict['Landsat7']='landsat7'
         self.wmtsDict['RapidEye']='rapideye'
-        pass
+        self.capabilitiesDict = dict()
 
     def __del__(self):
         pass
@@ -117,30 +117,64 @@ class BDGExTools(QObject):
         return myDom
     
     def parseCapabilitiesXML(self, capabilitiesDom):
-        jsonList = []
+        """
+        Parses GetCapabilities to get info.
+        Return dictionary has the format:
+        {
+            'layer_name' : {
+                'Name' : "layer name",
+                'SRS' : "layer srs",
+                'Title' : "layer title",
+                'Abstract' : "layer abstract",
+                'Format' : "layer image format"
+            }
+        }
+        """
+        jsonDict = dict()
         for node in capabilitiesDom.getElementsByTagName("Layer")[1::]:
             newItem = {}
             for tag in node.childNodes:
                 tagName = tag.tagName
                 if tag.childNodes:
                     newItem[tagName] = tag.childNodes[0].nodeValue
-            jsonList.append(newItem)
-        return jsonList
+            jsonDict[newItem['Name']] = newItem
+        #parse to add format to jsonDict
+        for tile in capabilitiesDom.getElementsByTagName("TileSet"):
+            itemName = tile.getElementsByTagName('Layers')[0].childNodes[0].nodeValue
+            imgFormat = tile.getElementsByTagName('Format')[0].childNodes[0].nodeValue
+            jsonDict[itemName]['Format'] = imgFormat
+        return jsonDict
+    
+    def getCapabilitiesDict(self):
+        url = "http://www.geoportal.eb.mil.br/mapcache?request=GetCapabilities"
+        myDom = self.getCapabilities(url)
+        return self.parseCapabilitiesXML(myDom)
 
 
-    def getTileCache(self,layerName):
+    def getRequestStringFromMapCache(self, layerName):
         """
         Makes the requisition to the tile cache service
         """
-        url = "http://www.geoportal.eb.mil.br/mapcache?request=GetCapabilities"
-        myDom = self.getCapabilities(url)
+        if self.capabilitiesDict == dict():
+            self.capabilitiesDict = self.getCapabilitiesDict()
+        if layerName not in self.capabilitiesDict and layerName != 'ctm_multi':
+            raise 'Invalid name request'
+        if layerName == 'ctm_multi':
+            ctmList = [i for i in self.capabilitiesDict.keys() if 'ctm' in i]
+            ctmList.sort(key = lambda x : int(x.replace('ctm','')))
+            layer_tag = 'layers&'+'layers&'.join(ctmList)
+            styles_tag = '&'.join(['styles']*len(ctmList))
+        else:
+            layer_tag = 'layers={layer_name}'.format(layer_name=layerName)
+            styles_tag = 'styles'
 
-        qgsIndexDict = dict()
-        count = 0
+        requestString = "crs={epsg}&dpiMode=7&featureCount=10&format={img_format}&{layer_tag}&{styles_tag}&url={url}".format(
+            epsg=self.capabilitiesDict[layerName]['SRS'],
+            img_format=self.capabilitiesDict[layerName]['Format'],
+            layer_tag=layer_tag,
+            styles_tag=styles_tag,
+            url='http://bdgex.eb.mil.br/mapcache'
+        )
 
-        for tileMap in myDom.getElementsByTagName("Layer"):
-            qgsIndexDict[tileMap.getElementsByTagName("Name")[0].firstChild.nodeValue]=count
-            count += 1
-
-        tileMatrixSet = '{0}-wmsc-{1}'.format(self.wmtsDict[layerName],qgsIndexDict[self.wmtsDict[layerName]])
-        return 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers={0}&styles=&url=http://www.geoportal.eb.mil.br/mapcache'.format(self.wmtsDict[layerName])
+        
+        return requestString
