@@ -46,7 +46,7 @@ class BDGExRequestHandler(QObject):
                     'WMS' : dict()
                 }
             },
-            'mapaindice' : {
+            'mapindex' : {
                 'url' : 'http://bdgex.eb.mil.br/cgi-bin/mapaindice',
                 'services': {
                     'WMS' : dict(),
@@ -182,15 +182,23 @@ class BDGExRequestHandler(QObject):
         for node in capabilitiesDom.getElementsByTagName("Layer")[1::]:
             newItem = {}
             for tag in node.childNodes:
-                tagName = tag.tagName
-                if tag.childNodes:
-                    newItem[tagName] = tag.childNodes[0].nodeValue
+                try:
+                    tagName = tag.tagName
+                    if tag.childNodes:
+                        newItem[tagName] = tag.childNodes[0].nodeValue
+                except:
+                    pass
             jsonDict[newItem['Name']] = newItem
         #parse to add format to jsonDict
         for tile in capabilitiesDom.getElementsByTagName("TileSet"):
             itemName = tile.getElementsByTagName('Layers')[0].childNodes[0].nodeValue
             imgFormat = tile.getElementsByTagName('Format')[0].childNodes[0].nodeValue
             jsonDict[itemName]['Format'] = imgFormat
+        for key, dictItem in jsonDict.items():
+            if 'Format' not in dictItem:
+                jsonDict[key]['Format'] = 'image/png'
+            if 'SRS' not in dictItem:
+                jsonDict[key]['SRS'] = 'EPSG:4326'
         return jsonDict
     
     def parse_wfs_capabilities(self, capabilitiesDom):
