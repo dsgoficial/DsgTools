@@ -247,6 +247,82 @@ class BDGExGuiManager(QObject):
                     'service' : 'auxlayers',
                     'service_type' : 'WFS'
                 }
+            ],
+            'raster_mapindex' : [
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:250,000'),
+                    'layers' : [
+                        'F250_WGS84_MATRICIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:100,000'),
+                    'layers' : [
+                        'F100_WGS84_MATRICIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:50,000'),
+                    'layers' : [
+                        'F50_WGS84_MATRICIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:25,000'),
+                    'layers' : [
+                        'F25_WGS84_MATRICIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                }
+            ],
+            'vector_mapindex' : [
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:250,000'),
+                    'layers' : [
+                        'F250_WGS84_VETORIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:100,000'),
+                    'layers' : [
+                        'F100_WGS84_VETORIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:50,000'),
+                    'layers' : [
+                        'F50_WGS84_VETORIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:25,000'),
+                    'layers' : [
+                        'F25_WGS84_VETORIAL'
+                    ],
+                    'service' : 'mapindex',
+                    'service_type' : 'WMS'
+                }
             ]
         }
 
@@ -262,8 +338,9 @@ class BDGExGuiManager(QObject):
         self.load_menus('aux_layers', self.auxLyr)
         self.indexes = self.manager.addMenu(u'indexes', self.tr('Product Indexes'),'eb.png', parentMenu = self.menu)
         self.rasterIndex = self.manager.addMenu(u'rasterindex', self.tr('Topographic Charts'),'eb.png', parentMenu = self.indexes)
+        self.load_menus('raster_mapindex', self.rasterIndex)
         self.vectorIndex = self.manager.addMenu(u'vectorindex', self.tr('Vectorial Charts'),'eb.png', parentMenu = self.indexes)
-        self.loadMenus()
+        self.load_menus('vector_mapindex', self.vectorIndex)
 
     def loadServiceLayer(self, legendName, service, layerList, serviceType='WMS'):
         urlWithParams = self.BDGExRequestHandler.get_url_string(service, layerList, serviceType)
@@ -294,144 +371,5 @@ class BDGExGuiManager(QObject):
                 )
             parentMenu.addAction(action)
 
-
-    def loadMenus(self):
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:250,000'),
-            callback=self.load250kRasterIndex,
-            parent=self.rasterIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.rasterIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:100,000'),
-            callback=self.load100kRasterIndex,
-            parent=self.rasterIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.rasterIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:50,000'),
-            callback=self.load50kRasterIndex,
-            parent=self.rasterIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.rasterIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:25,000'),
-            callback=self.load25kRasterIndex,
-            parent=self.rasterIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.rasterIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:250,000'),
-            callback=self.load250kVectorIndex,
-            parent=self.vectorIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.vectorIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:100,000'),
-            callback=self.load100kVectorIndex,
-            parent=self.vectorIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.vectorIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:50,000'),
-            callback=self.load50kVectorIndex,
-            parent=self.vectorIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.vectorIndex.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:25,000'),
-            callback=self.load25kVectorIndex,
-            parent=self.vectorIndex,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.vectorIndex.addAction(action)
-
     def unload(self):
         pass
-
-    def load250kRasterIndex(self):
-        """
-        Loads 250k raster index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Available Raster Charts'), 'wms')
-
-    def load100kRasterIndex(self):
-        """
-        Loads 100k raster index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Available Raster Charts'), 'wms')
-
-    def load50kRasterIndex(self):
-        """
-        Loads 50 raster index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Available Raster Charts'), 'wms')
-
-    def load25kRasterIndex(self):
-        """
-        Loads 25k raster index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_MATRICIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Raster Charts'), 'wms')
-
-    def load250kVectorIndex(self):
-        """
-        Loads 250k vector index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F250_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:250k Available Vectorial Charts'), 'wms')
-
-    def load100kVectorIndex(self):
-        """
-        Loads 100k vector index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F100_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:100k Available Vectorial Charts'), 'wms')
-
-    def load50kVectorIndex(self):
-        """
-        Loads 50k vector index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F50_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:50k Available Vectorial Charts'), 'wms')
-
-    def load25kVectorIndex(self):
-        """
-        Loads 25k vector index layer
-        """
-        urlWithParams = 'crs=EPSG:4326&dpiMode=7&featureCount=10&format=image/png&layers=F25_WGS84_VETORIAL&styles=&url=http://www.geoportal.eb.mil.br/teogc42/terraogcwms.cgi?version=1.1.0'
-        self.iface.addRasterLayer(urlWithParams, self.tr('1:25k Available Vectorial Charts'),'wms')
