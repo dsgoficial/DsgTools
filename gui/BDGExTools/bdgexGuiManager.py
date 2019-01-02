@@ -21,9 +21,10 @@
 """
 
 from __future__ import absolute_import
+from functools import partial
 
 from qgis.PyQt.QtCore import QObject 
-from .BDGExTools import BDGExTools
+from DsgTools.core.NetworkTools.BDGExRequestHandler import BDGExRequestHandler
 
 class BDGExGuiManager(QObject):
 
@@ -40,78 +41,259 @@ class BDGExGuiManager(QObject):
         self.iface = iface
         self.parentMenu = parentMenu
         self.toolbar = toolbar
-        self.BDGExTools = BDGExTools()
+        self.BDGExRequestHandler = BDGExRequestHandler()
         self.menu = self.manager.addMenu(u'bdgex', self.tr('BDGEx'),'eb.png')
         self.iconBasePath = ':/plugins/DsgTools/icons/'
+        self.availableServices = {
+            'topocharts' : [
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Multi scale mosaic'),
+                    'layers' : [
+                        'ctm25',
+                        'ctm50',
+                        'ctm100',
+                        'ctm250'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:250,000'),
+                    'layers' : [
+                        'ctm250'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:100,000'),
+                    'layers' : [
+                        'ctm100'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:50,000'),
+                    'layers' : [
+                        'ctm50'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('1:25,000'),
+                    'layers' : [
+                        'ctm25'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                }                
+            ],
+            'coverage' : [
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Rapideye Imagery (2013 mosaic)'),
+                    'layers' : [
+                        'rapideye'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Landsat 7 Imagery (2000 mosaic)'),
+                    'layers' : [
+                        'landsat7'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Orthorectified True Color Imagery compatible with 1:25,000 scale'),
+                    'layers' : [
+                        'ortoimagem_scn25'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Artificial SAR Imagery compatible with 1:50,000 scale'),
+                    'layers' : [
+                        'ram_colorimetria_50'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Artificial SAR Imagery compatible with 1:25,000 scale'),
+                    'layers' : [
+                        'ram_colorimetria_25'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                }                     
+            ],
+            'terrain' : [
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Surface Digital Model compatible with scale 1:25,000'),
+                    'layers' : [
+                        'mds25'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Contour lines compatible with scale 1:25,000'),
+                    'layers' : [
+                        'curva_nivel25'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Surface Digital Model compatible with scale 1:50,000'),
+                    'layers' : [
+                        'mds50'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Contour lines compatible with scale 1:50,000'),
+                    'layers' : [
+                        'curva_nivel50'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Contour lines compatible with scale 1:100,000'),
+                    'layers' : [
+                        'curva_nivel100'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Surface Digital Model compatible with scale 1:250,000 (SRTM)'),
+                    'layers' : [
+                        'mds250'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Contour lines compatible with scale 1:250,000'),
+                    'layers' : [
+                        'curva_nivel250'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                }
+            ],
+            'aux_layers' : [
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Brazilian Political Information'),
+                    'layers' : [
+                        'municipios',
+                        'estados',
+                        'capitais'
+                    ],
+                    'service' : 'mapcache',
+                    'service_type' : 'WMS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Brazilian Cities'),
+                    'layers' : [
+                        'municipios'
+                    ],
+                    'service' : 'auxlayers',
+                    'service_type' : 'WFS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Brazilian States'),
+                    'layers' : [
+                        'estados'
+                    ],
+                    'service' : 'auxlayers',
+                    'service_type' : 'WFS'
+                },
+                {
+                    'icon' : ':/plugins/DsgTools/icons/eb.png',
+                    'menu_entry' : self.tr('Brazilian State Capitals'),
+                    'layers' : [
+                        'capitais'
+                    ],
+                    'service' : 'auxlayers',
+                    'service_type' : 'WFS'
+                }
+            ]
+        }
+
     
     def initGui(self):
         self.topocharts = self.manager.addMenu(u'topocharts', self.tr('Topographic Charts'),'eb.png', parentMenu = self.menu)
+        self.load_menus('topocharts', self.topocharts)
         self.coverageLyr = self.manager.addMenu(u'coverageLyr', self.tr('Coverage Layers'),'eb.png', parentMenu = self.menu)
+        self.load_menus('coverage', self.coverageLyr)
+        self.terrainLyr = self.manager.addMenu(u'terrainLyr', self.tr('Terrain Information'),'eb.png', parentMenu = self.menu)
+        self.load_menus('terrain', self.terrainLyr)
+        self.auxLyr = self.manager.addMenu(u'auxLyr', self.tr('Auxiliar Information'),'eb.png', parentMenu = self.menu)
+        self.load_menus('aux_layers', self.auxLyr)
         self.indexes = self.manager.addMenu(u'indexes', self.tr('Product Indexes'),'eb.png', parentMenu = self.menu)
         self.rasterIndex = self.manager.addMenu(u'rasterindex', self.tr('Topographic Charts'),'eb.png', parentMenu = self.indexes)
         self.vectorIndex = self.manager.addMenu(u'vectorindex', self.tr('Vectorial Charts'),'eb.png', parentMenu = self.indexes)
         self.loadMenus()
 
+    def loadServiceLayer(self, legendName, service, layerList, serviceType='WMS'):
+        urlWithParams = self.BDGExRequestHandler.get_url_string(service, layerList, serviceType)
+        if not urlWithParams:
+            return
+        if serviceType == 'WMS':
+            self.iface.addRasterLayer(urlWithParams, legendName, serviceType.lower())
+        if serviceType == 'WFS':
+            self.iface.addVectorLayer(urlWithParams, legendName, serviceType.lower())
+    
+    def load_menus(self, menu_type, parentMenu):
+        for serviceDict in self.availableServices[menu_type]:
+            callback = partial(
+                self.loadServiceLayer,
+                legendName=serviceDict['menu_entry'],
+                service=serviceDict['service'],
+                layerList=serviceDict['layers'],
+                serviceType=serviceDict['service_type']
+                )
+            action = self.manager.add_action(
+                icon_path=serviceDict['icon'],
+                text=serviceDict['menu_entry'],
+                callback= callback,
+                parent=parentMenu,
+                add_to_menu=False,
+                add_to_toolbar=False
+                )
+            parentMenu.addAction(action)
+
+
     def loadMenus(self):
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:250,000'),
-            callback=self.load250kLayer,
-            parent=self.topocharts,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.topocharts.addAction(action)
-        
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:100,000'),
-            callback=self.load100kLayer,
-            parent=self.topocharts,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.topocharts.addAction(action)
-        
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:50,000'),
-            callback=self.load50kLayer,
-            parent=self.topocharts,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.topocharts.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('1:25,000'),
-            callback=self.load25kLayer,
-            parent=self.topocharts,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.topocharts.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('Landsat 7'),
-            callback=self.loadLandsatLayer,
-            parent=self.coverageLyr,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.coverageLyr.addAction(action)
-
-        icon_path = ':/plugins/DsgTools/icons/eb.png'
-        action = self.manager.add_action(
-            icon_path,
-            text=self.tr('RapidEye'),
-            callback=self.loadRapidEyeLayer,
-            parent=self.coverageLyr,
-            add_to_menu=False,
-            add_to_toolbar=False)
-        self.coverageLyr.addAction(action)
 
         icon_path = ':/plugins/DsgTools/icons/eb.png'
         action = self.manager.add_action(
@@ -195,69 +377,6 @@ class BDGExGuiManager(QObject):
 
     def unload(self):
         pass
-
-    def loadRapidEyeLayer(self):
-        """
-        Loads rapideye layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('RapidEye')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, 'RapidEye','wms')
-
-    def loadLandsatLayer(self):
-        """
-        Loads landsat layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('Landsat7')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, 'Landsat7', 'wms')
-    
-    def loadMultiScaleLayer(self):
-        """
-        Loads landsat layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('1:MultiScale')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, 'MultiScale', 'wms')
-
-    def load250kLayer(self):
-        """
-        Loads landsat layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('1:250k')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, '1:250k', 'wms')
-    
-    def load100kLayer(self):
-        """
-        Loads 100k layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('1:100k')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, '1:100k', 'wms')
-
-    def load50kLayer(self):
-        """
-        Loads 50k layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('1:50k')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, '1:50k', 'wms')
-
-    def load25kLayer(self):
-        """
-        Loads 25k layer
-        """
-        urlWithParams = self.BDGExTools.getTileCache('1:25k')
-        if not urlWithParams:
-            return
-        self.iface.addRasterLayer(urlWithParams, '1:25k', 'wms')
 
     def load250kRasterIndex(self):
         """

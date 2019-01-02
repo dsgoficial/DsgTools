@@ -33,22 +33,34 @@ from qgis.PyQt.QtCore import QSettings, QObject
 from qgis.PyQt.QtWidgets import QMessageBox
 
 
-class BDGExTools(QObject):
+class BDGExRequestHandler(QObject):
     def __init__(self,parent=None):
         """
         Constructor
         """
-        super(BDGExTools, self).__init__()
-
-        self.wmtsDict = dict()
-        self.wmtsDict['MultiScale']='ctm250'
-        self.wmtsDict['1:250k']='ctm250'
-        self.wmtsDict['1:100k']='ctm100'
-        self.wmtsDict['1:50k']='ctm50'
-        self.wmtsDict['1:25k']='ctm25'
-        self.wmtsDict['Landsat7']='landsat7'
-        self.wmtsDict['RapidEye']='rapideye'
-        self.capabilitiesDict = dict()
+        super(BDGExRequestHandler, self).__init__()
+        self.availableServicesDict = {
+            'mapcache' : {
+                'url' : 'http://bdgex.eb.mil.br/mapcache',
+                'services' : {
+                    'WMS' : dict()
+                }
+            },
+            'mapaindice' : {
+                'url' : 'http://bdgex.eb.mil.br/cgi-bin/mapaindice',
+                'services': {
+                    'WMS' : dict(),
+                    'WFS' : dict()
+                }
+            },
+            'auxlayers' : {
+                'url' : 'http://bdgex.eb.mil.br/cgi-bin/geoportal',
+                'services' : {
+                    'WMS' : dict(),
+                    'WFS' : dict()
+                }
+            }
+        }
 
     def __del__(self):
         pass
@@ -94,7 +106,38 @@ class BDGExTools(QObject):
         settings.endGroup()
         return (enabled, host, port, user, password, type, urlsList)
 
-    def getCapabilities(self, url):
+    def get_url_string(self, service, layerList, serviceType):
+        """
+        Returns QGIS url service string.
+        """
+        if service not in self.availableServicesDict:
+            raise Exception('Service {service} not available'.format(service=service))
+        if serviceType not in self.availableServicesDict[service]['services']:
+            raise Exception(
+                'Invalid request {service_type} for service {service}'.format(
+                    service=service,
+                    service_type=serviceType
+                    )
+                )
+        url = self.availableServicesDict[service]['url']
+        if not self.availableServicesDict[service]['services'][serviceType]:
+            self.availableServicesDict[service]['services'][serviceType] = self.getCapabilitiesDict(service, url, service_type=serviceType)
+        return self.getRequestString(
+            layerList,
+            url,
+            self.availableServicesDict[service]['services'][serviceType][layerList[0]],
+            serviceType
+            )
+
+    def getCapabilitiesDict(self, service, url, service_type='WMS'):
+        capabilities_url = "{url}?service={service_type}&request=GetCapabilities".format(
+            url=self.availableServicesDict[service]['url'],
+            service_type=service_type
+        )
+        myDom = self.requestGetCapabilitiesXML(capabilities_url)
+        return self.parseCapabilitiesXML(myDom, url)
+
+    def requestGetCapabilitiesXML(self, url):
         """
         Gets url capabilities
         """
@@ -116,7 +159,7 @@ class BDGExTools(QObject):
             return None
         return myDom
     
-    def parseCapabilitiesXML(self, capabilitiesDom):
+    def parseCapabilitiesXML(self, capabilitiesDom, url):
         """
         Parses GetCapabilities to get info.
         Return dictionary has the format:
@@ -144,37 +187,35 @@ class BDGExTools(QObject):
             imgFormat = tile.getElementsByTagName('Format')[0].childNodes[0].nodeValue
             jsonDict[itemName]['Format'] = imgFormat
         return jsonDict
-    
-    def getCapabilitiesDict(self):
-        url = "http://www.geoportal.eb.mil.br/mapcache?request=GetCapabilities"
-        myDom = self.getCapabilities(url)
-        return self.parseCapabilitiesXML(myDom)
 
-
-    def getRequestStringFromMapCache(self, layerName):
+    def getRequestString(self, layerList, url, infoDict, serviceType):
         """
         Makes the requisition to the tile cache service
         """
-        if self.capabilitiesDict == dict():
-            self.capabilitiesDict = self.getCapabilitiesDict()
-        if layerName not in self.capabilitiesDict and layerName != 'ctm_multi':
-            raise 'Invalid name request'
-        if layerName == 'ctm_multi':
-            ctmList = [i for i in self.capabilitiesDict.keys() if 'ctm' in i]
-            ctmList.sort(key = lambda x : int(x.replace('ctm','')))
-            layer_tag = 'layers&'+'layers&'.join(ctmList)
-            styles_tag = '&'.join(['styles']*len(ctmList))
+        if layerList == []:
+            raise Exception('Invalid name request')
+        elif len(layerList) > 1:
+            # ctmList = [i for i in capabilitiesDict.keys() if 'ctm' in i]
+            # ctmList.sort(key = lambda x : int(x.replace('ctm','')))
+            layer_tag = 'layers='+'&layers='.join(layerList)
+            styles_tag = '&'.join(['styles']*len(layerList))
         else:
-            layer_tag = 'layers={layer_name}'.format(layer_name=layerName)
+            layer_tag = 'layers={layer_name}'.format(layer_name=layerList[0])
             styles_tag = 'styles'
-
-        requestString = "crs={epsg}&dpiMode=7&featureCount=10&format={img_format}&{layer_tag}&{styles_tag}&url={url}".format(
-            epsg=self.capabilitiesDict[layerName]['SRS'],
-            img_format=self.capabilitiesDict[layerName]['Format'],
-            layer_tag=layer_tag,
-            styles_tag=styles_tag,
-            url='http://bdgex.eb.mil.br/mapcache'
-        )
-
-        
+        if serviceType == 'WMS':
+            requestString = "crs={epsg}&dpiMode=7&featureCount=10&format={img_format}&{layer_tag}&{styles_tag}&url={url}".format(
+                epsg=infoDict['SRS'],
+                img_format=infoDict['Format'],
+                layer_tag=layer_tag,
+                styles_tag=styles_tag,
+                url=url
+            )
+        if serviceType == 'WFS':
+            requestString = """pagingEnabled='true' restrictToRequestBBOX='1' srsname='{epsg}' typename='{layer_name}' url='{url}' version='auto' table="" sql=""".format(
+                epsg=infoDict['SRS'],
+                layer_name=layerList[0],
+                url=url
+            )
+        else:
+            requestString == ''
         return requestString
