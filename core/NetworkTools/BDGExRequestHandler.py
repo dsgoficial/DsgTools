@@ -135,7 +135,12 @@ class BDGExRequestHandler(QObject):
             service_type=service_type
         )
         myDom = self.requestGetCapabilitiesXML(capabilities_url)
-        return self.parseCapabilitiesXML(myDom, url)
+        if service_type == 'WMS':
+            return self.parseCapabilitiesXML(myDom)
+        elif service_type == 'WFS':
+            return self.parse_wfs_capabilities(myDom)
+        else:
+            return {}
 
     def requestGetCapabilitiesXML(self, url):
         """
@@ -159,7 +164,7 @@ class BDGExRequestHandler(QObject):
             return None
         return myDom
     
-    def parseCapabilitiesXML(self, capabilitiesDom, url):
+    def parseCapabilitiesXML(self, capabilitiesDom):
         """
         Parses GetCapabilities to get info.
         Return dictionary has the format:
@@ -187,6 +192,20 @@ class BDGExRequestHandler(QObject):
             imgFormat = tile.getElementsByTagName('Format')[0].childNodes[0].nodeValue
             jsonDict[itemName]['Format'] = imgFormat
         return jsonDict
+    
+    def parse_wfs_capabilities(self, capabilitiesDom):
+        jsonDict = dict()
+        for node in capabilitiesDom.getElementsByTagName('FeatureType'):
+            newItem = dict()
+            name = node.getElementsByTagName('Name')[0].childNodes[0].nodeValue
+            epsg = node.getElementsByTagName('DefaultSRS')[0].childNodes[0].nodeValue
+            newItem = {
+                'Name' : name,
+                'SRS' : 'EPSG:{code}'.format(code=epsg.split('::')[-1])
+            }
+            jsonDict[name] = newItem
+        return jsonDict
+
 
     def getRequestString(self, layerList, url, infoDict, serviceType):
         """
@@ -213,7 +232,7 @@ class BDGExRequestHandler(QObject):
         if serviceType == 'WFS':
             requestString = """pagingEnabled='true' restrictToRequestBBOX='1' srsname='{epsg}' typename='{layer_name}' url='{url}' version='auto' table="" sql=""".format(
                 epsg=infoDict['SRS'],
-                layer_name=layerList[0],
+                layer_name=infoDict['Name'],
                 url=url
             )
         else:
