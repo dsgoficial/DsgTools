@@ -23,6 +23,7 @@
 from __future__ import absolute_import
 from functools import partial
 
+from qgis.core import QgsVectorLayer, QgsProject
 from qgis.PyQt.QtCore import QObject 
 from DsgTools.core.NetworkTools.BDGExRequestHandler import BDGExRequestHandler
 
@@ -271,7 +272,8 @@ class BDGExGuiManager(QObject):
         if serviceType == 'WMS':
             self.iface.addRasterLayer(urlWithParams, legendName, serviceType.lower())
         if serviceType == 'WFS':
-            self.iface.addVectorLayer(urlWithParams, legendName, serviceType.lower())
+            vlayer = QgsVectorLayer(urlWithParams, legendName, serviceType)
+            QgsProject.instance().addMapLayer(vlayer)
     
     def load_menus(self, menu_type, parentMenu):
         for serviceDict in self.availableServices[menu_type]:
