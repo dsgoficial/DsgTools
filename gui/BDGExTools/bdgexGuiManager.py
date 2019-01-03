@@ -57,7 +57,8 @@ class BDGExGuiManager(QObject):
                         'ctm250'
                     ],
                     'service' : 'mapcache',
-                    'service_type' : 'WMS'
+                    'service_type' : 'WMS',
+                    'separator' : True
                 },
                 {
                     'icon' : ':/plugins/DsgTools/icons/eb.png',
@@ -160,7 +161,8 @@ class BDGExGuiManager(QObject):
                         'curva_nivel25'
                     ],
                     'service' : 'mapcache',
-                    'service_type' : 'WMS'
+                    'service_type' : 'WMS',
+                    'separator' : True
                 },
                 {
                     'icon' : ':/plugins/DsgTools/icons/eb.png',
@@ -178,7 +180,8 @@ class BDGExGuiManager(QObject):
                         'curva_nivel50'
                     ],
                     'service' : 'mapcache',
-                    'service_type' : 'WMS'
+                    'service_type' : 'WMS',
+                    'separator' : True
                 },
                 {
                     'icon' : ':/plugins/DsgTools/icons/eb.png',
@@ -218,7 +221,8 @@ class BDGExGuiManager(QObject):
                         'capitais'
                     ],
                     'service' : 'mapcache',
-                    'service_type' : 'WMS'
+                    'service_type' : 'WMS',
+                    'separator' : True
                 },
                 {
                     'icon' : ':/plugins/DsgTools/icons/eb.png',
@@ -370,6 +374,8 @@ class BDGExGuiManager(QObject):
                 add_to_toolbar=False
                 )
             parentMenu.addAction(action)
+            if 'separator' in serviceDict and serviceDict['separator']:
+                parentMenu.addSeparator()
 
     def unload(self):
         pass
