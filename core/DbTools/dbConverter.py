@@ -379,18 +379,18 @@ class DbConverter(QObject):
                                         conversionMap=conversionStep,
                                         feedback=feedback
                                         )
-                    if fanOut:
-                        # self.fanOut(***)
-                        pass
-                    else:
-                        translatedLayer.startEditing()
-                        fields = [f.name() for f in inputLayers[layer].fields()]
-                        removeFields = [translatedLayer.fields().indexFromName(f.name())\
-                                        for f in translatedLayer.fields() if f.name() not in fields]
-                        translatedLayer.deleteAttributes(removeFields)
-                        translatedLayer.updateFields()
-                        translatedLayer.commitChanges()
-                        inputLayersMap[key][layer] = translatedLayer
+                    # if fanOut:
+                    #     # self.fanOut(***)
+                    #     pass
+                    # else:
+                    translatedLayer.startEditing()
+                    fields = [f.name() for f in inputLayers[layer].fields()]
+                    removeFields = [translatedLayer.fields().indexFromName(f.name())\
+                                    for f in translatedLayer.fields() if f.name() not in fields]
+                    translatedLayer.deleteAttributes(removeFields)
+                    translatedLayer.updateFields()
+                    translatedLayer.commitChanges()
+                    inputLayersMap[key][layer] = translatedLayer
         return inputLayersMap
 
     def mapFeatures(self, layersMap, outputMapLayer, featureConversionMap=None):
@@ -418,7 +418,7 @@ class DbConverter(QObject):
                 coordinateTransformer = self.coordinateTransformers[k]
                 param = lh.getDestinationParameters(vl)
                 for feature in vl.getFeatures(QgsFeatureRequest()):
-                    featuresMap[layer] += fh.handleConvertedFeature(
+                    featuresMap[layer] |= fh.handleConvertedFeature(
                                                 feat=feature,
                                                 lyr=vl,
                                                 parameterDict=param,
