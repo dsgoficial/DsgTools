@@ -412,15 +412,16 @@ class DbConverter(QObject):
             for layer, vl in layersMap.items():
                 if vl.featureCount() == 0:
                     continue
-                k = "{0}->{1}".format(vl.crs().authid(), outputMapLayer[layer].crs().authid())
+                outuputLayer = outputMapLayer[layer]
+                k = "{0}->{1}".format(vl.crs().authid(), outuputLayer.crs().authid())
                 if k not in self.coordinateTransformers:
-                    self.coordinateTransformers[k] = lh.getCoordinateTransformer(inputLyr=vl, outputLyr=outputMapLayer[layer])
+                    self.coordinateTransformers[k] = lh.getCoordinateTransformer(inputLyr=vl, outputLyr=outuputLayer)
                 coordinateTransformer = self.coordinateTransformers[k]
                 param = lh.getDestinationParameters(vl)
                 for feature in vl.getFeatures(QgsFeatureRequest()):
                     featuresMap[layer] |= fh.handleConvertedFeature(
                                                 feat=feature,
-                                                lyr=vl,
+                                                lyr=outuputLayer,
                                                 parameterDict=param,
                                                 coordinateTransformer=coordinateTransformer
                                                 )
