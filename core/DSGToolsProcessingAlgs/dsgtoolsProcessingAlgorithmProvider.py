@@ -101,6 +101,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm i
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
     CreateFrameAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
+    FileInventoryAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -151,7 +154,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 IdentifyDuplicatedLinesOnCoverageAlgorithm(),
                 IdentifyDuplicatedPointsOnCoverageAlgorithm(),
                 RunRemoteFMEAlgorithm(),
-                CreateFrameAlgorithm()]
+                CreateFrameAlgorithm(),
+                FileInventoryAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
