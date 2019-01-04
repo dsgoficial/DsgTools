@@ -147,21 +147,13 @@ class BDGExRequestHandler(QObject):
         Gets url capabilities
         """
         self.setUrllibProxy(url)
-        try:
-            getCapa = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"})
-            resp = urllib.request.urlopen(getCapa)
-            response = resp.read()
-        except urllib.error.URLError as e:
-            QMessageBox.critical(None, self.tr("URL Error!"), '{0}\nReason: {1}'.format(e.args, e.reason))
-            return None
-        except urllib.error.HTTPError as e:
-            QMessageBox.critical(None, self.tr("HTTP Error!"), '{0}\nReason: {1}'.format(e.code, e.msg))
-            return None
+        getCapa = urllib.request.Request(url, headers={'User-Agent' : "Magic Browser"})
+        resp = urllib.request.urlopen(getCapa)
+        response = resp.read()
         try:
             myDom=parseString(response)
         except:
-            QMessageBox.critical(None, self.tr("Parse Error!"), self.tr('Invalid GetCapabilities response: \n{0}').format(response))
-            return None
+            raise Exception('Parse Error')
         return myDom
     
     def parseCapabilitiesXML(self, capabilitiesDom):
