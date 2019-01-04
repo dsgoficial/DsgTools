@@ -22,9 +22,9 @@
  ***************************************************************************/
 """
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.Factories.ThreadFactory.threadFactory import ThreadFactory
 from ...algRunner import AlgRunner
 import processing, os, requests
-from osgeo import gdal, ogr
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -52,7 +52,9 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterDefinition,
                        QgsProcessingParameterType,
                        QgsProcessingParameterMatrix,
-                       QgsProcessingParameterFile)
+                       QgsProcessingParameterFile,
+                       QgsCoordinateReferenceSystem,
+                       QgsFields)
 
 class FileInventoryAlgorithm(QgsProcessingAlgorithm):
     INPUT_FOLDER = 'INPUT_FOLDER'
@@ -68,8 +70,6 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         """
         Parameter setting.
         """
-        gdal.DontUseExceptions()
-        ogr.DontUseExceptions()
         self.addParameter(
             QgsProcessingParameterFile(
                 self.INPUT_FOLDER,
@@ -131,14 +131,38 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
+        inventory = ThreadFactory().makeProcess('inventory')
         inputFolder = self.parameterAsString(parameters, self.INPUT_FOLDER, context)
-        matrixItems = self.parameterAsMatrix(parameters, self.FILE_FORMATS, context)
+        if inputFolder is None:
+            raise QgsProcessingException(self.tr('Invalid input folder.'))
+        file_formats = self.parameterAsMatrix(parameters, self.FILE_FORMATS, context)
         copyFolder = self.parameterAsString(parameters, self.COPY_FOLDER, context)
-        feedback.pushInfo(inputFolder)
-        feedback.pushInfo(','.join(matrixItems))
-        feedback.pushInfo(copyFolder)
+        onlyGeo = self.parameterAsBool(parameters, self.ONLY_GEO, context)
+        copyFiles = self.parameterAsBool(parameters, self.COPY_FILES, context)
+        sinkFields = QgsFields()
+        for field in inventory.layer_attributes:
+            sinkFields.append(field)
 
-        return {}
+        (output_sink, output_dest_id) = self.parameterAsSink(
+                parameters,
+                self.OUTPUT,
+                context,
+                sinkFields,
+                QgsWkbTypes.Polygon,
+                QgsCoordinateReferenceSystem(4326)
+            )
+        
+        featList = inventory.make_inventory_from_processing(
+                inputFolder,
+                file_formats,
+                make_copy=copyFiles,
+                onlyGeo=onlyGeo,
+                destination_folder=copyFolder
+            )
+
+        output_sink.addFeatures(featList, QgsFeatureSink.FastInsert)
+
+        return {'OUTPUT':output_dest_id}
 
     def name(self):
         """
