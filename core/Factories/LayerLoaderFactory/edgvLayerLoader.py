@@ -268,7 +268,8 @@ class EDGVLayerLoader(QObject):
         :return: (QgsVectorLayer) vector layer. 
         """
         try:
-            # self.provider is added on children classes
-            return QgsVectorLayer(self.uri.uri(), layer, self.provider)
+            # self.provider is added on children classes]
+            schema, table = self.abstractDb.getTableSchema(layer)
+            return QgsVectorLayer(self.uri.uri(), table, self.provider)
         except:
             return None
