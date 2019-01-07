@@ -38,8 +38,9 @@ FORM_CLASS, _ = uic.loadUiType(os.path.join(
 
 class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     # enum for column ordering
-    COLUMN_COUNT = 8
-    InDs, Filter, SpatialFilterFanOut, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
+    COLUMN_COUNT = 7
+    # InDs, Filter, SpatialFilterFanOut, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
+    InDs, Filter, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
 
     def __init__(self, manager, parentMenu, parent=None):
         """
@@ -122,27 +123,24 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Replicates first row value to all the other rows from a selected column.
         :param col: (int) column to have its first row replicated.
         """
-        if col in [DatasourceConversion.OutDs, DatasourceConversion.ConversionMode, DatasourceConversion.SpatialFilterFanOut]:
+        if col in [DatasourceConversion.OutDs, DatasourceConversion.ConversionMode]: #, DatasourceConversion.SpatialFilterFanOut]:
             value = None
             for row in range(self.tableWidget.rowCount()):
-                if value is None:
-                    # if it's first row, need to check if widget is activated
-                    widget = self.getRowContents(row=row)[col]
-                    if widget.isEnabled():
-                        # if widget is enabled, capture its value
-                        if col == DatasourceConversion.SpatialFilterFanOut:
-                            value = self.getRowContents(row=row)[col].isChecked()
-                        else:
-                            value = self.getRowContents(row=row)[col].currentText()
-                else:
-                    widget = self.getRowContents(row=row)[col]
-                    # if value is captured from first activated widget, set it to all following activated widgets
-                    if widget.isEnabled():
-                        # if widget is active, set its value
-                        if col == DatasourceConversion.SpatialFilterFanOut:
-                            widget.setChecked(value)
-                        else:
-                            widget.setCurrentText(value)
+                widget = self.getRowContents(row=row)[col]
+                if widget.isEnabled():
+                    if value is None:
+                        # # if widget is enabled, capture its value
+                        # if col == DatasourceConversion.SpatialFilterFanOut:
+                        #     value = self.getRowContents(row=row)[col].isChecked()
+                        # else:
+                        value = widget.currentText()
+                    else:
+                        # if value is captured from first activated widget, set it to all following activated widgets
+                        # # if widget is active, set its value
+                        # if col == DatasourceConversion.SpatialFilterFanOut:
+                        #     widget.setChecked(value)
+                        # else:
+                        widget.setCurrentText(value)
 
     def resetTable(self, enabled=False):
         """
@@ -161,7 +159,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         headerDict = {
             DatasourceConversion.InDs : self.tr("Input"),
             DatasourceConversion.Filter : self.tr("Filters"),
-            DatasourceConversion.SpatialFilterFanOut : self.tr("Spatial Fan-out"),
+            # DatasourceConversion.SpatialFilterFanOut : self.tr("Spatial Fan-out"),
             DatasourceConversion.InEdgv : self.tr("In: EDGV Version"),
             DatasourceConversion.OutDs : self.tr("Output"),
             DatasourceConversion.outCrs : self.tr("Out: CRS"),
@@ -214,7 +212,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # set each widget to their column
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.OutDs, outDsComboBox)
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.Filter, filterPushButton)
-        self.tableWidget.setCellWidget(lastRow, DatasourceConversion.SpatialFilterFanOut, fanOutCheckBox)
+        # self.tableWidget.setCellWidget(lastRow, DatasourceConversion.SpatialFilterFanOut, fanOutCheckBox)
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.ConversionMode, convModeComboBox)
         # start filter widget
         self.prepareRowFilterDialog(row=lastRow)
@@ -368,15 +366,16 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             _filter = self.tableWidget.cellWidget(row, DatasourceConversion.Filter)
         except:
             _filter = None
-        try:
-            spatialFanOut = self.tableWidget.cellWidget(row, DatasourceConversion.SpatialFilterFanOut)
-        except:
-            spatialFanOut = None
+        # try:
+        #     spatialFanOut = self.tableWidget.cellWidget(row, DatasourceConversion.SpatialFilterFanOut)
+        # except:
+        #     spatialFanOut = None
         try:
             outCrs = self.tableWidget.cellWidget(row, DatasourceConversion.outCrs)
         except:
             outCrs = None
-        return [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
+        # return [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
+        return [inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode]
 
     def getInputDatasourceRow(self, inputDatasourceWidget):
         """
@@ -387,9 +386,11 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         inputText = inputDatasourceWidget.groupBox.title()
         for row in range(self.tableWidget.rowCount()):
-            inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            # inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+            inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
             if inputText in inDs:
-                return row, [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
+                # return row, [inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode]
+                return row, [inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode]
         return -1, []
 
     def updateFilterSettings(self, containerWidget):
@@ -411,7 +412,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             newFilter.setIcon(filterIcon)
             # set it as the new widget to cell
             self.tableWidget.setCellWidget(row, DatasourceConversion.Filter, newFilter)
-            contents[DatasourceConversion.SpatialFilterFanOut].setEnabled(bool(containerWidget.filters['spatial_filter']['layer_name']))
+            # contents[DatasourceConversion.SpatialFilterFanOut].setEnabled(bool(containerWidget.filters['spatial_filter']['layer_name']))
             # reset filter dialog
             self.prepareRowFilterDialog(row=row)
 
@@ -606,7 +607,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param row: (int) row containing dataset information.
         """
         # get row information
-        inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+        # inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
+        inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
         # retrieve input widget
         self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
         inWidget = self.inDs[inDs.split(':')[0]]
@@ -658,7 +660,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # get the row count from table widget and iterate over it
         for row in range(self.tableWidget.rowCount()):
             # get row contents
-            inDs, _, spatialFanOut, _, outDs, _, _, conversionMode = self.getRowContents(row=row)
+            # inDs, _, spatialFanOut, _, outDs, _, _, conversionMode = self.getRowContents(row=row)
+            inDs, _, _, outDs, _, _, conversionMode = self.getRowContents(row=row)
             # initiate this row's mapping dict and fill it
             rowMapping = dict()
             # get input information to be mapped - input datasource identification and filtering options
@@ -671,7 +674,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['outDs'] = containerWidget.connectionWidget.getDatasourcePath(),  # still to decide what to fill up in here
             rowMapping['outDs'] = rowMapping['outDs'][-1] # I DON'T KNOW WHY, BUT THAT'S THE ONLY WAY THIS COMES OUT AS A TUPLE.
             rowMapping['filter'] = inputFilteredLayers
-            rowMapping['spatialFanOut'] = spatialFanOut.isChecked()
+            # rowMapping['spatialFanOut'] = spatialFanOut.isChecked()
             # parameter indicating whether it is a new datasource
             rowMapping['createDs'] = self.tr('new') in outDs.currentText().split(':')[0]
             if self.tr('new') in outDs.currentText().split(':')[0]:
@@ -756,7 +759,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # it is assumed that containers' contents were already checked previously
         for row in range(self.tableWidget.rowCount()):
             # get row contents
-            inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
+            # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
+            inDsName, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
             # check if a conversion mode was selected
             if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
                 return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
