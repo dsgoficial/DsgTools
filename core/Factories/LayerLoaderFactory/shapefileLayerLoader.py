@@ -235,4 +235,6 @@ class ShapefileLayerLoader(EDGVLayerLoader):
         """
         # parent class reimplementation
         path = os.path.join(self.abstractDb.databaseName(), "{0}.shp".format(layer))
-        return QgsVectorLayer(path, layer, "ogr")
+        schema = layer.split('_')[0]
+        table = layer[len(schema) + 1:].lower()
+        return QgsVectorLayer(path, table, "ogr")

@@ -283,3 +283,40 @@ class AlgRunner:
         }
         output = processing.run("native:boundary", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
+
+    def runBuffer(self, inputLayer, distance, context, dissolve=False, endCapStyle=0, joinStyle=0, segments=5,\
+                 mitterLimit=2, feedback = None, outputLyr = 'memory:'):
+        parameters = {
+            'INPUT' : inputLayer,
+            'DISTANCE' : distance,
+            'DISSOLVE' : dissolve, 
+            'END_CAP_STYLE' : endCapStyle,
+            'JOIN_STYLE' : endCapStyle,
+            'SEGMENTS' : segments,
+            'MITER_LIMIT' : mitterLimit,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run("native:buffer", parameters, context = context, feedback = feedback)
+        return output['OUTPUT']
+    
+    def runIntersection(self, inputLyr, context, inputFields=None, outputLyr='memory:', overlayLyr=None, overlayFields=None, feedback=None):
+        inputFields = [] if inputFields is None else inputFields
+        overlayFields = [] if overlayFields is None else overlayFields
+        parameters = { 
+            'INPUT' : inputLyr, 
+            'INPUT_FIELDS' : inputFields, 
+            'OUTPUT' : outputLyr,
+            'OVERLAY' : overlayLyr,
+            'OVERLAY_FIELDS' : overlayFields 
+            }
+        output = processing.run("native:intersection", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']
+    
+    def runFilterExpression(self, inputLyr, expression, context, outputLyr='memory:', feedback=None):
+        parameters = {
+            'EXPRESSION' : expression,
+            'INPUT' : inputLyr,
+            'OUTPUT' : outputLyr
+            }
+        output = processing.run("native:extractbyexpression", parameters, context=context, feedback=feedback)
+        return output['OUTPUT']

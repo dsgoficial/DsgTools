@@ -72,6 +72,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         versions = [
             self.tr("EDGV Version..."),
             "EDGV 2.1.3",
+            "EDGV 2.1.3 F Ter",
             "EDGV 2.1.3 Pro",
             "EDGV 3.0",
             "EDGV 3.0 Pro"
