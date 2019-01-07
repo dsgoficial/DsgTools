@@ -235,6 +235,5 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         schema = layer.split('_')[0]
         table = layer[len(schema) + 1:]
         lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
-        table = layer[len(schema) + 1:]
         self.setDataSource('', layer, geomColumn, '')
-        return QgsVectorLayer(self.uri.uri(), tableName, self.provider)
+        return QgsVectorLayer(self.uri.uri(), table, self.provider)
