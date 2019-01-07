@@ -91,9 +91,10 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
                 optional = True
             )
         )
-        self.modes = [self.tr('Only features from input that intersect features from filter layer'),
+        self.modes = [self.tr('Select a spatial filtering option...'),
+                      self.tr('Only features from input that intersect features from filter layer'),
                       self.tr('Clip features from input with features from filter layer and take inside features'),
-                      self.tr('Clip features from input with features from filter layer and take outside features')
+                      self.tr('Clip features from input with features from buffer of filter layer and take inside features')
                       ]
 
         self.addParameter(
@@ -125,18 +126,59 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        layerHandler = LayerHandler()
+        inputLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.INPUT,
+            context
+            )
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        outputLyr = self.parameterAsVectorLayer(parameters, self.OUTPUT, context)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                    )
+                )
+        outputLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.OUTPUT,
+            context
+            )
         if outputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.OUTPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.OUTPUT
+                    )
+                )
         if inputLyr == outputLyr:
-            raise QgsProcessingException(self.tr('Input must be different from output!'))
-        inputExpression = self.parameterAsExpression(parameters, self.INPUT_FILTER_EXPRESSION, context)
-        filterLyr = self.parameterAsVectorLayer(parameters, self.FILTER_LAYER, context)
+            raise QgsProcessingException(
+                self.tr('Input must be different from output!')
+                )
+        inputExpression = self.parameterAsExpression(
+            parameters,
+            self.INPUT_FILTER_EXPRESSION,
+            context
+            )
+        filterLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.FILTER_LAYER,
+            context
+            )
+        behavior = self.parameterAsEnum(
+            parameters,
+            self.BEHAVIOR,
+            context
+            )
         
-
+        prepairedLyr = layerHandler.prepareConversion(
+            inputLyr=inputLyr,
+            context=context,
+            inputExpression=inputExpression,
+            filterLyr=filterLyr,
+            behavior=behavior,
+            feedback=feedback
+        )
 
         
 
@@ -170,9 +212,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         """
         Returns the unique ID of the group this algorithm belongs to. This
         string should be fixed for the algorithm, and must not be localised.
-        The group id should be unique within each provider. Group id should
-        contain lowercase alphanumeric characters only and no spaces or other
-        formatting characters.
+        The group id should be unique within each provider.
         """
         return 'DSGTools: Other Algorithms'
 

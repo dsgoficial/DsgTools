@@ -711,82 +711,55 @@ class LayerHandler(QObject):
         #2. 
         pass
 
-    def clipLayer(self, reference, target, parameter, request, fanOut, feedback=None):
+    def filterByExpression(self, layer, expression, context, feedback=None):
         """
-        Clips a given target layer and keeps inside, outside or both (?) sides.
-        :param reference: (QgsVectorLayer) reference feature.
-        :param target: (QgsVectorLayer) target layer.
-        :param parameter: (str) indication of which part should be kept.
-        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
-        :param fanOut: (bool) indicates whether output should be fanned-out.
-        :return: (list-of-QgsFeature) spatially filtered layer.
+        Filters a given layer using a filtering expression. The original layer is not modified.
+        :param layer: (QgsVectorLayer) layer to be filtered.
+        :param expression: (str) expression to be used as filter.
+        :param context: (QgsProcessingContext) processing context in which algorithm should be executed.
+        :param feedback: (QgsFeedback) QGIS feedback component (progress bar).
+        :return: (QgsVectorLayer) filtered layer.
         """
-        outMap = dict()
-        # cortar camada com camada
-        result = AlgRunner().runSnapLayerOnLayer(target, reference, 0.1, QgsProcessingContext(), feedback=feedback)
-        refFeatList = list(reference.getFeatures()) if request is None else list(reference.getFeatures(request))
-        if fanOut:
-            for feat in result.getFeatures():
-                for ref_feat in refFeatList:
-                    if ref_feat.id() not in outMap:
-                        outMap[ref_feat.id()] = []
-                    if ref_feat.geometry().contains(feat.geometry()):
-                        # separete features by their respective 'reference layer feature'
-                        outMap[ref_feat.id()].append(feat)
-                        break
+        return AlgRunner().runFilterExpression(
+                inputLyr=layer,
+                context=context,
+                expression = expression,
+                feedback=feedback
+            )
+
+    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None,\
+                         behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
+        algRunner = AlgRunner()
+        if feedback is not None:
+            count = 0
+            if inputExpression is not None:
+                count += 1
+            if filterLyr is not None:
+                count += 1
+                if behavior == 3:
+                    count += 1
+            elif count == 0:
+                return inputLyr
+            multiStepFeedback = QgsProcessingMultiStepFeedback(count, feedback)
         else:
-            outMap[0] = []
-            { outMap[0].append[feat] for feat in result.getFeatures() }
-        return outMap
-
-    def bufferLayer(self, reference, target, parameter, request, fanOut):
-        """
-        Clips a given target layer and keeps inside, outside or both (?) sides.
-        :param reference: (QgsFeature) reference feature.
-        :param target: (QgsVectorLayer) target layer.
-        :param parameter: (float) buffer size.
-        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
-        :param fanOut: (bool) indicates whether output should be fanned-out.
-        :return: (QgsVectorLayer) spatially filtered layer.
-        """
-        result = None
-        return result
-
-    def intersectsLayer(self, reference, target, request, fanOut):
-        """
-        Gets all features from a target layer that intersects reference feature.
-        :param reference: (QgsFeature) reference feature.
-        :param target: (QgsVectorLayer) target layer.
-        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
-        :param fanOut: (bool) indicates whether output should be fanned-out.
-        :return: (QgsVectorLayer) spatially filtered layer.
-        """
-        result = None
-        return result
-
-    def spatialFilter(self, reference, target, predicate, parameter=None, request=None, fanOut=False):
-        """
-        Spatially filters a target layer by a given spatial predicate regarding a given reference feature. 
-        :param reference: (QgsFeature) reference feature.
-        :param target: (QgsVectorLayer) target layer.
-        :param predicate: (str) spatial predicate to be applied.
-        :param request: (QgsFeatureRequest) feature request to be applied to reference layer.
-        :param parameter: (object) predicate's application parameter.
-        :param fanOut: (bool) indicates whether output should be fanned-out.
-        :return: (QgsVectorLayer) spatially filtered layer.
-        """
-        methods = {
-            self.tr('Clip') : lambda : self.clipLayer(reference=reference, target=target, parameter=parameter, request=request, fanOut=fanOut),
-            self.tr('Buffer') : lambda : self.bufferLayer(reference=reference, target=target, parameter=parameter, request=request, fanOut=fanOut),
-            self.tr('Intersects') : lambda : self.intersectsLayer(reference=reference, target=target, request=request, fanOut=fanOut)
-        }
-        return methods[predicate]() if predicate in methods else None
-    
-    def createFrame(self, layer, indexAttr, index, feedback=None):
-        """
-        Creates frame on layer and stores index on indexAttr.
-        """
-        if feedback is not None and feedback.isCanceled():
-            return
-        
-
+            multiStepFeedback = None
+        localLyr = inputLyr
+        currentStep = 0
+        if inputExpression is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            localLyr = algRunner.runFilterExpression(
+                inputLyr=localLyr,
+                context=context,
+                expression = inputExpression,
+                feedback=multiStepFeedback
+            )
+            currentStep+=1
+        if filterLyr is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            if behavior == 3:
+                filterLyr = algRunner.runBuffer(filterLyr, bufferRadius, context, feedback=multiStepFeedback)
+                currentStep += 1
+            localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
+        return localLyr
