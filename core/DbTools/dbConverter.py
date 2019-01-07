@@ -116,12 +116,12 @@ class DbConverter(QObject):
         Creates a dataset from a set of parameters.
         :param parameters: (dict) dict with all necessary parameters for a supported drivers.
         """
-        if self.connectToPostgis(parameters=parameters) is not None:
+        if self.connectToDb(parameters=parameters) is not None:
             raise Exception(self.tr("Dataset {0} already exists.").format(parameters["db"]))
         driverName, createParam = {
             DsgEnums.DriverPostGIS : lambda : ("QPSQL", self.getDefaultPgDb(parameters['host'])),
-            DsgEnums.DriverSpatiaLite : lambda : ("QSQLITE", parameters["path"]),
-            DsgEnums.DriverGeopackage : lambda : ("GPKG", parameters["path"]),
+            DsgEnums.DriverSpatiaLite : lambda : ("QSQLITE", os.path.dirname(parameters["path"])),
+            DsgEnums.DriverGeopackage : lambda : ("GPKG", os.path.dirname(parameters["path"])),
             DsgEnums.DriverShapefile : lambda : ("SHP", parameters["path"])
         }[parameters['driver']]()
         dbCreator = DbCreatorFactory().createDbCreatorFactory(driverName=driverName, createParam=createParam)
@@ -218,9 +218,11 @@ class DbConverter(QObject):
         :param parameters: (dict) a dict containing all connection parameters.
         :return: (AbstractDb) returns the DSGTools database object.
         """
-        abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
-        abstractDb.connectDatabase(conn=parameters['path'])
-        return abstractDb if abstractDb.getDatabaseName() else None
+        abstractDb = None
+        if os.path.exists(parameters['path']):
+            abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverSpatiaLite)
+            abstractDb.connectDatabase(conn=parameters['path'])
+        return abstractDb
 
     def connectToGeopackage(self, parameters):
         """
@@ -228,9 +230,11 @@ class DbConverter(QObject):
         :param parameters: (dict) a dict containing all connection parameters.
         :return: (AbstractDb) returns the DSGTools database object.
         """
-        abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverGeopackage)
-        abstractDb.connectDatabase(conn=parameters['path'])
-        return abstractDb if abstractDb.getDatabaseName() else None
+        abstractDb = None
+        if os.path.exists(parameters['path']):
+            abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverGeopackage)
+            abstractDb.connectDatabase(conn=parameters['path'])
+        return abstractDb
 
     def connectToShapefile(self, parameters):
         """
@@ -240,7 +244,7 @@ class DbConverter(QObject):
         """
         abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverShapefile)
         abstractDb.connectDatabase(conn=parameters['path'])
-        return abstractDb if abstractDb.getDatabaseName() else None
+        return abstractDb if abstractDb.getDatabaseName() != '' else None
 
     def connectToDb(self, parameters):
         """
@@ -289,11 +293,14 @@ class DbConverter(QObject):
                 failedInputs.append(ds)
                 continue
             layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
-            layers = abstractDb.listClassesWithElementsFromDatabase(useComplex=False).keys()
-            inputLayerMap[ds] = {l : layerLoader.getLayerByName(l) for l in layers}
-            complexLayers = abstractDb.listComplexClassesFromDatabase()
-            complexMap = {l : layerLoader.getComplexLayerByName(l) for l in complexLayers}
-            inputLayerMap[ds].update(complexMap)
+            inputLayerMap[ds] = dict()
+            for l in list(abstractDb.listClassesWithElementsFromDatabase([]).keys()):
+                vl = layerLoader.getLayerByName(l)
+                inputLayerMap[ds][vl.name()] = vl
+            for l in abstractDb.listComplexClassesFromDatabase():
+                vl = layerLoader.getComplexLayerByName(l)
+                if vl.featureCount() > 0:
+                    inputLayerMap[ds][vl.name()] = vl
         return inputLayerMap
 
     def readOutputLayers(self, conversionMap=None):
@@ -315,11 +322,13 @@ class DbConverter(QObject):
                 failedOutputs.append(ds)
                 continue
             layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
-            layers = abstractDb.listGeomClassesFromDatabase([])
-            outputLayerMap[ds] = {l : layerLoader.getLayerByName(l) for l in layers}
-            complexLayers = abstractDb.listComplexClassesFromDatabase()
-            complexMap = {l : layerLoader.getComplexLayerByName(l) for l in complexLayers}
-            outputLayerMap[ds].update(complexMap)
+            outputLayerMap[ds] = dict()
+            for  l in abstractDb.listGeomClassesFromDatabase([]):
+                vl = layerLoader.getLayerByName(l)
+                outputLayerMap[ds][vl.name()] = vl
+            for l in abstractDb.listComplexClassesFromDatabase():
+                vl = layerLoader.getComplexLayerByName(l)
+                outputLayerMap[ds][vl.name()] = vl
         return outputLayerMap
 
     def prepareInputLayers(self, conversionMap=None, context=None, feedback=None):

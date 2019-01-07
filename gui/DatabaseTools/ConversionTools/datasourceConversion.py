@@ -671,14 +671,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             rowMapping['outDs'] = containerWidget.connectionWidget.getDatasourcePath(),  # still to decide what to fill up in here
             rowMapping['outDs'] = rowMapping['outDs'][-1] # I DON'T KNOW WHY, BUT THAT'S THE ONLY WAY THIS COMES OUT AS A TUPLE.
             rowMapping['filter'] = inputFilteredLayers
-            rowMapping['spatialFanOut'] = str(spatialFanOut.isChecked())
+            rowMapping['spatialFanOut'] = spatialFanOut.isChecked()
             # parameter indicating whether it is a new datasource
-            rowMapping['createDs'] = str(self.tr('new') in outDs.currentText().split(':')[0])
+            rowMapping['createDs'] = self.tr('new') in outDs.currentText().split(':')[0]
             if self.tr('new') in outDs.currentText().split(':')[0]:
                 # if a new datasource will be created, EDGV version and CRS will be needed
                 rowMapping['edgv'] = containerWidget.connectionWidget.selectionWidget.edgvVersion()
                 rowMapping['crs'] = containerWidget.connectionWidget.selectionWidget.authId()
-            rowMapping['conversionMode'] = conversionMode.currentText()
+            rowMapping['conversionMode'] = conversionMode.currentIndex()
             # it is possible for the same dataset to be chosen for different outputs, in order to prevent instantiating it
             # more than once, map it all to the same dict entry and control layer/feature flux through filter entry
             if inputDatasourceId not in conversionMap:
