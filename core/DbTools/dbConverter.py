@@ -494,4 +494,7 @@ class DbConverter(QObject):
         :param featureConversionMap: (dict) map of features based on given input.
         :return: (tuple) successfull and failed translations lists.
         """
-        pass
+        print("BAM! CONVERTEU!")
+        status = True
+        log = "CONVERTEU TUDO!"
+        return status, log

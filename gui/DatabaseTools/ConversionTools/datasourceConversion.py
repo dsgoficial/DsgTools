@@ -21,6 +21,9 @@
  ***************************************************************************/
 """
 
+from functools import partial
+import os, json
+
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
@@ -29,9 +32,7 @@ from qgis.core import Qgis
 from qgis.gui import QgsCollapsibleGroupBox
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
-
-from functools import partial
-import os, json
+from DsgTools.core.DbTools.dbConverter import DbConverter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'datasourceConversion.ui'))
@@ -760,7 +761,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         for row in range(self.tableWidget.rowCount()):
             # get row contents
             # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
-            inDsName, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
+            inDs, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
             # check if a conversion mode was selected
             if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
                 return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
@@ -789,15 +790,16 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Executes conversion itself based on a conversion map.
         :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
         """
-        pass
+        status, log = DbConverter(iface, conversionMap).convertFromMap()
+        # expose log somehow
+        return status
 
     def startConversion(self):
         """
         Starts the conversion process.
         """
-        # validate interface parameters
         if self.validate():
-            # get conversion map
+            # from this point, interface is already validated and map produced from it also validated
             conversionMap = self.getConversionMap()
             self.exportConversionJson()
             # call conversion method taking the mapping json
