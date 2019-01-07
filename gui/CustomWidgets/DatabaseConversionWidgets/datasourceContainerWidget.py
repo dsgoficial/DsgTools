@@ -279,12 +279,16 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # gb.addLayout(layout)
             # initiate row counter
             row = 0
+            # eliminate schema from layer name
+            abstractDb = self.connectionWidget.getDatasource()
             for layerName, featCount in layers.items():
                 if layerName:
                     # add a new checkbox widget to layout for each layer found and a field expression widget
                     checkBoxWidget, fieldExpressionWidget = QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
                     # set current check box status based on previous filters, if any
-                    previousFilters = not self.filters['layer'] or layerName in self.filters['layer']
+                    # eliminate schema from layer name
+                    _, layer = abstractDb.getTableSchema(layerName)
+                    previousFilters = not self.filters['layer'] or layer in self.filters['layer']
                     checkBoxWidget.setChecked(previousFilters)
                     # allow filtering option only when layer is marked to be filtered
                     checkBoxWidget.toggled.connect(fieldExpressionWidget.setEnabled)
@@ -366,7 +370,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             if isinstance(self.topologicalRelationWidget, QtWidgets.QDoubleSpinBox):
                 topologyParameter = self.topologicalRelationWidget.value()
             if isinstance(self.topologicalRelationWidget, QtWidgets.QComboBox):
-                topologyParameter = self.topologicalRelationWidget.currentText()
+                topologyParameter = self.topologicalRelationWidget.currentIndex()
         return layer, spatialExpression, topologicalTest, topologyParameter
 
     def clearFilters(self):
@@ -404,6 +408,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # retrieve layouts
         spatialLayout = self.filterDlg.vLayout.itemAt(0).widget().layout()
         complexLayout = self.filterDlg.vLayout.itemAt(1).widget().layout() if self.filterDlg.vLayout.itemAt(1) else None
+        abstractDb = self.connectionWidget.getDatasource()
         # retrieve spatial and complex layers filter info
         if spatialLayout.rowCount() > 1:
             for row in range(spatialLayout.rowCount()):
@@ -416,12 +421,14 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     label = checkBox.text().replace('&', '')
                     featCount = label.split(' (')[1].split(' ')[0]
                     layerName = label.split(' (')[0]
+                    # eliminate schema from layer name
+                    _, layer = abstractDb.getTableSchema(layerName)
                     # fill layer selection filter info
-                    self.filters['layer'].update({ layerName : int(featCount) })
+                    self.filters['layer'].update({ layer : int(featCount) })
                     expression = filterExpression.currentText()
                     if expression:
                         # fill layer features filter expression info only if an expression is found
-                        self.filters['layer_filter'].update({ layerName : expression })
+                        self.filters['layer_filter'].update({ layer : expression })
         # retrieve complex layers filter info
         if complexLayout is not None:
             for row in range(complexLayout.rowCount()):
@@ -435,12 +442,14 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     label = checkBox.text().replace('&', '')
                     featCount = label.split(' (')[1].split(' ')[0]
                     layerName = label.split(' (')[0]
+                    # eliminate schema from layer name
+                    _, layer = abstractDb.getTableSchema(layerName)
                     # fill layer selection filter info
-                    d['layer'].update({ layerName : int(featCount) })
+                    d['layer'].update({ layer : int(featCount) })
                     expression = filterExpression.currentText()
                     if expression:
                         # fill layer features filter expression info only if an expression is found
-                        d['layer_filter'].update({ layerName : expression })
+                        d['layer_filter'].update({ layer : expression })
         # fill spatial filter info
         layer, spatialExpression, topologicalTest, topologyParameter = self.getSpatialFilterInformation()
         if layer:
