@@ -728,7 +728,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param edgvOut: (str) output EDGV version.
         """
         # TO DO
-        return '' not in [edgvIn, edgvOut]
+        return edgvIn == edgvOut and edgvOut != ''
 
     def validate(self):
         """
