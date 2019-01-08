@@ -59,14 +59,8 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Constructor
         """
         super(ValidationToolbox, self).__init__()
-        # Set up the user interface from Designer.
-        # After setupUI you can access any designer object by doing
-        # self.<objectname>, and you can use autoconnect slots - see
-        # http://qt-project.org/doc/qt-4.8/designer-using-a-ui-file.html
-        # #widgets-and-dialogs-with-auto-connect
         self.setupUi(self)
         self.iface = iface
-        # self.databaseLineEdit.setReadOnly(True)
         # self.configWindow = ValidationConfig()
         self.connectionSelectorComboBox.connectionChanged.connect(self.updateDbLineEdit)
         # self.connectionSelectorComboBox.dbChanged.connect(self.attributeRulePropertyManagerWidget.setParameters)
@@ -78,27 +72,6 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.ruleEnforcer = None
         self.itemList = []
         self.filterDict = {self.tr('Process Name'):DsgEnums.ProcessName, self.tr('Class Name'):DsgEnums.ClassName}
-        self.categoriesDict = OrderedDict({'identification':{
-            'categoryAlias' : self.tr('Identification Processes'),
-            'processList' : [],
-            'categoryNode' : None
-        },
-        'correction':{
-            'categoryAlias' : self.tr('Correction Processes'),
-            'processList' : [],
-            'categoryNode' : None
-        },
-        'topological':{
-            'categoryAlias' : self.tr('Topological Processes'),
-            'processList' : [],
-            'categoryNode' : None
-        },
-        'manipulation':{
-            'categoryAlias' : self.tr('Manipulation Processes'),
-            'processList' : [],
-            'categoryNode' : None
-        }
-        })
 
     def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
         icon_path = iconBasePath + 'validationtools.png'
@@ -217,7 +190,6 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
             self.connectionSelectorComboBox.abstractDb.checkAndOpenDb()
             self.validationManager = ValidationManager(self.connectionSelectorComboBox.abstractDb, self.iface)
-            self.populateProcessTreeList()
             # adjusting flags table model
             self.projectModel = QSqlTableModel(None,self.connectionSelectorComboBox.abstractDb.db)
             self.projectModel.setTable('validation.aux_flags_validacao')
