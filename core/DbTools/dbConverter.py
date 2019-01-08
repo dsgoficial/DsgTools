@@ -470,7 +470,7 @@ class DbConverter(QObject):
                             k = "{0} to {1}".format(inputDb, outputDb)
                             errors[k] = error
                             continue
-                        allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb)
+                    allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb)
                 outputLayers = allOutputLayers[outputDb]
                 # now conversion starts
                 preparedLayers = self.prepareInputLayers(inputLayers, conversionStepMap)
