@@ -790,7 +790,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Executes conversion itself based on a conversion map.
         :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
         """
-        status, log = DbConverter(iface, conversionMap).convertFromMap()
+        status, log, tests = DbConverter(iface, conversionMap).convertFromMap()
         # expose log somehow
         return status
 

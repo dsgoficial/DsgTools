@@ -25,7 +25,7 @@ from builtins import range
 import itertools
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
-                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback
+                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback, QgsVectorLayerUtils
 from qgis.PyQt.Qt import QObject, QVariant
 
 from .geometryHandler import GeometryHandler
