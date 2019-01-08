@@ -56,7 +56,10 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingParameterFile,
                        QgsCoordinateReferenceSystem,
                        QgsProject,
-                       QgsFields)
+                       QgsFields,
+                       QgsProcessingParameterCrs,
+                       QgsCoordinateTransform,
+                       QgsVectorLayer)
 
 class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
     INPUT = 'INPUT'
@@ -127,8 +130,8 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         if inputLyr is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
 
-        inputAttr = self.parameterAsField(parameters, self.FLAG_FIELD, context)
-        
+        inputAttr = self.parameterAsFields(parameters, self.FLAG_FIELD, context)
+        inputAttr = inputAttr[0]
         tableSchema = self.parameterAsString(parameters, self.TABLE_SCHEMA, context)
         if tableSchema is None or tableSchema == '':
             raise QgsProcessingException(self.tr('Invalid table schema'))
@@ -149,7 +152,7 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         if crs is None or not crs.isValid():
             raise QgsProcessingException(self.tr('Invalid CRS.'))
         
-        outputLyr = self.getOutputFromInput(inputLyr)
+        outputLyr = self.getOutputFromInput(inputLyr, tableSchema, tableName, geometryColumn)
         if not outputLyr.isValid():
             raise QgsProcessingException(self.tr('Invalid output layer.'))
         coordinateTransformer = QgsCoordinateTransform(
@@ -157,18 +160,23 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
             crs,
             QgsProject.instance()
             )
-        parameterDict = layerHandler.getDestinationParameters(outputLyr, tableSchema, tableName, geometryColumn)
+        parameterDict = layerHandler.getDestinationParameters(outputLyr)
         outputLyr.startEditing()
-        outputLyr.startEditCommand()
-        for feat in inputLyr.getFeatures():
+        outputLyr.beginEditCommand('Adding flag features')
+        count = inputLyr.featureCount()
+        progress_count = 100 / count if count else 0
+        for current, feat in enumerate(inputLyr.getFeatures()):
+            if feedback.isCanceled():
+                break
             for newFeat in featureHandler.handleConvertedFeature(feat, outputLyr, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer):
                 newFeat[flagTextAttr] = feat[inputAttr]
                 outputLyr.addFeature(newFeat)
+            feedback.setProgress(current * progress_count)
         outputLyr.endEditCommand()
         outputLyr.commitChanges()
         return {}
     
-    def getOutputFromInput(self, inputLyr, tableSchema, tableName, geometryColumn)
+    def getOutputFromInput(self, inputLyr, tableSchema, tableName, geometryColumn):
         lyrUri = inputLyr.dataProvider().dataSourceUri()
         uri = QgsDataSourceUri(lyrUri)
         uri.setDataSource(tableSchema, tableName, geometryColumn)
