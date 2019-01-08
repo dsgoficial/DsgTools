@@ -38,7 +38,7 @@ class OrderedValidationProcessesWidget(OrderedStructureWidget):
         """
         super(OrderedValidationProcessesWidget, self).__init__(parent)
         self.args = None
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Processes')])
+        self.tableWidget.setHorizontalHeaderLabels([self.tr('QGIS Processing Models')])
         self.widgetKey = 'validationProcessWidgetList'
         self.parent = parent
         if self.parent:

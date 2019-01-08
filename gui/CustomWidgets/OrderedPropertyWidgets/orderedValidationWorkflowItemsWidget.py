@@ -29,6 +29,7 @@ from qgis.PyQt.QtWidgets import QTableWidgetItem
 
 from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedStructureWidget import OrderedStructureWidget
 from DsgTools.gui.CustomWidgets.ValidationWidgets.validationWorkflowItemWidget import ValidationWorkflowItemWidget
+from DsgTools.gui.CustomWidgets.ValidationWidgets.validationProcessWidget import ValidationProcessWidget
 
 class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
 
@@ -38,7 +39,7 @@ class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
         """
         super(OrderedValidationWorkflowItemsWidget, self).__init__(parent)
         self.args = None
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('Validation Workflow Item')])
+        self.tableWidget.setHorizontalHeaderLabels([self.tr('QGIS Models')])
         self.widgetKey = 'validationWorkflowItemsWidgetList'
         self.parent = parent
         if self.parent:
@@ -46,4 +47,4 @@ class OrderedValidationWorkflowItemsWidget(OrderedStructureWidget):
         
     
     def instantiateWidgetItem(self):
-        return ValidationWorkflowItemWidget(parent = self)
+        return ValidationProcessWidget(parent = self)
