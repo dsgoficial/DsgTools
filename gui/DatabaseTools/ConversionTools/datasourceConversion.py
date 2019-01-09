@@ -28,7 +28,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsApplication
 from qgis.gui import QgsCollapsibleGroupBox
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
@@ -790,9 +790,10 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Executes conversion itself based on a conversion map.
         :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
         """
-        status, log, tests = DbConverter(iface, conversionMap).convertFromMap()
-        # expose log somehow
-        return status
+        task = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
+        showLog = lambda : print(task.output['log'])
+        task.taskCompleted.connect(showLog)
+        QgsApplication.taskManager().addTask(task)
 
     def startConversion(self):
         """
