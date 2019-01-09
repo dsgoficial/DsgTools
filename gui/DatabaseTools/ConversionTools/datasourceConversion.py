@@ -32,6 +32,7 @@ from qgis.core import Qgis, QgsApplication
 from qgis.gui import QgsCollapsibleGroupBox
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
 from DsgTools.core.DbTools.dbConverter import DbConverter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
