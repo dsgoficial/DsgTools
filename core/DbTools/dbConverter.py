@@ -470,12 +470,69 @@ class DbConverter(QgsTask):
                 feedback.setProgress(current * stepSize)
         return success, fail
 
-    def buildLog(self):
+    def getLogHeader(self):
+        """
+        Gets log header. Used to initiate log.
+        """
+        # any header info insertion should be through template
+        # header's data handling should be in this method!
+        with open(os.path.join(os.path.dirname(__file__), 'headerConversionSummaryTemplate.html'), 'r') as f:
+            return f.read()
+
+    def addConversionStepToLog(self, log, conversionStep, inputDb, outputDb, inputLayers, creationErrors, successfulLayers, failedLayers):
         """
         Builds conversion summary log message.
+        :param log: (str) log to have current step info inserted at. It is modified in-place.
+        :param conversionStep: (int) current conversion step.
+        :param inputDb: (str) input's dataset name.
+        :param outputDb: (str) output's dataset name.
+        :param inputLayers: (dict) input layers dict.
+        :param creationErrors: (dict) dataset creation errors.
+        :param successfulLayers: (dict) map to layers and their successesfully written features.
+        :param failedLayers: (dict) map to layers and their failing writting reason.
         """
-        # TODO
-        return self.tr("DSGTools Conversion Log")
+        with open(os.path.join(os.path.dirname(__file__), 'bodyConversionSummaryTemplate.html'), 'r') as f:
+            bodyHtml = f.read()
+        bodyHtml.replace('CONVERSION_STEP', str(conversionStep))
+        bodyHtml.replace('INPUT_DATASET', inputDb)
+        bodyHtml.replace('OUTPUT_DATASET', outputDb)
+        inputTable = ""
+        for layer, vl in inputLayers.items():
+            inputTable += """
+            <tr>
+                <td>{0}</td>
+                <td>{1}</td>
+            </tr>
+            """.format(layer, vl.featureCount())
+        bodyHtml.replace('INPUT_TABLE', inputTable)
+        outputTable = ""
+        for layer, feat_count in successfulLayers.items():
+            outputTable += """
+            <tr>
+                <td>{0}</td>
+                <td>{1}</td>
+            </tr>
+            """.format(layer, feat_count)
+        bodyHtml.replace('OUTPUT_TABLE', outputTable)
+        dsErrors = ""
+        if "{0} to {1}".format(inputDb, outputDb) in creationErrors:
+            dsErrors = """
+            <tr>
+                <td>{0}</td>
+                <td>{1}</td>
+            </tr>
+            """.format(outputDb, creationErrors["{0} to {1}".format(inputDb, outputDb)])
+        bodyHtml.replace('DATASET_CREATION_ERROR', dsErrors)
+        errors = ""
+        for layer, reason in failedLayers.items():
+            errors += """
+            <tr>
+                <td>{0}</td>
+                <td>{1}</td>
+            </tr>
+            """.format(layer, reason)
+        bodyHtml.replace('WRITTING_ERRORS', errors)
+        log += bodyHtml + "\n"
 
     def convertFromMap(self, conversionMap=None, featureConversionMap=None, feedback=None):
         """
@@ -496,6 +553,9 @@ class DbConverter(QgsTask):
         successfulLayers, failedLayers = None, None
         nSteps = self.getConversionCount()
         multiStepFeedback = QgsProcessingMultiStepFeedback(3*nSteps, feedback)
+        # start log
+        conversionSummary = self.getLogHeader()
+        conversionStep = 1
         for inputDb, conversionStepMaps in conversionMap.items():
             # input setup
             if inputDb not in allInputLayers:
@@ -511,6 +571,9 @@ class DbConverter(QgsTask):
                         if error != "":
                             k = "{0} to {1}".format(inputDb, outputDb)
                             errors[k] = error
+                            self.addConversionStepToLog(conversionSummary, conversionStep, inputDb, outputDb, \
+                                            inputLayers, errors, {}, {})
+                            conversionStep += 1
                             continue
                     allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb)
                 outputLayers = allOutputLayers[outputDb]
@@ -525,12 +588,16 @@ class DbConverter(QgsTask):
                 multiStepFeedback.setCurrentStep(currentStep)
                 successfulLayers, failedLayers = self.loadToOuput(mappedFeatures, outputLayers, feedback=multiStepFeedback)
                 currentStep += 1
+                # log update
+                self.addConversionStepToLog(conversionSummary, conversionStep, inputDb, outputDb, inputLayers, \
+                                            errors, successfulLayers, failedLayers)
+                conversionStep += 1
         return {
             'creationErrors' : errors,
             'successfulLayers' : successfulLayers,
             'failedLayers' : failedLayers,
             'status' : not feedback.isCanceled(),
-            'log' : self.buildLog()
+            'log' : conversionSummary
         }
     
     def run(self):

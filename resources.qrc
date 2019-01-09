@@ -68,5 +68,6 @@
         <file>icons/add_database.png</file>
         <file>icons/add_databases.png</file>
         <file>icons/CRS_qgis.svg</file>
+        <file>icons/save.png</file>
     </qresource>
 </RCC>
