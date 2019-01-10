@@ -46,7 +46,21 @@ class TextBrowserDialog(QDialog, FORM_CLASS):
         Sets HTML text to GUI.
         :param html: (str) html text to be added.
         """
-        self.textBrowser.setText(html)
+        self.textBrowser.setHtml(html)
+
+    def addToHtml(self, textToAdd):
+        """
+        Appends text to existing one.
+        :param textToAdd: (str) text to be added to GUI.
+        """
+        html = self.textBrowser.toHtml()
+        self.textBrowser.setHtml(html + textToAdd)
+
+    def clearHtml(self):
+        """
+        Clears text from GUI.
+        """
+        self.textBrowser.setHtml("")
 
     @pyqtSlot(bool, name='on_savePushButton_clicked')
     def saveHtml(self):

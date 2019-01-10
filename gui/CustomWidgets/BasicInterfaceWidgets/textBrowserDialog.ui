@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,24 +14,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>DSGTools Dataset Conversion Tool - Summary</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="3">
-    <widget class="QTextBrowser" name="textBrowser"/>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="savePushButton">
-     <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../../resources.qrc">
-       <normaloff>:/plugins/DsgTools/icons/save.png</normaloff>:/plugins/DsgTools/icons/save.png</iconset>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -41,10 +30,31 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="2">
+   <item row="2" column="0">
+    <widget class="QPushButton" name="savePushButton">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset resource="../../../resources.qrc">
+       <normaloff>:/plugins/DsgTools/icons/save.png</normaloff>:/plugins/DsgTools/icons/save.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
     <widget class="QPushButton" name="closePushButton">
      <property name="text">
       <string>Close</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="3">
+    <widget class="QTextBrowser" name="textBrowser"/>
+   </item>
+   <item row="1" column="0" colspan="3">
+    <widget class="QProgressBar" name="progressBar">
+     <property name="value">
+      <number>0</number>
      </property>
     </widget>
    </item>
