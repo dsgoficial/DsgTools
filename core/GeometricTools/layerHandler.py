@@ -769,6 +769,7 @@ class LayerHandler(QObject):
         stepSize = 100/featCount if featCount else 0
         flagDict = dict()
         parameterDict = self.getDestinationParameters(inputLyr)
+        geometryType = inputLyr.geometryType()
         newFeatSet = set()
         if fixInput:
             inputLyr.startEditing()
@@ -799,7 +800,7 @@ class LayerHandler(QObject):
             if fixInput:
                 geom.removeDuplicateNodes(useZValues=parameterDict['hasZValues'])
                 fixedGeom = geom.makeValid()
-                for idx, newGeom in enumerate(self.geometryHandler.handleGeometry(fixedGeom, parameterDict)):
+                for idx, newGeom in enumerate(self.geometryHandler.handleGeometryCollection(fixedGeom, geometryType, parameterDict=parameterDict)):
                     if idx == 0:
                         inputLyr.changeGeometry(id, newGeom)
                     else:

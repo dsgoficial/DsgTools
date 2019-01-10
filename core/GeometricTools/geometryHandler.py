@@ -620,3 +620,11 @@ class GeometryHandler(QObject):
         else:
             qgsPolygon = QgsGeometry.fromPolygonXY([polyline])
         return qgsPolygon
+    
+    def handleGeometryCollection(self, geom, geometryType, parameterDict=None, coordinateTransformer=None):
+        parameterDict = {} if parameterDict is None else parameterDict
+        outputList = []
+        for part in geom.asGeometryCollection():
+            if part.type() == geometryType:
+                outputList += self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer)
+        return outputList
