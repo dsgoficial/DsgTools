@@ -792,9 +792,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
         """
         task = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
-        showLog = lambda : print(task.output['log'])
-        task.taskCompleted.connect(showLog)
+        summaryDlg = TextBrowserDialog()
+        task.progressChanged.connect(summaryDlg.progressBar.setValue)
+        task.taskCompleted.connect(lambda : summaryDlg.setHtml(task.output['log']))
+        task.conversionUpdated.connect(summaryDlg.addToHtml)
+        # to clear log message
+        task.conversionFinished.connect(lambda : summaryDlg.clearHtml)
         QgsApplication.taskManager().addTask(task)
+        summaryDlg.exec_()
 
     def startConversion(self):
         """
