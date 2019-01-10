@@ -27,7 +27,7 @@ from builtins import range
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
                       QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback, QgsProcessingContext
+                      QgsProcessingMultiStepFeedback, QgsProcessingContext, QgsVectorLayerUtils
 from qgis.PyQt.Qt import QObject, QVariant
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 
@@ -763,3 +763,50 @@ class LayerHandler(QObject):
                 currentStep += 1
             localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
         return localLyr
+    
+    def identifyAndFixInvalidGeometries(self, inputLyr, fixInput=False, onlySelected=False, feedback=None):
+        iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
+        stepSize = 100/featCount if featCount else 0
+        flagDict = dict()
+        parameterDict = self.getDestinationParameters(inputLyr)
+        newFeatSet = set()
+        if fixInput:
+            inputLyr.startEditing()
+            inputLyr.beginEditCommand('Fixing geometries')
+        for current, feat in enumerate(iterator):
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            id = feat.id()
+            attrMap = { idx : feat[field.name()] for idx, field in enumerate(feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
+            for i, validate_type in enumerate(['GEOS', 'QGIS']):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                for error in geom.validateGeometry(i):
+                    if feedback is not None and feedback.isCanceled():
+                        break
+                    if error.hasWhere():
+                        errorPointXY = error.where()
+                        if errorPointXY not in flagDict:
+                            flagDict[errorPointXY] = {
+                                'geom' : QgsGeometry.fromPointXY(errorPointXY),
+                                'reason' : ''
+                            }
+                        flagDict[errorPointXY]['reason'] += '{type} invalid reason: {text}\n'.format(
+                            type=validate_type,
+                            text=error.what()
+                        )
+            if fixInput:
+                fixedGeom = geom.makeValid()
+                for idx, newGeom in enumerate(self.geometryHandler.handleGeometry(fixedGeom, parameterDict)):
+                    if idx == 0:
+                        inputLyr.changeGeometry(id, newGeom)
+                    else:
+                        newFeat = QgsVectorLayerUtils.createFeature(inputLyr, newGeom, attrMap)
+            if feedback is not None:
+                feedback.setProgress(stepSize*current)
+        if fixInput:
+            inputLyr.addFeatures(newFeatSet)
+            inputLyr.endEditCommand()
+
+        return flagDict
