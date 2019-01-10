@@ -560,6 +560,7 @@ class DbConverter(QgsTask):
         conversionStep = 1
         for inputDb, conversionStepMaps in conversionMap.items():
             # input setup
+            self.conversionUpdated.emit(self.tr("\nConversion Step {0} started...\n\n").format(conversionStep))
             self.conversionUpdated.emit(self.tr("[INPUT] Reading {0}'s layers...\n").format(inputDb))
             if inputDb not in allInputLayers:
                 allInputLayers[inputDb] = self.readInputLayers(datasourcePath=inputDb)
