@@ -797,6 +797,7 @@ class LayerHandler(QObject):
                             text=error.what()
                         )
             if fixInput:
+                geom.removeDuplicateNodes(useZValues=parameterDict['hasZValues'])
                 fixedGeom = geom.makeValid()
                 for idx, newGeom in enumerate(self.geometryHandler.handleGeometry(fixedGeom, parameterDict)):
                     if idx == 0:
