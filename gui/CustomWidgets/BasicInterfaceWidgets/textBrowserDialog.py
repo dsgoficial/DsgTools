@@ -25,7 +25,7 @@ import os
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
-from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtWidgets import QDialog, QFileDialog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'textBrowserDialog.ui'))
@@ -66,8 +66,16 @@ class TextBrowserDialog(QDialog, FORM_CLASS):
     def saveHtml(self):
         """
         Exports text.
+        :return: (str) output path.
         """
-        pass
+        html = self.textBrowser.toHtml()
+        fd = QFileDialog()
+        filename = fd.getSaveFileName(caption=self.tr('Select a Path to Log'),filter=self.tr('HTML Files (*.html)'))
+        filename = filename[0] if isinstance(filename, tuple) else filename
+        if filename:
+            with open(filename, 'w') as f:
+                f.write(html)
+        return filename
 
     @pyqtSlot(bool, name='on_closePushButton_clicked')
     def exit(self):

@@ -283,10 +283,11 @@ class DbConverter(QgsTask):
         }
         return predicates[predicate] if predicate in predicates else None
 
-    def readInputLayers(self, datasourcePath):
+    def readInputLayers(self, datasourcePath, feedback=None):
         """
         Reads all input datasources and return its layers.
         :param datasourcePath: (str) input's datasource path.
+        :param feedback: (QgsProcessingMultiStepFeedback) QGIS tool for progress tracking.
         :return: (dict) a map for input's layers.
         """
         inputLayerMap = dict()
@@ -295,16 +296,31 @@ class DbConverter(QgsTask):
         if abstractDb is None:
             return {}
         layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
-        for l in list(abstractDb.listClassesWithElementsFromDatabase([]).keys()):
+
+        geometricLayers = list(abstractDb.listClassesWithElementsFromDatabase([]).keys())
+        complexLayers = abstractDb.listComplexClassesFromDatabase()
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(len(geometricLayers) + len(complexLayers), feedback)
+        
+        for curr, l in enumerate(geometricLayers):
+            if feedback is not None and multiStepFeedback.isCanceled():
+                return inputLayerMap
             vl = layerLoader.getLayerByName(l)
             inputLayerMap[vl.name()] = vl
-        for l in abstractDb.listComplexClassesFromDatabase():
+            if feedback is not None:
+                multiStepFeedback.setCurrentStep(curr)
+        
+        for currComplex, l in enumerate(complexLayers):
+            if feedback is not None and multiStepFeedback.isCanceled():
+                return inputLayerMap
             vl = layerLoader.getComplexLayerByName(l)
             if vl.featureCount() > 0:
                 inputLayerMap[vl.name()] = vl
+            if feedback is not None:
+                multiStepFeedback.setCurrentStep(curr + currComplex)
         return inputLayerMap
 
-    def readOutputLayers(self, datasourcePath):
+    def readOutputLayers(self, datasourcePath, feedback=None):
         """
         Prepares output layers to be filled.
         :param datasourcePath: (str) output's datasource path.
@@ -318,12 +334,27 @@ class DbConverter(QgsTask):
             return {}
         layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
         outputLayerMap = dict()
-        for  l in abstractDb.listGeomClassesFromDatabase([]):
+
+        geometricLayers = abstractDb.listGeomClassesFromDatabase([])
+        complexLayers = abstractDb.listComplexClassesFromDatabase()
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(len(geometricLayers) + len(complexLayers), feedback)
+        
+        for  curr, l in enumerate(geometricLayers):
+            if feedback is not None and multiStepFeedback.isCanceled():
+                return outputLayerMap
             vl = layerLoader.getLayerByName(l)
             outputLayerMap[vl.name()] = vl
-        for l in abstractDb.listComplexClassesFromDatabase():
+            if feedback is not None:
+                multiStepFeedback.setCurrentStep(curr)
+        
+        for currComplex, l in enumerate(complexLayers):
+            if feedback is not None and multiStepFeedback.isCanceled():
+                return outputLayerMap
             vl = layerLoader.getComplexLayerByName(l)
             outputLayerMap[vl.name()] = vl
+            if feedback is not None:
+                multiStepFeedback.setCurrentStep(curr + currComplex)
         return outputLayerMap
 
     def prepareSpatialFilterLayer(self, spatialFilters, context=None):
@@ -548,28 +579,35 @@ class DbConverter(QgsTask):
             conversionMap = self.conversionMap
         if feedback is None:
             feedback = self.feedback
-        currentStep = 0
         allInputLayers = dict()
         allOutputLayers = dict()
         errors = dict()
         successfulLayers, failedLayers = None, None
-        nSteps = self.getConversionCount()
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3*nSteps, feedback)
+        nSteps = len(self.getAllUniqueInputDb()) + len(self.getAllUniqueOutputDb()) * 4
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
         # start log
         conversionSummary = self.getLogHeader()
         conversionStep = 1
+        currentStep = 0
         for inputDb, conversionStepMaps in conversionMap.items():
+            if multiStepFeedback.isCanceled() or self.isCanceled():
+                break
+            multiStepFeedback.setCurrentStep(currentStep)
+            currentStep += 1
             # input setup
             self.conversionUpdated.emit(self.tr("\nConversion Step {0} started...\n\n").format(conversionStep))
             self.conversionUpdated.emit(self.tr("[INPUT] Reading {0}'s layers...\n").format(inputDb))
             if inputDb not in allInputLayers:
-                allInputLayers[inputDb] = self.readInputLayers(datasourcePath=inputDb)
+                allInputLayers[inputDb] = self.readInputLayers(datasourcePath=inputDb, feedback=multiStepFeedback)
             inputLayers = allInputLayers[inputDb]
-            for conversionStepMap in conversionStepMaps:
-                multiStepFeedback.setCurrentStep(currentStep)
+            for currentOutput, conversionStepMap in enumerate(conversionStepMaps):
+                if multiStepFeedback.isCanceled() or self.isCanceled():
+                    break
                 # output setup
                 outputDb = conversionStepMap["outDs"]
                 self.conversionUpdated.emit(self.tr("[OUTPUT] Reading {0}'s layers...\n").format(outputDb))
+                multiStepFeedback.setCurrentStep(currentStep)
+                currentStep += 1
                 if outputDb not in allOutputLayers:
                     if conversionStepMap["createDs"]:
                         outputAbstractDb, error = self.checkAndCreateDataset(conversionStepMap)
@@ -581,22 +619,23 @@ class DbConverter(QgsTask):
                                             inputLayers, errors, {}, {})
                             conversionStep += 1
                             continue
-                    allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb)
+                    allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb, feedback=multiStepFeedback)
                 outputLayers = allOutputLayers[outputDb]
                 # now conversion starts
                 self.conversionUpdated.emit(self.tr("Preparing {0}'s layers for conversion...").format(inputDb))
-                preparedLayers = self.prepareInputLayers(inputLayers, conversionStepMap, feedback=multiStepFeedback)
+                multiStepFeedback.setCurrentStep(currentStep)
                 currentStep += 1
+                preparedLayers = self.prepareInputLayers(inputLayers, conversionStepMap, feedback=multiStepFeedback)
 
                 self.conversionUpdated.emit(self.tr("Mapping features..."))
                 multiStepFeedback.setCurrentStep(currentStep)
-                mappedFeatures = self.mapFeatures(preparedLayers, outputLayers, feedback=multiStepFeedback)
                 currentStep += 1
+                mappedFeatures = self.mapFeatures(preparedLayers, outputLayers, feedback=multiStepFeedback)
 
                 self.conversionUpdated.emit(self.tr("Loading layers to {0}...").format(outputDb))
                 multiStepFeedback.setCurrentStep(currentStep)
-                successfulLayers, failedLayers = self.loadToOuput(mappedFeatures, outputLayers, feedback=multiStepFeedback)
                 currentStep += 1
+                successfulLayers, failedLayers = self.loadToOuput(mappedFeatures, outputLayers, feedback=multiStepFeedback)
                 # log update
                 conversionSummary += self.addConversionStepToLog(conversionStep, inputDb, outputDb, inputLayers, \
                                             errors, successfulLayers, failedLayers)
