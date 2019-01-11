@@ -300,25 +300,26 @@ class DbConverter(QgsTask):
 
         geometricLayers = list(abstractDb.listClassesWithElementsFromDatabase([]).keys())
         complexLayers = abstractDb.listComplexClassesFromDatabase()
+
         if feedback is not None:
-            multiStepFeedback = QgsProcessingMultiStepFeedback(len(geometricLayers) + len(complexLayers), feedback)
-        
+            stepSize = 100 / (len(geometricLayers) + len(complexLayers)) if len(geometricLayers) + len(complexLayers) else 0
+
         for curr, l in enumerate(geometricLayers):
-            if feedback is not None and multiStepFeedback.isCanceled():
+            if feedback is not None and feedback.isCanceled():
                 return inputLayerMap
             vl = layerLoader.getLayerByName(l)
             inputLayerMap[vl.name()] = vl
             if feedback is not None:
-                multiStepFeedback.setCurrentStep(curr)
+                feedback.setProgress(curr * stepSize)
         
         for currComplex, l in enumerate(complexLayers):
-            if feedback is not None and multiStepFeedback.isCanceled():
+            if feedback is not None and feedback.isCanceled():
                 return inputLayerMap
             vl = layerLoader.getComplexLayerByName(l)
             if vl.featureCount() > 0:
                 inputLayerMap[vl.name()] = vl
             if feedback is not None:
-                multiStepFeedback.setCurrentStep(curr + currComplex)
+                feedback.setProgress((curr + currComplex) * stepSize)
         return inputLayerMap
 
     def readOutputLayers(self, datasourcePath, feedback=None):

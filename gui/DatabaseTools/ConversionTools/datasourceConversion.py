@@ -762,7 +762,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         for row in range(self.tableWidget.rowCount()):
             # get row contents
             # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
-            inDs, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
+            inDsName, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
             # check if a conversion mode was selected
             if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
                 return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
@@ -795,8 +795,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         if not conversionTask.feedback.isCanceled():
             conversionTask.feedback.cancel()
             summaryDlg.cancelPushButton.setEnabled(False)
+            conversionTask.blockSignals(True)
             summaryDlg.progressBar.setValue(0)
-            summaryDlg.addToHtml(self.tr("<p>\n\n\nCONVERSION TASK WAS CANCELLED.</p>"))
+            summaryDlg.addToHtml(self.tr('<span style="color: #ff0000;"><br><p>CONVERSION TASK WAS CANCELLED.</span></p>'))
             summaryDlg.savePushButton.setEnabled(True)
 
     def run(self, conversionMap):
@@ -814,7 +815,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         task.conversionUpdated.connect(summaryDlg.addToHtml)
         summaryDlg.cancelPushButton.clicked.connect(partial(self.cancelConversion, task, summaryDlg))
         # to clear log message before repopulating with conversion summary
-        task.conversionFinished.connect(lambda : summaryDlg.clearHtml)
+        task.conversionFinished.connect(summaryDlg.clearHtml)
         QgsApplication.taskManager().addTask(task)
         summaryDlg.show()
 
