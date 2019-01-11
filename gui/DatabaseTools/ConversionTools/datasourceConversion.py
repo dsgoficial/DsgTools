@@ -793,12 +793,11 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         :param summaryDlg: (TextBrowserDialog) dialog in which task's log is directed to.
         """
         if not conversionTask.feedback.isCanceled():
-            conversionTask.cancel()
             conversionTask.feedback.cancel()
-            conversionTask.blockSignals(True)
             summaryDlg.cancelPushButton.setEnabled(False)
             summaryDlg.progressBar.setValue(0)
-            summaryDlg.addToHtml(self.tr("\n\n\nCONVERSION TASK WAS CANCELLED."))
+            summaryDlg.addToHtml(self.tr("<p>\n\n\nCONVERSION TASK WAS CANCELLED.</p>"))
+            summaryDlg.savePushButton.setEnabled(True)
 
     def run(self, conversionMap):
         """
@@ -807,13 +806,14 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         task = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
         summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
+        summaryDlg.savePushButton.setEnabled(False)
         task.progressChanged.connect(summaryDlg.progressBar.setValue)
         task.taskCompleted.connect(lambda : summaryDlg.setHtml(task.output['log']))
-        task.taskCompleted.connect(summaryDlg.show)
         task.taskCompleted.connect(lambda : summaryDlg.cancelPushButton.setEnabled(False))
+        task.taskCompleted.connect(lambda : summaryDlg.savePushButton.setEnabled(True))
         task.conversionUpdated.connect(summaryDlg.addToHtml)
         summaryDlg.cancelPushButton.clicked.connect(partial(self.cancelConversion, task, summaryDlg))
-        # to clear log message
+        # to clear log message before repopulating with conversion summary
         task.conversionFinished.connect(lambda : summaryDlg.clearHtml)
         QgsApplication.taskManager().addTask(task)
         summaryDlg.show()
