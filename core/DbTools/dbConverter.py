@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 import os, collections
+import time
 
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 from qgis.core import QgsFeatureRequest, QgsProject, QgsProcessingContext, \
@@ -650,6 +651,9 @@ class DbConverter(QgsTask):
         }
     
     def run(self):
+        elapsedTime = time.time()
         self.output = self.convertFromMap()
+        self.output['elapsedTime'] = "{0:.2f} s".format(time.time() - elapsedTime)
+        self.output['log'] = self.output['log'].replace('ELAPSED_TIME', self.output['elapsedTime'])
         return self.output['status']
 
