@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
 from qgis.core import Qgis, QgsApplication
-from qgis.gui import QgsCollapsibleGroupBox
+from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBarItem, QgsMessageBar
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
@@ -742,7 +742,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         msg = self.invalidatedReason()
         if msg:
             # if an invalidation reason was given, warn user and nothing else.
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            QgsMessageBar(self).pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            # iface.messageBar().pushMessage(, msg, level=Qgis.Warning, duration=5)
         return msg == ''
 
     def invalidatedReason(self):
@@ -829,6 +830,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             self.exportConversionJson()
             # call conversion method taking the mapping json
             self.run(conversionMap=conversionMap)
+        else:
+            self.exec_()
 
     def populateInterface(self, parameterDict):
         """
