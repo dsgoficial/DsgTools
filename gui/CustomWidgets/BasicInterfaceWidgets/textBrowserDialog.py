@@ -73,7 +73,7 @@ class TextBrowserDialog(QDialog, FORM_CLASS):
         filename = fd.getSaveFileName(caption=self.tr('Select a Path to Log'),filter=self.tr('HTML Files (*.html)'))
         filename = filename[0] if isinstance(filename, tuple) else filename
         if filename:
-            with open(filename, 'w') as f:
+            with open(filename, 'w', encoding='utf-8') as f:
                 f.write(html)
         return filename
 
