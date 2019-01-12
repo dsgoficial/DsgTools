@@ -1,15 +1,25 @@
 <h2>CONVERSION_STEP. INPUT_DATASET -&gt; OUTPUT_DATASET</h2>
-<h3>CONVERSION_STEP.a. Layers Read</h3>
-<table>
+<p>Elapsed Time: STEP_ELAPSED_TIME.</p>
+<table style="border-color: #000000; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td><strong>LAYERS READ</strong></td>
+<td><strong>LAYERS WRITTEN</strong></td>
+</tr>
+<tr>
+<td style="vertical-align: top;">
+<table style="border-color: #696969;">
 <tbody>
 <tr>
 <td><strong>Layer Name</strong></td>
 <td><strong>Feature Count</strong></td>
+</tr>
 INPUT_TABLE
 </tbody>
 </table>
-<h3>CONVERSION_STEP.b. Layers Written</h3>
-<table>
+</td>
+<td style="vertical-align: top;">
+<table style="border-color: #696969;">
 <tbody>
 <tr>
 <td><strong>Layer Name</strong></td>
@@ -18,25 +28,42 @@ INPUT_TABLE
 OUTPUT_TABLE
 </tbody>
 </table>
-<h3>CONVERSION_STEP.c. Conversion Errors</h3>
-<h4>CONVERSION_STEP.c.i. Dataset Creation Erros</h4>
-<table>
+</td>
+</tr>
+<tr>
+<td colspan="2">
+<h3 style="text-align: center;">CONVERSION ERRORS</h3>
+</td>
+</tr>
+<tr>
+<td>
+<h4>DATASET CREATION ERRORS</h4>
+</td>
+<td>&nbsp;<strong>LAYERS WRITTING ERRORS</strong></td>
+</tr>
+<tr>
+<td>&nbsp;DATASET_CREATION_ERROR
+<table style="border-color: #696969;">
 <tbody>
 <tr>
-<td><strong>Dataset Name</strong></td>
-<td><strong>Error Message</strong></td>
+<td><strong>Dataset Name</strong>&nbsp;</td>
+<td><strong>Error Message</strong>&nbsp;</td>
 </tr>
-DATASET_CREATION_ERROR
 </tbody>
 </table>
-<h4>CONVERSION_STEP.c.ii. Layer Writting Errors</h4>
-<table>
+</td>
+<td>&nbsp;WRITTING_ERRORS
+<table style="border-color: #696969;">
 <tbody>
 <tr>
-<td><strong>Layer Name</strong></td>
-<td><strong>Error Message</strong></td>
+<td><strong>Layer Name</strong>&nbsp;</td>
+<td><strong>Error Message</strong>&nbsp;</td>
 </tr>
-WRITTING_ERRORS
 </tbody>
 </table>
+</td>
+</tr>
+</tbody>
+</table>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
