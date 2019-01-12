@@ -25,11 +25,11 @@ from functools import partial
 import os, json
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
 from qgis.core import Qgis, QgsApplication
-from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBarItem, QgsMessageBar
+from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
@@ -742,9 +742,21 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         msg = self.invalidatedReason()
         if msg:
             # if an invalidation reason was given, warn user and nothing else.
-            QgsMessageBar(self).pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-            # iface.messageBar().pushMessage(, msg, level=Qgis.Warning, duration=5)
+            msgBar = QgsMessageBar(self)
+            # if window is resized, msgBar stays, not ideal, but works for now
+            # maybe we should connect to some parent resizing signal or something...
+            msgBar.resize(QSize(self.geometry().size().width(), msgBar.geometry().height()))
+            msgBar.pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
         return msg == ''
+
+    def validateCurrentPage(self):
+        """
+        Reimplementation of QWizard's method.
+        """
+        if self.currentId() == 2:
+            return self.validate()
+        # validation per page may be added in here
+        return True
 
     def invalidatedReason(self):
         """
@@ -752,6 +764,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         as datasource conversion map.
         :return: (str) invalidation reason.
         """
+        if self.tableWidget.rowCount() == 0:
+            return self.tr("No datasets were selected (input or output)")
         for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
             # validate in/ouput
             msg = obj.validate()
@@ -830,8 +844,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             self.exportConversionJson()
             # call conversion method taking the mapping json
             self.run(conversionMap=conversionMap)
-        else:
-            self.exec_()
 
     def populateInterface(self, parameterDict):
         """
