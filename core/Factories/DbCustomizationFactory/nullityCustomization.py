@@ -28,29 +28,29 @@ class NullityCustomization(DbCustomization):
         super(NullityCustomization, self).__init__(customJson)
     
     def buildSql(self):
-        '''
+        """
         {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}
-        '''
+        """
         #Abstract method. Must be reimplemented in each child.
-        sql = ''''''
+        sql = """"""
         for modItem in self.customJson['ChangeNullity']:
             if modItem['notNull']:
                 nullClause = 'SET'
             else:
                 nullClause = 'DROP'
-            sql += '''ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n'''.format(modItem['schema'], modItem['table'], modItem['attrName'], nullClause)
+            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n""".format(modItem['schema'], modItem['table'], modItem['attrName'], nullClause)
         return sql
     
     def buildUndoSql(self):
-        '''
+        """
         {'schema':schema, 'table':table, 'attrName':attrName, 'notNull':notNull}
-        '''
+        """
         #Abstract method. Must be reimplemented in each child.
-        sql = ''''''
+        sql = """"""
         for modItem in self.customJson['ChangeNullity']:
             if not modItem['notNull']:
                 nullClause = 'SET'
             else:
                 nullClause = 'DROP'
-            sql += '''ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n'''.format(modItem['schema'], modItem['table'], modItem['attrName'], nullClause)
+            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" {3} NOT NULL;\n""".format(modItem['schema'], modItem['table'], modItem['attrName'], nullClause)
         return sql

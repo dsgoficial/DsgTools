@@ -28,36 +28,36 @@ class ClassCustomization(DbCustomization):
         super(ClassCustomization, self).__init__(customJson)
     
     def buildSql(self):
-        '''
+        """
         Parses customJson and builds sqls to create class
         {'name':name, 'attrs':attrList,'schema':schema}
-        '''
+        """
         #Abstract method. Must be reimplemented in each child.
-        sql = ''''''
-        pkClause = ''''''
+        sql = """"""
+        pkClause = """"""
         for table in self.customJson['ClassToAdd']:
-            sql += '''CREATE TABLE "{0}"."{1}" (\n'''.format(table['schema'],table['name'])
+            sql += """CREATE TABLE "{0}"."{1}" (\n""".format(table['schema'],table['name'])
             pkClause = None
             paramsSqlList = []
             for params in table['attrs']:
-                paramSql = '''    "{0}" {1}'''.format(params['attrName'], params['attrType'])
+                paramSql = """    "{0}" {1}""".format(params['attrName'], params['attrType'])
                 if not params['isNullable']:
-                    paramSql += ''' NOT NULL'''
+                    paramSql += """ NOT NULL"""
                 if params['isPk']:
-                    pkClause = '''    CONSTRAINT {0}_pk PRIMARY KEY ({1})'''.format(table['name'],params['attrName'])
+                    pkClause = """    CONSTRAINT {0}_pk PRIMARY KEY ({1})""".format(table['name'],params['attrName'])
                 paramsSqlList.append(paramSql)
             if pkClause:
                 paramsSqlList.append(pkClause)
-            sql += ''',\n'''.join(paramsSqlList)
-            sql += '''\n);\n'''
+            sql += """,\n""".join(paramsSqlList)
+            sql += """\n);\n"""
         return sql
     
     def buildUndoSql(self):
-        '''
+        """
         Parses customJson and builds undo sql.
-        '''
+        """
         #Abstract method. Must be reimplemented in each child.
         sql = ''
         for table in self.customJson['ClassToAdd']:
-            sql += '''DROP TABLE  "{0}"."{1}";\n'''.format(table['schema'],table['name'])
+            sql += """DROP TABLE  "{0}"."{1}";\n""".format(table['schema'],table['name'])
         return sql
