@@ -25,13 +25,14 @@ from functools import partial
 import os, json
 
 from qgis.PyQt import QtWidgets, uic
-from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
-from qgis.core import Qgis
-from qgis.gui import QgsCollapsibleGroupBox
+from qgis.core import Qgis, QgsApplication
+from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
+from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
 from DsgTools.core.DbTools.dbConverter import DbConverter
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -741,8 +742,21 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         msg = self.invalidatedReason()
         if msg:
             # if an invalidation reason was given, warn user and nothing else.
-            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            msgBar = QgsMessageBar(self)
+            # if window is resized, msgBar stays, not ideal, but works for now
+            # maybe we should connect to some parent resizing signal or something...
+            msgBar.resize(QSize(self.geometry().size().width(), msgBar.geometry().height()))
+            msgBar.pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
         return msg == ''
+
+    def validateCurrentPage(self):
+        """
+        Reimplementation of QWizard's method.
+        """
+        if self.currentId() == 2:
+            return self.validate()
+        # validation per page may be added in here
+        return True
 
     def invalidatedReason(self):
         """
@@ -750,6 +764,8 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         as datasource conversion map.
         :return: (str) invalidation reason.
         """
+        if self.tableWidget.rowCount() == 0:
+            return self.tr("No datasets were selected (input or output)")
         for obj in [self.datasourceManagementWidgetIn, self.datasourceManagementWidgetOut]:
             # validate in/ouput
             msg = obj.validate()
@@ -761,7 +777,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         for row in range(self.tableWidget.rowCount()):
             # get row contents
             # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
-            inDs, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
+            inDsName, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
             # check if a conversion mode was selected
             if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
                 return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
@@ -785,14 +801,38 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             return msg.format(", ".join(notUsed))
         return ''
 
+    def cancelConversion(self, conversionTask, summaryDlg):
+        """
+        Cancels a conversion task.
+        :param conversionTask: (DbConverter) conversion task to be cancelled.
+        :param summaryDlg: (TextBrowserDialog) dialog in which task's log is directed to.
+        """
+        if not conversionTask.feedback.isCanceled():
+            conversionTask.feedback.cancel()
+            summaryDlg.cancelPushButton.setEnabled(False)
+            conversionTask.blockSignals(True)
+            summaryDlg.progressBar.setValue(0)
+            summaryDlg.addToHtml(self.tr('<span style="color: #ff0000;"><br><p>CONVERSION TASK WAS CANCELLED.</span></p>'))
+            summaryDlg.savePushButton.setEnabled(True)
+
     def run(self, conversionMap):
         """
         Executes conversion itself based on a conversion map.
         :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
         """
-        status, log = DbConverter(iface, conversionMap).convertFromMap()
-        # expose log somehow
-        return status
+        task = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
+        summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
+        summaryDlg.savePushButton.setEnabled(False)
+        task.progressChanged.connect(summaryDlg.progressBar.setValue)
+        task.taskCompleted.connect(lambda : summaryDlg.setHtml(task.output['log']))
+        task.taskCompleted.connect(lambda : summaryDlg.cancelPushButton.setEnabled(False))
+        task.taskCompleted.connect(lambda : summaryDlg.savePushButton.setEnabled(True))
+        task.conversionUpdated.connect(summaryDlg.addToHtml)
+        summaryDlg.cancelPushButton.clicked.connect(partial(self.cancelConversion, task, summaryDlg))
+        # to clear log message before repopulating with conversion summary
+        task.conversionFinished.connect(summaryDlg.clearHtml)
+        QgsApplication.taskManager().addTask(task)
+        summaryDlg.show()
 
     def startConversion(self):
         """
