@@ -2456,27 +2456,27 @@ camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="225"/>
         <source>Coordinate Reference System not set or invalid!</source>
-        <translation type="unfinished">Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
+        <translation>Sistema de coordenadas não escolhido ou inválido!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="281"/>
         <source>Select Database</source>
-        <translation type="unfinished">Selecione o Banco de Dados</translation>
+        <translation>Selecione o banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="211"/>
         <source>This is not a valid DsgTools database!</source>
-        <translation type="unfinished">Este não é um banco DsgTools válido!</translation>
+        <translation>Este não é um banco válido!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="267"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="289"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="20"/>
@@ -2521,7 +2521,7 @@ camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="279"/>
         <source>File                    </source>
-        <translation>Arquivo</translation>
+        <translation>Arquivo                    </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="312"/>
@@ -2531,7 +2531,7 @@ camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="199"/>
         <source> on </source>
-        <translation type="unfinished"> em </translation>
+        <translation> no </translation>
     </message>
 </context>
 <context>
@@ -2539,64 +2539,64 @@ camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="61"/>
         <source>Select a conversion</source>
-        <translation type="unfinished">Selecione uma conversão</translation>
+        <translation>Selecione uma conversão</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="62"/>
         <source>postgis2spatialite</source>
-        <translation type="unfinished">postgis2spatialite</translation>
+        <translation>postgis2spatialite</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="63"/>
         <source>spatialite2postgis</source>
-        <translation type="unfinished">spatialite2postgis</translation>
+        <translation>spatialite2postgis</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="168"/>
         <source>Error!</source>
-        <translation type="unfinished">Erro!</translation>
+        <translation>Erro!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="130"/>
         <source>Enter input database!</source>
-        <translation type="unfinished">Entre com o bancos de dados de entrada!</translation>
+        <translation>Entre com o bancos de dados de entrada!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="133"/>
         <source>Enter output database!</source>
-        <translation type="unfinished">Entre com o banco de dados de saída!</translation>
+        <translation>Entre com o banco de dados de saída!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="136"/>
         <source>Version mismatch!
 Conversion must be between databases with the same version!</source>
-        <translation type="unfinished">Erro de versão!
+        <translation>Erro de versão!
 A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="166"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="166"/>
         <source>Conversion successfully completed!</source>
-        <translation type="unfinished">Conversão completada com sucesso!</translation>
+        <translation>Conversão completada com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="168"/>
         <source>Conversion not performed! Check log for details.</source>
-        <translation type="unfinished">Conversão não realizada! Verifique o log para detalhes.</translation>
+        <translation>Conversão não realizada! Verifique o log para detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="153"/>
         <source>Question</source>
-        <translation type="unfinished">Questão</translation>
+        <translation>Pergunta</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="153"/>
         <source>Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?</source>
-        <translation type="unfinished">Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
+        <translation>Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
     </message>
 </context>
 <context>
@@ -2682,57 +2682,57 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="46"/>
         <source>Select a Comma Separated Values File</source>
-        <translation type="unfinished">Selecione um arquivos separado por vírgulas</translation>
+        <translation>Selecione um arquivo separado por vírgulas</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="47"/>
         <source>Comma Separated Values File (*.csv)</source>
-        <translation type="unfinished">Arquivo separado por vírgulas (*.csv)</translation>
+        <translation>Arquivo separado por vírgulas (*.csv)</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="49"/>
         <source>CSV File</source>
-        <translation type="unfinished">Arquivo CSV</translation>
+        <translation>Arquivo CSV</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="91"/>
         <source>Database(s) {0} created successfully.</source>
-        <translation type="unfinished">Banco(s) de dados {0} criado(s) com sucesso.</translation>
+        <translation>Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="100"/>
         <source>Invalid inomen parameter!</source>
-        <translation type="unfinished">Parâmetro de índice de nomenclatura inválido!</translation>
+        <translation>Parâmetro de índice de nomenclatura inválido!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="104"/>
         <source>Error on {0}: </source>
-        <translation type="unfinished">Erro no(s) banco(s) de dados {0}: </translation>
+        <translation>Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="106"/>
         <source>Frame was not created on the following databases: {0}</source>
-        <translation type="unfinished">Moldura não criada no(s) seguinte(s) banco(s) de dados: {0}</translation>
+        <translation>Moldura não criada no(s) seguinte(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="108"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
-        <translation type="unfinished">Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
+        <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="112"/>
         <source>Check log for more details.</source>
-        <translation type="unfinished">Verifique o log para mais detalhes.</translation>
+        <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="114"/>
         <source>Info!</source>
-        <translation type="unfinished">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="114"/>
         <source>Process finished.</source>
-        <translation type="unfinished">Processo finalizado.</translation>
+        <translation>Processo finalizado.</translation>
     </message>
 </context>
 <context>
@@ -2750,32 +2750,32 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="83"/>
         <source>Database(s) {0} created successfully.</source>
-        <translation type="unfinished">Banco(s) de dados {0} criado(s) com sucesso.</translation>
+        <translation>Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="91"/>
         <source>Error on {0}: </source>
-        <translation type="unfinished">Erro no(s) banco(s) de dados {0}: </translation>
+        <translation>Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="93"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
-        <translation type="unfinished">Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
+        <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="97"/>
         <source>Check log for more details.</source>
-        <translation type="unfinished">Verifique o log para mais detalhes.</translation>
+        <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="99"/>
         <source>Info!</source>
-        <translation type="unfinished">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="99"/>
         <source>Process finished.</source>
-        <translation type="unfinished">Processo finalizado.</translation>
+        <translation>Processo finalizado.</translation>
     </message>
 </context>
 <context>
@@ -2783,112 +2783,112 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="145"/>
         <source>Attribute Customization</source>
-        <translation type="unfinished">Customização de atributos</translation>
+        <translation>Customização de atributos</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="149"/>
         <source>Class Customization</source>
-        <translation type="unfinished">Customização de classe</translation>
+        <translation>Customização de classe</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="153"/>
         <source>Code Name Customization</source>
-        <translation type="unfinished">Customização de code name</translation>
+        <translation>Customização de code name</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="157"/>
         <source>Default Customization</source>
-        <translation type="unfinished">Customização padrão</translation>
+        <translation>Customização padrão</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="161"/>
         <source>Domain Customization</source>
-        <translation type="unfinished">Customização de domínio</translation>
+        <translation>Customização de domínio</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="169"/>
         <source>Attribute Nullity Customization</source>
-        <translation type="unfinished">Customização de nulidade de atributo</translation>
+        <translation>Customização de nulidade de atributo</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="130"/>
         <source>Warning</source>
-        <translation type="unfinished">Atenção</translation>
+        <translation>Atenção</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="130"/>
         <source>Select a custom operation!</source>
-        <translation type="unfinished">Selecione uma operação de customização!</translation>
+        <translation>Selecione uma operação de customização!</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="149"/>
         <source>New Custom Class</source>
-        <translation type="unfinished">Nova classe customizada</translation>
+        <translation>Nova classe customizada</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="165"/>
         <source>Domain Value Customization</source>
-        <translation type="unfinished">Customização de valores de dompinio</translation>
+        <translation>Customização de valores de domínio</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="173"/>
         <source>Attribute Filter Customization</source>
-        <translation type="unfinished">Customização de filtro de atributo</translation>
+        <translation>Customização de filtro de atributo</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="145"/>
         <source>New Custom Attribute</source>
-        <translation type="unfinished">Novo atributo customizado</translation>
+        <translation>Novo atributo customizado</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="153"/>
         <source>New Custom Code Name</source>
-        <translation type="unfinished">Novo code name customizado</translation>
+        <translation>Novo code name customizado</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="157"/>
         <source>New Custom Default</source>
-        <translation type="unfinished">Novo default customizado</translation>
+        <translation>Novo padrão customizado</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="161"/>
         <source>New Custom Domain</source>
-        <translation type="unfinished">Novo domínio customizado</translation>
+        <translation>Novo domínio customizado</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="165"/>
         <source>New Domain Value</source>
-        <translation type="unfinished">Novo valor de domínio</translation>
+        <translation>Novo valor de domínio</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="169"/>
         <source>New Custom Attribute Nullity</source>
-        <translation type="unfinished">Nova customização de nulidade de atributo</translation>
+        <translation>Nova customização de nulidade de atributo</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="173"/>
         <source>New Custom Attribute Filter</source>
-        <translation type="unfinished">Nova customização de filtro de atributo</translation>
+        <translation>Nova customização de filtro de atributo</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="266"/>
         <source>Error!</source>
-        <translation type="unfinished">Erro!</translation>
+        <translation>Erro!</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="231"/>
         <source>Preparing to export customizations... </source>
-        <translation type="unfinished">Preparando para exportar customizações... </translation>
+        <translation>Preparando para exportar customizações... </translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="263"/>
         <source>Errors occured while trying to export customs built. Check qgis log for further details.</source>
-        <translation type="unfinished">Erros ocorreram durante a exportação de customizaçõe. Verifique o log do qgis para mais detalhes.</translation>
+        <translation>Ocorreram erros durante a exportação de customizações. Verifique o log do QGIS para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="265"/>
         <source>Customization error: </source>
-        <translation type="unfinished">Erro de customização: </translation>
+        <translation>Erro de customização: </translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="298"/>
@@ -2907,17 +2907,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="256"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="256"/>
         <source>Database Customization </source>
-        <translation type="unfinished">Customização de Bancos de Dados </translation>
+        <translation>Customização de bancos de dados </translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="256"/>
         <source> created successfuly!</source>
-        <translation type="unfinished">criada com sucesso!</translation>
+        <translation> criada com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -2988,12 +2988,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="71"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="71"/>
         <source>Map name index not valid!</source>
-        <translation type="unfinished">O índice de nomenclatura é inválido!</translation>
+        <translation>Índice de nomenclatura inválido!</translation>
     </message>
     <message>
         <location filename="../ui_about.ui" line="89"/>
@@ -3023,7 +3023,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="67"/>
         <source>Please, select a database first.</source>
-        <translation type="unfinished">Por favor, selecione um banco de dados antes.</translation>
+        <translation>Por favor, selecione um banco de dados antes.</translation>
     </message>
     <message>
         <location filename="../LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="74"/>
@@ -3134,22 +3134,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="136"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="136"/>
         <source>Fill the profile name!</source>
-        <translation type="unfinished">Preencha o nome do perfil!</translation>
+        <translation>Preencha o nome do perfil!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="101"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="101"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
 </context>
 <context>
@@ -3182,37 +3182,37 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="75"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="75"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="100"/>
         <source>Fill the profile name!</source>
-        <translation type="unfinished">Preencha o nome do perfil!</translation>
+        <translation>Preencha o nome do perfil!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source>Profile </source>
-        <translation type="unfinished">Perfil </translation>
+        <translation>Perfil </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source> for EDGV </source>
-        <translation type="unfinished"> para EDGV </translation>
+        <translation> para EDGV </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source> already exists!</source>
-        <translation type="unfinished"> já existe!</translation>
+        <translation> já existe!</translation>
     </message>
 </context>
 <context>
@@ -3220,42 +3220,42 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="62"/>
         <source>Select Database Path</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um caminho para a base de dados</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="112"/>
         <source>Database {0} successfully created.</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados {0} criado.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="120"/>
         <source>Error on {0}: </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro em {0}: </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="122"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="126"/>
         <source>Check log for more details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="128"/>
         <source>Info!</source>
-        <translation type="unfinished"></translation>
+        <translation>Informação!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="128"/>
         <source>Process finished.</source>
-        <translation type="unfinished"></translation>
+        <translation>Processo finalizado.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="150"/>
         <source>Create a PostGIS or a SpatiaLite Database</source>
-        <translation type="unfinished"></translation>
+        <translation>Criação bancos PostGIS ou SpatiaLite</translation>
     </message>
 </context>
 <context>
@@ -3293,7 +3293,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="79"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/create_user.py" line="70"/>
@@ -3308,17 +3308,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="83"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="83"/>
         <source>User </source>
-        <translation type="unfinished">Usuário </translation>
+        <translation>Usuário </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="66"/>
         <source>Password mismatch! User not created!</source>
-        <translation type="unfinished">Senha não coincidente! Usuário não criado!</translation>
+        <translation>Senha não coincidente! Usuário não criado!</translation>
     </message>
     <message>
         <location filename="UserTools/create_user.py" line="83"/>
@@ -3328,7 +3328,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="83"/>
         <source> created successfully on server </source>
-        <translation type="unfinished"> criado com sucesso no servidor </translation>
+        <translation> criado com sucesso no servidor </translation>
     </message>
 </context>
 <context>
@@ -3336,17 +3336,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ServerTools/createView.py" line="64"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.py" line="64"/>
         <source>Views created successfully on database </source>
-        <translation type="unfinished">Visões criadas com sucesso no banco de dados </translation>
+        <translation>Views criadas com sucesso no banco de dados </translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.py" line="67"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
 </context>
 <context>
@@ -3503,13 +3503,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.ui" line="26"/>
         <source>Select Reference Layer</source>
-        <translation>Selecione uma camada de referência
-</translation>
+        <translation>Selecione uma camada de referência</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.py" line="93"/>
         <source>Select a layer</source>
-        <translation type="unfinished">Selecione uma camada</translation>
+        <translation>Selecione uma camada</translation>
     </message>
 </context>
 <context>
@@ -3600,12 +3599,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="69"/>
         <source>Spatialite file databases (*.sqlite)</source>
-        <translation type="unfinished">Banco de dados Spatialite (*.sqlite)</translation>
+        <translation>Banco de dados Spatialite (*.sqlite)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="276"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/customServerConnectionWidget.py" line="62"/>
@@ -3650,17 +3649,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="68"/>
         <source>Select a DSGTools Spatialite File</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um arquivo SpatiaLite</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="71"/>
         <source>Select a DSGTools Geopackage File</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um arquivo Geopackage</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="72"/>
         <source>Geopackage Database Files (*.gpkg)</source>
-        <translation type="unfinished"></translation>
+        <translation>Banco de dados Geopackage (*.gpkg)</translation>
     </message>
 </context>
 <context>
@@ -3703,29 +3702,31 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
         <source>Area in mmÂ²</source>
-        <translation type="unfinished"></translation>
+        <translation>Área em mm²</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="56"/>
         <source>Enter a combo box text!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Insira um texto para o combo box!
+</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="58"/>
         <source>Enter a measurement!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Insira uma medida!
+</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="65"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="86"/>
         <source>Distance in mm</source>
-        <translation type="unfinished"></translation>
+        <translation>Distância em mm</translation>
     </message>
 </context>
 <context>
@@ -3743,7 +3744,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.py" line="68"/>
         <source>Select a layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione uma camada</translation>
     </message>
 </context>
 <context>
@@ -3882,57 +3883,57 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="84"/>
         <source>Question</source>
-        <translation type="unfinished">Questão</translation>
+        <translation>Pergunta</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="84"/>
         <source>Do you really want to delete customization </source>
-        <translation type="unfinished">Você realmente deseja apagar a customização </translation>
+        <translation>Você realmente deseja apagar a customização </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="90"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="90"/>
         <source>Customization </source>
-        <translation type="unfinished">Customização </translation>
+        <translation>Customização </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="90"/>
         <source> successfully deleted.</source>
-        <translation type="unfinished"> apagada com sucesso.</translation>
+        <translation> apagada com sucesso.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="94"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="94"/>
         <source>Error! Problem deleting customization: </source>
-        <translation type="unfinished">Erro! Problema apagando customização: </translation>
+        <translation>Erro! Problema ao tentar apagar customização: </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="67"/>
         <source>Select EDGV Version</source>
-        <translation type="unfinished">Selecione uma versão da EDGV</translation>
+        <translation>Selecione uma versão da EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="68"/>
         <source>Warning! Enter a EDGV Version</source>
-        <translation type="unfinished">Aviso! Entre com uma versão EDGV</translation>
+        <translation>Aviso! Insira uma versão EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="71"/>
         <source>Warning! Enter an Earth Coverage Name!</source>
-        <translation type="unfinished">Erro! Entre um nome para a Cobertura Terrestre!</translation>
+        <translation>Erro! Insira um nome para a cobertura terrestre!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="74"/>
         <source>Warning! Earth Coverage Name already exists!</source>
-        <translation type="unfinished">Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
+        <translation>Erro! Uma configuração de cobertura terrestre com este nome já existe!</translation>
     </message>
 </context>
 <context>
@@ -3940,32 +3941,32 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="56"/>
         <source>Other database model</source>
-        <translation type="unfinished"></translation>
+        <translation>Outro modelo de banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="86"/>
         <source>Select datasource</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione uma fonte de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="125"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="138"/>
         <source>Invalid datasource.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonte de dados inválida.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="142"/>
         <source>Invalid connection to server.</source>
-        <translation type="unfinished"></translation>
+        <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="145"/>
         <source>Database {0} does not exist.</source>
-        <translation type="unfinished"></translation>
+        <translation>A base de dados {0} não existe.</translation>
     </message>
 </context>
 <context>
@@ -3973,7 +3974,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/databaseManager.py" line="47"/>
         <source>Database Tools</source>
-        <translation type="unfinished">Ferramentas de BD</translation>
+        <translation>Ferramentas de BD</translation>
     </message>
 </context>
 <context>
@@ -4027,20 +4028,20 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="141"/>
         <source>Enter a database name!
 </source>
-        <translation type="unfinished">Entre um nome de banco de dados!
+        <translation>Insira o nome do banco de dados!
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="143"/>
         <source>Select a coordinate reference system!
 </source>
-        <translation type="unfinished">Selecione um sistema de referência de coordenadas!
+        <translation>Selecione um sistema de referência de coordenadas!
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="156"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="43"/>
@@ -4075,7 +4076,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="146"/>
         <source>Select a template database!
 </source>
-        <translation type="unfinished">Selecione um banco como modelo!
+        <translation>Selecione um banco como modelo!
 </translation>
     </message>
     <message>
@@ -4096,32 +4097,32 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="61"/>
         <source>Select a table from database</source>
-        <translation type="unfinished">Selecione uma tabela do banco de dados</translation>
+        <translation>Selecione uma tabela do banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="77"/>
         <source>Select an attribute from selected table</source>
-        <translation type="unfinished">Selecione um atributo da tabela selecionada</translation>
+        <translation>Selecione um atributo da tabela selecionada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="149"/>
         <source>Select a frame layer!
 </source>
-        <translation type="unfinished">Selecione uma camada de moldura!
+        <translation>Selecione uma camada de moldura!
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="151"/>
         <source>Select an index attribute!
 </source>
-        <translation type="unfinished">Selecione o atributo de MI!
+        <translation>Selecione o atributo de MI!
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="153"/>
         <source>Select an INOM attribute!
 </source>
-        <translation type="unfinished">Selecione o atributo de MI!
+        <translation>Selecione o atributo de MI!
 </translation>
     </message>
     <message>
@@ -4140,67 +4141,67 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="65"/>
         <source>Click to set datasource filter options</source>
-        <translation type="unfinished"></translation>
+        <translation>Clique para definir opções de filtro da fonte de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="66"/>
         <source>Remove this datasource widget</source>
-        <translation type="unfinished"></translation>
+        <translation>Remover este widget de fonte de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="139"/>
         <source>Choose a region...</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolha uma região...</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="139"/>
         <source>Inside Features</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições Internas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="139"/>
         <source>Outside Features</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições Externas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="226"/>
         <source>Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="226"/>
         <source>Buffer</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="226"/>
         <source>Intersects</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="364"/>
         <source>Select a layer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione uma camada...</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="265"/>
         <source>Spatial Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas espaciais</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="269"/>
         <source>Complex Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas complexas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="295"/>
         <source>{0} ({1} features)</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} ({1} features)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="295"/>
         <source>{0} ({1} feature)</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} ({1} feature)</translation>
     </message>
 </context>
 <context>
@@ -4208,172 +4209,172 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="69"/>
         <source>Input Datasources</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonte de dados de entrada</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="70"/>
         <source>Output Datasources</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonte de dados de saída</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="71"/>
         <source>Conversion Map and Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa e resumo de conversão</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="162"/>
         <source>Input</source>
-        <translation type="unfinished">Entrada</translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="163"/>
         <source>Filters</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtros</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="165"/>
         <source>In: EDGV Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Ent.: EDGV</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="166"/>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>Saída</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="167"/>
         <source>Out: CRS</source>
-        <translation type="unfinished"></translation>
+        <translation>Saída: SRC</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="168"/>
         <source>Out: EDGV Version</source>
-        <translation type="unfinished"></translation>
+        <translation>Saída: EDGV</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="169"/>
         <source>Conversion Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de conversão</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="796"/>
         <source>Select a datasource</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione uma fonte de dados</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="206"/>
         <source>Fan-out by filtered features from reference layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Fan-Out utilizando as feições filtradas da camada de referência</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="787"/>
         <source>Choose Conversion Mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Escolha o modo de conversão</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
         <source>Map No Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapear NoData</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
         <source>Strict Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversão rigorosa</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="537"/>
         <source>Reference Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de referência</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="538"/>
         <source>Layer Filtering Exp.</source>
-        <translation type="unfinished"></translation>
+        <translation>Expr. de filtro de camada</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="539"/>
         <source>Topological Test</source>
-        <translation type="unfinished"></translation>
+        <translation>Predicado topológico</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="540"/>
         <source>Topology Relation</source>
-        <translation type="unfinished"></translation>
+        <translation>Relação topológica</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="560"/>
         <source>Spatial Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas espaciais</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="566"/>
         <source>Complex Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas complexas</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="588"/>
         <source>{0} ({1} features)</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} ({1} features)</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="588"/>
         <source>{0} ({1} feature)</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} ({1} feature)</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="685"/>
         <source>new</source>
-        <translation type="unfinished"></translation>
+        <translation>nova</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="753"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="773"/>
         <source>No datasets were selected (input or output)</source>
-        <translation type="unfinished"></translation>
+        <translation>Alguma fonte de dados não foi definida (entrada ou saída)</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="788"/>
         <source>Conversion mode not selected for input {0} (row {1})</source>
-        <translation type="unfinished"></translation>
+        <translation>Modo de conversão não selecionado para a entrada {0} (linha {1})</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="791"/>
         <source>Conversion map unavailable for {0} to {1} (row {2})</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapa de conversão não disponível para conversão entre {0} e {1} (linha {2})</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="797"/>
         <source>Output datasource not selected for {0} (row {1})</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonte de dados de saída não selecionado para a entrada {0} (linha {1})</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="805"/>
         <source>Output datasource {0} was not used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonte de dados de saída {0} não utilizado.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="805"/>
         <source>Output datasources {0} were not used.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fontes de dados de saída {0} não utilizados.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="821"/>
         <source>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;CONVERSION TASK WAS CANCELLED.&lt;/span&gt;&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;TAREFA DE CONVERSÃO FOI CANCELADA.&lt;/span&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="829"/>
         <source>DSGTools Dataset Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramenta de Conversão de Fontes de Dados do DSGTools</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="865"/>
         <source>Convert Databases</source>
-        <translation type="unfinished"></translation>
+        <translation>Converter Bancos de Dados</translation>
     </message>
 </context>
 <context>
@@ -4381,27 +4382,28 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="82"/>
         <source>Schema</source>
-        <translation type="unfinished">Esquema</translation>
+        <translation>Esquema</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="83"/>
         <source>Layer</source>
-        <translation type="unfinished">Camada</translation>
+        <translation>Camada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="84"/>
         <source>Geometry Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Coluna 
+geométrica</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="85"/>
         <source>Geometry Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo geométrico</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="86"/>
         <source>SRID</source>
-        <translation type="unfinished"></translation>
+        <translation>SRID</translation>
     </message>
 </context>
 <context>
@@ -4414,52 +4416,52 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="62"/>
         <source>Select a datasource driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um driver de fonte de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="64"/>
         <source>PostGIS (create new database)</source>
-        <translation type="unfinished"></translation>
+        <translation>PostGIS (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="66"/>
         <source>SpatiaLite (create new database)</source>
-        <translation type="unfinished"></translation>
+        <translation>SpatiaLite (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="68"/>
         <source>Shapefile (create new database)</source>
-        <translation type="unfinished"></translation>
+        <translation>Shapefile (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="70"/>
         <source>Geopackage (create new database)</source>
-        <translation type="unfinished"></translation>
+        <translation>Geopackage (criar nova base de dados)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="77"/>
         <source>Add single datasource</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione uma fonte de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="78"/>
         <source>Add multiple datasource</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione múltiplas fontes de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="102"/>
         <source>new</source>
-        <translation type="unfinished"></translation>
+        <translation>nova</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="237"/>
         <source>Input Error!</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de entrada!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="239"/>
         <source>Output Error!</source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de saída!</translation>
     </message>
 </context>
 <context>
@@ -4480,7 +4482,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="136"/>
         <source>Dataset {0} already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fonte de dados {0} já existe.</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="608"/>
@@ -4488,46 +4490,53 @@ para moldura não for selecionada, a moldura não será criada </translation>
 Conversion Step {0} started...
 
 </source>
-        <translation type="unfinished"></translation>
+        <translation>
+Passo de conversão {0} iniciado...
+
+</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="609"/>
         <source>[INPUT] Reading {0}&apos;s layers...
 </source>
-        <translation type="unfinished"></translation>
+        <translation>[ENTRADA] Lendo camadas de {0}...
+</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="619"/>
         <source>[OUTPUT] Reading {0}&apos;s layers...
 </source>
-        <translation type="unfinished"></translation>
+        <translation>[SAÍDA] Lendo camadas de {0}...
+</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="624"/>
         <source>[OUTPUT] Creating dataset {0}...
 </source>
-        <translation type="unfinished"></translation>
+        <translation>[SAÍDA] Criando fonte de dados {0}...
+</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="628"/>
         <source>Dataset creation error ({0}): &apos;{1}&apos;
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro de criação de fonte de dados ({0}): &apos;{1}&apos;
+</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="637"/>
         <source>Preparing {0}&apos;s layers for conversion...</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando as camadas de {0} para a conversão...</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="642"/>
         <source>Mapping features...</source>
-        <translation type="unfinished"></translation>
+        <translation>Mapeando feições...</translation>
     </message>
     <message>
         <location filename="../core/DbTools/dbConverter.py" line="647"/>
         <source>Loading layers to {0}...</source>
-        <translation type="unfinished"></translation>
+        <translation>Carregando camadas para {0}...</translation>
     </message>
 </context>
 <context>
@@ -4566,46 +4575,46 @@ Conversion Step {0} started...
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="50"/>
         <source>Manage permissions to user </source>
-        <translation type="unfinished">Gerenciar permissão do usuário </translation>
+        <translation>Gerenciar permissão do usuário </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="50"/>
         <source> on database </source>
-        <translation type="unfinished"> no banco de dados </translation>
+        <translation> no banco de dados </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="59"/>
         <source>Grant / Revoke operation complete: </source>
-        <translation type="unfinished">Operação de Grant/Revoke completa: </translation>
+        <translation>Operação de Grant/Revoke completa: </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="86"/>
         <source>
 Successful profiles: </source>
-        <translation type="unfinished">
+        <translation>
 Perfis com sucesso: </translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="89"/>
         <source>Operation Complete!</source>
-        <translation type="unfinished">Operação completa!</translation>
+        <translation>Operação completa!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="96"/>
         <source>Profiles with error:</source>
-        <translation type="unfinished">Perfis com erro:</translation>
+        <translation>Perfis com erro:</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="98"/>
         <source>
 Error messages for each profile were output in qgis log.</source>
-        <translation type="unfinished">
-Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
+        <translation>
+Mensagens de erro para cada perfil foram geradas no log do QGIS.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="100"/>
         <source>Error for profile </source>
-        <translation type="unfinished">Erro para o perfil </translation>
+        <translation>Erro para o perfil </translation>
     </message>
 </context>
 <context>
@@ -4613,22 +4622,22 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="35"/>
         <source>Deaggregate Geometries</source>
-        <translation type="unfinished">Desagregar geometrias</translation>
+        <translation>Desagregar Geometrias</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="41"/>
         <source>Starting </source>
-        <translation type="unfinished">Iniciando </translation>
+        <translation>Iniciando o processo </translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="41"/>
         <source>Process.</source>
-        <translation type="unfinished">Processo.</translation>
+        <translation> .</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="44"/>
         <source>Running</source>
-        <translation type="unfinished">Rodando</translation>
+        <translation>Executando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="45"/>
@@ -4643,12 +4652,12 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="97"/>
         <source>All geometries are now single parted.</source>
-        <translation type="unfinished">Todas as geometrias são agora individuais.</translation>
+        <translation>Todas as geometrias são agora simples.</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="48"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="unfinished">Sem classes selecionada! Nada será feito.</translation>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="57"/>
@@ -4658,12 +4667,12 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="55"/>
         <source>Preparing execution for </source>
-        <translation type="unfinished">Preparando a execução para a camada </translation>
+        <translation>Preparando a execução para a camada </translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="71"/>
         <source>Running process on </source>
-        <translation type="unfinished">Executando o processo na camada  </translation>
+        <translation>Executando o processo na camada </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
@@ -5686,90 +5695,90 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="35"/>
         <source>Dissolve polygons with common attributes</source>
-        <translation type="unfinished">Dissolver polígonos com atributos comuns</translation>
+        <translation>Dissolver Polígonos com Atributos Comuns</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="57"/>
         <source>Deaggregate Geometries</source>
-        <translation type="unfinished">Desagregar geometrias</translation>
+        <translation>Desagregar Geometrias</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="72"/>
         <source>Problem executing qgis:dissolve. Check your installed libs.
 </source>
-        <translation type="unfinished">Problema ao executar qgis:dissolve. Verifique suas bibliotecas instaladas.</translation>
+        <translation>Erro ao tentar executar qgis:dissolve. Verifique as bibliotecas de algoritmos instaladas.
+</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="119"/>
         <source>Starting </source>
-        <translation type="unfinished">Iniciando </translation>
+        <translation>Iniciando o processo </translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="119"/>
         <source> Process.</source>
-        <translation type="unfinished"> Processo.</translation>
+        <translation> .</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="122"/>
         <source>Running</source>
-        <translation type="unfinished">Rodando</translation>
+        <translation>Executando</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="127"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="128"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="141"/>
         <source>There are dissolve errors. Check log.</source>
-        <translation type="unfinished">Ocorreram erros ao executar o dissolve. Verifique o log.</translation>
+        <translation>Ocorreram erros ao executar o dissolve. Verifique o log.</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="143"/>
         <source>Dissolve finished.</source>
-        <translation type="unfinished">Dissolve executado com sucesso.</translation>
+        <translation>Dissolve executado com sucesso.</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="unfinished">Categoria</translation>
+        <translation>Categoria</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="unfinished">Nome da 
-Camada</translation>
+        <translation>Nome da camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="unfinished">Coluna 
-Geométrica</translation>
+        <translation>Coluna 
+geométrica</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="unfinished">Tipo 
-Geométrico</translation>
+        <translation>Tipo 
+geométrico</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="unfinished">Tipo da 
-Camada</translation>
+        <translation>Tipo da 
+camada</translation>
     </message>
     <message>
         <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="51"/>
         <source>Force Geometries Validity</source>
-        <translation type="unfinished">Forçar validade de geometrias</translation>
+        <translation>Forçar Validade de Geometrias</translation>
     </message>
 </context>
 <context>
@@ -6078,38 +6087,39 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="57"/>
         <source>Show raster tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>Exibir valores de raster como tooltip</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="58"/>
         <source>Dynamic histogram view</source>
-        <translation type="unfinished"></translation>
+        <translation>Visualização dinâmica de histograma</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="59"/>
         <source>Set raster value from mouse click
 Shift + Left Click + Mouse Drag: Selects a set of points and assigns raster value for each point</source>
-        <translation type="unfinished"></translation>
+        <translation>Designar valor de raster a partir de clique do mouse
+Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e define valor de seus atributos a partir do valor de pixel do raster abaixo deles</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="112"/>
         <source>DSGTools: Raster information tool</source>
-        <translation type="unfinished"></translation>
+        <translation>DSGTools: Ferramenta de Informações de Raster</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="116"/>
         <source>DSGTools: Band tooltip</source>
-        <translation type="unfinished"></translation>
+        <translation>DSGTools: Tooltip de Bandas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="120"/>
         <source>DSGTools: Dynamic Histogram Viewer</source>
-        <translation type="unfinished"></translation>
+        <translation>DSGTools: Visualização Dinâmica de Histograma</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="124"/>
         <source>DSGTools: Set Value From Point</source>
-        <translation type="unfinished"></translation>
+        <translation>DSGTools: Definir Valor de Ponto</translation>
     </message>
 </context>
 <context>
@@ -6581,17 +6591,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="68"/>
         <source>Select EDGV Version</source>
-        <translation type="unfinished">Selecione uma versão da EDGV</translation>
+        <translation>Selecione uma versão da EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="75"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="69"/>
         <source>Warning! Enter a EDGV Version</source>
-        <translation type="unfinished">Aviso! Entre com uma versão EDGV</translation>
+        <translation>Aviso! Insira uma versão EDGV</translation>
     </message>
     <message>
         <location filename="CustomWidgets/earthCoverageManagerWidget.py" line="71"/>
@@ -6606,62 +6616,65 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="81"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="81"/>
         <source>Field Toolbox Configuration </source>
-        <translation type="unfinished">Configuração de Reclassificação </translation>
+        <translation>Ajustes de Reclassificação </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="81"/>
         <source> created successfuly!</source>
-        <translation type="unfinished"> criado com sucesso!</translation>
+        <translation> criado com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="103"/>
         <source>Update Earth Coverage configuration complete. 
 </source>
-        <translation type="unfinished">Atualizar configuração de Cobertura Terrestre completa. 
+        <translation>Atualização da configuração de cobertura terrestre completa. 
 </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="109"/>
         <source>earth coverage configuration</source>
-        <translation type="unfinished">configuração de cobertura terrestre</translation>
+        <translation>configuração de cobertura terrestre</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="123"/>
         <source>Uninstall Earth Coverage configuration complete. 
 </source>
-        <translation type="unfinished">Desinstalar configuração de Cobertura Terrestre completa. </translation>
+        <translation>Desinstalação configuração de cobertura terrestre completa. 
+</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="113"/>
         <source>Install Earth Coverage configuration complete. 
 </source>
-        <translation type="unfinished">Instalar configuração de Cobertura Terrestre. </translation>
+        <translation>Instalação de configuração de cobertura terrestre concluída. 
+</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="124"/>
         <source>earth coverage configurations</source>
-        <translation type="unfinished">configurações de cobertura terrestre</translation>
+        <translation>configurações de cobertura terrestre</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="118"/>
         <source>Delete Earth Coverage configuration complete. 
 </source>
-        <translation type="unfinished">Apagar configuração de Cobertura Terrestra completa. </translation>
+        <translation>Remoção de configuração de cobertura terrestra completa. 
+</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="72"/>
         <source>Warning! Enter an Earth Coverage Name!</source>
-        <translation type="unfinished">Erro! Entre um nome para a Cobertura Terrestre!</translation>
+        <translation>Atenção! Insira um nome para a cobertura terrestre!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="75"/>
         <source>Warning! Earth Coverage Name already exists!</source>
-        <translation type="unfinished">Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
+        <translation>Atenção! Uma configuração de cobertura terrestre com este nome já existe!</translation>
     </message>
 </context>
 <context>
@@ -6714,7 +6727,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.py" line="99"/>
         <source>Earth Coverage not loaded! Check log for details.</source>
-        <translation type="unfinished">Cobertura Terrestre não carregada! Verifique o log para detalhes.</translation>
+        <translation>Cobertura terrestre não carregada! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="CustomWidgets/earthCoverageWidget.py" line="121"/>
@@ -6732,57 +6745,57 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="111"/>
         <source>Info!</source>
-        <translation type="unfinished">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="111"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
-        <translation type="unfinished">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
+        <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="156"/>
         <source>Show properties</source>
-        <translation type="unfinished">Mostrar propriedades</translation>
+        <translation>Mostrar propriedades</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="183"/>
         <source>Question</source>
-        <translation type="unfinished">Questão</translation>
+        <translation>Pergunta</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="183"/>
         <source>Do you really want to drop database: </source>
-        <translation type="unfinished">Você realmente deseja apagar o banco de dados: </translation>
+        <translation>Você realmente deseja apagar o banco de dados: </translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="191"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="191"/>
         <source>Database </source>
-        <translation type="unfinished">Banco de Dados </translation>
+        <translation>Banco de dados </translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="191"/>
         <source> dropped successfully!</source>
-        <translation type="unfinished"> apagado com sucesso!</translation>
+        <translation> apagado com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="227"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="205"/>
         <source>Select a database to create view</source>
-        <translation type="unfinished">Selecione um banco de dados para criar view</translation>
+        <translation>Selecione um banco de dados para criar view</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.py" line="227"/>
         <source>Select a database to manage auxiliar structure</source>
-        <translation type="unfinished">Selecione um banco de dados para gerenciar a estrutura auxiliar</translation>
+        <translation>Selecione um banco de dados para gerenciar a estrutura auxiliar</translation>
     </message>
 </context>
 <context>
@@ -6790,42 +6803,42 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="160"/>
         <source>Select Server</source>
-        <translation type="unfinished">Selecione um Servidor</translation>
+        <translation>Selecione um servidor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="175"/>
         <source>Critical</source>
-        <translation type="unfinished">Crítico</translation>
+        <translation>Crítico</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="175"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="139"/>
         <source>Problem executing query: </source>
-        <translation type="unfinished">Problema executando a query: </translation>
+        <translation>Problema executando a query: </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="183"/>
         <source>Info!</source>
-        <translation type="unfinished">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="183"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
-        <translation type="unfinished">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
+        <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="187"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="103"/>
         <source>Loading databases from server... </source>
-        <translation type="unfinished">Carregando bancos de dados de servidor... </translation>
+        <translation>Carregando bancos de dados de servidor... </translation>
     </message>
 </context>
 <context>
@@ -6951,22 +6964,22 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="108"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="755"/>
         <source>Critical!</source>
-        <translation type="unfinished">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="347"/>
         <source>Enter a button name!</source>
-        <translation type="unfinished">Entre com um nome de botão!</translation>
+        <translation>Insira um nome para o botão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="717"/>
         <source>Remove child node</source>
-        <translation type="unfinished">Remover nó filho</translation>
+        <translation>Remover nó filho</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="492"/>
@@ -6981,7 +6994,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="750"/>
         <source>Question</source>
-        <translation type="unfinished">Questão</translation>
+        <translation>Pergunta</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="507"/>
@@ -7001,7 +7014,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="765"/>
         <source>Information!</source>
-        <translation type="unfinished">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="519"/>
@@ -7021,32 +7034,32 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="734"/>
         <source>Open reclassification setup file</source>
-        <translation type="unfinished">Abrir arquivo de configuração de reclassificação</translation>
+        <translation>Abrir arquivo de configuração de reclassificação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="753"/>
         <source>Reclassification Setup Files (*.reclas)</source>
-        <translation type="unfinished">Arquivo de Configuração de Reclassificação (*.reclas)</translation>
+        <translation>Arquivo de Configuração de Reclassificação (*.reclas)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="753"/>
         <source>Save reclassification setup file</source>
-        <translation type="unfinished">Salvar arquivo de configuração de reclassificação</translation>
+        <translation>Salvar arquivo de configuração de reclassificação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="755"/>
         <source>Define a name for the reclassification setup file!</source>
-        <translation type="unfinished">Defina um nome para o arquivo de configuração de reclassificação!</translation>
+        <translation>Defina um nome para o arquivo de configuração de reclassificação!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="765"/>
         <source>Reclassification setup file saved successfully!</source>
-        <translation type="unfinished">Arquivo de configuração de reclassificação salvo com sucesso!</translation>
+        <translation>Arquivo de configuração de reclassificação salvo com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="750"/>
         <source>Do you want to save this reclassification setup?</source>
-        <translation type="unfinished">Você deseja salvar esta configuração de reclassificação?</translation>
+        <translation>Você deseja salvar esta configuração de reclassificação?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="187"/>
@@ -7061,17 +7074,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="322"/>
         <source>Yes</source>
-        <translation type="unfinished">Sim</translation>
+        <translation>Sim</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="322"/>
         <source>No</source>
-        <translation type="unfinished">Não</translation>
+        <translation>Não</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="351"/>
         <source>Shortcut already set to another tool!</source>
-        <translation type="unfinished">Atalho já definido para outra ferramenta!</translation>
+        <translation>Atalho já definido para outra ferramenta!</translation>
     </message>
 </context>
 <context>
@@ -7079,53 +7092,54 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="70"/>
         <source>Select EDGV Version</source>
-        <translation type="unfinished">Selecione uma versão da EDGV</translation>
+        <translation>Selecione uma versão da EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="77"/>
         <source>Warning!</source>
-        <translation type="unfinished">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="71"/>
         <source>Warning! Enter a EDGV Version</source>
-        <translation type="unfinished">Aviso! Entre com uma versão EDGV</translation>
+        <translation>Aviso! Insira uma versão EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="74"/>
         <source>Warning! Enter a Field Toolbox Configuration Name!</source>
-        <translation type="unfinished">Aviso! Entre um nome para a Configuração de Reclassificação!</translation>
+        <translation>Aviso! Insira um nome de Ajustes de Reclassificação!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="77"/>
         <source>Warning! Field Toolbox Configuration Name already exists!</source>
-        <translation type="unfinished">Aviso! Nome de Configuração de Reclassificação já existente!</translation>
+        <translation>Aviso! Nome de Ajustes de Reclassificação já existente!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="83"/>
         <source>Success!</source>
-        <translation type="unfinished">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="83"/>
         <source>Field Toolbox Configuration </source>
-        <translation type="unfinished">Configuração de Reclassificação</translation>
+        <translation>Ajustes de Reclassificação </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="83"/>
         <source> created successfuly!</source>
-        <translation type="unfinished"> criada com sucesso!</translation>
+        <translation> criada com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="98"/>
         <source>Update Field Toolbox configuration complete. 
 </source>
-        <translation type="unfinished">Atualização de Configuração de Reclassificação completa. </translation>
+        <translation>Atualização de Ajustes de Reclassificação completa. 
+</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="104"/>
         <source>field toolbox configuration</source>
-        <translation type="unfinished">configuração de reclassificação</translation>
+        <translation>ajustes de reclassificação</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="118"/>
