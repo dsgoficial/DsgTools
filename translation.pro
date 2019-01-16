@@ -1,8 +1,13 @@
- SOURCES         =	core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py \
+ SOURCES         =	core/DbModels/SpatiaLite/__init__.py \
+					core/DbModels/PostGIS/__init__.py \
+					core/DbModels/__init__.py \
+					core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py \
 					core/DSGToolsProcessingAlgs/algRunner.py \
+					core/DSGToolsProcessingAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/convertLayer2LayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/updateOriginalLayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py \
@@ -27,6 +32,7 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/validationAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py \
@@ -45,54 +51,84 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/__init__.py \
+					core/Factories/SqlFactory/sqlGenerator.py \
+					core/Factories/SqlFactory/geopackageSqlGenerator.py \
+					core/Factories/SqlFactory/__init__.py \
+					core/Factories/SqlFactory/spatialiteSqlGenerator.py \
+					core/Factories/SqlFactory/sqlGeneratorFactory.py \
 					core/Factories/ThreadFactory/postgisDbThread.py \
 					core/Factories/ThreadFactory/inventoryThread.py \
 					core/Factories/ThreadFactory/dpiThread.py \
+					core/Factories/ThreadFactory/__init__.py \
 					core/Factories/ThreadFactory/genericThread.py \
 					core/Factories/ThreadFactory/threadFactory.py \
 					core/Factories/DbFactory/spatialiteDb.py \
 					core/Factories/DbFactory/abstractDb.py \
 					core/Factories/DbFactory/postgisDb.py \
 					core/Factories/DbFactory/geopackageDb.py \
+					core/Factories/DbFactory/__init__.py \
 					core/Factories/DbFactory/shapefileDb.py \
 					core/Factories/DbFactory/dbFactory.py \
 					core/Factories/DbCreatorFactory/dbCreatorFactory.py \
 					core/Factories/DbCreatorFactory/dbCreator.py \
 					core/Factories/DbCreatorFactory/postgisDbCreator.py \
 					core/Factories/DbCreatorFactory/spatialiteDbCreator.py \
+					core/Factories/DbCreatorFactory/__init__.py \
 					core/Factories/LayerLoaderFactory/shapefileLayerLoader.py \
 					core/Factories/LayerLoaderFactory/layerLoaderFactory.py \
 					core/Factories/LayerLoaderFactory/geopackageLayerLoader.py \
+					core/Factories/LayerLoaderFactory/__init__.py \
 					core/Factories/LayerLoaderFactory/spatialiteLayerLoader.py \
 					core/Factories/LayerLoaderFactory/postgisLayerLoader.py \
 					core/Factories/LayerLoaderFactory/edgvLayerLoader.py \
+					core/Factories/__init__.py \
+					core/Factories/Styles/edgv_213/__init__.py \
+					core/Factories/Styles/__init__.py \
+					core/Utils/__init__.py \
 					core/Utils/FrameTools/map_index.py \
+					core/Utils/FrameTools/__init__.py \
 					core/Utils/utils.py \
-					core/Misc/QGIS_Scripts/Sigef.py
+					core/Qmls/qgis_26/edgv_213_pro/__init__.py \
+					core/Qmls/qgis_26/edgv_3_pro/__init__.py \
 					core/Misc/QGIS_Scripts/edgv_checker.py \
 					core/Misc/QGIS_Scripts/HSV_fusion.py \
 					core/Misc/QGIS_Scripts/virtual_raster_inloco.py \
 					core/Misc/QGIS_Scripts/reverse_geocode.py \
+					core/Misc/QGIS_Scripts/__init__.py \
 					core/Misc/QGIS_Scripts/Sigef.py \
 					core/Misc/QGIS_Scripts/virtual_raster.py \
+					core/Misc/QmlTools/__init__.py \
 					core/Misc/QmlTools/qml_creator.py \
 					core/Misc/QmlTools/qmlParser.py \
+					core/Misc/__init__.py \
+					core/NetworkTools/__init__.py \
 					core/NetworkTools/BDGExRequestHandler.py \
 					core/GeometricTools/spatialRelationsHandler.py \
 					core/GeometricTools/featureHandler.py \
 					core/GeometricTools/attributeHandler.py \
+					core/GeometricTools/__init__.py \
 					core/GeometricTools/geometryHandler.py \
 					core/GeometricTools/networkHandler.py \
 					core/GeometricTools/layerHandler.py \
+					core/__init__.py \
 					core/ServerManagementTools/fieldToolBoxConfigManager.py \
 					core/ServerManagementTools/validationWorkflowManager.py \
 					core/ServerManagementTools/genericDbManager.py \
 					core/ServerManagementTools/permissionManager.py \
 					core/ServerManagementTools/earthCoverageManager.py \
 					core/ServerManagementTools/attributeRulesManager.py \
+					core/ServerManagementTools/__init__.py \
 					core/ServerManagementTools/customizationManager.py \
 					core/DbTools/dbConverter.py \
+					core/DbTools/__init__.py \
 					core/dsgEnums.py \
+					core/Styles/Non_EDGV/__init__.py \
+					core/Styles/edgv_3/__init__.py \
+					core/Styles/edgv_213/__init__.py \
+					core/Styles/edgv_FTer_2a_Ed/__init__.py \
+					core/Styles/__init__.py \
 					core/ValidationTools/validationManager.py \
 					core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \
 					core/ValidationTools/ValidationProcesses/snapToGridProcess.py \
@@ -121,6 +157,7 @@
 					core/ValidationTools/ValidationProcesses/identifyGapsProcess.py \
 					core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py \
 					core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py \
+					core/ValidationTools/ValidationProcesses/__init__.py \
 					core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py \
 					core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py \
 					core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py \
@@ -132,26 +169,34 @@
 					dsg_tools.py \
 					plugin_upload.py \
 					resources.py \
+					__init__.py \
 					resources_rc.py \
 					gui/ServerTools/serverDBExplorer.py \
+					gui/ServerTools/ViewServersGui/__init__.py \
 					gui/ServerTools/ViewServersGui/viewServersGui.py \
 					gui/ServerTools/serverToolsGuiManager.py \
 					gui/ServerTools/selectStyles.py \
 					gui/ServerTools/manageDBAuxiliarStructure.py \
 					gui/ServerTools/viewServers.py \
+					gui/ServerTools/BatchDbManagerGui/__init__.py \
 					gui/ServerTools/BatchDbManagerGui/batchDbManagerGui.py \
 					gui/ServerTools/exploreDb.py \
+					gui/ServerTools/__init__.py \
 					gui/ServerTools/serverConfigurator.py \
 					gui/ServerTools/createView.py \
 					gui/ServerTools/batchDbManager.py \
 					gui/ProductionTools/productionToolsGuiManager.py \
+					gui/ProductionTools/Toolboxes/FieldToolBox/FieldSetupConfigs/__init__.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py \
+					gui/ProductionTools/Toolboxes/FieldToolBox/__init__.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py \
 					gui/ProductionTools/Toolboxes/FieldToolBox/acquisition_tools.py \
+					gui/ProductionTools/Toolboxes/AttributeTools/__init__.py \
 					gui/ProductionTools/Toolboxes/AttributeTools/code_list.py \
 					gui/ProductionTools/Toolboxes/ContourTool/contour_value.py \
 					gui/ProductionTools/Toolboxes/ContourTool/contour_tool.py \
 					gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py \
+					gui/ProductionTools/Toolboxes/ContourTool/__init__.py \
 					gui/ProductionTools/Toolboxes/ContourTool/dsg_line_tool.py \
 					gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py \
 					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py \
@@ -160,49 +205,74 @@
 					gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py \
 					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py \
 					gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.py \
+					gui/ProductionTools/Toolboxes/ValidationToolbox/__init__.py \
+					gui/ProductionTools/Toolboxes/ValidationToolbox/ValidationRules/__init__.py \
 					gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py \
+					gui/ProductionTools/Toolboxes/__init__.py \
 					gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py \
+					gui/ProductionTools/Toolboxes/ComplexTools/__init__.py \
 					gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py \
 					gui/ProductionTools/Toolboxes/toolBoxesGuiManager.py \
+					gui/ProductionTools/__init__.py \
 					gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py \
+					gui/ProductionTools/Toolbars/StyleManagerTool/__init__.py \
 					gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py \
+					gui/ProductionTools/Toolbars/InspectFeatures/__init__.py \
 					gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py \
 					gui/ProductionTools/Toolbars/toolBarsGuiManager.py \
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py \
+					gui/ProductionTools/Toolbars/DsgRasterInfoTool/__init__.py \
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/bandValueTool.py \
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool_ui.py \
 					gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py \
+					gui/ProductionTools/Toolbars/__init__.py \
 					gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py \
+					gui/ProductionTools/Toolbars/MinimumAreaTool/__init__.py \
 					gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py \
 					gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py \
 					gui/ProductionTools/MapTools/mapToolsGuiManager.py \
 					gui/ProductionTools/MapTools/FreeHandTool/freeHandMain.py \
 					gui/ProductionTools/MapTools/FreeHandTool/models/acquisitionFree.py \
+					gui/ProductionTools/MapTools/FreeHandTool/models/__init__.py \
+					gui/ProductionTools/MapTools/FreeHandTool/__init__.py \
 					gui/ProductionTools/MapTools/FreeHandTool/controllers/acquisitionFreeController.py \
+					gui/ProductionTools/MapTools/FreeHandTool/controllers/__init__.py \
+					gui/ProductionTools/MapTools/__init__.py \
 					gui/ProductionTools/MapTools/Acquisition/acquisition.py \
 					gui/ProductionTools/MapTools/Acquisition/distanceToolTip.py \
 					gui/ProductionTools/MapTools/Acquisition/polygon.py \
 					gui/ProductionTools/MapTools/Acquisition/circle.py \
 					gui/ProductionTools/MapTools/Acquisition/geometricaAquisition.py \
 					gui/ProductionTools/MapTools/Acquisition/toolTip.py \
+					gui/ProductionTools/MapTools/Acquisition/__init__.py \
 					gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py \
+					gui/ProductionTools/MapTools/GenericSelectionTool/__init__.py \
 					gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py \
+					gui/ProductionTools/MapTools/FlipLineTool/__init__.py \
 					gui/DatabaseTools/ConversionTools/datasourceConversion.py \
+					gui/DatabaseTools/ConversionTools/__init__.py \
 					gui/DatabaseTools/ConversionTools/convert_database.py \
+					gui/DatabaseTools/__init__.py \
+					gui/DatabaseTools/DbTools/SingleDbCreator/__init__.py \
 					gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py \
+					gui/DatabaseTools/DbTools/__init__.py \
+					gui/DatabaseTools/DbTools/BatchDbCreator/__init__.py \
 					gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.py \
 					gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py \
 					gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py \
 					gui/DatabaseTools/UserTools/assign_profiles.py \
 					gui/DatabaseTools/UserTools/permission_properties.py \
 					gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.py \
+					gui/DatabaseTools/UserTools/PermissionManagerWizard/__init__.py \
 					gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizard.py \
 					gui/DatabaseTools/UserTools/serverProfilesManager.py \
 					gui/DatabaseTools/UserTools/create_profile.py \
 					gui/DatabaseTools/UserTools/createProfileWithProfileManager.py \
+					gui/DatabaseTools/UserTools/profiles/__init__.py \
 					gui/DatabaseTools/UserTools/alter_user_password.py \
 					gui/DatabaseTools/UserTools/create_user.py \
 					gui/DatabaseTools/UserTools/profileUserManager.py \
+					gui/DatabaseTools/UserTools/__init__.py \
 					gui/DatabaseTools/UserTools/manageServerUsers.py \
 					gui/DatabaseTools/UserTools/profile_editor.py \
 					gui/DatabaseTools/UserTools/dbProfileManager.py \
@@ -210,34 +280,50 @@
 					gui/DatabaseTools/databaseManager.py \
 					gui/LayerTools/layerToolsGuiManager.py \
 					gui/LayerTools/loadAuxStruct.py \
+					gui/LayerTools/LoadLayersFromServer/__init__.py \
 					gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py \
+					gui/LayerTools/__init__.py \
 					gui/LayerTools/load_by_class.py \
+					gui/LayerTools/CreateFrameTool/__init__.py \
 					gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py \
+					gui/LayerTools/CustomFormTools/formsCustom/__init__.py \
+					gui/LayerTools/CustomFormTools/__init__.py \
 					gui/LayerTools/CustomFormTools/generatorCustomForm.py \
 					gui/LayerTools/CustomFormTools/generatorCustomInitCode.py \
 					gui/LayerTools/create_features_test.py \
 					gui/Misc/ProcessingTools/processManager.py \
+					gui/Misc/ProcessingTools/__init__.py \
+					gui/Misc/ToolboxTools/__init__.py \
 					gui/Misc/ToolboxTools/models_and_scripts_installer.py \
+					gui/Misc/InventoryTools/__init__.py \
 					gui/Misc/InventoryTools/inventoryTools.py \
+					gui/Misc/__init__.py \
+					gui/Misc/ImageTools/__init__.py \
 					gui/Misc/ImageTools/raster_processing.py \
 					gui/Misc/ImageTools/processingTools.py \
 					gui/Misc/PostgisCustomization/dbCustomizer.py \
 					gui/Misc/PostgisCustomization/createDatabaseCustomization.py \
 					gui/Misc/PostgisCustomization/CustomJSONTools/customJSONBuilder.py \
+					gui/Misc/PostgisCustomization/CustomJSONTools/__init__.py \
 					gui/Misc/PostgisCustomization/CustomJSONTools/customJSONValidator.py \
+					gui/Misc/PostgisCustomization/CustomJSONValidator/__init__.py \
 					gui/Misc/PostgisCustomization/CustomJSONValidator/customJSONValidator.py \
+					gui/Misc/PostgisCustomization/__init__.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedRecursiveSnapWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRulesWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRuleTypesWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedHierarchicalSnapLayerWidget.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationWorkflowItemsWidget.py \
+					gui/CustomWidgets/OrderedPropertyWidgets/__init__.py \
 					gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationProcessesWidget.py \
+					gui/CustomWidgets/AdvancedInterfaceWidgets/__init__.py \
 					gui/CustomWidgets/AdvancedInterfaceWidgets/auxLayerSelector.py \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.py \
 					gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.py \
 					gui/CustomWidgets/AttributeValidityWidgets/listManagerWidget.py \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.py \
+					gui/CustomWidgets/AttributeValidityWidgets/__init__.py \
 					gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py \
 					gui/CustomWidgets/SelectionWidgets/customSelector.py \
 					gui/CustomWidgets/SelectionWidgets/selectFileWidget.py \
@@ -245,6 +331,7 @@
 					gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.py \
 					gui/CustomWidgets/SelectionWidgets/listSelector.py \
 					gui/CustomWidgets/SelectionWidgets/customTableWidget.py \
+					gui/CustomWidgets/SelectionWidgets/__init__.py \
 					gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.py \
 					gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py \
 					gui/CustomWidgets/SelectionWidgets/customTableSelector.py \
@@ -256,6 +343,7 @@
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newGeopackageWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/postgisWidget.py \
+					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/__init__.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/geopackageWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/spatialiteWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py \
@@ -263,16 +351,21 @@
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/multiDsWidgetFactory.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiShapefileSelectorWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiGeopackageSelectorWidget.py \
+					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/__init__.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/abstractMultiDsSelectorWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiSpatialiteSelectorWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py \
+					gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/__init__.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/datasourceSelectionWidgetFactory.py \
 					gui/CustomWidgets/ConnectionWidgets/connectionWidget.py \
 					gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py \
 					gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py \
 					gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py \
+					gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/__init__.py \
 					gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py \
+					gui/CustomWidgets/ConnectionWidgets/__init__.py \
+					gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/__init__.py \
 					gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py \
 					gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py \
 					gui/CustomWidgets/CustomDbManagementWidgets/domainSetter.py \
@@ -280,6 +373,7 @@
 					gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py \
 					gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py \
 					gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py \
+					gui/CustomWidgets/CustomDbManagementWidgets/__init__.py \
 					gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py \
 					gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py \
 					gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py \
@@ -291,32 +385,44 @@
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py \
+					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/__init__.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/validationWorkflowCompactPropertyManagerWidget.py \
+					gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/__init__.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/attributeRulesCompactPropertyManagerWidget.py \
 					gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py \
+					gui/CustomWidgets/DatabasePropertiesWidgets/__init__.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py \
+					gui/CustomWidgets/BasicInterfaceWidgets/__init__.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/dsgCustomComboBox.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.py \
 					gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py \
+					gui/CustomWidgets/__init__.py \
+					gui/CustomWidgets/DatabaseCustomizationWidgets/__init__.py \
 					gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py \
 					gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.py \
 					gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py \
+					gui/CustomWidgets/ValidationWidgets/__init__.py \
 					gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.py \
 					gui/CustomWidgets/customRasterToolTip.py \
+					gui/__init__.py \
 					gui/guiManager.py \
 					gui/ProcessingUI/snapHierarchyWrapper.py \
 					gui/ProcessingUI/fmeManagerWrapper.py \
 					gui/ProcessingUI/attributeRulesWrapper.py \
+					gui/ProcessingUI/__init__.py \
 					gui/BDGExTools/bdgexGuiManager.py \
+					gui/BDGExTools/__init__.py \
 					gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py \
 					gui/AboutAndFurtherInfo/Options/options.py \
+					gui/AboutAndFurtherInfo/Options/__init__.py \
+					gui/AboutAndFurtherInfo/__init__.py \
 					gui/AboutAndFurtherInfo/aboutdialog.py
 
  FORMS         =	gui/ServerTools/selectStyles.ui \
