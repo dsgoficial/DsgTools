@@ -272,7 +272,6 @@
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newGeopackageWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/postgisWidget.py \
-					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/__initi__.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/geopackageWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/spatialiteWidget.py \
 					gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py \

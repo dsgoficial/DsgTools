@@ -2548,12 +2548,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="146"/>
         <source>Invalid {index}</source>
-        <translation type="unfinished"></translation>
+        <translation>{index} inválido</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="149"/>
         <source>Invalid {index} format.</source>
-        <translation type="unfinished"></translation>
+        <translation>Formato de {index} inválido.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py" line="152"/>
@@ -3198,7 +3198,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="14"/>
         <source>Enter new measure parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Insira novos parâmetros de medição</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="20"/>
@@ -3213,7 +3213,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="37"/>
         <source>Combo box text</source>
-        <translation type="unfinished"></translation>
+        <translation>Texto do combo box</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="47"/>
@@ -6655,12 +6655,12 @@ Ativa</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.ui" line="80"/>
         <source>Edit server connections</source>
-        <translation type="unfinished"></translation>
+        <translation>Editar Conexões</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.ui" line="72"/>
         <source>Select File</source>
-        <translation type="unfinished">Selecionar arquivo</translation>
+        <translation>Selecionar arquivo</translation>
     </message>
 </context>
 <context>
@@ -6696,17 +6696,17 @@ Ativa</translation>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Diálogo</translation>
+        <translation>Caixa de Diálogo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui" line="45"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui" line="52"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -7129,47 +7129,47 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="61"/>
         <source>Select a DSGTools Geopackage file</source>
-        <translation type="unfinished"></translation>
+        <translation>Selecione um arquivo Geopackage DSGTools</translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="61"/>
         <source>Geopackage file databases (*.gpkg)</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivos Geopackage (*.gpkg)</translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="76"/>
         <source>Problem listing geom classes: </source>
-        <translation type="unfinished">Problema ao listar classes geométricas: </translation>
+        <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="93"/>
         <source>Problem getting tables from database: </source>
-        <translation type="unfinished">Problema ao obter tabelas do banco: </translation>
+        <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="110"/>
         <source>Problem getting geom column dict: </source>
-        <translation type="unfinished">Problema obtendo dicionário de colunas geométricas: </translation>
+        <translation>Problema ao ler o dicionário de colunas geométricas: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="126"/>
         <source>Problem getting full table name: </source>
-        <translation type="unfinished">Problema obtendo nome completo da tabela: </translation>
+        <translation>Problema obtendo o nome completo da tabela: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="136"/>
         <source>Problem getting geom types from db: </source>
-        <translation type="unfinished">Problema obtendo tipos geométricos do db: </translation>
+        <translation>Problema ao ler os tipos de geometria do banco: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="162"/>
         <source>Problem getting geom tables from db: </source>
-        <translation type="unfinished">Problema obtendo tabelas geométricas do db: </translation>
+        <translation>Problema ao ler camadas geométricas do banco: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="196"/>
         <source>Problem getting geom tuple list: </source>
-        <translation type="unfinished">Problema ao obter a lista de tuplas geometricas: </translation>
+        <translation>Problema ao obter a lista de tuplas geométricas: </translation>
     </message>
 </context>
 <context>
@@ -7177,67 +7177,67 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="57"/>
         <source>Snap hierarchy</source>
-        <translation type="unfinished"></translation>
+        <translation>Hierarquia de Snaps</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="66"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="73"/>
         <source>Prefer aligning nodes, insert extra vertices where required</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar alinhamento de nós, inserção de vértices extras quando necessário</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="74"/>
         <source>Prefer closest point, insert extra vertices where required</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar ponto mais próximo, inserção de vértices extras quando necessário</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="75"/>
         <source>Prefer aligning nodes, don&apos;t insert new vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar alinhamento de nós, não inserir novos vértices</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="76"/>
         <source>Prefer closest point, don&apos;t insert new vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar ponto mais próximo, não inserir novos vértices</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="77"/>
         <source>Move end points only, prefer aligning nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover apenas o último ponto, priorizar alinhamento de nós</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="78"/>
         <source>Move end points only, prefer closest point</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover apenas o último ponto, priorizar ponto mais próximo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="79"/>
         <source>Snap end points to end points only</source>
-        <translation type="unfinished"></translation>
+        <translation>União apenas entre os últimos pontos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="81"/>
         <source>Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamento</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="114"/>
         <source>Snapping geometries from layer {input} to {reference} with snap {snap}...</source>
-        <translation type="unfinished"></translation>
+        <translation>Unindo geometrias da camada {input} à {reference} com snap de {snap}...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="147"/>
         <source>Hierarchical Snap layer on layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Snap Hierárquico Entre Camadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="154"/>
         <source>Validation Tools (Manipulation Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
 <context>
@@ -7245,37 +7245,37 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="57"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="64"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="70"/>
         <source>Fix input geometries</source>
-        <translation type="unfinished"></translation>
+        <translation>Consertar geometrias da camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="77"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="83"/>
         <source>Original layer (has fixed geometries if fix mode is chosen)</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada original (com geometrias consertadas, caso disponível)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="137"/>
         <source>Identify And Fix Invalid Geometries</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar e Consertar Geometrias Inválidas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="144"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7283,67 +7283,67 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="57"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="64"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="70"/>
         <source>Contour value field</source>
-        <translation type="unfinished"></translation>
+        <translation>Campo de valor da cota</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="79"/>
         <source>Topology radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Raio topológico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="87"/>
         <source>Reference layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Referência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="95"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Tolerância</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="104"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="132"/>
         <source>Identifying dangles...</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificando pontas soltas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="144"/>
         <source>Adjusting frame lyr...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ajustando moldura...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="158"/>
         <source>Validating contour lines...</source>
-        <translation type="unfinished"></translation>
+        <translation>Validando linhas de contorno...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="167"/>
         <source>Raising flags...</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando flags...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="192"/>
         <source>Identify Contour Line Out of Threshhold</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Linhas de Contorno Fora da Tolerância</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="199"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7351,87 +7351,87 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="60"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="67"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="73"/>
         <source>Search radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Raio de busca</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="81"/>
         <source>Linestring Filter Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de filtro do tipo linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="89"/>
         <source>Polygon Filter Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas de filtro do tipo polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="97"/>
         <source>Ignore dangle on unsegmented lines</source>
-        <translation type="unfinished">Ignorar pontas soltas em linhas não segmentadas</translation>
+        <translation>Ignorar pontas soltas em linhas não segmentadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="103"/>
         <source>Ignore search radius on inner layer search</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar raio de busca na própria camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="109"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="138"/>
         <source>Building search structure...</source>
-        <translation type="unfinished"></translation>
+        <translation>Construindo estrutura de busca...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="148"/>
         <source>Looking for dangles...</source>
-        <translation type="unfinished"></translation>
+        <translation>Procurando por poltas sontas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="153"/>
         <source>Filtering dangles candidates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrando candidatos a pontas soltas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="166"/>
         <source>Filtering dangles candidates with filter...</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrando candidatos a pontas soltas com as camadas de filtros...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="179"/>
         <source>Filtering inner dangles...</source>
-        <translation type="unfinished"></translation>
+        <translation>Filtrando pontas soltas da própria camada...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="191"/>
         <source>Raising flags...</source>
-        <translation type="unfinished"></translation>
+        <translation>Preparando flags...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="198"/>
         <source>Dangle on {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Ponta solta em {0}</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="347"/>
         <source>Identify Dangles</source>
-        <translation type="unfinished">Identificar Pontas Soltas</translation>
+        <translation>Identificar Pontas Soltas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="354"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7574,47 +7574,47 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="52"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="60"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="67"/>
         <source>Fields to ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>Campos a Ignorar</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="78"/>
         <source>Ignore virtual fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar campos virtuais</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="85"/>
         <source>Ignore primary key fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar campos de chaves primárias</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="93"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="133"/>
         <source>Features from layer {0} with ids=({1}) have the same set of attributes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições da camada {0} com ids=({1}) possuem o mesmo conjunto de atributos.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="152"/>
         <source>Identify Duplicated Features</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Feições Duplicadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="159"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7622,32 +7622,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="45"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="53"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="60"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="100"/>
         <source>Features from layer {0} with ids=({1}) have duplicated geometries.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições da camada {0} com ids=({1}) possuem geometrias duplicadas.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="120"/>
         <source>Identify Duplicated Geometries</source>
-        <translation type="unfinished">Identificar geometrias duplicadas</translation>
+        <translation>Identificar Geometrias Duplicadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="127"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7755,32 +7755,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="47"/>
         <source>Coverage Linestring Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas do Tipo Linha da Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="62"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="105"/>
         <source>Features from coverage with same geometry: {0}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições da cobertura com a mesma gemetria: {0}.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="125"/>
         <source>Identify Duplicated Lines on Coverage</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Linhas Duplicadas na Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="132"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7788,32 +7788,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="47"/>
         <source>Point Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas do Tipo Ponto</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="62"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="105"/>
         <source>Features from coverage with same geometry: {0}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições da cobertura com a mesma gemetria: {0}.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="125"/>
         <source>Identify Duplicated Points on Coverage</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Pontos Duplicados na Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="132"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7821,32 +7821,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="47"/>
         <source>Coverage Polygon Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas do Tipo Polígono da Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="62"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="105"/>
         <source>Features from coverage with same geometry: {0}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições da cobertura com a mesma gemetria: {0}.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="125"/>
         <source>Identify Duplicated Polygons on Coverage</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Polígonos Duplicados na Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="132"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7854,32 +7854,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="52"/>
         <source>Input Polygon Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Polígonos de Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="60"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="67"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="113"/>
         <source>Gap in layer {0}.</source>
-        <translation type="unfinished"></translation>
+        <translation>Buraco na camada {0}.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="133"/>
         <source>Identify Gaps</source>
-        <translation type="unfinished">Identificar Gaps</translation>
+        <translation>Identificar Buracos na Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="140"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -7887,47 +7887,47 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="52"/>
         <source>Coverage Polygon Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Camadas do Tipo Polígono da Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="60"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="67"/>
         <source>Frame Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada deReferência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="76"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="150"/>
         <source>Gap in coverage with frame</source>
-        <translation type="unfinished"></translation>
+        <translation>Buraco entre a camada de cobertura terrestre e de referência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="168"/>
         <source>Gap in coverage layer.</source>
-        <translation type="unfinished"></translation>
+        <translation>Buraco na camada de cobertura terrestre.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="180"/>
         <source>Overlapping features (id,layer): {0}</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreposição entre as feições (id,camada): {0}</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="198"/>
         <source>Identify Gaps and Overlaps in Coverage Layers</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Buracos e Sobreposições na Camada de Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="205"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -8125,62 +8125,62 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="56"/>
         <source>Attribute Rules</source>
-        <translation type="unfinished">Regras de atributo</translation>
+        <translation>Regras de atributo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="65"/>
         <source>Prefer aligning nodes, insert extra vertices where required</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar alinhamento de nós, inserir vértices extras quando necessário</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="66"/>
         <source>Prefer closest point, insert extra vertices where required</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar ponto mais próximo, inserir vértices extras quando necessário</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="67"/>
         <source>Prefer aligning nodes, don&apos;t insert new vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar alinhamento de nós, não inserir novos vértices</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="68"/>
         <source>Prefer closest point, don&apos;t insert new vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar ponto mais próximo, não inserir novos vértices</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="69"/>
         <source>Move end points only, prefer aligning nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover apenas o último ponto, priorizar alinhamento de nós</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="70"/>
         <source>Move end points only, prefer closest point</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover apenas o último ponto, priorizar ponto mais próximo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="71"/>
         <source>Snap end points to end points only</source>
-        <translation type="unfinished"></translation>
+        <translation>União (snap) apenas pelos últimos pontos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="73"/>
         <source>Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamento</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="106"/>
         <source>Snapping geometries from layer {input} to {reference} with snap {snap}...</source>
-        <translation type="unfinished"></translation>
+        <translation>Unindo geometrias da camada {input} à {reference} com snap de {snap}...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="139"/>
         <source>Identify Invalid Attribute Combinations</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Combinações Inválidas de Atributos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="146"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -8288,87 +8288,87 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="59"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="67"/>
         <source>Process only selected features from input</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="74"/>
         <source>Filter expression for input</source>
-        <translation type="unfinished"></translation>
+        <translation>Expressão da camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="84"/>
         <source>Prefer aligning nodes, insert extra vertices where required</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar alinhamento de nós, inserir vértices extras quando necessário</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="85"/>
         <source>Prefer closest point, insert extra vertices where required</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar ponto mais próximo, inserir vértices extras quando necessário</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="86"/>
         <source>Prefer aligning nodes, don&apos;t insert new vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar alinhamento de nós, não inserir novos vértices</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="87"/>
         <source>Prefer closest point, don&apos;t insert new vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>Priorizar ponto mais próximo, não inserir novos vértices</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="88"/>
         <source>Move end points only, prefer aligning nodes</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover apena o último ponto, priorizar alinhamento de nós</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="89"/>
         <source>Move end points only, prefer closest point</source>
-        <translation type="unfinished"></translation>
+        <translation>Mover apenas o último ponto, priorizar ponto mais próximo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="90"/>
         <source>Snap end points to end points only</source>
-        <translation type="unfinished"></translation>
+        <translation>União (snap) apenas pelos últimos pontos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="93"/>
         <source>Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamento</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="101"/>
         <source>Ignore virtual fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar campos virtuais</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="108"/>
         <source>Ignore primary key fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar campos de chaves primárias</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="116"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="156"/>
         <source>Features from layer {0} with ids=({1}) have the same set of attributes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feições da camada {0} com ids=({1}) possuem o mesmo conjunto de atributos.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="175"/>
         <source>Identify Invalid Spatial Relationship Features</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Feições com Relacionamento Espacial Inválido</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="182"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -8476,37 +8476,37 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="48"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="56"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="63"/>
         <source>Minimum angle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ângulo mínimo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="72"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="101"/>
         <source>Feature from layer {0} with id={1} has angle of value {2} degrees, which is lesser than the tolerance of {3} degrees.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feição da camada {0} com id={1} possui ângulo de {2} graus, que é menor que a tolerância ({3} graus).</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="123"/>
         <source>Identify Out Of Bounds Angles</source>
-        <translation type="unfinished">Identificar ângulos fora de limites</translation>
+        <translation>Identificar Ângulos Fora de Limites</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="130"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -8514,32 +8514,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="51"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="59"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="66"/>
         <source>Minimum angle</source>
-        <translation type="unfinished"></translation>
+        <translation>Ângulo mínimo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="75"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="169"/>
         <source>Identify Out Of Bounds Angles in Coverage</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Ângulos Fora de Limites na Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="176"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -8662,32 +8662,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="51"/>
         <source>Input Polygon Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de polígonos de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="59"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="66"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="137"/>
         <source>Features from {0} overlap.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sobreposição de feições da camada {0}.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="157"/>
         <source>Identify Overlaps</source>
-        <translation type="unfinished">Identificar Sobreposições</translation>
+        <translation>Identificar Sobreposições</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="164"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -8880,37 +8880,37 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="50"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="58"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="65"/>
         <source>Line length tolerance</source>
-        <translation type="unfinished"></translation>
+        <translation>Tolerância de comprimento de linha</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="75"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="102"/>
         <source>Feature from layer {0} with id={1} has length of value {2:.2f}, which is lesser than the tolerance of {3} units.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feição da camada {0} com id={1} possui comprimento de {2:.2f}. que é menor que a tolerância ({3} unidades da camada).</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="124"/>
         <source>Identify Small Lines</source>
-        <translation type="unfinished">Identificar linhas pequenas</translation>
+        <translation>Identificar Linhas Pequenas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="131"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -9023,37 +9023,37 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="47"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar Apenas Feições Selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="62"/>
         <source>Area tolerance</source>
-        <translation type="unfinished"></translation>
+        <translation>Tolerância de área</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="71"/>
         <source>{0} Flags</source>
-        <translation type="unfinished"></translation>
+        <translation>{0} Flags</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="98"/>
         <source>Feature from layer {0} with id={1} has area of value {2:.2f}, which is lesser than the tolerance of {3} square units.</source>
-        <translation type="unfinished"></translation>
+        <translation>Feição da camada {0} com id={1} possui área de {2:.2f}. que é menor que a tolerância ({3} unidades quadradas da camada).</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="120"/>
         <source>Identify Small Polygons</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificar Polígonos Pequenos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="127"/>
         <source>Validation Tools (Identification Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
 <context>
@@ -9267,13 +9267,14 @@ Camada</translation>
     <message>
         <location filename="../core/Factories/ThreadFactory/inventoryThread.py" line="173"/>
         <source>File {file} copied to {destination}</source>
-        <translation type="unfinished"></translation>
+        <translation>Arquivo {file} copiado para {destination}</translation>
     </message>
     <message>
         <location filename="../core/Factories/ThreadFactory/inventoryThread.py" line="181"/>
         <source>Error copying file {file}: {exception}
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Erro ao copiar o arquivo {file}: {exception}
+</translation>
     </message>
 </context>
 <context>
@@ -9444,47 +9445,47 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="56"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="63"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="69"/>
         <source>Snap radius</source>
-        <translation type="unfinished"></translation>
+        <translation>Raio de atração (snap)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="78"/>
         <source>Original layer with overlayed lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada original com linhas seccionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="97"/>
         <source>Identifying dangles on {layer}...</source>
-        <translation type="unfinished"></translation>
+        <translation>Identificando pontas soltas na camada {layer}...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="117"/>
         <source>Snapping layer {layer} to dangles...</source>
-        <translation type="unfinished"></translation>
+        <translation>Unindo camada {layer} às pontas soltas...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="131"/>
         <source>Cleanning layer {layer}...</source>
-        <translation type="unfinished"></translation>
+        <translation>Limpando a camada {layer}...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="160"/>
         <source>Line on line overlayer</source>
-        <translation type="unfinished"></translation>
+        <translation>Seccionar Linhas com Linhas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="167"/>
         <source>Validation Tools (Manipulation Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
 <context>
@@ -10287,47 +10288,47 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="56"/>
         <source>Input layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="63"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="69"/>
         <source>Fields to ignore</source>
-        <translation type="unfinished"></translation>
+        <translation>Campos a ignorar</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="80"/>
         <source>Ignore virtual fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar campos virtuais</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="87"/>
         <source>Ignore primary key fields</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar campos de chaves primárias</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="94"/>
         <source>Ignore network construction</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorar construção da rede</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="101"/>
         <source>Original layer with merged lines</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada original com linhas unidas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="171"/>
         <source>Merge lines with same attribute set</source>
-        <translation type="unfinished"></translation>
+        <translation>Unir Linhas com Mesmo Conjunto de Atributos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="178"/>
         <source>Validation Tools (Manipulation Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
 <context>
@@ -10509,22 +10510,23 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="14"/>
         <source>Multiple Datasource Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Seleção de Múltiplas Fontes de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="26"/>
         <source>Nr. Datasources</source>
-        <translation type="unfinished"></translation>
+        <translation>Qtd. de Fontes
+    de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="112"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="131"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
 </context>
 <context>
@@ -10710,57 +10712,57 @@ Camada</translation>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="14"/>
         <source>DSGTools Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Opções do DSGTools</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="20"/>
         <source>Free Hand&apos;s Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Parâmetros da Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="36"/>
         <source>Smooth Iterations</source>
-        <translation type="unfinished"></translation>
+        <translation>Iterações de suavização</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="50"/>
         <source>Algorithm Iterations</source>
-        <translation type="unfinished"></translation>
+        <translation>Iterações de algoritmo</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="57"/>
         <source>Tolerance</source>
-        <translation type="unfinished">Tolerância</translation>
+        <translation>Tolerância</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="71"/>
         <source>Smooth offset</source>
-        <translation type="unfinished"></translation>
+        <translation>Offset de suavização</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="92"/>
         <source>Number of points removed on undo action</source>
-        <translation type="unfinished"></translation>
+        <translation>Nr. de pontos removidos ao desfazer ação</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="102"/>
         <source>Generic Selector&apos;s Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Parâmetro da Ferramenta Seletor Genérico</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="110"/>
         <source>New black list entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada a ser ignorada</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="151"/>
         <source>moldura</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="159"/>
         <source>Layer Name black list</source>
-        <translation type="unfinished"></translation>
+        <translation>Nome da Camada a ser ignorada (blacklist)</translation>
     </message>
 </context>
 <context>
@@ -10768,32 +10770,32 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="26"/>
         <source>Form</source>
-        <translation type="unfinished">Formulário</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="47"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Item</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="82"/>
         <source>Move up</source>
-        <translation type="unfinished"></translation>
+        <translation>Subir</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="108"/>
         <source>Add</source>
-        <translation type="unfinished">Adicionar</translation>
+        <translation>Adicionar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="134"/>
         <source>Remove</source>
-        <translation type="unfinished">Remover</translation>
+        <translation>Remover</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="160"/>
         <source>Move down</source>
-        <translation type="unfinished"></translation>
+        <translation>Descer</translation>
     </message>
 </context>
 <context>
@@ -10801,72 +10803,72 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="58"/>
         <source>Input Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="65"/>
         <source>Process only selected features</source>
-        <translation type="unfinished"></translation>
+        <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="71"/>
         <source>Polygon overlay Layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada de Referência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="78"/>
         <source>Use only selected features from overlay layer</source>
-        <translation type="unfinished"></translation>
+        <translation>Usar somente feições selecionadas da camada de referência</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="84"/>
         <source>Remove outside elements</source>
-        <translation type="unfinished">Remover elementos fora da área de corte</translation>
+        <translation>Remover elementos de fora da área de corte</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="85"/>
         <source>Remove inside elements</source>
-        <translation type="unfinished">Cortar e remover elementos dentro da área de corte</translation>
+        <translation>Remover elementos de dentro da área de corte</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="86"/>
         <source>Overlay and Keep Elements</source>
-        <translation type="unfinished">Cortar e manter elementos fora da área de corte</translation>
+        <translation>Apenas cortar elementos (mantém todas as feições)</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="89"/>
         <source>Behavior</source>
-        <translation type="unfinished"></translation>
+        <translation>Comportamento</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="97"/>
         <source>Original layer with overlayed elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Camada original com feições cortadas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="153"/>
         <source>Populating temp layer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Populando camada temporária...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="177"/>
         <source>Running overlay...</source>
-        <translation type="unfinished"></translation>
+        <translation>Executando o recorte...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="186"/>
         <source>Updating original layer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Atualizando a camada original...</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="235"/>
         <source>Overlay Elements With Areas</source>
-        <translation type="unfinished"></translation>
+        <translation>Cortar Feições com Áreas</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="242"/>
         <source>Validation Tools (Manipulation Processes)</source>
-        <translation type="unfinished"></translation>
+        <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
 <context>
@@ -12178,32 +12180,32 @@ Camada</translation>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3610"/>
         <source>Problem while retrieving flags dict: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao obter dicionário de flags: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3659"/>
         <source>Problem while retrieving validation processes history table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao tentar ler a tabela de histórico dos processos de validação: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3673"/>
         <source>Problem while creating compact validation processes history table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao tentar criar a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3680"/>
         <source>Problem while populating compact validation processes history table: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema ao tentar popular a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3710"/>
         <source>Problem getting list of attributes with filter: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problema obtendo lista de atributos com filtros: </translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/postgisDb.py" line="3724"/>
         <source>Problem getting domain json list: </source>
-        <translation type="unfinished"></translation>
+        <translation>Problemas ao tentar ler lista de JSON de domínios: </translation>
     </message>
 </context>
 <context>
@@ -12304,32 +12306,32 @@ Camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="184"/>
         <source>Snap Hierarchy</source>
-        <translation type="unfinished"></translation>
+        <translation>Snap Hierárquico</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="177"/>
         <source>FME Manager Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Parâmetros do FME Manager</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py" line="183"/>
         <source>FME Manager parameters. Used on Run Remote FME Workspace</source>
-        <translation type="unfinished"></translation>
+        <translation>Parâmetros do FME Manager. Utilizado na Execução Remota do FME Workspace.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="190"/>
         <source>An hierarchical snapping type. Used in the Hierarchical Snap Layer on Layer algorithm.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um tipo de snap hierárquico. Usando no algoritmo Snap Hierárquico Entre Camadas.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="176"/>
         <source>Attribute Rules</source>
-        <translation type="unfinished">Regras de atributo</translation>
+        <translation>Regras de atributo</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="182"/>
         <source>An attribute rules type. Used in the Identify Invalid Attribute Combinations algorithm.</source>
-        <translation type="unfinished"></translation>
+        <translation>Um tipo de regras de atributo. Usado no algoritmo Identificar Combinações Inválidas de Atributos.</translation>
     </message>
 </context>
 <context>
@@ -12523,7 +12525,7 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py" line="77"/>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Entrada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py" line="109"/>
@@ -15851,27 +15853,27 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="14"/>
         <source>&amp;DSGTools: Validation Toolbox</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;DSGTools: Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="71"/>
         <source>Validation Workflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Fluxo de Trabalho de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="107"/>
         <source>Task</source>
-        <translation type="unfinished"></translation>
+        <translation>Tarefa</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="126"/>
         <source>Re-Run Workflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Rodar Novamente Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="146"/>
         <source>Run Workflow</source>
-        <translation type="unfinished"></translation>
+        <translation>Executar Fluxo de Trabalho</translation>
     </message>
 </context>
 <context>
@@ -16600,7 +16602,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.ui" line="14"/>
         <source>Datasource Conversion</source>
-        <translation type="unfinished"></translation>
+        <translation>Conversão de Fontes de Dados</translation>
     </message>
 </context>
 </TS>
