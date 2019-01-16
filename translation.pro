@@ -45,27 +45,11 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py \
-					core/Factories/SqlFactory/postgisSqlGenerator.py \
-					core/Factories/SqlFactory/sqlGenerator.py \
-					core/Factories/SqlFactory/geopackageSqlGenerator.py \
-					core/Factories/SqlFactory/spatialiteSqlGenerator.py \
-					core/Factories/SqlFactory/sqlGeneratorFactory.py \
 					core/Factories/ThreadFactory/postgisDbThread.py \
 					core/Factories/ThreadFactory/inventoryThread.py \
 					core/Factories/ThreadFactory/dpiThread.py \
 					core/Factories/ThreadFactory/genericThread.py \
 					core/Factories/ThreadFactory/threadFactory.py \
-					core/Factories/DbCustomizationFactory/dbCustomizationFactory.py \
-					core/Factories/DbCustomizationFactory/classCustomization.py \
-					core/Factories/DbCustomizationFactory/nullityCustomization.py \
-					core/Factories/DbCustomizationFactory/dbCustomization.py \
-					core/Factories/DbCustomizationFactory/defaultCustomization.py \
-					core/Factories/DbCustomizationFactory/newDomainValueCustomization.py \
-					core/Factories/DbCustomizationFactory/codeNameCustomization.py \
-					core/Factories/DbCustomizationFactory/domainValueCustomization.py \
-					core/Factories/DbCustomizationFactory/newDomainTableCustomization.py \
-					core/Factories/DbCustomizationFactory/filterCustomization.py \
-					core/Factories/DbCustomizationFactory/attributeCustomization.py \
 					core/Factories/DbFactory/spatialiteDb.py \
 					core/Factories/DbFactory/abstractDb.py \
 					core/Factories/DbFactory/postgisDb.py \
@@ -335,7 +319,7 @@
 					gui/AboutAndFurtherInfo/Options/options.py \
 					gui/AboutAndFurtherInfo/aboutdialog.py
 
- FORMS         =	gui/ServerTools/selectStyles.ui \ \
+ FORMS         =	gui/ServerTools/selectStyles.ui \
 					gui/ServerTools/ui_serverDBExplorer.ui \
 					gui/ServerTools/exploreDb.ui \
 					gui/ServerTools/ui_viewServers.ui \

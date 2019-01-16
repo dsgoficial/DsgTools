@@ -1169,7 +1169,7 @@ class PostGISSqlGenerator(SqlGenerator):
         elif settingType == 'ValidationWorkflow':
             tableName = 'validation_workflow'
         else:
-            raise Exception(self.tr('Setting type not defined!'))
+            raise Exception('Setting type not defined!')
         return tableName
 
     def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
