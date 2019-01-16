@@ -10,6 +10,29 @@
     </message>
 </context>
 <context>
+    <name>AboutAndFurtherInfoGuiManager</name>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="51"/>
+        <source>DSGTools&apos; Options</source>
+        <translation>Opções do DSGTools</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="63"/>
+        <source>Report bug / Suggest features</source>
+        <translation>Reportar bug / Fazer sugestões</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="73"/>
+        <source>Help</source>
+        <translation>Ajuda</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="83"/>
+        <source>About DSGTools</source>
+        <translation>Sobre o DSGTools</translation>
+    </message>
+</context>
+<context>
     <name>AboutDialog</name>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about.ui" line="14"/>
@@ -259,7 +282,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/Factories/DbFactory/abstractDb.py" line="244"/>
         <source>Classes with null primary keys:</source>
-        <translation>Classes com chaves primárias nulas: </translation>
+        <translation>Classes com chaves primárias nulas:</translation>
     </message>
     <message>
         <location filename="../core/Factories/DbFactory/abstractDb.py" line="250"/>
@@ -359,7 +382,45 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../core/Factories/DbFactory/abstractDb.py" line="738"/>
         <source>Problem getting qmlRecordDict: </source>
-        <translation>Problema ao obter qmlRecordDict:</translation>
+        <translation>Problema ao obter qmlRecordDict: </translation>
+    </message>
+</context>
+<context>
+    <name>AbstractSelectionWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="55"/>
+        <source>No database selected.</source>
+        <translation>Nenhuma base de dados selecionada.</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="57"/>
+        <source>Select a datasource driver</source>
+        <translation>Selecione um driver de fonte de dados</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="59"/>
+        <source>PostGIS (create new database)</source>
+        <translation>PostGIS (criar nova base de dados)</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="61"/>
+        <source>SpatiaLite (create new database)</source>
+        <translation>SpatiaLite (criar nova base de dados)</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="63"/>
+        <source>Shapefile (create new database)</source>
+        <translation>Shapefile (criar nova base de dados)</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="65"/>
+        <source>Geopackage (create new database)</source>
+        <translation>Geopackage (criar nova base de dados)</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="197"/>
+        <source>Selection widget not available.</source>
+        <translation>Widget de seleção não disponível.</translation>
     </message>
 </context>
 <context>
@@ -370,40 +431,57 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/Acquisition/acquisition.py" line="38"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="82"/>
         <source>Tool not defined for points</source>
-        <translation type="obsolete">Ferramenta não definida para pontos</translation>
+        <translation>Ferramenta não funciona com pontos</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/Acquisition/acquisition.py" line="43"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="87"/>
         <source>Start editing in current layer!</source>
-        <translation type="obsolete">Inicie a edição na camada atual!</translation>
+        <translation>Inicie a edição na camada atual!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/Acquisition/acquisition.py" line="43"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="87"/>
         <source>Warning</source>
-        <translation type="obsolete">Atenção</translation>
+        <translation>Atenção</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="22"/>
+        <source>DSGTools: Right Degree Angle Digitizing
+Control modifier: disables tool while control is pressed.</source>
+        <translation>DSGTools: DSGTools: Ferramenta de Aquisição com Ângulos Retos
+Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="23"/>
+        <source>DSGTools: Right Degree Angle Digitizing</source>
+        <translation>DSGTools: Ferramenta de Aquisição com Ângulos Retos</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="36"/>
+        <source>DSGTools: Circle Digitizing</source>
+        <translation>DSGTools: Ferramenta de Aquisição de Círculos</translation>
     </message>
 </context>
 <context>
     <name>AddAttributeWidget</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="152"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="152"/>
         <source>EDGV Domain</source>
-        <translation type="obsolete">Domínio EDGV</translation>
+        <translation>Domínio EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="142"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="142"/>
         <source>Attribute must have a name.
 </source>
-        <translation type="obsolete">O atributo deve ter um nome.
+        <translation>O atributo deve ter um nome.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="144"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.py" line="144"/>
         <source>Attribute must have a type.
 </source>
-        <translation type="obsolete">O atributo deve ter um tipo.
+        <translation>O atributo deve ter um tipo.
 </translation>
     </message>
 </context>
@@ -488,54 +566,57 @@ p, li { white-space: pre-wrap; }
         <translation>Nome do atributo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="82"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="84"/>
         <source>Select a schema</source>
-        <translation type="obsolete">Selecione um esquema</translation>
+        <translation>Selecione um esquema</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="100"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="102"/>
         <source>Select a table</source>
-        <translation type="obsolete">Selecione uma tabela</translation>
+        <translation>Selecione uma tabela</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="115"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="117"/>
         <source>Select an attribute</source>
-        <translation type="obsolete">Selecione um atributo</translation>
+        <translation>Selecione um atributo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="168"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="170"/>
         <source>Select a value to alter</source>
-        <translation type="obsolete">Selecione um valor para alterar</translation>
+        <translation>Selecione um valor para alterar</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="260"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="262"/>
         <source>A value must be chosen.
 </source>
-        <translation type="obsolete">Um valor deve ser escolhido.</translation>
-    </message>
-    <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="262"/>
-        <source>A schema must be chosen.
-</source>
-        <translation type="obsolete">Um esquema deve ser escolhido.</translation>
-    </message>
-    <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="264"/>
-        <source>A table must be chosen.
-</source>
-        <translation type="obsolete">Uma tabela deve ser escolhida.</translation>
-    </message>
-    <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="266"/>
-        <source>An attribute must be chosen.
-</source>
-        <translation type="obsolete">Um atributio deve ser escolhido.
+        <translation>Um valor deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="271"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="264"/>
+        <source>A schema must be chosen.
+</source>
+        <translation>Um esquema deve ser escolhido.
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="266"/>
+        <source>A table must be chosen.
+</source>
+        <translation>Uma tabela deve ser escolhida.
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="268"/>
+        <source>An attribute must be chosen.
+</source>
+        <translation>Um atributio deve ser escolhido.
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="273"/>
         <source>Error in default customization </source>
-        <translation type="obsolete">Erro na customização padrão</translation>
+        <translation>Erro na customização padrão </translation>
     </message>
 </context>
 <context>
@@ -566,9 +647,9 @@ p, li { white-space: pre-wrap; }
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="73"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="73"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/alter_user_password.py" line="61"/>
@@ -581,47 +662,48 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Problema alterando password do usuário: </translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
         <source>User </source>
-        <translation type="obsolete">Usuário </translation>
+        <translation>Usuário </translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="58"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="58"/>
         <source>Password mismatch! Password not altered!</source>
-        <translation type="obsolete">Senha não coincidente! Senha não alterada!</translation>
+        <translation>Senhas são diferentes! Senha não alterada!</translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="75"/>
         <source> password successfully updated on database </source>
-        <translation type="obsolete"> senha atualizada com sucesso no banco de dados </translation>
+        <translation> senha atualizada com sucesso no banco de dados </translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="89"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="89"/>
         <source>Alter operation on server </source>
-        <translation type="obsolete">Operação de alteração no servidor </translation>
+        <translation>Operação de alteração no servidor </translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="89"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="89"/>
         <source> complete!
 </source>
-        <translation type="obsolete">completa!</translation>
+        <translation> concluída!
+</translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="98"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="98"/>
         <source>
 Successful users: </source>
-        <translation type="obsolete">
+        <translation>
 Usuários com sucesso: </translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="101"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="101"/>
         <source>Operation Complete!</source>
-        <translation type="obsolete">Operação completa!</translation>
+        <translation>Operação completa!</translation>
     </message>
     <message>
         <location filename="../UserTools/alter_user_password.py" line="111"/>
@@ -629,24 +711,44 @@ Usuários com sucesso: </translation>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="113"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="113"/>
         <source>
 Error messages for each user were output in qgis log.</source>
-        <translation type="obsolete">
-Mensagens de erro para cada usuário foram registradas no log do qgis.</translation>
+        <translation>
+Mensagens de erro para cada usuário foram registradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../UserTools/alter_user_password.py" line="115"/>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="115"/>
         <source>Error for user </source>
-        <translation type="obsolete">Erro para o usuário </translation>
+        <translation>Erro para o usuário </translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="111"/>
+        <source>
+Users with error:</source>
+        <translation>
+Usuários com erro:</translation>
+    </message>
+</context>
+<context>
+    <name>AssignBandValueTool</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py" line="268"/>
+        <source>Warning</source>
+        <translation>Atenção</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/assignBandValueTool.py" line="268"/>
+        <source>Select a point vector layer as the active layer</source>
+        <translation>Selecione uma camada vetorial do tipo ponto como a camada ativa</translation>
     </message>
 </context>
 <context>
     <name>AssignProfiles</name>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="201"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="202"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.py" line="118"/>
@@ -654,14 +756,14 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="188"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="189"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="134"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="135"/>
         <source>Profiles assigned successfully!</source>
-        <translation type="obsolete">Perfis atribuídos com sucesso!</translation>
+        <translation>Perfis atribuídos com sucesso!</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.py" line="147"/>
@@ -669,29 +771,77 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema ao remover perfil: </translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="178"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="179"/>
         <source>Profiles removed successfully!</source>
-        <translation type="obsolete">Perfis removidos com sucesso!</translation>
+        <translation>Perfis removidos com sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="191"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="192"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="191"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="192"/>
         <source>Do you really want to remove selected profile models?</source>
-        <translation type="obsolete">Você deseja realmente remover os modelos de perfil selecionados?</translation>
+        <translation>Você deseja realmente remover os modelos de perfil selecionados?</translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="201"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="202"/>
         <source>Problem removing profile model: </source>
-        <translation type="obsolete">Problema removendo o modelo de perfil: </translation>
+        <translation>Problema ao tentar remover o modelo de perfil: </translation>
     </message>
     <message>
-        <location filename="../UserTools/assign_profiles.py" line="188"/>
+        <location filename="../gui/DatabaseTools/UserTools/assign_profiles.py" line="189"/>
         <source>Select at least one profile and try again!</source>
-        <translation type="obsolete">Selecione pelo menos uma permissão de usuário e tente de novo!</translation>
+        <translation>Selecione pelo menos uma permissão de usuário e tente de novo!</translation>
+    </message>
+</context>
+<context>
+    <name>AttributeRuleProcess</name>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/attributeRuleProcess.py" line="42"/>
+        <source>Attribute Rule Checker</source>
+        <translation>Verificador de Regras de Atributo</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/attributeRuleProcess.py" line="51"/>
+        <source>Starting </source>
+        <translation>Iniciando o processo </translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/attributeRuleProcess.py" line="51"/>
+        <source> Process.</source>
+        <translation> .</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/attributeRuleProcess.py" line="54"/>
+        <source>Running</source>
+        <translation>Executando</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/attributeRuleProcess.py" line="62"/>
+        <source> features are invalid. Check flags.</source>
+        <translation> feições estão inválidas. Verifique as flags.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/attributeRuleProcess.py" line="65"/>
+        <source>All features are valid.</source>
+        <translation>Todas as feições estão válidas.</translation>
+    </message>
+</context>
+<context>
+    <name>AttributeRuleTypeWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.py" line="76"/>
+        <source>Invalid Attribute Rule Type Widget json config!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.py" line="109"/>
+        <source>Invalid rule name!
+</source>
+        <translation>Nome de regra inválido!
+</translation>
     </message>
 </context>
 <context>
@@ -736,6 +886,42 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <source>Enter description (optional)</source>
         <translation>Insira descrição (opcional)</translation>
     </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="44"/>
+        <source>Select a layer</source>
+        <translation>Selecione uma camada</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="74"/>
+        <source>Select attribute</source>
+        <translation>Selecione um atributo</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="109"/>
+        <source>Invalid Attribute Rule Widget json config!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="153"/>
+        <source>Invalid layer!
+</source>
+        <translation>Camada inválida!
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="155"/>
+        <source>Invalid attribute!
+</source>
+        <translation>Atributo inválido!
+</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="158"/>
+        <source>Invalid rule!
+</source>
+        <translation>Regra inválida!
+</translation>
+    </message>
 </context>
 <context>
     <name>AttributeRulesEditor</name>
@@ -759,6 +945,22 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="61"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="61"/>
+        <source>Errors on interface! Check log for details!</source>
+        <translation>Erros na interface! Verifique o log para mais detalhes!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="92"/>
+        <source>Invalid tags for attributeRulesEditor!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AttributesViewer</name>
@@ -766,6 +968,149 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <location filename="AttributeTools/attributes_viewer.py" line="56"/>
         <source>Select a Layer</source>
         <translation type="obsolete">Selecione uma camada</translation>
+    </message>
+</context>
+<context>
+    <name>BDGExGuiManager</name>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="46"/>
+        <source>BDGEx</source>
+        <translation>BDGEx</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="52"/>
+        <source>Multi scale mosaic</source>
+        <translation>Mosaico multi-escala</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="296"/>
+        <source>1:250,000</source>
+        <translation>1:250.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="305"/>
+        <source>1:100,000</source>
+        <translation>1:100.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="314"/>
+        <source>1:50,000</source>
+        <translation>1:50.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="323"/>
+        <source>1:25,000</source>
+        <translation>1:25.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="103"/>
+        <source>Rapideye Imagery (2013 mosaic)</source>
+        <translation>Imagens RapidEye (mosaico de 2013)</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="112"/>
+        <source>Landsat 7 Imagery (2000 mosaic)</source>
+        <translation>Imagens Landsat 7 (mosaico de 2000)</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="121"/>
+        <source>Orthorectified True Color Imagery compatible with 1:25,000 scale</source>
+        <translation>Imagens ortorretificadas True Color compatíveis com a escala 1:25.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="130"/>
+        <source>Artificial SAR Imagery compatible with 1:50,000 scale</source>
+        <translation>Imagens SAR artificiais compatíveis com a escala 1:50.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="139"/>
+        <source>Artificial SAR Imagery compatible with 1:25,000 scale</source>
+        <translation>Imagens SAR artificiais compatíveis com a escala 1:25.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="150"/>
+        <source>Surface Digital Model compatible with scale 1:25,000</source>
+        <translation>MDS compatíveis com a escala 1:25.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="159"/>
+        <source>Contour lines compatible with scale 1:25,000</source>
+        <translation>Curvas de nível compatíveis com a escala 1:25.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="169"/>
+        <source>Surface Digital Model compatible with scale 1:50,000</source>
+        <translation>MDS compatíveis com a escala 1:50.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="178"/>
+        <source>Contour lines compatible with scale 1:50,000</source>
+        <translation>Curvas de nível compatíveis com a escala 1:50.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="188"/>
+        <source>Contour lines compatible with scale 1:100,000</source>
+        <translation>Curvas de nível compatíveis com a escala 1:100.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="197"/>
+        <source>Surface Digital Model compatible with scale 1:250,000 (SRTM)</source>
+        <translation>MDS compatíveis com a escala 1:250.000 (SRTM</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="206"/>
+        <source>Contour lines compatible with scale 1:250,000</source>
+        <translation>Curvas de nível compatíveis com a escala 1:250.000</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="217"/>
+        <source>Brazilian Political Information</source>
+        <translation>Informações politicas brasileiras</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="229"/>
+        <source>Brazilian Cities</source>
+        <translation>Cidades brasileiras</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="238"/>
+        <source>Brazilian States</source>
+        <translation>Estados brasileiros</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="247"/>
+        <source>Brazilian State Capitals</source>
+        <translation>Capitais de estados brasileiros</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="344"/>
+        <source>Topographic Charts</source>
+        <translation>Cartas topográficas</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="337"/>
+        <source>Coverage Layers</source>
+        <translation>Camadas de cobertura terrestre</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="339"/>
+        <source>Terrain Information</source>
+        <translation>Informações de terreno</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="341"/>
+        <source>Auxiliar Information</source>
+        <translation>Informações auxiliares</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="343"/>
+        <source>Product Indexes</source>
+        <translation>Índices de produtos</translation>
+    </message>
+    <message>
+        <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="346"/>
+        <source>Vectorial Charts</source>
+        <translation>Cartas vetoriais</translation>
     </message>
 </context>
 <context>
@@ -819,6 +1164,11 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <location filename="DbTools/BatchDbCreator/batchDbCreator.ui" line="46"/>
         <source>Create databases based on an map index list</source>
         <translation type="obsolete">Criar bancos de dados baseados numa lista de índices de nomenclatura</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.py" line="77"/>
+        <source>Create batches of PostGIS/SpatiaLite Databases</source>
+        <translation>Criação em lote de bancos PostGIS e SpatiaLite</translation>
     </message>
 </context>
 <context>
@@ -1009,50 +1359,50 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation>Fechar</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="62"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="66"/>
         <source>Server Databases</source>
-        <translation type="obsolete">Bancos de Dados do Servidor</translation>
+        <translation>Bancos de Dados do Servidor</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="108"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="112"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="106"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="110"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="106"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="110"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
-        <translation type="obsolete">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
+        <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="139"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="143"/>
         <source>
 Successful databases: </source>
-        <translation type="obsolete">
+        <translation>
 Bancos de dados com sucesso: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="142"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="146"/>
         <source>Operation Complete!</source>
-        <translation type="obsolete">Operação completa!</translation>
+        <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="149"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="153"/>
         <source>
 Databases with error:</source>
-        <translation type="obsolete">
+        <translation>
 Bancos de dados com erro:</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="151"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="155"/>
         <source>
 Error messages for each database were output in qgis log.</source>
-        <translation type="obsolete">
-Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
+        <translation>
+Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</translation>
     </message>
     <message>
         <location filename="../ServerTools/batchDbManager.py" line="153"/>
@@ -1060,63 +1410,67 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="229"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="234"/>
         <source>Warning</source>
-        <translation type="obsolete">Atenção</translation>
+        <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="160"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="165"/>
         <source>Please select one or more databases to drop!</source>
-        <translation type="obsolete">Por favor, selecione um ou mais bancos para apagar!</translation>
+        <translation>Por favor, selecione um ou mais bancos para apagar!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="161"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="166"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="161"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="166"/>
         <source>Do you really want to drop databases: </source>
-        <translation type="obsolete">Você realmente quer apagar os bancos de dados: </translation>
+        <translation>Você realmente quer apagar os bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="167"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="172"/>
         <source>Drop operation complete. 
 </source>
-        <translation type="obsolete">Operação de deleção completa. </translation>
+        <translation>Operação de deleção completa. 
+</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="229"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="234"/>
         <source>Multiple edgv versions are not allowed!</source>
-        <translation type="obsolete">Múltiplas versões da edgv não são permitidas!</translation>
+        <translation>Múltiplas versões da EDGV não são permitidas!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="241"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="246"/>
         <source>Import operation complete. 
 </source>
-        <translation type="obsolete">Operação de importação completa. </translation>
+        <translation>Operação de importação completa. 
+</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="342"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="346"/>
         <source>Delete operation complete. 
 </source>
-        <translation type="obsolete">Operação de deleção completa. </translation>
+        <translation>Operação de deleção completa. 
+</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="362"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="366"/>
         <source>Select a SQL file</source>
-        <translation type="obsolete">Selecione um arquivo SQL</translation>
+        <translation>Selecione um arquivo SQL</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="362"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="366"/>
         <source>sql file (*.sql)</source>
-        <translation type="obsolete">arquivo-sql (*.sql)</translation>
+        <translation>arquivo SQL (*.sql)</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="374"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="378"/>
         <source>Customize from SQL file operation complete. 
 </source>
-        <translation type="obsolete">Operação Cutomizar a partir de arquivo SQL completa. </translation>
+        <translation>Operação de cutomização a partir de arquivo SQL completa. 
+</translation>
     </message>
     <message>
         <location filename="ServerTools/batchDbManager.py" line="347"/>
@@ -1169,10 +1523,10 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Ajustes de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../ServerTools/batchDbManager.py" line="178"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="183"/>
         <source>Upgrade Posgtis operation complete. 
 </source>
-        <translation type="obsolete">Operação de atualização do PostGIS completa. 
+        <translation>Operação de atualização do PostGIS completa. 
 </translation>
     </message>
     <message>
@@ -1191,17 +1545,17 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Não usar a clausula FROM ONLY</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.ui" line="86"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
         <source>Load Database Model EDGV Version 2.1.3</source>
         <translation>Carregar bancos com modelo EDGV Versão 2.1.3</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.ui" line="106"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
         <source>Load Database Model EDGV Version FTer_2a_Ed</source>
         <translation>Carregar bancos com modelo EDGV Versão FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.ui" line="111"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
         <source>Load Other Database Models</source>
         <translation>Carregar bancos com outras modelagens</translation>
     </message>
@@ -1216,12 +1570,12 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Rodar SQL de Arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.ui" line="96"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
         <source>Load Database Model EDGV Version 3.0</source>
         <translation>Carregar bancos com modelo EDGV Versão 3.0</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.ui" line="91"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
         <source>Load Database Model EDGV Version 2.1.3 Pro</source>
         <translation>Carregar Bancos com Modelo EDGV Versão 2.1.3 Pro</translation>
     </message>
@@ -1234,6 +1588,19 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="133"/>
         <source>Do not use custom form (Pro databases use custom form by default)</source>
         <translation>Não utilizar formulário customizado (padrão de bancos de versões Pro)</translation>
+    </message>
+    <message>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="157"/>
+        <source>Error for database {0}: </source>
+        <translation>Erro para o banco de dados {0}: </translation>
+    </message>
+</context>
+<context>
+    <name>BatchDbManagerGui</name>
+    <message>
+        <location filename="../gui/ServerTools/BatchDbManagerGui/batchDbManagerGui.py" line="47"/>
+        <source>Manage Databases from Server</source>
+        <translation>Gerenciar bancos de dados de um servidor</translation>
     </message>
 </context>
 <context>
@@ -1277,29 +1644,29 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
 <context>
     <name>CalcContour</name>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="94"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="106"/>
         <source>Select a Layer</source>
-        <translation type="obsolete">Selecione uma camada</translation>
+        <translation>Selecione uma camada</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="124"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="136"/>
         <source>Information</source>
-        <translation type="obsolete">Informação</translation>
+        <translation>Informação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="120"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="132"/>
         <source>A layer must be selected!</source>
-        <translation type="obsolete">Uma camada deve ser selecionada!</translation>
+        <translation>Uma camada deve ser selecionada!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="124"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="136"/>
         <source>A field must be selected!</source>
-        <translation type="obsolete">Um campo deve ser selecionado!</translation>
+        <translation>Um campo deve ser selecionado!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="136"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="148"/>
         <source>Layer successfully updated!</source>
-        <translation type="obsolete">Camada atualizada com sucesso!</translation>
+        <translation>Camada atualizada com sucesso!</translation>
     </message>
     <message>
         <location filename="VectorTools/calc_contour.py" line="111"/>
@@ -1312,117 +1679,122 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="136"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="148"/>
         <source>Information!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="144"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="156"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="138"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="150"/>
         <source>Could not update features!</source>
-        <translation type="obsolete">Não pôde atualizar feições!</translation>
+        <translation>Não foi possível atualizar feições!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="140"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="152"/>
         <source>Problem ordering the features!</source>
-        <translation type="obsolete">Problema ordenando as feições!</translation>
+        <translation>Problema ao tentar ordenar as feições!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="142"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="154"/>
         <source>The line created does not cross any features in the selected layer!</source>
-        <translation type="obsolete">A linha criada não cruza nenhuma feição na camada selecionada!</translation>
+        <translation>A linha criada não cruza nenhuma feição na camada selecionada!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/ContourTool/calc_contour.py" line="144"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="156"/>
         <source>Assign a value for the selected attribute of the first crossed feature!</source>
-        <translation type="obsolete">Atribua um valor para o atributo selecionado da primeira feição cruzada!</translation>
+        <translation>Atribua um valor para o atributo selecionado da primeira feição cruzada!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.py" line="71"/>
+        <source>Assign Contour Values</source>
+        <translation>Linha Cotadora</translation>
     </message>
 </context>
 <context>
     <name>ChangeFilterWidget</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="50"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="51"/>
         <source>Select filter values</source>
-        <translation type="obsolete">Selecionar valores do filtro</translation>
+        <translation>Selecionar valores do filtro</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="58"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="59"/>
         <source>Add to Filter (Leave empty if filter is empty)</source>
-        <translation type="obsolete">Adicionar no filtro (Deixe vazio se o filtro é vazio)</translation>
+        <translation>Adicionar ao filtro (deixe vazio caso não haja filtro)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="58"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="59"/>
         <source>Add to Filter (Add value to empty filter)</source>
-        <translation type="obsolete">Adicionar no filtro (Adicionar valor em filtro vazio)</translation>
+        <translation>Adicionar ao filtro (adicionar valor em filtro vazio)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="58"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="59"/>
         <source>Remove from Filter</source>
-        <translation type="obsolete">Remover do filtro</translation>
+        <translation>Remover do filtro</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="106"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="107"/>
         <source>Select a schema</source>
-        <translation type="obsolete">Selecionar um esquema</translation>
+        <translation>Selecione um esquema</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="131"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="132"/>
         <source>Select a table</source>
-        <translation type="obsolete">Selecionar uma tabela</translation>
+        <translation>Selecione uma tabela</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="146"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="147"/>
         <source>Select an attribute</source>
-        <translation type="obsolete">Selecionar um atributo</translation>
+        <translation>Selecione um atributo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="161"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="162"/>
         <source>Select a value to alter</source>
-        <translation type="obsolete">Selecionar um valor para alterar</translation>
+        <translation>Selecione um valor para alterar</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="299"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="300"/>
         <source>A value must be chosen.
 </source>
-        <translation type="obsolete">Um valor deve ser escolhido.
+        <translation>Um valor deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="301"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="302"/>
         <source>An action must be chosen.
 </source>
-        <translation type="obsolete">Uma ação deve ser escolhida.
+        <translation>Uma ação deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="308"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="309"/>
         <source>A schema must be chosen.
 </source>
-        <translation type="obsolete">Um esquema deve ser escolhido.
+        <translation>Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="310"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="311"/>
         <source>A table must be chosen.
 </source>
-        <translation type="obsolete">Uma tabela deve ser escolhida.
+        <translation>Uma tabela deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="312"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="313"/>
         <source>An attribute must be chosen.
 </source>
-        <translation type="obsolete">Um atributo deve ser escolhido.
+        <translation>Um atributo deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="317"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.py" line="318"/>
         <source>Error in change filter customization </source>
-        <translation type="obsolete">Erro na customização de mudança de filtro</translation>
+        <translation>Erro na customização de mudança de filtro </translation>
     </message>
 </context>
 <context>
@@ -1518,52 +1890,52 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation>Alterar nulidade de todos os atributos do banco de dados selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="77"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="77"/>
         <source>Select a schema</source>
-        <translation type="obsolete">Selecionar um esquema</translation>
+        <translation>Selecione um esquema</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="94"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="94"/>
         <source>Select a table</source>
-        <translation type="obsolete">Selecionar uma tabela</translation>
+        <translation>Selecione uma tabela</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="109"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="109"/>
         <source>Select an attribute</source>
-        <translation type="obsolete">Selecionar um atributo</translation>
+        <translation>Selecione um atributo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="163"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="163"/>
         <source>A schema must be chosen.
 </source>
-        <translation type="obsolete">Um esquema deve ser escolhido.
+        <translation>Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="165"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="165"/>
         <source>A table must be chosen.
 </source>
-        <translation type="obsolete">Uma tabela deve ser escolhida.
+        <translation>Uma tabela deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="167"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="167"/>
         <source>An action be chosen.
 </source>
-        <translation type="obsolete">Uma ação deve ser escolhida.
+        <translation>Uma ação deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="169"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="169"/>
         <source>An attribute must be chosen.
 </source>
-        <translation type="obsolete">Um atributo deve ser escolhido.
+        <translation>Um atributo deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="174"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="174"/>
         <source>Error in change nullity customization </source>
-        <translation type="obsolete">Erro na customização de mudança de nulidade </translation>
+        <translation>Erro na customização de mudança de nulidade </translation>
     </message>
 </context>
 <context>
@@ -1642,24 +2014,25 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
 <context>
     <name>CleanGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="35"/>
         <source>Clean Geometries</source>
-        <translation type="obsolete">Limpar geometrias</translation>
+        <translation>Limpar Geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="79"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="87"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translatorcomment>mudança de ordem da estrura na hora de traduzir!</translatorcomment>
+        <translation>Iniciando o processo </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="79"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="87"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation> .</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="82"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="90"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation>Executando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="87"/>
@@ -1667,9 +2040,9 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Banco de dados vazio.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="112"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="120"/>
         <source>Cleaning error.</source>
-        <translation type="obsolete">Erro de limpeza.</translation>
+        <translation>Erro de limpeza.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="108"/>
@@ -1682,24 +2055,24 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Não há erros de limpeza em {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="119"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="127"/>
         <source>There are cleaning errors. Check log.</source>
-        <translation type="obsolete">Não há erros de limpeza. Verifique o log.</translation>
+        <translation>Há erros de limpeza. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="121"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="129"/>
         <source>There are no cleaning errors.</source>
-        <translation type="obsolete">Não há erros de limpeza.</translation>
+        <translation>Não há erros de limpeza.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="94"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="87"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="95"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation>Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="65"/>
@@ -1708,110 +2081,118 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="114"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="122"/>
         <source> feature(s) from </source>
-        <translation type="obsolete"> feição(ões) da camada </translation>
+        <translation> feição(ões) da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="114"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="122"/>
         <source> with cleaning errors. Check flags.</source>
-        <translation type="obsolete"> com erros de limpeza. Verifique as flags.</translation>
+        <translation> com erros de limpeza. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="116"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="124"/>
         <source>There are no cleaning errors on </source>
-        <translation type="obsolete">Não há erros de limpeza em </translation>
+        <translation>Não há erros de limpeza em </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation>Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
-Camada</translation>
+        <translation>Nome da 
+camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
-Geométrica</translation>
+        <translation>Coluna 
+geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
-Geométrico</translation>
+        <translation>Tipo 
+geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
-Camada</translation>
+        <translation>Tipo da 
+camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="105"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="113"/>
         <source>Error while trying to remove coverage layer.</source>
-        <translation type="obsolete">Erro ao tentar remover camada de cobertura. </translation>
+        <translation>Erro ao tentar remover camada de cobertura terrestre.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py" line="73"/>
+        <source>Problem executing grass7:v.clean. Check your installed libs.
+</source>
+        <translation>Erro ao tentar executar grass7:v.clean. Verifique as bibliotecas de algoritmos instaladas.
+</translation>
     </message>
 </context>
 <context>
     <name>CloseEarthCoveragePolygonsProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="113"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="115"/>
         <source>Problem executing qgis:polygonize. Check your installed libs.
 </source>
-        <translation type="obsolete">Problema executando o polygonize do qgis. Verifique suas bibliotecas instaladas.</translation>
+        <translation>Erro ao tentar executar qgis:polygonize. Verifique as bibliotecas de algoritmos instaladas.
+</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="38"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="40"/>
         <source>Close Earth Coverage Polygons</source>
-        <translation type="obsolete">Fechar Polígonos de Cobertura Terrestre</translation>
+        <translation>Fechar Polígonos de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="46"/>
         <source>Snap Lines to Frame</source>
-        <translation type="obsolete">Colar linhas na moldura</translation>
+        <translation>Colar Linhas na Moldura</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="154"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="156"/>
         <source>Area with conflicted centroid.</source>
-        <translation type="obsolete">Área com centróide conflitante.</translation>
+        <translation>Área com centróide conflitante.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="167"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="169"/>
         <source>Area without centroid.</source>
-        <translation type="obsolete">Área sem centróide.</translation>
+        <translation>Área sem centróide.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="171"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="173"/>
         <source>Process finished with problems. Check flags.</source>
-        <translation type="obsolete">Processo terminado com problemas. Verifique as flags.</translation>
+        <translation>Processo terminado com problemas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="174"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="176"/>
         <source>There are no area building errors.</source>
-        <translation type="obsolete">Não há erros de construção de áreas.</translation>
+        <translation>Não há erros de construção de áreas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="325"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="327"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation>Iniciando o processo </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="325"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="327"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation> .</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="327"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="330"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation>Executando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="331"/>
@@ -1819,42 +2200,42 @@ Camada</translation>
         <translation type="obsolete">Cobertura Terrestre não definida!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="342"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="345"/>
         <source>Empty earth coverage!</source>
-        <translation type="obsolete">Cobertura Terrestre vazia!</translation>
+        <translation>Camada de cobertura terrestre vazia!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="356"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py" line="359"/>
         <source>Processing earth coverage on </source>
-        <translation type="obsolete">Processando a cobertura terrestre na camada </translation>
+        <translation>Processando a cobertura terrestre na camada </translation>
     </message>
 </context>
 <context>
     <name>CodeList</name>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="158"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="171"/>
         <source>Value</source>
-        <translation type="obsolete">Valor</translation>
+        <translation>Valor</translation>
     </message>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="158"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="171"/>
         <source>Code</source>
-        <translation type="obsolete">Código</translation>
+        <translation>Código</translation>
     </message>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="127"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="140"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="127"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="140"/>
         <source>Problem obtaining domain values: </source>
-        <translation type="obsolete">Problema ao obter valores de domínio: </translation>
+        <translation>Erro ao tentar obter valores de domínio: </translation>
     </message>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="228"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="251"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../AttributeTools/code_list.py" line="228"/>
@@ -1862,47 +2243,53 @@ Camada</translation>
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detaalhes.</translation>
     </message>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="229"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="252"/>
         <source>Error loading classes to Code List Viewer: </source>
-        <translation type="obsolete">Erro ao carregar classes no Visualizador de Code List: </translation>
+        <translation>Erro ao carregar classes no Visualizador de Code List: </translation>
     </message>
     <message>
-        <location filename="../AttributeTools/code_list.py" line="228"/>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="251"/>
         <source>A problem occurred! Check log for details. (Do the layers have Value Maps?)</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes. (As camadas possuem mapa de valor?)</translation>
+        <translation>Problema criando a estrutura do banco de dados! Verifique o terminal Log para detalhes. (As camadas possuem mapas de valor?)</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.py" line="51"/>
+        <source>View Code List Codes and Values</source>
+        <translation>Visualizar Code List e Valores</translation>
     </message>
 </context>
 <context>
     <name>CodeNameCustomizationWidget</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="76"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="76"/>
         <source>Choose a domain</source>
-        <translation type="obsolete">Escolha um domínio</translation>
+        <translation>Escolha um domínio</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="117"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="117"/>
         <source>A domain table must be chosen.
 </source>
-        <translation type="obsolete">Um domínio de tabela deve ser escolhido.</translation>
+        <translation>Um tabela de domínio deve ser escolhida.
+</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="119"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="119"/>
         <source>An old code name value must be chosen.
 </source>
-        <translation type="obsolete">Uma code name antigo deve ser escolhido.
+        <translation>Um code name antigo deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="121"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="121"/>
         <source>A new code name value must be chosen.
 </source>
-        <translation type="obsolete">Um novo code name deve ser escolhido.
+        <translation>Um novo code name deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="127"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.py" line="127"/>
         <source>Error in code name customization </source>
-        <translation type="obsolete">Erro na customização de code name </translation>
+        <translation>Erro na customização de code name </translation>
     </message>
 </context>
 <context>
@@ -1931,82 +2318,87 @@ Camada</translation>
 <context>
     <name>ComplexWindow</name>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="154"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="170"/>
         <source>select a complex class</source>
-        <translation type="obsolete">selecione a classe complexa</translation>
+        <translation>selecione uma classe complexa</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="170"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="186"/>
         <source>select a database</source>
-        <translation type="obsolete">selecione o Banco de Dados</translation>
+        <translation>selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="481"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="497"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="218"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="234"/>
         <source>Please, select an item to zoom.</source>
-        <translation type="obsolete">Por favor, selecione um item para aproximar.</translation>
+        <translation>Por favor, selecione um item para dar zoom.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="237"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="253"/>
         <source>The associated classes must be loaded in the table of contents.</source>
-        <translation type="obsolete">As classes associadas precisam ser carregadas na tabela de conteúdo.</translation>
+        <translation>As classes associadas precisam ser carregadas na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="252"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="268"/>
         <source>Select a complex.</source>
-        <translation type="obsolete">Selecione um complexo.</translation>
+        <translation>Selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="331"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="347"/>
         <source>The class you&apos;re trying to disassociate must loaded in the table of contents.</source>
-        <translation type="obsolete">A classe que você está tentando desassociar precisa ser carregada na tabela de conteúdo.</translation>
+        <translation>A classe que você está tentando desassociar precisa ser carregada na tabela de conteúdo.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="379"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="395"/>
         <source>Please, select an aggregated class or aggregated id.</source>
-        <translation type="obsolete">Por favor, selecione uma classe agregada ou o identificador dela.</translation>
+        <translation>Por favor, selecione uma classe agregada ou o seu ID de agregação.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="432"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="448"/>
         <source>Please, select a complex.</source>
-        <translation type="obsolete">Por favor, selecione um complexo.</translation>
+        <translation>Por favor, selecione um complexo.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="478"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="494"/>
         <source>The following layers cannot be associated to complexes from </source>
-        <translation type="obsolete">As camadas a seguir não podem ser associadas a complexos de</translation>
+        <translation>As camadas a seguir não podem ser associadas a complexos de </translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="357"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="373"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="457"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="473"/>
         <source>Critical</source>
-        <translation type="obsolete">Crítico</translation>
+        <translation>Crítico</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="457"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="473"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detaalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/complexWindow.py" line="193"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="209"/>
         <source>Select a database before managing a complex!</source>
-        <translation type="obsolete">Selecione um banco de dados para gerenciar um complexo!</translation>
+        <translation>Selecione um banco de dados antes de manipular um complexo!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow.py" line="68"/>
+        <source>Build Complex Structures</source>
+        <translation>Construir Estruturas Complexas</translation>
     </message>
 </context>
 <context>
     <name>ConnectionComboBox</name>
     <message>
-        <location filename="../CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="44"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="52"/>
         <source>Other database model</source>
-        <translation type="obsolete">Banco com outra modelagem</translation>
+        <translation>Banco com outra modelagem</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="45"/>
@@ -2014,19 +2406,19 @@ Camada</translation>
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="69"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="92"/>
         <source>Select Database</source>
-        <translation type="obsolete">Selecione o Banco de Dados</translation>
+        <translation>Selecione o banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="76"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="99"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="116"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="144"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.ui" line="14"/>
@@ -2038,33 +2430,53 @@ Camada</translation>
         <source>Edit server connections</source>
         <translation>Editar Conexões com Servidores</translation>
     </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="56"/>
+        <source>Select database</source>
+        <translation>Selecione um banco de dados</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="180"/>
+        <source>Invalid datasource.</source>
+        <translation>Fonte de dados inválido.</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="184"/>
+        <source>Invalid connection to server.</source>
+        <translation>Conexão com o servidor inválida.</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="187"/>
+        <source>Database {0} does not exist.</source>
+        <translation>A base de dados {0} não existe.</translation>
+    </message>
 </context>
 <context>
     <name>ConnectionWidget</name>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="224"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="225"/>
         <source>Coordinate Reference System not set or invalid!</source>
-        <translation type="obsolete">Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
+        <translation type="unfinished">Sistema de Coordenadas de Referência não escolhido ou inválido!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="280"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="281"/>
         <source>Select Database</source>
-        <translation type="obsolete">Selecione o Banco de Dados</translation>
+        <translation type="unfinished">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="210"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="211"/>
         <source>This is not a valid DsgTools database!</source>
-        <translation type="obsolete">Este não é um banco DsgTools válido!</translation>
+        <translation type="unfinished">Este não é um banco DsgTools válido!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="266"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="267"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="288"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="289"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="20"/>
@@ -2072,7 +2484,7 @@ Camada</translation>
         <translation>Formulário</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="38"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="172"/>
         <source>Database connection</source>
         <translation>Conexão do Banco de Dados</translation>
     </message>
@@ -2117,74 +2529,74 @@ Camada</translation>
         <translation>Pesquisar</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/connectionWidget.py" line="198"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="199"/>
         <source> on </source>
-        <translation type="obsolete"> em </translation>
+        <translation type="unfinished"> em </translation>
     </message>
 </context>
 <context>
     <name>ConvertDatabase</name>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="60"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="61"/>
         <source>Select a conversion</source>
-        <translation type="obsolete">Selecione uma conversão</translation>
+        <translation type="unfinished">Selecione uma conversão</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="61"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="62"/>
         <source>postgis2spatialite</source>
-        <translation type="obsolete">postgis2spatialite</translation>
+        <translation type="unfinished">postgis2spatialite</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="62"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="63"/>
         <source>spatialite2postgis</source>
-        <translation type="obsolete">spatialite2postgis</translation>
+        <translation type="unfinished">spatialite2postgis</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="167"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="168"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="129"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="130"/>
         <source>Enter input database!</source>
-        <translation type="obsolete">Entre com o bancos de dados de entrada!</translation>
+        <translation type="unfinished">Entre com o bancos de dados de entrada!</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="132"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="133"/>
         <source>Enter output database!</source>
-        <translation type="obsolete">Entre com o banco de dados de saída!</translation>
+        <translation type="unfinished">Entre com o banco de dados de saída!</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="135"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="136"/>
         <source>Version mismatch!
 Conversion must be between databases with the same version!</source>
-        <translation type="obsolete">Erro de versão!
+        <translation type="unfinished">Erro de versão!
 A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="165"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="166"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="165"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="166"/>
         <source>Conversion successfully completed!</source>
-        <translation type="obsolete">Conversão completada com sucesso!</translation>
+        <translation type="unfinished">Conversão completada com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="167"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="168"/>
         <source>Conversion not performed! Check log for details.</source>
-        <translation type="obsolete">Conversão não realizada! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Conversão não realizada! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="152"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="153"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../ConversionTools/convert_database.py" line="152"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="153"/>
         <source>Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?</source>
-        <translation type="obsolete">Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
+        <translation type="unfinished">Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
     </message>
 </context>
 <context>
@@ -2268,59 +2680,59 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>WizardPage</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="45"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="46"/>
         <source>Select a Comma Separated Values File</source>
-        <translation type="obsolete">Selecione um arquivos separado por vírgulas</translation>
+        <translation type="unfinished">Selecione um arquivos separado por vírgulas</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="46"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="47"/>
         <source>Comma Separated Values File (*.csv)</source>
-        <translation type="obsolete">Arquivo separado por vírgulas (*.csv)</translation>
+        <translation type="unfinished">Arquivo separado por vírgulas (*.csv)</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="48"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="49"/>
         <source>CSV File</source>
-        <translation type="obsolete">Arquivo CSV</translation>
+        <translation type="unfinished">Arquivo CSV</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="90"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="91"/>
         <source>Database(s) {0} created successfully.</source>
-        <translation type="obsolete">Banco(s) de dados {0} criado(s) com sucesso.</translation>
+        <translation type="unfinished">Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="99"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="100"/>
         <source>Invalid inomen parameter!</source>
-        <translation type="obsolete">Parâmetro de índice de nomenclatura inválido!</translation>
+        <translation type="unfinished">Parâmetro de índice de nomenclatura inválido!</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="103"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="104"/>
         <source>Error on {0}: </source>
-        <translation type="obsolete">Erro no(s) banco(s) de dados {0}: </translation>
+        <translation type="unfinished">Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="105"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="106"/>
         <source>Frame was not created on the following databases: {0}</source>
-        <translation type="obsolete">Moldura não criada no(s) seguinte(s) banco(s) de dados: {0}</translation>
+        <translation type="unfinished">Moldura não criada no(s) seguinte(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="107"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="108"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
-        <translation type="obsolete">Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
+        <translation type="unfinished">Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="111"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="112"/>
         <source>Check log for more details.</source>
-        <translation type="obsolete">Verifique o log para mais detalhes.</translation>
+        <translation type="unfinished">Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="113"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="114"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchFromCsv.py" line="113"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="114"/>
         <source>Process finished.</source>
-        <translation type="obsolete">Processo finalizado.</translation>
+        <translation type="unfinished">Processo finalizado.</translation>
     </message>
 </context>
 <context>
@@ -2336,147 +2748,147 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Número de banco de dados</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchIncrementing.py" line="82"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="83"/>
         <source>Database(s) {0} created successfully.</source>
-        <translation type="obsolete">Banco(s) de dados {0} criado(s) com sucesso.</translation>
+        <translation type="unfinished">Banco(s) de dados {0} criado(s) com sucesso.</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchIncrementing.py" line="90"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="91"/>
         <source>Error on {0}: </source>
-        <translation type="obsolete">Erro no(s) banco(s) de dados {0}: </translation>
+        <translation type="unfinished">Erro no(s) banco(s) de dados {0}: </translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchIncrementing.py" line="92"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="93"/>
         <source>Some errors occurred while trying to create database(s) {0}</source>
-        <translation type="obsolete">Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
+        <translation type="unfinished">Ocorreu erro ao tentar criar o(s) banco(s) de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchIncrementing.py" line="96"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="97"/>
         <source>Check log for more details.</source>
-        <translation type="obsolete">Verifique o log para mais detalhes.</translation>
+        <translation type="unfinished">Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchIncrementing.py" line="98"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="99"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../DbTools/BatchDbCreator/createBatchIncrementing.py" line="98"/>
+        <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="99"/>
         <source>Process finished.</source>
-        <translation type="obsolete">Processo finalizado.</translation>
+        <translation type="unfinished">Processo finalizado.</translation>
     </message>
 </context>
 <context>
     <name>CreateDatabaseCustomization</name>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="143"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="145"/>
         <source>Attribute Customization</source>
-        <translation type="obsolete">Customização de atributos</translation>
+        <translation type="unfinished">Customização de atributos</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="147"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="149"/>
         <source>Class Customization</source>
-        <translation type="obsolete">Customização de classe</translation>
+        <translation type="unfinished">Customização de classe</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="151"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="153"/>
         <source>Code Name Customization</source>
-        <translation type="obsolete">Customização de code name</translation>
+        <translation type="unfinished">Customização de code name</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="155"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="157"/>
         <source>Default Customization</source>
-        <translation type="obsolete">Customização padrão</translation>
+        <translation type="unfinished">Customização padrão</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="159"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="161"/>
         <source>Domain Customization</source>
-        <translation type="obsolete">Customização de domínio</translation>
+        <translation type="unfinished">Customização de domínio</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="167"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="169"/>
         <source>Attribute Nullity Customization</source>
-        <translation type="obsolete">Customização de nulidade de atributo</translation>
+        <translation type="unfinished">Customização de nulidade de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="128"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="130"/>
         <source>Warning</source>
-        <translation type="obsolete">Atenção</translation>
+        <translation type="unfinished">Atenção</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="128"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="130"/>
         <source>Select a custom operation!</source>
-        <translation type="obsolete">Selecione uma operação de customização!</translation>
+        <translation type="unfinished">Selecione uma operação de customização!</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="147"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="149"/>
         <source>New Custom Class</source>
-        <translation type="obsolete">Nova classe customizada</translation>
+        <translation type="unfinished">Nova classe customizada</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="163"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="165"/>
         <source>Domain Value Customization</source>
-        <translation type="obsolete">Customização de valores de dompinio</translation>
+        <translation type="unfinished">Customização de valores de dompinio</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="171"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="173"/>
         <source>Attribute Filter Customization</source>
-        <translation type="obsolete">Customização de filtro de atributo</translation>
+        <translation type="unfinished">Customização de filtro de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="143"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="145"/>
         <source>New Custom Attribute</source>
-        <translation type="obsolete">Novo atributo customizado</translation>
+        <translation type="unfinished">Novo atributo customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="151"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="153"/>
         <source>New Custom Code Name</source>
-        <translation type="obsolete">Novo code name customizado</translation>
+        <translation type="unfinished">Novo code name customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="155"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="157"/>
         <source>New Custom Default</source>
-        <translation type="obsolete">Novo default customizado</translation>
+        <translation type="unfinished">Novo default customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="159"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="161"/>
         <source>New Custom Domain</source>
-        <translation type="obsolete">Novo domínio customizado</translation>
+        <translation type="unfinished">Novo domínio customizado</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="163"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="165"/>
         <source>New Domain Value</source>
-        <translation type="obsolete">Novo valor de domínio</translation>
+        <translation type="unfinished">Novo valor de domínio</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="167"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="169"/>
         <source>New Custom Attribute Nullity</source>
-        <translation type="obsolete">Nova customização de nulidade de atributo</translation>
+        <translation type="unfinished">Nova customização de nulidade de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="171"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="173"/>
         <source>New Custom Attribute Filter</source>
-        <translation type="obsolete">Nova customização de filtro de atributo</translation>
+        <translation type="unfinished">Nova customização de filtro de atributo</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="264"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="266"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="229"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="231"/>
         <source>Preparing to export customizations... </source>
-        <translation type="obsolete">Preparando para exportar customizações... </translation>
+        <translation type="unfinished">Preparando para exportar customizações... </translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="261"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="263"/>
         <source>Errors occured while trying to export customs built. Check qgis log for further details.</source>
-        <translation type="obsolete">Erros ocorreram durante a exportação de customizaçõe. Verifique o log do qgis para mais detalhes.</translation>
+        <translation type="unfinished">Erros ocorreram durante a exportação de customizaçõe. Verifique o log do qgis para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="263"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="265"/>
         <source>Customization error: </source>
-        <translation type="obsolete">Erro de customização: </translation>
+        <translation type="unfinished">Erro de customização: </translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="298"/>
@@ -2493,19 +2905,19 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 </translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="256"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="256"/>
         <source>Database Customization </source>
-        <translation type="obsolete">Customização de Bancos de Dados </translation>
+        <translation type="unfinished">Customização de Bancos de Dados </translation>
     </message>
     <message>
-        <location filename="../PostgisCustomization/createDatabaseCustomization.py" line="254"/>
+        <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.py" line="256"/>
         <source> created successfuly!</source>
-        <translation type="obsolete">criada com sucesso!</translation>
+        <translation type="unfinished">criada com sucesso!</translation>
     </message>
 </context>
 <context>
@@ -2574,14 +2986,14 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateInomDialog</name>
     <message>
-        <location filename="../LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="66"/>
+        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="71"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="66"/>
+        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="71"/>
         <source>Map name index not valid!</source>
-        <translation type="obsolete">O índice de nomenclatura é inválido!</translation>
+        <translation type="unfinished">O índice de nomenclatura é inválido!</translation>
     </message>
     <message>
         <location filename="../ui_about.ui" line="89"/>
@@ -2609,9 +3021,9 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="62"/>
+        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="67"/>
         <source>Please, select a database first.</source>
-        <translation type="obsolete">Por favor, selecione um banco de dados antes.</translation>
+        <translation type="unfinished">Por favor, selecione um banco de dados antes.</translation>
     </message>
     <message>
         <location filename="../LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="74"/>
@@ -2720,24 +3132,24 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateProfile</name>
     <message>
-        <location filename="../UserTools/create_profile.py" line="135"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="136"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../UserTools/create_profile.py" line="135"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="136"/>
         <source>Fill the profile name!</source>
-        <translation type="obsolete">Preencha o nome do perfil!</translation>
+        <translation type="unfinished">Preencha o nome do perfil!</translation>
     </message>
     <message>
-        <location filename="../UserTools/create_profile.py" line="100"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="101"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../UserTools/create_profile.py" line="100"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_profile.py" line="101"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
 </context>
 <context>
@@ -2768,39 +3180,82 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="108"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="75"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="75"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="75"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="100"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="100"/>
         <source>Fill the profile name!</source>
-        <translation type="obsolete">Preencha o nome do perfil!</translation>
+        <translation type="unfinished">Preencha o nome do perfil!</translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="108"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source>Profile </source>
-        <translation type="obsolete">Perfil </translation>
+        <translation type="unfinished">Perfil </translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="108"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source> for EDGV </source>
-        <translation type="obsolete"> para EDGV </translation>
+        <translation type="unfinished"> para EDGV </translation>
     </message>
     <message>
-        <location filename="../UserTools/createProfileWithProfileManager.py" line="108"/>
+        <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
         <source> already exists!</source>
-        <translation type="obsolete"> já existe!</translation>
+        <translation type="unfinished"> já existe!</translation>
+    </message>
+</context>
+<context>
+    <name>CreateSingleDatabase</name>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="62"/>
+        <source>Select Database Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="112"/>
+        <source>Database {0} successfully created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="120"/>
+        <source>Error on {0}: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="122"/>
+        <source>Some errors occurred while trying to create database(s) {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="126"/>
+        <source>Check log for more details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="128"/>
+        <source>Info!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="128"/>
+        <source>Process finished.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py" line="150"/>
+        <source>Create a PostGIS or a SpatiaLite Database</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2836,9 +3291,9 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Fechar</translation>
     </message>
     <message>
-        <location filename="../UserTools/create_user.py" line="79"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="79"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/create_user.py" line="70"/>
@@ -2851,19 +3306,19 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../UserTools/create_user.py" line="83"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="83"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/create_user.py" line="83"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="83"/>
         <source>User </source>
-        <translation type="obsolete">Usuário </translation>
+        <translation type="unfinished">Usuário </translation>
     </message>
     <message>
-        <location filename="../UserTools/create_user.py" line="66"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="66"/>
         <source>Password mismatch! User not created!</source>
-        <translation type="obsolete">Senha não coincidente! Usuário não criado!</translation>
+        <translation type="unfinished">Senha não coincidente! Usuário não criado!</translation>
     </message>
     <message>
         <location filename="UserTools/create_user.py" line="83"/>
@@ -2871,27 +3326,27 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete"> criado com sucesso no banco de dados </translation>
     </message>
     <message>
-        <location filename="../UserTools/create_user.py" line="83"/>
+        <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="83"/>
         <source> created successfully on server </source>
-        <translation type="obsolete"> criado com sucesso no servidor </translation>
+        <translation type="unfinished"> criado com sucesso no servidor </translation>
     </message>
 </context>
 <context>
     <name>CreateView</name>
     <message>
-        <location filename="../ServerTools/createView.py" line="63"/>
+        <location filename="../gui/ServerTools/createView.py" line="64"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/createView.py" line="63"/>
+        <location filename="../gui/ServerTools/createView.py" line="64"/>
         <source>Views created successfully on database </source>
-        <translation type="obsolete">Visões criadas com sucesso no banco de dados </translation>
+        <translation type="unfinished">Visões criadas com sucesso no banco de dados </translation>
     </message>
     <message>
-        <location filename="../ServerTools/createView.py" line="66"/>
+        <location filename="../gui/ServerTools/createView.py" line="67"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
 </context>
 <context>
@@ -3052,9 +3507,9 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customReferenceAndLayersParameterSelector.py" line="93"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.py" line="93"/>
         <source>Select a layer</source>
-        <translation type="obsolete">Selecione uma camada</translation>
+        <translation type="unfinished">Selecione uma camada</translation>
     </message>
 </context>
 <context>
@@ -3143,14 +3598,14 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Selecione um arquivo spatialite DsgTools</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customServerConnectionWidget.py" line="65"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="69"/>
         <source>Spatialite file databases (*.sqlite)</source>
-        <translation type="obsolete">Banco de dados Spatialite (*.sqlite)</translation>
+        <translation type="unfinished">Banco de dados Spatialite (*.sqlite)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customServerConnectionWidget.py" line="201"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="276"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/customServerConnectionWidget.py" line="62"/>
@@ -3158,32 +3613,32 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Carregar Não EDGV</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="212"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="55"/>
         <source>Load Database Model EDGV Version 2.1.3</source>
         <translation>Carregar bancos com modelo EDGV Versão 2.1.3</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="222"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="59"/>
         <source>Load Database Model EDGV Version FTer_2a_Ed</source>
         <translation>Carregar bancos com modelo EDGV Versão FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="227"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="60"/>
         <source>Load Other Database Models</source>
         <translation>Carregar bancos com outras modelagens</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="217"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="57"/>
         <source>Load Database Model EDGV Version 3.0</source>
         <translation>Carregar bancos com modelo EDGV Versão 3.0</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="81"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="56"/>
         <source>Load Database Model EDGV Version 2.1.3 Pro</source>
         <translation>Carregar Bancos com Modelo EDGV Versão 2.1.3 Pro</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="91"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="58"/>
         <source>Load Database Model EDGV Version 3.0 Pro</source>
         <translation>Carregar Bancos com Modelo EDGV Versão 3.0 Pro</translation>
     </message>
@@ -3191,6 +3646,21 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="183"/>
         <source>Geopackage</source>
         <translation>Geopackage</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="68"/>
+        <source>Select a DSGTools Spatialite File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="71"/>
+        <source>Select a DSGTools Geopackage File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="72"/>
+        <source>Geopackage Database Files (*.gpkg)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3230,6 +3700,33 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
+        <source>Area in mmÂ²</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="56"/>
+        <source>Enter a combo box text!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="58"/>
+        <source>Enter a measurement!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="65"/>
+        <source>Warning!</source>
+        <translation type="unfinished">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="86"/>
+        <source>Distance in mm</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CustomSnaperParameterSelector</name>
@@ -3242,6 +3739,11 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.ui" line="26"/>
         <source>Select Reference Layer</source>
         <translation>Selecione uma Camada de Referência</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.py" line="68"/>
+        <source>Select a layer</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3378,59 +3880,100 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Apagar selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="83"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="84"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="83"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="84"/>
         <source>Do you really want to delete customization </source>
-        <translation type="obsolete">Você realmente deseja apagar a customização </translation>
+        <translation type="unfinished">Você realmente deseja apagar a customização </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="89"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="90"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="89"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="90"/>
         <source>Customization </source>
-        <translation type="obsolete">Customização </translation>
+        <translation type="unfinished">Customização </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="89"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="90"/>
         <source> successfully deleted.</source>
-        <translation type="obsolete"> apagada com sucesso.</translation>
+        <translation type="unfinished"> apagada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="93"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="94"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="93"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="94"/>
         <source>Error! Problem deleting customization: </source>
-        <translation type="obsolete">Erro! Problema apagando customização: </translation>
+        <translation type="unfinished">Erro! Problema apagando customização: </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="66"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="67"/>
         <source>Select EDGV Version</source>
-        <translation type="obsolete">Selecione uma versão da EDGV</translation>
+        <translation type="unfinished">Selecione uma versão da EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="67"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="68"/>
         <source>Warning! Enter a EDGV Version</source>
-        <translation type="obsolete">Aviso! Entre com uma versão EDGV</translation>
+        <translation type="unfinished">Aviso! Entre com uma versão EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="70"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="71"/>
         <source>Warning! Enter an Earth Coverage Name!</source>
-        <translation type="obsolete">Erro! Entre um nome para a Cobertura Terrestre!</translation>
+        <translation type="unfinished">Erro! Entre um nome para a Cobertura Terrestre!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/customizationManagerWidget.py" line="73"/>
+        <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="74"/>
         <source>Warning! Earth Coverage Name already exists!</source>
-        <translation type="obsolete">Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
+        <translation type="unfinished">Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
+    </message>
+</context>
+<context>
+    <name>DatabaseFileLineEdit</name>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="56"/>
+        <source>Other database model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="86"/>
+        <source>Select datasource</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="125"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="138"/>
+        <source>Invalid datasource.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="142"/>
+        <source>Invalid connection to server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="145"/>
+        <source>Database {0} does not exist.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DatabaseGuiManager</name>
+    <message>
+        <location filename="../gui/DatabaseTools/databaseManager.py" line="47"/>
+        <source>Database Tools</source>
+        <translation type="unfinished">Ferramentas de BD</translation>
     </message>
 </context>
 <context>
@@ -3481,23 +4024,23 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Sufixo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="141"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="141"/>
         <source>Enter a database name!
 </source>
-        <translation type="obsolete">Entre um nome de banco de dados!
+        <translation type="unfinished">Entre um nome de banco de dados!
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="143"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="143"/>
         <source>Select a coordinate reference system!
 </source>
-        <translation type="obsolete">Selecione um sistema de referência de coordenadas!
+        <translation type="unfinished">Selecione um sistema de referência de coordenadas!
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="156"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="156"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="43"/>
@@ -3529,10 +4072,10 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Sufixo (opcional)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="146"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="146"/>
         <source>Select a template database!
 </source>
-        <translation type="obsolete">Selecione um banco como modelo!
+        <translation type="unfinished">Selecione um banco como modelo!
 </translation>
     </message>
     <message>
@@ -3551,34 +4094,34 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Selecione o atributo INOM</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="61"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="61"/>
         <source>Select a table from database</source>
-        <translation type="obsolete">Selecione uma tabela do banco de dados</translation>
+        <translation type="unfinished">Selecione uma tabela do banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="77"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="77"/>
         <source>Select an attribute from selected table</source>
-        <translation type="obsolete">Selecione um atributo da tabela selecionada</translation>
+        <translation type="unfinished">Selecione um atributo da tabela selecionada</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="149"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="149"/>
         <source>Select a frame layer!
 </source>
-        <translation type="obsolete">Selecione uma camada de moldura!
+        <translation type="unfinished">Selecione uma camada de moldura!
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="151"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="151"/>
         <source>Select an index attribute!
 </source>
-        <translation type="obsolete">Selecione o atributo de MI!
+        <translation type="unfinished">Selecione o atributo de MI!
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/databaseParameterWidget.py" line="153"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="153"/>
         <source>Select an INOM attribute!
 </source>
-        <translation type="obsolete">Selecione o atributo de MI!
+        <translation type="unfinished">Selecione o atributo de MI!
 </translation>
     </message>
     <message>
@@ -3593,11 +4136,330 @@ para moldura não for selecionada, a moldura não será criada </translation>
     </message>
 </context>
 <context>
+    <name>DatasourceContainerWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="65"/>
+        <source>Click to set datasource filter options</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="66"/>
+        <source>Remove this datasource widget</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="139"/>
+        <source>Choose a region...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="139"/>
+        <source>Inside Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="139"/>
+        <source>Outside Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="226"/>
+        <source>Clip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="226"/>
+        <source>Buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="226"/>
+        <source>Intersects</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="364"/>
+        <source>Select a layer...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="265"/>
+        <source>Spatial Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="269"/>
+        <source>Complex Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="295"/>
+        <source>{0} ({1} features)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.py" line="295"/>
+        <source>{0} ({1} feature)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DatasourceConversion</name>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="69"/>
+        <source>Input Datasources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="70"/>
+        <source>Output Datasources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="71"/>
+        <source>Conversion Map and Summary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="162"/>
+        <source>Input</source>
+        <translation type="unfinished">Entrada</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="163"/>
+        <source>Filters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="165"/>
+        <source>In: EDGV Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="166"/>
+        <source>Output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="167"/>
+        <source>Out: CRS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="168"/>
+        <source>Out: EDGV Version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="169"/>
+        <source>Conversion Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="796"/>
+        <source>Select a datasource</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="206"/>
+        <source>Fan-out by filtered features from reference layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="787"/>
+        <source>Choose Conversion Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
+        <source>Map No Data</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
+        <source>Strict Conversion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="537"/>
+        <source>Reference Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="538"/>
+        <source>Layer Filtering Exp.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="539"/>
+        <source>Topological Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="540"/>
+        <source>Topology Relation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="560"/>
+        <source>Spatial Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="566"/>
+        <source>Complex Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="588"/>
+        <source>{0} ({1} features)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="588"/>
+        <source>{0} ({1} feature)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="685"/>
+        <source>new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="753"/>
+        <source>Warning!</source>
+        <translation type="unfinished">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="773"/>
+        <source>No datasets were selected (input or output)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="788"/>
+        <source>Conversion mode not selected for input {0} (row {1})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="791"/>
+        <source>Conversion map unavailable for {0} to {1} (row {2})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="797"/>
+        <source>Output datasource not selected for {0} (row {1})</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="805"/>
+        <source>Output datasource {0} was not used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="805"/>
+        <source>Output datasources {0} were not used.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="821"/>
+        <source>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;CONVERSION TASK WAS CANCELLED.&lt;/span&gt;&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="829"/>
+        <source>DSGTools Dataset Conversion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="865"/>
+        <source>Convert Databases</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DatasourceInfoTable</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="82"/>
+        <source>Schema</source>
+        <translation type="unfinished">Esquema</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="83"/>
+        <source>Layer</source>
+        <translation type="unfinished">Camada</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="84"/>
+        <source>Geometry Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="85"/>
+        <source>Geometry Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.py" line="86"/>
+        <source>SRID</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>DatasourceManagementWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.ui" line="14"/>
         <source>Dialog</source>
         <translation>Caixa de Diálogo</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="62"/>
+        <source>Select a datasource driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="64"/>
+        <source>PostGIS (create new database)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="66"/>
+        <source>SpatiaLite (create new database)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="68"/>
+        <source>Shapefile (create new database)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="70"/>
+        <source>Geopackage (create new database)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="77"/>
+        <source>Add single datasource</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="78"/>
+        <source>Add multiple datasource</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="102"/>
+        <source>new</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="237"/>
+        <source>Input Error!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="239"/>
+        <source>Output Error!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3611,6 +4473,61 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <location filename="../gui/CustomWidgets/SelectionWidgets/datasourceSelectionWidget.ui" line="50"/>
         <source>Add Datasource</source>
         <translation>Adicionar Fonte de Dados</translation>
+    </message>
+</context>
+<context>
+    <name>DbConverter</name>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="136"/>
+        <source>Dataset {0} already exists.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="608"/>
+        <source>
+Conversion Step {0} started...
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="609"/>
+        <source>[INPUT] Reading {0}&apos;s layers...
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="619"/>
+        <source>[OUTPUT] Reading {0}&apos;s layers...
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="624"/>
+        <source>[OUTPUT] Creating dataset {0}...
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="628"/>
+        <source>Dataset creation error ({0}): &apos;{1}&apos;
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="637"/>
+        <source>Preparing {0}&apos;s layers for conversion...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="642"/>
+        <source>Mapping features...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="647"/>
+        <source>Loading layers to {0}...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3647,71 +4564,71 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="48"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="50"/>
         <source>Manage permissions to user </source>
-        <translation type="obsolete">Gerenciar permissão do usuário </translation>
+        <translation type="unfinished">Gerenciar permissão do usuário </translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="48"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="50"/>
         <source> on database </source>
-        <translation type="obsolete"> no banco de dados </translation>
+        <translation type="unfinished"> no banco de dados </translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="57"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="59"/>
         <source>Grant / Revoke operation complete: </source>
-        <translation type="obsolete">Operação de Grant/Revoke completa: </translation>
+        <translation type="unfinished">Operação de Grant/Revoke completa: </translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="84"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="86"/>
         <source>
 Successful profiles: </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Perfis com sucesso: </translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="87"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="89"/>
         <source>Operation Complete!</source>
-        <translation type="obsolete">Operação completa!</translation>
+        <translation type="unfinished">Operação completa!</translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="94"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="96"/>
         <source>Profiles with error:</source>
-        <translation type="obsolete">Perfis com erro:</translation>
+        <translation type="unfinished">Perfis com erro:</translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="96"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="98"/>
         <source>
 Error messages for each profile were output in qgis log.</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../UserTools/dbProfileManager.py" line="98"/>
+        <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="100"/>
         <source>Error for profile </source>
-        <translation type="obsolete">Erro para o perfil </translation>
+        <translation type="unfinished">Erro para o perfil </translation>
     </message>
 </context>
 <context>
     <name>DeaggregateGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="35"/>
         <source>Deaggregate Geometries</source>
-        <translation type="obsolete">Desagregar geometrias</translation>
+        <translation type="unfinished">Desagregar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="41"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="41"/>
         <source>Process.</source>
-        <translation type="obsolete">Processo.</translation>
+        <translation type="unfinished">Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="44"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="45"/>
@@ -3724,14 +4641,14 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
         <translation type="obsolete">Camada {0} falhou ao carregar!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="104"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="97"/>
         <source>All geometries are now single parted.</source>
-        <translation type="obsolete">Todas as geometrias são agora individuais.</translation>
+        <translation type="unfinished">Todas as geometrias são agora individuais.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="48"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionada! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionada! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="57"/>
@@ -3739,14 +4656,14 @@ Mensagens de erro para cada perfil foram geradas no log do qgis.</translation>
         <translation type="obsolete">No classes selected!. Nothing to be done.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="62"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="55"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="71"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py" line="42"/>
@@ -4767,92 +5684,92 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
 <context>
     <name>DissolvePolygonsWithCommonAttributesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="34"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="35"/>
         <source>Dissolve polygons with common attributes</source>
-        <translation type="obsolete">Dissolver polígonos com atributos comuns</translation>
+        <translation type="unfinished">Dissolver polígonos com atributos comuns</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="57"/>
         <source>Deaggregate Geometries</source>
-        <translation type="obsolete">Desagregar geometrias</translation>
+        <translation type="unfinished">Desagregar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="71"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="72"/>
         <source>Problem executing qgis:dissolve. Check your installed libs.
 </source>
-        <translation type="obsolete">Problema ao executar qgis:dissolve. Verifique suas bibliotecas instaladas.</translation>
+        <translation type="unfinished">Problema ao executar qgis:dissolve. Verifique suas bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="118"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="119"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="118"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="119"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="120"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="122"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="125"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="127"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="126"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="128"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="139"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="141"/>
         <source>There are dissolve errors. Check log.</source>
-        <translation type="obsolete">Ocorreram erros ao executar o dissolve. Verifique o log.</translation>
+        <translation type="unfinished">Ocorreram erros ao executar o dissolve. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="141"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="143"/>
         <source>Dissolve finished.</source>
-        <translation type="obsolete">Dissolve executado com sucesso.</translation>
+        <translation type="unfinished">Dissolve executado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py" line="51"/>
         <source>Force Geometries Validity</source>
-        <translation type="obsolete">Forçar validade de geometrias</translation>
+        <translation type="unfinished">Forçar validade de geometrias</translation>
     </message>
 </context>
 <context>
@@ -5149,14 +6066,50 @@ Camada</translation>
 <context>
     <name>DsgRasterInfoTool</name>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.ui" line="32"/>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool_ui.py" line="128"/>
         <source>Form</source>
         <translation>Formulário</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.ui" line="59"/>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool_ui.py" line="129"/>
         <source>Raster Info Tool</source>
         <translation>Ferramenta de Informações de Raster</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="57"/>
+        <source>Show raster tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="58"/>
+        <source>Dynamic histogram view</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="59"/>
+        <source>Set raster value from mouse click
+Shift + Left Click + Mouse Drag: Selects a set of points and assigns raster value for each point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="112"/>
+        <source>DSGTools: Raster information tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="116"/>
+        <source>DSGTools: Band tooltip</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="120"/>
+        <source>DSGTools: Dynamic Histogram Viewer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/DsgRasterInfoTool/dsgRasterInfoTool.py" line="124"/>
+        <source>DSGTools: Set Value From Point</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -5626,19 +6579,19 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 <context>
     <name>EarthCoverageManagerWidget</name>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="67"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="68"/>
         <source>Select EDGV Version</source>
-        <translation type="obsolete">Selecione uma versão da EDGV</translation>
+        <translation type="unfinished">Selecione uma versão da EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="75"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="68"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="69"/>
         <source>Warning! Enter a EDGV Version</source>
-        <translation type="obsolete">Aviso! Entre com uma versão EDGV</translation>
+        <translation type="unfinished">Aviso! Entre com uma versão EDGV</translation>
     </message>
     <message>
         <location filename="CustomWidgets/earthCoverageManagerWidget.py" line="71"/>
@@ -5651,64 +6604,64 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Aviso! Nome de Configuração de Reclassificação já existe!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="80"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="81"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="80"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="81"/>
         <source>Field Toolbox Configuration </source>
-        <translation type="obsolete">Configuração de Reclassificação </translation>
+        <translation type="unfinished">Configuração de Reclassificação </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="80"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="81"/>
         <source> created successfuly!</source>
-        <translation type="obsolete"> criado com sucesso!</translation>
+        <translation type="unfinished"> criado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="102"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="103"/>
         <source>Update Earth Coverage configuration complete. 
 </source>
-        <translation type="obsolete">Atualizar configuração de Cobertura Terrestre completa. 
+        <translation type="unfinished">Atualizar configuração de Cobertura Terrestre completa. 
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="108"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="109"/>
         <source>earth coverage configuration</source>
-        <translation type="obsolete">configuração de cobertura terrestre</translation>
+        <translation type="unfinished">configuração de cobertura terrestre</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="122"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="123"/>
         <source>Uninstall Earth Coverage configuration complete. 
 </source>
-        <translation type="obsolete">Desinstalar configuração de Cobertura Terrestre completa. </translation>
+        <translation type="unfinished">Desinstalar configuração de Cobertura Terrestre completa. </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="112"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="113"/>
         <source>Install Earth Coverage configuration complete. 
 </source>
-        <translation type="obsolete">Instalar configuração de Cobertura Terrestre. </translation>
+        <translation type="unfinished">Instalar configuração de Cobertura Terrestre. </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="123"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="124"/>
         <source>earth coverage configurations</source>
-        <translation type="obsolete">configurações de cobertura terrestre</translation>
+        <translation type="unfinished">configurações de cobertura terrestre</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="117"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="118"/>
         <source>Delete Earth Coverage configuration complete. 
 </source>
-        <translation type="obsolete">Apagar configuração de Cobertura Terrestra completa. </translation>
+        <translation type="unfinished">Apagar configuração de Cobertura Terrestra completa. </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="71"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="72"/>
         <source>Warning! Enter an Earth Coverage Name!</source>
-        <translation type="obsolete">Erro! Entre um nome para a Cobertura Terrestre!</translation>
+        <translation type="unfinished">Erro! Entre um nome para a Cobertura Terrestre!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageManagerWidget.py" line="74"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageManagerWidget.py" line="75"/>
         <source>Warning! Earth Coverage Name already exists!</source>
-        <translation type="obsolete">Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
+        <translation type="unfinished">Erro! Uma configuração de Cobertura Terrestre com este nome já existe!</translation>
     </message>
 </context>
 <context>
@@ -5759,9 +6712,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/earthCoverageWidget.py" line="99"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.py" line="99"/>
         <source>Earth Coverage not loaded! Check log for details.</source>
-        <translation type="obsolete">Cobertura Terrestre não carregada! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Cobertura Terrestre não carregada! Verifique o log para detalhes.</translation>
     </message>
     <message>
         <location filename="CustomWidgets/earthCoverageWidget.py" line="121"/>
@@ -5777,102 +6730,102 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 <context>
     <name>ExploreDb</name>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="109"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="111"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="109"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="111"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
-        <translation type="obsolete">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
+        <translation type="unfinished">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="154"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="156"/>
         <source>Show properties</source>
-        <translation type="obsolete">Mostrar propriedades</translation>
+        <translation type="unfinished">Mostrar propriedades</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="181"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="183"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="181"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="183"/>
         <source>Do you really want to drop database: </source>
-        <translation type="obsolete">Você realmente deseja apagar o banco de dados: </translation>
+        <translation type="unfinished">Você realmente deseja apagar o banco de dados: </translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="189"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="191"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="189"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="191"/>
         <source>Database </source>
-        <translation type="obsolete">Banco de Dados </translation>
+        <translation type="unfinished">Banco de Dados </translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="189"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="191"/>
         <source> dropped successfully!</source>
-        <translation type="obsolete"> apagado com sucesso!</translation>
+        <translation type="unfinished"> apagado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="225"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="227"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="203"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="205"/>
         <source>Select a database to create view</source>
-        <translation type="obsolete">Selecione um banco de dados para criar view</translation>
+        <translation type="unfinished">Selecione um banco de dados para criar view</translation>
     </message>
     <message>
-        <location filename="../ServerTools/exploreDb.py" line="225"/>
+        <location filename="../gui/ServerTools/exploreDb.py" line="227"/>
         <source>Select a database to manage auxiliar structure</source>
-        <translation type="obsolete">Selecione um banco de dados para gerenciar a estrutura auxiliar</translation>
+        <translation type="unfinished">Selecione um banco de dados para gerenciar a estrutura auxiliar</translation>
     </message>
 </context>
 <context>
     <name>ExploreServerWidget</name>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="162"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="160"/>
         <source>Select Server</source>
-        <translation type="obsolete">Selecione um Servidor</translation>
+        <translation type="unfinished">Selecione um Servidor</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="177"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="175"/>
         <source>Critical</source>
-        <translation type="obsolete">Crítico</translation>
+        <translation type="unfinished">Crítico</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="177"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="175"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="141"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="139"/>
         <source>Problem executing query: </source>
-        <translation type="obsolete">Problema executando a query: </translation>
+        <translation type="unfinished">Problema executando a query: </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="185"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="183"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="185"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="183"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
-        <translation type="obsolete">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
+        <translation type="unfinished">Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="189"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="187"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/exploreServerWidget.py" line="106"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="103"/>
         <source>Loading databases from server... </source>
-        <translation type="obsolete">Carregando bancos de dados de servidor... </translation>
+        <translation type="unfinished">Carregando bancos de dados de servidor... </translation>
     </message>
 </context>
 <context>
@@ -5996,24 +6949,24 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="99"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="108"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="746"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="755"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="338"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="347"/>
         <source>Enter a button name!</source>
-        <translation type="obsolete">Entre com um nome de botão!</translation>
+        <translation type="unfinished">Entre com um nome de botão!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="708"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="717"/>
         <source>Remove child node</source>
-        <translation type="obsolete">Remover nó filho</translation>
+        <translation type="unfinished">Remover nó filho</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="492"/>
@@ -6026,9 +6979,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Arquivos de Configuração de Campo (*.json)</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="741"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="750"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="507"/>
@@ -6046,9 +6999,9 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Defina um nome para o arquivo de configuração de campo!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="756"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="765"/>
         <source>Information!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="519"/>
@@ -6066,34 +7019,34 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Ajustes de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="725"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="734"/>
         <source>Open reclassification setup file</source>
-        <translation type="obsolete">Abrir arquivo de configuração de reclassificação</translation>
+        <translation type="unfinished">Abrir arquivo de configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="744"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="753"/>
         <source>Reclassification Setup Files (*.reclas)</source>
-        <translation type="obsolete">Arquivo de Configuração de Reclassificação (*.reclas)</translation>
+        <translation type="unfinished">Arquivo de Configuração de Reclassificação (*.reclas)</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="744"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="753"/>
         <source>Save reclassification setup file</source>
-        <translation type="obsolete">Salvar arquivo de configuração de reclassificação</translation>
+        <translation type="unfinished">Salvar arquivo de configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="746"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="755"/>
         <source>Define a name for the reclassification setup file!</source>
-        <translation type="obsolete">Defina um nome para o arquivo de configuração de reclassificação!</translation>
+        <translation type="unfinished">Defina um nome para o arquivo de configuração de reclassificação!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="756"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="765"/>
         <source>Reclassification setup file saved successfully!</source>
-        <translation type="obsolete">Arquivo de configuração de reclassificação salvo com sucesso!</translation>
+        <translation type="unfinished">Arquivo de configuração de reclassificação salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="741"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="750"/>
         <source>Do you want to save this reclassification setup?</source>
-        <translation type="obsolete">Você deseja salvar esta configuração de reclassificação?</translation>
+        <translation type="unfinished">Você deseja salvar esta configuração de reclassificação?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="187"/>
@@ -6106,102 +7059,102 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Ignorado</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="313"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="322"/>
         <source>Yes</source>
-        <translation type="obsolete">Sim</translation>
+        <translation type="unfinished">Sim</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="313"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="322"/>
         <source>No</source>
-        <translation type="obsolete">Não</translation>
+        <translation type="unfinished">Não</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_setup.py" line="342"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="351"/>
         <source>Shortcut already set to another tool!</source>
-        <translation type="obsolete">Atalho já definido para outra ferramenta!</translation>
+        <translation type="unfinished">Atalho já definido para outra ferramenta!</translation>
     </message>
 </context>
 <context>
     <name>FieldToolBoxConfigManagerWidget</name>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="69"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="70"/>
         <source>Select EDGV Version</source>
-        <translation type="obsolete">Selecione uma versão da EDGV</translation>
+        <translation type="unfinished">Selecione uma versão da EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="76"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="77"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="70"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="71"/>
         <source>Warning! Enter a EDGV Version</source>
-        <translation type="obsolete">Aviso! Entre com uma versão EDGV</translation>
+        <translation type="unfinished">Aviso! Entre com uma versão EDGV</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="73"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="74"/>
         <source>Warning! Enter a Field Toolbox Configuration Name!</source>
-        <translation type="obsolete">Aviso! Entre um nome para a Configuração de Reclassificação!</translation>
+        <translation type="unfinished">Aviso! Entre um nome para a Configuração de Reclassificação!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="76"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="77"/>
         <source>Warning! Field Toolbox Configuration Name already exists!</source>
-        <translation type="obsolete">Aviso! Nome de Configuração de Reclassificação já existente!</translation>
+        <translation type="unfinished">Aviso! Nome de Configuração de Reclassificação já existente!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="82"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="83"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="82"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="83"/>
         <source>Field Toolbox Configuration </source>
-        <translation type="obsolete">Configuração de Reclassificação</translation>
+        <translation type="unfinished">Configuração de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="82"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="83"/>
         <source> created successfuly!</source>
-        <translation type="obsolete"> criada com sucesso!</translation>
+        <translation type="unfinished"> criada com sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="97"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="98"/>
         <source>Update Field Toolbox configuration complete. 
 </source>
-        <translation type="obsolete">Atualização de Configuração de Reclassificação completa. </translation>
+        <translation type="unfinished">Atualização de Configuração de Reclassificação completa. </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="103"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="104"/>
         <source>field toolbox configuration</source>
-        <translation type="obsolete">configuração de reclassificação</translation>
+        <translation type="unfinished">configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="117"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="118"/>
         <source>Uninstall Field Toolbox configuration complete. 
 </source>
-        <translation type="obsolete">Desinstalação de Configuração de Reclassificação completa. </translation>
+        <translation type="unfinished">Desinstalação de Configuração de Reclassificação completa. </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="107"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="108"/>
         <source>Install Field Toolbox configuration complete. 
 </source>
-        <translation type="obsolete">Instalação de Configuração de Reclassificação completa. </translation>
+        <translation type="unfinished">Instalação de Configuração de Reclassificação completa. </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="118"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="119"/>
         <source>field toolbox configurations</source>
-        <translation type="obsolete">configurações de reclassificação</translation>
+        <translation type="unfinished">configurações de reclassificação</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="112"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="113"/>
         <source>Delete Field Toolbox configuration complete. 
 </source>
-        <translation type="obsolete">Remoção de Configurações de Reclassificação completa. 
+        <translation type="unfinished">Remoção de Configurações de Reclassificação completa. 
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/fieldToolBoxConfigManagerWidget.py" line="67"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/fieldToolBoxConfigManagerWidget.py" line="68"/>
         <source>Warning! Select a template database!</source>
-        <translation type="obsolete">Erro! Selecione um banco como modelo!</translation>
+        <translation type="unfinished">Erro! Selecione um banco como modelo!</translation>
     </message>
 </context>
 <context>
@@ -6217,14 +7170,14 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Conexão do Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="67"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="116"/>
         <source>Setup</source>
         <translation>Ajustar</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="293"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="309"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_toolbox.py" line="187"/>
@@ -6232,29 +7185,29 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="315"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="331"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="300"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="316"/>
         <source>Please, select a database.</source>
-        <translation type="obsolete">Por favor, selecione um banco de dados.</translation>
+        <translation type="unfinished">Por favor, selecione um banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="306"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="322"/>
         <source>Problem obtaining database version! Please, check log for details.</source>
-        <translation type="obsolete">Problema obtendo versão do banco de dados! Por favor, verifique o log para detalhes.</translation>
+        <translation type="unfinished">Problema obtendo versão do banco de dados! Por favor, verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="315"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="331"/>
         <source>Database version does not match the field toolbox version.</source>
-        <translation type="obsolete">Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
+        <translation type="unfinished">Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="558"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="518"/>
         <source>Information!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_toolbox.py" line="268"/>
@@ -6272,18 +7225,18 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Usar edição em tempo real</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="92"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="108"/>
         <source>First select a database!</source>
-        <translation type="obsolete">Selecione um banco de dados antes!</translation>
+        <translation type="unfinished">Selecione um banco de dados antes!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="293"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="309"/>
         <source>Could not load the selected classes!
 </source>
-        <translation type="obsolete">Não foi possível carregar as classes selecionadas!</translation>
+        <translation type="unfinished">Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="53"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="541"/>
         <source>Select Stored Config (optional)</source>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
@@ -6293,14 +7246,14 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Editar configuração atual</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="363"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="379"/>
         <source>DsgTools reclassification</source>
-        <translation type="obsolete">Reclassificação do DsgTools</translation>
+        <translation type="unfinished">Reclassificação do DsgTools</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="558"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="518"/>
         <source>{} features reclassified with success!</source>
-        <translation type="obsolete">{} feições reclassificadas com sucesso!</translation>
+        <translation type="unfinished">{} feições reclassificadas com sucesso!</translation>
     </message>
     <message>
         <location filename="../ProductionTools/FieldToolBox/field_toolbox.ui" line="14"/>
@@ -6333,10 +7286,10 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>DSGTools: Ferramenta de (Re)classificação</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="75"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="91"/>
         <source>Error getting stored configuration.
 </source>
-        <translation type="obsolete">Erro ao obter configuração armazenada no banco de dados.
+        <translation type="unfinished">Erro ao obter configuração armazenada no banco de dados.
 </translation>
     </message>
     <message>
@@ -6345,9 +7298,14 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Filtrar botão pelo nome</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/FieldToolBox/field_toolbox.py" line="311"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="327"/>
         <source>File not formated propperly.</source>
-        <translation type="obsolete">Arquivo não formatado corretamente.</translation>
+        <translation type="unfinished">Arquivo não formatado corretamente.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="70"/>
+        <source>Feature Classification Tool</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -6409,69 +7367,125 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     </message>
 </context>
 <context>
+    <name>FlipLine</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="45"/>
+        <source>DSGTools: Flip Line Tool
+Insert tool tip for Flip Line Tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="46"/>
+        <source>DSGTools: Flip Line Tool</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="114"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="121"/>
+        <source>Success</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="133"/>
+        <source>There are no (valid) lines selected!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="136"/>
+        <source>Feature(s) flipped: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="142"/>
+        <source>
+Feature(s) that failed to be flipped: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="146"/>
+        <source>
+{} lines flipped. {} failed to be flipped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="152"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="152"/>
+        <source>Start editing in current layer!</source>
+        <translation type="unfinished">Inicie a edição na camada atual!</translation>
+    </message>
+</context>
+<context>
     <name>ForceValidityGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="34"/>
         <source>Force Geometries Validity</source>
-        <translation type="obsolete">Forçar validade de geometrias</translation>
+        <translation type="unfinished">Forçar validade de geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="50"/>
         <source>Identify Invalid Geometries</source>
-        <translation type="obsolete">Identificar geometrias inválidas</translation>
+        <translation type="unfinished">Identificar geometrias inválidas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="50"/>
         <source>Deaggregate Geometries</source>
-        <translation type="obsolete">Desagregar geometrias</translation>
+        <translation type="unfinished">Desagregar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="56"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="56"/>
         <source>Process.
 </source>
-        <translation type="obsolete">Processo.
+        <translation type="unfinished">Processo.
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="59"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="64"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="66"/>
         <source>There are no invalid geometries.</source>
-        <translation type="obsolete">Não há geometrias inválidas.</translation>
+        <translation type="unfinished">Não há geometrias inválidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="83"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="85"/>
         <source>{0} features from {1} were changed.</source>
-        <translation type="obsolete">{0} feições de {1} foram modificadas..</translation>
+        <translation type="unfinished">{0} feições de {1} foram modificadas..</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="86"/>
         <source>{0} features were changed.</source>
-        <translation type="obsolete">{0} feições foram modificadas.</translation>
+        <translation type="unfinished">{0} feições foram modificadas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="70"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="72"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="75"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py" line="77"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
 </context>
 <context>
     <name>Form</name>
     <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="14"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="135"/>
         <source>Form</source>
         <translation>Formulário</translation>
     </message>
@@ -6526,12 +7540,12 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui" line="261"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="140"/>
         <source>Inspect Features Tool</source>
         <translation>Ferramenta de inspeção de feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui" line="172"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="138"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Back inspect&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar anterior&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -6548,7 +7562,7 @@ aproximação:</translation>
 de feição</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui" line="208"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="139"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Next inspect&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inspecionar próximo&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -6608,12 +7622,12 @@ Layer</source>
 Ativa</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui" line="94"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="136"/>
         <source>Scale</source>
         <translation>Escala</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.ui" line="149"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures_ui.py" line="137"/>
         <source>ID: </source>
         <translation>ID: </translation>
     </message>
@@ -6664,31 +7678,207 @@ Ativa</translation>
     </message>
 </context>
 <context>
+    <name>FreeHandMain</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandMain.py" line="41"/>
+        <source>DSGTools: Free Hand Acquisition</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GenericCompactPropertyManagerWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="54"/>
+        <source>Earth Coverage</source>
+        <translation type="unfinished">Cobertura Terrestre</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="55"/>
+        <source>Customization</source>
+        <translation type="unfinished">Customização</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="56"/>
+        <source>Style</source>
+        <translation type="unfinished">Estilo</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="57"/>
+        <source>Validation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="58"/>
+        <source>Field Toolbox Configuration</source>
+        <translation type="unfinished">Ajustes de Reclassificação</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="59"/>
+        <source>Permissions</source>
+        <translation type="unfinished">Permissões</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="60"/>
+        <source>Attribute Rules Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="61"/>
+        <source>Spatial Rules Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="62"/>
+        <source>Generic Property</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="63"/>
+        <source>Validation Workflow</source>
+        <translation type="unfinished">Fluxo de Trabalho de Validação</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="100"/>
+        <source>Add {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="101"/>
+        <source>Remove {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="102"/>
+        <source>Import {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="103"/>
+        <source>Export {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="104"/>
+        <source>Update {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="208"/>
+        <source>Warning!</source>
+        <translation type="unfinished">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="155"/>
+        <source>Warning! Enter a {0} name!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="158"/>
+        <source>Warning! {0} name already exists!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="242"/>
+        <source>Success!</source>
+        <translation type="unfinished">Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="164"/>
+        <source>{0} configuration {1} created successfuly!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="182"/>
+        <source>Warning! Select a file to import!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="190"/>
+        <source>Sucess!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="190"/>
+        <source>Success! {0} successfully imported and installed in {1}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="245"/>
+        <source>Error!</source>
+        <translation type="unfinished">Erro!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="193"/>
+        <source>Error! Problem importing {0}: {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="203"/>
+        <source>Warning! Select a profile to export!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="206"/>
+        <source>Select a folder to output</source>
+        <translation type="unfinished">Selecione um diretório de saída</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="208"/>
+        <source>Warning! Select a output!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="216"/>
+        <source>Success! {0} successfully exported.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="219"/>
+        <source>Error! Problem exporting {0}: {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="233"/>
+        <source>Error! Problem getting {0}: Invalid property {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="242"/>
+        <source>Success! Property {0} successfully updated.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="245"/>
+        <source>Error! Problem updating {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>GenericDbManager</name>
     <message>
-        <location filename="../ServerManagementTools/genericDbManager.py" line="123"/>
+        <location filename="../core/ServerManagementTools/genericDbManager.py" line="130"/>
         <source>Setting </source>
-        <translation type="obsolete">Ajuste </translation>
+        <translation type="unfinished">Ajuste </translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/genericDbManager.py" line="123"/>
+        <location filename="../core/ServerManagementTools/genericDbManager.py" line="130"/>
         <source> not found on dsgtools_admindb!</source>
-        <translation type="obsolete"> não encontrado em dsgtools_admindb!</translation>
+        <translation type="unfinished"> não encontrado em dsgtools_admindb!</translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/genericDbManager.py" line="183"/>
+        <location filename="../core/ServerManagementTools/genericDbManager.py" line="190"/>
         <source>Not valid DsgTools property file!</source>
-        <translation type="obsolete">Arquivo de propriedades DsgTools não válido!</translation>
+        <translation type="unfinished">Arquivo de propriedades DsgTools não válido!</translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/genericDbManager.py" line="191"/>
+        <location filename="../core/ServerManagementTools/genericDbManager.py" line="198"/>
         <source>Error importing setting </source>
-        <translation type="obsolete">Erro importando ajuste </translation>
+        <translation type="unfinished">Erro importando ajuste </translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/genericDbManager.py" line="271"/>
+        <location filename="../core/ServerManagementTools/genericDbManager.py" line="278"/>
         <source>Database version missmatch.</source>
-        <translation type="obsolete">Incompatibilidade de versão de banco.</translation>
+        <translation type="unfinished">Incompatibilidade de versão de banco.</translation>
     </message>
 </context>
 <context>
@@ -6782,275 +7972,305 @@ Ativa</translation>
         <translation>Desinstalar ajustes dos bancos selecionados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="57"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="61"/>
         <source>Earth Coverage</source>
-        <translation type="obsolete">Cobertura Terrestre</translation>
+        <translation type="unfinished">Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="58"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="62"/>
         <source>Customization</source>
-        <translation type="obsolete">Customização</translation>
+        <translation type="unfinished">Customização</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="59"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="63"/>
         <source>Style</source>
-        <translation type="obsolete">Estilo</translation>
+        <translation type="unfinished">Estilo</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="60"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="64"/>
         <source>Validation</source>
-        <translation type="obsolete">Validação</translation>
+        <translation type="unfinished">Validação</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="55"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="57"/>
         <source>Field Toolbox Configuration</source>
-        <translation type="obsolete">Configuração de Reclassificação</translation>
+        <translation type="unfinished">Configuração de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="56"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="58"/>
         <source>Permissions</source>
-        <translation type="obsolete">Permissões</translation>
+        <translation type="unfinished">Permissões</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="61"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="65"/>
         <source>Reclassification Setup Files</source>
-        <translation type="obsolete">Arquivos de Reclassificação</translation>
+        <translation type="unfinished">Arquivos de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="62"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="66"/>
         <source>Select a dsgtools permission profile</source>
-        <translation type="obsolete">Selecione um perfil de permissões do dsgtools</translation>
+        <translation type="unfinished">Selecione um perfil de permissões do dsgtools</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="63"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="69"/>
         <source>Earth Coverage Setup File (*.dsgearthcov)</source>
-        <translation type="obsolete">Arquivo de Cobertura Terrestre (*.dsgearthcov)</translation>
+        <translation type="unfinished">Arquivo de Cobertura Terrestre (*.dsgearthcov)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="64"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="70"/>
         <source>DsgTools Customization File (*.dsgcustom)</source>
-        <translation type="obsolete">Arquivo de Customização do DsgTools (*.dsgcustom)</translation>
+        <translation type="unfinished">Arquivo de Customização do DsgTools (*.dsgcustom)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="65"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="71"/>
         <source>DsgTools Styles File (*.dsgstyle)</source>
-        <translation type="obsolete">Arquivos de Estilos do DsgTools (*.dsgstyle)</translation>
+        <translation type="unfinished">Arquivos de Estilos do DsgTools (*.dsgstyle)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="66"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="72"/>
         <source>DsgTools Validation Configuration File (*.dsgvalidcfg)</source>
-        <translation type="obsolete">Arquivos de Configuração de Validação do DsgTools (*.dsgvalidcfg)</translation>
+        <translation type="unfinished">Arquivos de Configuração de Validação do DsgTools (*.dsgvalidcfg)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="67"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="73"/>
         <source>Reclassification Setup Files (*.reclas)</source>
-        <translation type="obsolete">Arquivos de Reclassificação (*.reclas)</translation>
+        <translation type="unfinished">Arquivos de Reclassificação (*.reclas)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="68"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="74"/>
         <source>DsgTools Permission Profile File (*.dsgperm)</source>
-        <translation type="obsolete">Arquivos de Perfil de Permissões do DsgTools (*.dsgperm)</translation>
+        <translation type="unfinished">Arquivos de Perfil de Permissões do DsgTools (*.dsgperm)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="82"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="90"/>
         <source>Setting</source>
-        <translation type="obsolete">Ajuste</translation>
+        <translation type="unfinished">Ajuste</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="89"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="97"/>
         <source>Database</source>
-        <translation type="obsolete">Banco de Dados</translation>
+        <translation type="unfinished">Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="338"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="346"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="134"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="142"/>
         <source>Warning! Select a file to import!</source>
-        <translation type="obsolete">Aviso! Selecione um arquivo para importar!</translation>
+        <translation type="unfinished">Aviso! Selecione um arquivo para importar!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="204"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="212"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="204"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="212"/>
         <source> successfully imported.</source>
-        <translation type="obsolete"> importado com sucesso.</translation>
+        <translation type="unfinished"> importado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="427"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="435"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="207"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="215"/>
         <source>Error! Problem importing </source>
-        <translation type="obsolete">Erro! Problema importando </translation>
+        <translation type="unfinished">Erro! Problema importando </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="153"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="161"/>
         <source>Warning! Select a profile to export!</source>
-        <translation type="obsolete">Aviso! Selecione um perfil para exportar!</translation>
+        <translation type="unfinished">Aviso! Selecione um perfil para exportar!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="177"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="185"/>
         <source>Select a folder to output</source>
-        <translation type="obsolete">Selecione um diretório de saída</translation>
+        <translation type="unfinished">Selecione um diretório de saída</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="179"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="187"/>
         <source>Warning! Select a output!</source>
-        <translation type="obsolete">Aviso! Selecione uma saída!</translation>
+        <translation type="unfinished">Aviso! Selecione uma saída!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="185"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="193"/>
         <source> successfully exported.</source>
-        <translation type="obsolete"> exportado com sucesso.</translation>
+        <translation type="unfinished"> exportado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="188"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="196"/>
         <source>Error! Problem exporting </source>
-        <translation type="obsolete">Erro! Problema exportando </translation>
+        <translation type="unfinished">Erro! Problema exportando </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="196"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="204"/>
         <source>Select a folder with json files: </source>
-        <translation type="obsolete">Selecione um diretório com arquivos json: </translation>
+        <translation type="unfinished">Selecione um diretório com arquivos json: </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="198"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="206"/>
         <source>Warning! Select a input folder!</source>
-        <translation type="obsolete">Aviso! Selecione um diretório de entrada!</translation>
+        <translation type="unfinished">Aviso! Selecione um diretório de entrada!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="267"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="275"/>
         <source>
 Successful </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Com sucesso </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="273"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="281"/>
         <source> on databases </source>
-        <translation type="obsolete"> nos bancos </translation>
+        <translation type="unfinished"> nos bancos </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="277"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="285"/>
         <source>Operation Complete!</source>
-        <translation type="obsolete">Operação completa!</translation>
+        <translation type="unfinished">Operação completa!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="287"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="295"/>
         <source>
 Config with error:</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Configuração com erro:</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="288"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="296"/>
         <source>
 Error messages for each config and database were output in qgis log.</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Mensagens de erro para cada config e banco de dados foram geradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="292"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="300"/>
         <source>Error for config </source>
-        <translation type="obsolete">Erro para a configuração </translation>
+        <translation type="unfinished">Erro para a configuração </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="323"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="331"/>
         <source>Select at least one configuration!</source>
-        <translation type="obsolete">Selecione pelo menos uma configuração!</translation>
+        <translation type="unfinished">Selecione pelo menos uma configuração!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="338"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="346"/>
         <source>Operation canceled by user!</source>
-        <translation type="obsolete">Operação cancelada pelo usuário!</translation>
+        <translation type="unfinished">Operação cancelada pelo usuário!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="356"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="364"/>
         <source>Uninstall all settings from selected database</source>
-        <translation type="obsolete">Desinstalar todos os ajustes do banco selecionado</translation>
+        <translation type="unfinished">Desinstalar todos os ajustes do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="357"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="365"/>
         <source>Manage settings from selected database</source>
-        <translation type="obsolete">Gerenciar ajustes do banco selecionado</translation>
+        <translation type="unfinished">Gerenciar ajustes do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="370"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="378"/>
         <source>Update selected setting</source>
-        <translation type="obsolete">Atualizar ajuste selecionado</translation>
+        <translation type="unfinished">Atualizar ajuste selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="371"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="379"/>
         <source>Clone selected setting</source>
-        <translation type="obsolete">Clonar ajuste selecionado</translation>
+        <translation type="unfinished">Clonar ajuste selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="361"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="369"/>
         <source>Uninstall selected setting</source>
-        <translation type="obsolete">Desinstalar ajuste selecionado</translation>
+        <translation type="unfinished">Desinstalar ajuste selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="374"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="382"/>
         <source>Delete selected setting</source>
-        <translation type="obsolete">Apagar ajuste selecionado</translation>
+        <translation type="unfinished">Apagar ajuste selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="372"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="380"/>
         <source>Manage selected setting</source>
-        <translation type="obsolete">Gerenciar ajuste selecionado</translation>
+        <translation type="unfinished">Gerenciar ajuste selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="373"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="381"/>
         <source>Uninstall selected setting on all databases</source>
-        <translation type="obsolete">Desinstalar ajuste selecionado em todos os bancos</translation>
+        <translation type="unfinished">Desinstalar ajuste selecionado em todos os bancos</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="376"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="384"/>
         <source>Manage Settings on database</source>
-        <translation type="obsolete">Gerenciar ajustes do banco de dados</translation>
+        <translation type="unfinished">Gerenciar ajustes do banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="377"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="385"/>
         <source>Uninstall selected setting on selected database</source>
-        <translation type="obsolete">Desinstalar ajuste selecionado no banco selecionado</translation>
+        <translation type="unfinished">Desinstalar ajuste selecionado no banco selecionado</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="397"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="405"/>
         <source>Select at least one configuration to manage!</source>
-        <translation type="obsolete">Selecione pelo menos uma configuração para gerenciar!</translation>
+        <translation type="unfinished">Selecione pelo menos uma configuração para gerenciar!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="427"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="435"/>
         <source>Select at least one configuration database to manage!</source>
-        <translation type="obsolete">Selecione pelo menos uma configuração de banco para gerenciar!</translation>
+        <translation type="unfinished">Selecione pelo menos uma configuração de banco para gerenciar!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="543"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="551"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="530"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="538"/>
         <source>Do you really want to delete </source>
-        <translation type="obsolete">Você realmente deseja apagar </translation>
+        <translation type="unfinished">Você realmente deseja apagar </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="543"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="551"/>
         <source>Do you really want to apply selected operation on </source>
-        <translation type="obsolete">Você realmente deseja aplicar a operação selecionada em </translation>
+        <translation type="unfinished">Você realmente deseja aplicar a operação selecionada em </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericManagerWidget.py" line="543"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="551"/>
         <source> (Data may be lost in the process)</source>
-        <translation type="obsolete"> (Dados podem ser perdidos no processo)</translation>
+        <translation type="unfinished"> (Dados podem ser perdidos no processo)</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="59"/>
+        <source>Attribute Rule Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="60"/>
+        <source>Spatial Rule Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="67"/>
+        <source>Attribute Rule Configuration file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="68"/>
+        <source>Spatial Rule Configuration file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="75"/>
+        <source>Attribute Rule Configuration file (*.dsgattrrul)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="76"/>
+        <source>Spatial Rule Configuration file (*.dsgspatrul)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7101,27 +8321,96 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <translation>Ok</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="59"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="64"/>
         <source>Enter a parameter name!
 </source>
-        <translation type="obsolete">Entre um nome para o parâmetro!</translation>
+        <translation type="unfinished">Entre um nome para o parâmetro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="62"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="67"/>
         <source>Parameter already exists! Choose another name!
 </source>
-        <translation type="obsolete">Parâmetro existente! Escolha outro nome para o parâmetro!</translation>
+        <translation type="unfinished">Parâmetro existente! Escolha outro nome para o parâmetro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="64"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="70"/>
         <source>Select a template database!
 </source>
-        <translation type="obsolete">Selecione um banco como modelo!</translation>
+        <translation type="unfinished">Selecione um banco como modelo!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/genericParameterSetter.py" line="71"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="77"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
+    </message>
+</context>
+<context>
+    <name>GenericSelectionTool</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="74"/>
+        <source>DSGTools: Generic Selector
+Left Click: select feature&apos;s layer and put it on edit mode
+Right Click: Open feature&apos;s form
+Control+Left Click: add/remove feature from selection
+Shift+Left Click+drag and drop: select all features that intersects rubberband.</source>
+        <translation type="unfinished">DSGTools: Seletor Genérico
+Clique de botão esquerdo: seleciona a feição, coloca sua camada em edição e como camada ativa
+Clique de botão direito: Abre o formulário de feição
+Control+Clique de botão esquerdo: adiciona/remove a feição da seleção atual
+Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições que intersectam a região formada. </translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="75"/>
+        <source>DSGTools: Generic Selector</source>
+        <translation type="unfinished">DSGTools: Seletor Genérico</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="488"/>
+        <source>{0} (Memory Layer)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="537"/>
+        <source>{0} From Class {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="573"/>
+        <source>Open All Feature Forms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="588"/>
+        <source>Select All Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="583"/>
+        <source>Selected Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="587"/>
+        <source>Deselect All Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="584"/>
+        <source>Not Selected Features</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>GeometryHandler</name>
+    <message>
+        <location filename="../core/GeometricTools/geometryHandler.py" line="521"/>
+        <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/geometryHandler.py" line="533"/>
+        <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7170,6 +8459,19 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <location filename="../core/Factories/DbFactory/geopackageDb.py" line="196"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geométricas: </translation>
+    </message>
+</context>
+<context>
+    <name>GeopackageWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/geopackageWidget.py" line="46"/>
+        <source>Select a Geopackage Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/geopackageWidget.py" line="47"/>
+        <source>Geopackage Database (*.gpkg)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7238,6 +8540,60 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="154"/>
         <source>Validation Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
+    </message>
+</context>
+<context>
+    <name>HierarchicalSnapLayerOnLayerProcess</name>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="43"/>
+        <source>Hierarchical Snap Layer on Layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="67"/>
+        <source>Starting </source>
+        <translation type="unfinished">Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="67"/>
+        <source> Process.</source>
+        <translation type="unfinished"> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="69"/>
+        <source>Running</source>
+        <translation type="unfinished">Rodando</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="72"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="87"/>
+        <source>Preparing snapping of {0} on {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="98"/>
+        <source>Snapping features from {0} on {1} </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="104"/>
+        <source>All features from </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="104"/>
+        <source> snapped to reference </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py" line="104"/>
+        <source> succesfully.
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -7437,66 +8793,66 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do qgis
 <context>
     <name>IdentifyDanglesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="47"/>
         <source>Identify Dangles</source>
-        <translation type="obsolete">Identificar Pontas Soltas</translation>
+        <translation type="unfinished">Identificar Pontas Soltas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="63"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="70"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="73"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="70"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="73"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="73"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="76"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="81"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="79"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="82"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="64"/>
@@ -7519,54 +8875,54 @@ Camada</translation>
         <translation type="obsolete"> feições possuem pontas soltas. Verifique as flags..</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="125"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="129"/>
         <source>There are no dangles.</source>
-        <translation type="obsolete">Não há pontas soltas.</translation>
+        <translation type="unfinished">Não há pontas soltas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="61"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="64"/>
         <source>Consider dangle on unsegmented lines</source>
-        <translation type="obsolete">Considerar pontas soltas em linhas não segmentadas </translation>
+        <translation type="unfinished">Considerar pontas soltas em linhas não segmentadas </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="61"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="64"/>
         <source>Ignore dangle on unsegmented lines</source>
-        <translation type="obsolete">Ignorar pontas soltas em linhas não segmentadas</translation>
+        <translation type="unfinished">Ignorar pontas soltas em linhas não segmentadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="87"/>
         <source>One layer must be selected! Stopping.</source>
-        <translation type="obsolete">Uma referência deve ser selecionada! Parando o processo.</translation>
+        <translation type="unfinished">Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="89"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="92"/>
         <source>Preparing execution for {0}.{1}</source>
-        <translation type="obsolete">Preparando a execução para {0}.{1}</translation>
+        <translation type="unfinished">Preparando a execução para {0}.{1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="122"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="126"/>
         <source>{0} features have dangles. Check flags.</source>
-        <translation type="obsolete">{0} feições possuem pontas soltas. Verifique as flags.</translation>
+        <translation type="unfinished">{0} feições possuem pontas soltas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="147"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="151"/>
         <source>Building search structure for {0}.{1}</source>
-        <translation type="obsolete">Criando estrutura de busca para {0}.{1}</translation>
+        <translation type="unfinished">Criando estrutura de busca para {0}.{1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="189"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="193"/>
         <source>Searching dangles on {0}.{1}</source>
-        <translation type="obsolete">Buscando pontas soltas em {0}.{1}</translation>
+        <translation type="unfinished">Buscando pontas soltas em {0}.{1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="321"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="325"/>
         <source>Dangle on {0}.{1}</source>
-        <translation type="obsolete">Ponta solta em {0}.{1}</translation>
+        <translation type="unfinished">Ponta solta em {0}.{1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="118"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py" line="122"/>
         <source>Error while trying to remove filter layer.</source>
-        <translation type="obsolete">Erro ao tentar remover camada de filtro.</translation>
+        <translation type="unfinished">Erro ao tentar remover camada de filtro.</translation>
     </message>
 </context>
 <context>
@@ -7653,24 +9009,24 @@ Camada</translation>
 <context>
     <name>IdentifyDuplicatedGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="34"/>
         <source>Identify Duplicated Geometries</source>
-        <translation type="obsolete">Identificar geometrias duplicadas</translation>
+        <translation type="unfinished">Identificar geometrias duplicadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="50"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="50"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="53"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="90"/>
@@ -7678,14 +9034,14 @@ Camada</translation>
         <translation type="obsolete">{} feições estão duplicadas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="87"/>
         <source>There are no duplicated geometries.</source>
-        <translation type="obsolete">Não há geometrias duplicadas.</translation>
+        <translation type="unfinished">Não há geometrias duplicadas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="57"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="57"/>
@@ -7693,9 +9049,9 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="79"/>
         <source>Duplicated Geometry</source>
-        <translation type="obsolete">Geometria Duplicada</translation>
+        <translation type="unfinished">Geometria Duplicada</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="68"/>
@@ -7703,51 +9059,51 @@ Camada</translation>
         <translation type="obsolete">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="63"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="64"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="83"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="84"/>
         <source> features are duplicated. Check flags.</source>
-        <translation type="obsolete"> feições estão duplicadas. Verifique as flags.</translation>
+        <translation type="unfinished"> feições estão duplicadas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="68"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py" line="69"/>
         <source>Running process for </source>
-        <translation type="obsolete">Executando o processo para </translation>
+        <translation type="unfinished">Executando o processo para </translation>
     </message>
 </context>
 <context>
@@ -7938,24 +9294,24 @@ Camada</translation>
         <translation type="obsolete">Identificar Gaps e Overlaps</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="54"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="54"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="57"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="59"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="61"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="60"/>
@@ -7963,71 +9319,71 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="63"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="65"/>
         <source>One reference must be selected! Stopping.</source>
-        <translation type="obsolete">Uma referência deve ser selecionada! Parando o processo.</translation>
+        <translation type="unfinished">Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="77"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="79"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="90"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="92"/>
         <source>Running process for coverage_temp</source>
-        <translation type="obsolete">Rodando processo para coverage_temp</translation>
+        <translation type="unfinished">Rodando processo para coverage_temp</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="106"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="108"/>
         <source>Error while trying to remove coverage layer.</source>
-        <translation type="obsolete">Erro ao tentar remover camada de cobertura. </translation>
+        <translation type="unfinished">Erro ao tentar remover camada de cobertura. </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="111"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="113"/>
         <source>There are {} gaps or overlaps in the coverage layer. Check flags.</source>
-        <translation type="obsolete">Há {} gaps or overlaps na camada de cobertura. Verifique as flags.</translation>
+        <translation type="unfinished">Há {} gaps or overlaps na camada de cobertura. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="114"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="116"/>
         <source>The coverage has no gaps or overlaps.</source>
-        <translation type="obsolete">A cobertura não possui gaps or overlaps.</translation>
+        <translation type="unfinished">A cobertura não possui gaps or overlaps.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="35"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py" line="37"/>
         <source>Identify Earth Coverage Gaps and Overlaps</source>
-        <translation type="obsolete">Identificar Buracos e Sobreposições na Cobertura Terrestre</translation>
+        <translation type="unfinished">Identificar Buracos e Sobreposições na Cobertura Terrestre</translation>
     </message>
 </context>
 <context>
@@ -8038,56 +9394,56 @@ Camada</translation>
         <translation type="obsolete">Identificar Gaps</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="51"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="51"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="54"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="58"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="57"/>
@@ -8095,29 +9451,29 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="63"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="65"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="68"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="70"/>
         <source>Running process for </source>
-        <translation type="obsolete">Executando o processo para </translation>
+        <translation type="unfinished">Executando o processo para </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="83"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="85"/>
         <source> gaps were found. Check flags.</source>
-        <translation type="obsolete"> gaps foram encontrados. Verifique as flags.</translation>
+        <translation type="unfinished"> gaps foram encontrados. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="88"/>
         <source>There are no gaps.</source>
-        <translation type="obsolete">Não há gaps.</translation>
+        <translation type="unfinished">Não há gaps.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyGapsProcess.py" line="35"/>
         <source>Identify Layer Gaps</source>
-        <translation type="obsolete">Identificar Buracos na Camada</translation>
+        <translation type="unfinished">Identificar Buracos na Camada</translation>
     </message>
 </context>
 <context>
@@ -8186,24 +9542,24 @@ Camada</translation>
 <context>
     <name>IdentifyInvalidGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="35"/>
         <source>Identify Invalid Geometries</source>
-        <translation type="obsolete">Identificar geometrias inválidas</translation>
+        <translation type="unfinished">Identificar geometrias inválidas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="57"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="57"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="58"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="60"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="83"/>
@@ -8211,14 +9567,14 @@ Camada</translation>
         <translation type="obsolete">{} feições estão inválida. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="95"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="97"/>
         <source>All features are valid.</source>
-        <translation type="obsolete">Todas as feições são válidas.</translation>
+        <translation type="unfinished">Todas as feições são válidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="62"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="64"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="63"/>
@@ -8231,56 +9587,56 @@ Camada</translation>
         <translation type="obsolete">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="70"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="72"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="92"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="94"/>
         <source> features are invalid. Check flags.</source>
-        <translation type="obsolete"> feições são inválidas. Verifique as flags.</translation>
+        <translation type="unfinished"> feições são inválidas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="76"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="78"/>
         <source>Running process for </source>
-        <translation type="obsolete">Executando o processo para </translation>
+        <translation type="unfinished">Executando o processo para </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py" line="51"/>
         <source>Remove Empty Geometries</source>
-        <translation type="obsolete">Remover geometrias vazias</translation>
+        <translation type="unfinished">Remover geometrias vazias</translation>
     </message>
 </context>
 <context>
@@ -8374,24 +9730,24 @@ Camada</translation>
 <context>
     <name>IdentifyNotSimpleGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="35"/>
         <source>Identify Not Simple Geometries</source>
-        <translation type="obsolete">Identificar geometrias não simples</translation>
+        <translation type="unfinished">Identificar geometrias não simples</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="51"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="51"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="53"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="89"/>
@@ -8399,24 +9755,24 @@ Camada</translation>
         <translation type="obsolete">{} feições são não simples. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="89"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="91"/>
         <source>All features are simple.</source>
-        <translation type="obsolete">Todas as feições são simples.</translation>
+        <translation type="unfinished">Todas as feições são simples.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="58"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="59"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="81"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="83"/>
         <source>Not simple geometry.</source>
-        <translation type="obsolete">Geometria não simples.</translation>
+        <translation type="unfinished">Geometria não simples.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="68"/>
@@ -8424,50 +9780,50 @@ Camada</translation>
         <translation type="obsolete">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="64"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="66"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="70"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="72"/>
         <source>Running process </source>
-        <translation type="obsolete">Executando processo</translation>
+        <translation type="unfinished">Executando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="88"/>
         <source> features are not simple. Check flags.</source>
-        <translation type="obsolete"> feições são não simples. Verifique as flags.</translation>
+        <translation type="unfinished"> feições são não simples. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -8543,26 +9899,132 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>IdentifyOutOfBoundsAnglesInCoverageProcess</name>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="36"/>
+        <source>Identify Out Of Bounds Angles in Coverage</source>
+        <translation type="unfinished">Identificar Ângulos Fora de Limites na Cobertura Terrestre</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
+        <source>Category</source>
+        <translation type="unfinished">Categoria</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
+        <source>Layer Name</source>
+        <translation type="unfinished">Nome da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
+        <source>Geometry
+Column</source>
+        <translation type="unfinished">Coluna 
+Geométrica</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
+        <source>Geometry
+Type</source>
+        <translation type="unfinished">Tipo 
+Geométrico</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="46"/>
+        <source>Layer
+Type</source>
+        <translation type="unfinished">Tipo da 
+Camada</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="53"/>
+        <source>Identify Out Of Bounds Angles</source>
+        <translation type="unfinished">Identificar Ângulos Fora de Limites</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="61"/>
+        <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
+</source>
+        <translation type="unfinished">Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="116"/>
+        <source>Angle out of bounds ({0:.2f} deg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="126"/>
+        <source>Starting </source>
+        <translation type="unfinished">Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="126"/>
+        <source> Process.</source>
+        <translation type="unfinished"> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="128"/>
+        <source>Running</source>
+        <translation type="unfinished">Rodando</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="132"/>
+        <source>No classes selected!. Nothing to be done.</source>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="133"/>
+        <source>No classes selected! Nothing to be done.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="150"/>
+        <source>Error while trying to remove coverage layer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="155"/>
+        <source>{0} angles between coverage features have out of bounds angle(s). Check flags.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="157"/>
+        <source>There are no out of bounds angles between features from coverage.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="159"/>
+        <source>Error while checking angles. Check log.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py" line="161"/>
+        <source>There are no features with angles out of bounds.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>IdentifyOutOfBoundsAnglesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="36"/>
         <source>Identify Out Of Bounds Angles</source>
-        <translation type="obsolete">Identificar ângulos fora de limites</translation>
+        <translation type="unfinished">Identificar ângulos fora de limites</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="109"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="109"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="111"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
@@ -8580,19 +10042,19 @@ Camada</translation>
         <translation type="obsolete">Não há ângulos fora de limites em {0}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="94"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="142"/>
         <source>There are no features with angles out of bounds.</source>
-        <translation type="obsolete">Não há feições com ângulos fora de limites.</translation>
+        <translation type="unfinished">Não há feições com ângulos fora de limites.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="116"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="117"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="84"/>
@@ -8605,56 +10067,61 @@ Camada</translation>
         <translation type="obsolete">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="71"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="127"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="87"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="135"/>
         <source> features from</source>
-        <translation type="obsolete"> feições da camada </translation>
+        <translation type="unfinished"> feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="87"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="135"/>
         <source> have out of bounds angle(s). Check flags.</source>
-        <translation type="obsolete"> tem ângulos fora do limite. Verifique as flags.</translation>
+        <translation type="unfinished"> tem ângulos fora do limite. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="89"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="137"/>
         <source>There are no out of bounds angles on </source>
-        <translation type="obsolete">Não há ângulos fora de limites na camada </translation>
+        <translation type="unfinished">Não há ângulos fora de limites na camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py" line="140"/>
+        <source>There are features with angles out of bounds. Check log.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8698,56 +10165,56 @@ Camada</translation>
         <translation type="obsolete">Identificar Sobreposições</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="42"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="49"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="49"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="52"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="57"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="57"/>
@@ -8755,67 +10222,67 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="64"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="64"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="69"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="69"/>
         <source>Running process for </source>
-        <translation type="obsolete">Executando o processo para </translation>
+        <translation type="unfinished">Executando o processo para </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="84"/>
         <source> features are overlapping. Check flags.</source>
-        <translation type="obsolete">feições se sobrepondo. Verifique as flags.</translation>
+        <translation type="unfinished">feições se sobrepondo. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="87"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="87"/>
         <source>There are no overlapping geometries.</source>
-        <translation type="obsolete">Não há feições se sobrepondo.</translation>
+        <translation type="unfinished">Não há feições se sobrepondo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py" line="33"/>
         <source>Identify Layer Overlaps</source>
-        <translation type="obsolete">Identificar Sobreposições na camada</translation>
+        <translation type="unfinished">Identificar Sobreposições na camada</translation>
     </message>
 </context>
 <context>
     <name>IdentifySmallAreasProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="34"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="35"/>
         <source>Identify Small Areas</source>
-        <translation type="obsolete">Identificar áreas pequenas</translation>
+        <translation type="unfinished">Identificar áreas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="51"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="51"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="54"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="90"/>
         <source>{0} features have small areas. Check flags.</source>
-        <translation type="obsolete">{0} feições tem áreas pequenas. Verifique as flags.</translation>
+        <translation type="unfinished">{0} feições tem áreas pequenas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="90"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="93"/>
         <source>There are no small areas.</source>
-        <translation type="obsolete">Não há áreas pequenas.</translation>
+        <translation type="unfinished">Não há áreas pequenas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="59"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="60"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="59"/>
@@ -8828,14 +10295,14 @@ Camada</translation>
         <translation type="obsolete">Área pequena.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="65"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="67"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="77"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="79"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="87"/>
@@ -8843,36 +10310,41 @@ Camada</translation>
         <translation type="obsolete"> feições tem áreas pequenas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py" line="82"/>
+        <source>Small area. Area smaller than {0}</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -8916,9 +10388,9 @@ Camada</translation>
 <context>
     <name>IdentifySmallLinesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="35"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="36"/>
         <source>Identify Small Lines</source>
-        <translation type="obsolete">Identificar linhas pequenas</translation>
+        <translation type="unfinished">Identificar linhas pequenas</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="58"/>
@@ -8926,19 +10398,19 @@ Camada</translation>
         <translation type="obsolete">Comprimento</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="54"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="54"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="57"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="83"/>
@@ -8946,14 +10418,14 @@ Camada</translation>
         <translation type="obsolete">{0} feições tem comprimentos pequenos. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="99"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="101"/>
         <source>There are no small lines.</source>
-        <translation type="obsolete">Não há linhas pequenas.</translation>
+        <translation type="unfinished">Não há linhas pequenas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="62"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="63"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="59"/>
@@ -8971,14 +10443,14 @@ Camada</translation>
         <translation type="obsolete">Linha pequena.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="69"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="70"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="87"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="96"/>
@@ -8986,36 +10458,46 @@ Camada</translation>
         <translation type="obsolete"> feições tem pequeenas linhas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="45"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="90"/>
+        <source>Small line. Line length smaller than {0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py" line="98"/>
+        <source>{0} features have small lines. Check flags.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -9184,19 +10666,19 @@ Camada</translation>
 <context>
     <name>InspectFeatures</name>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="241"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="242"/>
         <source>ERROR:</source>
-        <translation type="obsolete">ERRO:</translation>
+        <translation type="unfinished">ERRO:</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="241"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="242"/>
         <source>&lt;font color=red&gt;There are no features in the current layer:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Add features and try again!&lt;/font&gt;</source>
-        <translation type="obsolete">&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
+        <translation type="unfinished">&lt;font color=red&gt;Não há feições na camada corrente:&lt;br&gt;&lt;/font&gt;&lt;font color=blue&gt;Adicione feições e tente de novo!&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="180"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="181"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="134"/>
@@ -9204,34 +10686,34 @@ Camada</translation>
         <translation type="obsolete">Não existe feição de id {0} na camada {1}. Retornando ao id anterior</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="171"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="172"/>
         <source>Selected id does not exist in layer {0}. Returned to previous id.</source>
-        <translation type="obsolete">O id selecionado não existe na camada {0}. Retornando ao id anterior.</translation>
+        <translation type="unfinished">O id selecionado não existe na camada {0}. Retornando ao id anterior.</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="300"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="301"/>
         <source>Select a vector layer to enable tool</source>
-        <translation type="obsolete">Selecione uma camada vetorial para ativar a ferramenta</translation>
+        <translation type="unfinished">Selecione uma camada vetorial para ativar a ferramenta</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="62"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="63"/>
         <source>DSGTools: Inspect Features</source>
-        <translation type="obsolete">DSGTools: Ferramenta de inspeção de feições</translation>
+        <translation type="unfinished">DSGTools: Ferramenta de inspeção de feições</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="180"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="181"/>
         <source>Invalid attribute filter!</source>
-        <translation type="obsolete">Filtro de atributo inválido!</translation>
+        <translation type="unfinished">Filtro de atributo inválido!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="66"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="67"/>
         <source>DSGTools: Back Inspect</source>
-        <translation type="obsolete">DSGTools: Inspecionar anterior</translation>
+        <translation type="unfinished">DSGTools: Inspecionar anterior</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/InspectFeatures/inspectFeatures.py" line="70"/>
+        <location filename="../gui/ProductionTools/Toolbars/InspectFeatures/inspectFeatures.py" line="71"/>
         <source>DSGTools: Next Inspect</source>
-        <translation type="obsolete">DSGTools: Inspecionar próximo</translation>
+        <translation type="unfinished">DSGTools: Inspecionar próximo</translation>
     </message>
 </context>
 <context>
@@ -9280,164 +10762,195 @@ Camada</translation>
 <context>
     <name>InventoryTools</name>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="85"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="88"/>
         <source>Insert Extension</source>
-        <translation type="obsolete">Inserir Extensão</translation>
+        <translation type="unfinished">Inserir Extensão</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="88"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="91"/>
         <source>Remove Extension</source>
-        <translation type="obsolete">Remover extensão</translation>
+        <translation type="unfinished">Remover extensão</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="96"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="99"/>
         <source>Type the extension</source>
-        <translation type="obsolete">Escreva a extensão</translation>
+        <translation type="unfinished">Escreva a extensão</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="96"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="99"/>
         <source>File extension</source>
-        <translation type="obsolete">Extensão do arquivo</translation>
+        <translation type="unfinished">Extensão do arquivo</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="135"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="138"/>
         <source>Select Directory</source>
-        <translation type="obsolete">Selecione um Diretório</translation>
+        <translation type="unfinished">Selecione um Diretório</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="146"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="149"/>
         <source>Save Output File</source>
-        <translation type="obsolete">Salvar arquivo de saída</translation>
+        <translation type="unfinished">Salvar arquivo de saída</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="191"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="194"/>
         <source>Information!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="176"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="179"/>
         <source>Please, fill all fields.</source>
-        <translation type="obsolete">Por favor, preencha todos os campos.</translation>
+        <translation type="unfinished">Por favor, preencha todos os campos.</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="191"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="194"/>
         <source>Please, choose a location to save the files.</source>
-        <translation type="obsolete">Por favor, escolha um local para salvar os arquivos.</translation>
+        <translation type="unfinished">Por favor, escolha um local para salvar os arquivos.</translation>
     </message>
     <message>
-        <location filename="../InventoryTools/inventoryTools.py" line="183"/>
+        <location filename="../gui/Misc/InventoryTools/inventoryTools.py" line="186"/>
         <source>Please, insert file extensions to be considered.</source>
-        <translation type="obsolete">Por favor, insira extensões de arquivo que devem ser consideradas.</translation>
+        <translation type="unfinished">Por favor, insira extensões de arquivo que devem ser consideradas.</translation>
+    </message>
+</context>
+<context>
+    <name>LayerHandler</name>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="92"/>
+        <source>DsgTools reclassification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/layerHandler.py" line="355"/>
+        <source>Merging Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LayerToolsGuiManager</name>
+    <message>
+        <location filename="../gui/LayerTools/layerToolsGuiManager.py" line="42"/>
+        <source>Layer Tools</source>
+        <translation type="unfinished">Ferramentas de Camadas</translation>
+    </message>
+    <message>
+        <location filename="../gui/LayerTools/layerToolsGuiManager.py" line="64"/>
+        <source>Load Layers</source>
+        <translation type="unfinished">Carregar Camadas</translation>
+    </message>
+    <message>
+        <location filename="../gui/LayerTools/layerToolsGuiManager.py" line="65"/>
+        <source>Create Frame</source>
+        <translation type="unfinished">Criar Moldura</translation>
     </message>
 </context>
 <context>
     <name>LineOnLineOverlayProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="35"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="37"/>
         <source>Overlay Lines with Lines</source>
-        <translation type="obsolete">Seccionar linhas com linhas</translation>
+        <translation type="unfinished">Seccionar linhas com linhas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="44"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="46"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="52"/>
         <source>Snap to Grid (adjust coordinates precision)</source>
-        <translation type="obsolete">Colar na grade (ajustar precisão de coordenadas)</translation>
+        <translation type="unfinished">Colar na grade (ajustar precisão de coordenadas)</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="55"/>
         <source>Remove Small Lines</source>
-        <translation type="obsolete">Remover linhas pequenas</translation>
+        <translation type="unfinished">Remover linhas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="55"/>
         <source>Clean Geometries</source>
-        <translation type="obsolete">Limpar geometrias</translation>
+        <translation type="unfinished">Limpar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="59"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="61"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="59"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="61"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="61"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="63"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="66"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="68"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="92"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="94"/>
         <source>Line on Line Overlay process complete.</source>
-        <translation type="obsolete">Processo de seccionar linhas com linhas completo.</translation>
+        <translation type="unfinished">Processo de seccionar linhas com linhas completo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="55"/>
         <source>Identify Small Lines</source>
-        <translation type="obsolete">Identificar linhas pequenas</translation>
+        <translation type="unfinished">Identificar linhas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="80"/>
         <source>Empty layer or empty selection!. Nothing to be done.</source>
-        <translation type="obsolete">Camada vazia ou seleção vazia! Nada a ser feito.</translation>
+        <translation type="unfinished">Camada vazia ou seleção vazia! Nada a ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="79"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="81"/>
         <source>Layer {0} is empty or there are no selected features!. Nothing to be done.</source>
-        <translation type="obsolete">Camada {0} está vazia ou não há feições selecionadas! Nada a ser feito.</translation>
+        <translation type="unfinished">Camada {0} está vazia ou não há feições selecionadas! Nada a ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="55"/>
         <source>Identify Duplicated Geometries</source>
-        <translation type="obsolete">Identificar geometrias duplicadas</translation>
+        <translation type="unfinished">Identificar geometrias duplicadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="55"/>
         <source>Remove Duplicated Elements</source>
-        <translation type="obsolete">Remover feições duplicadas</translation>
+        <translation type="unfinished">Remover feições duplicadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py" line="52"/>
         <source>Snap Geometries</source>
-        <translation type="obsolete">Colar geometrias</translation>
+        <translation type="unfinished">Colar geometrias</translation>
     </message>
 </context>
 <context>
@@ -9514,9 +11027,9 @@ Camada</translation>
         <translation>Selecione itens</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/listSelector.py" line="44"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/listSelector.py" line="45"/>
         <source>Select</source>
-        <translation type="obsolete">Selecionar</translation>
+        <translation type="unfinished">Selecionar</translation>
     </message>
 </context>
 <context>
@@ -9537,14 +11050,14 @@ Camada</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../LayerTools/loadAuxStruct.py" line="120"/>
+        <location filename="../gui/LayerTools/loadAuxStruct.py" line="121"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/loadAuxStruct.py" line="120"/>
+        <location filename="../gui/LayerTools/loadAuxStruct.py" line="121"/>
         <source>Could not load auxiliary classes! Check log for details!</source>
-        <translation type="obsolete">Não foi possível carregar classes auxiliares! Verifique o log para detalhes!</translation>
+        <translation type="unfinished">Não foi possível carregar classes auxiliares! Verifique o log para detalhes!</translation>
     </message>
 </context>
 <context>
@@ -9813,24 +11326,24 @@ Camada</translation>
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="194"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="196"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="194"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="196"/>
         <source>Could not load the selected classes!</source>
-        <translation type="obsolete">Não foi possível carregar as classes selecionadas!</translation>
+        <translation type="unfinished">Não foi possível carregar as classes selecionadas!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="196"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="198"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="196"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="198"/>
         <source>Please, select at least one class!</source>
-        <translation type="obsolete">Por favor, selecione pelo menos uma classe!</translation>
+        <translation type="unfinished">Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="180"/>
@@ -9848,14 +11361,14 @@ Camada</translation>
         <translation>Filtro:</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="104"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="106"/>
         <source>CRITICAL!</source>
-        <translation type="obsolete">CRÍTICO!</translation>
+        <translation type="unfinished">CRÍTICO!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="104"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="106"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="96"/>
@@ -9873,71 +11386,71 @@ Camada</translation>
         <translation>Ajustar estilo</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="204"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="206"/>
         <source>Select Style</source>
-        <translation type="obsolete">Selecionar estilo</translation>
+        <translation type="unfinished">Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="../LayerTools/load_by_class.py" line="208"/>
+        <location filename="../gui/LayerTools/load_by_class.py" line="210"/>
         <source>No available styles</source>
-        <translation type="obsolete">Sem estilos disponíveis</translation>
+        <translation type="unfinished">Sem estilos disponíveis</translation>
     </message>
 </context>
 <context>
     <name>LoadLayersFromServer</name>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="56"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="54"/>
         <source>Select Databases</source>
-        <translation type="obsolete">Selecionar bancos de dados</translation>
+        <translation type="unfinished">Selecionar bancos de dados</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="57"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="55"/>
         <source>Selected Spatialites</source>
-        <translation type="obsolete">Selecionar Spatialites</translation>
+        <translation type="unfinished">Selecionar Spatialites</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="58"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="57"/>
         <source>Select layers to be loaded</source>
-        <translation type="obsolete">Selecionar camadas para serem carregadas</translation>
+        <translation type="unfinished">Selecionar camadas para serem carregadas</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="92"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="92"/>
         <source>Reading selected databases... </source>
-        <translation type="obsolete">Lendo bancos de dados selecionados... </translation>
+        <translation type="unfinished">Lendo bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="157"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="156"/>
         <source>Loading layers from selected databases... </source>
-        <translation type="obsolete">Carregando camadas dos bancos de dados selecionados... </translation>
+        <translation type="unfinished">Carregando camadas dos bancos de dados selecionados... </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="190"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="190"/>
         <source>
 Databases with error:</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Bancos de dados com erros:</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="192"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="192"/>
         <source>
 Error messages for each database were output in qgis log.</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Mensagens de erro para cada banco de dados foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="194"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="194"/>
         <source>Error for database </source>
-        <translation type="obsolete">Erro para o banco de dados </translation>
+        <translation type="unfinished">Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="205"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="205"/>
         <source>Select Style</source>
-        <translation type="obsolete">Selecionar estilo</translation>
+        <translation type="unfinished">Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="209"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="209"/>
         <source>No available styles</source>
-        <translation type="obsolete">Sem estilos disponíveis</translation>
+        <translation type="unfinished">Sem estilos disponíveis</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="164"/>
@@ -9955,46 +11468,51 @@ Mensagens de erro para cada banco de dados foram registradas no log do qgis.</tr
         <translation type="obsolete">Área</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna
+        <translation type="unfinished">Coluna
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo
+        <translation type="unfinished">Tipo
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="125"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="136"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="137"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="136"/>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="137"/>
         <source>Select at least one layer to be loaded!</source>
-        <translation type="obsolete">Selecione pelo menos uma camada para ser carregada!</translation>
+        <translation type="unfinished">Selecione pelo menos uma camada para ser carregada!</translation>
+    </message>
+    <message>
+        <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.py" line="56"/>
+        <source>Selected Geopackages</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10063,39 +11581,39 @@ Camada</translation>
 <context>
     <name>ManageComplexDialog</name>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="387"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="395"/>
         <source>edit this field</source>
-        <translation type="obsolete">edite este campo</translation>
+        <translation type="unfinished">edite este campo</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="419"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="427"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="419"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="427"/>
         <source>The field: &apos;nome&apos; must be filled in all rows. Please, check and try again.</source>
-        <translation type="obsolete">O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
+        <translation type="unfinished">O campo &apos;nome&apos; precisa ser preenchido em todas as linhas. Por favor, verifique e tente novamente.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="435"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="443"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="266"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="274"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="266"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="274"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ComplexTools/manageComplex.py" line="248"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/manageComplex.py" line="256"/>
         <source>Select a database before managing a complex!</source>
-        <translation type="obsolete">Selecione um banco de dados antes de gerenciar um complexo!</translation>
+        <translation type="unfinished">Selecione um banco de dados antes de gerenciar um complexo!</translation>
     </message>
 </context>
 <context>
@@ -10136,56 +11654,56 @@ Camada</translation>
         <translation>Tipo de usuário</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="50"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="51"/>
         <source>Super User</source>
-        <translation type="obsolete">Super usuário</translation>
+        <translation type="unfinished">Super usuário</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="50"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="51"/>
         <source>User</source>
-        <translation type="obsolete">Usuário</translation>
+        <translation type="unfinished">Usuário</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="113"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="114"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="110"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="111"/>
         <source>First select a database!</source>
-        <translation type="obsolete">Selecione um banco de dados antes!</translation>
+        <translation type="unfinished">Selecione um banco de dados antes!</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="113"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="114"/>
         <source>First select a user to remove!</source>
-        <translation type="obsolete">Primeiro selecione um usuário para remover!</translation>
+        <translation type="unfinished">Primeiro selecione um usuário para remover!</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="91"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="92"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="91"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="92"/>
         <source>Do you really want to remove users: </source>
-        <translation type="obsolete">Você realmente deseja remover os usuários: </translation>
+        <translation type="unfinished">Você realmente deseja remover os usuários: </translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="101"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="102"/>
         <source>Drop user(s) operation complete!
 </source>
-        <translation type="obsolete">Operação remover usuário(s) completa!</translation>
+        <translation type="unfinished">Operação remover usuário(s) completa!</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="125"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="126"/>
         <source>
 Successful users: </source>
-        <translation type="obsolete">Usuários com sucesso: </translation>
+        <translation type="unfinished">Usuários com sucesso: </translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="128"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="129"/>
         <source>Operation Complete!</source>
-        <translation type="obsolete">Operação completa!</translation>
+        <translation type="unfinished">Operação completa!</translation>
     </message>
     <message>
         <location filename="../UserTools/manageServerUsers.py" line="135"/>
@@ -10193,10 +11711,10 @@ Successful users: </source>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../UserTools/manageServerUsers.py" line="137"/>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="138"/>
         <source>
 Error messages for each user were output in qgis log.</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Mensagens de erro para cada usuário foram registradas no log do qgis.</translation>
     </message>
     <message>
@@ -10204,18 +11722,29 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <source>Error for user </source>
         <translation type="obsolete">Erro para o usuário </translation>
     </message>
+    <message>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="136"/>
+        <source>
+Users with error:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="140"/>
+        <source>Error for user {user}: {exception}</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ManageUserProfiles</name>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="140"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="141"/>
         <source>Select a User</source>
-        <translation type="obsolete">Selecione um Usuário</translation>
+        <translation type="unfinished">Selecione um Usuário</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="274"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="275"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.py" line="195"/>
@@ -10228,24 +11757,24 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="274"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="347"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="274"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="280"/>
         <source>User updated successfully!</source>
-        <translation type="obsolete">Usuário atualizado com sucesso!</translation>
+        <translation type="unfinished">Usuário atualizado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="218"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="219"/>
         <source>First select a database!</source>
-        <translation type="obsolete">Selecione um banco de dados antes!</translation>
+        <translation type="unfinished">Selecione um banco de dados antes!</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="197"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="198"/>
         <source>First select a user to remove!</source>
-        <translation type="obsolete">Primeiro selecione um usuário para remover!</translation>
+        <translation type="unfinished">Primeiro selecione um usuário para remover!</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.py" line="140"/>
@@ -10253,34 +11782,34 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Problema removendo usuário: </translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="208"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="209"/>
         <source>User removed successfully!</source>
-        <translation type="obsolete">Usuário removido com sucesso!</translation>
+        <translation type="unfinished">Usuário removido com sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="221"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="222"/>
         <source>First select a user!</source>
-        <translation type="obsolete">Primeiro selecione um usuário!</translation>
+        <translation type="unfinished">Primeiro selecione um usuário!</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="104"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="105"/>
         <source>Show properties</source>
-        <translation type="obsolete">Mostrar propriedades</translation>
+        <translation type="unfinished">Mostrar propriedades</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="274"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="296"/>
         <source>No profiles installed! Install at least one and try again.</source>
-        <translation type="obsolete">Não há permissões de usuário instaladas! Instale pelo menos uma e tente de novo.</translation>
+        <translation type="unfinished">Não há permissões de usuário instaladas! Instale pelo menos uma e tente de novo.</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="274"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="313"/>
         <source>No profiles assigned! Assign at least one and try again.</source>
-        <translation type="obsolete">Não há permissões de usuário atribuídas! Atribua pelo menos uma e tente de novo.</translation>
+        <translation type="unfinished">Não há permissões de usuário atribuídas! Atribua pelo menos uma e tente de novo.</translation>
     </message>
     <message>
-        <location filename="../UserTools/user_profiles.py" line="274"/>
+        <location filename="../gui/DatabaseTools/UserTools/user_profiles.py" line="347"/>
         <source>Select a profile first!</source>
-        <translation type="obsolete">Selecione uma permissão de usuário primeiro!</translation>
+        <translation type="unfinished">Selecione uma permissão de usuário primeiro!</translation>
     </message>
 </context>
 <context>
@@ -10339,56 +11868,56 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Unir linhas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="57"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="57"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="59"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="60"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="68"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="69"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="69"/>
@@ -10396,34 +11925,34 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="74"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="75"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="90"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="91"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="117"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="118"/>
         <source>Merging lines for </source>
-        <translation type="obsolete">Unindo linhas para </translation>
+        <translation type="unfinished">Unindo linhas para </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="157"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="158"/>
         <source>All lines were merged.</source>
-        <translation type="obsolete">Todas as linhas foram unidas.</translation>
+        <translation type="unfinished">Todas as linhas foram unidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="51"/>
         <source>Clean Geometries</source>
-        <translation type="obsolete">Limpar geometrias</translation>
+        <translation type="unfinished">Limpar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="34"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/mergeLinesProcess.py" line="35"/>
         <source>Merge lines with common attributes</source>
-        <translation type="obsolete">Unir linhas com atributos comuns</translation>
+        <translation type="unfinished">Unir linhas com atributos comuns</translation>
     </message>
 </context>
 <context>
@@ -10462,47 +11991,60 @@ Camada</translation>
         <translation type="obsolete">distância</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="140"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="142"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="140"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="142"/>
         <source>This tool does not work with angular unit reference system!</source>
-        <translation type="obsolete">Esta ferramenta não trabalha com sistemas de referência angulares!</translation>
+        <translation type="unfinished">Esta ferramenta não trabalha com sistemas de referência angulares!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="144"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="146"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="144"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="146"/>
         <source>&lt;font color=red&gt;Shape value not defined :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Define all values to activate tool!&lt;/font&gt;</source>
-        <translation type="obsolete">&lt;font color=red&gt;Valor de forma não definido :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Defina todos os valores para ativar a ferramenta!&lt;/font&gt;</translation>
+        <translation type="unfinished">&lt;font color=red&gt;Valor de forma não definido :&lt;/font&gt;&lt;br&gt;&lt;font color=blue&gt;Defina todos os valores para ativar a ferramenta!&lt;/font&gt;</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="216"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="234"/>
         <source>SIZES</source>
-        <translation type="obsolete">TAMANHOS</translation>
+        <translation type="unfinished">TAMANHOS</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="59"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="61"/>
         <source>DSGTools: Minimum Area Tool</source>
-        <translation type="obsolete">DSGTools: Ferramenta de área mínima</translation>
+        <translation type="unfinished">DSGTools: Ferramenta de área mínima</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.py" line="63"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.py" line="65"/>
         <source>DSGTools: Draw Shape</source>
-        <translation type="obsolete">DSGTools: Desenhar forma</translation>
+        <translation type="unfinished">DSGTools: Desenhar forma</translation>
     </message>
 </context>
 <context>
     <name>ModelsAndScriptsInstaller</name>
     <message>
-        <location filename="../ToolboxTools/models_and_scripts_installer.py" line="112"/>
+        <location filename="../gui/Misc/ToolboxTools/models_and_scripts_installer.py" line="112"/>
         <source>Error copying file: </source>
-        <translation type="obsolete">Erro copiando arquivo: </translation>
+        <translation type="unfinished">Erro copiando arquivo: </translation>
+    </message>
+</context>
+<context>
+    <name>MultiGeopackageSelectorWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiGeopackageSelectorWidget.py" line="63"/>
+        <source>Select Geopackage Databases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiGeopackageSelectorWidget.py" line="63"/>
+        <source>Geopackage Databases (*.gpkg)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10528,81 +12070,480 @@ Camada</translation>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="79"/>
+        <source>EDGV Version...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="114"/>
+        <source>Warning!</source>
+        <translation type="unfinished">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="136"/>
+        <source>Select the amount of datasources to be created.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="139"/>
+        <source>Invalid EDGV version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="142"/>
+        <source>Invalid CRS.</source>
+        <translation type="unfinished">SRC inválido.</translation>
+    </message>
+</context>
+<context>
+    <name>MultiPostgisSelector</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py" line="53"/>
+        <source>Available Databases</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.py" line="152"/>
+        <source>Select Server</source>
+        <translation type="unfinished">Selecione Servidor</translation>
+    </message>
+</context>
+<context>
+    <name>MultiShapefileSelectorWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiShapefileSelectorWidget.py" line="63"/>
+        <source>Select Folders with Shapefiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiShapefileSelectorWidget.py" line="63"/>
+        <source>Shapefiles (*.shp)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>MultiSpatialiteSelectorWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiSpatialiteSelectorWidget.py" line="63"/>
+        <source>Select SpatiaLite Datasources</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiSpatialiteSelectorWidget.py" line="63"/>
+        <source>SpatiaLite Databases (*.sqlite)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NetworkHandler</name>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="51"/>
+        <source>Flag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="52"/>
+        <source>Sink</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="53"/>
+        <source>Waterway Beginning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="54"/>
+        <source>Up Hill Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="55"/>
+        <source>Down Hill Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="56"/>
+        <source>Confluence</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="57"/>
+        <source>Ramification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="58"/>
+        <source>Attribute Change Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="59"/>
+        <source>Node Next to Water Body</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="60"/>
+        <source>Attribute Change Flag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="61"/>
+        <source>Overloaded Node</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="62"/>
+        <source>Disconnected From Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="63"/>
+        <source>Node next to ditch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="64"/>
+        <source>Spillway</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="67"/>
+        <source>Segments must be connected and with correct flow.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="68"/>
+        <source>Segments with same attribute set must be merged.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="69"/>
+        <source>Line disconnected From Network</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="70"/>
+        <source>Node with flow problem</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="811"/>
+        <source>Lines id={0} and id={1} have conflicting directions ({2:.2f} deg).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="823"/>
+        <source>Cannot infer directions for lines {0} and {1} (Right Angle)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="867"/>
+        <source>Error!</source>
+        <translation type="unfinished">Erro!</translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="867"/>
+        <source>There are unclassified nodes! Node (re)creation process is recommended before this process.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="896"/>
+        <source>Node was flagged upon classification (probably cannot be an ending hidrography node).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="885"/>
+        <source>Redundant node. Connected lines ({0}, {1}) share the same set of attributes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="903"/>
+        <source>Line {0} disconnected from network.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="905"/>
+        <source>Node is overloaded - 4 or more lines are flowing in (&gt;= 2 lines) and out (&gt;= 2 lines).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="931"/>
+        <source>Line id={0} does not end at a node with IN flow type (node type is {1}). </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="938"/>
+        <source>Line id={0} does not start at a node with OUT flow type (node type is {1}). </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="944"/>
+        <source>Lines are either flowing only in or out of node. Node classification is {0}.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="953"/>
+        <source>Line {0} seems to be invalid (unable to point specific reason).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1093"/>
+        <source>No network starting point was found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1197"/>
+        <source>does not end at a node with IN flow type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1198"/>
+        <source>does not start at a node with OUT flow type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1199"/>
+        <source>have conflicting directions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1200"/>
+        <source>Redundant node.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1201"/>
+        <source>Node was flagged upon classification</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1225"/>
+        <source>id=</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1230"/>
+        <source>, </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1296"/>
+        <source>{0} to {1}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1429"/>
+        <source>Lines that were flipped while directioning hidrography lines: {0}
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1431"/>
+        <source>Lines that were merged while directioning hidrography lines: {0}
+
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1435"/>
+        <source>
+Verify Network Directioning: Flipped/Merged Lines
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1495"/>
+        <source>Connected to invalid hidrography node.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1496"/>
+        <source>Line not yet visited.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1589"/>
+        <source>Cycle {0}/{1} completed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1605"/>
+        <source>Invalid lines were exposed in line flags layer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1630"/>
+        <source>{0} nodes may be invalid ({1:.2f}% of network is well directed). Check flags.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/networkHandler.py" line="1633"/>
+        <source>{1:.2f}% of network is well directed.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NewAttributeWidget</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="79"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="79"/>
         <source>Select a schema</source>
-        <translation type="obsolete">Selecione um esquema</translation>
+        <translation type="unfinished">Selecione um esquema</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="94"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="94"/>
         <source>Select a table</source>
-        <translation type="obsolete">Selecione uma tabela</translation>
+        <translation type="unfinished">Selecione uma tabela</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="122"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="122"/>
         <source>A table name must be chosen.
 </source>
-        <translation type="obsolete">Um nome de tabela deve ser escolhido.
+        <translation type="unfinished">Um nome de tabela deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="124"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="124"/>
         <source>A schema must be chosen.
 </source>
-        <translation type="obsolete">Um esquema deve ser escolhido.
+        <translation type="unfinished">Um esquema deve ser escolhido.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="130"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.py" line="130"/>
         <source>Error in attribute </source>
-        <translation type="obsolete">Erro no atributo </translation>
+        <translation type="unfinished">Erro no atributo </translation>
     </message>
 </context>
 <context>
     <name>NewClassWidget</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="47"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="48"/>
         <source>Point</source>
-        <translation type="obsolete">Ponto</translation>
+        <translation type="unfinished">Ponto</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="47"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="48"/>
         <source>Line</source>
-        <translation type="obsolete">Linha</translation>
+        <translation type="unfinished">Linha</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="47"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="48"/>
         <source>Area</source>
-        <translation type="obsolete">Área</translation>
+        <translation type="unfinished">Área</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="142"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="143"/>
         <source>Class must have a category.
 </source>
-        <translation type="obsolete">A classe deve ter uma categoria.
+        <translation type="unfinished">A classe deve ter uma categoria.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="144"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="145"/>
         <source>Class must have a name.
 </source>
-        <translation type="obsolete">A classe deve ter um nome.
+        <translation type="unfinished">A classe deve ter um nome.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="146"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="147"/>
         <source>Class must have a geometric primitive.
 </source>
-        <translation type="obsolete">A classe deve ter uma primitiva geométrica.
+        <translation type="unfinished">A classe deve ter uma primitiva geométrica.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="152"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.py" line="153"/>
         <source>Error in class </source>
-        <translation type="obsolete">Erro na classe </translation>
+        <translation type="unfinished">Erro na classe </translation>
+    </message>
+</context>
+<context>
+    <name>NewConnectionLineEdit</name>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="97"/>
+        <source>EDGV Version...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="121"/>
+        <source>New Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="166"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="181"/>
+        <source>Invalid datasource (is there a blank space on it?).</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="185"/>
+        <source>Invalid connection to server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="188"/>
+        <source>Database {0} already exists into selected server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="191"/>
+        <source>Invalid EDGV version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.py" line="194"/>
+        <source>Invalid CRS.</source>
+        <translation type="unfinished">SRC inválido.</translation>
+    </message>
+</context>
+<context>
+    <name>NewDatabaseLineEdit</name>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="96"/>
+        <source>EDGV Version...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="120"/>
+        <source>New Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="177"/>
+        <source>A problem occurred! Check log for details.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="192"/>
+        <source>Invalid datasource.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="196"/>
+        <source>Invalid connection to server.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="199"/>
+        <source>Database {0} already exists.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="203"/>
+        <source>Invalid EDGV version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.py" line="206"/>
+        <source>Invalid CRS.</source>
+        <translation type="unfinished">SRC inválido.</translation>
     </message>
 </context>
 <context>
@@ -10633,78 +12574,122 @@ Camada</translation>
         <translation>Code Name</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="76"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="76"/>
         <source>Select a domain</source>
-        <translation type="obsolete">Selecione um domínio</translation>
+        <translation type="unfinished">Selecione um domínio</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="116"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="116"/>
         <source>Code value already exists, choose another.</source>
-        <translation type="obsolete">Code value já existe, escolha outro.</translation>
+        <translation type="unfinished">Code value já existe, escolha outro.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="143"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="143"/>
         <source>A code value must be entered.
 </source>
-        <translation type="obsolete">Um code value deve ser entrado.
+        <translation type="unfinished">Um code value deve ser entrado.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="145"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="145"/>
         <source>A code name value must be entered.
 </source>
-        <translation type="obsolete">Um code name deve ser entrado.
+        <translation type="unfinished">Um code name deve ser entrado.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="147"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="147"/>
         <source>A domain table must be chosen.
 </source>
-        <translation type="obsolete">Uma tabela de domínio deve ser escolhida.
+        <translation type="unfinished">Uma tabela de domínio deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="152"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="152"/>
         <source>Error in new domain value </source>
-        <translation type="obsolete">Erro no novo valor de domínio </translation>
+        <translation type="unfinished">Erro no novo valor de domínio </translation>
     </message>
 </context>
 <context>
     <name>NewDomainWidget</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="128"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="130"/>
         <source>Enter a value!</source>
-        <translation type="obsolete">Entre um valor!</translation>
+        <translation type="unfinished">Entre um valor!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="144"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="146"/>
         <source>Code value already entered.</source>
-        <translation type="obsolete">Code value já entrado.</translation>
+        <translation type="unfinished">Code value já entrado.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="169"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="171"/>
         <source>A domain name must be chosen.
 </source>
-        <translation type="obsolete">Um nome de domínio deve ser escolhido.</translation>
+        <translation type="unfinished">Um nome de domínio deve ser escolhido.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="171"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="173"/>
         <source>There must be no empty codes or values.
 </source>
-        <translation type="obsolete">Não deve haver códigos ou valores vazios.
+        <translation type="unfinished">Não deve haver códigos ou valores vazios.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="173"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="175"/>
         <source>Codes must be unique.
 </source>
-        <translation type="obsolete">Códigos devem ser únicos.
+        <translation type="unfinished">Códigos devem ser únicos.
 </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="195"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="197"/>
         <source>Error in domain </source>
-        <translation type="obsolete">Erro no domínio </translation>
+        <translation type="unfinished">Erro no domínio </translation>
+    </message>
+</context>
+<context>
+    <name>NewGeopackageWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newGeopackageWidget.py" line="45"/>
+        <source>Create a Geopackage Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newGeopackageWidget.py" line="46"/>
+        <source>Geopackage Database (*.gpkg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NewShapefileWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newShapefileWidget.py" line="49"/>
+        <source>Select a Directory for Shapes to be Saved At</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newShapefileWidget.py" line="50"/>
+        <source>Shapefile Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newShapefileWidget.py" line="75"/>
+        <source>New Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NewSpatialiteWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newSpatialiteWidget.py" line="48"/>
+        <source>Create a SpatiaLite Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/newSpatialiteWidget.py" line="49"/>
+        <source>SpatiaLite Database (*.sqlite)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10764,6 +12749,53 @@ Camada</translation>
         <source>Layer Name black list</source>
         <translation>Nome da Camada a ser ignorada (blacklist)</translation>
     </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="52"/>
+        <source>Warning!</source>
+        <translation type="unfinished">Alerta!</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="49"/>
+        <source>Fill in a value before adding!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="52"/>
+        <source>Value already in black list!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OrderedAttributeRuleTypesWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRuleTypesWidget.py" line="41"/>
+        <source>Attribute Rule Types</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OrderedAttributeRulesWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedAttributeRulesWidget.py" line="41"/>
+        <source>Attribute Rules</source>
+        <translation type="unfinished">Regras de atributo</translation>
+    </message>
+</context>
+<context>
+    <name>OrderedHierarchicalSnapLayerWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedHierarchicalSnapLayerWidget.py" line="47"/>
+        <source>Snap Order</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OrderedRecursiveSnapWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedRecursiveSnapWidget.py" line="42"/>
+        <source>Snap Order</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OrderedStructureWidget</name>
@@ -10796,6 +12828,28 @@ Camada</translation>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="160"/>
         <source>Move down</source>
         <translation>Descer</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py" line="138"/>
+        <source>Error for rule #{0}:
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OrderedValidationProcessesWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationProcessesWidget.py" line="41"/>
+        <source>QGIS Processing Models</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>OrderedValidationWorkflowItemsWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedValidationWorkflowItemsWidget.py" line="42"/>
+        <source>QGIS Models</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -10874,83 +12928,83 @@ Camada</translation>
 <context>
     <name>OverlayElementsWithAreasProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="34"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="36"/>
         <source>Overlay Elements with Areas</source>
-        <translation type="obsolete">Cortar elementos utilizando áreas como referência</translation>
+        <translation type="unfinished">Cortar elementos utilizando áreas como referência</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="50"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="52"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="53"/>
         <source>Overlay and Keep Elements</source>
-        <translation type="obsolete">Cortar e manter elementos fora da área de corte</translation>
+        <translation type="unfinished">Cortar e manter elementos fora da área de corte</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="53"/>
         <source>Remove outside elements</source>
-        <translation type="obsolete">Remover elementos fora da área de corte</translation>
+        <translation type="unfinished">Remover elementos fora da área de corte</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="53"/>
         <source>Remove inside elements</source>
-        <translation type="obsolete">Cortar e remover elementos dentro da área de corte</translation>
+        <translation type="unfinished">Cortar e remover elementos dentro da área de corte</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="151"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="153"/>
         <source>Problem executing grass7:v.overlay. Check your installed libs.
 </source>
-        <translation type="obsolete">Problema ao executar grass7:v.overlay. Verifique as bibliotecas instaladas.
+        <translation type="unfinished">Problema ao executar grass7:v.overlay. Verifique as bibliotecas instaladas.
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="58"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="60"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="58"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="60"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="61"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="63"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="65"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="67"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="66"/>
@@ -10988,62 +13042,150 @@ Camada</translation>
         <translation type="obsolete">Não há erros de limpeza.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="68"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="70"/>
         <source>One overlayer must be selected! Stopping.</source>
-        <translation type="obsolete">Uma camada de corte deve ser selecionada! Parando.</translation>
+        <translation type="unfinished">Uma camada de corte deve ser selecionada! Parando.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="88"/>
         <source>Overlay error.</source>
-        <translation type="obsolete">Erro de corte.</translation>
+        <translation type="unfinished">Erro de corte.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="88"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="90"/>
         <source> feature(s) from {0}.{1}</source>
-        <translation type="obsolete">feições de {0}.{1}</translation>
+        <translation type="unfinished">feições de {0}.{1}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="88"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="90"/>
         <source> with overlay errors. Check flags.</source>
-        <translation type="obsolete"> com erros de corte. Verifique as flags.</translation>
+        <translation type="unfinished"> com erros de corte. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="90"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="92"/>
         <source>All features from {0}.{1} overlayed to elements from {2}.{3}.</source>
-        <translation type="obsolete">Todas as feições de {0}.{1} cortadas com feições da camada {2}.{3}.</translation>
+        <translation type="unfinished">Todas as feições de {0}.{1} cortadas com feições da camada {2}.{3}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="93"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="95"/>
         <source>There are overlay errors. Check log.</source>
-        <translation type="obsolete">Há erros de corte. Verifique o log.</translation>
+        <translation type="unfinished">Há erros de corte. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="95"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py" line="97"/>
         <source>Overlay process complete.</source>
-        <translation type="obsolete">Processo de Cortar elementos completo.</translation>
+        <translation type="unfinished">Processo de Cortar elementos completo.</translation>
+    </message>
+</context>
+<context>
+    <name>ParameterFetcher</name>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="45"/>
+        <source>Rules Setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="49"/>
+        <source>Snap</source>
+        <translation type="unfinished">Snap</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="53"/>
+        <source>Minimum area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="57"/>
+        <source>Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="61"/>
+        <source>Only Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="65"/>
+        <source>Maximum dissolved area</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="77"/>
+        <source>Ordered Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="73"/>
+        <source>Ignore search radius on inner layer search</source>
+        <translation type="unfinished">Ignorar raio de busca na própria camada</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="81"/>
+        <source>Identification Type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="89"/>
+        <source>Reference and Layers</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="93"/>
+        <source>Only First Order Lines</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="97"/>
+        <source>Tolerance</source>
+        <translation type="unfinished">Tolerância</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="101"/>
+        <source>Attribute Black List (comma separated)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="105"/>
+        <source>Overlay layer and layers to be overlayed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="109"/>
+        <source>Overlay type</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="113"/>
+        <source>Coordinate Precision</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/parameterFetcher.py" line="123"/>
+        <source>Process parameters setter for process(es) {0}</source>
+        <translation type="unfinished">Ajustador de parâmetros de processo(s) {0}</translation>
     </message>
 </context>
 <context>
     <name>PermissionManager</name>
     <message>
-        <location filename="../ServerManagementTools/permissionManager.py" line="140"/>
+        <location filename="../core/ServerManagementTools/permissionManager.py" line="139"/>
         <source>Problem revoking role </source>
-        <translation type="obsolete">Problema ao revogar perfil </translation>
+        <translation type="unfinished">Problema ao revogar perfil </translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/permissionManager.py" line="140"/>
+        <location filename="../core/ServerManagementTools/permissionManager.py" line="139"/>
         <source> on database </source>
-        <translation type="obsolete"> no banco de dados </translation>
+        <translation type="unfinished"> no banco de dados </translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/permissionManager.py" line="190"/>
+        <location filename="../core/ServerManagementTools/permissionManager.py" line="189"/>
         <source>Unable to update profile </source>
-        <translation type="obsolete">Não pôde atualizar perfil </translation>
+        <translation type="unfinished">Não pôde atualizar perfil </translation>
     </message>
     <message>
-        <location filename="../ServerManagementTools/permissionManager.py" line="221"/>
+        <location filename="../core/ServerManagementTools/permissionManager.py" line="220"/>
         <source>Problem deleting permission: </source>
-        <translation type="obsolete">Problema deletando permissão: </translation>
+        <translation type="unfinished">Problema deletando permissão: </translation>
     </message>
 </context>
 <context>
@@ -11079,17 +13221,17 @@ Camada</translation>
         <translation>Clique com o botão direito para opções</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="39"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="92"/>
         <source>Database</source>
         <translation>Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="44"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="92"/>
         <source>Permission</source>
         <translation>Permissão</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="49"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="92"/>
         <source>User</source>
         <translation>Usuário</translation>
     </message>
@@ -11104,69 +13246,69 @@ Camada</translation>
         <translation>Ver perspectiva do usuário</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="259"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="262"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="124"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="127"/>
         <source>Select a server!</source>
-        <translation type="obsolete">Selecione um servidor!</translation>
+        <translation type="unfinished">Selecione um servidor!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="153"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="156"/>
         <source>Revoke all permissions</source>
-        <translation type="obsolete">Revogar todas as permissões</translation>
+        <translation type="unfinished">Revogar todas as permissões</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="155"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="158"/>
         <source>Manage User Permissions</source>
-        <translation type="obsolete">Gerenciar Permissões de Usuário</translation>
+        <translation type="unfinished">Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="157"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="160"/>
         <source>Revoke User</source>
-        <translation type="obsolete">Revogar usuário</translation>
+        <translation type="unfinished">Revogar usuário</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="165"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="168"/>
         <source>Revoke permissions on all granted databases</source>
-        <translation type="obsolete">Revogar permissões em todos os bancos permitidos</translation>
+        <translation type="unfinished">Revogar permissões em todos os bancos permitidos</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="167"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="170"/>
         <source>Manage Permissions on database</source>
-        <translation type="obsolete">Gerenciar permissões no banco de dados</translation>
+        <translation type="unfinished">Gerenciar permissões no banco de dados</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="169"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="172"/>
         <source>Revoke Permission</source>
-        <translation type="obsolete">Revogar  permissão</translation>
+        <translation type="unfinished">Revogar  permissão</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="256"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="259"/>
         <source>Revoke Complete!</source>
-        <translation type="obsolete">Revogação completa!</translation>
+        <translation type="unfinished">Revogação completa!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="256"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="259"/>
         <source>Revoke for user </source>
-        <translation type="obsolete">Revogar para o usuário </translation>
+        <translation type="unfinished">Revogar para o usuário </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="256"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="259"/>
         <source> on profile </source>
-        <translation type="obsolete"> no perfil </translation>
+        <translation type="unfinished"> no perfil </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="256"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="259"/>
         <source> of database </source>
-        <translation type="obsolete"> do banco </translation>
+        <translation type="unfinished"> do banco </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="256"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="259"/>
         <source> complete.</source>
-        <translation type="obsolete"> completo.</translation>
+        <translation type="unfinished"> completo.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="59"/>
@@ -11189,84 +13331,84 @@ Camada</translation>
         <translation>Exportar em lote</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="265"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="268"/>
         <source>Select a dsgtools profile</source>
-        <translation type="obsolete">Selecione um perfil dsgtools</translation>
+        <translation type="unfinished">Selecione um perfil dsgtools</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="265"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="268"/>
         <source>json file (*.json)</source>
-        <translation type="obsolete">arquivo json (*.json)</translation>
+        <translation type="unfinished">arquivo json (*.json)</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="332"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="335"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="267"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="270"/>
         <source>Error! Select a file to import!</source>
-        <translation type="obsolete">Erro! Selecione um arquivo para importar!</translation>
+        <translation type="unfinished">Erro! Selecione um arquivo para importar!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="329"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="332"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="273"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="276"/>
         <source>Permission successfully imported.</source>
-        <translation type="obsolete">Permissão importada com sucesso.</translation>
+        <translation type="unfinished">Permissão importada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="332"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="335"/>
         <source>Error! Problem importing permission: </source>
-        <translation type="obsolete">Erro! Problema importando permissão: </translation>
+        <translation type="unfinished">Erro! Problema importando permissão: </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="282"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="285"/>
         <source>Error! Select a profile to export!</source>
-        <translation type="obsolete">Erro! Selecione um perfil para exportar!</translation>
+        <translation type="unfinished">Erro! Selecione um perfil para exportar!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="305"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="308"/>
         <source>Select a folder to output</source>
-        <translation type="obsolete">Selecione um diretório de saída</translation>
+        <translation type="unfinished">Selecione um diretório de saída</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="307"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="310"/>
         <source>Error! Select a output!</source>
-        <translation type="obsolete">Erro! Selecione uma saída!</translation>
+        <translation type="unfinished">Erro! Selecione uma saída!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="297"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="300"/>
         <source>Permission successfully exported.</source>
-        <translation type="obsolete">Permissão exportada com sucesso.</translation>
+        <translation type="unfinished">Permissão exportada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="316"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="319"/>
         <source>Error! Problem exporting permission: </source>
-        <translation type="obsolete">Erro! Problema exportando permissão: </translation>
+        <translation type="unfinished">Erro! Problema exportando permissão: </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="313"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="316"/>
         <source>Permissions successfully exported.</source>
-        <translation type="obsolete">Permissões exportadas com sucesso.</translation>
+        <translation type="unfinished">Permissões exportadas com sucesso.</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="321"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="324"/>
         <source>Select a folder with permissions: </source>
-        <translation type="obsolete">Selecione um diretório com permissões: </translation>
+        <translation type="unfinished">Selecione um diretório com permissões: </translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="323"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="326"/>
         <source>Error! Select a input folder!</source>
-        <translation type="obsolete">Erro! Selecione um diretório de entrada!</translation>
+        <translation type="unfinished">Erro! Selecione um diretório de entrada!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/permissionWidget.py" line="329"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="332"/>
         <source>Permissions successfully imported.</source>
-        <translation type="obsolete">Permissões importadas com sucesso.</translation>
+        <translation type="unfinished">Permissões importadas com sucesso.</translation>
     </message>
 </context>
 <context>
@@ -11277,9 +13419,9 @@ Camada</translation>
         <translation>Criação de bancos de dados em lote</translation>
     </message>
     <message>
-        <location filename="../UserTools/PermissionManagerWizard/permissionWizard.py" line="49"/>
+        <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizard.py" line="48"/>
         <source>Select users to be managed</source>
-        <translation type="obsolete">Selecione usuários para serem gerenciados</translation>
+        <translation type="unfinished">Selecione usuários para serem gerenciados</translation>
     </message>
 </context>
 <context>
@@ -11290,9 +13432,22 @@ Camada</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="../UserTools/PermissionManagerWizard/permissionWizardProfile.py" line="46"/>
+        <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.py" line="46"/>
         <source>Select profiles to be installed</source>
-        <translation type="obsolete">Selecione perfis para serem instalados</translation>
+        <translation type="unfinished">Selecione perfis para serem instalados</translation>
+    </message>
+</context>
+<context>
+    <name>Polygon</name>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="87"/>
+        <source>Tool is designed for composed features by straight angles.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="88"/>
+        <source>Warning!</source>
+        <translation type="unfinished">Alerta!</translation>
     </message>
 </context>
 <context>
@@ -12236,69 +14391,69 @@ Camada</translation>
 <context>
     <name>ProcessManager</name>
     <message>
-        <location filename="../ProcessingTools/processManager.py" line="139"/>
+        <location filename="../gui/Misc/ProcessingTools/processManager.py" line="141"/>
         <source>Creating database structure...</source>
-        <translation type="obsolete">Criando a estrutura do banco de dados...</translation>
+        <translation type="unfinished">Criando a estrutura do banco de dados...</translation>
     </message>
     <message>
-        <location filename="../ProcessingTools/processManager.py" line="156"/>
+        <location filename="../gui/Misc/ProcessingTools/processManager.py" line="158"/>
         <source>Processing images...</source>
-        <translation type="obsolete">Processando as imagens...</translation>
+        <translation type="unfinished">Processando as imagens...</translation>
     </message>
     <message>
-        <location filename="../ProcessingTools/processManager.py" line="174"/>
+        <location filename="../gui/Misc/ProcessingTools/processManager.py" line="176"/>
         <source>Making inventory, please wait...</source>
-        <translation type="obsolete">Fazendo o inventário, por favor espere...</translation>
+        <translation type="unfinished">Fazendo o inventário, por favor espere...</translation>
     </message>
 </context>
 <context>
     <name>ProcessParametersDialog</name>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="105"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="122"/>
         <source>Select classes</source>
-        <translation type="obsolete">Selecione as Classes</translation>
+        <translation type="unfinished">Selecione as Classes</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="111"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="130"/>
         <source>Select layers to be snapped</source>
-        <translation type="obsolete">Selecione as camadas a serem atraídas</translation>
+        <translation type="unfinished">Selecione as camadas a serem atraídas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="114"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="114"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="114"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="114"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="114"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="134"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/processParametersDialog.py" line="113"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/processParametersDialog.py" line="133"/>
         <source>Select layers</source>
-        <translation type="obsolete">Selecione as camadas</translation>
+        <translation type="unfinished">Selecione as camadas</translation>
     </message>
 </context>
 <context>
@@ -12337,62 +14492,70 @@ Camada</translation>
 <context>
     <name>ProcessingTools</name>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="94"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="96"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="64"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="66"/>
         <source>Please select at least one image.</source>
-        <translation type="obsolete">Por favor selecione pelo menos uma imagem.</translation>
+        <translation type="unfinished">Por favor selecione pelo menos uma imagem.</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="68"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="70"/>
         <source>Please select at the output folder.</source>
-        <translation type="obsolete">Por favor selecione o diretório de saída.</translation>
+        <translation type="unfinished">Por favor selecione o diretório de saída.</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="71"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="73"/>
         <source>Information!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="71"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="73"/>
         <source>The processing may take several minutes. Please wait the final message.</source>
-        <translation type="obsolete">O processamento pode levar vários minutos. Por favor aguarde a messagem de conclusão.</translation>
+        <translation type="unfinished">O processamento pode levar vários minutos. Por favor aguarde a messagem de conclusão.</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="91"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="93"/>
         <source>Select the Spatial Reference System!</source>
-        <translation type="obsolete">Selecione o Sistema de Referência Espacial!</translation>
+        <translation type="unfinished">Selecione o Sistema de Referência Espacial!</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="106"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="108"/>
         <source>Select Images</source>
-        <translation type="obsolete">Selecione as Imagens</translation>
+        <translation type="unfinished">Selecione as Imagens</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="106"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="108"/>
         <source>Image files (*.tif)</source>
-        <translation type="obsolete">Arquivos de Inagem (*.tif)</translation>
+        <translation type="unfinished">Arquivos de Inagem (*.tif)</translation>
     </message>
     <message>
-        <location filename="../ImageTools/processingTools.py" line="135"/>
+        <location filename="../gui/Misc/ImageTools/processingTools.py" line="137"/>
         <source>Select Directory</source>
-        <translation type="obsolete">Selecione um Diretório</translation>
+        <translation type="unfinished">Selecione um Diretório</translation>
+    </message>
+</context>
+<context>
+    <name>ProductionToolsGuiManager</name>
+    <message>
+        <location filename="../gui/ProductionTools/productionToolsGuiManager.py" line="45"/>
+        <source>Production Tools</source>
+        <translation type="unfinished">Ferramentas de Produção</translation>
     </message>
 </context>
 <context>
     <name>ProfileEditor</name>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="68"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="70"/>
         <source>Select a profile</source>
-        <translation type="obsolete">Selecione um perfil</translation>
+        <translation type="unfinished">Selecione um perfil</translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="253"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="255"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.py" line="185"/>
@@ -12405,36 +14568,36 @@ Camada</translation>
         <translation type="obsolete">Problema ao salvar o arquivo!</translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="231"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="233"/>
         <source>Profile saved successfully!</source>
-        <translation type="obsolete">Perfil salvo com sucesso!</translation>
+        <translation type="unfinished">Perfil salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="217"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="219"/>
         <source>Select a profile model!</source>
-        <translation type="obsolete">Selecione um modelo de perfil!</translation>
+        <translation type="unfinished">Selecione um modelo de perfil!</translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="228"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="230"/>
         <source>Problem saving file! 
 </source>
-        <translation type="obsolete">Problema salvando arquivo!</translation>
+        <translation type="unfinished">Problema salvando arquivo!</translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="248"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="250"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="248"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="250"/>
         <source>Do you really want to remove profile </source>
-        <translation type="obsolete">Você realmente deseja remover o perfil </translation>
+        <translation type="unfinished">Você realmente deseja remover o perfil </translation>
     </message>
     <message>
-        <location filename="../UserTools/profile_editor.py" line="253"/>
+        <location filename="../gui/DatabaseTools/UserTools/profile_editor.py" line="255"/>
         <source>Problem deleting profile! 
 </source>
-        <translation type="obsolete">Problema deletando perfil! </translation>
+        <translation type="unfinished">Problema deletando perfil! </translation>
     </message>
 </context>
 <context>
@@ -12455,31 +14618,31 @@ Camada</translation>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="48"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="49"/>
         <source>Manage user permissions to profile </source>
-        <translation type="obsolete">Gerenciar Permissões de Usuário do perfil </translation>
+        <translation type="unfinished">Gerenciar Permissões de Usuário do perfil </translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="48"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="49"/>
         <source> on database </source>
-        <translation type="obsolete"> no banco </translation>
+        <translation type="unfinished"> no banco </translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="57"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="58"/>
         <source>Grant / Revoke operation complete: </source>
-        <translation type="obsolete">Operação de Grant/Revoke completa: </translation>
+        <translation type="unfinished">Operação de Grant/Revoke completa: </translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="84"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="85"/>
         <source>
 Successful users: </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Usuários com sucesso: </translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="87"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="88"/>
         <source>Operation Complete!</source>
-        <translation type="obsolete">Operação completa!</translation>
+        <translation type="unfinished">Operação completa!</translation>
     </message>
     <message>
         <location filename="../UserTools/profileUserManager.py" line="94"/>
@@ -12487,37 +14650,43 @@ Usuários com sucesso: </translation>
         <translation type="obsolete">Usuários com erro:</translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="96"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="97"/>
         <source>
 Error messages for each user were output in qgis log.</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Mensagens de erro para cada usuário foram registradas no log do qgis.</translation>
     </message>
     <message>
-        <location filename="../UserTools/profileUserManager.py" line="98"/>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="99"/>
         <source>Error for user </source>
-        <translation type="obsolete">Erro para o usuário </translation>
+        <translation type="unfinished">Erro para o usuário </translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="95"/>
+        <source>
+Users with error:</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ProgressWidget</name>
     <message>
-        <location filename="../CustomWidgets/progressWidget.py" line="46"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/progressWidget.py" line="47"/>
         <source>INFO: </source>
-        <translation type="obsolete">INFO: </translation>
+        <translation type="unfinished">INFO: </translation>
     </message>
 </context>
 <context>
     <name>QmlParser</name>
     <message>
-        <location filename="../QmlTools/qmlParser.py" line="100"/>
+        <location filename="../core/Misc/QmlTools/qmlParser.py" line="102"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../QmlTools/qmlParser.py" line="100"/>
+        <location filename="../core/Misc/QmlTools/qmlParser.py" line="102"/>
         <source>QML file not loaded properly. Enum values won&apos;t be available.</source>
-        <translation type="obsolete">Arquivo QML não carregado corretamente. Os mapas de valores não estarão disponíveis.</translation>
+        <translation type="unfinished">Arquivo QML não carregado corretamente. Os mapas de valores não estarão disponíveis.</translation>
     </message>
 </context>
 <context>
@@ -12730,34 +14899,34 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
 <context>
     <name>RemoveDuplicatesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="35"/>
         <source>Remove Duplicated Elements</source>
-        <translation type="obsolete">Remover feições duplicadas</translation>
+        <translation type="unfinished">Remover feições duplicadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="44"/>
         <source>Identify Duplicated Geometries</source>
-        <translation type="obsolete">Identificar geometrias duplicadas</translation>
+        <translation type="unfinished">Identificar geometrias duplicadas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="53"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="53"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="54"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="56"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="61"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="63"/>
         <source>There are no duplicated geometries.</source>
-        <translation type="obsolete">Não há geometrias duplicadas.</translation>
+        <translation type="unfinished">Não há geometrias duplicadas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
@@ -12770,29 +14939,29 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">{0} feições duplicadas foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="66"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="68"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="71"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="73"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="80"/>
         <source> duplicated features from </source>
-        <translation type="obsolete"> feições duplicadas da camada </translation>
+        <translation type="unfinished"> feições duplicadas da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="80"/>
         <source> were removed.</source>
-        <translation type="obsolete"> foram removidas.</translation>
+        <translation type="unfinished"> foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="80"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py" line="82"/>
         <source> duplicated features were removed.</source>
-        <translation type="obsolete"> feições duplicadas foram removidas.</translation>
+        <translation type="unfinished"> feições duplicadas foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -12841,24 +15010,24 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
 <context>
     <name>RemoveEmptyGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="34"/>
         <source>Remove Empty Geometries</source>
-        <translation type="obsolete">Remover geometrias vazias</translation>
+        <translation type="unfinished">Remover geometrias vazias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="50"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="50"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="53"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="44"/>
@@ -12866,14 +15035,14 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Banco de dados vazio</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="80"/>
         <source>Process executed successfully!</source>
-        <translation type="obsolete">Processo executado com sucesso!</translation>
+        <translation type="unfinished">Processo executado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="56"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="56"/>
@@ -12881,45 +15050,45 @@ Mensagens de erro para cada usuário foram registradas no log do qgis.</translat
         <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="59"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="61"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="65"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="67"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -12954,29 +15123,29 @@ Camada</translation>
         <translation type="obsolete">Remover pequenos polígonos</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="48"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="50"/>
         <source>Identify Small Areas</source>
-        <translation type="obsolete">Identificar áreas pequenas</translation>
+        <translation type="unfinished">Identificar áreas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="54"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="56"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="54"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="56"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="59"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="64"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="66"/>
         <source>There are no small areas.</source>
-        <translation type="obsolete">Não há áreas pequenas.</translation>
+        <translation type="unfinished">Não há áreas pequenas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="74"/>
@@ -12989,34 +15158,34 @@ Camada</translation>
         <translation type="obsolete">{} feições foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="35"/>
         <source>Remove Small Areas</source>
-        <translation type="obsolete">Remover áreas pequenas</translation>
+        <translation type="unfinished">Remover áreas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="69"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="71"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="75"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="77"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="86"/>
         <source> features from </source>
-        <translation type="obsolete"> feições da camada </translation>
+        <translation type="unfinished"> feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="86"/>
         <source> were removed.</source>
-        <translation type="obsolete"> foram removidas.</translation>
+        <translation type="unfinished"> foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="86"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py" line="88"/>
         <source> features were removed.</source>
-        <translation type="obsolete"> feições foram removidas.</translation>
+        <translation type="unfinished"> feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -13065,29 +15234,29 @@ Camada</translation>
 <context>
     <name>RemoveSmallLinesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="35"/>
         <source>Remove Small Lines</source>
-        <translation type="obsolete">Remover linhas pequenas</translation>
+        <translation type="unfinished">Remover linhas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="48"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="50"/>
         <source>Identify Small Lines</source>
-        <translation type="obsolete">Identificar linhas pequenas</translation>
+        <translation type="unfinished">Identificar linhas pequenas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="54"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="56"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="54"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="56"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="59"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="50"/>
@@ -13105,34 +15274,34 @@ Camada</translation>
         <translation type="obsolete">{} feições foram removidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="65"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="67"/>
         <source>There are no small lines.</source>
-        <translation type="obsolete">Não há linhas pequenas.</translation>
+        <translation type="unfinished">Não há linhas pequenas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="70"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="72"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="76"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="78"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="85"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="87"/>
         <source> features from </source>
-        <translation type="obsolete"> feições da camada </translation>
+        <translation type="unfinished"> feições da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="85"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="87"/>
         <source> were changed.</source>
-        <translation type="obsolete"> foram modificadas.</translation>
+        <translation type="unfinished"> foram modificadas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="87"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py" line="89"/>
         <source> features were removed.</source>
-        <translation type="obsolete"> feições foram removidas.</translation>
+        <translation type="unfinished"> feições foram removidas.</translation>
     </message>
 </context>
 <context>
@@ -13181,31 +15350,31 @@ Camada</translation>
 <context>
     <name>RulesEditor</name>
     <message>
-        <location filename="../ValidationTools/rules_editor.py" line="182"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="184"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/rules_editor.py" line="121"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="123"/>
         <source>Problem reading file! 
 </source>
-        <translation type="obsolete">Problema lendo arquivo! </translation>
+        <translation type="unfinished">Problema lendo arquivo! </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/rules_editor.py" line="179"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="181"/>
         <source>Problem saving file! 
 </source>
-        <translation type="obsolete">Problema salvando arquivo! </translation>
+        <translation type="unfinished">Problema salvando arquivo! </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/rules_editor.py" line="182"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="184"/>
         <source>Profile saved successfully!</source>
-        <translation type="obsolete">Perfil salvo com sucesso!</translation>
+        <translation type="unfinished">Perfil salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/rules_editor.py" line="162"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.py" line="164"/>
         <source>disjoint</source>
-        <translation type="obsolete">disjunto</translation>
+        <translation type="unfinished">disjunto</translation>
     </message>
 </context>
 <context>
@@ -13270,19 +15439,19 @@ Camada</translation>
 <context>
     <name>SelectStyles</name>
     <message>
-        <location filename="../ServerTools/selectStyles.py" line="59"/>
+        <location filename="../gui/ServerTools/selectStyles.py" line="60"/>
         <source>Select Styles</source>
-        <translation type="obsolete">Selecione estilos</translation>
+        <translation type="unfinished">Selecione estilos</translation>
     </message>
     <message>
-        <location filename="../ServerTools/selectStyles.py" line="65"/>
+        <location filename="../gui/ServerTools/selectStyles.py" line="66"/>
         <source>Warning</source>
-        <translation type="obsolete">Atenção</translation>
+        <translation type="unfinished">Atenção</translation>
     </message>
     <message>
-        <location filename="../ServerTools/selectStyles.py" line="65"/>
+        <location filename="../gui/ServerTools/selectStyles.py" line="66"/>
         <source>Select at least one style!</source>
-        <translation type="obsolete">Selecione pelo menos um estilo!</translation>
+        <translation type="unfinished">Selecione pelo menos um estilo!</translation>
     </message>
 </context>
 <context>
@@ -13312,38 +15481,60 @@ Camada</translation>
         <source>Setting</source>
         <translation>Configurações</translation>
     </message>
+    <message>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.py" line="50"/>
+        <source>Select one setting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.py" line="68"/>
+        <source>An option must be chosen!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.py" line="74"/>
+        <source>Error!</source>
+        <translation type="unfinished">Erro!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.py" line="73"/>
+        <source>A setting must be chosen!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ServerConfigurator</name>
     <message>
-        <location filename="../ServerTools/serverConfigurator.py" line="100"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="100"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverConfigurator.py" line="67"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="67"/>
         <source>Fill all parameters.</source>
-        <translation type="obsolete">Preencha todos os parâmetros.</translation>
+        <translation type="unfinished">Preencha todos os parâmetros.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverConfigurator.py" line="64"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="64"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverConfigurator.py" line="64"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="64"/>
         <source>Server stored.</source>
-        <translation type="obsolete">Servidor armazenado.</translation>
+        <translation type="unfinished">Servidor armazenado.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverConfigurator.py" line="100"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="100"/>
         <source>Already has a server with this name.</source>
-        <translation type="obsolete">Já existe um servidor com este nome.</translation>
+        <translation type="unfinished">Já existe um servidor com este nome.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverConfigurator.py" line="89"/>
+        <location filename="../gui/ServerTools/serverConfigurator.py" line="89"/>
         <source>Server name cannot contain the character &quot;_&quot;.</source>
-        <translation type="obsolete">O nome do servidor não pode conter o caractere &quot;_&quot;.</translation>
+        <translation type="unfinished">O nome do servidor não pode conter o caractere &quot;_&quot;.</translation>
     </message>
 </context>
 <context>
@@ -13354,17 +15545,17 @@ Camada</translation>
         <translation type="obsolete">Selecione Servidor</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="143"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="145"/>
         <source>Information:
 </source>
-        <translation type="obsolete">Informação:
+        <translation type="unfinished">Informação:
 </translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="145"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="147"/>
         <source>The following databases connections already exist:
 </source>
-        <translation type="obsolete">Os seguintes conexões de bancos de dados já existem:</translation>
+        <translation type="unfinished">Os seguintes conexões de bancos de dados já existem:</translation>
     </message>
     <message>
         <location filename="ServerTools/serverDBExplorer.py" line="124"/>
@@ -13375,37 +15566,37 @@ The following databases connections were created successfully!:
 As seguintes conexões de bancos de dados foram criadas com sucesso!:</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="191"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="193"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="149"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="151"/>
         <source>
 The following databases connections were created successfully:
 </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 As seguintes conexões de banco de dados foram criadas com sucesso:
 </translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="188"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="190"/>
         <source>
 The following databases connections were removed successfully:
 </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 As seguintes conexões de banco de dados foram removidas com sucesso:
 </translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="190"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="192"/>
         <source>No connections were removed.</source>
-        <translation type="obsolete">Nenhuma conexão foi removida.</translation>
+        <translation type="unfinished">Nenhuma conexão foi removida.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/serverDBExplorer.py" line="179"/>
+        <location filename="../gui/ServerTools/serverDBExplorer.py" line="181"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
 </context>
 <context>
@@ -13486,49 +15677,49 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation>Limpar Tudo</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="219"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="222"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="219"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="222"/>
         <source>Do you really want to delete profile </source>
-        <translation type="obsolete">Você realmente deseja apagar o perfil  </translation>
+        <translation type="unfinished">Você realmente deseja apagar o perfil  </translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="240"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="243"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="240"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="243"/>
         <source>Permission </source>
-        <translation type="obsolete">Permissão </translation>
+        <translation type="unfinished">Permissão </translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="225"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="228"/>
         <source> successfully deleted.</source>
-        <translation type="obsolete"> apagada com sucesso.</translation>
+        <translation type="unfinished"> apagada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="243"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="246"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="229"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="232"/>
         <source>Error! Problem deleting permission: </source>
-        <translation type="obsolete">Erro! Problema apagando permissão: </translation>
+        <translation type="unfinished">Erro! Problema apagando permissão: </translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="240"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="243"/>
         <source> successfully updated.</source>
-        <translation type="obsolete"> atualizado com sucesso.</translation>
+        <translation type="unfinished"> atualizado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="243"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="246"/>
         <source>Error! Problem updating permission: </source>
-        <translation type="obsolete">Erro! Problema atualizando permissão: </translation>
+        <translation type="unfinished">Erro! Problema atualizando permissão: </translation>
     </message>
     <message>
         <location filename="UserTools/serverProfilesManager.py" line="245"/>
@@ -13601,34 +15792,42 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation type="obsolete">Permissões importadas com sucesso.</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="192"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="195"/>
         <source>Profile </source>
-        <translation type="obsolete">Perfil </translation>
+        <translation type="unfinished">Perfil </translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="186"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="189"/>
         <source> for EDGV </source>
-        <translation type="obsolete"> para EDGV </translation>
+        <translation type="unfinished"> para EDGV </translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="186"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="189"/>
         <source> already exists!</source>
-        <translation type="obsolete"> já existe!</translation>
+        <translation type="unfinished"> já existe!</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="192"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="195"/>
         <source> created successfully!</source>
-        <translation type="obsolete"> criado com sucesso!</translation>
+        <translation type="unfinished"> criado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="253"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="256"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../UserTools/serverProfilesManager.py" line="253"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="256"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+</context>
+<context>
+    <name>ServerToolsGuiManager</name>
+    <message>
+        <location filename="../gui/ServerTools/serverToolsGuiManager.py" line="45"/>
+        <source>Servers Tools</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13682,39 +15881,39 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">3- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construir ela (note que a moldura é sempre usada para fechar áreas)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="47"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="48"/>
         <source>Areas</source>
-        <translation type="obsolete">Áreas</translation>
+        <translation type="unfinished">Áreas</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="48"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="49"/>
         <source>Lines</source>
-        <translation type="obsolete">Linhas</translation>
+        <translation type="unfinished">Linhas</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="204"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="60"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="59"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="60"/>
         <source>Do you want to open an earth coverage file?</source>
-        <translation type="obsolete">Você deseja abrir um arquivo de cobertura terrestre?</translation>
+        <translation type="unfinished">Você deseja abrir um arquivo de cobertura terrestre?</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="61"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="62"/>
         <source>Open Earth Coverage Setup configuration</source>
-        <translation type="obsolete">Abrir ajustes de configuração de Cobertura Terrestre</translation>
+        <translation type="unfinished">Abrir ajustes de configuração de Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="61"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="62"/>
         <source>Earth Coverage Files (*.json)</source>
-        <translation type="obsolete">Arquivos de Cobertura Terrestre (*.json)</translation>
+        <translation type="unfinished">Arquivos de Cobertura Terrestre (*.json)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="140"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="152"/>
         <source>Open Field Setup configuration</source>
-        <translation type="obsolete">Abrir ajsutes de Configuração de Campo</translation>
+        <translation type="unfinished">Abrir ajsutes de Configuração de Campo</translation>
     </message>
     <message>
         <location filename="ValidationTools/setupEarthCoverage.py" line="111"/>
@@ -13792,55 +15991,55 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
 (note que a moldura é sempre usada para fechar áreas)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="206"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="152"/>
         <source>Earth Coverage Setup File (*.dsgearthcov)</source>
-        <translation type="obsolete">Arquivo de Cobertura Terrestre (*.dsgearthcov)</translation>
+        <translation type="unfinished">Arquivo de Cobertura Terrestre (*.dsgearthcov)</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="260"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="247"/>
         <source>An Earth Coverage name must be set.
 </source>
-        <translation type="obsolete">Um nome de Cobertura Terrestre deve ser entrado.
+        <translation type="unfinished">Um nome de Cobertura Terrestre deve ser entrado.
 </translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="263"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="250"/>
         <source>An Earth Coverage with this name already exists.
 </source>
-        <translation type="obsolete">Uma Cobertura Terrestre com este nome já existe.
+        <translation type="unfinished">Uma Cobertura Terrestre com este nome já existe.
 </translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="266"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="253"/>
         <source>A frame layer must be chosen.
 </source>
-        <translation type="obsolete">Uma camada de moldura deve ser escolhida.
+        <translation type="unfinished">Uma camada de moldura deve ser escolhida.
 </translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="287"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="274"/>
         <source>Error!</source>
-        <translation type="obsolete">Erro!</translation>
+        <translation type="unfinished">Erro!</translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="273"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="260"/>
         <source>Areas must be chosen for Earth Coverage.
 </source>
-        <translation type="obsolete">Áreas devem ser selecionadas para a Cobertura Terrestre.
+        <translation type="unfinished">Áreas devem ser selecionadas para a Cobertura Terrestre.
 </translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="279"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="266"/>
         <source>Lines must be chosen for Earth Coverage.
 </source>
-        <translation type="obsolete">Linhas devem ser selecionadas para a Cobertura Terrestre.
+        <translation type="unfinished">Linhas devem ser selecionadas para a Cobertura Terrestre.
 </translation>
     </message>
     <message>
-        <location filename="ValidationTools/setupEarthCoverage.py" line="286"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.py" line="273"/>
         <source>At least one line must be chosen for each Earth Coverage area.
 </source>
-        <translation type="obsolete">Pelo menos uma linha deve ser escolhida para cada área da Cobertura Terrestre.
+        <translation type="unfinished">Pelo menos uma linha deve ser escolhida para cada área da Cobertura Terrestre.
 </translation>
     </message>
 </context>
@@ -13852,19 +16051,19 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">area</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="109"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="111"/>
         <source>Circle</source>
-        <translation type="obsolete">Círculo</translation>
+        <translation type="unfinished">Círculo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="111"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="113"/>
         <source>Square</source>
-        <translation type="obsolete">Quadrado</translation>
+        <translation type="unfinished">Quadrado</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/MinimumAreaTool/shapeTool.py" line="121"/>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/shapeTool.py" line="123"/>
         <source>distance</source>
-        <translation type="obsolete">distância</translation>
+        <translation type="unfinished">distância</translation>
     </message>
 </context>
 <context>
@@ -13914,6 +16113,19 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     </message>
 </context>
 <context>
+    <name>ShapefileWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/shapefileWidget.py" line="47"/>
+        <source>Select a Directory Containing Shapefiles</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/shapefileWidget.py" line="48"/>
+        <source>Shapefile Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ShortcutChooserWidget</name>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui" line="14"/>
@@ -13926,19 +16138,19 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation>Limpar atribuição</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui" line="49"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="64"/>
         <source>Assign Shortcut</source>
         <translation>Atribuir Atalho</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="56"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="56"/>
         <source>Enter Value</source>
-        <translation type="obsolete">Entrar Valor</translation>
+        <translation type="unfinished">Entrar Valor</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="144"/>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="144"/>
         <source>Input: {0}</source>
-        <translation type="obsolete">Entrada: {0}</translation>
+        <translation type="unfinished">Entrada: {0}</translation>
     </message>
 </context>
 <context>
@@ -13958,18 +16170,40 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <source>Snap</source>
         <translation>Snap</translation>
     </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="61"/>
+        <source>Select a layer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="98"/>
+        <source>Invalid Snap Chooser Widget json config!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="134"/>
+        <source>Invalid layer!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="136"/>
+        <source>Invalid snap value!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SnapGeometriesProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="34"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="35"/>
         <source>Snap Geometries</source>
-        <translation type="obsolete">Colar geometrias</translation>
+        <translation type="unfinished">Colar geometrias</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="129"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="130"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="80"/>
@@ -13977,9 +16211,9 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="131"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="132"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="78"/>
@@ -14012,20 +16246,20 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Não há erros de snap.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="136"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="137"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="137"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="138"/>
         <source>No classes selected! Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="66"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="67"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
-        <translation type="obsolete">Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+        <translation type="unfinished">Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="110"/>
@@ -14043,63 +16277,63 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
         <translation type="obsolete">Não há problemas de atração na camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="129"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="130"/>
         <source>Process.
 </source>
-        <translation type="obsolete">Processo.
+        <translation type="unfinished">Processo.
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="142"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="143"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="147"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="148"/>
         <source>Running process for </source>
-        <translation type="obsolete">Executando o processo para </translation>
+        <translation type="unfinished">Executando o processo para </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="154"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="155"/>
         <source>All features from {} were snapped.</source>
-        <translation type="obsolete">Todas as feições da camada {} foram atraídas.</translation>
+        <translation type="unfinished">Todas as feições da camada {} foram atraídas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="155"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py" line="156"/>
         <source>All features were snapped.</source>
-        <translation type="obsolete">Todas as feições foram atraídas.</translation>
+        <translation type="unfinished">Todas as feições foram atraídas.</translation>
     </message>
 </context>
 <context>
@@ -14183,29 +16417,29 @@ Camada</translation>
 <context>
     <name>SnapLayerOnLayerProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="36"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="38"/>
         <source>Snap Layer on Layer</source>
-        <translation type="obsolete">Colar camada em camada</translation>
+        <translation type="unfinished">Colar camada em camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="55"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="53"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="55"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="58"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="62"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="61"/>
@@ -14223,90 +16457,90 @@ Camada</translation>
         <translation type="obsolete">Todas as feições coladas na referência com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="64"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="66"/>
         <source>One reference must be selected! Stopping.</source>
-        <translation type="obsolete">Uma camada de referência deve ser selecionada! Parando o processo.</translation>
+        <translation type="unfinished">Uma camada de referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="95"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="98"/>
         <source>All features from </source>
-        <translation type="obsolete">Todas as feições de </translation>
+        <translation type="unfinished">Todas as feições de </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="95"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="98"/>
         <source> snapped to reference </source>
-        <translation type="obsolete"> atraídas para a referência </translation>
+        <translation type="unfinished"> atraídas para a referência </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="95"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="98"/>
         <source> succesfully.
 </source>
-        <translation type="obsolete"> com sucesso.</translation>
+        <translation type="unfinished"> com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="81"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="89"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="92"/>
         <source>Processing features on </source>
-        <translation type="obsolete">Processando feições na camada </translation>
+        <translation type="unfinished">Processando feições na camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="45"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="45"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="45"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="45"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="45"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py" line="47"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
 </context>
 <context>
     <name>SnapLinesToFrameProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="35"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="36"/>
         <source>Snap Lines to Frame</source>
-        <translation type="obsolete">Colar linhas na moldura</translation>
+        <translation type="unfinished">Colar linhas na moldura</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="58"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="58"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="60"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="61"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="51"/>
@@ -14324,9 +16558,9 @@ Camada</translation>
         <translation type="obsolete">Colar na grade</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="65"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="66"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="66"/>
@@ -14334,55 +16568,55 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="102"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="103"/>
         <source>All features snapped to frame succesfully.</source>
-        <translation type="obsolete">Todas as feições coladas na moldura com sucesso.</translation>
+        <translation type="unfinished">Todas as feições coladas na moldura com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="69"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="70"/>
         <source>One reference must be selected! Stopping.</source>
-        <translation type="obsolete">Uma referência deve ser selecionada! Parando o processo.</translation>
+        <translation type="unfinished">Uma referência deve ser selecionada! Parando o processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="85"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="91"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="92"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py" line="50"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
 </context>
@@ -14442,19 +16676,19 @@ Camada</translation>
         <translation type="obsolete">Colar na grade</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="50"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="49"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="50"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="52"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="53"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="45"/>
@@ -14472,9 +16706,9 @@ Camada</translation>
         <translation type="obsolete">Todas as feições foram coladas com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="55"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="56"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada para ser feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada para ser feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/snapToGridProcess.py" line="56"/>
@@ -14487,74 +16721,138 @@ Camada</translation>
         <translation type="obsolete">Todas as feições de {} coladas no grid com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="63"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="64"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="73"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="74"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="85"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="86"/>
         <source>All features from </source>
-        <translation type="obsolete">Todas as feições de </translation>
+        <translation type="unfinished">Todas as feições de </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="82"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="83"/>
         <source> snapped to grid successfully.</source>
-        <translation type="obsolete"> atraídas à grade com sucesso.</translation>
+        <translation type="unfinished"> atraídas à grade com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="85"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="86"/>
         <source> snapped successfully.</source>
-        <translation type="obsolete"> atraídas com sucesso.</translation>
+        <translation type="unfinished"> atraídas com sucesso.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="34"/>
         <source>Snap to Grid (adjust coordinates precision)</source>
-        <translation type="obsolete">Colar na grade (ajustar precisão de coordenadas)</translation>
+        <translation type="unfinished">Colar na grade (ajustar precisão de coordenadas)</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/snapToGridProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/snapToGridProcess.py" line="43"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
+    </message>
+</context>
+<context>
+    <name>SnapWithLayerChooserWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="96"/>
+        <source>Invalid Snap Chooser Widget json config!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="136"/>
+        <source>Invalid layer!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.py" line="138"/>
+        <source>Invalid snap value!
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SpatialRelationsHandler</name>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="83"/>
+        <source>Building contour structures...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="96"/>
+        <source>Validating contour structures. Check 1/4...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="112"/>
+        <source>Building drainage spatial index...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="124"/>
+        <source>Relating contours with drainages...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="248"/>
+        <source>Contour lines id=({ids}) touch each other and have different height values!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="252"/>
+        <source>Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="313"/>
+        <source>Contour id={c_id} intersects drainage id={d_id} in more than one point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="371"/>
+        <source>Difference between contour with values {id1}                         and {id2} do not match equidistance {equidistance}.                        Probably one contour is                         missing or one of the contours have wrong value.
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>SpatialRuleEnforcer</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="284"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="286"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="173"/>
@@ -14588,32 +16886,32 @@ Camada</translation>
         <translation type="obsolete"> viola a regra: </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="284"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="286"/>
         <source>Problem reading file!</source>
-        <translation type="obsolete">Problema lendo arquivo!</translation>
+        <translation type="unfinished">Problema lendo arquivo!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="57"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="59"/>
         <source>Spatial Rule Enforcer</source>
-        <translation type="obsolete">Reforçador de regras espaciais</translation>
+        <translation type="unfinished">Reforçador de regras espaciais</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="213"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="215"/>
         <source>Feature id {0} from {1} violates cardinality {2}..{3} of rule: {4} {5}</source>
-        <translation type="obsolete">Feição id {0} de {1} viola a cardinalidade {2}..{3} da regra: {4} {5}</translation>
+        <translation type="unfinished">Feição id {0} de {1} viola a cardinalidade {2}..{3} da regra: {4} {5}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="228"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleEnforcer.py" line="230"/>
         <source>Feature id {0} from {1} violates rule: {2} {3}</source>
-        <translation type="obsolete">Feição id {0} de {1} viola a regra: {2} {3}</translation>
+        <translation type="unfinished">Feição id {0} de {1} viola a regra: {2} {3}</translation>
     </message>
 </context>
 <context>
     <name>SpatialRuleProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="66"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="68"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
@@ -14622,29 +16920,29 @@ Camada</translation>
         <translation type="obsolete">Problema lendo arquivo! </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="66"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="68"/>
         <source>Problem reading file!</source>
-        <translation type="obsolete">Problema lendo arquivo!</translation>
+        <translation type="unfinished">Problema lendo arquivo!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="56"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="58"/>
         <source>Spatial Rule Checker</source>
-        <translation type="obsolete">Verificador de regras espaciais</translation>
+        <translation type="unfinished">Verificador de regras espaciais</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="88"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="93"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="88"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="93"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="91"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="96"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="117"/>
@@ -14652,24 +16950,24 @@ Camada</translation>
         <translation type="obsolete">{} feições são inválidas. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="123"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="128"/>
         <source>All features are valid.</source>
-        <translation type="obsolete">Todas as feições são válidas.</translation>
+        <translation type="unfinished">Todas as feições são válidas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="97"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="102"/>
         <source>Preparing execution for </source>
-        <translation type="obsolete">Preparando a execução para a camada </translation>
+        <translation type="unfinished">Preparando a execução para a camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="107"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="112"/>
         <source>Running process on </source>
-        <translation type="obsolete">Executando o processo na camada  </translation>
+        <translation type="unfinished">Executando o processo na camada  </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="120"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/spatialRuleProcess.py" line="125"/>
         <source> features are invalid. Check flags.</source>
-        <translation type="obsolete"> feições são inválidas. Verifique as flags.</translation>
+        <translation type="unfinished"> feições são inválidas. Verifique as flags.</translation>
     </message>
 </context>
 <context>
@@ -14800,6 +17098,19 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>SpatialiteWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/spatialiteWidget.py" line="49"/>
+        <source>Select a SpatiaLite Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/spatialiteWidget.py" line="50"/>
+        <source>SpatiaLite Database (*.sqlite)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>StyleManagerTool</name>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui" line="26"/>
@@ -14817,39 +17128,76 @@ Camada</translation>
         <translation>Recarregar lista de bancos de dados</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="67"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="70"/>
         <source>Select Database</source>
-        <translation type="obsolete">Selecione o Banco de Dados</translation>
+        <translation type="unfinished">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="93"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="96"/>
         <source>Loading style {0}</source>
-        <translation type="obsolete">Carregando o estilo {0}</translation>
+        <translation type="unfinished">Carregando o estilo {0}</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="106"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="113"/>
         <source>Error setting style </source>
-        <translation type="obsolete">Erro ao ajustar o estilo</translation>
+        <translation type="unfinished">Erro ao ajustar o estilo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="175"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="187"/>
         <source>Select Style</source>
-        <translation type="obsolete">Selecionar estilo</translation>
+        <translation type="unfinished">Selecionar estilo</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="140"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="147"/>
         <source>No available styles</source>
-        <translation type="obsolete">Sem estilos disponíveis</translation>
+        <translation type="unfinished">Sem estilos disponíveis</translation>
     </message>
     <message>
-        <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.py" line="160"/>
+        <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="171"/>
         <source>Feature only implemented for PostGIS and Spatialite</source>
-        <translation type="obsolete">Funcionalidade implementada apenas para PostGIS e Spatialite</translation>
+        <translation type="unfinished">Funcionalidade implementada apenas para PostGIS e Spatialite</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui" line="56"/>
         <source>Manage Styles Tool</source>
         <translation>Ferramenta de Gerência de Estilo</translation>
+    </message>
+</context>
+<context>
+    <name>StyleManagerWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="73"/>
+        <source>Update Style configuration complete. 
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="79"/>
+        <source>style configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="93"/>
+        <source>Uninstall Style configuration complete. 
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="83"/>
+        <source>Install Style configuration complete. 
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="94"/>
+        <source>style configurations</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/styleManagerWidget.py" line="88"/>
+        <source>Delete Style configuration complete. 
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -14878,19 +17226,32 @@ Camada</translation>
         <translation>Spatialite</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/tabDbSelectorWidget.py" line="70"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="70"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/tabDbSelectorWidget.py" line="64"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="64"/>
         <source>Select a server!</source>
-        <translation type="obsolete">Selecione um servidor!</translation>
+        <translation type="unfinished">Selecione um servidor!</translation>
     </message>
     <message>
-        <location filename="../CustomWidgets/tabDbSelectorWidget.py" line="70"/>
+        <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="70"/>
         <source>Select a folder!</source>
-        <translation type="obsolete">Selecione uma pasta!</translation>
+        <translation type="unfinished">Selecione uma pasta!</translation>
+    </message>
+</context>
+<context>
+    <name>TextBrowserDialog</name>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.py" line="73"/>
+        <source>Select a Path to Log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.py" line="73"/>
+        <source>HTML Files (*.html)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15002,35 +17363,35 @@ Camada</translation>
 <context>
     <name>TopologicalCleanProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="33"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="35"/>
         <source>Topological Clean</source>
-        <translation type="obsolete">Limpeza Topológica</translation>
+        <translation type="unfinished">Limpeza Topológica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="65"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="67"/>
         <source>Problem executing grass7:v.clean.advanced. Check your installed libs.
 </source>
-        <translation type="obsolete">Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
+        <translation type="unfinished">Problema ao executar grass7:v.clean.advanced. Verifique as bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="80"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando </translation>
+        <translation type="unfinished">Iniciando </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="78"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="80"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="81"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="83"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="85"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="87"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="86"/>
@@ -15038,71 +17399,71 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="109"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="111"/>
         <source>Cleaning error.</source>
-        <translation type="obsolete">Erro de limpeza.</translation>
+        <translation type="unfinished">Erro de limpeza.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="111"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="113"/>
         <source> feature(s) from </source>
-        <translation type="obsolete"> feição(ões) da camada </translation>
+        <translation type="unfinished"> feição(ões) da camada </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="111"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="113"/>
         <source> with cleaning errors. Check flags.</source>
-        <translation type="obsolete"> com erros de limpeza. Verifique as flags.</translation>
+        <translation type="unfinished"> com erros de limpeza. Verifique as flags.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="114"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="116"/>
         <source>There are no cleaning errors on </source>
-        <translation type="obsolete">Não há erros de limpeza em </translation>
+        <translation type="unfinished">Não há erros de limpeza em </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="117"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="119"/>
         <source>There are cleaning errors. Check log.</source>
-        <translation type="obsolete">Não há erros de limpeza. Verifique o log.</translation>
+        <translation type="unfinished">Não há erros de limpeza. Verifique o log.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="119"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="121"/>
         <source>There are no cleaning errors.</source>
-        <translation type="obsolete">Não há erros de limpeza.</translation>
+        <translation type="unfinished">Não há erros de limpeza.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="42"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="101"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py" line="103"/>
         <source>Error while trying to remove coverage layer.</source>
-        <translation type="obsolete">Erro ao tentar remover camada de cobertura. </translation>
+        <translation type="unfinished">Erro ao tentar remover camada de cobertura. </translation>
     </message>
 </context>
 <context>
@@ -15181,67 +17542,67 @@ Camada</translation>
 <context>
     <name>TopologicalDouglasSimplificationProcess</name>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="34"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="35"/>
         <source>Topological Douglas Peucker Simplification</source>
-        <translation type="obsolete">Simplificação Topológica de Douglas Peucker</translation>
+        <translation type="unfinished">Simplificação Topológica de Douglas Peucker</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Category</source>
-        <translation type="obsolete">Categoria</translation>
+        <translation type="unfinished">Categoria</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Layer Name</source>
-        <translation type="obsolete">Nome da 
+        <translation type="unfinished">Nome da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Geometry
 Column</source>
-        <translation type="obsolete">Coluna 
+        <translation type="unfinished">Coluna 
 Geométrica</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Geometry
 Type</source>
-        <translation type="obsolete">Tipo 
+        <translation type="unfinished">Tipo 
 Geométrico</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="43"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="44"/>
         <source>Layer
 Type</source>
-        <translation type="obsolete">Tipo da 
+        <translation type="unfinished">Tipo da 
 Camada</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="74"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="75"/>
         <source>Problem executing grass7:v.generalize.simplify. Check your installed libs.
 </source>
-        <translation type="obsolete">Problema ao executar grass7:v.generalize.simplify. Verifique suas bibliotecas instaladas.</translation>
+        <translation type="unfinished">Problema ao executar grass7:v.generalize.simplify. Verifique suas bibliotecas instaladas.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="85"/>
         <source>Starting </source>
-        <translation type="obsolete">Iniciando</translation>
+        <translation type="unfinished">Iniciando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="84"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="85"/>
         <source> Process.</source>
-        <translation type="obsolete"> Processo.</translation>
+        <translation type="unfinished"> Processo.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="87"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="88"/>
         <source>Running</source>
-        <translation type="obsolete">Rodando</translation>
+        <translation type="unfinished">Rodando</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="91"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="92"/>
         <source>No classes selected!. Nothing to be done.</source>
-        <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
+        <translation type="unfinished">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
         <location filename="ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="92"/>
@@ -15249,19 +17610,42 @@ Camada</translation>
         <translation type="obsolete">Sem classes selecionadas! Nada será feito.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="108"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="109"/>
         <source>Error while trying to remove coverage layer.</source>
-        <translation type="obsolete">Erro ao tentar remover camada de cobertura. </translation>
+        <translation type="unfinished">Erro ao tentar remover camada de cobertura. </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="109"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="110"/>
         <source>Simplification done on the following layers: </source>
-        <translation type="obsolete">Simplificação realizada nas seguintes camdas: </translation>
+        <translation type="unfinished">Simplificação realizada nas seguintes camdas: </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="111"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py" line="112"/>
         <source>Simplification process complete.</source>
-        <translation type="obsolete">Processo de simplificação completo.</translation>
+        <translation type="unfinished">Processo de simplificação completo.</translation>
+    </message>
+</context>
+<context>
+    <name>UnbuildEarthCoveragePolygonsProcess</name>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py" line="40"/>
+        <source>Unbuild Earth Coverage Polygons</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py" line="101"/>
+        <source>Starting </source>
+        <translation type="unfinished">Iniciando </translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py" line="101"/>
+        <source> Process.</source>
+        <translation type="unfinished"> Processo.</translation>
+    </message>
+    <message>
+        <location filename="../core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py" line="103"/>
+        <source>Running</source>
+        <translation type="unfinished">Rodando</translation>
     </message>
 </context>
 <context>
@@ -15303,9 +17687,9 @@ Camada</translation>
 <context>
     <name>ValidatedItemDelegate</name>
     <message>
-        <location filename="../CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="54"/>
+        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.py" line="56"/>
         <source>Enter a value.</source>
-        <translation type="obsolete">Entre um valor.</translation>
+        <translation type="unfinished">Entre um valor.</translation>
     </message>
 </context>
 <context>
@@ -15399,27 +17783,62 @@ Camada</translation>
         <translation>Fechar</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_history.py" line="50"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="56"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_history.py" line="50"/>
         <source>A problem occurred! Check log for details.</source>
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="48"/>
+        <source>Select a username...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="49"/>
+        <source>Processes with no user set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="50"/>
+        <source>Unable to get database username.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="56"/>
+        <source>A problem occurred! Check log for details. (Did you select a database?)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="120"/>
+        <source>Database username:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="142"/>
+        <source>{0}</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="149"/>
+        <source>Database username: {0}</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ValidationManager</name>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="51"/>
+        <location filename="../core/ValidationTools/validationManager.py" line="64"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validationManager.py" line="51"/>
+        <location filename="../core/ValidationTools/validationManager.py" line="64"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validationManager.py" line="209"/>
@@ -15461,6 +17880,11 @@ Camada</translation>
         <source>Process parameters setter for process(es) {0}</source>
         <translation type="obsolete">Ajustador de parâmetros de processo(s) {0}</translation>
     </message>
+    <message>
+        <location filename="../core/ValidationTools/validationManager.py" line="87"/>
+        <source>Validation Workflow</source>
+        <translation type="unfinished">Fluxo de Trabalho de Validação</translation>
+    </message>
 </context>
 <context>
     <name>ValidationProcess</name>
@@ -15480,14 +17904,14 @@ Camada</translation>
         <translation type="obsolete">Instanciando processo</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="51"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="47"/>
         <source>Validation Process</source>
-        <translation type="obsolete">Processo de validação</translation>
+        <translation type="unfinished">Processo de validação</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="199"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="94"/>
         <source>Process finished with errors.</source>
-        <translation type="obsolete">Processo terminado com erros.</translation>
+        <translation type="unfinished">Processo terminado com erros.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="141"/>
@@ -15495,29 +17919,29 @@ Camada</translation>
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="468"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="314"/>
         <source>Operation not defined with provided geometry type!</source>
-        <translation type="obsolete">Operação não definida com o tipo geométrico fornecido! </translation>
+        <translation type="unfinished">Operação não definida com o tipo geométrico fornecido! </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="480"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="326"/>
         <source>Error! Different geometry primitives!</source>
-        <translation type="obsolete">Erro! Primitivas geométricas diferentes!</translation>
+        <translation type="unfinished">Erro! Primitivas geométricas diferentes!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="501"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="347"/>
         <source>Building unified layers with  </source>
-        <translation type="obsolete">Construindo camada unificada com </translation>
+        <translation type="unfinished">Construindo camada unificada com </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="570"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="416"/>
         <source>Elapsed time for process {0} on layer {1}: {2}</source>
-        <translation type="obsolete">Tempo decorrido para o processo {0} na camada {1}: {2}</translation>
+        <translation type="unfinished">Tempo decorrido para o processo {0} na camada {1}: {2}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="574"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="420"/>
         <source>Elapsed time for process {0}: {1}</source>
-        <translation type="obsolete">Tempo decorrido para o processo {1}: {2}</translation>
+        <translation type="unfinished">Tempo decorrido para o processo {1}: {2}</translation>
     </message>
     <message>
         <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="188"/>
@@ -15525,49 +17949,49 @@ Camada</translation>
         <translation type="obsolete">Usuário do banco de dados: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="598"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="444"/>
         <source>Database username: {0}</source>
-        <translation type="obsolete">Usuário do banco de dados: {0}</translation>
+        <translation type="unfinished">Usuário do banco de dados: {0}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="600"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="446"/>
         <source>Unable to get database username.</source>
-        <translation type="obsolete">Não foi possível obter o usuário do banco de dados.</translation>
+        <translation type="unfinished">Não foi possível obter o usuário do banco de dados.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="603"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="449"/>
         <source>
 Parameters used on this execution of process {}
 </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Parâmetros utilizados nesta execução do processo {}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="607"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="453"/>
         <source>Unable to get database parameters for process {}.</source>
-        <translation type="obsolete">Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
+        <translation type="unfinished">Não foi possível obter os parâmetros do banco de dados para o process {}.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="609"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="455"/>
         <source>
 Number of flags raised by the process: {}</source>
-        <translation type="obsolete">Número de flags apontadas pelo processo: {}</translation>
+        <translation type="unfinished">Número de flags apontadas pelo processo: {}</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="613"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="459"/>
         <source>
 Total elapsed time for process {0}: {1}
 </source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Tempo total de execução para o processo {0}: {1}
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/ValidationProcesses/validationProcess.py" line="615"/>
+        <location filename="../core/ValidationTools/ValidationProcesses/validationProcess.py" line="461"/>
         <source>
 Unable to get total elapsed time.</source>
-        <translation type="obsolete">
+        <translation type="unfinished">
 Não foi possível obter o tempo total gasto.</translation>
     </message>
 </context>
@@ -15582,6 +18006,22 @@ Não foi possível obter o tempo total gasto.</translation>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.ui" line="36"/>
         <source>Halt if flags are raised</source>
         <translation>Parar caso hajam flags</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py" line="54"/>
+        <source>Select a model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py" line="82"/>
+        <source>Invalid Validation Process Widget json config!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py" line="112"/>
+        <source>Invalid rule name!
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15682,9 +18122,9 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation type="obsolete">Iniciar/Parar Reforçador de Regras Espaciais</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="84"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="97"/>
         <source>Zoom to flag</source>
-        <translation type="obsolete">Zoom para a flag</translation>
+        <translation type="unfinished">Zoom para a flag</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.py" line="81"/>
@@ -15697,35 +18137,35 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation type="obsolete">Marcar não visitado</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="444"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="414"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="308"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="278"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="315"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="285"/>
         <source>Process error. Check log for details.</source>
-        <translation type="obsolete">Erro do processo. Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Erro do processo. Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="319"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="289"/>
         <source>Success!</source>
-        <translation type="obsolete">Sucesso!</translation>
+        <translation type="unfinished">Sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="319"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="289"/>
         <source>Process successfully executed!</source>
-        <translation type="obsolete">Processo executado com sucesso!</translation>
+        <translation type="unfinished">Processo executado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="393"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="363"/>
         <source>Database not loaded or a problem occurred.
 </source>
-        <translation type="obsolete">Banco de Dados não carregado ou um problema ocorreu.</translation>
+        <translation type="unfinished">Banco de Dados não carregado ou um problema ocorreu.</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="73"/>
@@ -15748,19 +18188,19 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation type="obsolete">Mostrar editor de regras de atributos</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="221"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="203"/>
         <source>Error loading db: </source>
-        <translation type="obsolete">Erro carregando db: </translation>
+        <translation type="unfinished">Erro carregando db: </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="317"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="287"/>
         <source>Information!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="317"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="287"/>
         <source>Process canceled by user!</source>
-        <translation type="obsolete">Processo cancelado pelo usuário!</translation>
+        <translation type="unfinished">Processo cancelado pelo usuário!</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="14"/>
@@ -15773,17 +18213,17 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation type="obsolete">Filtrar processo pelo nome</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="301"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="271"/>
         <source>Select a process to run!</source>
-        <translation type="obsolete">Selecione um processo para rodar!</translation>
+        <translation type="unfinished">Selecione um processo para rodar!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="165"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="74"/>
         <source>Process Name</source>
         <translation>Nome do Processo</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="170"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="74"/>
         <source>Class Name</source>
         <translation>Nome da classe</translation>
     </message>
@@ -15798,20 +18238,20 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Limpar Todas as Flags</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="421"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="391"/>
         <source>Question</source>
-        <translation type="obsolete">Questão</translation>
+        <translation type="unfinished">Questão</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="403"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="373"/>
         <source>Do you really want to clear all flags?</source>
-        <translation type="obsolete">Você realmente deseja limpar todas as flags?</translation>
+        <translation type="unfinished">Você realmente deseja limpar todas as flags?</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="444"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="414"/>
         <source>Flags not deleted.
 </source>
-        <translation type="obsolete">Flags não apagadas.
+        <translation type="unfinished">Flags não apagadas.
 </translation>
     </message>
     <message>
@@ -15825,36 +18265,36 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Limpar flags filtradas</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="85"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="98"/>
         <source>Remove flag</source>
-        <translation type="obsolete">Remover flag</translation>
+        <translation type="unfinished">Remover flag</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="272"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="242"/>
         <source>Select a database to run process!</source>
-        <translation type="obsolete">Selecione um banco de dados para rodar o processo!</translation>
+        <translation type="unfinished">Selecione um banco de dados para rodar o processo!</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="289"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="259"/>
         <source>No previous process run this session.</source>
-        <translation type="obsolete">Sem processo prévio nesta sessão.</translation>
+        <translation type="unfinished">Sem processo prévio nesta sessão.</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="421"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="391"/>
         <source>Do you really want to clear those flags?</source>
-        <translation type="obsolete">Você realmente deseja apagar aquelas flags?</translation>
+        <translation type="unfinished">Você realmente deseja apagar aquelas flags?</translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="436"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="406"/>
         <source>Flags not deleted as no Process nor Class was chosen.
 </source>
-        <translation type="obsolete">Flags não deletadas pois nenhum Processo nem Classe foram escolhidos.
+        <translation type="unfinished">Flags não deletadas pois nenhum Processo nem Classe foram escolhidos.
 </translation>
     </message>
     <message>
-        <location filename="../ValidationTools/validation_toolbox.py" line="129"/>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="121"/>
         <source>No flags were selected!</source>
-        <translation type="obsolete">Nenhuma flag foi selecionada!</translation>
+        <translation type="unfinished">Nenhuma flag foi selecionada!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="14"/>
@@ -15880,6 +18320,32 @@ Não foi possível obter o tempo total gasto.</translation>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="146"/>
         <source>Run Workflow</source>
         <translation>Executar Fluxo de Trabalho</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="78"/>
+        <source>Perform database validation (quality assurance)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ValidationWorkflow</name>
+    <message>
+        <location filename="../core/ValidationTools/validationManager.py" line="40"/>
+        <source>Started task {}</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ValidationWorkflowCompactPropertyManagerWidget</name>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/validationWorkflowCompactPropertyManagerWidget.py" line="71"/>
+        <source>Success!</source>
+        <translation type="unfinished">Sucesso!</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/validationWorkflowCompactPropertyManagerWidget.py" line="71"/>
+        <source>{0} configuration {1} created successfuly!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -15931,6 +18397,21 @@ Não foi possível obter o tempo total gasto.</translation>
         <source>dd/MM/yyyy</source>
         <translation>dd/MM/yyyy</translation>
     </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="57"/>
+        <source>Critical!</source>
+        <translation>Crítico!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="57"/>
+        <source>Errors on interface! Check log for details!</source>
+        <translation>Erros na interface! Verifique o log para mais detalhes!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="71"/>
+        <source>Invalid tag for attributeRulesEditor!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ValidationWorkflowItemWidget</name>
@@ -15953,6 +18434,17 @@ Não foi possível obter o tempo total gasto.</translation>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.ui" line="46"/>
         <source>Halt workflow in case of flags</source>
         <translation>Parar fluxo de trabalho caso hajam flags</translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.py" line="79"/>
+        <source>Invalid Attribute Rule Type Widget json config!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.py" line="111"/>
+        <source>Invalid rule name!
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16074,24 +18566,24 @@ Não foi possível obter o tempo total gasto.</translation>
 <context>
     <name>ViewServers</name>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="198"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="236"/>
         <source>Warning!</source>
-        <translation type="obsolete">Alerta!</translation>
+        <translation type="unfinished">Alerta!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="198"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="236"/>
         <source>Select one server.</source>
-        <translation type="obsolete">Selecione um servidor.</translation>
+        <translation type="unfinished">Selecione um servidor.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="139"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="176"/>
         <source>Info!</source>
-        <translation type="obsolete">Informação!</translation>
+        <translation type="unfinished">Informação!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="119"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="155"/>
         <source>Server removed.</source>
-        <translation type="obsolete">Servidor removido.</translation>
+        <translation type="unfinished">Servidor removido.</translation>
     </message>
     <message>
         <location filename="ServerTools/viewServers.py" line="65"/>
@@ -16099,9 +18591,9 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation type="obsolete">Limpar</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="76"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="75"/>
         <source>Saved</source>
-        <translation type="obsolete">Salva</translation>
+        <translation type="unfinished">Salva</translation>
     </message>
     <message>
         <location filename="ServerTools/viewServers.py" line="112"/>
@@ -16114,29 +18606,42 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation type="obsolete">Servidor Offline.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="74"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="73"/>
         <source>Not Saved</source>
-        <translation type="obsolete">Não Salvo</translation>
+        <translation type="unfinished">Não Salvo</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="137"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="170"/>
         <source>Connection online.</source>
-        <translation type="obsolete">Conexão online.</translation>
+        <translation type="unfinished">Conexão online.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="139"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="176"/>
         <source>Connection was not successful. Check log for details.</source>
-        <translation type="obsolete">A conexão não foi bem sucedida. Confira o log para detalhes.</translation>
+        <translation type="unfinished">A conexão não foi bem sucedida. Confira o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="188"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="226"/>
         <source>Critical!</source>
-        <translation type="obsolete">Crítico!</translation>
+        <translation type="unfinished">Crítico!</translation>
     </message>
     <message>
-        <location filename="../ServerTools/viewServers.py" line="188"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="226"/>
         <source>A problem occurred! Check log for details.</source>
-        <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
+        <translation type="unfinished">Um problema ocorreu! Verifique o log para detalhes.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ServerTools/viewServers.py" line="119"/>
+        <source>Set default connection before closing!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ViewServersGui</name>
+    <message>
+        <location filename="../gui/ServerTools/ViewServersGui/viewServersGui.py" line="48"/>
+        <source>Configure Servers</source>
+        <translation type="unfinished">Configurar Servidores</translation>
     </message>
 </context>
 <context>
