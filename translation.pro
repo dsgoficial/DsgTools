@@ -130,42 +130,6 @@
 					core/Styles/edgv_FTer_2a_Ed/__init__.py \
 					core/Styles/__init__.py \
 					core/ValidationTools/validationManager.py \
-					core/ValidationTools/ValidationProcesses/snapLayerOnLayerProcess.py \
-					core/ValidationTools/ValidationProcesses/snapToGridProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyNotSimpleGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/topologicalDouglasSimplificationProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesProcess.py \
-					core/ValidationTools/ValidationProcesses/removeSmallAreasProcess.py \
-					core/ValidationTools/ValidationProcesses/snapGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/spatialRuleProcess.py \
-					core/ValidationTools/ValidationProcesses/removeDuplicatesProcess.py \
-					core/ValidationTools/ValidationProcesses/lineOnLineOverlayProcess.py \
-					core/ValidationTools/ValidationProcesses/attributeRuleProcess.py \
-					core/ValidationTools/ValidationProcesses/spatialRuleEnforcer.py \
-					core/ValidationTools/ValidationProcesses/identifySmallLinesProcess.py \
-					core/ValidationTools/ValidationProcesses/cleanGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyInvalidGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyOverlapsProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyDanglesProcess.py \
-					core/ValidationTools/ValidationProcesses/validationProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyOutOfBoundsAnglesInCoverageProcess.py \
-					core/ValidationTools/ValidationProcesses/snapLinesToFrameProcess.py \
-					core/ValidationTools/ValidationProcesses/identifySmallAreasProcess.py \
-					core/ValidationTools/ValidationProcesses/removeSmallLinesProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyGapsAndOverlapsProcess.py \
-					core/ValidationTools/ValidationProcesses/deaggregateGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyGapsProcess.py \
-					core/ValidationTools/ValidationProcesses/dissolvePolygonsWithCommonAttributesProcess.py \
-					core/ValidationTools/ValidationProcesses/closeEarthCoveragePolygonsProcess.py \
-					core/ValidationTools/ValidationProcesses/__init__.py \
-					core/ValidationTools/ValidationProcesses/forceValidityGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/overlayElementsWithAreasProcess.py \
-					core/ValidationTools/ValidationProcesses/removeEmptyGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/mergeLinesProcess.py \
-					core/ValidationTools/ValidationProcesses/identifyDuplicatedGeometriesProcess.py \
-					core/ValidationTools/ValidationProcesses/unbuildEarthCoveragePolygonsProcess.py \
-					core/ValidationTools/ValidationProcesses/hierarchicalSnapLayerOnLayerProcess.py \
-					core/ValidationTools/ValidationProcesses/topologicalCleanProcess.py \
 					dsg_tools.py \
 					plugin_upload.py \
 					resources.py \
