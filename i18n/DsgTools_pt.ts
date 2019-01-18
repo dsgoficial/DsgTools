@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
+<!DOCTYPE TS>
+<TS version="2.1" language="pt_BR">
 <context>
     <name>AboutAndFurtherInfoGuiManager</name>
     <message>
@@ -3676,7 +3677,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mm&#xb2;</source>
+        <source>Area in mm²</source>
         <translation type="obsolete">Área em mm²</translation>
     </message>
     <message>
@@ -3715,7 +3716,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mm&#xc2;&#xb2;</source>
+        <source>Area in mmÂ²</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -6026,7 +6027,7 @@ camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="138"/>
         <source>Donut Hole Extractor</source>
-        <translation>Remover Buracos</translation>
+        <translation>Separar Buraco do Exterior de um Polígono</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py" line="145"/>
@@ -18074,7 +18075,7 @@ Não foi possível obter o tempo total gasto.</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
-        <source>Situa&#xe7;&#xe3;o</source>
+        <source>Situação</source>
         <translation type="obsolete">Situação</translation>
     </message>
     <message>
