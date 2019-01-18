@@ -18,18 +18,16 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-from builtins import range
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
-from qgis.utils import iface
-from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject
-from qgis.gui import QgsMapMouseEvent
 import math
-from qgis.PyQt import QtCore, QtGui
-from qgis.PyQt.QtWidgets import QShortcut
-from qgis.PyQt.QtGui import QKeySequence, QCursor, QPixmap, QColor
-from qgis.PyQt.QtCore import QSettings
+from builtins import range
+
+from qgis.PyQt.QtCore import Qt, QSettings
+from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing,\
+                     QgsAttributeForm
+from qgis.utils import iface
+from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem,\
+                      QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import DistanceToolTip
 
