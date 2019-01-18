@@ -21,12 +21,9 @@
  ***************************************************************************/
 """
 
-from qgis.PyQt.QtWidgets import QToolTip
-from qgis.PyQt.QtGui import QColor, QFont
 from qgis.core import QgsDistanceArea, QgsCoordinateTransformContext
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.toolTip import ToolTip
-
 
 class DistanceToolTip(ToolTip):
 	def __init__(self, iface):
