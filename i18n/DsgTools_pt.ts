@@ -2,14 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="pt_BR">
 <context>
-    <name>@default</name>
-    <message>
-        <location filename="../test/test_translations.py" line="48"/>
-        <source>Good morning</source>
-        <translation type="obsolete">Bom dia</translation>
-    </message>
-</context>
-<context>
     <name>AboutAndFurtherInfoGuiManager</name>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/aboutAndFurtherInfoGuiManager.py" line="51"/>
@@ -1055,7 +1047,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="197"/>
         <source>Surface Digital Model compatible with scale 1:250,000 (SRTM)</source>
-        <translation>MDS compatíveis com a escala 1:250.000 (SRTM</translation>
+        <translation>MDS compatíveis com a escala 1:250.000 (SRTM)</translation>
     </message>
     <message>
         <location filename="../gui/BDGExTools/bdgexGuiManager.py" line="206"/>
@@ -3700,7 +3692,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mmÂ²</source>
+        <source>Area in mm²</source>
         <translation>Área em mm²</translation>
     </message>
     <message>
