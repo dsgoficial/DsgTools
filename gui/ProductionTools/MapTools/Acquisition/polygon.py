@@ -19,18 +19,11 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from __future__ import absolute_import
-import os                                                                         
 
-from qgis.PyQt import QtGui, uic 
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
-import math
-from qgis.PyQt import QtCore, QtGui
-from qgis.PyQt.QtWidgets import QShortcut
-from qgis.PyQt.QtGui import QKeySequence
-from qgis.PyQt.QtCore import QSettings
-from .geometricaAquisition import GeometricaAcquisition
+from qgis.PyQt.QtCore import Qt
 from qgis.core import QgsPointXY, Qgis, QgsGeometry, QgsWkbTypes
-from qgis.gui import QgsMapMouseEvent, QgsMapTool, QgsMessageBar
+
+from .geometricaAquisition import GeometricaAcquisition
 
 class Polygon(GeometricaAcquisition):
     def __init__(self, canvas, iface, action):
@@ -55,7 +48,16 @@ class Polygon(GeometricaAcquisition):
                 geom = QgsGeometry.fromPolylineXY(self.geometry + [self.geometry[0]])
             self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
             self.createGeometry(geom)
-  
+
+    def distance_acceptable(self, p1, p_n, p_n_1, p_n_2):
+        d_n = self.distanceToolTip.calculateDistance(p_n, p1)
+        d_n_1 = self.distanceToolTip.calculateDistance(p_n, p_n_1)
+        d_n_2 = self.distanceToolTip.calculateDistance(p_n_1, p_n_2)
+        if (d_n>self.minSegmentDistance) and (d_n > self.minSegmentDistance) and (d_n>self.minSegmentDistance):
+            return True
+        else:
+            return False
+
     def canvasReleaseEvent(self, event):
         event.snapPoint() #snap!!!
         if self.snapCursorRubberBand:
@@ -76,16 +78,25 @@ class Polygon(GeometricaAcquisition):
                 if (self.qntPoint >=2):
                     if (self.qntPoint % 2 == 0):
                         point = QgsPointXY(pointMap)
-                        testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                        if testgeom:
-                            new_geom, pf = self.completePolygon(self.geometry, testgeom)
-                            self.geometry.append(QgsPointXY(testgeom.x(), testgeom.y()))        
-                            self.geometry.append(pf)   
-                        self.endGeometry()
-                        self.qntPoint = 0
+                        projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                        if projectedMousePoint:                            
+                            new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)
+                            if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
+                                self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
+                                self.geometry.append(last_point)   
+                                self.endGeometry() 
+                            else:
+                                self.iface.messageBar().pushMessage(
+                                        self.tr("Observation:"),
+                                        self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                        level=Qgis.Info
+                                    )                        
                     else:
-                        msg = self.tr("Tool is designed for composed features by straight angles.")
-                        self.iface.messageBar().pushInfo(self.tr("Warning!"), msg)
+                        self.iface.messageBar().pushMessage(
+                                self.tr("Observation:"),
+                                self.tr("The right angle tool should be used only for rectangular shapes."),
+                                level=Qgis.Info
+                            )
         elif self.free:
             self.geometry.append(pointMap)
             self.qntPoint += 1
@@ -95,16 +106,32 @@ class Polygon(GeometricaAcquisition):
                     self.rubberBand = self.getRubberBand()
                     point = QgsPointXY(pointMap)
                     self.geometry.append(point)
+                    self.qntPoint += 1
                 elif self.qntPoint == 1:
                     point = QgsPointXY(pointMap)
-                    self.geometry.append(point)
+                    if self.distanceToolTip.calculateDistance(self.geometry[-1], point) > self.minSegmentDistance:
+                        self.geometry.append(point)
+                        self.qntPoint += 1
+                    else:
+                        self.iface.messageBar().pushMessage(
+                                self.tr("Observation:"),
+                                self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                level=Qgis.Info
+                            )
                 else:
                     point = QgsPointXY(pointMap)
-                    testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                    if testgeom:
-                        self.geometry.append(QgsPointXY(testgeom.x(), testgeom.y()))        
-                self.qntPoint += 1
-               
+                    projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                    if projectedMousePoint:
+                        if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
+                            self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
+                            self.qntPoint += 1
+                        else:
+                            self.iface.messageBar().pushMessage(
+                                    self.tr("Observation:"),
+                                    self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                    level=Qgis.Info
+                                )
+
     def canvasMoveEvent(self, event):
         if self.snapCursorRubberBand:
             self.snapCursorRubberBand.hide()
@@ -131,9 +158,9 @@ class Polygon(GeometricaAcquisition):
                         self.setAvoidStyleSnapRubberBand()
                     else:
                         self.setAllowedStyleSnapRubberBand()     
-                    testgeom = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                    if testgeom:
-                        geom, pf = self.completePolygon(self.geometry, testgeom)
-                        self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+                projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                if projectedMousePoint:
+                    geom, pf = self.completePolygon(self.geometry, projectedMousePoint)
+                    self.rubberBand.setToGeometry(geom, None)
         else:
             self.initVariable()
