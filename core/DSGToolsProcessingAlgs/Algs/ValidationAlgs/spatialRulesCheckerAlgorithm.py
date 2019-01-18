@@ -114,7 +114,7 @@ class SpatialRulesCheckerAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RunRemoteFMEAlgorithm', string)
 
     def createInstance(self):
         return RunRemoteFMEAlgorithm()

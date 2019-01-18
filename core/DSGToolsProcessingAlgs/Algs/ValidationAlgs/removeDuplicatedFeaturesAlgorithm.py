@@ -197,7 +197,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveDuplicatedFeaturesAlgorithm', string)
 
     def createInstance(self):
         return RemoveDuplicatedFeaturesAlgorithm()

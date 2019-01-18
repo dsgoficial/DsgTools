@@ -188,7 +188,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('MergeLinesAlgorithm', string)
 
     def createInstance(self):
         return MergeLinesAlgorithm()

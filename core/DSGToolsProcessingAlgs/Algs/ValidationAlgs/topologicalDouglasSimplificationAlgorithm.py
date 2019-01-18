@@ -206,7 +206,7 @@ class TopologicalDouglasSimplificationAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Topological Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('TopologicalDouglasSimplificationAlgorithm', string)
 
     def createInstance(self):
         return TopologicalDouglasSimplificationAlgorithm()

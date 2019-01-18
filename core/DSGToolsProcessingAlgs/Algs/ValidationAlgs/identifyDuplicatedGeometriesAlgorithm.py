@@ -137,7 +137,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyDuplicatedGeometriesAlgorithm', string)
 
     def createInstance(self):
         return IdentifyDuplicatedGeometriesAlgorithm()

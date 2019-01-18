@@ -164,7 +164,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveSmallLinesAlgorithm', string)
 
     def createInstance(self):
         return RemoveSmallLinesAlgorithm()

@@ -157,7 +157,7 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveEmptyAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return RemoveEmptyAndUpdateAlgorithm()
