@@ -230,7 +230,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Topological Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('TopologicalCleanAlgorithm', string)
 
     def createInstance(self):
         return TopologicalCleanAlgorithm()

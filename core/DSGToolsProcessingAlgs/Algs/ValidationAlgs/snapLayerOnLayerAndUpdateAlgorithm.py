@@ -194,7 +194,7 @@ class SnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('SnapLayerOnLayerAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return SnapLayerOnLayerAndUpdateAlgorithm()

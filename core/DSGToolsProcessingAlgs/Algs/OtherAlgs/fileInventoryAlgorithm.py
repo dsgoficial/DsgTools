@@ -199,7 +199,7 @@ class FileInventoryAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('FileInventoryAlgorithm', string)
 
     def createInstance(self):
         return FileInventoryAlgorithm()

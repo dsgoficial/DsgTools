@@ -324,7 +324,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Network Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('VerifyNetworkDirectioningAlgorithm', string)
 
     def createInstance(self):
         return VerifyNetworkDirectioningAlgorithm()

@@ -136,7 +136,7 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('UpdateOriginalLayerAlgorithm', string)
 
     def createInstance(self):
         return UpdateOriginalLayerAlgorithm()

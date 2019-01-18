@@ -202,7 +202,7 @@ class CreateFrameAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('CreateFrameAlgorithm', string)
 
     def createInstance(self):
         return CreateFrameAlgorithm()

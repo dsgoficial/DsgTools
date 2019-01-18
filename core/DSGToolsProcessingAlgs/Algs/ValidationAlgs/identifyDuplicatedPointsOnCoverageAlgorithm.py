@@ -142,7 +142,7 @@ class IdentifyDuplicatedPointsOnCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyDuplicatedPointsOnCoverageAlgorithm', string)
 
     def createInstance(self):
         return IdentifyDuplicatedPointsOnCoverageAlgorithm()

@@ -141,7 +141,7 @@ class AdjustNetworkConnectivityAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Network Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('AdjustNetworkConnectivityAlgorithm', string)
 
     def createInstance(self):
         return AdjustNetworkConnectivityAlgorithm()

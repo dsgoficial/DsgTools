@@ -178,7 +178,7 @@ class DissolvePolygonsWithSameAttributesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('DissolvePolygonsWithSameAttributesAlgorithm', string)
 
     def createInstance(self):
         return DissolvePolygonsWithSameAttributesAlgorithm()

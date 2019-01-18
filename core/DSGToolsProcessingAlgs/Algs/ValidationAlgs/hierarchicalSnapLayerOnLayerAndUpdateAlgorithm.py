@@ -164,7 +164,7 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('HierarchicalSnapLayerOnLayerAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return HierarchicalSnapLayerOnLayerAndUpdateAlgorithm()

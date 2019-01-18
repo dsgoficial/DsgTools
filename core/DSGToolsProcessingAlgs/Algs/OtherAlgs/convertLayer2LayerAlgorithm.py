@@ -217,7 +217,7 @@ class ConvertLayer2LayerAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('ConvertLayer2LayerAlgorithm', string)
 
     def createInstance(self):
         return ConvertLayer2LayerAlgorithm()

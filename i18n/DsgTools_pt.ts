@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="pt_BR">
+<!DOCTYPE TS><TS version="2.0" language="pt_BR" sourcelanguage="">
 <context>
     <name>AboutAndFurtherInfoGuiManager</name>
     <message>
@@ -3676,8 +3675,8 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Texto do combo box</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="47"/>
-        <source>Area in mm²</source>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
+        <source>Area in mm&#xb2;</source>
         <translation type="obsolete">Área em mm²</translation>
     </message>
     <message>
@@ -3689,11 +3688,6 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="64"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
-    </message>
-    <message>
-        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
-        <source>Area in mm²</source>
-        <translation>Área em mm²</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="56"/>
@@ -3718,6 +3712,11 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="86"/>
         <source>Distance in mm</source>
         <translation>Distância em mm</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
+        <source>Area in mm&#xc2;&#xb2;</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -12256,31 +12255,26 @@ Camada</translation>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="1197"/>
         <source>does not end at a node with IN flow type</source>
-        <translatorcomment>CUIDADO AQUI! AS STRINGS SÃO USADAS PARA A SEPARAÇÃO DA FRASE: LEIA O CÓDIGO ANTES DE TRADUZIR!</translatorcomment>
         <translation>termina em um nó com fluxo de ENTRADA</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="1198"/>
         <source>does not start at a node with OUT flow type</source>
-        <translatorcomment>CUIDADO AQUI! AS STRINGS SÃO USADAS PARA A SEPARAÇÃO DA FRASE: LEIA O CÓDIGO ANTES DE TRADUZIR!</translatorcomment>
         <translation>termina em um nó com fluxo de SAÍDA</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="1199"/>
         <source>have conflicting directions</source>
-        <translatorcomment>CUIDADO AQUI! AS STRINGS SÃO USADAS PARA A SEPARAÇÃO DA FRASE: LEIA O CÓDIGO ANTES DE TRADUZIR!</translatorcomment>
         <translation>possuem direções conflitantes</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="1200"/>
         <source>Redundant node.</source>
-        <translatorcomment>CUIDADO AQUI! AS STRINGS SÃO USADAS PARA A SEPARAÇÃO DA FRASE: LEIA O CÓDIGO ANTES DE TRADUZIR!</translatorcomment>
         <translation>Nó redundante.</translation>
     </message>
     <message>
         <location filename="../core/GeometricTools/networkHandler.py" line="1201"/>
         <source>Node was flagged upon classification</source>
-        <translatorcomment>CUIDADO AQUI! AS STRINGS SÃO USADAS PARA A SEPARAÇÃO DA FRASE: LEIA O CÓDIGO ANTES DE TRADUZIR!</translatorcomment>
         <translation>Nó inválido desde sua classificação</translation>
     </message>
     <message>
@@ -18080,7 +18074,7 @@ Não foi possível obter o tempo total gasto.</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="118"/>
-        <source>Situação</source>
+        <source>Situa&#xe7;&#xe3;o</source>
         <translation type="obsolete">Situação</translation>
     </message>
     <message>
