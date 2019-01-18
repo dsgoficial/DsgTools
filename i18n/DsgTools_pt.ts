@@ -5833,7 +5833,7 @@ camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="161"/>
         <source>Dissolve polygons with same attribute set</source>
-        <translation>Dissolver Poçígonos com Mesmo Conjunto de Atributos</translation>
+        <translation>Dissolver Polígonos com Mesmo Conjunto de Atributos</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="168"/>
