@@ -50,7 +50,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
 
     def getMinSegmentDistance(self):
         parameters = self.getParametersFromConfig()
-        return parameters[u'minSegmentDistance']
+        return int(parameters[u'minSegmentDistance'])
 
     def setAction(self, action):
         self.toolAction = action

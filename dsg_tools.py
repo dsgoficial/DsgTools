@@ -66,7 +66,7 @@ from DsgTools.ProductionTools.FlipLineTool.flipLineTool import FlipLine
 from qgis.utils import showPluginHelp
 try:
     import ptvsd
-    ptvsd.enable_attach(secret='my_secret', address = ('localhost', 5679))
+    ptvsd.enable_attach(address = ('localhost', 5679))
 except:
     pass
 
