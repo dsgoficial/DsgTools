@@ -131,7 +131,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
 
     def getMinSegmentDistance(self):
         parameters = self.getParametersFromConfig()
-        return parameters[u'minSegmentDistance']
+        return int(parameters[u'minSegmentDistance'])
 
     def completePolygon(self,geom, p4):                
         if (len(geom)>=2) and (len(geom) % 2 == 0):
