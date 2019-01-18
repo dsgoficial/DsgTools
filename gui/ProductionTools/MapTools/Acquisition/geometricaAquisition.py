@@ -18,7 +18,6 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  ***************************************************************************/
 """
 
-import math
 from builtins import range
 
 from qgis.PyQt.QtCore import Qt, QSettings
