@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>613</width>
-    <height>500</height>
+    <height>623</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -123,7 +123,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset>
             <normaloff>:/plugins/DsgTools/icons/plus.png</normaloff>:/plugins/DsgTools/icons/plus.png</iconset>
           </property>
           <property name="iconSize">
@@ -140,7 +140,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="resources.qrc">
+           <iconset>
             <normaloff>:/plugins/DsgTools/icons/remove.png</normaloff>:/plugins/DsgTools/icons/remove.png</iconset>
           </property>
          </widget>
@@ -178,7 +178,7 @@
       <item row="0" column="1">
        <widget class="QgsSpinBox" name="decimalQgsSpinBox">
         <property name="maximum">
-         <number>15</number>
+         <number>21</number>
         </property>
         <property name="value">
          <number>0</number>
@@ -203,6 +203,9 @@
       </item>
       <item row="0" column="1">
        <widget class="QgsSpinBox" name="minSegmentDistanceQgsSpinBox">
+        <property name="maximum">
+         <number>999999999</number>
+        </property>
         <property name="value">
          <number>4</number>
         </property>
@@ -217,18 +220,18 @@
   <customwidget>
    <class>QgsCollapsibleGroupBox</class>
    <extends>QGroupBox</extends>
-   <header>qgis.gui</header>
+   <header>qgscollapsiblegroupbox.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>QgsDoubleSpinBox</class>
    <extends>QDoubleSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsdoublespinbox.h</header>
   </customwidget>
   <customwidget>
    <class>QgsSpinBox</class>
    <extends>QSpinBox</extends>
-   <header>qgis.gui</header>
+   <header>qgsspinbox.h</header>
   </customwidget>
  </customwidgets>
  <resources>

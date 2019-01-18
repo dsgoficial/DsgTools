@@ -26,8 +26,8 @@ from qgis.core import QgsDistanceArea, QgsCoordinateTransformContext
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.toolTip import ToolTip
 
 class DistanceToolTip(ToolTip):
-	def __init__(self, iface):
-		super(DistanceToolTip, self).__init__(iface, minSegmentDistance)
+	def __init__(self, iface, minSegmentDistance):
+		super(DistanceToolTip, self).__init__(iface)
 		self.iface = iface
 		self.canvas = iface.mapCanvas()      
 		self.last_distance = 0  
