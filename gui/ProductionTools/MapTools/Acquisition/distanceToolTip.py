@@ -58,7 +58,7 @@ class DistanceToolTip(ToolTip):
 		else:
 			if m > 1:
 				color = 'red'
-				if m >= 4:
+				if m >= self.minSegmentDistance:
 					color = 'green'				
 				txt = "<p style='color:{color}'><b>{distance}</b></p>".format(color=color, distance=str(m))
 				super(DistanceToolTip, self).show(txt, current_p)		  	
