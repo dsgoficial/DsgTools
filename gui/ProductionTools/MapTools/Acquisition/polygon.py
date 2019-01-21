@@ -53,10 +53,7 @@ class Polygon(GeometricaAcquisition):
         d_n = self.distanceToolTip.calculateDistance(p_n, p1)
         d_n_1 = self.distanceToolTip.calculateDistance(p_n, p_n_1)
         d_n_2 = self.distanceToolTip.calculateDistance(p_n_1, p_n_2)
-        if (d_n>self.minSegmentDistance) and (d_n > self.minSegmentDistance) and (d_n>self.minSegmentDistance):
-            return True
-        else:
-            return False
+        return (d_n > self.minSegmentDistance) and (d_n_1 > self.minSegmentDistance) and (d_n_2 > self.minSegmentDistance)
 
     def canvasReleaseEvent(self, event):
         event.snapPoint() #snap!!!
