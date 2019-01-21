@@ -24,6 +24,7 @@ from __future__ import absolute_import
 
 from builtins import range
 from itertools import tee
+from collections import defaultdict
 
 from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 from qgis.core import (Qgis, QgsCoordinateReferenceSystem,
@@ -418,3 +419,64 @@ class SpatialRelationsHandler(QObject):
         4. Validate contours.
         """
         pass
+    
+    def validateSpatialRelations(self, ruleList, feedback=None):
+        """
+        1. iterate over rule list and get all layers.
+        2. build spatial index
+        3. test rule
+        """
+        pass
+    
+    def buildSpatialRelationDict(self, layerFeatureDict, spatialIndexDict, spatialRuleDict, feedback=None):
+        """
+        layerFeatureDict = {
+            'layer_name' = {
+                featId : QgsFeature
+            }
+        }
+        spatialIndexDict = {
+            'layer_name' : QgsSpatialIndex
+        }
+        spatialRuleDict = {
+            'input_layer' : QgsVectorLayer,
+            'ruleList' : [
+                {
+                    'predicate' : spatial predicate,
+                    'candidate_layer' : QgsVectorLayer,
+                }
+            ]
+        }
+
+        """
+        layer_A = spatialRuleDict['input_layer']
+        layer_name = layer_A.name()
+        spatialRelationDict = {}
+        if layer_name not in layerFeatureDict:
+            return {}
+        for featId, feat in layerFeatureDict[layer_name].items():
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            geom_BB = geom.boundingBox()
+            #geometry engine is the fastest way of comparing geometries in QGIS 3.x series
+            engine = QgsGeometry.createGeometryEngine(geom.constGet())
+            engine.prepareGeometry()
+            initialDictLambda = lambda : {rule['predicate']:defaultdict(dict) for rule in spatialRuleDict['ruleList']}
+            spatialRelationDict[featId] = defaultdict(initialDictLambda)
+            for rule in spatialRuleDict['ruleList']:
+                predicate = rule['predicate']
+                candidate_layer = rule['candidate_layer']
+                candidate_layer_name = candidate_layer.name()
+                for candidateFeatId in spatialIndexDict[candidate_layer_name].intersects(geom_BB):
+                    test_feat = layerFeatureDict[candidate_layer][candidateFeatId]
+                    #this is the same as feat.geometry().<predicate method>(candidate_geom), but faster
+                    if getattr(engine, predicate)(test_feat.geometry().constGet()):
+                        if candidate_layer_name not in spatialRelationDict[featId][predicate]:
+                            spatialRelationDict[featId][predicate][candidate_layer_name] = set()
+                        spatialRelationDict[featId][predicate][candidate_layer_name].add(candidateFeatId)
+        return spatialRelationDict
+                
+                
+
+
