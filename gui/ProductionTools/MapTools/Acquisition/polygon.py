@@ -139,7 +139,6 @@ class Polygon(GeometricaAcquisition):
         point = QgsPointXY(event.mapPoint())
         if oldPoint != point:
             self.createSnapCursor(point)
-        point = QgsPointXY(event.mapPoint())
         if self.rubberBand:
             if self.qntPoint == 1:
                 self.distanceToolTip.canvasMoveEvent(self.geometry[0], point)
@@ -149,15 +148,15 @@ class Polygon(GeometricaAcquisition):
                 self.distanceToolTip.canvasMoveEvent(self.geometry[-1], point)
                 if self.free:
                     geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(point.x(), point.y())]])
-                    self.rubberBand.setToGeometry(geom, self.iface.activeLayer())             
+                    self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
                 else:   
                     if (self.qntPoint % 2 == 1): 
                         self.setAvoidStyleSnapRubberBand()
                     else:
                         self.setAllowedStyleSnapRubberBand()     
-                projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
-                if projectedMousePoint:
-                    geom, pf = self.completePolygon(self.geometry, projectedMousePoint)
-                    self.rubberBand.setToGeometry(geom, None)
+                    projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
+                    if projectedMousePoint:
+                        geom, pf = self.completePolygon(self.geometry, projectedMousePoint)
+                        self.rubberBand.setToGeometry(geom, None)
         else:
             self.initVariable()
