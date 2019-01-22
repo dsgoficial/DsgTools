@@ -160,7 +160,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveDuplicatedGeometriesAlgorithm', string)
 
     def createInstance(self):
         return RemoveDuplicatedGeometriesAlgorithm()

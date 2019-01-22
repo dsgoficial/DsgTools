@@ -142,7 +142,7 @@ class IdentifyDuplicatedPolygonsOnCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyDuplicatedPolygonsOnCoverageAlgorithm', string)
 
     def createInstance(self):
         return IdentifyDuplicatedPolygonsOnCoverageAlgorithm()

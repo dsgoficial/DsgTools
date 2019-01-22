@@ -191,7 +191,7 @@ class AcquisitionFree(gui.QgsMapTool):
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         undoPoints = settings.value('undoPoints')
         settings.endGroup()
-        return undoPoints
+        return int(undoPoints)
    
     def removeVertice(self):
         #Método para remover vertices

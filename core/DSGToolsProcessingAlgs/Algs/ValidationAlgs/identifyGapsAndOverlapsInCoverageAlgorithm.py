@@ -214,7 +214,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyGapsAndOverlapsInCoverageAlgorithm', string)
 
     def createInstance(self):
         return IdentifyGapsAndOverlapsInCoverageAlgorithm()

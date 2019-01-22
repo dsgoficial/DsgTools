@@ -177,7 +177,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('SnapToGridAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return SnapToGridAndUpdateAlgorithm()

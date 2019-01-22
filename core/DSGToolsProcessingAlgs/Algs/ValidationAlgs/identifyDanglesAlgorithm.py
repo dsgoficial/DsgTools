@@ -363,7 +363,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyDanglesAlgorithm', string)
 
     def createInstance(self):
         return IdentifyDanglesAlgorithm()
