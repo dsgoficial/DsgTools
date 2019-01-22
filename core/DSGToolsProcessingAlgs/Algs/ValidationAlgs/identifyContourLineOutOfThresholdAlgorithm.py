@@ -209,7 +209,7 @@ class IdentifyContourLineOutOfThresholdAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyContourLineOutOfThresholdAlgorithm', string)
 
     def createInstance(self):
         return IdentifyContourLineOutOfThresholdAlgorithm()

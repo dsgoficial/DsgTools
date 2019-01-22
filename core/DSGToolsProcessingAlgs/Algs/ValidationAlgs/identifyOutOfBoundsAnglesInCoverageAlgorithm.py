@@ -185,7 +185,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyOutOfBoundsAnglesInCoverageAlgorithm', string)
 
     def createInstance(self):
         return IdentifyOutOfBoundsAnglesInCoverageAlgorithm()

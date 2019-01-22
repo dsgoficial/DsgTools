@@ -1,4 +1,5 @@
- SOURCES         =	core/DbModels/SpatiaLite/__init__.py \
+ SOURCES         =	core/__init__.py \
+ 					core/DbModels/SpatiaLite/__init__.py \
 					core/DbModels/PostGIS/__init__.py \
 					core/DbModels/__init__.py \
 					core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py \
@@ -8,6 +9,7 @@
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/updateOriginalLayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py \
@@ -32,7 +34,6 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/validationAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py \
@@ -112,7 +113,6 @@
 					core/GeometricTools/geometryHandler.py \
 					core/GeometricTools/networkHandler.py \
 					core/GeometricTools/layerHandler.py \
-					core/__init__.py \
 					core/ServerManagementTools/fieldToolBoxConfigManager.py \
 					core/ServerManagementTools/validationWorkflowManager.py \
 					core/ServerManagementTools/genericDbManager.py \

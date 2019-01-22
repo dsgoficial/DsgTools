@@ -157,7 +157,7 @@ class RunRemoteFMEAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RunRemoteFMEAlgorithm', string)
 
     def createInstance(self):
         return RunRemoteFMEAlgorithm()

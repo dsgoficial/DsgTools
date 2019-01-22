@@ -252,7 +252,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('OverlayElementsWithAreasAlgorithm', string)
 
     def createInstance(self):
         return OverlayElementsWithAreasAlgorithm()

@@ -201,7 +201,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('CleanGeometriesAlgorithm', string)
 
     def createInstance(self):
         return CleanGeometriesAlgorithm()

@@ -313,7 +313,7 @@ class CreateNetworkNodesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Network Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('CreateNetworkNodesAlgorithm', string)
 
     def createInstance(self):
         return CreateNetworkNodesAlgorithm()

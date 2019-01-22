@@ -155,7 +155,7 @@ class DonutHoleExtractorAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Geometric Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('DonutHoleExtractorAlgorithm', string)
 
     def createInstance(self):
         return DonutHoleExtractorAlgorithm()

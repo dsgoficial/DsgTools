@@ -168,7 +168,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveSmallPolygonsAlgorithm', string)
 
     def createInstance(self):
         return RemoveSmallPolygonsAlgorithm()

@@ -218,7 +218,7 @@ class RaiseFlagsAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Other Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RaiseFlagsAlgorithm', string)
 
     def createInstance(self):
         return RaiseFlagsAlgorithm()

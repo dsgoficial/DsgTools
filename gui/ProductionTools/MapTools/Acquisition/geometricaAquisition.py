@@ -19,17 +19,14 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 """
 
 from builtins import range
-from qgis.PyQt import QtGui, uic
-from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot, Qt
-from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing, QgsAttributeForm
+
+from qgis.PyQt.QtCore import Qt, QSettings
+from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing,\
+                     QgsAttributeForm
 from qgis.utils import iface
-from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject
-from qgis.gui import QgsMapMouseEvent
-import math
-from qgis.PyQt import QtCore, QtGui
-from qgis.PyQt.QtWidgets import QShortcut
-from qgis.PyQt.QtGui import QKeySequence, QCursor, QPixmap, QColor
-from qgis.PyQt.QtCore import QSettings
+from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem,\
+                      QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import DistanceToolTip
 
@@ -42,19 +39,15 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
         self.snapCursorRubberBand = None
         self.initVariable()
         self.setAction(action)
-        self.distanceToolTip = DistanceToolTip(self.iface)
+        self.minSegmentDistance = self.getMinSegmentDistance()
+        self.distanceToolTip = DistanceToolTip(self.iface, self.minSegmentDistance)
 
     def getSuppressOptions(self):
         qgisSettigns = QSettings()
         qgisSettigns.beginGroup('Qgis/digitizing')
         setting = qgisSettigns.value('disable_enter_attribute_values_dialog')
         qgisSettigns.endGroup()
-        if not setting:
-            return False
-        if setting.lower() == u'false':
-            return False
-        else:
-            return True
+        return isinstance(setting, str) and setting.lower() == u'true'
 
     def setAction(self, action):
         self.toolAction = action
@@ -103,13 +96,23 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
     def keyPressEvent(self, event):
         if event.key() == Qt.Key_Control:
             self.free = True
-        if event.key() == Qt.Key_Backspace:
-            if self.geometry:
-                self.geometry.pop()
-                geom = QgsGeometry.fromPolygonXY([self.geometry])
-                self.qntPoint -= 1
-                self.rubberBand.setToGeometry(geom, self.iface.activeLayer())      
-    
+        if event.key() == Qt.Key_Backspace and self.geometry:
+            self.geometry.pop()
+            geom = QgsGeometry.fromPolygonXY([self.geometry])
+            self.qntPoint -= 1
+            self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+
+    def getParametersFromConfig(self):
+        #Método para obter as configurações da tool do QSettings
+        #Parâmetro de retorno: parameters (Todas os parâmetros do QSettings usado na ferramenta)
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        parameters = {
+            u'minSegmentDistance' : settings.value('minSegmentDistance'),
+        }
+        settings.endGroup()
+        return parameters
+
     def initVariable(self):
         if self.rubberBand:
             self.rubberBand.reset(geometryType = self.iface.activeLayer().geometryType())
@@ -120,6 +123,10 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
             self.snapCursorRubberBand.hide()
             self.snapCursorRubberBand = None
+
+    def getMinSegmentDistance(self):
+        parameters = self.getParametersFromConfig()
+        return int(parameters[u'minSegmentDistance'])
 
     def completePolygon(self,geom, p4):                
         if (len(geom)>=2) and (len(geom) % 2 == 0):
@@ -133,13 +140,27 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             pf = p4            
         return new_geom, pf
 
+    def distanceBetweenLinesTest(self, geom, p):
+        teste_answer = True
+        for i in range(len(geom)-1):
+            p1 = geom[i]
+            p2 = geom[i+1]
+            projected_point = self.projectPoint(p1,p2,p)
+            distance = self.distanceToolTip.calculateDistance(projected_point,p2)
+            if distance > self.minSegmentDistance:
+                continue
+            else:
+                teste_answer = False
+                break
+        return teste_answer
+
     def lineIntersection(self, p1, p2, p3, p4):    
-        p3Projected = p4       
-        if(p1.y() == p2.y()):                     
+        p3Projected = p4
+        if((p1.y() == p2.y()) or (p3.x()==p4.x())):
             y = p3Projected.y()
-            x = p2.x() 
+            x = p2.x()
             return QgsPointXY(x,y)
-        if(p1.x() == p2.x()):         
+        if((p1.x() == p2.x()) or (p3.y() == p4.y())):        
             y = p2.y()
             x = p3Projected.x() 
             return QgsPointXY(x,y)
