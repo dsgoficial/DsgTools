@@ -420,15 +420,105 @@ class SpatialRelationsHandler(QObject):
         """
         pass
     
-    def validateSpatialRelations(self, ruleList, feedback=None):
+    def validateSpatialRelations(self, ruleList, createSpatialIndex=True, feedback=None):
         """
         1. iterate over rule list and get all layers.
         2. build spatial index
         3. test rule
         """
-        pass
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(0)
+        spatialDict = self.buildSpatialDictFromRuleList(ruleList, feedback=multiStepFeedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
+        spatialRuleDict = self.buildSpatialRuleDict(ruleList, feedback=multiStepFeedback)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(2)
+        spatialRelationDict = self.buildSpatialRelationDict()
+
+        
+
+    def buildSpatialDictFromRuleList(self, ruleList, feedback=None):
+        """
+        returns {
+            'key formed by layer name and filter' : {
+                'spatial_index' : QgsSpatialIndex
+                'feature_id_dict' : {
+                    'feat_id' : 'feat'
+                }
+            }
+        }
+        """
+        progressStep = 100/len(ruleList) if ruleList else 0
+        spatialDict = defaultdict(dict)
+        for current, rule in enumerate(ruleList):
+            if feedback is not None and feedback.isCanceled():
+                break
+            inputKey = '_'.join(rule['input_layer'].name(), rule['input_layer_filter'])
+            candidateKey = '_'.join(rule['candidate_layer'].name(), rule['candidate_layer_filter'])
+            for key in [inputKey, candidateKey]:
+                if key not in spatialDict:
+                    spatialDict[key]['spatial_index'], spatialDict[key]['feature_id_dict'] = self.layerHandler.buildSpatialIndexAndIdDict(
+                        inputLyr=rule['input_layer'],
+                        featureRequest=rule['input_layer_filter']
+                    )
+            if feedback is not None:
+                feedback.setProgress(current * progressStep)
+        return spatialDict
     
-    def buildSpatialRelationDict(self, layerFeatureDict, spatialIndexDict, spatialRuleDict, feedback=None):
+    def buildSpatialRuleDict(self, ruleList, feedback=None):
+        """
+        Rule list has the following format:
+        ruleList = [
+            {
+                'input_layer': QgsVectorLayer,
+                'input_layer_filter' : str,
+                'predicate' : str,
+                'candidate_layer' : QgsVectorLayer,
+                'candidate_layer_filter' : str,
+                'cardinality' : str
+            }
+        ]
+
+        outputs:
+        { 'input_layer_input_layer_filter' : {
+                        'input_layer': QgsVectorLayer,
+                        'input_layer_filter' : str,
+                        'rule_list' : [
+                            {
+                                'predicate' : str,
+                                'candidate_layer' : QgsVectorLayer,
+                                'candidate_layer_filter' : str,
+                                'cardinality' : str
+                            }
+                        ]
+                    }
+        }
+        """
+        spatialRuleDict = defaultdict(
+            lambda : {
+                'input_layer' : None,
+                'input_layer_filter' : '',
+                'rule_list' : []
+            }
+        )
+        progressStep = 100/len(ruleList) if ruleList else 0
+        for current, rule in enumerate(ruleList):
+            if feedback is not None and feedback.isCanceled():
+                break
+            key = '_'.join(rule['input_layer'].name(), rule['input_layer_filter'])
+            spatialRuleDict[key]['input_layer'] = rule['input_layer']
+            spatialRuleDict[key]['input_layer_filter'] = rule['input_layer_filter']
+            spatialRuleDict[key]['rule_list'].append(
+                {k:v for k, v in rule.items() if 'input' not in k}
+            )
+            if feedback is not None:
+                feedback.setProgress(current * progressStep)
+        return spatialRuleDict
+
+    
+    def buildSpatialRelationDict(self, spatialDict, spatialRuleDict, feedback=None):
         """
         layerFeatureDict = {
             'layer_name' = {
@@ -465,10 +555,14 @@ class SpatialRelationsHandler(QObject):
             initialDictLambda = lambda : {rule['predicate']:defaultdict(dict) for rule in spatialRuleDict['ruleList']}
             spatialRelationDict[featId] = defaultdict(initialDictLambda)
             for rule in spatialRuleDict['ruleList']:
+                if feedback is not None and feedback.isCanceled():
+                    break
                 predicate = rule['predicate']
                 candidate_layer = rule['candidate_layer']
                 candidate_layer_name = candidate_layer.name()
                 for candidateFeatId in spatialIndexDict[candidate_layer_name].intersects(geom_BB):
+                    if feedback is not None and feedback.isCanceled():
+                        break
                     test_feat = layerFeatureDict[candidate_layer][candidateFeatId]
                     #this is the same as feat.geometry().<predicate method>(candidate_geom), but faster
                     if getattr(engine, predicate)(test_feat.geometry().constGet()):
