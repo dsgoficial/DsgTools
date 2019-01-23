@@ -75,6 +75,7 @@ class IdentifyDanglesAlgorithm(ValidationAlgorithm):
                 self.TOLERANCE,
                 self.tr('Search radius'),
                 minValue=0,
+                type=QgsProcessingParameterNumber.Double,
                 defaultValue=2
             )
         )
