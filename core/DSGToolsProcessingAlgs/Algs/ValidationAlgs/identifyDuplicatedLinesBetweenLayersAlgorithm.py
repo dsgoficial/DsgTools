@@ -35,7 +35,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyDuplicatedLinesOnCoverageAlgorithm(ValidationAlgorithm):
+class IdentifyDuplicatedLinesBetweenLayersAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUTLAYERS = 'INPUTLAYERS'
     SELECTED = 'SELECTED'
@@ -122,7 +122,7 @@ class IdentifyDuplicatedLinesOnCoverageAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Duplicated Lines on Coverage')
+        return self.tr('Identify Duplicated Lines Between Layers')
 
     def group(self):
         """
@@ -142,7 +142,7 @@ class IdentifyDuplicatedLinesOnCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDuplicatedLinesOnCoverageAlgorithm', string)
+        return QCoreApplication.translate('IdentifyDuplicatedLinesBetweenLayersAlgorithm', string)
 
     def createInstance(self):
-        return IdentifyDuplicatedLinesOnCoverageAlgorithm()
+        return IdentifyDuplicatedLinesBetweenLayersAlgorithm()

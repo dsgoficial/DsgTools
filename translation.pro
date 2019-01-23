@@ -33,7 +33,7 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/validationAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py \
@@ -43,12 +43,12 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py \
