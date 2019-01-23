@@ -3112,12 +3112,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py" line="296"/>
         <source>Create Network Nodes</source>
-        <translation>Criar Nós de Rede</translation>
+        <translation type="obsolete">Criar Nós de Rede</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py" line="303"/>
         <source>Validation Tools (Network Processes)</source>
         <translation>Ferramentas de Validação (Processos de Rede)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py" line="296"/>
+        <source>Create Drainage Network Nodes</source>
+        <translation>Criar Nós de Rede de Drenagem</translation>
     </message>
 </context>
 <context>
@@ -3717,7 +3722,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
         <source>Area in mmÂ²</source>
-        <translation type="unfinished"></translation>
+        <translation>Área em mm²</translation>
     </message>
 </context>
 <context>
@@ -7700,7 +7705,9 @@ Ativa</translation>
         <source>DSGTools: Free Hand Acquisition
 Acquires polygon or linestring features with mouse movement.
 If CTRL is held, overlapped feature is reshaped.</source>
-        <translation type="unfinished"></translation>
+        <translation>DSGTools: Aquisição à Mão Livre
+Adquire feições do tipo polígono ou linha com o movimento do mouse.
+Se a tecla Control for pressionada, feições que cruzam a geometria desenhada são remodeladas.</translation>
     </message>
 </context>
 <context>
@@ -12757,22 +12764,22 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="168"/>
         <source>Raster Info Tool&apos;s Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Parametros da Ferramenta de Informação de Raster</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="174"/>
         <source>Value setter tool precision (decimal points)</source>
-        <translation type="unfinished"></translation>
+        <translation>Precisão da ferramenta Definir Valor de Pontos (quantidade de casas decimais)</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="194"/>
         <source>Right Angle Tool Parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Parâmetros da Ferramenta de Aquisição com Ângulos Retos</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="200"/>
         <source>Minimum Segment Distance (meters)</source>
-        <translation type="unfinished"></translation>
+        <translation>Distância mínima para segmento (metros)</translation>
     </message>
 </context>
 <context>
@@ -13463,17 +13470,17 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="126"/>
         <source>Observation:</source>
-        <translation type="unfinished"></translation>
+        <translation>Observação:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="126"/>
         <source>Not possible to digitalize, segment smaller than minimun distance.</source>
-        <translation type="unfinished"></translation>
+        <translation>Não foi possível digitalizar, segmento menor que a distância mínima.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="92"/>
         <source>The right angle tool should be used only for rectangular shapes.</source>
-        <translation type="unfinished"></translation>
+        <translation>A ferramenta de aquisição com ângulos retos deve ser usada somente para adquirir formas retangulares.</translation>
     </message>
 </context>
 <context>
