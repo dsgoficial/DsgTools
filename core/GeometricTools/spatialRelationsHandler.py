@@ -426,7 +426,7 @@ class SpatialRelationsHandler(QObject):
         2. build spatial index
         3. test rule
         """
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback) if feedback is not None else None
+        multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback) if feedback is not None else None
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(0)
         spatialDict = self.buildSpatialDictFromRuleList(ruleList, feedback=multiStepFeedback)
@@ -435,7 +435,15 @@ class SpatialRelationsHandler(QObject):
         spatialRuleDict = self.buildSpatialRuleDict(ruleList, feedback=multiStepFeedback)
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(2)
-        spatialRelationDict = self.buildSpatialRelationDict()
+        self.buildSpatialRelationDictOnSpatialRuleDict(
+            spatialDict=spatialDict,
+            spatialRuleDict=spatialRuleDict,
+            feedback=multiStepFeedback
+        )
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(3)
+        flagList = self.identifyInvalidRelations(spatialRuleDict):
+        return flagList
 
         
 
@@ -500,7 +508,8 @@ class SpatialRelationsHandler(QObject):
             lambda : {
                 'input_layer' : None,
                 'input_layer_filter' : '',
-                'rule_list' : []
+                'rule_list' : [],
+                'feat_relation_list' : []
             }
         )
         progressStep = 100/len(ruleList) if ruleList else 0
@@ -518,7 +527,7 @@ class SpatialRelationsHandler(QObject):
         return spatialRuleDict
 
     
-    def buildSpatialRelationDict(self, spatialDict, spatialRuleDict, feedback=None):
+    def buildSpatialRelationDictOnSpatialRuleDict(self, spatialDict, spatialRuleDict, feedback=None):
         """
         layerFeatureDict = {
             'layer_name' = {
@@ -528,49 +537,94 @@ class SpatialRelationsHandler(QObject):
         spatialIndexDict = {
             'layer_name' : QgsSpatialIndex
         }
-        spatialRuleDict = {
-            'input_layer' : QgsVectorLayer,
-            'ruleList' : [
-                {
-                    'predicate' : spatial predicate,
-                    'candidate_layer' : QgsVectorLayer,
-                }
-            ]
+        spatialRuleDict = { 'input_layer_input_layer_filter' : {
+                                                                    'input_layer': QgsVectorLayer,
+                                                                    'input_layer_filter' : str,
+                                                                    'rule_list' : [
+                                                                        {
+                                                                            'predicate' : str,
+                                                                            'candidate_layer' : QgsVectorLayer,
+                                                                            'candidate_layer_filter' : str,
+                                                                            'cardinality' : str
+                                                                        }
+                                                                    ]
+                                                                }
         }
 
         """
-        layer_A = spatialRuleDict['input_layer']
-        layer_name = layer_A.name()
-        spatialRelationDict = {}
-        if layer_name not in layerFeatureDict:
-            return {}
-        for featId, feat in layerFeatureDict[layer_name].items():
+        totalSteps = self.countSteps(spatialRuleDict, spatialDict)
+        progressStep = 100/totalSteps if totalSteps else 0
+        counter = 0
+        for inputKey, inputDict in spatialRuleDict.items():
             if feedback is not None and feedback.isCanceled():
                 break
-            geom = feat.geometry()
-            geom_BB = geom.boundingBox()
-            #geometry engine is the fastest way of comparing geometries in QGIS 3.x series
-            engine = QgsGeometry.createGeometryEngine(geom.constGet())
-            engine.prepareGeometry()
-            initialDictLambda = lambda : {rule['predicate']:defaultdict(dict) for rule in spatialRuleDict['ruleList']}
-            spatialRelationDict[featId] = defaultdict(initialDictLambda)
-            for rule in spatialRuleDict['ruleList']:
+            keyRuleList = ['_'.join(i['candidate_layer'], i['candidate_layer_filter'] for i in inputDict['rule_list']]
+            for featId, feat in spatialDict[inputKey]['feature_id_dict']:
                 if feedback is not None and feedback.isCanceled():
                     break
-                predicate = rule['predicate']
-                candidate_layer = rule['candidate_layer']
-                candidate_layer_name = candidate_layer.name()
-                for candidateFeatId in spatialIndexDict[candidate_layer_name].intersects(geom_BB):
+                for idx, rule in enumerate(inputDict['rule_list']):
                     if feedback is not None and feedback.isCanceled():
                         break
-                    test_feat = layerFeatureDict[candidate_layer][candidateFeatId]
-                    #this is the same as feat.geometry().<predicate method>(candidate_geom), but faster
-                    if getattr(engine, predicate)(test_feat.geometry().constGet()):
-                        if candidate_layer_name not in spatialRelationDict[featId][predicate]:
-                            spatialRelationDict[featId][predicate][candidate_layer_name] = set()
-                        spatialRelationDict[featId][predicate][candidate_layer_name].add(candidateFeatId)
-        return spatialRelationDict
-                
-                
+                    rule['feat_relation_list'].append( 
+                        {
+                            featId: self.relateFeatureAccordingToPredicate(
+                                feat=feat,
+                                rule=rule,
+                                key=keyRuleList[idx],
+                                predicate=rule['predicate'],
+                                spatialDict=spatialDict
+                            )
+                        }
+                    )
+                    counter+=1
+                    if feedback is not None:
+                        feedback.setProgress(counter * progressStep)
+    
+    def countSteps(self, spatialRuleDict, spatialDict):
+        """
+        Counts the number of steps of execution.
+        """
+        steps = len(spatialRuleDict)
+        for k,v in spatialRuleDict.items():
+            steps += len(v['rule_list'])
+            steps += len(spatialDict[k]['feature_id_dict'])
+        return steps
+    
+    def prepareEngine(self, feat):
+        """
+        Prepairs the geometryEngine for spatial comparisons.
 
+        returns geom (QgsGeometry), geom_BB (QgsRectangle), engine (QgsGeometryEngine)
+        """
+        geom = feat.geometry()
+        geom_BB = geom.boundingBox()
+        #geometry engine is the fastest way of comparing geometries in QGIS 3.x series
+        engine = QgsGeometry.createGeometryEngine(geom.constGet())
+        engine.prepareGeometry()
+        return geom, geom_BB, engine
+                
+    def relateFeatureAccordingToPredicate(self, feat, rule, key, predicate, spatialDict):
+        geom, geom_BB, engine = self.prepareEngine(feat)
+        relationList = []
+        predicate = rule['predicate']
+        candidateSpatialIdx = spatialDict[key]['spatial_index']
+        candidateFeatureDict = spatialDict[keyRuleList[idx]]['feature_id_dict']
+        for fid in candidateSpatialIdx.intersects(geom_BB):
+            test_feat = candidateFeatureDict[fid]
+            if getattr(engine, predicate)(test_feat.geometry().constGet()):
+                relationList.append(test_feat)
+        return relationList
+    
+    def parseCardinalityAndGetLambdaToIdentifyProblems(self, predicate, cardinality, necessity, isSameLayer=False):
+        """
+        Parses cardinality and returns a lambda to verify if the list of features 
+        that relates to the considered feature violates rule.
+        """
+        min_card, max_card = cardinality.split('..')
+        if max_card != '*'
+            lambdaCompair = lambda x : len(x) >= int(min_card) and len(x) <= 1
+        else:
+            lambdaCompair = lambda x : len(x) >= int(min_card)
+        return lambdaCompair
+    
 
