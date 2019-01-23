@@ -48,12 +48,12 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicated
     IdentifyDuplicatedFeaturesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedGeometriesAlgorithm import \
     IdentifyDuplicatedGeometriesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedLinesOnCoverageAlgorithm import \
-    IdentifyDuplicatedLinesOnCoverageAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPointsOnCoverageAlgorithm import \
-    IdentifyDuplicatedPointsOnCoverageAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPolygonsOnCoverageAlgorithm import \
-    IdentifyDuplicatedPolygonsOnCoverageAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedLinesBetweenLayersAlgorithm import \
+    IdentifyDuplicatedLinesBetweenLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPointsBetweenLayersAlgorithm import \
+    IdentifyDuplicatedPointsBetweenLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedPolygonsBetweenLayersAlgorithm import \
+    IdentifyDuplicatedPolygonsBetweenLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAlgorithm import \
     IdentifyGapsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyGapsAndOverlapsInCoverageAlgorithm import \
@@ -156,9 +156,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 AdjustNetworkConnectivityAlgorithm(),
                 RemoveDuplicatedFeaturesAlgorithm(),
                 HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(),
-                IdentifyDuplicatedPolygonsOnCoverageAlgorithm(),
-                IdentifyDuplicatedLinesOnCoverageAlgorithm(),
-                IdentifyDuplicatedPointsOnCoverageAlgorithm(),
+                IdentifyDuplicatedPolygonsBetweenLayersAlgorithm(),
+                IdentifyDuplicatedLinesBetweenLayersAlgorithm(),
+                IdentifyDuplicatedPointsBetweenLayersAlgorithm(),
                 RunRemoteFMEAlgorithm(),
                 CreateFrameAlgorithm(),
                 FileInventoryAlgorithm(),

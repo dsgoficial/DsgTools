@@ -7695,6 +7695,13 @@ Ativa</translation>
         <source>DSGTools: Free Hand Acquisition</source>
         <translation>DSGTools: Ferramenta de Aquisição à Mão Livre</translation>
     </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/FreeHandTool/freeHandMain.py" line="41"/>
+        <source>DSGTools: Free Hand Acquisition
+Acquires polygon or linestring features with mouse movement.
+If CTRL is held, overlapped feature is reshaped.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GenericCompactPropertyManagerWidget</name>
@@ -9120,102 +9127,117 @@ Camada</translation>
     </message>
 </context>
 <context>
-    <name>IdentifyDuplicatedLinesOnCoverageAlgorithm</name>
+    <name>IdentifyDuplicatedLinesBetweenLayersAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="47"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="47"/>
         <source>Coverage Linestring Layers</source>
         <translation>Camadas do Tipo Linha da Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="55"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="62"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="62"/>
         <source>{0} Flags</source>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="105"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="105"/>
         <source>Features from coverage with same geometry: {0}.</source>
         <translation>Feições da cobertura com a mesma gemetria: {0}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="125"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/IdentifyDuplicatedLinesBetweenLayersAlgorithm.py" line="125"/>
         <source>Identify Duplicated Lines on Coverage</source>
-        <translation>Identificar Linhas Duplicadas na Cobertura Terrestre</translation>
+        <translation type="obsolete">Identificar Linhas Duplicadas na Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesOnCoverageAlgorithm.py" line="132"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="132"/>
         <source>Validation Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="125"/>
+        <source>Identify Duplicated Lines Between Layers</source>
+        <translation>Identificar Linhas Duplicadas Intercamadas</translation>
+    </message>
 </context>
 <context>
-    <name>IdentifyDuplicatedPointsOnCoverageAlgorithm</name>
+    <name>IdentifyDuplicatedPointsBetweenLayersAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="47"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="47"/>
         <source>Point Layers</source>
         <translation>Camadas do Tipo Ponto</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="55"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="62"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="62"/>
         <source>{0} Flags</source>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="105"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="105"/>
         <source>Features from coverage with same geometry: {0}.</source>
         <translation>Feições da cobertura com a mesma gemetria: {0}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="125"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/IdentifyDuplicatedPointsBetweenLayersAlgorithm.py" line="125"/>
         <source>Identify Duplicated Points on Coverage</source>
-        <translation>Identificar Pontos Duplicados na Cobertura Terrestre</translation>
+        <translation type="obsolete">Identificar Pontos Duplicados na Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsOnCoverageAlgorithm.py" line="132"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="132"/>
         <source>Validation Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="125"/>
+        <source>Identify Duplicated Points Between Layers</source>
+        <translation>Identificar Pontos Duplicados Intercamadas</translation>
+    </message>
 </context>
 <context>
-    <name>IdentifyDuplicatedPolygonsOnCoverageAlgorithm</name>
+    <name>IdentifyDuplicatedPolygonsBetweenLayersAlgorithm</name>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="47"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="47"/>
         <source>Coverage Polygon Layers</source>
         <translation>Camadas do Tipo Polígono da Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="55"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="55"/>
         <source>Process only selected features</source>
         <translation>Processar apenas feições selecionadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="62"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="62"/>
         <source>{0} Flags</source>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="105"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="105"/>
         <source>Features from coverage with same geometry: {0}.</source>
         <translation>Feições da cobertura com a mesma gemetria: {0}.</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="125"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/IdentifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="125"/>
         <source>Identify Duplicated Polygons on Coverage</source>
-        <translation>Identificar Polígonos Duplicados na Cobertura Terrestre</translation>
+        <translation type="obsolete">Identificar Polígonos Duplicados na Cobertura Terrestre</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsOnCoverageAlgorithm.py" line="132"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="132"/>
         <source>Validation Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="125"/>
+        <source>Identify Duplicated Polygons Between Layers</source>
+        <translation>Identificar Polígonos Duplicados Intercamadas</translation>
     </message>
 </context>
 <context>
@@ -12668,54 +12690,54 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <translation>Opções do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="20"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="30"/>
         <source>Free Hand&apos;s Parameters</source>
         <translation>Parâmetros da Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="36"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="46"/>
         <source>Smooth Iterations</source>
         <translation>Iterações de suavização</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="50"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="60"/>
         <source>Algorithm Iterations</source>
         <translation>Iterações de algoritmo</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="57"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="67"/>
         <source>Tolerance</source>
         <translation>Tolerância</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="71"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="81"/>
         <source>Smooth offset</source>
         <translation>Offset de suavização</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="92"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="102"/>
         <source>Number of points removed on undo action</source>
         <translation>Nr. de pontos removidos ao desfazer ação</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="102"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="112"/>
         <source>Generic Selector&apos;s Parameters</source>
         <translation>Parâmetro da Ferramenta Seletor Genérico</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="110"/>
         <source>New black list entry</source>
-        <translation>Camada a ser ignorada</translation>
+        <translation type="obsolete">Camada a ser ignorada</translation>
     </message>
     <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="151"/>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="157"/>
         <source>moldura</source>
         <translation></translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="159"/>
         <source>Layer Name black list</source>
-        <translation>Nome da Camada a ser ignorada (blacklist)</translation>
+        <translation type="obsolete">Nome da Camada a ser ignorada (blacklist)</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="52"/>
@@ -12731,6 +12753,26 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
         <location filename="../gui/AboutAndFurtherInfo/Options/options.py" line="52"/>
         <source>Value already in black list!</source>
         <translation>Valor já existente na blacklist!</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="168"/>
+        <source>Raster Info Tool&apos;s Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="174"/>
+        <source>Value setter tool precision (decimal points)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="194"/>
+        <source>Right Angle Tool Parameters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="200"/>
+        <source>Minimum Segment Distance (meters)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -13411,12 +13453,27 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="87"/>
         <source>Tool is designed for composed features by straight angles.</source>
-        <translation>Ferramenta desenvolvida para trabalhar com feições com ângulos retos.</translation>
+        <translation type="obsolete">Ferramenta desenvolvida para trabalhar com feições com ângulos retos.</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="88"/>
         <source>Warning!</source>
-        <translation>Atenção!</translation>
+        <translation type="obsolete">Atenção!</translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="126"/>
+        <source>Observation:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="126"/>
+        <source>Not possible to digitalize, segment smaller than minimun distance.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/polygon.py" line="92"/>
+        <source>The right angle tool should be used only for rectangular shapes.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -16787,42 +16844,42 @@ Camada</translation>
 <context>
     <name>SpatialRelationsHandler</name>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="83"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="84"/>
         <source>Building contour structures...</source>
         <translation>Construindo estruturas de curvas de nível...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="96"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="97"/>
         <source>Validating contour structures. Check 1/4...</source>
         <translation>Validando estruturas de curvas de nível. Verificado 1/4...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="112"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="113"/>
         <source>Building drainage spatial index...</source>
         <translation>Contruindo índice espacial da drenagem...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="124"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="125"/>
         <source>Relating contours with drainages...</source>
         <translation>Relacionando curvas de nível com a drenagem...</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="248"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="249"/>
         <source>Contour lines id=({ids}) touch each other and have different height values!</source>
         <translation>Curvas de nível id=({ids}) se tocam e possuem diferentes valores de cota!</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="252"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="253"/>
         <source>Contour lines id=({ids}) touch each other. Contour lines must touch itself or only one other.</source>
         <translation>Curvas de nível id=({ids}) se tocam. Curvas de nível podem apenas se tocar ou tocar outra em um único ponto.</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="313"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="314"/>
         <source>Contour id={c_id} intersects drainage id={d_id} in more than one point</source>
         <translation>Curva de nível id={c_id} intersecta a drenagem id={d_id} em mais de um ponto</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="371"/>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="372"/>
         <source>Difference between contour with values {id1}                         and {id2} do not match equidistance {equidistance}.                        Probably one contour is                         missing or one of the contours have wrong value.
 </source>
         <translation>Diferença de cotas das curvas {id1} e {id2} são diferentes da equidistância {equidistance}. É possível que estejam faltando curvas de nível ou uma delas possui valor de cota incorreto.

@@ -35,7 +35,7 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
 from .validationAlgorithm import ValidationAlgorithm
 
 
-class IdentifyDuplicatedPolygonsOnCoverageAlgorithm(ValidationAlgorithm):
+class IdentifyDuplicatedPointsBetweenLayersAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUTLAYERS = 'INPUTLAYERS'
     SELECTED = 'SELECTED'
@@ -47,8 +47,8 @@ class IdentifyDuplicatedPolygonsOnCoverageAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.INPUTLAYERS,
-                self.tr('Coverage Polygon Layers'),
-                QgsProcessing.TypeVectorPolygon
+                self.tr('Point Layers'),
+                QgsProcessing.TypeVectorPoint
             )
         )
 
@@ -75,7 +75,7 @@ class IdentifyDuplicatedPolygonsOnCoverageAlgorithm(ValidationAlgorithm):
         if inputLyrList == []:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Polygon, context)
+        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.Point, context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
         geomDict = dict()
@@ -115,14 +115,14 @@ class IdentifyDuplicatedPolygonsOnCoverageAlgorithm(ValidationAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'identifyduplicatedpolygonsoncoverage'
+        return 'identifyduplicatedpointsoncoverage'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Identify Duplicated Polygons on Coverage')
+        return self.tr('Identify Duplicated Points Between Layers')
 
     def group(self):
         """
@@ -142,7 +142,7 @@ class IdentifyDuplicatedPolygonsOnCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('IdentifyDuplicatedPolygonsOnCoverageAlgorithm', string)
+        return QCoreApplication.translate('IdentifyDuplicatedPointsBetweenLayersAlgorithm', string)
 
     def createInstance(self):
-        return IdentifyDuplicatedPolygonsOnCoverageAlgorithm()
+        return IdentifyDuplicatedPointsBetweenLayersAlgorithm()
