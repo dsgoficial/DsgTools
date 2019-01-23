@@ -304,7 +304,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Verify Network Directioning')
+        return self.tr('Verify Drainage Network Directioning')
 
     def group(self):
         """
