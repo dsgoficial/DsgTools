@@ -8742,72 +8742,72 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>Raio de busca</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="81"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="82"/>
         <source>Linestring Filter Layers</source>
         <translation>Camada de filtro do tipo linha</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="89"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="90"/>
         <source>Polygon Filter Layers</source>
         <translation>Camadas de filtro do tipo polígono</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="97"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="98"/>
         <source>Ignore dangle on unsegmented lines</source>
         <translation>Ignorar pontas soltas em linhas não segmentadas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="103"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="104"/>
         <source>Ignore search radius on inner layer search</source>
         <translation>Ignorar raio de busca na própria camada</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="109"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="110"/>
         <source>{0} Flags</source>
         <translation>{0} Flags</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="138"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="139"/>
         <source>Building search structure...</source>
         <translation>Construindo estrutura de busca...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="148"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="149"/>
         <source>Looking for dangles...</source>
         <translation>Procurando por poltas sontas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="153"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="154"/>
         <source>Filtering dangles candidates...</source>
         <translation>Filtrando candidatos a pontas soltas...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="166"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="167"/>
         <source>Filtering dangles candidates with filter...</source>
         <translation>Filtrando candidatos a pontas soltas com as camadas de filtros...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="179"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="180"/>
         <source>Filtering inner dangles...</source>
         <translation>Filtrando pontas soltas da própria camada...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="191"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="192"/>
         <source>Raising flags...</source>
         <translation>Preparando flags...</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="198"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="199"/>
         <source>Dangle on {0}</source>
         <translation>Ponta solta em {0}</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="347"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="348"/>
         <source>Identify Dangles</source>
         <translation>Identificar Pontas Soltas</translation>
     </message>
     <message>
-        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="354"/>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="355"/>
         <source>Validation Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
@@ -18596,12 +18596,17 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="307"/>
         <source>Verify Network Directioning</source>
-        <translation>Verificar Direcionamento de Redes</translation>
+        <translation type="obsolete">Verificar Direcionamento de Redes</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="314"/>
         <source>Validation Tools (Network Processes)</source>
         <translation>Ferramentas de Validação (Processos de Rede)</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="307"/>
+        <source>Verify Drainage Network Directioning</source>
+        <translation>Verificar Direcionamento de Redes de Drenagem</translation>
     </message>
 </context>
 <context>
