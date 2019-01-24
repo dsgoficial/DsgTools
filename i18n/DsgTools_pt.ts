@@ -17720,6 +17720,11 @@ Camada</translation>
         <source>Other Algorithms</source>
         <translation>Outros Algoritmos</translation>
     </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/OtherAlgs/updateOriginalLayerAlgorithm.py" line="69"/>
+        <source>Control Layer</source>
+        <translation>Camada de Controle</translation>
+    </message>
 </context>
 <context>
     <name>UtmGrid</name>
