@@ -69,7 +69,7 @@ class UpdateOriginalLayerAlgorithm(ValidationAlgorithm):
         self.addParameter(
             QgsProcessingParameterVectorLayer(
                 self.PROCESSOUTPUTLAYER,
-                self.tr('Update Layer'),
+                self.tr('Control Layer'),
                 [QgsProcessing.TypeVectorAnyGeometry]
             )
         )
