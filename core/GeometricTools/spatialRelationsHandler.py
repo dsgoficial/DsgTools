@@ -442,10 +442,8 @@ class SpatialRelationsHandler(QObject):
         )
         if multiStepFeedback is not None:
             multiStepFeedback.setCurrentStep(3)
-        flagList = self.identifyInvalidRelations(spatialRuleDict):
+        flagList = self.identifyInvalidRelations(spatialDict, spatialRuleDict, feedback=multiStepFeedback):
         return flagList
-
-        
 
     def buildSpatialDictFromRuleList(self, ruleList, feedback=None):
         """
@@ -477,6 +475,7 @@ class SpatialRelationsHandler(QObject):
     
     def buildSpatialRuleDict(self, ruleList, feedback=None):
         """
+        ruleList comes from the ui
         Rule list has the following format:
         ruleList = [
             {
@@ -485,7 +484,9 @@ class SpatialRelationsHandler(QObject):
                 'predicate' : str,
                 'candidate_layer' : QgsVectorLayer,
                 'candidate_layer_filter' : str,
-                'cardinality' : str
+                'cardinality' : str,
+                'feat_relation_list' : list of pairs of (featId, relatedFeatures),
+                'flag_text' : str
             }
         ]
 
@@ -498,7 +499,9 @@ class SpatialRelationsHandler(QObject):
                                 'predicate' : str,
                                 'candidate_layer' : QgsVectorLayer,
                                 'candidate_layer_filter' : str,
-                                'cardinality' : str
+                                'cardinality' : str,
+                                'flag_text' : str,
+                                'feat_relation_list' : list of pairs of (featId, relatedFeatures)
                             }
                         ]
                     }
@@ -508,8 +511,7 @@ class SpatialRelationsHandler(QObject):
             lambda : {
                 'input_layer' : None,
                 'input_layer_filter' : '',
-                'rule_list' : [],
-                'feat_relation_list' : []
+                'rule_list' : []
             }
         )
         progressStep = 100/len(ruleList) if ruleList else 0
@@ -545,7 +547,8 @@ class SpatialRelationsHandler(QObject):
                                                                             'predicate' : str,
                                                                             'candidate_layer' : QgsVectorLayer,
                                                                             'candidate_layer_filter' : str,
-                                                                            'cardinality' : str
+                                                                            'cardinality' : str,
+                                                                            'flag_text' : str
                                                                         }
                                                                     ]
                                                                 }
@@ -566,15 +569,15 @@ class SpatialRelationsHandler(QObject):
                     if feedback is not None and feedback.isCanceled():
                         break
                     rule['feat_relation_list'].append( 
-                        {
-                            featId: self.relateFeatureAccordingToPredicate(
+                        (
+                            featId, self.relateFeatureAccordingToPredicate(
                                 feat=feat,
                                 rule=rule,
                                 key=keyRuleList[idx],
                                 predicate=rule['predicate'],
                                 spatialDict=spatialDict
                             )
-                        }
+                        )
                     )
                     counter+=1
                     if feedback is not None:
@@ -605,26 +608,94 @@ class SpatialRelationsHandler(QObject):
                 
     def relateFeatureAccordingToPredicate(self, feat, rule, key, predicate, spatialDict):
         geom, geom_BB, engine = self.prepareEngine(feat)
-        relationList = []
+        relationSet = set()
         predicate = rule['predicate']
         candidateSpatialIdx = spatialDict[key]['spatial_index']
-        candidateFeatureDict = spatialDict[keyRuleList[idx]]['feature_id_dict']
+        candidateFeatureDict = spatialDict[key]['feature_id_dict']
         for fid in candidateSpatialIdx.intersects(geom_BB):
             test_feat = candidateFeatureDict[fid]
             if getattr(engine, predicate)(test_feat.geometry().constGet()):
-                relationList.append(test_feat)
-        return relationList
+                relationSet.add(test_feat)
+        return relationSet
     
-    def parseCardinalityAndGetLambdaToIdentifyProblems(self, predicate, cardinality, necessity, isSameLayer=False):
+    def parseCardinalityAndGetLambdaToIdentifyProblems(self, cardinality, necessity, isSameLayer=False):
         """
         Parses cardinality and returns a lambda to verify if the list of features 
         that relates to the considered feature violates rule.
         """
+        if cardinality is None:
+            lambdaCompair = lambda x: len(x) != 0
+            return lambdaCompair
         min_card, max_card = cardinality.split('..')
         if max_card != '*'
-            lambdaCompair = lambda x : len(x) >= int(min_card) and len(x) <= 1
+            lambdaCompair = lambda x : len(x) < int(min_card)
+        elif min_card == max_card:
+            lambdaCompair = lambda x: len(x) != int(min_card)
         else:
-            lambdaCompair = lambda x : len(x) >= int(min_card)
+            lambdaCompair = lambda x : len(x) < int(min_card) or len(x) > int(max_card)
         return lambdaCompair
+    
+    def identifyInvalidRelations(self, spatialDict, spatialRuleDict, feedback=None):
+        """
+        Identifies invalid spatial relations and returns a list with flags to be raised.
+        """
+        totalSteps = self.countSteps(spatialRuleDict, spatialDict)
+        progressStep = 100/totalSteps if totalSteps else 0
+        counter = 0
+        invalidFlagList = []
+        for inputKey, inputDict in spatialRuleDict:
+            if feedback is not None and feedback.isCanceled():
+                        break
+            inputLyrName = inputDict['input_layer']
+            for rule in inputDict['rule_list']:
+                if feedback is not None and feedback.isCanceled():
+                        break
+                candidateLyrName = i['candidate_layer']
+                candidateKey = '_'.join(candidateLyrName, i['candidate_layer_filter']
+                sameLayer = True if inputKey == candidateKey else False
+                lambdaCompair = self.parseCardinalityAndGetLambdaToIdentifyProblems(
+                    cardinality=rule['cardinality'],
+                    necessity=rule['necessity'],
+                    isSameLayer=sameLayer
+                )
+                for featId, relatedFeatures in rule['feat_relation_list']:
+                    if feedback is not None and feedback.isCanceled():
+                        break
+                    inputFeature=spatialDict[inputKey][featId]
+                    if lambdaCompair(relatedFeatures):
+                        if inputLyrName == candidateLyrName and inputFeature in relatedFeatures:
+                            relatedFeatures.pop(inputFeature)
+                        invalidFlagList += self.buildSpatialFlags(
+                            inputFeature=inputFeature,
+                            relatedFeatures=relatedFeatures,
+                            flagText=rule['flag_text']
+                        )
+                    if feedback is not None:
+                        feedback.setProgress(counter * progressStep)
+                        counter += 1
+        return invalidFlagList
+    
+    def buildSpatialFlags(self, inputLyrName, inputFeature, candidateLyrName, relatedFeatures, flagText):
+        input_id = inputFeature.id()
+        inputGeom = inputFeature.geometry()
+        spatialFlags = []
+        for feat in relatedFeatures:
+            flagGeom = inputGeom.intersection(feat.geometry().constGet())
+            flagText = self.tr('Feature from {input} with id {input_id} violates the following predicate with feature from {candidate} with id {candidate_id}: {predicate_text}').format(
+                input=inputLyrName,
+                input_id=input_id,
+                candidate=candidateLyrName,
+                candidate_id=feat.id(),
+                predicate_text=flagText
+            )
+            spatialFlags.append(
+                {
+                    'flagGeom' : flagGeom,
+                    'flagText' : flagText
+                }
+            )
+        return spatialFlags
+
+
     
 
