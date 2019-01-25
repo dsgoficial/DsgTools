@@ -128,7 +128,8 @@ class FlipLine(QgsMapTool):
         :param failedLines: list of lines that were selected and failed to be flipped.
         :param success: indicates whether the log is for a failed execution or 
         """
-        nrFlipped = nrFailed = 0  
+        nrFlipped = nrFailed = 0 
+        logMsg = '' 
         if not flippedLines and not failedLines:
             return self.tr('There are no (valid) lines selected!')
         if flippedLines:
