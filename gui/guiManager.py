@@ -163,10 +163,10 @@ class GuiManager(QObject):
         self.managerList.append(self.databaseGuiManager)
         self.layerToolsGuiManager = LayerToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.layerToolsGuiManager)
-        self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
-        self.managerList.append(self.bdgexGuiManager)
         self.productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.productionToolsGuiManager)
+        self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.managerList.append(self.bdgexGuiManager)
         self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.aboutAndFurtherGuiManager)
     
