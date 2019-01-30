@@ -68,8 +68,15 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
         self.dbsCustomSelector.selectionChanged.connect(self.populateOtherInterfaces)
         self.previousTab = 0
-        self.dbDict = {'2.1.3':[], '2.1.3 Pro':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[]}
-        self.correspondenceDict = {self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3', self.tr('Load Database Model EDGV Version 2.1.3 Pro'):'2.1.3 Pro',self.tr('Load Database Model EDGV Version 3.0'):'3.0', self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Other Database Models'):'Non_EDGV'}
+        self.dbDict = {'2.1.3':[], '2.1.3 Pro':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[], '3.0 Pro':[]}
+        self.correspondenceDict = {
+            self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3',
+            self.tr('Load Database Model EDGV Version 2.1.3 Pro'):'2.1.3 Pro',
+            self.tr('Load Database Model EDGV Version 3.0'):'3.0',
+            self.tr('Load Database Model EDGV Version 3.0 Pro'):'3.0 Pro',
+            self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',
+            self.tr('Load Other Database Models'):'Non_EDGV'
+        }
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -162,6 +169,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         selectedDbNameList = self.getSelectedDbList()
         if len(selectedDbNameList) == 0:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Please select one or more databases to drop!'))
+            return
         if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to drop databases: ')+', '.join(selectedDbNameList), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
