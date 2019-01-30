@@ -229,34 +229,34 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         dbsDict = self.instantiateAbstractDbs()
         exceptionDict = dict()
         versionList = []
-        
-        for dbName in list(dbsDict.keys()):
-            try:
-                version = dbsDict[dbName].getDatabaseVersion()
-                if version not in versionList:
-                    versionList.append(version)
-            except Exception as e:
-                exceptionDict[dbName] = ':'.join(e.args)
-        if len(list(exceptionDict.keys()))>0:
-            self.logInternalError(exceptionDict)
-        if len(versionList) > 1:
-            QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
-            return
-        styleDir = self.getStyleDir(versionList)
-        styleList = self.getStyleList(styleDir)
-        dlg = SelectStyles(styleList)
-        dlg.exec_()
-        selectedStyles = dlg.selectedStyles
-        if len(selectedStyles) == 0:
-            return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
-        QApplication.restoreOverrideCursor()
-        header = self.tr('Import operation complete. \n')
-        self.outputMessage(header, successList, exceptionDict)
-        self.populateStylesInterface()
-        closeExceptionDict = self.closeAbstractDbs(dbsDict)
-        self.logInternalError(closeExceptionDict)            
+        if dbsDict != {}:
+            for dbName in list(dbsDict.keys()):
+                try:
+                    version = dbsDict[dbName].getDatabaseVersion()
+                    if version not in versionList:
+                        versionList.append(version)
+                except Exception as e:
+                    exceptionDict[dbName] = ':'.join(e.args)
+            if len(list(exceptionDict.keys()))>0:
+                self.logInternalError(exceptionDict)
+            if len(versionList) > 1:
+                QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
+                return
+            styleDir = self.getStyleDir(versionList)
+            styleList = self.getStyleList(styleDir)
+            dlg = SelectStyles(styleList)
+            dlg.exec_()
+            selectedStyles = dlg.selectedStyles
+            if len(selectedStyles) == 0:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
+            QApplication.restoreOverrideCursor()
+            header = self.tr('Import operation complete. \n')
+            self.outputMessage(header, successList, exceptionDict)
+            self.populateStylesInterface()
+            closeExceptionDict = self.closeAbstractDbs(dbsDict)
+            self.logInternalError(closeExceptionDict)            
             
     
     def getStyleList(self, styleDir):
@@ -294,7 +294,9 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         return successList, exceptionDict
     
     def getStyleDir(self, versionList):
-        return os.path.join(os.path.dirname(__file__),'..', '..', 'core', 'Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
+        if versionList != []:
+            return os.path.join(os.path.dirname(__file__),'..', '..', 'core', 'Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
+        return ""
     
     def getStylesFromDbs(self, perspective = 'style'):
         '''
@@ -347,16 +349,18 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         styleDict = self.getStylesFromDbs()
         styleList = list(styleDict.keys())
         dlg = SelectStyles(styleList)
-        dlg.exec_()
+        execStatus = dlg.exec_()
         selectedStyles = dlg.selectedStyles
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        successList, exceptionDict = self.batchDeleteStyles(dbsDict, styleDict)
-        QApplication.restoreOverrideCursor()
-        header = self.tr('Delete operation complete. \n')
-        self.outputMessage(header, successList, exceptionDict)
-        self.populateStylesInterface()
-        closeExceptionDict = self.closeAbstractDbs(dbsDict)
-        self.logInternalError(closeExceptionDict)       
+        if execStatus != 0 and selectedStyles != []:
+            selectedStyleDict = { k : styleDict[k] for k in selectedStyles }
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            successList, exceptionDict = self.batchDeleteStyles(dbsDict, selectedStyleDict)
+            QApplication.restoreOverrideCursor()
+            header = self.tr('Delete operation complete. \n')
+            self.outputMessage(header, successList, exceptionDict)
+            self.populateStylesInterface()
+            closeExceptionDict = self.closeAbstractDbs(dbsDict)
+            self.logInternalError(closeExceptionDict)       
     
     def batchDeleteStyles(self, dbsDict, styleDict):
         exceptionDict = dict()
