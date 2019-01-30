@@ -266,6 +266,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_importPushButton_clicked(self):
         fd = QFileDialog()
         filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
+        filename = filename[0] if isinstance(filename, tuple) else filename
         if filename == '':
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
             return
