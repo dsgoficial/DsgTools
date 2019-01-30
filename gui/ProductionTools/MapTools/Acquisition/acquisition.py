@@ -32,17 +32,6 @@ class Acquisition(QObject):
             )
         self.setPolygonAction(action)
 
-        icon_path = iconBasePath +'circle.png'
-        action = manager.add_action(
-            icon_path,
-            text=self.tr('DSGTools: Circle Digitizing'),
-            callback=self.acquisitionCircle,
-            add_to_menu=False,
-            add_to_toolbar=True,
-            withShortcut = True,
-            parentToolbar =parentMenu)
-        self.setCircleAction(action)
-
     def setPolygonAction(self, action):
         self.polygonAction = action
     
