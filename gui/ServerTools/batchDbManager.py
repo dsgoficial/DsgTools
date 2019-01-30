@@ -149,8 +149,10 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         if len(successList) > 0:
             msg += self.tr('\nSuccessful databases: ')
             msg +=', '.join(successList)
-        msg += self.logInternalError(exceptionDict)
-        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
+        if exceptionDict != []:
+            msg += self.logInternalError(exceptionDict)
+        if successList != [] and exceptionDict != []:
+            QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
     
     def logInternalError(self, exceptionDict):
         msg = ''
