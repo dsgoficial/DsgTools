@@ -124,11 +124,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     def instantiateAbstractDbs(self, instantiateTemplates = False):
         dbsDict = dict()
         selectedDbNameList = self.getSelectedDbList()
-        if instantiateTemplates:
-            for templateName in ['template_edgv_213', 'template_edgv_fter_2a_ed', 'template_edgv_3']:
-                if templateName not in selectedDbNameList:
-                    if templateName != 'dsgtools_admindb':
-                        selectedDbNameList.append(templateName)
+        selectedDbNameList = list(set(selectedDbNameList + ['template_edgv_213', 'template_edgv_fter_2a_ed', 'template_edgv_3', 'dsgtools_admindb'])) if instantiateTemplates else selectedDbNameList
         for dbName in selectedDbNameList:
             localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), dbName, self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
@@ -195,9 +191,11 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     def batchUpgradePostgis(self, dbList):
         exceptionDict = dict()
         successList = []
+        if QMessageBox.question(self, self.tr('Question'), self.tr('This operation will upgrade PostGIS version for templates databases as well as the selected databases. Would you like to continue?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            return successList, exceptionDict
         dbsDict = self.instantiateAbstractDbs(instantiateTemplates = True)
         self.closeAbstractDbs(dbsDict)
-        for dbName in list(dbsDict.keys()):
+        for dbName in dbsDict:
             try:
                 if self.serverWidget.abstractDb.checkIfTemplate(dbName):
                     self.serverWidget.abstractDb.setDbAsTemplate(dbName = dbName, setTemplate = False)
