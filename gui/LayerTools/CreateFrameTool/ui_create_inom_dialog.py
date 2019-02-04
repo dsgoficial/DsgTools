@@ -28,7 +28,8 @@ from qgis.core import QgsCoordinateReferenceSystem, QgsCoordinateTransform, \
                         QgsProcessingContext, QgsFeature
 from qgis.PyQt import QtWidgets, QtCore, uic, QtGui
 from qgis.PyQt.QtWidgets import QMessageBox
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import pyqtSlot, Qt
+from qgis.PyQt.QtGui import QCursor
 
 import os
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -81,7 +82,7 @@ class CreateInomDialog(QtWidgets.QDialog, FORM_CLASS):
         self.done(1)
     
     def runCreateFrameAndAddFeaturesToFrame(self, layer):
-        crs = self.widget.crs
+        crs = self.widget.crs.authid()
         inom = self.inomLineEdit.text()
         scaleIdx = self.scaleCombo.currentIndex()
         context = QgsProcessingContext()
