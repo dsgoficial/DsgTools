@@ -204,8 +204,9 @@ class GenericCompactPropertyManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             return
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = folder[0] if isinstance(folder, tuple) else folder
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         edgvVersion = self.genericDbManager.edgvVersion
         try:

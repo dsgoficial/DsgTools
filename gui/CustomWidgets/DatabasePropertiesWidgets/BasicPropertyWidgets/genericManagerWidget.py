@@ -138,8 +138,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         widgetType = self.getWhoAmI()
         filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])[0]
+        filename = filename[0] if isinstance(filename, tuple) else filename
         if filename == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -165,8 +166,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             return
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = folder[0] if isinstance(folder, tuple) else folder
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         edgvVersion = self.genericDbManager.edgvVersion
         try:
@@ -186,8 +188,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = folder[0] if isinstance(folder, tuple) else folder
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -206,7 +209,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder with json files: '))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
