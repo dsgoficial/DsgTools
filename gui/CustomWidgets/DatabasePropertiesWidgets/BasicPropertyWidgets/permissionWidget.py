@@ -268,7 +268,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
         filename = filename[0] if isinstance(filename, tuple) else filename
         if filename == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -289,7 +289,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
             return
         profileName = self.permissionTreeWidget.currentItem().text(1)
         dbName = self.permissionTreeWidget.currentItem().parent().text(0)
@@ -308,7 +308,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -324,7 +324,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder with permissions: '))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
