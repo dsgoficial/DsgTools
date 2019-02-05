@@ -213,6 +213,9 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # emit widget that has been removed
         self.activeWidgetRemoved.emit(w)
         # remove widget from GUI, remove its reference on a parent widget and delete it
+        abstractDb = w.getDatasource()
+        if abstractDb is not None:
+            abstractDb.closeDatabase()
         w.setParent(None)
         del w
 
