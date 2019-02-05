@@ -141,6 +141,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         dbList = []
         while query.next():
             dbList.append(query.value(0))
+        postgisDb.closeDatabase()
         return self.browseServer(dbList, host, port, user, password)
     
     @pyqtSlot(bool)
@@ -169,7 +170,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         Updates the server databases
         """
         self.clearWidgets.emit()
-        if self.serversCombo.currentIndex() != 0:
+        if self.serversCombo.currentIndex() > 0:
             self.abstractDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             if not self.abstractDb:
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))

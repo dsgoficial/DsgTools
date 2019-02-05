@@ -30,7 +30,7 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase
 from .serverConfigurator import ServerConfigurator
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 from ...core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.dsgEnums import DsgEnums
@@ -222,11 +222,13 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
         try:
             abstractDb.checkAndOpenDb()
+            abstractDb.closeDatabase()
+            return True
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            abstractDb.closeDatabase()
             return False
-        return True
     
     def returnSelectedName(self):
         '''
