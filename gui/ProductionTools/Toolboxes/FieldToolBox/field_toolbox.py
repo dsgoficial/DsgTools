@@ -361,7 +361,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                 if isinstance(candidateDict, dict):
                     if candidateDict['isEditable'] == '0' and attr in lyrAttributes:
                         attrIdx = lyrAttributes.index(attr)
-                        reclassificationLayer.setFieldEditable(attrIdx, False)
+                        reclassificationLayer.editFormConfig().setReadOnly(attrIdx, True)
 
         return (reclassificationLayer, category, edgvClass)
     
@@ -399,10 +399,11 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                     self.setFeatureAttributes(feature, editBuffer)
                 # layer.endEditCommand()
                     if 'openForm' in self.reclassificationDict[self.category][self.edgvClass][self.buttonName]['buttonProp']:
+                        layer.updateFeature(feature)
                         form = QgsAttributeDialog(layer, feature, False)
                         form.setMode(int(QgsAttributeForm.SingleEditMode))
-                        if form.exec_() != 0:
-                            layer.updateFeature(form.feature())
+                        form.exec_()
+                        layer.updateFeature(feature)
 
     def setFeatureAttributes(self, newFeature, editBuffer=None, oldFeat = None):
         """
@@ -433,7 +434,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             else:
                 #this way are working with selected features and inserting a new one in the layer
                 newFeature.setAttribute(idx, value)
-                
+        
         if not editBuffer:
             # we should return when under the normal behavior
             return newFeature
