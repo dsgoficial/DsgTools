@@ -62,7 +62,7 @@ class AbstractDb(QObject):
         """
         Destructor
         """
-        if self.db.isOpen():
+        if self.db is not None and self.db.isOpen():
             self.db.close()
             self.db = None
             
