@@ -60,7 +60,8 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         Destructor
         """
-        self.closeDatabase()
+        if self.serverAbstractDb is not None:
+            self.serverAbstractDb.closeDatabase()
         super(ConnectionComboBox, self).__del__()
     
     def loadServerAbstractDb(self):
