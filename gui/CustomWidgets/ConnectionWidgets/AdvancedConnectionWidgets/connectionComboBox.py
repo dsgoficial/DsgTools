@@ -56,6 +56,13 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         self.connectionSelectorComboBox.addItem(self.tr('Select database'))
         self.loadServerAbstractDb()
     
+    def __del__(self):
+        """
+        Destructor
+        """
+        self.closeDatabase()
+        super(ConnectionComboBox, self).__del__()
+    
     def loadServerAbstractDb(self):
         """
         Checks if there is a default db in self.viewServers . If there isn't one, disables connection combo
