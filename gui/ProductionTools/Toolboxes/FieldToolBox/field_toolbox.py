@@ -30,7 +30,7 @@ from qgis.PyQt.QtGui import QKeySequence
 
 # QGIS imports
 from qgis.core import QgsMapLayer, QgsDataSourceUri, QgsGeometry, QgsProject, QgsLayerTreeLayer, QgsFeature, QgsMessageLog, QgsCoordinateTransform, QgsCoordinateReferenceSystem, QgsEditFormConfig, QgsVectorLayer, QgsWkbTypes, Qgis
-from qgis.gui import QgsMessageBar, QgisInterface
+from qgis.gui import QgsMessageBar, QgisInterface, QgsAttributeForm, QgsAttributeDialog
 import qgis as qgis
 
 #DsgTools imports
@@ -333,7 +333,8 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         Gets the correct layer to be used in the tool
         """
         #edgvClass found in the dictionary (this is made using the sqlite seed)
-        button = buttonText.split(' [')[0]
+        # if more than 1 button exists, it randomly generates this & middle string, why? no idea
+        button = buttonText.split(' [')[0].replace('&', '')
         (category, edgvClass) = self.findReclassificationClass(button)
         
         driverName = self.widget.abstractDb.getType()
@@ -364,7 +365,8 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
 
         return (reclassificationLayer, category, edgvClass)
     
-    @pyqtSlot(int)
+    # @pyqtSlot(QgsFeatureId)
+    # @pyqtSlot(int)
     def setAttributesFromButton(self, featureId):
         """
         Sets the attributes for the newly added feature
@@ -374,6 +376,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         if isinstance(layer, QgsVectorLayer):
             layer.beginEditCommand(self.tr('DsgTools reclassification'))
             self.addedFeatures.append(featureId)
+            layer.endEditCommand()
 
     def updateAttributesAfterAdding(self):
         """
@@ -388,13 +391,18 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             #accessing added features
             editBuffer = layer.editBuffer()
             features = editBuffer.addedFeatures()
-            for key in list(features.keys()):
+            for key in features:
                 #just checking the newly added feature, the other I don't care
                 if key == featureId:
                     feature = features[key]
                     #setting the attributes using the reclassification dictionary
                     self.setFeatureAttributes(feature, editBuffer)
-            layer.endEditCommand()
+                # layer.endEditCommand()
+                    if 'openForm' in self.reclassificationDict[self.category][self.edgvClass][self.buttonName]['buttonProp']:
+                        form = QgsAttributeDialog(layer, feature, False)
+                        form.setMode(int(QgsAttributeForm.SingleEditMode))
+                        if form.exec_() != 0:
+                            layer.updateFeature(form.feature())
 
     def setFeatureAttributes(self, newFeature, editBuffer=None, oldFeat = None):
         """
@@ -438,11 +446,12 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
                 self.prevLayer.editCommandEnded.disconnect(self.updateAttributesAfterAdding)
-                self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
+                self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressDefault)
             except:
                 pass
 
-    @pyqtSlot(bool)
+    # @pyqtSlot(bool)
+    # @pyqtSlot(QgsMapLayer)
     def acquire(self, pressed):
         """
         Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes.
@@ -465,7 +474,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                 return
 
             #button that sent the signal
-            self.buttonName = sender.text().split(' [')[0]
+            self.buttonName = sender.text().split(' [')[0].replace('&', '')
     
             #checking if another button is checked
             for button in self.buttons:
@@ -478,10 +487,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
 
             #suppressing the form dialog
-            if 'openForm' in list(self.reclassificationDict[self.category][self.edgvClass][self.buttonName]['buttonProp'].keys()):
-                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOff)
-            else:
-                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
+            reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
             #connecting addedFeature signal
             reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
             reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
@@ -490,14 +496,14 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                 self.iface.blockSignals(True)
                 self.iface.setActiveLayer(reclassificationLayer)
                 self.iface.blockSignals(False)
-            self.iface.actionAddFeature().trigger()            
+            self.iface.actionAddFeature().trigger()
             #setting the previous layer             
-            self.prevLayer = reclassificationLayer        
+            self.prevLayer = reclassificationLayer
         else:
             #disconnecting the previous layer
             self.disconnectLayerSignals()
             
-    @pyqtSlot()
+    # @pyqtSlot()
     def reclassify(self):
         """
         Performs the actual reclassification, moving the geometry to the correct layer along with the specified attributes
@@ -505,11 +511,11 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         if not self.checkConditions():
             return
         #button that sent the signal
-        self.buttonName = self.sender().text().split(' [')[0]
+        self.buttonName = self.sender().text().split(' [')[0].replace('&', '')
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
         reclassificationDict = self.reclassificationDict[self.category][self.edgvClass][self.buttonName]
         reclassifiedFeatures = self.layerHandler.reclassifySelectedFeatures(reclassificationLayer, reclassificationDict)
-        
+        self.iface.mapCanvas().refreshAllLayers()
         if reclassifiedFeatures > 0:
             self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=Qgis.Info, duration=3)
 
@@ -526,7 +532,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
                     if button == buttonName:
                         #returning the desired edgvClass
                         return (category, edgvClass)
-        return ()
+        return ('', '')
     
     def populateConfigFromDb(self):
         """
