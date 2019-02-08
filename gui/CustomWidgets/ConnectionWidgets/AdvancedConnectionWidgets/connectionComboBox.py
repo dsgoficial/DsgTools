@@ -76,6 +76,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             serverAbstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
             self.setServerDb(serverAbstractDb)
+            serverAbstractDb.closeDatabase()
     
     def closeDatabase(self):
         try:
@@ -101,7 +102,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 self.addItems(dbList)
             else:
                 self.clear()
-                self.abstractDb = None
+                self.closeDatabase()
                 return
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))

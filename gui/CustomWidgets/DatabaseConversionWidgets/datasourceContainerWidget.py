@@ -98,7 +98,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         Gets the datasource selected on current widget.
         :return: (object) the object representing the target datasource according to its driver. 
         """
-        return self.connectionWidget.abstractDb if self.connectionWidget else None
+        return self.connectionWidget.getDatasource() if self.connectionWidget else None
 
     def setDatasource(self, newDatasource):
         """
