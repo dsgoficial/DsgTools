@@ -62,9 +62,11 @@ class AbstractDb(QObject):
         """
         Destructor
         """
+        self.closeDatabase()
+    
+    def closeDatabase(self):
         if self.db.isOpen():
             self.db.close()
-            self.db = None
             
     def checkAndOpenDb(self):
         """
