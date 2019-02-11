@@ -855,10 +855,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         Instantiate GUI for user, including button shortcut (if necessary) and tool insertion on DSGTools tab on QGIS. 
         """
-        callback = lambda : self.exec_() 
         self.manager.addTool(
             text=self.tr('Convert Databases'),
-            callback=callback,
+            callback=self.exec_,
             parentMenu=self.parentMenu,
             icon='install.png',
             parentButton=self.parentButton,

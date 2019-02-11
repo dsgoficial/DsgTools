@@ -42,7 +42,11 @@ class SpatialiteDb(AbstractDb):
         super(SpatialiteDb,self).__init__()
         self.db = QSqlDatabase('QSQLITE')
         self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverSpatiaLite)
-    
+
+    def closeDatabase(self):
+        if self.db.isOpen() and self.db is not None:
+            self.db.close()
+
     def getDatabaseName(self):
         '''
         Gets the database name

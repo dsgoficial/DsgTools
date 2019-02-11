@@ -62,12 +62,8 @@ class DatabaseFileLineEdit(QtWidgets.QWidget, FORM_CLASS):
         """
         Unsets any selected database.
         """
-        try:
-            self.abstractDb.db.close()
-            del self.abstractDb
-            self.abstractDb = None
-        except:
-            self.abstractDb = None
+        if self.abstractDb is not None:
+            self.abstractDb.closeDatabase()
 
     def clear(self):
         """

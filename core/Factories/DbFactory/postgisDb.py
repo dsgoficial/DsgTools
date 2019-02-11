@@ -51,6 +51,10 @@ class PostgisDb(AbstractDb):
         self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.databaseEncoding = 'utf-8'
 
+    def closeDatabase(self):
+        if self.db.isOpen() and self.db is not None:
+            self.db.close()
+
     def getDatabaseParameters(self):
         """
         Gets (host, port, user, password)

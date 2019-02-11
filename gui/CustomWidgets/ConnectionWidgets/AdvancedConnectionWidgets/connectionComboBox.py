@@ -79,12 +79,8 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             serverAbstractDb.closeDatabase()
     
     def closeDatabase(self):
-        try:
-            self.abstractDb.db.close()
-            del self.abstractDb
-            self.abstractDb = None
-        except:
-            self.abstractDb = None
+        if self.abstractDb is not None:
+            self.abstractDb.closeDatabase()
 
     def clear(self):
         self.connectionSelectorComboBox.clear()
@@ -102,8 +98,6 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 self.addItems(dbList)
             else:
                 self.clear()
-                self.closeDatabase()
-                return
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         QApplication.restoreOverrideCursor()

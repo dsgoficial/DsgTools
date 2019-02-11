@@ -68,9 +68,7 @@ class AbstractDb(QObject):
             pass
     
     def closeDatabase(self):
-        if self.db.isOpen():
-            self.db.close()
-            self.db = None
+        pass
             
     def checkAndOpenDb(self):
         """
@@ -79,14 +77,6 @@ class AbstractDb(QObject):
         if not self.db.isOpen():
             if not self.db.open():
                 raise Exception(self.tr('Error opening database: ')+self.db.lastError().text())
-
-    def closeDatabase(self):
-        try:
-            self.db.close()
-            del self.db
-            self.db = None
-        except:
-            self.db = None
 
     def getType(self):
         """
@@ -713,7 +703,7 @@ class AbstractDb(QObject):
             self.db.close()
             raise Exception(self.tr('Problem inserting frame: ') + query.lastError().text())
         self.db.commit()
-        self.db.close()
+        # self.db.close()
     
     def prepareCreateFrame(self, type, scale, param):
         if type == 'mi':
