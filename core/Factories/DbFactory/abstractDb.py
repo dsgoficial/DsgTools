@@ -68,8 +68,7 @@ class AbstractDb(QObject):
             pass
     
     def closeDatabase(self):
-        if self.db.isOpen():
-            self.db.close()
+        pass
             
     def checkAndOpenDb(self):
         """
