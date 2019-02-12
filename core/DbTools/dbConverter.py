@@ -541,7 +541,7 @@ class DbConverter(QgsTask):
             inputTable += """
             <tr>
                 <td>{0}</td>
-                <td>{1}</td>
+                <td style="text-align: center;">{1}</td>
             </tr>
             """.format(layer, vl.featureCount())
         bodyHtml = bodyHtml.replace('INPUT_TABLE', inputTable)
@@ -550,7 +550,7 @@ class DbConverter(QgsTask):
             outputTable += """
             <tr>
                 <td>{0}</td>
-                <td>{1}</td>
+                <td style="text-align: center;">{1}</td>
             </tr>
             """.format(layer, feat_count)
         bodyHtml = bodyHtml.replace('OUTPUT_TABLE', outputTable)
