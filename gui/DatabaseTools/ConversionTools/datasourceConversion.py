@@ -879,3 +879,4 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 for w in wList:
                     # removeWidget method disconnects all widget signals
                     obj.removeWidget(w)
+                    del w
