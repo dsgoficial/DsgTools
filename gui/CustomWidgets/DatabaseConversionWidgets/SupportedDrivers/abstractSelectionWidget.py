@@ -44,6 +44,16 @@ class AbstractSelectionWidget(QObject):
         self.source = ''
         self.selectionWidget = None
 
+    def __del__(self):
+        """
+        
+        """
+        abstractDb = self.getDatasource()
+        if abstractDb is not None:
+            abstractDb.closeDatabase()
+        del self.selectionWidget
+        del self
+
     def getSelectionWidgetName(self, source=None):
         """
         Gets selection widget to be returned to user as selectionWidget attribute.
