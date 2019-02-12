@@ -62,7 +62,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         if self.serverAbstractDb is not None:
             self.serverAbstractDb.closeDatabase()
-        super(ConnectionComboBox, self).__del__()
+        del self
     
     def loadServerAbstractDb(self):
         """
