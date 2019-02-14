@@ -154,6 +154,7 @@ class DbConverter(QgsTask):
         :return: (tuple) new dataset (or None if failed) and failing message (empty, if successful).
         """
         output = conversionStepMap["outDs"]
+        abstractDb = None
         try:
             parameters = self.parseDatasourcePath(datasource=output)
             # filling missing parameters as required by dbCreator
@@ -171,7 +172,9 @@ class DbConverter(QgsTask):
             abstractDb = self.createDataset(parameters=parameters)
             msg = ""
         except Exception as e:
-            abstractDb = None
+            if abstractDb is not None:
+                abstractDb.closeDatabase()
+                abstractDb = None
             msg = "{0} dataset creation has failed: '{1}'".format(output, "; ".join(map(str, e.args)))
         return abstractDb, msg
 
@@ -320,6 +323,8 @@ class DbConverter(QgsTask):
                 inputLayerMap[vl.name()] = vl
             if feedback is not None:
                 feedback.setProgress((curr + currComplex) * stepSize)
+        # after reading its layers, db connection will not be used again
+        del abstractDb
         return inputLayerMap
 
     def readOutputLayers(self, datasourcePath, feedback=None):
@@ -357,6 +362,8 @@ class DbConverter(QgsTask):
             outputLayerMap[vl.name()] = vl
             if feedback is not None:
                 multiStepFeedback.setCurrentStep(curr + currComplex)
+        # after reading its layers, db connection will not be used again
+        del abstractDb
         return outputLayerMap
 
     def prepareSpatialFilterLayer(self, spatialFilters, context=None):
@@ -435,7 +442,7 @@ class DbConverter(QgsTask):
             for current, (layer, vl) in enumerate(inputPreparedLayers.items()):
                 if feedback is not None and feedback.isCanceled():
                         break
-                if vl.featureCount() == 0:
+                if vl.featureCount() == 0 or layer not in outputLayers:
                     continue
                 outuputLayer = outputLayers[layer]
                 k = "{0}->{1}".format(vl.crs().authid(), outuputLayer.crs().authid())

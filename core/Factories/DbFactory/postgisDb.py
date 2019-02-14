@@ -53,6 +53,7 @@ class PostgisDb(AbstractDb):
 
     def closeDatabase(self):
         if self.db.isOpen() and self.db is not None:
+            # self.dropAllConections(self.getDatabaseName())
             self.db.close()
 
     def getDatabaseParameters(self):
