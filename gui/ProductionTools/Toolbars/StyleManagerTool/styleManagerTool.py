@@ -212,7 +212,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             # dsgtools have the right to write on its own directory
             # a temporary file "temp.qml"
             tempPath = os.path.join(stylePath, "temp.qml")
-            with open(tempPath, "w") as f:
+            with open(tempPath, "w", encoding='utf-8') as f:
                 f.writelines(qml)
                 f.close()
             return tempPath
