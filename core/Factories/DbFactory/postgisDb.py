@@ -52,7 +52,7 @@ class PostgisDb(AbstractDb):
         self.databaseEncoding = 'utf-8'
 
     def closeDatabase(self):
-        if self.db.isOpen() and self.db is not None:
+        if self.db is not None and self.db.isOpen():
             # self.dropAllConections(self.getDatabaseName())
             self.db.close()
 
