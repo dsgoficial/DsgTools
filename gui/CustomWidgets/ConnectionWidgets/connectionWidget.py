@@ -278,9 +278,10 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 
             else:
                 self.setInitialState()
+                QApplication.restoreOverrideCursor()
                 return
         except Exception as e:
+            QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
-            self.setInitialState()
             self.setInitialState()
         QApplication.restoreOverrideCursor()
