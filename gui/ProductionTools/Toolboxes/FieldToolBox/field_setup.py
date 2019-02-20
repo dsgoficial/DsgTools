@@ -430,7 +430,10 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
                             values.append(valueRelation[key])
                     value = '{%s}' % ','.join(map(str, values))
             else:
-                value = widgetItem.text()
+                if isinstance(widgetItem, DsgCustomComboBox):
+                    value = widgetItem.currentText()
+                else:
+                    value = widgetItem.text()
             
             #sweep tree for attribute
             attrFound = False
@@ -720,8 +723,9 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
         Removes a tree widget item and all its children
         """
         item = self.treeWidget.currentItem()
-        item.parent().removeChild(item)     
-        
+        self.treeWidget.invisibleRootItem().removeChild(item)
+        del item
+
     @pyqtSlot(bool)
     def on_loadButton_clicked(self):
         """

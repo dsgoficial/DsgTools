@@ -98,7 +98,11 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 self.addItems(dbList)
             else:
                 self.clear()
+                self.abstractDb = None
+                QApplication.restoreOverrideCursor()
+                return
         except Exception as e:
+            QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
         QApplication.restoreOverrideCursor()
     

@@ -217,19 +217,20 @@ class ServerProfilesManager(QtWidgets.QDialog, FORM_CLASS):
     
     @pyqtSlot(bool)
     def on_deletePermissionPushButton_clicked(self):
-        profileName, edgvVersion = self.profilesListWidget.currentItem().text().split(' (')
-        edgvVersion = edgvVersion.replace(')','')
-        if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete profile ')+profileName+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
-            return
-        try:
-            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-            self.permissionManager.deleteSetting(profileName, edgvVersion)
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully deleted.'))
-            self.refreshProfileList()
-        except Exception as e:
-            QApplication.restoreOverrideCursor()
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting permission: ') + ':'.join(e.args))
+        if self.profilesListWidget.currentItem() is not None:
+            profileName, edgvVersion = self.profilesListWidget.currentItem().text().split(' (')
+            edgvVersion = edgvVersion.replace(')','')
+            if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to delete profile ')+profileName+'?', QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+                return
+            try:
+                QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+                self.permissionManager.deleteSetting(profileName, edgvVersion)
+                QApplication.restoreOverrideCursor()
+                QMessageBox.warning(self, self.tr('Success!'), self.tr('Permission ') + profileName + self.tr(' successfully deleted.'))
+                self.refreshProfileList()
+            except Exception as e:
+                QApplication.restoreOverrideCursor()
+                QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem deleting permission: ') + ':'.join(e.args))
     
     @pyqtSlot(bool)
     def on_saveButton_clicked(self):
