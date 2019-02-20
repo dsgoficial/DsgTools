@@ -58,6 +58,7 @@ class SelectStyles(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.customSelector.setInitialState(styleList)
         self.customSelector.setTitle(self.tr('Select Styles'))
+        self.selectedStyles = []
 
     @pyqtSlot()
     def on_buttonBox_accepted(self):
