@@ -87,7 +87,7 @@ class NewShapefileWidget(AbstractSelectionWidget):
         Gets the datasource selected on current widget.
         :return: (AbstractDb) the object representing the target datasource according to its driver. 
         """
-        return self.selectionWidget.abstractDb
+        return None
 
     def getDatasourceEdgvVersion(self):
         """

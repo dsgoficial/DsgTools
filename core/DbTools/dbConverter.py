@@ -154,6 +154,7 @@ class DbConverter(QgsTask):
         :return: (tuple) new dataset (or None if failed) and failing message (empty, if successful).
         """
         output = conversionStepMap["outDs"]
+        abstractDb = None
         try:
             parameters = self.parseDatasourcePath(datasource=output)
             # filling missing parameters as required by dbCreator
@@ -171,7 +172,9 @@ class DbConverter(QgsTask):
             abstractDb = self.createDataset(parameters=parameters)
             msg = ""
         except Exception as e:
-            abstractDb = None
+            if abstractDb is not None:
+                abstractDb.closeDatabase()
+                abstractDb = None
             msg = "{0} dataset creation has failed: '{1}'".format(output, "; ".join(map(str, e.args)))
         return abstractDb, msg
 
@@ -320,6 +323,8 @@ class DbConverter(QgsTask):
                 inputLayerMap[vl.name()] = vl
             if feedback is not None:
                 feedback.setProgress((curr + currComplex) * stepSize)
+        # after reading its layers, db connection will not be used again
+        del abstractDb
         return inputLayerMap
 
     def readOutputLayers(self, datasourcePath, feedback=None):
@@ -357,6 +362,8 @@ class DbConverter(QgsTask):
             outputLayerMap[vl.name()] = vl
             if feedback is not None:
                 multiStepFeedback.setCurrentStep(curr + currComplex)
+        # after reading its layers, db connection will not be used again
+        del abstractDb
         return outputLayerMap
 
     def prepareSpatialFilterLayer(self, spatialFilters, context=None):
@@ -435,7 +442,7 @@ class DbConverter(QgsTask):
             for current, (layer, vl) in enumerate(inputPreparedLayers.items()):
                 if feedback is not None and feedback.isCanceled():
                         break
-                if vl.featureCount() == 0:
+                if vl.featureCount() == 0 or layer not in outputLayers:
                     continue
                 outuputLayer = outputLayers[layer]
                 k = "{0}->{1}".format(vl.crs().authid(), outuputLayer.crs().authid())
@@ -495,12 +502,15 @@ class DbConverter(QgsTask):
         for current, (layer, featureSet) in enumerate(featuresMap.items()):
             if feedback is not None and feedback.isCanceled():
                 break
-            outputLayers[layer].startEditing()
-            outputLayers[layer].addFeatures(featureSet)
-            outputLayers[layer].updateExtents()
-            if outputLayers[layer].commitChanges():
+            vl = outputLayers[layer]
+            vl.startEditing()
+            vl.addFeatures(featureSet)
+            vl.updateExtents()
+            if vl.commitChanges():
+                self.conversionUpdated.emit(self.tr("{0} successfully loaded.").format(vl.name()))
                 success[layer] = len(featureSet)
             else:
+                self.conversionUpdated.emit(self.tr("{0} failed to be loaded.").format(vl.name()))
                 fail[layer] = outputLayers[layer].commitErrors()[0]
             if feedback is not None:
                 feedback.setProgress(current * stepSize)
@@ -538,7 +548,7 @@ class DbConverter(QgsTask):
             inputTable += """
             <tr>
                 <td>{0}</td>
-                <td>{1}</td>
+                <td style="text-align: center;">{1}</td>
             </tr>
             """.format(layer, vl.featureCount())
         bodyHtml = bodyHtml.replace('INPUT_TABLE', inputTable)
@@ -547,7 +557,7 @@ class DbConverter(QgsTask):
             outputTable += """
             <tr>
                 <td>{0}</td>
-                <td>{1}</td>
+                <td style="text-align: center;">{1}</td>
             </tr>
             """.format(layer, feat_count)
         bodyHtml = bodyHtml.replace('OUTPUT_TABLE', outputTable)
@@ -610,13 +620,11 @@ class DbConverter(QgsTask):
                     break
                 # output setup
                 outputDb = conversionStepMap["outDs"]
-                self.conversionUpdated.emit(self.tr("[OUTPUT] Reading {0}'s layers...\n").format(outputDb))
-                multiStepFeedback.setCurrentStep(currentStep)
-                currentStep += 1
                 if outputDb not in allOutputLayers:
                     if conversionStepMap["createDs"]:
                         self.conversionUpdated.emit(self.tr("[OUTPUT] Creating dataset {0}...\n").format(outputDb))
                         outputAbstractDb, error = self.checkAndCreateDataset(conversionStepMap)
+                        del outputAbstractDb
                         if error != "":
                             k = "{0} to {1}".format(inputDb, outputDb)
                             self.conversionUpdated.emit(self.tr("Dataset creation error ({0}): '{1}'\n").format(outputDb, error))
@@ -625,6 +633,9 @@ class DbConverter(QgsTask):
                                             inputLayers, errors, {}, {}, "{0:.2f} s".format(time.time() - startTime))
                             conversionStep += 1
                             continue
+                    self.conversionUpdated.emit(self.tr("[OUTPUT] Reading {0}'s layers...\n").format(outputDb))
+                    multiStepFeedback.setCurrentStep(currentStep)
+                    currentStep += 1
                     allOutputLayers[outputDb] = self.readOutputLayers(datasourcePath=outputDb, feedback=multiStepFeedback)
                 outputLayers = allOutputLayers[outputDb]
                 # now conversion starts

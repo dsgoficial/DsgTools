@@ -44,7 +44,7 @@ class SpatialiteDb(AbstractDb):
         self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverSpatiaLite)
 
     def closeDatabase(self):
-        if self.db.isOpen() and self.db is not None:
+        if self.db is not None and self.db.isOpen():
             self.db.close()
 
     def getDatabaseName(self):

@@ -72,7 +72,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
             self.connectionSelectorComboBox.setEnabled(False)
         else:
             self.connectionSelectorComboBox.setEnabled(True)
-            (host, port, user, password) = self.viewServers.getDefaultConnectionParameters()
+            (_, host, port, user, password) = self.viewServers.getDefaultConnectionParameters()
             serverAbstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             serverAbstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
             self.setServerDb(serverAbstractDb)
@@ -159,7 +159,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         Checks if connection to server is valid.
         """
         # for files, server check is not necessary
-        h = self.viewServers.getDefaultConnectionParameters()[0]
+        h = self.viewServers.getDefaultConnectionParameters()[1]
         return self.viewServers.testServer(h)
 
     def databaseExists(self):
@@ -168,7 +168,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         # for files, it is only necessary to check if file exists and is not empty.
         if self.abstractDb:
-            host, port, user, password = self.viewServers.getDefaultConnectionParameters()
+            _, host, port, user, password = self.viewServers.getDefaultConnectionParameters()
             database = self.currentDb()
             return self.abstractDb.testCredentials(host, port, database, user, password)
         return False
