@@ -202,7 +202,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # disconnect all widget connected signals
         w.blockSignals(True)
         # remove from active dict
-        self.activeDrivers[w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)].remove(w)
+        driverName = w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)
+        self.activeDrivers[self.tr(driverName)].remove(w)
         self.datasourceLayout.removeWidget(w)
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
