@@ -29,7 +29,7 @@
     <message>
         <location filename="../gui/AboutAndFurtherInfo/ui_about.ui" line="14"/>
         <source>About</source>
-        <translation>Sobre</translation>
+        <translation type="obsolete">Sobre</translation>
     </message>
     <message>
         <location filename="ui_about.ui" line="89"/>
@@ -227,7 +227,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -247,132 +247,132 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Erro abrindo banco de dados.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="104"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="108"/>
         <source>Problem counting elements: </source>
         <translation>Problema na contagem dos elementos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="234"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="238"/>
         <source>Validation Problems Summary</source>
         <translation>Resumo de Problemas de Validação</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="238"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="242"/>
         <source>Classes with null lines:</source>
         <translation>Classes com linhas nulas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="595"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="599"/>
         <source>Class</source>
         <translation>Classe</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="389"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="393"/>
         <source>Elements</source>
         <translation>Elementos</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="244"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="248"/>
         <source>Classes with null primary keys:</source>
         <translation>Classes com chaves primárias nulas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="250"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="254"/>
         <source>Features with attributes not in domain:</source>
         <translation>Feições com atributos fora do domínio:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="294"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="298"/>
         <source>Class: </source>
         <translation>Classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="263"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="267"/>
         <source>Features with null attributes in a not null field:</source>
         <translation>Feições com atributos nulos em campo não nulo:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="287"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="291"/>
         <source>Classes with classes that have elements but do not have output equivalent:</source>
         <translation>Classes com classes que tem elementos mas não tem equivalente de saída:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="292"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="296"/>
         <source>Classes with attributes that have no output attribute equivalent:</source>
         <translation>Classes com atributos que não possuem atributo de saída equivalente:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="307"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="311"/>
         <source>Conversion type: </source>
         <translation>Tipo de Conversão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="308"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="312"/>
         <source>Input database: </source>
         <translation>Banco de dados de entrada: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="309"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="313"/>
         <source>Output database: </source>
         <translation>Banco de dados de saída: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="310"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="314"/>
         <source>Read Summary</source>
         <translation>Resumo de Leitura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="388"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="392"/>
         <source>Write Summary</source>
         <translation>Resumo de Escrita</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="424"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="428"/>
         <source>Error on layer </source>
         <translation>Erro na camada </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="424"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="428"/>
         <source>. Conversion not performed.</source>
         <translation>. Conversão não realizada.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="594"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="598"/>
         <source>Features not converted</source>
         <translation>Feições não convertidas</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="595"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="599"/>
         <source>Feature id</source>
         <translation>Id da Feição</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="148"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="152"/>
         <source>Problem finding EPSG: </source>
         <translation>Problema para encontrar EPSG: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="189"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="193"/>
         <source>Problem getting aggregation attributes: </source>
         <translation>Problema ao obter atributos de agregação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="75"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="79"/>
         <source>Error opening database: </source>
         <translation>Erro abrindo banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="701"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="705"/>
         <source>Problem inserting frame: </source>
         <translation>Problema inserindo moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="275"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="279"/>
         <source>Features with invalid uuid foreign key:</source>
         <translation>Feições com chave estrangeira do tipo uuid inválidas:</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/abstractDb.py" line="738"/>
+        <location filename="../core/Factories/DbFactory/abstractDb.py" line="742"/>
         <source>Problem getting qmlRecordDict: </source>
         <translation>Problema ao obter qmlRecordDict: </translation>
     </message>
@@ -380,37 +380,37 @@ p, li { white-space: pre-wrap; }
 <context>
     <name>AbstractSelectionWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="55"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="65"/>
         <source>No database selected.</source>
         <translation>Nenhuma base de dados selecionada.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="57"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="67"/>
         <source>Select a datasource driver</source>
         <translation>Selecione um driver de fonte de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="59"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="69"/>
         <source>PostGIS (create new database)</source>
         <translation>PostGIS (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="61"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="71"/>
         <source>SpatiaLite (create new database)</source>
         <translation>SpatiaLite (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="63"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="73"/>
         <source>Shapefile (create new database)</source>
         <translation>Shapefile (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="65"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="75"/>
         <source>Geopackage (create new database)</source>
         <translation>Geopackage (criar nova base de dados)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="197"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/SupportedDrivers/abstractSelectionWidget.py" line="207"/>
         <source>Selection widget not available.</source>
         <translation>Widget de seleção não disponível.</translation>
     </message>
@@ -423,17 +423,17 @@ p, li { white-space: pre-wrap; }
         <translation type="obsolete">Alerta!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="82"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="71"/>
         <source>Tool not defined for points</source>
         <translation>Ferramenta não funciona com pontos</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="87"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="76"/>
         <source>Start editing in current layer!</source>
         <translation>Inicie a edição na camada atual!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="87"/>
+        <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="76"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
@@ -452,7 +452,7 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     <message>
         <location filename="../gui/ProductionTools/MapTools/Acquisition/acquisition.py" line="36"/>
         <source>DSGTools: Circle Digitizing</source>
-        <translation>DSGTools: Ferramenta de Aquisição de Círculos</translation>
+        <translation type="obsolete">DSGTools: Ferramenta de Aquisição de Círculos</translation>
     </message>
 </context>
 <context>
@@ -525,37 +525,37 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="26"/>
         <source>Alter default of all attributes of this table</source>
-        <translation>Alterar default de todos os atributos desta tabela</translation>
+        <translation type="obsolete">Alterar default de todos os atributos desta tabela</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="42"/>
         <source>Alter default of all attributes with domain of selected database</source>
-        <translation>Alterar default de todos os atributos com domínio do banco selecionado</translation>
+        <translation type="obsolete">Alterar default de todos os atributos com domínio do banco selecionado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="54"/>
         <source>Value to alter</source>
-        <translation>Valor para alterar</translation>
+        <translation type="obsolete">Valor para alterar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="68"/>
         <source>Schema</source>
-        <translation>Esquema</translation>
+        <translation type="obsolete">Esquema</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="85"/>
         <source>Table Name</source>
-        <translation>Nome da tabela</translation>
+        <translation type="obsolete">Nome da tabela</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.ui" line="105"/>
         <source>Attribute Name</source>
-        <translation>Nome do atributo</translation>
+        <translation type="obsolete">Nome do atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/alterDefaultWidget.py" line="84"/>
@@ -616,27 +616,27 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="14"/>
         <source>Alter User Password</source>
-        <translation>Alterar Senha de Usuário</translation>
+        <translation type="obsolete">Alterar Senha de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="20"/>
         <source>Repeat New Password</source>
-        <translation>Repetir Nova Senha</translation>
+        <translation type="obsolete">Repetir Nova Senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="37"/>
         <source>New Password</source>
-        <translation>Nova Senha</translation>
+        <translation type="obsolete">Nova Senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="54"/>
         <source>Alter Password</source>
-        <translation>Alterar Senha</translation>
+        <translation type="obsolete">Alterar Senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="61"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="73"/>
@@ -841,42 +841,42 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.ui" line="32"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.ui" line="20"/>
         <source>Rule Name</source>
-        <translation>Nome da Regra</translation>
+        <translation type="obsolete">Nome da Regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.ui" line="36"/>
         <source>Enter rule name</source>
-        <translation>Insira o nome da regra</translation>
+        <translation type="obsolete">Insira o nome da regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.ui" line="43"/>
         <source>Rule Rank</source>
-        <translation>Nível da Regra</translation>
+        <translation type="obsolete">Nível da Regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleTypeWidget.ui" line="53"/>
         <source>Rule Color</source>
-        <translation>Cor da Regra</translation>
+        <translation type="obsolete">Cor da Regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.ui" line="59"/>
         <source>Name of the layer that will be used to build the rule</source>
-        <translation>Nome da camada a ser utilizada para a construção da regra</translation>
+        <translation type="obsolete">Nome da camada a ser utilizada para a construção da regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.ui" line="84"/>
         <source>Dominant attribute (used to output flag)</source>
-        <translation>Atributo dominante (usado na apresentação de erros)</translation>
+        <translation type="obsolete">Atributo dominante (usado na apresentação de erros)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.ui" line="134"/>
         <source>Enter description (optional)</source>
-        <translation>Insira descrição (opcional)</translation>
+        <translation type="obsolete">Insira descrição (opcional)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeRuleWidget.py" line="44"/>
@@ -925,17 +925,17 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui" line="14"/>
         <source>Attribute Rules Editor</source>
-        <translation>Editor de Regras de Atributo</translation>
+        <translation type="obsolete">Editor de Regras de Atributo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui" line="46"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.ui" line="53"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="61"/>
@@ -1140,17 +1140,17 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.ui" line="25"/>
         <source>Batch database creation</source>
-        <translation>Criação de banco de dados em lote</translation>
+        <translation type="obsolete">Criação de banco de dados em lote</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.ui" line="50"/>
         <source>Create databases based on an auto incrementing pattern</source>
-        <translation>Criar banco de dados baseados em um padrão autoincrementado</translation>
+        <translation type="obsolete">Criar banco de dados baseados em um padrão autoincrementado</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/batchDbCreator.ui" line="63"/>
         <source>Create databases from csv file list</source>
-        <translation>Criar bancos de dados  a partir de uma lista em um arquivos csv</translation>
+        <translation type="obsolete">Criar bancos de dados  a partir de uma lista em um arquivos csv</translation>
     </message>
     <message>
         <location filename="DbTools/BatchDbCreator/batchDbCreator.ui" line="46"/>
@@ -1168,7 +1168,7 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="20"/>
         <source>Load Layers from a Server</source>
-        <translation>Carregar camadas de um servidor</translation>
+        <translation type="obsolete">Carregar camadas de um servidor</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="50"/>
@@ -1208,17 +1208,17 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="64"/>
         <source>Options</source>
-        <translation>Opções</translation>
+        <translation type="obsolete">Opções</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="88"/>
         <source>Only layers with Elements</source>
-        <translation>Apenas Camadas com Elementos</translation>
+        <translation type="obsolete">Apenas Camadas com Elementos</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="156"/>
         <source>Set Style</source>
-        <translation>Ajustar estilo</translation>
+        <translation type="obsolete">Ajustar estilo</translation>
     </message>
     <message>
         <location filename="../LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="304"/>
@@ -1228,22 +1228,22 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="20"/>
         <source>Manage Databases from a Server</source>
-        <translation>Gerenciar bancos de dados de um servidor</translation>
+        <translation type="obsolete">Gerenciar bancos de dados de um servidor</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="192"/>
         <source>Database Administration</source>
-        <translation>Administração do Banco de Dados</translation>
+        <translation type="obsolete">Administração do Banco de Dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="198"/>
         <source>Drop Databases</source>
-        <translation>Apagar bancos de dados</translation>
+        <translation type="obsolete">Apagar bancos de dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="205"/>
         <source>Create Domain Resolved Views</source>
-        <translation>Criar Visões com domínios resolvidos</translation>
+        <translation type="obsolete">Criar Visões com domínios resolvidos</translation>
     </message>
     <message>
         <location filename="ServerTools/batchDbManager.ui" line="71"/>
@@ -1268,52 +1268,52 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="230"/>
         <source>Style Management</source>
-        <translation>Gerenciamento de estilos</translation>
+        <translation type="obsolete">Gerenciamento de estilos</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="248"/>
         <source>Manage Styles</source>
-        <translation>Gerenciar estilos</translation>
+        <translation type="obsolete">Gerenciar estilos</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="262"/>
         <source>Import Styles</source>
-        <translation>Importar estilos</translation>
+        <translation type="obsolete">Importar estilos</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="275"/>
         <source>Delete Styles</source>
-        <translation>Deletar estilos</translation>
+        <translation type="obsolete">Deletar estilos</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="300"/>
         <source>Style</source>
-        <translation>Estilo</translation>
+        <translation type="obsolete">Estilo</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="305"/>
         <source>Database</source>
-        <translation>Banco de Dados</translation>
+        <translation type="obsolete">Banco de Dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="310"/>
         <source>Class</source>
-        <translation>Classe</translation>
+        <translation type="obsolete">Classe</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="315"/>
         <source>Timestamp</source>
-        <translation>Data/hora</translation>
+        <translation type="obsolete">Data/hora</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="327"/>
         <source>Permissions</source>
-        <translation>Permissões</translation>
+        <translation type="obsolete">Permissões</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="339"/>
         <source>Database Permissions</source>
-        <translation>Permissões do Banco de Dados</translation>
+        <translation type="obsolete">Permissões do Banco de Dados</translation>
     </message>
     <message>
         <location filename="ServerTools/batchDbManager.ui" line="196"/>
@@ -1338,17 +1338,17 @@ Usuários com erro:</translation>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="359"/>
         <source>Earth Coverage</source>
-        <translation>Cobertura Terrestre</translation>
+        <translation type="obsolete">Cobertura Terrestre</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="371"/>
         <source>Line-Centroid Structure</source>
-        <translation>Estrutura Linha-Centróide</translation>
+        <translation type="obsolete">Estrutura Linha-Centróide</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="28"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.py" line="66"/>
@@ -1356,41 +1356,41 @@ Usuários com erro:</translation>
         <translation>Bancos de Dados do Servidor</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="112"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="119"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="110"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="117"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="110"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="117"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
         <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="143"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="146"/>
         <source>
 Successful databases: </source>
         <translation>
 Bancos de dados com sucesso: </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="146"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="151"/>
         <source>Operation Complete!</source>
         <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="153"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="158"/>
         <source>
 Databases with error:</source>
         <translation>
 Bancos de dados com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="155"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="160"/>
         <source>
 Error messages for each database were output in qgis log.</source>
         <translation>
@@ -1402,63 +1402,63 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
         <translation type="obsolete">Erro para o banco de dados </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="234"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="242"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="165"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="170"/>
         <source>Please select one or more databases to drop!</source>
         <translation>Por favor, selecione um ou mais bancos para apagar!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="166"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="195"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="166"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="172"/>
         <source>Do you really want to drop databases: </source>
         <translation>Você realmente quer apagar os bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="172"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="178"/>
         <source>Drop operation complete. 
 </source>
         <translation>Operação de deleção completa. 
 </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="234"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="242"/>
         <source>Multiple edgv versions are not allowed!</source>
         <translation>Múltiplas versões da EDGV não são permitidas!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="246"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="254"/>
         <source>Import operation complete. 
 </source>
         <translation>Operação de importação completa. 
 </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="346"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="359"/>
         <source>Delete operation complete. 
 </source>
         <translation>Operação de deleção completa. 
 </translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="366"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="379"/>
         <source>Select a SQL file</source>
         <translation>Selecione um arquivo SQL</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="366"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="379"/>
         <source>sql file (*.sql)</source>
         <translation>arquivo SQL (*.sql)</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="378"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="391"/>
         <source>Customize from SQL file operation complete. 
 </source>
         <translation>Operação de cutomização a partir de arquivo SQL completa. 
@@ -1477,17 +1477,17 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="62"/>
         <source>Click to hide database selection</source>
-        <translation>Clique para esconder a seleção de banco de dados</translation>
+        <translation type="obsolete">Clique para esconder a seleção de banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="81"/>
         <source>Select Database Version</source>
-        <translation>Selecione a versão do banco de dados</translation>
+        <translation type="obsolete">Selecione a versão do banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="212"/>
         <source>Updgrade PostGIS Version</source>
-        <translation>Atualizar versão do PostGIS</translation>
+        <translation type="obsolete">Atualizar versão do PostGIS</translation>
     </message>
     <message>
         <location filename="../ServerTools/batchDbManager.ui" line="331"/>
@@ -1512,10 +1512,10 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="384"/>
         <source>Field Toolbox Configuration</source>
-        <translation>Ajustes de Reclassificação</translation>
+        <translation type="obsolete">Ajustes de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="183"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="189"/>
         <source>Upgrade Posgtis operation complete. 
 </source>
         <translation>Operação de atualização do PostGIS completa. 
@@ -1524,67 +1524,72 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="123"/>
         <source>Unique Load (do not load if layer is already loaded)</source>
-        <translation>Carregamento Único (não carregar se a camada já estiver carregada)</translation>
+        <translation type="obsolete">Carregamento Único (não carregar se a camada já estiver carregada)</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="107"/>
         <source>DSGTools uses from only as a query filter. If this behaviour is not desired, check this item.</source>
-        <translation>DSGTools usa por default a clausula FROM ONLY como filtro da camada. Caso esse comportamento não seja desejado, marque esse item para desabilitá-lo.</translation>
+        <translation type="obsolete">DSGTools usa por default a clausula FROM ONLY como filtro da camada. Caso esse comportamento não seja desejado, marque esse item para desabilitá-lo.</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="110"/>
         <source>Do not use FROM ONLY clause when using inheritance</source>
-        <translation>Não usar a clausula FROM ONLY</translation>
+        <translation type="obsolete">Não usar a clausula FROM ONLY</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="73"/>
         <source>Load Database Model EDGV Version 2.1.3</source>
         <translation>Carregar bancos com modelo EDGV Versão 2.1.3</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="77"/>
         <source>Load Database Model EDGV Version FTer_2a_Ed</source>
         <translation>Carregar bancos com modelo EDGV Versão FTer_2a_Ed</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="78"/>
         <source>Load Other Database Models</source>
         <translation>Carregar bancos com outras modelagens</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="143"/>
         <source>Show Views</source>
-        <translation>Mostrar Views</translation>
+        <translation type="obsolete">Mostrar Views</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/batchDbManager.ui" line="219"/>
         <source>Run SQL from File</source>
-        <translation>Rodar SQL de Arquivo</translation>
+        <translation type="obsolete">Rodar SQL de Arquivo</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="75"/>
         <source>Load Database Model EDGV Version 3.0</source>
         <translation>Carregar bancos com modelo EDGV Versão 3.0</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="72"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="74"/>
         <source>Load Database Model EDGV Version 2.1.3 Pro</source>
         <translation>Carregar Bancos com Modelo EDGV Versão 2.1.3 Pro</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.ui" line="101"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="76"/>
         <source>Load Database Model EDGV Version 3.0 Pro</source>
         <translation>Carregar Bancos com Modelo EDGV Versão 3.0 Pro</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/LoadLayersFromServer/loadLayersFromServer.ui" line="133"/>
         <source>Do not use custom form (Pro databases use custom form by default)</source>
-        <translation>Não utilizar formulário customizado (padrão de bancos de versões Pro)</translation>
+        <translation type="obsolete">Não utilizar formulário customizado (padrão de bancos de versões Pro)</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/batchDbManager.py" line="157"/>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="162"/>
         <source>Error for database {0}: </source>
         <translation>Erro para o banco de dados {0}: </translation>
+    </message>
+    <message>
+        <location filename="../gui/ServerTools/batchDbManager.py" line="195"/>
+        <source>This operation will upgrade PostGIS version for templates databases as well as the selected databases. Would you like to continue?</source>
+        <translation>Essa operação irá atualizar a versão do PostGIS para as bases de templates, além dos bancos de dados selecionados. Deseja continuar?</translation>
     </message>
 </context>
 <context>
@@ -1600,37 +1605,37 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="23"/>
         <source>Optional Parameters</source>
-        <translation>Parâmetros Opcionais</translation>
+        <translation type="obsolete">Parâmetros Opcionais</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="39"/>
         <source>Assign Color</source>
-        <translation>Atribuir Cor</translation>
+        <translation type="obsolete">Atribuir Cor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="72"/>
         <source>Assign Tooltip</source>
-        <translation>Atribuir Dica de Uso</translation>
+        <translation type="obsolete">Atribuir Dica de Uso</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="86"/>
         <source>Assign Shortcut</source>
-        <translation>Atribuir Atalho</translation>
+        <translation type="obsolete">Atribuir Atalho</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="93"/>
         <source>Custom category</source>
-        <translation>Categoria personalizada</translation>
+        <translation type="obsolete">Categoria personalizada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/buttonPropWidget.ui" line="100"/>
         <source>Open feature form when digitizing</source>
-        <translation>Abrir formulário de feições após digitalizar</translation>
+        <translation type="obsolete">Abrir formulário de feições após digitalizar</translation>
     </message>
 </context>
 <context>
@@ -1794,92 +1799,92 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="26"/>
         <source>Add/remove filter value on all attributes of this table</source>
-        <translation>Adicionar/Remover valor de filtro em todos os atributos desta tabela</translation>
+        <translation type="obsolete">Adicionar/Remover valor de filtro em todos os atributos desta tabela</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="42"/>
         <source>Add/remove filter value on all attributes of selected database</source>
-        <translation>Adicionar/Remover valor de filtro em todos os atributos do banco de dados selecionado</translation>
+        <translation type="obsolete">Adicionar/Remover valor de filtro em todos os atributos do banco de dados selecionado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="53"/>
         <source>Affected Tables due to Inheritance</source>
-        <translation>Tabelas afetadas por causa de herança</translation>
+        <translation type="obsolete">Tabelas afetadas por causa de herança</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="20"/>
         <source>Schema</source>
-        <translation>Esquema</translation>
+        <translation type="obsolete">Esquema</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="37"/>
         <source>Table Name</source>
-        <translation>Noma da tabela</translation>
+        <translation type="obsolete">Noma da tabela</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="73"/>
         <source>Attribute Name</source>
-        <translation>Nome do atributo</translation>
+        <translation type="obsolete">Nome do atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="127"/>
         <source>Value to alter</source>
-        <translation>Valor para alterar</translation>
+        <translation type="obsolete">Valor para alterar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="138"/>
         <source>Select operation</source>
-        <translation>Selecione a operação</translation>
+        <translation type="obsolete">Selecione a operação</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="143"/>
         <source>Add to Filter (Leave empty if filter is empty)</source>
-        <translation>Adicionar no filtro (Deixe vazio se o filtro é vazio)</translation>
+        <translation type="obsolete">Adicionar no filtro (Deixe vazio se o filtro é vazio)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="148"/>
         <source>Add to Filter (Add value to empty filter)</source>
-        <translation>Adicionar no filtro (Adicionar valor no filtro vazio)</translation>
+        <translation type="obsolete">Adicionar no filtro (Adicionar valor no filtro vazio)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeFilterWidget.ui" line="153"/>
         <source>Remove from Filter</source>
-        <translation>Remover do filtro</translation>
+        <translation type="obsolete">Remover do filtro</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="63"/>
         <source>Alter nullity on all attributes of this table</source>
-        <translation>Alterar nulidade de todos os atributos desta tabela</translation>
+        <translation type="obsolete">Alterar nulidade de todos os atributos desta tabela</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="93"/>
         <source>Action</source>
-        <translation>Ação</translation>
+        <translation type="obsolete">Ação</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="107"/>
         <source>Select an action</source>
-        <translation>Selecione uma ação</translation>
+        <translation type="obsolete">Selecione uma ação</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="112"/>
         <source>Set NOT NULL</source>
-        <translation>Ajustar  NOT NULL</translation>
+        <translation type="obsolete">Ajustar  NOT NULL</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="117"/>
         <source>SET NULL</source>
-        <translation>Ajustar NULL</translation>
+        <translation type="obsolete">Ajustar NULL</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.ui" line="131"/>
         <source>Alter nullity on all attributes of selected database</source>
-        <translation>Alterar nulidade de todos os atributos do banco de dados selecionado</translation>
+        <translation type="obsolete">Alterar nulidade de todos os atributos do banco de dados selecionado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/changeNullityWidget.py" line="77"/>
@@ -2288,22 +2293,22 @@ camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.ui" line="71"/>
         <source>Add spatial rule</source>
-        <translation>Adicionar Regra Espacial</translation>
+        <translation type="obsolete">Adicionar Regra Espacial</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.ui" line="97"/>
         <source>Import spatial rule</source>
-        <translation>Importar Regra Espacial</translation>
+        <translation type="obsolete">Importar Regra Espacial</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.ui" line="149"/>
         <source>Configure spatial rule</source>
-        <translation>Configurar Regra Espacial</translation>
+        <translation type="obsolete">Configurar Regra Espacial</translation>
     </message>
 </context>
 <context>
@@ -2397,29 +2402,29 @@ camada</translation>
         <translation type="obsolete">Selecione o Banco de Dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="92"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="97"/>
         <source>Select Database</source>
         <translation>Selecione o banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="99"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="106"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="144"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="151"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.ui" line="38"/>
         <source>Edit server connections</source>
-        <translation>Editar Conexões com Servidores</translation>
+        <translation type="obsolete">Editar Conexões com Servidores</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="56"/>
@@ -2427,17 +2432,17 @@ camada</translation>
         <translation>Selecione um banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="180"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="187"/>
         <source>Invalid datasource.</source>
         <translation>Fonte de dados inválido.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="184"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="191"/>
         <source>Invalid connection to server.</source>
         <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="187"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/connectionComboBox.py" line="194"/>
         <source>Database {0} does not exist.</source>
         <translation>A base de dados {0} não existe.</translation>
     </message>
@@ -2465,14 +2470,14 @@ camada</translation>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="289"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="291"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="172"/>
@@ -2482,42 +2487,42 @@ camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="60"/>
         <source>PostGIS</source>
-        <translation>PostGIS</translation>
+        <translation type="obsolete">PostGIS</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="72"/>
         <source>Connections</source>
-        <translation>Conexões</translation>
+        <translation type="obsolete">Conexões</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="100"/>
         <source>Select database</source>
-        <translation>Selecione um banco de dados</translation>
+        <translation type="obsolete">Selecione um banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="335"/>
         <source>Coordinate System</source>
-        <translation>Sistema de Coordenadas</translation>
+        <translation type="obsolete">Sistema de Coordenadas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="390"/>
         <source>EDGV Version</source>
-        <translation>Versão da EDGV</translation>
+        <translation type="obsolete">Versão da EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="251"/>
         <source>Spatialite</source>
-        <translation>Spatialite</translation>
+        <translation type="obsolete">Spatialite</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="279"/>
         <source>File                    </source>
-        <translation>Arquivo                    </translation>
+        <translation type="obsolete">Arquivo                    </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.ui" line="312"/>
         <source>Search</source>
-        <translation>Pesquisar</translation>
+        <translation type="obsolete">Pesquisar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/connectionWidget.py" line="199"/>
@@ -2530,64 +2535,64 @@ camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="61"/>
         <source>Select a conversion</source>
-        <translation>Selecione uma conversão</translation>
+        <translation type="obsolete">Selecione uma conversão</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="62"/>
         <source>postgis2spatialite</source>
-        <translation>postgis2spatialite</translation>
+        <translation type="obsolete">postgis2spatialite</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="63"/>
         <source>spatialite2postgis</source>
-        <translation>spatialite2postgis</translation>
+        <translation type="obsolete">spatialite2postgis</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="168"/>
         <source>Error!</source>
-        <translation>Erro!</translation>
+        <translation type="obsolete">Erro!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="130"/>
         <source>Enter input database!</source>
-        <translation>Entre com o bancos de dados de entrada!</translation>
+        <translation type="obsolete">Entre com o bancos de dados de entrada!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="133"/>
         <source>Enter output database!</source>
-        <translation>Entre com o banco de dados de saída!</translation>
+        <translation type="obsolete">Entre com o banco de dados de saída!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="136"/>
         <source>Version mismatch!
 Conversion must be between databases with the same version!</source>
-        <translation>Erro de versão!
+        <translation type="obsolete">Erro de versão!
 A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="166"/>
         <source>Success!</source>
-        <translation>Sucesso!</translation>
+        <translation type="obsolete">Sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="166"/>
         <source>Conversion successfully completed!</source>
-        <translation>Conversão completada com sucesso!</translation>
+        <translation type="obsolete">Conversão completada com sucesso!</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="168"/>
         <source>Conversion not performed! Check log for details.</source>
-        <translation>Conversão não realizada! Verifique o log para detalhes.</translation>
+        <translation type="obsolete">Conversão não realizada! Verifique o log para detalhes.</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="153"/>
         <source>Question</source>
-        <translation>Pergunta</translation>
+        <translation type="obsolete">Pergunta</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.py" line="153"/>
         <source>Databases CRS are different. Conversor will reproject spatial data. Do you want to proceed?</source>
-        <translation>Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
+        <translation type="obsolete">Os Sistemas de Referência Espacial dos bancos são diferentes. O Conversor reprojetará os dados espaciais. Você deseja prosseguir?</translation>
     </message>
 </context>
 <context>
@@ -2668,7 +2673,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.ui" line="26"/>
         <source>WizardPage</source>
-        <translation>WizardPage</translation>
+        <translation type="obsolete">WizardPage</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.py" line="46"/>
@@ -2731,12 +2736,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.ui" line="14"/>
         <source>WizardPage</source>
-        <translation>WizardPage</translation>
+        <translation type="obsolete">WizardPage</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.ui" line="44"/>
         <source>Number of Databases</source>
-        <translation>Número de banco de dados</translation>
+        <translation type="obsolete">Número de banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.py" line="83"/>
@@ -2977,12 +2982,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
 <context>
     <name>CreateInomDialog</name>
     <message>
-        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="71"/>
+        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="72"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="71"/>
+        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="72"/>
         <source>Map name index not valid!</source>
         <translation>Índice de nomenclatura inválido!</translation>
     </message>
@@ -3012,7 +3017,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation type="obsolete">Por favor, selecione pelo menos uma classe!</translation>
     </message>
     <message>
-        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="67"/>
+        <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog.py" line="68"/>
         <source>Please, select a database first.</source>
         <translation>Por favor, selecione um banco de dados antes.</translation>
     </message>
@@ -3153,27 +3158,27 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.ui" line="14"/>
         <source>Create Permissions Model</source>
-        <translation>Criar Modelo de Permissões</translation>
+        <translation type="obsolete">Criar Modelo de Permissões</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.ui" line="22"/>
         <source>Permissions Model Name:</source>
-        <translation>Nome do Modelo de Permissões:</translation>
+        <translation type="obsolete">Nome do Modelo de Permissões:</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.ui" line="36"/>
         <source>EDGV Version:</source>
-        <translation>Versão da EDGV:</translation>
+        <translation type="obsolete">Versão da EDGV:</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.ui" line="44"/>
         <source>2.1.3</source>
-        <translation>2.1.3</translation>
+        <translation type="obsolete">2.1.3</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.ui" line="49"/>
         <source>FTer_2a_Ed</source>
-        <translation>FTer_2a_Ed</translation>
+        <translation type="obsolete">FTer_2a_Ed</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/createProfileWithProfileManager.py" line="108"/>
@@ -3259,32 +3264,32 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.ui" line="65"/>
         <source>Create User</source>
-        <translation>Criar Usuário</translation>
+        <translation type="obsolete">Criar Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.ui" line="20"/>
         <source>User Name</source>
-        <translation>Nome do Usuário</translation>
+        <translation type="obsolete">Nome do Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.ui" line="30"/>
         <source>Password</source>
-        <translation>Senha</translation>
+        <translation type="obsolete">Senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.ui" line="44"/>
         <source>Re-enter Password</source>
-        <translation>Entre a Senha novamente</translation>
+        <translation type="obsolete">Entre a Senha novamente</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.ui" line="58"/>
         <source>Superuser</source>
-        <translation>Superusuário</translation>
+        <translation type="obsolete">Superusuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.ui" line="72"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_user.py" line="79"/>
@@ -3350,42 +3355,42 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="14"/>
         <source>Create Domain Resolved Views</source>
-        <translation>Criar Visões com domínios resolvidos</translation>
+        <translation type="obsolete">Criar Visões com domínios resolvidos</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="20"/>
         <source>Database</source>
-        <translation>Banco de Dados</translation>
+        <translation type="obsolete">Banco de Dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="30"/>
         <source>View Type</source>
-        <translation>Tipo de Visão</translation>
+        <translation type="obsolete">Tipo de Visão</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="38"/>
         <source>View</source>
-        <translation>Visão</translation>
+        <translation type="obsolete">Visão</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="43"/>
         <source>Materialized View</source>
-        <translation>Visão Materializada</translation>
+        <translation type="obsolete">Visão Materializada</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="51"/>
         <source>Inheritance Type</source>
-        <translation>Tipo de Herança</translation>
+        <translation type="obsolete">Tipo de Herança</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="59"/>
         <source>Do not use Inheritance</source>
-        <translation>Não usar herança</translation>
+        <translation type="obsolete">Não usar herança</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/createView.ui" line="64"/>
         <source>Use database Inheritance</source>
-        <translation>Usar herança do banco de dados</translation>
+        <translation type="obsolete">Usar herança do banco de dados</translation>
     </message>
 </context>
 <context>
@@ -3494,12 +3499,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.ui" line="26"/>
         <source>Select Reference Layer</source>
-        <translation>Selecione uma camada de referência</translation>
+        <translation type="obsolete">Selecione uma camada de referência</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customReferenceAndLayersParameterSelector.py" line="93"/>
@@ -3512,52 +3517,52 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="47"/>
         <source>Custom Selector</source>
-        <translation>Seletor Customizado</translation>
+        <translation type="obsolete">Seletor Customizado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="119"/>
         <source>Select all categories in the database</source>
-        <translation>Selecionar todas as categorias no banco de dados</translation>
+        <translation type="obsolete">Selecionar todas as categorias no banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="122"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="obsolete">&gt;&gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="141"/>
         <source>Select only the selected</source>
-        <translation>Selecionar apenas as selecionadas</translation>
+        <translation type="obsolete">Selecionar apenas as selecionadas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="144"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="163"/>
         <source>Remove from list only the selected categories</source>
-        <translation>Remove da lista apenas as categorias selecionadas</translation>
+        <translation type="obsolete">Remove da lista apenas as categorias selecionadas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="166"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="185"/>
         <source>Remove all categories</source>
-        <translation>Remover todas as categorias</translation>
+        <translation type="obsolete">Remover todas as categorias</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSelector.ui" line="188"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="obsolete">&lt;&lt;</translation>
     </message>
 </context>
 <context>
@@ -3565,12 +3570,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="14"/>
         <source>Manage Databases from a Server</source>
-        <translation>Gerenciar bancos de dados de um servidor</translation>
+        <translation type="obsolete">Gerenciar bancos de dados de um servidor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="47"/>
         <source>Postgis</source>
-        <translation>Postgis</translation>
+        <translation type="obsolete">Postgis</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/customServerConnectionWidget.py" line="62"/>
@@ -3585,7 +3590,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="120"/>
         <source>Spatialite</source>
-        <translation>Spatialite</translation>
+        <translation type="obsolete">Spatialite</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/customServerConnectionWidget.py" line="64"/>
@@ -3640,7 +3645,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.ui" line="183"/>
         <source>Geopackage</source>
-        <translation>Geopackage</translation>
+        <translation type="obsolete">Geopackage</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/customServerConnectionWidget.py" line="68"/>
@@ -3663,22 +3668,22 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="14"/>
         <source>Enter new measure parameters</source>
-        <translation>Insira novos parâmetros de medição</translation>
+        <translation type="obsolete">Insira novos parâmetros de medição</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="20"/>
         <source>Area</source>
-        <translation>Área</translation>
+        <translation type="obsolete">Área</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="30"/>
         <source>Distance</source>
-        <translation>Distância</translation>
+        <translation type="obsolete">Distância</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="37"/>
         <source>Combo box text</source>
-        <translation>Texto do combo box</translation>
+        <translation type="obsolete">Texto do combo box</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="84"/>
@@ -3688,12 +3693,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="57"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui" line="64"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.py" line="56"/>
@@ -3730,12 +3735,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.ui" line="26"/>
         <source>Select Reference Layer</source>
-        <translation>Selecione uma Camada de Referência</translation>
+        <translation type="obsolete">Selecione uma Camada de Referência</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customSnaperParameterSelector.py" line="68"/>
@@ -3748,52 +3753,52 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="47"/>
         <source>Custom Selector</source>
-        <translation>Seletor Customizado</translation>
+        <translation type="obsolete">Seletor Customizado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="93"/>
         <source>Select all categories in the database</source>
-        <translation>Selecione Todas as Categorias do Banco de Dados</translation>
+        <translation type="obsolete">Selecione Todas as Categorias do Banco de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="96"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="obsolete">&gt;&gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="115"/>
         <source>Select only the selected</source>
-        <translation>Selecionar apenas as selecionadas</translation>
+        <translation type="obsolete">Selecionar apenas as selecionadas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="118"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="137"/>
         <source>Remove from list only the selected categories</source>
-        <translation>Remove da lista apenas as categorias selecionadas</translation>
+        <translation type="obsolete">Remove da lista apenas as categorias selecionadas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="140"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="159"/>
         <source>Remove all categories</source>
-        <translation>Remover todas as categorias</translation>
+        <translation type="obsolete">Remover todas as categorias</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableSelector.ui" line="162"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="obsolete">&lt;&lt;</translation>
     </message>
 </context>
 <context>
@@ -3801,17 +3806,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableWidget.ui" line="48"/>
         <source>Add</source>
-        <translation>Adicionar</translation>
+        <translation type="obsolete">Adicionar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/customTableWidget.ui" line="71"/>
         <source>Remove</source>
-        <translation>Remover</translation>
+        <translation type="obsolete">Remover</translation>
     </message>
 </context>
 <context>
@@ -3819,62 +3824,62 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="28"/>
         <source>Right click for options</source>
-        <translation>Botão direito para opções</translation>
+        <translation type="obsolete">Botão direito para opções</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="41"/>
         <source>Database</source>
-        <translation>Banco de Dados</translation>
+        <translation type="obsolete">Banco de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="46"/>
         <source>Customization</source>
-        <translation>Customização</translation>
+        <translation type="obsolete">Customização</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="87"/>
         <source>View Database Perspective</source>
-        <translation>Ver perspectiva do banco de dados</translation>
+        <translation type="obsolete">Ver perspectiva do banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="131"/>
         <source>View User Perspective</source>
-        <translation>Ver perspectiva do usuário</translation>
+        <translation type="obsolete">Ver perspectiva do usuário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="157"/>
         <source>Import Customization</source>
-        <translation>Importar Customização</translation>
+        <translation type="obsolete">Importar Customização</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="164"/>
         <source>Batch Import Customizations</source>
-        <translation>Importar Customizações em lote</translation>
+        <translation type="obsolete">Importar Customizações em lote</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="171"/>
         <source>Export Customization</source>
-        <translation>Exportar Customização</translation>
+        <translation type="obsolete">Exportar Customização</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="178"/>
         <source>Batch Export Customizations</source>
-        <translation>Exportar Customizações em lote</translation>
+        <translation type="obsolete">Exportar Customizações em lote</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="199"/>
         <source>Create Customization</source>
-        <translation>Criar Customização</translation>
+        <translation type="obsolete">Criar Customização</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.ui" line="216"/>
         <source>Delete Selected</source>
-        <translation>Apagar selecionado</translation>
+        <translation type="obsolete">Apagar selecionado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseCustomizationWidgets/customizationManagerWidget.py" line="84"/>
@@ -3940,27 +3945,27 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
         <translation>Outro modelo de banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="86"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="82"/>
         <source>Select datasource</source>
         <translation>Selecione uma fonte de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="125"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="121"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="138"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="134"/>
         <source>Invalid datasource.</source>
         <translation>Fonte de dados inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="142"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="138"/>
         <source>Invalid connection to server.</source>
         <translation>Conexão com o servidor inválida.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="145"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/databaseFileLineEdit.py" line="141"/>
         <source>Database {0} does not exist.</source>
         <translation>A base de dados {0} não existe.</translation>
     </message>
@@ -3978,12 +3983,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="26"/>
         <source>Select Projection</source>
-        <translation>Selecione uma projeção</translation>
+        <translation type="obsolete">Selecione uma projeção</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="43"/>
@@ -3993,17 +3998,17 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="60"/>
         <source>2.1.3</source>
-        <translation>2.1.3</translation>
+        <translation type="obsolete">2.1.3</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="70"/>
         <source>FTer_2a_Ed</source>
-        <translation>FTer_2a_Ed</translation>
+        <translation type="obsolete">FTer_2a_Ed</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="271"/>
         <source>&lt;prefix&gt;_&lt;database name&gt;_&lt;sufix&gt;</source>
-        <translation>&lt;prefixo&gt;_&lt;nome do banco de dados&gt;_&lt;sufixo&gt;</translation>
+        <translation type="obsolete">&lt;prefixo&gt;_&lt;nome do banco de dados&gt;_&lt;sufixo&gt;</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="100"/>
@@ -4013,7 +4018,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="319"/>
         <source>Database Name</source>
-        <translation>Nome do banco de dados</translation>
+        <translation type="obsolete">Nome do banco de dados</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="154"/>
@@ -4042,12 +4047,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="43"/>
         <source>Create from EDGV template</source>
-        <translation>Criar do template EDGV</translation>
+        <translation type="obsolete">Criar do template EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="86"/>
         <source>Create from a database template</source>
-        <translation>Criar banco a partir de um template</translation>
+        <translation type="obsolete">Criar banco a partir de um template</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="96"/>
@@ -4061,12 +4066,12 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="292"/>
         <source>Prefix (optional)</source>
-        <translation>Prefixo (opcional)</translation>
+        <translation type="obsolete">Prefixo (opcional)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="346"/>
         <source>Sufix (optional)</source>
-        <translation>Sufixo (opcional)</translation>
+        <translation type="obsolete">Sufixo (opcional)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="146"/>
@@ -4078,17 +4083,17 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="136"/>
         <source>Select Frame Layer</source>
-        <translation>Selecione a camada de moldura</translation>
+        <translation type="obsolete">Selecione a camada de moldura</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="183"/>
         <source>Select index attribute</source>
-        <translation>Selecione o atributo MI</translation>
+        <translation type="obsolete">Selecione o atributo MI</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="230"/>
         <source>Select INOM attribute</source>
-        <translation>Selecione o atributo INOM</translation>
+        <translation type="obsolete">Selecione o atributo INOM</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="61"/>
@@ -4124,12 +4129,12 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="75"/>
         <source>3.0</source>
-        <translation>3.0</translation>
+        <translation type="obsolete">3.0</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="65"/>
         <source>2.1.3 Pro</source>
-        <translation>2.1.3 Pro</translation>
+        <translation type="obsolete">2.1.3 Pro</translation>
     </message>
 </context>
 <context>
@@ -4368,7 +4373,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>Ferramenta de Conversão de Fontes de Dados do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="865"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="864"/>
         <source>Convert Databases</source>
         <translation>Converter Bancos de Dados</translation>
     </message>
@@ -4407,7 +4412,7 @@ geométrica</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Caixa de Diálogo</translation>
+        <translation type="obsolete">Caixa de Diálogo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="62"/>
@@ -4450,12 +4455,12 @@ geométrica</translation>
         <translation>nova</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="237"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="233"/>
         <source>Input Error!</source>
         <translation>Erro de entrada!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="239"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="235"/>
         <source>Output Error!</source>
         <translation>Erro de saída!</translation>
     </message>
@@ -4465,12 +4470,12 @@ geométrica</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/datasourceSelectionWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/datasourceSelectionWidget.ui" line="50"/>
         <source>Add Datasource</source>
-        <translation>Adicionar Fonte de Dados</translation>
+        <translation type="obsolete">Adicionar Fonte de Dados</translation>
     </message>
 </context>
 <context>
@@ -4481,7 +4486,7 @@ geométrica</translation>
         <translation>Fonte de dados {0} já existe.</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="608"/>
+        <location filename="../core/DbTools/dbConverter.py" line="618"/>
         <source>
 Conversion Step {0} started...
 
@@ -4492,47 +4497,57 @@ Passo de conversão {0} iniciado...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="609"/>
+        <location filename="../core/DbTools/dbConverter.py" line="619"/>
         <source>[INPUT] Reading {0}&apos;s layers...
 </source>
         <translation>[ENTRADA] Lendo camadas de {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="619"/>
+        <location filename="../core/DbTools/dbConverter.py" line="642"/>
         <source>[OUTPUT] Reading {0}&apos;s layers...
 </source>
         <translation>[SAÍDA] Lendo camadas de {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="624"/>
+        <location filename="../core/DbTools/dbConverter.py" line="631"/>
         <source>[OUTPUT] Creating dataset {0}...
 </source>
         <translation>[SAÍDA] Criando fonte de dados {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="628"/>
+        <location filename="../core/DbTools/dbConverter.py" line="636"/>
         <source>Dataset creation error ({0}): &apos;{1}&apos;
 </source>
         <translation>Erro de criação de fonte de dados ({0}): &apos;{1}&apos;
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="637"/>
+        <location filename="../core/DbTools/dbConverter.py" line="648"/>
         <source>Preparing {0}&apos;s layers for conversion...</source>
         <translation>Preparando as camadas de {0} para a conversão...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="642"/>
+        <location filename="../core/DbTools/dbConverter.py" line="653"/>
         <source>Mapping features...</source>
         <translation>Mapeando feições...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="647"/>
+        <location filename="../core/DbTools/dbConverter.py" line="658"/>
         <source>Loading layers to {0}...</source>
         <translation>Carregando camadas para {0}...</translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="512"/>
+        <source>{0} successfully loaded.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DbTools/dbConverter.py" line="515"/>
+        <source>{0} failed to be loaded.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -4556,17 +4571,17 @@ Passo de conversão {0} iniciado...
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.ui" line="14"/>
         <source>Manage profiles</source>
-        <translation>Gerenciar perfis</translation>
+        <translation type="obsolete">Gerenciar perfis</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.ui" line="20"/>
         <source>Apply Changes</source>
-        <translation>Aplicar mudanças</translation>
+        <translation type="obsolete">Aplicar mudanças</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.ui" line="27"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="50"/>
@@ -4736,32 +4751,32 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui" line="14"/>
         <source>Manage Complex Features</source>
-        <translation>Gerenciar Feições Complexas</translation>
+        <translation type="obsolete">Gerenciar Feições Complexas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui" line="29"/>
         <source>Add Complex</source>
-        <translation>Adicionar Complexo</translation>
+        <translation type="obsolete">Adicionar Complexo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui" line="36"/>
         <source>Remove Complex</source>
-        <translation>Remover Complexo</translation>
+        <translation type="obsolete">Remover Complexo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/ui_manageComplex.ui" line="47"/>
         <source>Update Table</source>
-        <translation>Atualizar Tabela</translation>
+        <translation type="obsolete">Atualizar Tabela</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.ui" line="57"/>
+        <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="177"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.ui" line="14"/>
         <source>Create Database</source>
-        <translation>Criar Banco de Dados</translation>
+        <translation type="obsolete">Criar Banco de Dados</translation>
     </message>
     <message>
         <location filename="../DbTools/PostGISTool/ui_postgisDBTool.ui" line="22"/>
@@ -4786,17 +4801,17 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.ui" line="44"/>
         <source>2.1.3</source>
-        <translation>2.1.3</translation>
+        <translation type="obsolete">2.1.3</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/profile_editor.ui" line="106"/>
+        <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="170"/>
         <source>Save</source>
         <translation>Salvar</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="14"/>
         <source>Create Frame</source>
-        <translation>Criar Moldura</translation>
+        <translation type="obsolete">Criar Moldura</translation>
     </message>
     <message>
         <location filename="../LayerTools/ui_create_inom_dialog_base.ui" line="24"/>
@@ -4811,7 +4826,7 @@ Camada</translation>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="230"/>
         <source>Search</source>
-        <translation>Pesquisar</translation>
+        <translation type="obsolete">Pesquisar</translation>
     </message>
     <message>
         <location filename="../LayerTools/ui_create_inom_dialog_base.ui" line="103"/>
@@ -4831,92 +4846,92 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="25"/>
         <source>Scale:</source>
-        <translation>Escala:</translation>
+        <translation type="obsolete">Escala:</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="33"/>
         <source>1000k</source>
-        <translation>1000k</translation>
+        <translation type="obsolete">1000k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="38"/>
         <source>500k</source>
-        <translation>500k</translation>
+        <translation type="obsolete">500k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="43"/>
         <source>250k</source>
-        <translation>250k</translation>
+        <translation type="obsolete">250k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="48"/>
         <source>100k</source>
-        <translation>100k</translation>
+        <translation type="obsolete">100k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="53"/>
         <source>50k</source>
-        <translation>50k</translation>
+        <translation type="obsolete">50k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="58"/>
         <source>25k</source>
-        <translation>25k</translation>
+        <translation type="obsolete">25k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="63"/>
         <source>10k</source>
-        <translation>10k</translation>
+        <translation type="obsolete">10k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="68"/>
         <source>5k</source>
-        <translation>5k</translation>
+        <translation type="obsolete">5k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="73"/>
         <source>2k</source>
-        <translation>2k</translation>
+        <translation type="obsolete">2k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="78"/>
         <source>1k</source>
-        <translation>1k</translation>
+        <translation type="obsolete">1k</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="88"/>
         <source>Index Frame Selection</source>
-        <translation>Seleção de Índice de Nomenclatura</translation>
+        <translation type="obsolete">Seleção de Índice de Nomenclatura</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="102"/>
         <source>MIR:</source>
-        <translation>MIR:</translation>
+        <translation type="obsolete">MIR:</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="135"/>
         <source>MI:</source>
-        <translation>MI:</translation>
+        <translation type="obsolete">MI:</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/CreateFrameTool/ui_create_inom_dialog_base.ui" line="175"/>
         <source>Index:</source>
-        <translation>INOM:</translation>
+        <translation type="obsolete">INOM:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="177"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="14"/>
         <source>Configurate Servers</source>
-        <translation>Configurar Servidores</translation>
+        <translation>Configurar servidores</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="22"/>
         <source>Server Name:</source>
-        <translation>Nome do Servidor:</translation>
+        <translation>Nome do servidor:</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="49"/>
@@ -4929,7 +4944,7 @@ Camada</translation>
         <translation>Porta:</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="87"/>
+        <location filename="../gui/ServerTools/ui_serverConfigurator.ui" line="103"/>
         <source>User:</source>
         <translation>Usuário:</translation>
     </message>
@@ -4949,14 +4964,14 @@ Camada</translation>
         <translation type="obsolete">Pesquisar SRC</translation>
     </message>
     <message>
-        <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="60"/>
+        <location filename="../gui/ServerTools/ui_viewServers.ui" line="86"/>
         <source>Remove</source>
         <translation>Remover</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_viewServers.ui" line="44"/>
         <source>Server Name</source>
-        <translation>Nome do Servidor</translation>
+        <translation>Nome do servidor</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_viewServers.ui" line="49"/>
@@ -4974,7 +4989,7 @@ Camada</translation>
         <translation>Usuário</translation>
     </message>
     <message>
-        <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="53"/>
+        <location filename="../gui/ServerTools/ui_viewServers.ui" line="79"/>
         <source>Add</source>
         <translation>Adicionar</translation>
     </message>
@@ -4996,207 +5011,207 @@ Camada</translation>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="14"/>
         <source>Batch Image Processor</source>
-        <translation>Processador de Imagens em Lote</translation>
+        <translation type="obsolete">Processador de Imagens em Lote</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="27"/>
         <source>Image</source>
-        <translation>Imagem</translation>
+        <translation type="obsolete">Imagem</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="36"/>
         <source>Input images:</source>
-        <translation>Imagens de Entrada:</translation>
+        <translation type="obsolete">Imagens de Entrada:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="67"/>
         <source>Add folder</source>
-        <translation>Adicionar diretório</translation>
+        <translation type="obsolete">Adicionar diretório</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="91"/>
         <source>Apply contrast enhancement:</source>
-        <translation>Aplicar melhoria de contraste:</translation>
+        <translation type="obsolete">Aplicar melhoria de contraste:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="99"/>
         <source>None</source>
-        <translation>Nenhum</translation>
+        <translation type="obsolete">Nenhum</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="104"/>
         <source>Linear 2%</source>
-        <translation>Linear 2%</translation>
+        <translation type="obsolete">Linear 2%</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="112"/>
         <source>Spatial Reference System:</source>
-        <translation>Sistema de Referência Espacial:</translation>
+        <translation type="obsolete">Sistema de Referência Espacial:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="124"/>
         <source>CRS</source>
-        <translation>SRC</translation>
+        <translation type="obsolete">SRC</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="133"/>
         <source>Output raster type</source>
-        <translation>Tipo de raster de saída</translation>
+        <translation type="obsolete">Tipo de raster de saída</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="141"/>
         <source>Byte</source>
-        <translation>Byte</translation>
+        <translation type="obsolete">Byte</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="146"/>
         <source>Unsigned Int 16</source>
-        <translation>Unsigned Int 16</translation>
+        <translation type="obsolete">Unsigned Int 16</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="151"/>
         <source>Int 16</source>
-        <translation>Int 16</translation>
+        <translation type="obsolete">Int 16</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="156"/>
         <source>Unsigned Int 32</source>
-        <translation>Unsigned Int 32</translation>
+        <translation type="obsolete">Unsigned Int 32</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="161"/>
         <source>Int 32</source>
-        <translation>Int 32</translation>
+        <translation type="obsolete">Int 32</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="166"/>
         <source>Float 32</source>
-        <translation>Float 32</translation>
+        <translation type="obsolete">Float 32</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="171"/>
         <source>Float 64</source>
-        <translation>Float 64</translation>
+        <translation type="obsolete">Float 64</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="180"/>
         <source>Metadata</source>
-        <translation>Metadados</translation>
+        <translation type="obsolete">Metadados</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="186"/>
         <source>Metadata output XML model:</source>
-        <translation>Modelo XML de metadados de saída:</translation>
+        <translation type="obsolete">Modelo XML de metadados de saída:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="207"/>
         <source>Process metadata</source>
-        <translation>Processar metadados</translation>
+        <translation type="obsolete">Processar metadados</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ImageTools/ui_processingTools.ui" line="220"/>
         <source>Output files folder:</source>
-        <translation>Diretório de arquivos de saída:</translation>
+        <translation type="obsolete">Diretório de arquivos de saída:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="14"/>
         <source>Inventory Tools</source>
-        <translation>Ferramentas de Inventário</translation>
+        <translation type="obsolete">Ferramentas de Inventário</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="31"/>
         <source>Parent Folder:</source>
-        <translation>Diretório pai:</translation>
+        <translation type="obsolete">Diretório pai:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="163"/>
         <source>Select Folder</source>
-        <translation>Selecionar Pasta</translation>
+        <translation type="obsolete">Selecionar Pasta</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="53"/>
         <source>Search only Georeferenced files</source>
-        <translation>Buscar somente arquivos Georreferenciados</translation>
+        <translation type="obsolete">Buscar somente arquivos Georreferenciados</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="74"/>
         <source>Output File:</source>
-        <translation>Arquivo de saída:</translation>
+        <translation type="obsolete">Arquivo de saída:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="84"/>
         <source>Save File</source>
-        <translation>Salvar Arquivo</translation>
+        <translation type="obsolete">Salvar Arquivo</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="132"/>
         <source>Copy Files</source>
-        <translation>Copiar arquivos</translation>
+        <translation type="obsolete">Copiar arquivos</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="153"/>
         <source>Destination Folder:</source>
-        <translation>Pasta de destino:</translation>
+        <translation type="obsolete">Pasta de destino:</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="96"/>
         <source>File extensions to be considered</source>
-        <translation>Extensões de arquivo que serão consideradas</translation>
+        <translation type="obsolete">Extensões de arquivo que serão consideradas</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="104"/>
         <source>Exclude the following formats</source>
-        <translation>Excluir os seguintes formatos</translation>
+        <translation type="obsolete">Excluir os seguintes formatos</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="111"/>
         <source>Search only the following formats</source>
-        <translation>Buscar somente os seguintes formatos</translation>
+        <translation type="obsolete">Buscar somente os seguintes formatos</translation>
     </message>
     <message>
         <location filename="../gui/Misc/InventoryTools/ui_inventoryTools.ui" line="121"/>
         <source>Formats</source>
-        <translation>Formatos</translation>
+        <translation type="obsolete">Formatos</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ToolboxTools/models_and_scripts_installer.ui" line="14"/>
         <source>Install Models and Scripts</source>
-        <translation>Instalar Modelos e Scripts</translation>
+        <translation type="obsolete">Instalar Modelos e Scripts</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ToolboxTools/models_and_scripts_installer.ui" line="20"/>
         <source>Available Models</source>
-        <translation>Modelos disponíveis</translation>
+        <translation type="obsolete">Modelos disponíveis</translation>
     </message>
     <message>
         <location filename="../gui/Misc/ToolboxTools/models_and_scripts_installer.ui" line="36"/>
         <source>Available Scripts (geoalgorithms)</source>
-        <translation>Scripts disponíveis (geoalgoritmos)</translation>
+        <translation type="obsolete">Scripts disponíveis (geoalgoritmos)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.ui" line="14"/>
+        <location filename="../gui/ServerTools/ui_serverDBExplorer.ui" line="14"/>
         <source>Configure Connections</source>
-        <translation>Configurar Conexões</translation>
+        <translation>Configurar conexões</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.ui" line="31"/>
         <source>Server</source>
-        <translation>Servidor</translation>
+        <translation type="obsolete">Servidor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.ui" line="70"/>
         <source>Create New Server</source>
-        <translation>Criar Novo Servidor</translation>
+        <translation type="obsolete">Criar Novo Servidor</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverDBExplorer.ui" line="22"/>
         <source>Create Conection</source>
-        <translation>Criar Conexão</translation>
+        <translation>Criar conexão</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverDBExplorer.ui" line="36"/>
         <source>Select All</source>
-        <translation>Selecionar Todos</translation>
+        <translation>Selecionar todos</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="14"/>
@@ -5211,7 +5226,7 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.ui" line="49"/>
         <source>Install</source>
-        <translation>Instalar</translation>
+        <translation type="obsolete">Instalar</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="79"/>
@@ -5221,7 +5236,7 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.ui" line="105"/>
         <source>Remove Profile</source>
-        <translation>Remover Perfil</translation>
+        <translation type="obsolete">Remover Perfil</translation>
     </message>
     <message>
         <location filename="UserTools/assign_profiles.ui" line="143"/>
@@ -5229,7 +5244,7 @@ Camada</translation>
         <translation type="obsolete">Abrir Editor de Perfil</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.ui" line="47"/>
+        <location filename="../gui/ServerTools/ui_viewServers.ui" line="120"/>
         <source>Close</source>
         <translation>Fechar</translation>
     </message>
@@ -5246,7 +5261,7 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.ui" line="36"/>
         <source>EDGV Version:</source>
-        <translation>Versão da EDGV:</translation>
+        <translation type="obsolete">Versão da EDGV:</translation>
     </message>
     <message>
         <location filename="UserTools/profile_editor.ui" line="14"/>
@@ -5264,24 +5279,24 @@ Camada</translation>
         <translation type="obsolete">Criar Modelo de Perfil</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/profile_editor.ui" line="61"/>
+        <location filename="../gui/ServerTools/exploreDb.ui" line="69"/>
         <source>Permissions</source>
         <translation>Permissões</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/permission_properties.ui" line="41"/>
         <source>Read</source>
-        <translation>Ler</translation>
+        <translation type="obsolete">Ler</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/permission_properties.ui" line="46"/>
         <source>Write</source>
-        <translation>Escrever</translation>
+        <translation type="obsolete">Escrever</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.ui" line="113"/>
         <source>Clear All</source>
-        <translation>Limpar Tudo</translation>
+        <translation type="obsolete">Limpar Tudo</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="14"/>
@@ -5296,22 +5311,22 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="49"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="obsolete">&gt;&gt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="56"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="63"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="70"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="obsolete">&lt;&lt;</translation>
     </message>
     <message>
         <location filename="UserTools/user_profiles.ui" line="69"/>
@@ -5326,82 +5341,82 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.ui" line="14"/>
         <source>Install/Remove User Permissions</source>
-        <translation>Instalar/Remover Permissões de Usuário</translation>
+        <translation type="obsolete">Instalar/Remover Permissões de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.ui" line="23"/>
         <source>Existent User Permissions Models</source>
-        <translation>Modelos de Permissões de Usuário Existentes</translation>
+        <translation type="obsolete">Modelos de Permissões de Usuário Existentes</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.ui" line="79"/>
         <source>Installed User Permissions</source>
-        <translation>Permissões de Usuário Instaladas</translation>
+        <translation type="obsolete">Permissões de Usuário Instaladas</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.ui" line="14"/>
         <source>Create Permissions Model</source>
-        <translation>Criar Modelo de Permissões</translation>
+        <translation type="obsolete">Criar Modelo de Permissões</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.ui" line="22"/>
         <source>Permissions Model Name:</source>
-        <translation>Nome do Modelo de Permissões:</translation>
+        <translation type="obsolete">Nome do Modelo de Permissões:</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.ui" line="14"/>
         <source>User Permissions Editor</source>
-        <translation>Editor de Permissões de Usuário</translation>
+        <translation type="obsolete">Editor de Permissões de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="17"/>
         <source>Manage User Permissions</source>
-        <translation>Gerenciar Permissões de Usuário</translation>
+        <translation type="obsolete">Gerenciar Permissões de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="79"/>
         <source>Assigned User Permissions</source>
-        <translation>Permissões de Usuário Atribuídas</translation>
+        <translation type="obsolete">Permissões de Usuário Atribuídas</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="137"/>
         <source>Install New User Permission</source>
-        <translation>Instalar Nova Permissão de Usuário</translation>
+        <translation type="obsolete">Instalar Nova Permissão de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/assign_profiles.ui" line="143"/>
         <source>Open User Permissions Editor</source>
-        <translation>Abrir Editor de Permissões de Usuário</translation>
+        <translation type="obsolete">Abrir Editor de Permissões de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="104"/>
         <source>Create User</source>
-        <translation>Criar Usuário</translation>
+        <translation type="obsolete">Criar Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="111"/>
         <source>Alter Password</source>
-        <translation>Alterar Senha</translation>
+        <translation type="obsolete">Alterar Senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/user_profiles.ui" line="118"/>
         <source>Remove User</source>
-        <translation>Remover Usuário</translation>
+        <translation type="obsolete">Remover Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.ui" line="14"/>
         <source>Convert Database</source>
-        <translation>Converter Banco de Dados</translation>
+        <translation type="obsolete">Converter Banco de Dados</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.ui" line="22"/>
         <source>Convert</source>
-        <translation>Converter</translation>
+        <translation type="obsolete">Converter</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.ui" line="38"/>
         <source>Only convert if all data is compatible</source>
-        <translation>Somente converter caso todos os dados sejam compatíveis</translation>
+        <translation type="obsolete">Somente converter caso todos os dados sejam compatíveis</translation>
     </message>
     <message>
         <location filename="ConversionTools/convert_database.ui" line="48"/>
@@ -5411,12 +5426,12 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.ui" line="64"/>
         <source>Select the conversion type</source>
-        <translation>Selecione um tipo de conversão</translation>
+        <translation type="obsolete">Selecione um tipo de conversão</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.ui" line="76"/>
         <source>Conversion Log</source>
-        <translation>Log da Conversão</translation>
+        <translation type="obsolete">Log da Conversão</translation>
     </message>
     <message>
         <location filename="ConversionTools/convert_database.ui" line="48"/>
@@ -5427,23 +5442,23 @@ Camada</translation>
         <location filename="../gui/DatabaseTools/ConversionTools/convert_database.ui" line="48"/>
         <source>Convert fixing data (Data not compatible will be changed to its default value.
 Null data in a not null field will be changed to -9999)</source>
-        <translation>Converter corrigindo os dados (Dados não compatíveis serão modificados para seus valores padrão.
+        <translation type="obsolete">Converter corrigindo os dados (Dados não compatíveis serão modificados para seus valores padrão.
 Dados nulos em campos não nulos serão modificados para -9999)</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.ui" line="14"/>
         <source>Database Properties</source>
-        <translation>Propriedades de Banco de Dados</translation>
+        <translation>Propriedades de banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.ui" line="29"/>
         <source>Server Databases</source>
-        <translation>Bancos de Dados do Servidor</translation>
+        <translation>Bancos de dados do servidor</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.ui" line="75"/>
         <source>Database Permissions</source>
-        <translation>Permissões do Banco de Dados</translation>
+        <translation>Permissões do banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/exploreDb.ui" line="102"/>
@@ -5463,12 +5478,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/permission_properties.ui" line="14"/>
         <source>Permission Properties</source>
-        <translation>Propriedades da Permissão</translation>
+        <translation type="obsolete">Propriedades da Permissão</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/ui_serverDBExplorer.ui" line="29"/>
         <source>Remove Connections to Missing Databases</source>
-        <translation>Remover Conexões para Bancos de Dados faltantes</translation>
+        <translation>Remover conexões para bancos de dados faltantes</translation>
     </message>
     <message>
         <location filename="../DbTools/PostGISTool/ui_postgisDBTool.ui" line="69"/>
@@ -5478,12 +5493,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../gui/ServerTools/ui_viewServers.ui" line="17"/>
         <source>Configure Servers</source>
-        <translation>Configurar Servidores</translation>
+        <translation>Configurar servidores</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/create_profile.ui" line="49"/>
         <source>FTer_2a_Ed</source>
-        <translation>FTer_2a_Ed</translation>
+        <translation type="obsolete">FTer_2a_Ed</translation>
     </message>
     <message>
         <location filename="ServerTools/exploreDb.ui" line="113"/>
@@ -5548,107 +5563,107 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="14"/>
         <source>Validation Rules</source>
-        <translation>Regras de Validação</translation>
+        <translation type="obsolete">Regras de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="214"/>
         <source>Layer #1</source>
-        <translation>Camada #1</translation>
+        <translation type="obsolete">Camada #1</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="219"/>
         <source>Necessity</source>
-        <translation>Necessidade</translation>
+        <translation type="obsolete">Necessidade</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="53"/>
         <source>must (be)</source>
-        <translation>deve (ser)</translation>
+        <translation type="obsolete">deve (ser)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="58"/>
         <source>must not (be)</source>
-        <translation>não deve (ser)</translation>
+        <translation type="obsolete">não deve (ser)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="70"/>
         <source>Spatial predicate</source>
-        <translation>Predicado espacial</translation>
+        <translation type="obsolete">Predicado espacial</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="78"/>
         <source>equal</source>
-        <translation>igual</translation>
+        <translation type="obsolete">igual</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="83"/>
         <source>disjoint</source>
-        <translation>disjunto</translation>
+        <translation type="obsolete">disjunto</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="88"/>
         <source>intersect</source>
-        <translation>intersectar</translation>
+        <translation type="obsolete">intersectar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="93"/>
         <source>touch</source>
-        <translation>tocar</translation>
+        <translation type="obsolete">tocar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="98"/>
         <source>cross</source>
-        <translation>cruzar</translation>
+        <translation type="obsolete">cruzar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="103"/>
         <source>within</source>
-        <translation>dentro</translation>
+        <translation type="obsolete">dentro</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="108"/>
         <source>overlap</source>
-        <translation>sobrepor</translation>
+        <translation type="obsolete">sobrepor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="113"/>
         <source>contain</source>
-        <translation>conter</translation>
+        <translation type="obsolete">conter</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="118"/>
         <source>cover</source>
-        <translation>cobrir</translation>
+        <translation type="obsolete">cobrir</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="123"/>
         <source>covered by</source>
-        <translation>coberto por</translation>
+        <translation type="obsolete">coberto por</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="229"/>
         <source>Layer #2</source>
-        <translation>Camada #2</translation>
+        <translation type="obsolete">Camada #2</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="234"/>
         <source>Cardinality</source>
-        <translation>Cardinalidade</translation>
+        <translation type="obsolete">Cardinalidade</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="190"/>
         <source>Insert Rule</source>
-        <translation>Inserir Regra</translation>
+        <translation type="obsolete">Inserir Regra</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="197"/>
         <source>Remove Rule</source>
-        <translation>Remover Regra</translation>
+        <translation type="obsolete">Remover Regra</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/rules_editor.ui" line="224"/>
         <source>Predicate</source>
-        <translation>Predicado</translation>
+        <translation type="obsolete">Predicado</translation>
     </message>
     <message>
         <location filename="../ValidationTools/workspace_editor.ui" line="149"/>
@@ -5663,7 +5678,7 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profile_editor.ui" line="52"/>
         <source>Delete Selected Model</source>
-        <translation>Deletar modelo selecionado</translation>
+        <translation type="obsolete">Deletar modelo selecionado</translation>
     </message>
     <message>
         <location filename="../DbTools/PostGISTool/ui_postgisDBTool.ui" line="145"/>
@@ -5678,12 +5693,12 @@ Dados nulos em campos não nulos serão modificados para -9999)</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceInfoTable.ui" line="14"/>
         <source>Datasource Information</source>
-        <translation>Informção da Fonte de Dados</translation>
+        <translation type="obsolete">Informção da Fonte de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/textBrowserDialog.ui" line="17"/>
         <source>DSGTools Dataset Conversion Tool - Summary</source>
-        <translation>Ferramenta de Conversão de Dados do DSGTools - Resumo</translation>
+        <translation type="obsolete">Ferramenta de Conversão de Dados do DSGTools - Resumo</translation>
     </message>
 </context>
 <context>
@@ -5856,47 +5871,47 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="23"/>
         <source>Database:</source>
-        <translation>Banco de Dados:</translation>
+        <translation type="obsolete">Banco de Dados:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="37"/>
         <source>Complex Class:</source>
-        <translation>Classe Complexa:</translation>
+        <translation type="obsolete">Classe Complexa:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="51"/>
         <source>Load DB&apos;s</source>
-        <translation>Carrega Bancos</translation>
+        <translation type="obsolete">Carrega Bancos</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="58"/>
         <source>Manage</source>
-        <translation>Gerenciar</translation>
+        <translation type="obsolete">Gerenciar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="69"/>
         <source>Associate</source>
-        <translation>Associar</translation>
+        <translation type="obsolete">Associar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="76"/>
         <source>Disassociate</source>
-        <translation>Desassociar</translation>
+        <translation type="obsolete">Desassociar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="83"/>
         <source>Zoom</source>
-        <translation>Aproximar</translation>
+        <translation type="obsolete">Aproximar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="93"/>
         <source>Name</source>
-        <translation>Nome</translation>
+        <translation type="obsolete">Nome</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="98"/>
         <source>Value</source>
-        <translation>Valor</translation>
+        <translation type="obsolete">Valor</translation>
     </message>
     <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="14"/>
@@ -5906,17 +5921,17 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="107"/>
         <source>Layer:</source>
-        <translation>Camada:</translation>
+        <translation type="obsolete">Camada:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="68"/>
         <source>Field:</source>
-        <translation>Campo:</translation>
+        <translation type="obsolete">Campo:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="48"/>
         <source>Pace:</source>
-        <translation>Espaçamento:</translation>
+        <translation type="obsolete">Espaçamento:</translation>
     </message>
     <message>
         <location filename="../AttributeTools/attributes_viewer.ui" line="14"/>
@@ -5936,17 +5951,17 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui" line="92"/>
         <source>Code</source>
-        <translation>Código</translation>
+        <translation type="obsolete">Código</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="14"/>
         <source>DSGTools: Assign Contour Values Tool</source>
-        <translation>DSGTools: Linha Cotadora</translation>
+        <translation type="obsolete">DSGTools: Linha Cotadora</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="26"/>
         <source>Ascending Mode</source>
-        <translation>Modo Ascendente</translation>
+        <translation type="obsolete">Modo Ascendente</translation>
     </message>
     <message>
         <location filename="../ProductionTools/ContourTool/calc_contour.ui" line="36"/>
@@ -5956,37 +5971,37 @@ camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="39"/>
         <source>Descending Mode</source>
-        <translation>Modo Descendente</translation>
+        <translation type="obsolete">Modo Descendente</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/calc_contour.ui" line="114"/>
         <source>Reactivate</source>
-        <translation>Reativar</translation>
+        <translation type="obsolete">Reativar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui" line="20"/>
         <source>DSGTools: Code List Viewer</source>
-        <translation>DSGTools: Visualizador de Code List</translation>
+        <translation type="obsolete">DSGTools: Visualizador de Code List</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ComplexTools/complexWindow_base.ui" line="14"/>
         <source>DSGTools: Manage Complex Structures</source>
-        <translation>DSGTools: Gerenciar Estruturas Complexas</translation>
+        <translation type="obsolete">DSGTools: Gerenciar Estruturas Complexas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui" line="33"/>
         <source>Class</source>
-        <translation>Classe</translation>
+        <translation type="obsolete">Classe</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui" line="56"/>
         <source>Field</source>
-        <translation>Atributo</translation>
+        <translation type="obsolete">Atributo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/AttributeTools/code_list.ui" line="79"/>
         <source>Reload</source>
-        <translation>Recarregar</translation>
+        <translation type="obsolete">Recarregar</translation>
     </message>
 </context>
 <context>
@@ -5994,17 +6009,17 @@ camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/domainSetter.ui" line="14"/>
         <source>Select a domain</source>
-        <translation>Selecionar um domínio</translation>
+        <translation type="obsolete">Selecionar um domínio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/domainSetter.ui" line="20"/>
         <source>Choose a domain</source>
-        <translation>Escolher um domínio</translation>
+        <translation type="obsolete">Escolher um domínio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/domainSetter.ui" line="46"/>
         <source>Filter domain values</source>
-        <translation>Filtrar valores de domínio</translation>
+        <translation type="obsolete">Filtrar valores de domínio</translation>
     </message>
 </context>
 <context>
@@ -6557,17 +6572,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Área</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="106"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="99"/>
         <source>area_otf</source>
         <translation>area_otf</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="108"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="101"/>
         <source>lenght_otf</source>
         <translation>comprimento_otf</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="205"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="198"/>
         <source>Error for lyr </source>
         <translation>Erro para camada </translation>
     </message>
@@ -6577,7 +6592,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Um problema ocorreu! Verifique o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="180"/>
+        <location filename="../core/Factories/LayerLoaderFactory/edgvLayerLoader.py" line="173"/>
         <source>Domains</source>
         <translation>Domínios</translation>
     </message>
@@ -6678,17 +6693,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.ui" line="53"/>
         <source>Class of earth coverage</source>
-        <translation>Classe da cobertura terrestre</translation>
+        <translation type="obsolete">Classe da cobertura terrestre</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/earthCoverageWidget.ui" line="58"/>
         <source>Delimiter</source>
-        <translation>Delimitador</translation>
+        <translation type="obsolete">Delimitador</translation>
     </message>
     <message>
         <location filename="CustomWidgets/earthCoverageWidget.ui" line="96"/>
@@ -6797,17 +6812,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 <context>
     <name>ExploreServerWidget</name>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="160"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="161"/>
         <source>Select Server</source>
         <translation>Selecione um servidor</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="175"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="176"/>
         <source>Critical</source>
         <translation>Crítico</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="175"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="176"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
@@ -6817,17 +6832,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Problema executando a query: </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="183"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="184"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="183"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="184"/>
         <source>Connection refused. Connect with a super user to inspect server.</source>
         <translation>Conexão recusada. Conecte com um super usuário para inspecionar o servidor.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="187"/>
+        <location filename="../gui/CustomWidgets/ConnectionWidgets/ServerConnectionWidgets/exploreServerWidget.py" line="188"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -6842,27 +6857,27 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="20"/>
         <source>Server Address</source>
-        <translation>Endereço do Servidor</translation>
+        <translation type="obsolete">Endereço do Servidor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="36"/>
         <source>Load / Reload</source>
-        <translation>(Re) Carregar</translation>
+        <translation type="obsolete">(Re) Carregar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="50"/>
         <source>Workspace</source>
-        <translation>Workspace</translation>
+        <translation type="obsolete">Workspace</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ProcessingParameterWidgets/fmeManagerWidget.ui" line="57"/>
         <source>Parameters</source>
-        <translation>Parâmetros</translation>
+        <translation type="obsolete">Parâmetros</translation>
     </message>
 </context>
 <context>
@@ -6875,27 +6890,27 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="24"/>
         <source>Load from file</source>
-        <translation>Carregar de arquivo</translation>
+        <translation type="obsolete">Carregar de arquivo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="34"/>
         <source>Load</source>
-        <translation>Carregar</translation>
+        <translation type="obsolete">Carregar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="43"/>
         <source>Button size:</source>
-        <translation>Tamanho do Botão:</translation>
+        <translation type="obsolete">Tamanho do Botão:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="52"/>
         <source>Small</source>
-        <translation>Pequeno</translation>
+        <translation type="obsolete">Pequeno</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="69"/>
         <source>Big</source>
-        <translation>Grande</translation>
+        <translation type="obsolete">Grande</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.ui" line="89"/>
@@ -6920,17 +6935,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="110"/>
         <source>Custom Elements</source>
-        <translation>Elementos Customizados</translation>
+        <translation type="obsolete">Elementos Customizados</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="182"/>
         <source>Value</source>
-        <translation>Valor</translation>
+        <translation type="obsolete">Valor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="140"/>
         <source>New Element</source>
-        <translation>Novo Elemento</translation>
+        <translation type="obsolete">Novo Elemento</translation>
     </message>
     <message>
         <location filename="ProductionTools/FieldToolBox/field_setup.ui" line="152"/>
@@ -6940,17 +6955,17 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="151"/>
         <source>Button Name</source>
-        <translation>Nome do Botão</translation>
+        <translation type="obsolete">Nome do Botão</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="177"/>
         <source>Attribute</source>
-        <translation>Atributo</translation>
+        <translation type="obsolete">Atributo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="209"/>
         <source>Add / Update</source>
-        <translation>Adicionar / Atualizar</translation>
+        <translation type="obsolete">Adicionar / Atualizar</translation>
     </message>
     <message>
         <location filename="ProductionTools/field_setup.py" line="88"/>
@@ -6963,7 +6978,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="755"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="759"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
@@ -6973,7 +6988,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Insira um nome para o botão!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="717"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="720"/>
         <source>Remove child node</source>
         <translation>Remover nó filho</translation>
     </message>
@@ -6988,7 +7003,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Arquivos de Configuração de Campo (*.json)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="750"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="754"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
@@ -7008,7 +7023,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation type="obsolete">Defina um nome para o arquivo de configuração de campo!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="765"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="769"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -7020,52 +7035,52 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="78"/>
         <source>Create buttons grouped by category</source>
-        <translation>Criar botões agrupados por categoria</translation>
+        <translation type="obsolete">Criar botões agrupados por categoria</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="14"/>
         <source>Reclassification Setup</source>
-        <translation>Ajustes de Reclassificação</translation>
+        <translation type="obsolete">Ajustes de Reclassificação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="734"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="738"/>
         <source>Open reclassification setup file</source>
         <translation>Abrir arquivo de configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="753"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="757"/>
         <source>Reclassification Setup Files (*.reclas)</source>
         <translation>Arquivo de Configuração de Reclassificação (*.reclas)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="753"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="757"/>
         <source>Save reclassification setup file</source>
         <translation>Salvar arquivo de configuração de reclassificação</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="755"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="759"/>
         <source>Define a name for the reclassification setup file!</source>
         <translation>Defina um nome para o arquivo de configuração de reclassificação!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="765"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="769"/>
         <source>Reclassification setup file saved successfully!</source>
         <translation>Arquivo de configuração de reclassificação salvo com sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="750"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="754"/>
         <source>Do you want to save this reclassification setup?</source>
         <translation>Você deseja salvar esta configuração de reclassificação?</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="187"/>
         <source>Editable</source>
-        <translation>Editável</translation>
+        <translation type="obsolete">Editável</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui" line="192"/>
         <source>Ignored</source>
-        <translation>Ignorado</translation>
+        <translation type="obsolete">Ignorado</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.py" line="322"/>
@@ -7217,7 +7232,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="518"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="525"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -7249,22 +7264,22 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="541"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="548"/>
         <source>Select Stored Config (optional)</source>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="110"/>
         <source>Edit Current Config</source>
-        <translation>Editar configuração atual</translation>
+        <translation type="obsolete">Editar configuração atual</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="379"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="381"/>
         <source>DsgTools reclassification</source>
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="518"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="525"/>
         <source>{} features reclassified with success!</source>
         <translation>{} feições reclassificadas com sucesso!</translation>
     </message>
@@ -7276,27 +7291,22 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="123"/>
         <source>After selecting one button, the selected features are removed from its original layers, pasted into the button layer and its attributes are set according to the button settings</source>
-        <translation>Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
+        <translation type="obsolete">Após selecionar um botão, as feições são removidas de suas camadas originais, coladas na camada referente ao botão e os atributos de cada feição são ajustados de acordo com os definidos na configuração do botão</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="126"/>
         <source>Reclassify Feature Mode</source>
-        <translation>Modo de Reclassificação de Feições</translation>
-    </message>
-    <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="139"/>
-        <source>After digitizing, the feature is set with the attributes configured in the selected button</source>
-        <translation></translation>
+        <translation type="obsolete">Modo de Reclassificação de Feições</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="142"/>
         <source>New Feature Mode</source>
-        <translation>Modo de Aquisição de Feições</translation>
+        <translation type="obsolete">Modo de Aquisição de Feições</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="20"/>
         <source>DSGTools: Feature (Re)classification Tool</source>
-        <translation>DSGTools: Ferramenta de Classificação</translation>
+        <translation type="obsolete">DSGTools: Ferramenta de Classificação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="91"/>
@@ -7308,7 +7318,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.ui" line="161"/>
         <source>Filter buttons by name</source>
-        <translation>Filtrar botão pelo nome</translation>
+        <translation type="obsolete">Filtrar botão pelo nome</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="327"/>
@@ -7404,36 +7414,36 @@ Inverte a direção de aquisição de linhas.</translation>
         <translation>Sucesso</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="133"/>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="134"/>
         <source>There are no (valid) lines selected!</source>
         <translation>Não há linhas (válidas) selecionadas!</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="136"/>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="137"/>
         <source>Feature(s) flipped: </source>
         <translation>Feição(ões) invertidas: </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="142"/>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="143"/>
         <source>
 Feature(s) that failed to be flipped: </source>
         <translation>
 Feição(ões) não invertidas: </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="146"/>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="147"/>
         <source>
 {} lines flipped. {} failed to be flipped.</source>
         <translation>
 {} linhas invertidas. {} linhas não invertidas.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="152"/>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="153"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="152"/>
+        <location filename="../gui/ProductionTools/MapTools/FlipLineTool/flipLineTool.py" line="153"/>
         <source>Start editing in current layer!</source>
         <translation>Inicie a edição na camada atual!</translation>
     </message>
@@ -7585,32 +7595,32 @@ de feição</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="26"/>
         <source>Domain Name</source>
-        <translation>Nome do domínio</translation>
+        <translation type="obsolete">Nome do domínio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="39"/>
         <source>Enter a domain name</source>
-        <translation>Entre com um nome de domínio</translation>
+        <translation type="obsolete">Entre com um nome de domínio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="59"/>
         <source>Code</source>
-        <translation>Código</translation>
+        <translation type="obsolete">Código</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="64"/>
         <source>Value</source>
-        <translation>Valor</translation>
+        <translation type="obsolete">Valor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="78"/>
         <source>Add Value</source>
-        <translation>Adicionar valor</translation>
+        <translation type="obsolete">Adicionar valor</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainWidget.ui" line="101"/>
         <source>Remove Value</source>
-        <translation>Remover valor</translation>
+        <translation type="obsolete">Remover valor</translation>
     </message>
     <message>
         <location filename="../ProductionTools/InspectFeatures/inspectFeatures.ui" line="308"/>
@@ -7650,47 +7660,42 @@ Ativa</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceContainerWidget.ui" line="32"/>
         <source>Datasource #X</source>
-        <translation>Datasource #X</translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="23"/>
-        <source>GroupBox</source>
-        <translation></translation>
+        <translation type="obsolete">Datasource #X</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="79"/>
         <source>Select All</source>
-        <translation>Selecionar Todos</translation>
+        <translation type="obsolete">Selecionar Todos</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="86"/>
         <source>Clear All</source>
-        <translation>Limpar Tudo</translation>
+        <translation type="obsolete">Limpar Tudo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="93"/>
         <source>Toggle Selection</source>
-        <translation>Inverter Seleção</translation>
+        <translation type="obsolete">Inverter Seleção</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="147"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiPostgisSelectorWidget.ui" line="154"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newConnectionLineEdit.ui" line="80"/>
         <source>Edit server connections</source>
-        <translation>Editar Conexões</translation>
+        <translation type="obsolete">Editar Conexões</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ConnectionWidgets/AdvancedConnectionWidgets/newDatabaseLineEdit.ui" line="72"/>
         <source>Select File</source>
-        <translation>Selecionar arquivo</translation>
+        <translation type="obsolete">Selecionar arquivo</translation>
     </message>
 </context>
 <context>
@@ -7788,7 +7793,7 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
         <translation>Adicionar {0}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="208"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="203"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -7803,7 +7808,7 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
         <translation>Atenção! O nome para {0} já existe!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="242"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="243"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
@@ -7828,7 +7833,7 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
         <translation>Sucesso! {0} foi importado e instalado na propriedade {1}.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="245"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="246"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
@@ -7850,30 +7855,30 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="208"/>
         <source>Warning! Select a output!</source>
-        <translation>Erro! Selecione uma saída!</translation>
+        <translation type="obsolete">Erro! Selecione uma saída!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="216"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="217"/>
         <source>Success! {0} successfully exported.</source>
         <translation>Sucesso! {0} exportada.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="219"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="220"/>
         <source>Error! Problem exporting {0}: {1}</source>
         <translation>Erro! Falhas ao tentar exportar {0}: {1}</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="233"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="234"/>
         <source>Error! Problem getting {0}: Invalid property {1}</source>
         <translation>Erro! Falhas ao tentar recuperar {0}: propriedade {1} inválida</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="242"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="243"/>
         <source>Success! Property {0} successfully updated.</source>
         <translation>Sucesso! Propriedade {0} atualizada.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="245"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/CompactPropertyWidgets/genericCompactPropertyManagerWidget.py" line="246"/>
         <source>Error! Problem updating {0}</source>
         <translation>Erro! Falhas ao tentar atualizar {0}</translation>
     </message>
@@ -7911,17 +7916,17 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Caixa de Diálogo</translation>
+        <translation type="obsolete">Caixa de Diálogo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui" line="45"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/genericDialogLayout.ui" line="52"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
 </context>
 <context>
@@ -7929,72 +7934,72 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="28"/>
         <source>Right click for options</source>
-        <translation>Clique com o botão direito para opções</translation>
+        <translation type="obsolete">Clique com o botão direito para opções</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="41"/>
         <source>Column1</source>
-        <translation>Coluna1</translation>
+        <translation type="obsolete">Coluna1</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="46"/>
         <source>Column2</source>
-        <translation>Coluna2</translation>
+        <translation type="obsolete">Coluna2</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="87"/>
         <source>View Database Perspective</source>
-        <translation>Ver perspectiva do banco</translation>
+        <translation type="obsolete">Ver perspectiva do banco</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="131"/>
         <source>View Setting Perspective</source>
-        <translation>Ver perspectiva do ajuste</translation>
+        <translation type="obsolete">Ver perspectiva do ajuste</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="157"/>
         <source>Import</source>
-        <translation>Importar</translation>
+        <translation type="obsolete">Importar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="164"/>
         <source>Batch Import</source>
-        <translation>Importar em lote</translation>
+        <translation type="obsolete">Importar em lote</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="171"/>
         <source>Export</source>
-        <translation>Exportar</translation>
+        <translation type="obsolete">Exportar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="178"/>
         <source>Batch Export</source>
-        <translation>Exportar em lote</translation>
+        <translation type="obsolete">Exportar em lote</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="199"/>
         <source>Create Setting</source>
-        <translation>Criar ajuste</translation>
+        <translation type="obsolete">Criar ajuste</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="228"/>
         <source>Delete Setting</source>
-        <translation>Apagar ajuste</translation>
+        <translation type="obsolete">Apagar ajuste</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="245"/>
         <source>Install Settings on Selected Databases</source>
-        <translation>Instalar ajustes nos bancos selecionados</translation>
+        <translation type="obsolete">Instalar ajustes nos bancos selecionados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.ui" line="252"/>
         <source>Uninstall Settings from Selected Databases</source>
-        <translation>Desinstalar ajustes dos bancos selecionados</translation>
+        <translation type="obsolete">Desinstalar ajustes dos bancos selecionados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="61"/>
@@ -8077,193 +8082,193 @@ Se a tecla Control for pressionada, feições que cruzam a geometria desenhada s
         <translation>Banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="346"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="366"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="142"/>
         <source>Warning! Select a file to import!</source>
-        <translation>Atenção! Selecione um arquivo para importar!</translation>
+        <translation type="obsolete">Atenção! Selecione um arquivo para importar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="212"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="218"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="212"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="218"/>
         <source> successfully imported.</source>
         <translation> importado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="435"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="455"/>
         <source>Error!</source>
         <translation>Erro!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="215"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="221"/>
         <source>Error! Problem importing </source>
         <translation>Erro! Problema ao tentar importar </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="161"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="165"/>
         <source>Warning! Select a profile to export!</source>
         <translation>Aviso! Selecione um perfil para exportar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="185"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="190"/>
         <source>Select a folder to output</source>
         <translation>Selecione um diretório de saída</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="187"/>
         <source>Warning! Select a output!</source>
-        <translation>Aviso! Selecione uma saída!</translation>
+        <translation type="obsolete">Aviso! Selecione uma saída!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="193"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="199"/>
         <source> successfully exported.</source>
         <translation> exportado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="196"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="202"/>
         <source>Error! Problem exporting </source>
         <translation>Erro! Problema ao tentar exportar </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="204"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="210"/>
         <source>Select a folder with json files: </source>
         <translation>Selecione um diretório com arquivos .JSON: </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="206"/>
         <source>Warning! Select a input folder!</source>
-        <translation>Aviso! Selecione um diretório de entrada!</translation>
+        <translation type="obsolete">Aviso! Selecione um diretório de entrada!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="275"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="287"/>
         <source>
 Successful </source>
         <translation>
 Com sucesso </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="281"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="293"/>
         <source> on databases </source>
         <translation> nos bancos </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="285"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="297"/>
         <source>Operation Complete!</source>
         <translation>Operação completa!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="295"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="307"/>
         <source>
 Config with error:</source>
         <translation>
 Configuração com erro:</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="296"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="308"/>
         <source>
 Error messages for each config and database were output in qgis log.</source>
         <translation>
 Mensagens de erro para cada config e banco de dados foram geradas no log do QGIS.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="300"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="312"/>
         <source>Error for config </source>
         <translation>Erro para a configuração </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="331"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="350"/>
         <source>Select at least one configuration!</source>
         <translation>Selecione pelo menos uma configuração!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="346"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="366"/>
         <source>Operation canceled by user!</source>
         <translation>Operação cancelada pelo usuário!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="364"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="384"/>
         <source>Uninstall all settings from selected database</source>
         <translation>Desinstalar todos os ajustes do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="365"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="385"/>
         <source>Manage settings from selected database</source>
         <translation>Gerenciar configurações do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="378"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="398"/>
         <source>Update selected setting</source>
         <translation>Atualizar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="379"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="399"/>
         <source>Clone selected setting</source>
         <translation>Clonar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="369"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="389"/>
         <source>Uninstall selected setting</source>
         <translation>Desinstalar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="382"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="402"/>
         <source>Delete selected setting</source>
         <translation>Apagar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="380"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="400"/>
         <source>Manage selected setting</source>
         <translation>Gerenciar configuração selecionada</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="381"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="401"/>
         <source>Uninstall selected setting on all databases</source>
         <translation>Desinstalar configuração selecionada de todos os bancos</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="384"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="404"/>
         <source>Manage Settings on database</source>
         <translation>Gerenciar configurações do banco de dados</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="385"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="405"/>
         <source>Uninstall selected setting on selected database</source>
         <translation>Desinstalar configuração selecionada do banco selecionado</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="405"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="425"/>
         <source>Select at least one configuration to manage!</source>
         <translation>Selecione pelo menos uma configuração para gerenciar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="435"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="455"/>
         <source>Select at least one configuration database to manage!</source>
         <translation>Selecione pelo menos uma configuração de banco para gerenciar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="551"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="571"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="538"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="558"/>
         <source>Do you really want to delete </source>
         <translation>Você realmente deseja apagar </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="551"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="571"/>
         <source>Do you really want to apply selected operation on </source>
         <translation>Você realmente deseja aplicar a operação selecionada em </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="551"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericManagerWidget.py" line="571"/>
         <source> (Data may be lost in the process)</source>
         <translation> (dados podem ser perdidos no processo)</translation>
     </message>
@@ -8303,7 +8308,7 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do QGIS
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.ui" line="20"/>
         <source>Enter parameters</source>
-        <translation>Entre os parâmetros</translation>
+        <translation type="obsolete">Entre os parâmetros</translation>
     </message>
     <message>
         <location filename="CustomWidgets/genericParameterSetter.ui" line="20"/>
@@ -8333,17 +8338,17 @@ Mensagens de erro para cada config e banco de dados foram geradas no log do QGIS
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.ui" line="35"/>
         <source>Property Name</source>
-        <translation>Nome da Propriedade</translation>
+        <translation type="obsolete">Nome da Propriedade</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.ui" line="61"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.ui" line="68"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/genericParameterSetter.py" line="64"/>
@@ -10807,7 +10812,7 @@ Camada</translation>
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../core/GeometricTools/layerHandler.py" line="355"/>
+        <location filename="../core/GeometricTools/layerHandler.py" line="356"/>
         <source>Merging Lines</source>
         <translation>Unindo linhas</translation>
     </message>
@@ -10993,17 +10998,17 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="38"/>
         <source>Add Rule</source>
-        <translation>Adicionar regra</translation>
+        <translation type="obsolete">Adicionar regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/listManagerWidget.ui" line="49"/>
         <source>Remove Selected</source>
-        <translation>Remover selecionado</translation>
+        <translation type="obsolete">Remover selecionado</translation>
     </message>
 </context>
 <context>
@@ -11011,7 +11016,7 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/listSelector.ui" line="14"/>
         <source>Select items</source>
-        <translation>Selecione itens</translation>
+        <translation type="obsolete">Selecione itens</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/listSelector.py" line="45"/>
@@ -11024,17 +11029,17 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/loadAuxStruct.ui" line="33"/>
         <source>Load Auxiliar Structure</source>
-        <translation>Carregar Estrutura Auxiliar</translation>
+        <translation type="obsolete">Carregar Estrutura Auxiliar</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/loadAuxStruct.ui" line="62"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/loadAuxStruct.ui" line="82"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/loadAuxStruct.py" line="121"/>
@@ -11082,82 +11087,82 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="23"/>
         <source>Load by Category</source>
-        <translation>Carregar por Categoria</translation>
+        <translation type="obsolete">Carregar por Categoria</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="42"/>
         <source>Select all categories in the database</source>
-        <translation>Selecione Todas as Categorias no BD</translation>
+        <translation type="obsolete">Selecione Todas as Categorias no BD</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="45"/>
         <source>&gt;&gt;</source>
-        <translation>&gt;&gt;</translation>
+        <translation type="obsolete">&gt;&gt;</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="65"/>
         <source>Select only the selected</source>
-        <translation>Selecionar apenas as selecionadas</translation>
+        <translation type="obsolete">Selecionar apenas as selecionadas</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="68"/>
         <source>&gt;</source>
-        <translation>&gt;</translation>
+        <translation type="obsolete">&gt;</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="75"/>
         <source>Remove from list only the selected categories</source>
-        <translation>Remove da lista apenas as categorias selecionadas</translation>
+        <translation type="obsolete">Remove da lista apenas as categorias selecionadas</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="78"/>
         <source>&lt;</source>
-        <translation>&lt;</translation>
+        <translation type="obsolete">&lt;</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="85"/>
         <source>Remove all categories</source>
-        <translation>Remover todas as categorias</translation>
+        <translation type="obsolete">Remover todas as categorias</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="121"/>
         <source>Group by Geometry Type</source>
-        <translation>Agrupar por Geometria</translation>
+        <translation type="obsolete">Agrupar por Geometria</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="129"/>
         <source>Point</source>
-        <translation>Ponto</translation>
+        <translation type="obsolete">Ponto</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="136"/>
         <source>Line</source>
-        <translation>Linha</translation>
+        <translation type="obsolete">Linha</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="143"/>
         <source>Polygon</source>
-        <translation>Polígono</translation>
+        <translation type="obsolete">Polígono</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="150"/>
         <source>Select All</source>
-        <translation>Selecionar Todos</translation>
+        <translation type="obsolete">Selecionar Todos</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="200"/>
         <source>Only layers with Elements</source>
-        <translation>Apenas Camadas com Elementos</translation>
+        <translation type="obsolete">Apenas Camadas com Elementos</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="287"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="307"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category.py" line="196"/>
@@ -11207,12 +11212,12 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="14"/>
         <source>Load Layers by Category</source>
-        <translation>Carrega Camadas por Categorias</translation>
+        <translation type="obsolete">Carrega Camadas por Categorias</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="88"/>
         <source>&lt;&lt;</source>
-        <translation>&lt;&lt;</translation>
+        <translation type="obsolete">&lt;&lt;</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_category.py" line="355"/>
@@ -11232,17 +11237,17 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="180"/>
         <source>Options</source>
-        <translation>Opções</translation>
+        <translation type="obsolete">Opções</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="219"/>
         <source>Load only parent classes</source>
-        <translation>Carregar somente classes pai</translation>
+        <translation type="obsolete">Carregar somente classes pai</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_category_dialog.ui" line="234"/>
         <source>Set Style</source>
-        <translation>Ajustar estilo</translation>
+        <translation type="obsolete">Ajustar estilo</translation>
     </message>
 </context>
 <context>
@@ -11250,7 +11255,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="33"/>
         <source>Load by Class</source>
-        <translation>Carrega por Classe</translation>
+        <translation type="obsolete">Carrega por Classe</translation>
     </message>
     <message>
         <location filename="../LayerTools/load_by_class_base.ui" line="43"/>
@@ -11285,22 +11290,22 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="44"/>
         <source>Select the classes</source>
-        <translation>Selecione as Classes</translation>
+        <translation type="obsolete">Selecione as Classes</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="113"/>
         <source>Select All</source>
-        <translation>Selecionar Todos</translation>
+        <translation type="obsolete">Selecionar Todos</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="199"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="219"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="105"/>
@@ -11345,7 +11350,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="50"/>
         <source>Filter:</source>
-        <translation>Filtro:</translation>
+        <translation type="obsolete">Filtro:</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class.py" line="106"/>
@@ -11360,17 +11365,17 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="96"/>
         <source>Options</source>
-        <translation>Opções</translation>
+        <translation type="obsolete">Opções</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="136"/>
         <source>List only parent layers</source>
-        <translation>Listar somente classes pai</translation>
+        <translation type="obsolete">Listar somente classes pai</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="151"/>
         <source>Set Style</source>
-        <translation>Ajustar estilo</translation>
+        <translation type="obsolete">Ajustar estilo</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class.py" line="206"/>
@@ -11507,12 +11512,12 @@ camada</translation>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="32"/>
         <source>Manage Database Auxiliar Structure</source>
-        <translation>Gerenciar Estrutura Auxiliar do Banco de Dados</translation>
+        <translation>Gerenciar bancos de dados de estruturas auxiliares</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="38"/>
         <source>Line-Centroid Structure</source>
-        <translation>Estrutura Linha-Centróide</translation>
+        <translation>Estrutura linha-centróide</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="50"/>
@@ -11522,7 +11527,7 @@ camada</translation>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="66"/>
         <source>Not Created</source>
-        <translation>Não Criado</translation>
+        <translation>Não criado</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="82"/>
@@ -11537,7 +11542,7 @@ camada</translation>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="116"/>
         <source>Constraint and Defaults</source>
-        <translation>Restrições e Padrões</translation>
+        <translation>Restrições e padrões</translation>
     </message>
     <message>
         <location filename="../gui/ServerTools/manageDBAuxiliarStructure.ui" line="128"/>
@@ -11608,37 +11613,37 @@ camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="14"/>
         <source>Manage Server Users</source>
-        <translation>Gerenciar usuários de servidor</translation>
+        <translation type="obsolete">Gerenciar usuários de servidor</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="20"/>
         <source>Create User</source>
-        <translation>Criar Usuário</translation>
+        <translation type="obsolete">Criar Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="27"/>
         <source>Alter Password</source>
-        <translation>Alterar Senha</translation>
+        <translation type="obsolete">Alterar Senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="34"/>
         <source>Remove User</source>
-        <translation>Remover Usuário</translation>
+        <translation type="obsolete">Remover Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="41"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="58"/>
         <source>User Name</source>
-        <translation>Nome do Usuário</translation>
+        <translation type="obsolete">Nome do Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.ui" line="63"/>
         <source>User Type</source>
-        <translation>Tipo de usuário</translation>
+        <translation type="obsolete">Tipo de usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/manageServerUsers.py" line="51"/>
@@ -12042,23 +12047,23 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="14"/>
         <source>Multiple Datasource Selection</source>
-        <translation>Seleção de Múltiplas Fontes de Dados</translation>
+        <translation type="obsolete">Seleção de Múltiplas Fontes de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="26"/>
         <source>Nr. Datasources</source>
-        <translation>Qtd. de Fontes
+        <translation type="obsolete">Qtd. de Fontes
     de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="112"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="131"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="79"/>
@@ -12547,27 +12552,27 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui" line="22"/>
         <source>Domain Table</source>
-        <translation>Tabela de dominio</translation>
+        <translation type="obsolete">Tabela de dominio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui" line="41"/>
         <source>Add Value to all domain tables</source>
-        <translation>Adicionar valor para todas as tabelas de domínio</translation>
+        <translation type="obsolete">Adicionar valor para todas as tabelas de domínio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui" line="50"/>
         <source>Code</source>
-        <translation>Código</translation>
+        <translation type="obsolete">Código</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.ui" line="70"/>
         <source>Code Name</source>
-        <translation>Code Name</translation>
+        <translation type="obsolete">Code Name</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newDomainValueWidget.py" line="76"/>
@@ -12694,52 +12699,47 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="14"/>
         <source>DSGTools Options</source>
-        <translation>Opções do DSGTools</translation>
+        <translation type="obsolete">Opções do DSGTools</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="30"/>
         <source>Free Hand&apos;s Parameters</source>
-        <translation>Parâmetros da Ferramenta de Aquisição à Mão Livre</translation>
+        <translation type="obsolete">Parâmetros da Ferramenta de Aquisição à Mão Livre</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="46"/>
         <source>Smooth Iterations</source>
-        <translation>Iterações de suavização</translation>
+        <translation type="obsolete">Iterações de suavização</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="60"/>
         <source>Algorithm Iterations</source>
-        <translation>Iterações de algoritmo</translation>
+        <translation type="obsolete">Iterações de algoritmo</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="67"/>
         <source>Tolerance</source>
-        <translation>Tolerância</translation>
+        <translation type="obsolete">Tolerância</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="81"/>
         <source>Smooth offset</source>
-        <translation>Offset de suavização</translation>
+        <translation type="obsolete">Offset de suavização</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="102"/>
         <source>Number of points removed on undo action</source>
-        <translation>Nr. de pontos removidos ao desfazer ação</translation>
+        <translation type="obsolete">Nr. de pontos removidos ao desfazer ação</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="112"/>
         <source>Generic Selector&apos;s Parameters</source>
-        <translation>Parâmetro da Ferramenta Seletor Genérico</translation>
+        <translation type="obsolete">Parâmetro da Ferramenta Seletor Genérico</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="110"/>
         <source>New black list entry</source>
         <translation type="obsolete">Camada a ser ignorada</translation>
-    </message>
-    <message>
-        <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="157"/>
-        <source>moldura</source>
-        <translation></translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="159"/>
@@ -12764,22 +12764,22 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="168"/>
         <source>Raster Info Tool&apos;s Parameters</source>
-        <translation>Parametros da Ferramenta de Informação de Raster</translation>
+        <translation type="obsolete">Parametros da Ferramenta de Informação de Raster</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="174"/>
         <source>Value setter tool precision (decimal points)</source>
-        <translation>Precisão da ferramenta Definir Valor de Pontos (quantidade de casas decimais)</translation>
+        <translation type="obsolete">Precisão da ferramenta Definir Valor de Pontos (quantidade de casas decimais)</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="194"/>
         <source>Right Angle Tool Parameters</source>
-        <translation>Parâmetros da Ferramenta de Aquisição com Ângulos Retos</translation>
+        <translation type="obsolete">Parâmetros da Ferramenta de Aquisição com Ângulos Retos</translation>
     </message>
     <message>
         <location filename="../gui/AboutAndFurtherInfo/Options/options.ui" line="200"/>
         <source>Minimum Segment Distance (meters)</source>
-        <translation>Distância mínima para segmento (metros)</translation>
+        <translation type="obsolete">Distância mínima para segmento (metros)</translation>
     </message>
 </context>
 <context>
@@ -12819,32 +12819,32 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="47"/>
         <source>Item</source>
-        <translation>Item</translation>
+        <translation type="obsolete">Item</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="82"/>
         <source>Move up</source>
-        <translation>Subir</translation>
+        <translation type="obsolete">Subir</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="108"/>
         <source>Add</source>
-        <translation>Adicionar</translation>
+        <translation type="obsolete">Adicionar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="134"/>
         <source>Remove</source>
-        <translation>Remover</translation>
+        <translation type="obsolete">Remover</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.ui" line="160"/>
         <source>Move down</source>
-        <translation>Descer</translation>
+        <translation type="obsolete">Descer</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/OrderedPropertyWidgets/orderedStructureWidget.py" line="138"/>
@@ -13211,32 +13211,32 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="20"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="190"/>
         <source>Create or Remove an user from selected server</source>
-        <translation>Criar ou remover um usuário do servidor selecionado</translation>
+        <translation type="obsolete">Criar ou remover um usuário do servidor selecionado</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="193"/>
         <source>Manage Users</source>
-        <translation>Gerenciar usuários</translation>
+        <translation type="obsolete">Gerenciar usuários</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="200"/>
         <source>Create, Update or Delete a profile</source>
-        <translation>Criar, atualizar ou deletar um perfil</translation>
+        <translation type="obsolete">Criar, atualizar ou deletar um perfil</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="203"/>
         <source>Manage Profiles</source>
-        <translation>Gerenciar perfis</translation>
+        <translation type="obsolete">Gerenciar perfis</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="26"/>
         <source>Right click for options</source>
-        <translation>Clique com o botão direito para opções</translation>
+        <translation type="obsolete">Clique com o botão direito para opções</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="92"/>
@@ -13256,12 +13256,12 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="122"/>
         <source>View Database Perspective</source>
-        <translation>Ver perspectiva do banco</translation>
+        <translation type="obsolete">Ver perspectiva do banco</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="166"/>
         <source>View User Perspective</source>
-        <translation>Ver perspectiva do usuário</translation>
+        <translation type="obsolete">Ver perspectiva do usuário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="262"/>
@@ -13331,22 +13331,22 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="59"/>
         <source>Import</source>
-        <translation>Importar</translation>
+        <translation type="obsolete">Importar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="66"/>
         <source>Batch Import</source>
-        <translation>Importar em lote</translation>
+        <translation type="obsolete">Importar em lote</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="73"/>
         <source>Export</source>
-        <translation>Exportar</translation>
+        <translation type="obsolete">Exportar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.ui" line="80"/>
         <source>Batch Export</source>
-        <translation>Exportar em lote</translation>
+        <translation type="obsolete">Exportar em lote</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="268"/>
@@ -13359,72 +13359,72 @@ Camada</translation>
         <translation>arquivo JSON (*.json *.JSON)</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="335"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="336"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="270"/>
         <source>Error! Select a file to import!</source>
-        <translation>Erro! Selecione um arquivo para importar!</translation>
+        <translation type="obsolete">Erro! Selecione um arquivo para importar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="332"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="333"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="276"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="277"/>
         <source>Permission successfully imported.</source>
         <translation>Permissão importada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="335"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="336"/>
         <source>Error! Problem importing permission: </source>
         <translation>Erro! Problema ao tentar importar permissão: </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="285"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="286"/>
         <source>Error! Select a profile to export!</source>
         <translation>Erro! Selecione um perfil para exportar!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="308"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="309"/>
         <source>Select a folder to output</source>
         <translation>Selecione um diretório de saída</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="310"/>
         <source>Error! Select a output!</source>
-        <translation>Erro! Selecione uma saída!</translation>
+        <translation type="obsolete">Erro! Selecione uma saída!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="300"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="301"/>
         <source>Permission successfully exported.</source>
         <translation>Permissão exportada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="319"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="320"/>
         <source>Error! Problem exporting permission: </source>
         <translation>Erro! Problema ao tentar exportar permissão: </translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="316"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="317"/>
         <source>Permissions successfully exported.</source>
         <translation>Permissões exportadas com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="324"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="325"/>
         <source>Select a folder with permissions: </source>
         <translation>Selecione um diretório com permissões: </translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="326"/>
         <source>Error! Select a input folder!</source>
-        <translation>Erro! Selecione um diretório de entrada!</translation>
+        <translation type="obsolete">Erro! Selecione um diretório de entrada!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="332"/>
+        <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/permissionWidget.py" line="333"/>
         <source>Permissions successfully imported.</source>
         <translation>Permissões importadas com sucesso.</translation>
     </message>
@@ -13434,7 +13434,7 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizard.ui" line="19"/>
         <source>Batch database creation</source>
-        <translation>Criação de bancos de dados em lote</translation>
+        <translation type="obsolete">Criação de bancos de dados em lote</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizard.py" line="48"/>
@@ -13444,11 +13444,6 @@ Camada</translation>
 </context>
 <context>
     <name>PermissionWizardProfile</name>
-    <message>
-        <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.ui" line="14"/>
-        <source>WizardPage</source>
-        <translation></translation>
-    </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.py" line="46"/>
         <source>Select profiles to be installed</source>
@@ -13538,52 +13533,52 @@ Camada</translation>
         <translation type="obsolete">Erro!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2013"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2018"/>
         <source>Operation not defined for this database version!</source>
         <translation>Operação não definida para esta versão de banco de dados!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="522"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="527"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="618"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="623"/>
         <source>Problem assigning profile: </source>
         <translation>Problema atribuindo perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="636"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="641"/>
         <source>Problem removing profile: </source>
         <translation>Problema removendo perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="649"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="654"/>
         <source>Problem altering user&apos;s password: </source>
         <translation>Problema alterando senha do usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="663"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="668"/>
         <source>Problem creating user: </source>
         <translation>Problema criando usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2718"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2723"/>
         <source>Problem removing user: </source>
         <translation>Problema removendo usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="688"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="693"/>
         <source>Problem granting profile: </source>
         <translation>Problema ao atribuir perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="701"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="706"/>
         <source>Problem revoking profile: </source>
         <translation>Problema ao revogar perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="902"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="907"/>
         <source>Problem dropping database: </source>
         <translation>Problema apagando o banco de dados: </translation>
     </message>
@@ -13593,7 +13588,7 @@ Camada</translation>
         <translation type="obsolete">Problema acessando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="929"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="934"/>
         <source>Problem creating views: </source>
         <translation>Problema criando visões: </translation>
     </message>
@@ -13603,57 +13598,57 @@ Camada</translation>
         <translation type="obsolete">Problema obtendo a versão do banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="191"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="196"/>
         <source>Problem listing geom classes: </source>
         <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="227"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="232"/>
         <source>Problem listing complex classes: </source>
         <translation>Problema ao listar classes complexas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="294"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="299"/>
         <source>Problem getting database structure: </source>
         <translation>Problema ao obter a estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2019"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2024"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar a query: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="441"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="446"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema obtendo a coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="489"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="494"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2708"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2713"/>
         <source>Problem getting users: </source>
         <translation>Problema ao obter usuários: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="554"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="559"/>
         <source>Problem getting user roles: </source>
         <translation>Problema ao obter permissões de usuários: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="578"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="583"/>
         <source>Problem getting roles: </source>
         <translation>Problema ao obter permissões: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="733"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="738"/>
         <source>Problem getting role privileges: </source>
         <translation>Problema ao obter privilégios da permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="785"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="790"/>
         <source>Problem getting EDGV databases: </source>
         <translation>Problema ao obter bancos EDGV: </translation>
     </message>
@@ -13668,57 +13663,57 @@ Camada</translation>
         <translation type="obsolete">Problema ao acessar bancos de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="841"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="846"/>
         <source>Problem getting databases: </source>
         <translation>Problema ao obter bancos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="859"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="864"/>
         <source>Problem checking user: </source>
         <translation>Problema ao checar usuário: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="957"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="962"/>
         <source>Problem getting invalid geometries: </source>
         <translation>Problema obtendo geometrias inválidas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="994"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="999"/>
         <source>Problem inserting flags: </source>
         <translation>Problema inserindo flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1015"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1020"/>
         <source>Problem deleting flags: </source>
         <translation>Problema removendo flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3437"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3442"/>
         <source>Problem creating structure: </source>
         <translation>Problema criando estrutura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1069"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1074"/>
         <source>Problem acquiring status: </source>
         <translation>Problema adquirindo status: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1084"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1089"/>
         <source>Problem setting status: </source>
         <translation>Problema ajustando o status: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1094"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1099"/>
         <source>Problem getting running process: </source>
         <translation>Problema obtendo processo atual: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1123"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1128"/>
         <source>Problem testing spatial rule: </source>
         <translation>Problema testando regra espacial: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1143"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1148"/>
         <source>Problem getting dimension: </source>
         <translation>Problema obtendo dimensão: </translation>
     </message>
@@ -13728,157 +13723,157 @@ Camada</translation>
         <translation type="obsolete">Problema explodindo geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1221"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1226"/>
         <source>Problem getting duplicated geometries: </source>
         <translation>Problema obtendo geometrias duplicadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1239"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1244"/>
         <source>Problem getting small areas: </source>
         <translation>Problema obtendo áreas pequenas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1258"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1263"/>
         <source>Problem getting small lines: </source>
         <translation>Problema obtendo linhas pequenas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1283"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1288"/>
         <source>Problem preparing auxiliary structure: </source>
         <translation>Problema preparando estrutura auxiliar: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1292"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1297"/>
         <source>Problem getting vertex near edges: </source>
         <translation>Problema obtendo vértice próximo à arestas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1318"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1323"/>
         <source>Problem deleting features from </source>
         <translation>Problema deletando feições de </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1336"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1341"/>
         <source>Problem getting not simple geometries: </source>
         <translation>Problema obtendo geometrias não simples: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1355"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1360"/>
         <source>Problem getting not out of bounds angles: </source>
         <translation>Problema obtendo ângulos fora dos limites: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1372"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1377"/>
         <source>Problem getting flags dict: </source>
         <translation>Problema obtendo dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1403"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1408"/>
         <source>Problem forcing validity of features from </source>
         <translation>Problema forçando validade de feições de </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1418"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1423"/>
         <source>Problem getting table extent: </source>
         <translation>Problema obtendo extensão da tabela: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1451"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1456"/>
         <source>Problem getting orphan tables: </source>
         <translation>Problema obtendo tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1458"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1463"/>
         <source>Problem counting orphan table: </source>
         <translation>Problema contando tabelas órfãs: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1481"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1486"/>
         <source>Problem updating geometries: </source>
         <translation>Problema atualizando geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1487"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1492"/>
         <source>Problem deleting geometries: </source>
         <translation>Problema deletando geometrias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1499"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1504"/>
         <source>Problem checking structure: </source>
         <translation>Problema checando estrutura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1531"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1536"/>
         <source>Problem creating centroid structure: </source>
         <translation>Problema criando estrutura de centróides: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1551"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1556"/>
         <source>Problem getting earth coverage tables: </source>
         <translation>Problema obtendo tabelas de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1649"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1654"/>
         <source>Problem getting earth coverage structure: </source>
         <translation>Problema obtendo estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1582"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1587"/>
         <source>Problem setting earth coverage structure: </source>
         <translation>Problema ajustando a estrutura de cobertura terrestre: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1625"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1630"/>
         <source>Problem dropping centroids: </source>
         <translation>Problema apagando centróides: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1667"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1672"/>
         <source>Problem getting class name: </source>
         <translation>Problema obtendo nome da classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1696"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1701"/>
         <source>Problem snapping to grid: </source>
         <translation>Problema ao realizar snap para o grid: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1717"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1722"/>
         <source>Problem snapping to frame: </source>
         <translation>Problema ao realizar snap para a moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1734"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1739"/>
         <source>Problem densifying frame: </source>
         <translation>Problema densificando moldura: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1752"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1757"/>
         <source>Problem creating recursive snap function: </source>
         <translation>Problema criando função de snap recursivo: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1758"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1763"/>
         <source>Problem snapping class: </source>
         <translation>Problema ao realizar snap na classe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2735"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2740"/>
         <source>Problem deleting flag: </source>
         <translation>Problema deletando flag: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="713"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="718"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2753"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2758"/>
         <source>Problem removing empty geometries: </source>
         <translation>Problema removendo geometrias vazias: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="794"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="799"/>
         <source>Reading selected databases... </source>
         <translation>Lendo bancos de dados selecionados... </translation>
     </message>
@@ -13903,52 +13898,52 @@ Camada</translation>
         <translation type="obsolete">Problema ao apagar a tabela temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1844"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1849"/>
         <source>Problem creating style table: </source>
         <translation>Problema criando tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1833"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1838"/>
         <source>Problem getting style table: </source>
         <translation>Problema obtendo tabela de estilos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1975"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1980"/>
         <source>Problem getting styles from db: </source>
         <translation>Problema obtendo estilos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1921"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1926"/>
         <source>Problem importing style</source>
         <translation>Problema importanto estilo</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1931"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1936"/>
         <source>Style </source>
         <translation>Estilo </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1931"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1936"/>
         <source> does not match the version of database </source>
         <translation> não combina com a versão do banco de dados </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1954"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1959"/>
         <source>Problem importing style </source>
         <translation>Problema importando estilos </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1998"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2003"/>
         <source>Problem running sql </source>
         <translation>Problema ao rodar sql </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3762"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3767"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema obtendo esquemas geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2061"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2066"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
@@ -13958,37 +13953,37 @@ Camada</translation>
         <translation type="obsolete">Versão de EDGV não reconhecida!</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2290"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2295"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2313"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2318"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2409"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2414"/>
         <source>Problem getting not null dict: </source>
         <translation>Problema obtendo dicionário de não nulos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2426"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2431"/>
         <source>Problem getting domain dict from table </source>
         <translation>Problema obtendo dicionário de domínios da tabela </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2438"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2443"/>
         <source>Problem getting layer column dict from table </source>
         <translation>Problema obtendo dicionário de colunas da tabela </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2461"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2466"/>
         <source>Problem getting geom struct dict: </source>
         <translation>Problema obtendo dicionário de estruturas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2484"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2489"/>
         <source>Problem creating from template: </source>
         <translation>Problema criando a partir de template: </translation>
     </message>
@@ -13998,47 +13993,47 @@ Camada</translation>
         <translation type="obsolete">Problema ajustando srid: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2562"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2567"/>
         <source>Problem setting as template: </source>
         <translation>Problema ajustando template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2773"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2778"/>
         <source>Problem creating database: </source>
         <translation>Problema criando banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2614"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2619"/>
         <source>Problem setting database as template: </source>
         <translation>Problema ajustando banco como template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2676"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2681"/>
         <source>Error on database creation! </source>
         <translation>Erro na criação de banco de dados! </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2676"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2681"/>
         <source> Db will be dropped.</source>
         <translation> Db será apagado.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2694"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2699"/>
         <source>Problem altering search path: </source>
         <translation>Problema alterando search path: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1157"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1162"/>
         <source>Problem exploding candidates: </source>
         <translation>Problema explodindo candidatos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1676"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1681"/>
         <source>Problem getting db oid: </source>
         <translation>Problema obtendo oid do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1961"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1966"/>
         <source>Problem getting table schema from db: </source>
         <translation>Problema obtendo esquema de tabela do db: </translation>
     </message>
@@ -14050,182 +14045,182 @@ Camada</translation>
 </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2623"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2628"/>
         <source>Problem checking  template: </source>
         <translation>Problema checando template: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2783"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2788"/>
         <source>Problem looking for admindb: </source>
         <translation>Problema procurando pelo admindb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2797"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2802"/>
         <source>Problem getting roles dict: </source>
         <translation>Problema ao obter dicionário de perfis: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3151"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3156"/>
         <source>Error! Operation not defined for non dsgtools_admindb</source>
         <translation>Erro! Operação não definida para bancos nãodsgtools_admindb</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2816"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2821"/>
         <source>Problem inserting into permission profile: </source>
         <translation>Problema inserindo no perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2827"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2832"/>
         <source>Problem dropping profile: </source>
         <translation>Problema apagando perfil: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2837"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2842"/>
         <source>Problem getting roles from adminDb: </source>
         <translation>Problema obtendo perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2849"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2854"/>
         <source>Problem getting all roles from adminDb: </source>
         <translation>Problema obtendo todos os perfis do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2864"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2869"/>
         <source>Problem deleting permission profile: </source>
         <translation>Problema deletando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2875"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2880"/>
         <source>Problem getting granted roles dict: </source>
         <translation>Problema ao obter dicionário de perfis permitidos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2894"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2899"/>
         <source>Problem updating permission profile: </source>
         <translation>Problema atualizando perfil de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2904"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2909"/>
         <source>Problem getting domain tables: </source>
         <translation>Problema obtendo tabelas de domínio: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2918"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2923"/>
         <source>Problem getting geometric schema list: </source>
         <translation>Problema obtendo lista de esquemas geométricos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2932"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2937"/>
         <source>Problem getting geometric table list: </source>
         <translation>Problema obtendo lista de tabelas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3011"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3016"/>
         <source>Problem getting inheritance: </source>
         <translation>Problema obtendo herança: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3049"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3054"/>
         <source>Problem getting attribute list: </source>
         <translation>Problema obtendo lista de atributos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3110"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3115"/>
         <source>Problem constraint dict from db: </source>
         <translation>Problema obtendo dicionário de constraints do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3140"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3145"/>
         <source>Problem getting default from db: </source>
         <translation>Problema obtendo default do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3155"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3160"/>
         <source>Problem inserting property </source>
         <translation>Problema inserindo propriedade </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3155"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3160"/>
         <source> into dsgtools_admindb: </source>
         <translation> no banco dsgtools_admindb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3174"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3179"/>
         <source>Problem getting setting from adminDb: </source>
         <translation>Problema obtendo ajuste do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3188"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3193"/>
         <source>Problem getting settings from adminDb: </source>
         <translation>Problema obtendo ajustes do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3203"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3208"/>
         <source>Problem deleting permission setting: </source>
         <translation>Problema deletando ajuste de permissão: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3216"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3221"/>
         <source>Problem upgrading postgis: </source>
         <translation>Problema atualizando o PostGIS: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3225"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3230"/>
         <source>Problem getting postgis version: </source>
         <translation>Problema obtendo versão do PostGIS: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3251"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3256"/>
         <source>Problem getting applied customizations: </source>
         <translation>Problema obtendo customizações aplicadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3267"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3272"/>
         <source>Problem creating Setting table: </source>
         <translation>Problema criando tabela de ajustes: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3276"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3281"/>
         <source>Problem getting checking if table exists: </source>
         <translation>Problema checando se tabela existe: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3291"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3296"/>
         <source>Problem getting getting record from adminDb: </source>
         <translation>Problema obtendo registro do adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3304"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3309"/>
         <source>Invalid property with database version.</source>
         <translation>Propriedade invalida com versão de banco.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3312"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3317"/>
         <source>Problem inserting record inside property table: </source>
         <translation>Problema inserindo registro na tabela de propriedades: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3323"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3328"/>
         <source>Problem getting getting property dict: </source>
         <translation>Problema obtendo dicionário de domínios: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3346"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3351"/>
         <source>Problem inserting installed record into adminDb: </source>
         <translation>Problema inserindo registro no adminDb: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3387"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3392"/>
         <source>Problem removing installed record into db: </source>
         <translation>Problema removendo registro do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3396"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3401"/>
         <source>Problem getting primary key column: </source>
         <translation>Problema ao identificar a coluna de chave primária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2279"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2284"/>
         <source>Problem getting tables dict from db: </source>
         <translation>Problema obtendo tabelas do bd: </translation>
     </message>
@@ -14235,83 +14230,83 @@ Camada</translation>
         <translation type="obsolete">É obrigatório informar a versão! </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2345"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2350"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="806"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="811"/>
         <source>Problem opening databases: </source>
         <translation>Problema ao abrir os seguintes bancos: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2216"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2221"/>
         <source>Error parsing check constraint!
 :</source>
         <translation>Erro ao decodificar o check constraint! :</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3409"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3414"/>
         <source>Problem dropping database conections: </source>
         <translation>Problema ao derrubar as conexões ao banco de dados: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2476"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2481"/>
         <source>Creating database {0} from template {1}... </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2496"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2501"/>
         <source>Problem getting view definition: </source>
         <translation>Problema ao tentar obter uma definição de view: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2509"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2514"/>
         <source>Updating SRIDs from {0}... </source>
         <translation>Atualizando os sistemas de referência de {0}... </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2545"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="2550"/>
         <source>Problem dropping views: </source>
         <translation>Problema ao tentar apagar views: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3419"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3424"/>
         <source>Problem getting attributes from table {0}.{1}: {2}</source>
         <translation>Problema ao tentar obter os atributos da tabela {0}.{1}:{2}</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1128"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1133"/>
         <source>Feature id {} from {} violates rule {} {}</source>
         <translation>Feição id {} de {} viola a regra {} {}</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3463"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3468"/>
         <source>Problem creating coverage temp table: </source>
         <translation>Problema criando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3491"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3496"/>
         <source>Problem populating coverage temp table: </source>
         <translation>Problema populando tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3496"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3501"/>
         <source>Problem creating spatial index on coverage temp table: </source>
         <translation>Problema criando índice espacial na tabela de cobertura temporária: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3595"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3600"/>
         <source>Problem getting gaps: </source>
         <translation>Problema obtendo gaps: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3512"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3517"/>
         <source>Gap between the frame layer and coverage layer</source>
         <translation>Gap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3532"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3537"/>
         <source>Problem getting overlaps: </source>
         <translation>Problema obtendo overlaps: </translation>
     </message>
@@ -14321,32 +14316,32 @@ Camada</translation>
         <translation type="obsolete">Overlap entre a camada de referência e a camada de cobertura</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3534"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3539"/>
         <source>Overlap between the features of the layer</source>
         <translation>Overlap entre as feições da camada</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1794"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1799"/>
         <source>Problem creating temp table {}: </source>
         <translation>Problema criando tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1799"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1804"/>
         <source>Problem creating spatial index on temp table {}: </source>
         <translation>Problema criando índice espacial na tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1812"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="1817"/>
         <source>Problem dropping temp table {}: </source>
         <translation>Problema ao apagar a tabela temporária {}: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3581"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3586"/>
         <source>Problem filtering flags: </source>
         <translation>Problema filtrando as flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3597"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3602"/>
         <source>Gap between the features of the layer</source>
         <translation>Gap entre as feições da camada</translation>
     </message>
@@ -14356,42 +14351,42 @@ Camada</translation>
         <translation type="obsolete">Problema ao obter o histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="885"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="890"/>
         <source>Problem getting implementation version: </source>
         <translation>Problema ao obter a versão de implementação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="904"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="909"/>
         <source>Problem dropping database: user must have permission for that.</source>
         <translation>Problema ao tentar apagar banco de dados: o usuário deve ter permissão para tal procedimento.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3610"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3615"/>
         <source>Problem while retrieving flags dict: </source>
         <translation>Problema ao obter dicionário de flags: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3659"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3664"/>
         <source>Problem while retrieving validation processes history table: </source>
         <translation>Problema ao tentar ler a tabela de histórico dos processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3673"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3678"/>
         <source>Problem while creating compact validation processes history table: </source>
         <translation>Problema ao tentar criar a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3680"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3685"/>
         <source>Problem while populating compact validation processes history table: </source>
         <translation>Problema ao tentar popular a tabela compacta de histórico de processos de validação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3710"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3715"/>
         <source>Problem getting list of attributes with filter: </source>
         <translation>Problema obtendo lista de atributos com filtros: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3724"/>
+        <location filename="../core/Factories/DbFactory/postgisDb.py" line="3729"/>
         <source>Problem getting domain json list: </source>
         <translation>Problemas ao tentar ler lista de JSON de domínios: </translation>
     </message>
@@ -14521,6 +14516,16 @@ camada</translation>
         <source>An attribute rules type. Used in the Identify Invalid Attribute Combinations algorithm.</source>
         <translation>Um tipo de regras de atributo. Usado no algoritmo Identificar Combinações Inválidas de Atributos.</translation>
     </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="134"/>
+        <source>Spatial Rules Set</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="140"/>
+        <source>Set of spatial rules. Used on Spatial Rules Checker.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ProcessingTools</name>
@@ -14640,17 +14645,17 @@ camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profileUserManager.ui" line="14"/>
         <source>Dialog</source>
-        <translation>Diálogo</translation>
+        <translation type="obsolete">Diálogo</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profileUserManager.ui" line="20"/>
         <source>Apply Changes</source>
-        <translation>Aplicar mudanças</translation>
+        <translation type="obsolete">Aplicar mudanças</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profileUserManager.ui" line="27"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/profileUserManager.py" line="49"/>
@@ -15466,12 +15471,12 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectFileWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectFileWidget.ui" line="58"/>
         <source>Select File</source>
-        <translation>Selecionar arquivo</translation>
+        <translation type="obsolete">Selecionar arquivo</translation>
     </message>
 </context>
 <context>
@@ -15482,12 +15487,12 @@ Camada</translation>
         <translation>Selecione estilos</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/selectStyles.py" line="66"/>
+        <location filename="../gui/ServerTools/selectStyles.py" line="67"/>
         <source>Warning</source>
         <translation>Atenção</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/selectStyles.py" line="66"/>
+        <location filename="../gui/ServerTools/selectStyles.py" line="67"/>
         <source>Select at least one style!</source>
         <translation>Selecione pelo menos um estilo!</translation>
     </message>
@@ -15497,27 +15502,27 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.ui" line="14"/>
         <source>Select an option</source>
-        <translation>Selecione uma opção</translation>
+        <translation type="obsolete">Selecione uma opção</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.ui" line="21"/>
         <source>Import setting from file</source>
-        <translation>Importar arquivo de configurações</translation>
+        <translation type="obsolete">Importar arquivo de configurações</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.ui" line="28"/>
         <source>Create a new setting</source>
-        <translation>Criar novas configurações</translation>
+        <translation type="obsolete">Criar novas configurações</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.ui" line="35"/>
         <source>Install one setting that is already created</source>
-        <translation>Instalar configurações que já estão criadas</translation>
+        <translation type="obsolete">Instalar configurações que já estão criadas</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.ui" line="44"/>
         <source>Setting</source>
-        <translation>Configurações</translation>
+        <translation type="obsolete">Configurações</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/selectTaskWizard.py" line="50"/>
@@ -15645,7 +15650,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="14"/>
         <source>Server Permissions Editor</source>
-        <translation>Editor de permissões de servidor</translation>
+        <translation type="obsolete">Editor de permissões de servidor</translation>
     </message>
     <message>
         <location filename="UserTools/serverProfilesManager.ui" line="25"/>
@@ -15665,12 +15670,12 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="36"/>
         <source>Create Profile</source>
-        <translation>Criar perfil</translation>
+        <translation type="obsolete">Criar perfil</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="86"/>
         <source>Delete Selected</source>
-        <translation>Apagar selecionado</translation>
+        <translation type="obsolete">Apagar selecionado</translation>
     </message>
     <message>
         <location filename="UserTools/serverProfilesManager.ui" line="102"/>
@@ -15695,70 +15700,70 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="122"/>
         <source>Permissions</source>
-        <translation>Permissões</translation>
+        <translation type="obsolete">Permissões</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="158"/>
         <source>Read</source>
-        <translation>Ler</translation>
+        <translation type="obsolete">Ler</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="163"/>
         <source>Write</source>
-        <translation>Escrever</translation>
+        <translation type="obsolete">Escrever</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="179"/>
         <source>Save Changes on Profile</source>
-        <translation>Salvar mudanças no perfil</translation>
+        <translation type="obsolete">Salvar mudanças no perfil</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.ui" line="189"/>
         <source>Clear All</source>
-        <translation>Limpar Tudo</translation>
+        <translation type="obsolete">Limpar Tudo</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="222"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="223"/>
         <source>Question</source>
         <translation>Pergunta</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="222"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="223"/>
         <source>Do you really want to delete profile </source>
         <translation>Você realmente deseja apagar o perfil </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="243"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="244"/>
         <source>Success!</source>
         <translation>Sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="243"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="244"/>
         <source>Permission </source>
         <translation>Permissão </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="228"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="229"/>
         <source> successfully deleted.</source>
         <translation> apagada com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="246"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="247"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="232"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="233"/>
         <source>Error! Problem deleting permission: </source>
         <translation>Erro! Problema ao tentar apagar permissão: </translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="243"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="244"/>
         <source> successfully updated.</source>
         <translation> atualizado com sucesso.</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="246"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="247"/>
         <source>Error! Problem updating permission: </source>
         <translation>Erro! Problema ao tentar atualizar permissão: </translation>
     </message>
@@ -15853,12 +15858,12 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
         <translation> criado com sucesso!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="256"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="257"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="256"/>
+        <location filename="../gui/DatabaseTools/UserTools/serverProfilesManager.py" line="257"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
@@ -15876,7 +15881,7 @@ As seguintes conexões de banco de dados foram removidas com sucesso:
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="20"/>
         <source>Define earth coverage areas and lines</source>
-        <translation>Definir áreas e linhas da cobertura terrestre</translation>
+        <translation type="obsolete">Definir áreas e linhas da cobertura terrestre</translation>
     </message>
     <message>
         <location filename="ValidationTools/setupEarthCoverage.ui" line="27"/>
@@ -15898,12 +15903,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="133"/>
         <source>Class</source>
-        <translation>Classe</translation>
+        <translation type="obsolete">Classe</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="138"/>
         <source>Delimiters</source>
-        <translation>Delimitadores</translation>
+        <translation type="obsolete">Delimitadores</translation>
     </message>
     <message>
         <location filename="ValidationTools/setupEarthCoverage_backup.ui" line="27"/>
@@ -16005,30 +16010,30 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="33"/>
         <source>2- Choose the frame layer</source>
-        <translation>2- Escolha a camada de moldura</translation>
+        <translation type="obsolete">2- Escolha a camada de moldura</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="40"/>
         <source>1- Enter Earth Coverage Name</source>
-        <translation>1- Insira o nome da cobertura terrestre</translation>
+        <translation type="obsolete">1- Insira o nome da cobertura terrestre</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="80"/>
         <source>3- Choose the area classes that build earth coverage (only parent classes are listed here).</source>
-        <translation>3- Escolha classes do tipo área que compõem a cobertura terrestre (somente classes pai serão listadas aqui).</translation>
+        <translation type="obsolete">3- Escolha classes do tipo área que compõem a cobertura terrestre (somente classes pai serão listadas aqui).</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="94"/>
         <source>4- Choose the line classes that, along with the frame, build the areas of earth coverage 
 (only parent classes are listed here).</source>
-        <translation>4- Escolha as classes do tipo linha que, juntamente com a moldura, definem áreas da cobertura terrestre 
+        <translation type="obsolete">4- Escolha as classes do tipo linha que, juntamente com a moldura, definem áreas da cobertura terrestre 
 (somente classes pai são listadas aqui).</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/setupEarthCoverage.ui" line="109"/>
         <source>5- For each area class of earth coverage, define which lines are used to build it 
 (note that frame is always used to close areas)</source>
-        <translation>5- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construí-la 
+        <translation type="obsolete">5- Para cada classe da cobertura terrestre, defina quais linhas são usadas para construí-la 
 (note que a moldura é sempre usada para fechar áreas)</translation>
     </message>
     <message>
@@ -16171,12 +16176,12 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.ui" line="29"/>
         <source>Clear Assignment</source>
-        <translation>Limpar atribuição</translation>
+        <translation type="obsolete">Limpar atribuição</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/shortcutChooserWidget.py" line="64"/>
@@ -16199,17 +16204,17 @@ Se existe um atributo restritivo na classe selecionada, clique com o botão dire
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.ui" line="32"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.ui" line="43"/>
         <source>Layer</source>
-        <translation>Camada</translation>
+        <translation type="obsolete">Camada</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapWithLayerChooserWidget.ui" line="85"/>
         <source>Snap</source>
-        <translation>Snap</translation>
+        <translation type="obsolete">Snap</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/BasicInterfaceWidgets/snapChooserWidget.py" line="61"/>
@@ -16892,6 +16897,11 @@ Camada</translation>
         <translation>Diferença de cotas das curvas {id1} e {id2} são diferentes da equidistância {equidistance}. É possível que estejam faltando curvas de nível ou uma delas possui valor de cota incorreto.
 </translation>
     </message>
+    <message>
+        <location filename="../core/GeometricTools/spatialRelationsHandler.py" line="564"/>
+        <source>Feature from {input} with id {input_id} violates the following predicate with feature from {candidate} with id {candidate_id}: {predicate_text}</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SpatialRuleEnforcer</name>
@@ -17017,89 +17027,107 @@ Camada</translation>
     </message>
 </context>
 <context>
+    <name>SpatialRulesCheckerAlgorithm</name>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="62"/>
+        <source>Spatial Rules Set</source>
+        <translation>Conjunto de regras espaciais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="97"/>
+        <source>Spatial Rules Checker</source>
+        <translation>Verificador de regras espaciais</translation>
+    </message>
+    <message>
+        <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="104"/>
+        <source>Validation Tools (Identification Processes)</source>
+        <translation>Ferramentas de Validação (Processos de Identificação)</translation>
+    </message>
+</context>
+<context>
     <name>SpatialiteDb</name>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="269"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="273"/>
         <source>Conversion not perfomed due to validation errors! Check log above for more information.</source>
         <translation>Conversão não realizada devido à erros de validação! Verifique o log acima para maiores informações.</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="398"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="402"/>
         <source>Problem disassociating complex from complex: </source>
         <translation>Problema disassociando complexo de complexo: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="67"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="71"/>
         <source>Select a DSGTools Spatialite file</source>
         <translation>Selecione um arquivo spatialite DsgTools</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="67"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="71"/>
         <source>Spatialite file databases (*.sqlite)</source>
         <translation>Banco de dados SpatiaLite (*.sqlite)</translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="81"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="85"/>
         <source>Problem listing geom classes: </source>
         <translation>Problema ao listar classes geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="99"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="103"/>
         <source>Problem listing complex classes: </source>
         <translation>Problema ao listar classes complexas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="118"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="122"/>
         <source>Problem getting database structure: </source>
         <translation>Problema ao obter estrutura do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="380"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="384"/>
         <source>Problem executing query: </source>
         <translation>Problema ao executar query: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="309"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="313"/>
         <source>Problem obtaining link column: </source>
         <translation>Problema ao obter coluna de ligação: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="329"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="333"/>
         <source>Problem loading associated features: </source>
         <translation>Problema ao carregar feições associadas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="411"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="415"/>
         <source>Problem getting tables from database: </source>
         <translation>Problema ao obter tabelas do banco: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="442"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="446"/>
         <source>Problem getting geom types from db: </source>
         <translation>Problema obtendo tipos geométricos do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="468"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="472"/>
         <source>Problem getting geom tables from db: </source>
         <translation>Problema obtendo tabelas geométricas do db: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="500"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="504"/>
         <source>Problem getting geom column dict: </source>
         <translation>Problema obtendo dicionário de colunas geométricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="545"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="549"/>
         <source>Problem getting full table name: </source>
         <translation>Problema obtendo nome completo da tabela: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="559"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="563"/>
         <source>Problem getting geom tuple list: </source>
         <translation>Problema ao obter a lista de tuplas geometricas: </translation>
     </message>
     <message>
-        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="596"/>
+        <location filename="../core/Factories/DbFactory/spatialiteDb.py" line="600"/>
         <source>Problem getting geom schemas from db: </source>
         <translation>Problema ao tentar obter os esquemas geométricos do banco de dados: </translation>
     </message>
@@ -17161,7 +17189,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../ProductionTools/StyleManagerTool/styleManagerTool.ui" line="50"/>
@@ -17171,7 +17199,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui" line="96"/>
         <source>Refresh database list</source>
-        <translation>Recarregar lista de bancos de dados</translation>
+        <translation type="obsolete">Recarregar lista de bancos de dados</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.py" line="70"/>
@@ -17206,7 +17234,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/StyleManagerTool/styleManagerTool.ui" line="56"/>
         <source>Manage Styles Tool</source>
-        <translation>Ferramenta de Gerência de Estilo</translation>
+        <translation type="obsolete">Ferramenta de Gerência de Estilo</translation>
     </message>
 </context>
 <context>
@@ -17263,17 +17291,17 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.ui" line="30"/>
         <source>PostGIS</source>
-        <translation>PostGIS</translation>
+        <translation type="obsolete">PostGIS</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.ui" line="47"/>
         <source>Spatialite</source>
-        <translation>Spatialite</translation>
+        <translation type="obsolete">Spatialite</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/SelectionWidgets/tabDbSelectorWidget.py" line="70"/>
@@ -17747,7 +17775,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.ui" line="33"/>
         <source>Validation Configuration</source>
-        <translation>Configuração de Validação</translation>
+        <translation type="obsolete">Configuração de Validação</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_config.ui" line="46"/>
@@ -17817,7 +17845,7 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_config.ui" line="56"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
     </message>
 </context>
 <context>
@@ -17825,12 +17853,12 @@ Camada</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.ui" line="36"/>
         <source>Validation History</source>
-        <translation>Histórico de Validação</translation>
+        <translation type="obsolete">Histórico de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.ui" line="86"/>
         <source>Close</source>
-        <translation>Fechar</translation>
+        <translation type="obsolete">Fechar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_history.py" line="56"/>
@@ -18050,12 +18078,12 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.ui" line="36"/>
         <source>Halt if flags are raised</source>
-        <translation>Parar caso hajam flags</translation>
+        <translation type="obsolete">Parar caso hajam flags</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationProcessWidget.py" line="54"/>
@@ -18085,7 +18113,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="37"/>
         <source>Processes</source>
-        <translation>Processos</translation>
+        <translation type="obsolete">Processos</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="31"/>
@@ -18100,12 +18128,12 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="231"/>
         <source>Open History</source>
-        <translation>Abrir Histórico</translation>
+        <translation type="obsolete">Abrir Histórico</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="143"/>
         <source>Run Process</source>
-        <translation>Rodar Processo</translation>
+        <translation type="obsolete">Rodar Processo</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="62"/>
@@ -18135,7 +18163,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="102"/>
         <source>#</source>
-        <translation>#</translation>
+        <translation type="obsolete">#</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="113"/>
@@ -18150,7 +18178,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="158"/>
         <source>Flags</source>
-        <translation>Flags</translation>
+        <translation type="obsolete">Flags</translation>
     </message>
     <message>
         <location filename="ValidationTools/validation_toolbox.ui" line="129"/>
@@ -18227,7 +18255,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="112"/>
         <source>Status</source>
-        <translation>Estado</translation>
+        <translation type="obsolete">Estado</translation>
     </message>
     <message>
         <location filename="../ValidationTools/validation_toolbox.ui" line="186"/>
@@ -18287,7 +18315,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="220"/>
         <source>Clear All Flags</source>
-        <translation>Limpar Todas as Flags</translation>
+        <translation type="obsolete">Limpar Todas as Flags</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="391"/>
@@ -18309,12 +18337,12 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="123"/>
         <source>Re-Run Last Process</source>
-        <translation>Re-Rodar Último Processo</translation>
+        <translation type="obsolete">Re-Rodar Último Processo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="209"/>
         <source>Clear Filtered Flags</source>
-        <translation>Limpar flags filtradas</translation>
+        <translation type="obsolete">Limpar flags filtradas</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="98"/>
@@ -18351,27 +18379,27 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="14"/>
         <source>&amp;DSGTools: Validation Toolbox</source>
-        <translation>&amp;DSGTools: Caixa de Ferramentas de Validação</translation>
+        <translation type="obsolete">&amp;DSGTools: Caixa de Ferramentas de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="71"/>
         <source>Validation Workflow</source>
-        <translation>Fluxo de Trabalho de Validação</translation>
+        <translation type="obsolete">Fluxo de Trabalho de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="107"/>
         <source>Task</source>
-        <translation>Tarefa</translation>
+        <translation type="obsolete">Tarefa</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="126"/>
         <source>Re-Run Workflow</source>
-        <translation>Rodar Novamente Fluxo de Trabalho</translation>
+        <translation type="obsolete">Rodar Novamente Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.ui" line="146"/>
         <source>Run Workflow</source>
-        <translation>Executar Fluxo de Trabalho</translation>
+        <translation type="obsolete">Executar Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validation_toolbox.py" line="78"/>
@@ -18405,49 +18433,49 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="20"/>
         <source>Create Validation Workspace</source>
-        <translation>Criar Workspace de Validação</translation>
+        <translation type="obsolete">Criar Workspace de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="28"/>
         <source>Workflow Name</source>
-        <translation>Nome do Fluxo de Trabalho</translation>
+        <translation type="obsolete">Nome do Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="35"/>
         <source>Enter a workflow name</source>
-        <translation>Insira o nome do fluxo de trabalho</translation>
+        <translation type="obsolete">Insira o nome do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="42"/>
         <source>Author Name</source>
-        <translation>Nome do Autor</translation>
+        <translation type="obsolete">Nome do Autor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="49"/>
         <source>Enter a workflow author name</source>
-        <translation>Insira o nome do autor do fluxo de trabalho</translation>
+        <translation type="obsolete">Insira o nome do autor do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="56"/>
         <source>Workflow Version</source>
-        <translation>Versão do fluxo
+        <translation type="obsolete">Versão do fluxo
   de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="63"/>
         <source>Enter a workflow version</source>
-        <translation>Insira a versão do fluxo de trabalho</translation>
+        <translation type="obsolete">Insira a versão do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="70"/>
         <source>Workflow Version Date</source>
-        <translation>Data da versão do
+        <translation type="obsolete">Data da versão do
  fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="77"/>
         <source>dd/MM/yyyy</source>
-        <translation>dd/MM/yyyy</translation>
+        <translation type="obsolete">dd/MM/yyyy</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="57"/>
@@ -18470,22 +18498,22 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.ui" line="32"/>
         <source>Workspace Item</source>
-        <translation>Item do Workspace</translation>
+        <translation type="obsolete">Item do Workspace</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.ui" line="39"/>
         <source>Enter a workspace item name</source>
-        <translation>Insira o nome do item do workspace</translation>
+        <translation type="obsolete">Insira o nome do item do workspace</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.ui" line="46"/>
         <source>Halt workflow in case of flags</source>
-        <translation>Parar fluxo de trabalho caso hajam flags</translation>
+        <translation type="obsolete">Parar fluxo de trabalho caso hajam flags</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/ValidationWidgets/validationWorkflowItemWidget.py" line="79"/>
@@ -18505,22 +18533,22 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui" line="14"/>
         <source>Contour Value</source>
-        <translation>Valor de relevo</translation>
+        <translation type="obsolete">Valor de relevo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui" line="20"/>
         <source>Contour value:</source>
-        <translation>Valor de relevo:</translation>
+        <translation type="obsolete">Valor de relevo:</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui" line="30"/>
         <source>Cancel</source>
-        <translation>Cancelar</translation>
+        <translation type="obsolete">Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ContourTool/contour_value.ui" line="37"/>
         <source>OK</source>
-        <translation>Ok</translation>
+        <translation type="obsolete">Ok</translation>
     </message>
 </context>
 <context>
@@ -18624,22 +18652,22 @@ Não foi possível obter o tempo total gasto.</translation>
 <context>
     <name>ViewServers</name>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="236"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="247"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="236"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="247"/>
         <source>Select one server.</source>
         <translation>Selecione um servidor.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="176"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="185"/>
         <source>Info!</source>
         <translation>Informação!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="155"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="164"/>
         <source>Server removed.</source>
         <translation>Servidor removido.</translation>
     </message>
@@ -18669,27 +18697,27 @@ Não foi possível obter o tempo total gasto.</translation>
         <translation>Não salva</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="170"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="179"/>
         <source>Connection online.</source>
         <translation>Conexão online.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="176"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="185"/>
         <source>Connection was not successful. Check log for details.</source>
         <translation>A conexão não foi bem sucedida. Confira o log para detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="226"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="237"/>
         <source>Critical!</source>
         <translation>Crítico!</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="226"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="237"/>
         <source>A problem occurred! Check log for details.</source>
         <translation>Um problema ocorreu! Verifique o log para mais detalhes.</translation>
     </message>
     <message>
-        <location filename="../gui/ServerTools/viewServers.py" line="119"/>
+        <location filename="../gui/ServerTools/viewServers.py" line="128"/>
         <source>Set default connection before closing!</source>
         <translation>Definir conexão padrão antes de fechar!</translation>
     </message>
@@ -18707,67 +18735,37 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="26"/>
         <source>New Attribute</source>
-        <translation>Novo atributo</translation>
+        <translation type="obsolete">Novo atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="32"/>
         <source>Attribute</source>
-        <translation>Atributo</translation>
+        <translation type="obsolete">Atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="39"/>
         <source>write an attribute</source>
-        <translation>escreva um atributo</translation>
+        <translation type="obsolete">escreva um atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="47"/>
         <source>Choose a type</source>
-        <translation>Escolha um tipo</translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="52"/>
-        <source>int</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="57"/>
-        <source>float</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="62"/>
-        <source>char(30)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="67"/>
-        <source>text</source>
-        <translation></translation>
+        <translation type="obsolete">Escolha um tipo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="72"/>
         <source>EDGV Domain</source>
-        <translation>Domínio EDGV</translation>
+        <translation type="obsolete">Domínio EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="80"/>
         <source>Not Null</source>
-        <translation>Não nulo</translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="97"/>
-        <source>References</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="129"/>
-        <source>Set Reference</source>
-        <translation></translation>
+        <translation type="obsolete">Não nulo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/addAttributeWidget.ui" line="153"/>
         <source>Default</source>
-        <translation>Padrão</translation>
+        <translation type="obsolete">Padrão</translation>
     </message>
 </context>
 <context>
@@ -18775,32 +18773,32 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui" line="20"/>
         <source>Attribute</source>
-        <translation>Atributo</translation>
+        <translation type="obsolete">Atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui" line="49"/>
         <source>Logical</source>
-        <translation>Lógico</translation>
+        <translation type="obsolete">Lógico</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui" line="69"/>
         <source>=</source>
-        <translation>=</translation>
+        <translation type="obsolete">=</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui" line="74"/>
         <source>!=</source>
-        <translation>!=</translation>
+        <translation type="obsolete">!=</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/attributeConditionWidget.ui" line="88"/>
         <source>Value</source>
-        <translation>Valor</translation>
+        <translation type="obsolete">Valor</translation>
     </message>
 </context>
 <context>
@@ -18808,27 +18806,27 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.ui" line="14"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.ui" line="22"/>
         <source>Domain Name</source>
-        <translation>Nome do domínio</translation>
+        <translation type="obsolete">Nome do domínio</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.ui" line="44"/>
         <source>Old Code Name</source>
-        <translation>Code name antigo</translation>
+        <translation type="obsolete">Code name antigo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.ui" line="64"/>
         <source>New Code Name</source>
-        <translation>Code name novo</translation>
+        <translation type="obsolete">Code name novo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/codeNameCustomizationWidget.ui" line="86"/>
         <source>Enter new name</source>
-        <translation>Entre o novo nome</translation>
+        <translation type="obsolete">Entre o novo nome</translation>
     </message>
 </context>
 <context>
@@ -18836,22 +18834,22 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.ui" line="20"/>
         <source>Create Database Customization</source>
-        <translation>Criar customização de banco de dados</translation>
+        <translation type="obsolete">Criar customização de banco de dados</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.ui" line="37"/>
         <source>Select customization</source>
-        <translation>Selecionar customização</translation>
+        <translation type="obsolete">Selecionar customização</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.ui" line="83"/>
         <source>Customization Tree</source>
-        <translation>Árvore de customização</translation>
+        <translation type="obsolete">Árvore de customização</translation>
     </message>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.ui" line="91"/>
         <source>Remove Selected</source>
-        <translation>Remover selecionados</translation>
+        <translation type="obsolete">Remover selecionados</translation>
     </message>
     <message>
         <location filename="../PostgisCustomization/createDatabaseCustomization.ui" line="26"/>
@@ -18886,7 +18884,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/Misc/PostgisCustomization/createDatabaseCustomization.ui" line="26"/>
         <source>Customization Elements</source>
-        <translation>Elementos da customização</translation>
+        <translation type="obsolete">Elementos da customização</translation>
     </message>
 </context>
 <context>
@@ -18917,7 +18915,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../ProductionTools/MinimumAreaTool/minimumAreaTool.ui" line="64"/>
@@ -18932,37 +18930,37 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="160"/>
         <source>SHAPES</source>
-        <translation>FORMAS</translation>
+        <translation type="obsolete">FORMAS</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="165"/>
         <source>Square</source>
-        <translation>Quadrado</translation>
+        <translation type="obsolete">Quadrado</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="170"/>
         <source>Circle</source>
-        <translation>Círculo</translation>
+        <translation type="obsolete">Círculo</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="224"/>
         <source>Draw Shape</source>
-        <translation>Desenhar forma</translation>
+        <translation type="obsolete">Desenhar forma</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="65"/>
         <source>Minimum Area Tool</source>
-        <translation>Ferramenta de área mínima</translation>
+        <translation type="obsolete">Ferramenta de área mínima</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="194"/>
         <source>Color Selector</source>
-        <translation>Seletor de Cor</translation>
+        <translation type="obsolete">Seletor de Cor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui" line="260"/>
         <source>Create Custom Size</source>
-        <translation>Criar Tamanho Personalizado</translation>
+        <translation type="obsolete">Criar Tamanho Personalizado</translation>
     </message>
 </context>
 <context>
@@ -18970,52 +18968,52 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="34"/>
         <source>Rule Name</source>
-        <translation>Nome da regra</translation>
+        <translation type="obsolete">Nome da regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="48"/>
         <source>Class Name</source>
-        <translation>Nome da classe</translation>
+        <translation type="obsolete">Nome da classe</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="62"/>
         <source>Select Class</source>
-        <translation>Seleciona uma classe</translation>
+        <translation type="obsolete">Seleciona uma classe</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="74"/>
         <source>Expression</source>
-        <translation>Expressão</translation>
+        <translation type="obsolete">Expressão</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="92"/>
         <source>Rule Filter</source>
-        <translation>Filtro de regra</translation>
+        <translation type="obsolete">Filtro de regra</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="149"/>
         <source>Attribute Clause</source>
-        <translation>Cláusula de atributo</translation>
+        <translation type="obsolete">Cláusula de atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="154"/>
         <source>Attribute Rules</source>
-        <translation>Regras de atributo</translation>
+        <translation type="obsolete">Regras de atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="168"/>
         <source>Add Clause</source>
-        <translation>Cláusula de adição</translation>
+        <translation type="obsolete">Cláusula de adição</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/AttributeValidityWidgets/newAttributeRuleBuilderWidget.ui" line="179"/>
         <source>Remove clause</source>
-        <translation>Cláusula de remoção</translation>
+        <translation type="obsolete">Cláusula de remoção</translation>
     </message>
 </context>
 <context>
@@ -19046,22 +19044,22 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.ui" line="26"/>
         <source>New Attribute</source>
-        <translation>Novo atributo</translation>
+        <translation type="obsolete">Novo atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.ui" line="32"/>
         <source>Schema</source>
-        <translation>Esquema</translation>
+        <translation type="obsolete">Esquema</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.ui" line="42"/>
         <source>Table Name</source>
-        <translation>Nome da tabela</translation>
+        <translation type="obsolete">Nome da tabela</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newAttributeWidget.ui" line="56"/>
         <source>Create attribute on all tables with geometries</source>
-        <translation>Criar atributo em todas as tabelas com geometrias</translation>
+        <translation type="obsolete">Criar atributo em todas as tabelas com geometrias</translation>
     </message>
 </context>
 <context>
@@ -19069,72 +19067,72 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="26"/>
         <source>Form</source>
-        <translation>Formulário</translation>
+        <translation type="obsolete">Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="51"/>
         <source>Category</source>
-        <translation>Categoria</translation>
+        <translation type="obsolete">Categoria</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="71"/>
         <source>Class Name</source>
-        <translation>Nome da classe</translation>
+        <translation type="obsolete">Nome da classe</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="85"/>
         <source>Geometric Primitive</source>
-        <translation>Primitiva geométrica</translation>
+        <translation type="obsolete">Primitiva geométrica</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="93"/>
         <source>Select</source>
-        <translation>Selecionar</translation>
+        <translation type="obsolete">Selecionar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="98"/>
         <source>Point</source>
-        <translation>Ponto</translation>
+        <translation type="obsolete">Ponto</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="103"/>
         <source>Line</source>
-        <translation>Linha</translation>
+        <translation type="obsolete">Linha</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="108"/>
         <source>Area</source>
-        <translation>Área</translation>
+        <translation type="obsolete">Área</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="176"/>
         <source>Attributes</source>
-        <translation>Atributos</translation>
+        <translation type="obsolete">Atributos</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="190"/>
         <source>Add Attribute</source>
-        <translation>Adicionar atributo</translation>
+        <translation type="obsolete">Adicionar atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="201"/>
         <source>Remove attribute</source>
-        <translation>Remover atributo</translation>
+        <translation type="obsolete">Remover atributo</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="34"/>
         <source>Schema</source>
-        <translation>Esquema</translation>
+        <translation type="obsolete">Esquema</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="64"/>
         <source>Enter a category</source>
-        <translation>Entre uma categoria</translation>
+        <translation type="obsolete">Entre uma categoria</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/CustomDbManagementWidgets/newClassWidget.ui" line="78"/>
         <source>Enter a class</source>
-        <translation>Entre uma classe</translation>
+        <translation type="obsolete">Entre uma classe</translation>
     </message>
 </context>
 <context>
@@ -19173,7 +19171,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.ui" line="14"/>
         <source>Datasource Conversion</source>
-        <translation>Conversão de Fontes de Dados</translation>
+        <translation type="obsolete">Conversão de Fontes de Dados</translation>
     </message>
 </context>
 </TS>

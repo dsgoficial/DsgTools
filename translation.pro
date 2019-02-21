@@ -1,5 +1,4 @@
- SOURCES         =	core/__init__.py \
- 					core/DbModels/SpatiaLite/__init__.py \
+ SOURCES         =	core/DbModels/SpatiaLite/__init__.py \
 					core/DbModels/PostGIS/__init__.py \
 					core/DbModels/__init__.py \
 					core/DSGToolsProcessingAlgs/dsgtoolsProcessingAlgorithmProvider.py \
@@ -9,11 +8,11 @@
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/createFrameAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/runRemoteFMEAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/__init__.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/raiseFlagsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/updateOriginalLayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/OtherAlgs/fileInventoryAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasSimplificationAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallPolygonsAlgorithm.py \
@@ -26,6 +25,7 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/adjustNetworkConnectivityAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedFeaturesAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py \
@@ -33,22 +33,22 @@
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/validationAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/__init__.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py \
+					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py \
-					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py \
 					core/DSGToolsProcessingAlgs/Algs/GeometricAlgs/donutHoleExtractorAlgorithm.py \
@@ -113,6 +113,7 @@
 					core/GeometricTools/geometryHandler.py \
 					core/GeometricTools/networkHandler.py \
 					core/GeometricTools/layerHandler.py \
+					core/__init__.py \
 					core/ServerManagementTools/fieldToolBoxConfigManager.py \
 					core/ServerManagementTools/validationWorkflowManager.py \
 					core/ServerManagementTools/genericDbManager.py \
@@ -125,10 +126,12 @@
 					core/DbTools/__init__.py \
 					core/dsgEnums.py \
 					core/Styles/Non_EDGV/__init__.py \
+					core/Styles/edgv_213_pro/__init__.py \
 					core/Styles/edgv_3/__init__.py \
 					core/Styles/edgv_213/__init__.py \
 					core/Styles/edgv_FTer_2a_Ed/__init__.py \
 					core/Styles/__init__.py \
+					core/Styles/edgv_3_pro/__init__.py \
 					core/ValidationTools/validationManager.py \
 					dsg_tools.py \
 					plugin_upload.py \
@@ -215,7 +218,6 @@
 					gui/ProductionTools/MapTools/FlipLineTool/__init__.py \
 					gui/DatabaseTools/ConversionTools/datasourceConversion.py \
 					gui/DatabaseTools/ConversionTools/__init__.py \
-					gui/DatabaseTools/ConversionTools/convert_database.py \
 					gui/DatabaseTools/__init__.py \
 					gui/DatabaseTools/DbTools/SingleDbCreator/__init__.py \
 					gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.py \
@@ -395,6 +397,7 @@
 					gui/ServerTools/ui_viewServers.ui \
 					gui/ServerTools/manageDBAuxiliarStructure.ui \
 					gui/ServerTools/ui_serverConfigurator.ui \
+					gui/ServerTools/BatchDbManagerGui
 					gui/ServerTools/batchDbManager.ui \
 					gui/ServerTools/createView.ui \
 					gui/ProductionTools/Toolboxes/FieldToolBox/field_setup.ui \
@@ -416,7 +419,6 @@
 					gui/ProductionTools/Toolbars/MinimumAreaTool/minimumAreaTool.ui \
 					gui/ProductionTools/Toolbars/MinimumAreaTool/customSizeSetter.ui \
 					gui/DatabaseTools/ConversionTools/datasourceConversion.ui \
-					gui/DatabaseTools/ConversionTools/convert_database.ui \
 					gui/DatabaseTools/DbTools/SingleDbCreator/singleDbCreator.ui \
 					gui/DatabaseTools/DbTools/BatchDbCreator/createBatchFromCsv.ui \
 					gui/DatabaseTools/DbTools/BatchDbCreator/createBatchIncrementing.ui \
