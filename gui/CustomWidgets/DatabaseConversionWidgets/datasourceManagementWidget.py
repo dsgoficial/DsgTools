@@ -202,20 +202,13 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # disconnect all widget connected signals
         w.blockSignals(True)
         # remove from active dict
-        try:
-            self.activeDrivers[w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)].remove(w)
-        except:
-            # THIS PAIR TRY-EXCEPT IS ONLY TILL NEW DATASOURCE OPTIONS ARE ADJUSTED ( VALUEERROR RAISED DUE TO HALF-IMPLEMENTATION)
-            pass
+        self.activeDrivers[w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)].remove(w)
         self.datasourceLayout.removeWidget(w)
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
         # emit widget that has been removed
         self.activeWidgetRemoved.emit(w)
         # remove widget from GUI, remove its reference on a parent widget and delete it
-        abstractDb = w.getDatasource()
-        if abstractDb is not None:
-            abstractDb.closeDatabase()
         w.setParent(None)
         del w
 

@@ -138,8 +138,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         widgetType = self.getWhoAmI()
         filename = fd.getOpenFileName(caption=self.captionDict[widgetType],filter=self.filterDict[widgetType])[0]
+        filename = filename[0] if isinstance(filename, tuple) else filename
         if filename == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a file to import!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -157,13 +158,17 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         Export selected properties.
         """
         exportPropertyList = self.selectConfig()
+        if exportPropertyList is None:
+            # user cancelled
+            return
         if exportPropertyList == []:
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a profile to export!'))
             return
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = folder[0] if isinstance(folder, tuple) else folder
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         edgvVersion = self.genericDbManager.edgvVersion
         try:
@@ -183,8 +188,9 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
+        folder = folder[0] if isinstance(folder, tuple) else folder
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a output!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -203,7 +209,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder with json files: '))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Warning! Select a input folder!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -218,12 +224,16 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_applyPushButton_clicked(self):
         dbList = list(self.genericDbManager.dbDict.keys())
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Install, dbList = dbList)
+        if successDict == {} and  exceptionDict == {}:
+            return
         header, operation = self.getApplyHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
 
     @pyqtSlot(bool)
     def on_deletePushButton_clicked(self):
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Delete)
+        if successDict == {} and  exceptionDict == {}:
+            return
         header, operation = self.getDeleteHeader()
         self.outputMessage(operation, header, successDict, exceptionDict)
 
@@ -231,6 +241,8 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_uninstallFromSelectedPushButton_clicked(self):
         dbList = []
         successDict, exceptionDict = self.manageSettings(GenericManagerWidget.Uninstall, dbList)
+        if successDict == {} and  exceptionDict == {}:
+            return
         header, operation = self.getUninstallFromSelected()
         self.outputMessage(operation, header, successDict, exceptionDict)
 
@@ -314,23 +326,31 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
     def selectConfig(self):
         availableConfig = list(self.genericDbManager.getPropertyPerspectiveDict().keys())
         dlg = ListSelector(availableConfig,[])
-        dlg.exec_()
+        res = dlg.exec_()
+        if res == 0:
+            # to identify when user presses Cancel
+            return None
         selectedConfig = dlg.getSelected()
         return selectedConfig
 
-    def manageSettings(self, manageType, dbList = [], selectedConfig = [], parameterDict = dict()):
+    def manageSettings(self, manageType, dbList=None, selectedConfig=None, parameterDict = dict()):
         """
         Executes the setting work according to manageType
         successDict = {configName: [--list of successful databases--]}
         exceptionDict = {configName: {dbName: errorText}}
         """
-        if selectedConfig == []:
+
+        if selectedConfig is None:
             selectedConfig = self.selectConfig()
+            if selectedConfig is None:
+                # user cancelled
+                return dict(), dict()
             if selectedConfig == []:
                 QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select at least one configuration!'))
                 return (dict(),dict())
         successDict = dict()
         exceptionDict = dict()
+        dbList = [] if dbList is None else dbList
         if self.lookAndPromptForStructuralChanges(dbList = dbList):
             for config in selectedConfig:
                 QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
