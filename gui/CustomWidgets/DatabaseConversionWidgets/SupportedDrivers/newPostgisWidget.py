@@ -64,7 +64,7 @@ class NewPostgisWidget(AbstractSelectionWidget):
         :return: (str) datasource connection name.
         """
         if self.selectionWidget:
-            host, port, user, _ = self.selectionWidget.viewServers.getDefaultConnectionParameters()
+            _, host, port, user, _ = self.selectionWidget.viewServers.getDefaultConnectionParameters()
             return 'pg:{2}@{0}:{1}.{3}'.format(host, port, user, self.getDatasourceConnectionName())
         return ''
 
@@ -79,4 +79,4 @@ class NewPostgisWidget(AbstractSelectionWidget):
         Gets the datasource selected on current widget.
         :return: (AbstractDb) the object representing the target datasource according to its driver. 
         """
-        return self.selectionWidget.abstractDb
+        return None

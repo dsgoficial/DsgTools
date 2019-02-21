@@ -46,8 +46,8 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.abstractDbFactory = DbFactory()
         self.initGui()
-        host, port, user, password = self.getDefaultConnectionParameters()
-        self.defaultConnectionDict = self.setDefaultConnectionParameters(host, port, user, password)
+        connection, host, port, user, password = self.getDefaultConnectionParameters()
+        self.defaultConnectionDict = self.setDefaultConnectionParameters(connection, host, port, user, password)
     
     def initGui(self):
         '''
@@ -79,13 +79,22 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 radio.setChecked(True)
             self.tableWidget.setCellWidget(i, 5, radio)
     
-    def setDefaultConnectionParameters(self, host, port, user, password):
+    def setDefaultConnectionParameters(self, connection, host, port, user, password):
         defaultConnectionDict = dict()
         if host and port and user and password:
             defaultConnectionDict['host'] = host
             defaultConnectionDict['port'] = port
             defaultConnectionDict['user'] = user
             defaultConnectionDict['password'] = password
+            # set all connection on QSettings to not default and this connetion to default
+            settings = QSettings()
+            settings.beginGroup('PostgreSQL/servers')
+            connections = settings.childGroups()
+            settings.endGroup()
+            for conn in connections:
+                settings.beginGroup('PostgreSQL/servers/{0}'.format(conn))
+                settings.setValue('isDefault', conn == connection)
+                settings.endGroup()
         else:
             defaultConnectionDict = dict()
         return defaultConnectionDict
@@ -95,8 +104,8 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         for i, connection in enumerate(currentConnections):
             (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
             if isDefault == True or isDefault == u'true':
-                return (host, port, user, password)
-        return (None, None, None, None)
+                return (connection, host, port, user, password)
+        return (None, None, None, None, None)
 
         
     @pyqtSlot(bool)
@@ -112,7 +121,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 dlg = ServerConfigurator(self)
                 dlg.setServerConfiguration(connection)
                 dlg.storeServerConfiguration(connection, host, port, user, password, isDefault = True)
-                self.defaultConnectionDict = self.setDefaultConnectionParameters(host, port, user, password)
+                self.defaultConnectionDict = self.setDefaultConnectionParameters(connection, host, port, user, password)
                 self.defaultChanged.emit()
                 self.done(0)
                 return

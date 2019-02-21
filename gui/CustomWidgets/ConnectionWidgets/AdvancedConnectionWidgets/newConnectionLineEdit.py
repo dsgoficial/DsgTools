@@ -132,14 +132,14 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         Checks if connection to server is valid.
         """
         # for files, server check is not necessary
-        h = self.viewServers.getDefaultConnectionParameters()[0]
+        h = self.viewServers.getDefaultConnectionParameters()[1]
         return self.viewServers.testServer(h)
 
     def databaseExists(self):
         """
         Checks if database exists.
         """
-        host, port, user, password = self.viewServers.getDefaultConnectionParameters()
+        _, host, port, user, password = self.viewServers.getDefaultConnectionParameters()
         database = self.currentDb()
         # get a PostGIS database instance to check if database exists
         abstractDb = DbFactory().createDbFactory(DsgEnums.DriverPostGIS)
