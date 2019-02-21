@@ -28,8 +28,8 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
-from qgis.core import Qgis, QgsApplication
-from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar, QgsMessageLog
+from qgis.core import Qgis, QgsApplication, QgsMessageLog, Qgis
+from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
@@ -835,13 +835,12 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # summaryDlg.show()
         # conversion off the thread
         conv = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
+        summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
         try:
             if conv.run():
                 # advise conversion has failed
                 msg = self.tr("Dataset conversion has failed.")
                 iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
-            summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
             summaryDlg.setHtml(conv.output['log'])
             summaryDlg.cancelPushButton.hide()
             summaryDlg.progressBar.hide()
