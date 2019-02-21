@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
 from qgis.PyQt.QtGui import QIcon
 from qgis.utils import iface
 from qgis.core import Qgis, QgsApplication
-from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
+from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar, QgsMessageLog
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.textBrowserDialog import TextBrowserDialog
@@ -820,19 +820,38 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         Executes conversion itself based on a conversion map.
         :param conversionMap: (dict) the conversion map. (SPECIFY FORMAT!)
         """
-        task = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
-        summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
-        summaryDlg.savePushButton.setEnabled(False)
-        task.progressChanged.connect(summaryDlg.progressBar.setValue)
-        task.taskCompleted.connect(lambda : summaryDlg.setHtml(task.output['log']))
-        task.taskCompleted.connect(lambda : summaryDlg.cancelPushButton.setEnabled(False))
-        task.taskCompleted.connect(lambda : summaryDlg.savePushButton.setEnabled(True))
-        task.conversionUpdated.connect(summaryDlg.addToHtml)
-        summaryDlg.cancelPushButton.clicked.connect(partial(self.cancelConversion, task, summaryDlg))
-        # to clear log message before repopulating with conversion summary
-        task.conversionFinished.connect(summaryDlg.clearHtml)
-        QgsApplication.taskManager().addTask(task)
-        summaryDlg.show()
+        # task = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
+        # summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
+        # summaryDlg.savePushButton.setEnabled(False)
+        # task.progressChanged.connect(summaryDlg.progressBar.setValue)
+        # task.taskCompleted.connect(lambda : summaryDlg.setHtml(task.output['log']))
+        # task.taskCompleted.connect(lambda : summaryDlg.cancelPushButton.setEnabled(False))
+        # task.taskCompleted.connect(lambda : summaryDlg.savePushButton.setEnabled(True))
+        # task.conversionUpdated.connect(summaryDlg.addToHtml)
+        # summaryDlg.cancelPushButton.clicked.connect(partial(self.cancelConversion, task, summaryDlg))
+        # # to clear log message before repopulating with conversion summary
+        # task.conversionFinished.connect(summaryDlg.clearHtml)
+        # QgsApplication.taskManager().addTask(task)
+        # summaryDlg.show()
+        # conversion off the thread
+        conv = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
+        try:
+            if conv.run():
+                # advise conversion has failed
+                msg = self.tr("Dataset conversion has failed.")
+                iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
+            summaryDlg.setHtml(conv.output['log'])
+            summaryDlg.cancelPushButton.hide()
+            summaryDlg.progressBar.hide()
+        except Exception as e:
+            msg = self.tr("Dataset conversion has failed: '{0}'").format(', '.join(map(str, e.args)))
+            iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+        summaryDlg.exec_()
+
+
 
     def startConversion(self):
         """
