@@ -306,7 +306,7 @@ class DbConverter(QgsTask):
 
         if feedback is not None:
             stepSize = 100 / (len(geometricLayers) + len(complexLayers)) if len(geometricLayers) + len(complexLayers) else 0
-
+        curr = 0
         for curr, l in enumerate(geometricLayers):
             if feedback is not None and feedback.isCanceled():
                 return inputLayerMap
