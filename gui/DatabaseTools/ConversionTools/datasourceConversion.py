@@ -26,7 +26,7 @@ import os, json
 
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import Qt, pyqtSignal, pyqtSlot, QSize
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon, QCursor
 from qgis.utils import iface
 from qgis.core import Qgis, QgsApplication, QgsMessageLog, Qgis
 from qgis.gui import QgsCollapsibleGroupBox, QgsMessageBar
@@ -836,21 +836,24 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # conversion off the thread
         conv = DbConverter(iface, conversionMap, description=self.tr('DSGTools Dataset Conversion'))
         summaryDlg = TextBrowserDialog(parent=iface.mainWindow())
+        summaryDlg.cancelPushButton.hide()
+        summaryDlg.progressBar.hide()
         try:
-            if conv.run():
+            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            if not conv.run():
                 # advise conversion has failed
                 msg = self.tr("Dataset conversion has finished with some errors. Check conversion log for details.")
                 iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            else:
+                self.resetInterface()
+            QtWidgets.QApplication.restoreOverrideCursor()
             summaryDlg.setHtml(conv.output['log'])
-            summaryDlg.cancelPushButton.hide()
-            summaryDlg.progressBar.hide()
         except Exception as e:
+            QtWidgets.QApplication.restoreOverrideCursor()
             msg = self.tr("Dataset conversion has failed: '{0}'").format(', '.join(map(str, e.args)))
             iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
         summaryDlg.exec_()
-
-
 
     def startConversion(self):
         """
@@ -881,6 +884,18 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             parentButton=self.parentButton,
             defaultButton=False
         )
+
+    def resetInterface(self):
+        """
+        Resets interface to its initial state.
+        """
+        # clear input/output widgets
+        self.unload()
+        self.connectToolSignals()
+        self.setTableInitialState()
+        self.restart()
+        self.datasourceManagementWidgetIn.datasourceComboBox.setCurrentIndex(0)
+        self.datasourceManagementWidgetOut.datasourceComboBox.setCurrentIndex(0)
 
     def unload(self):
         """
