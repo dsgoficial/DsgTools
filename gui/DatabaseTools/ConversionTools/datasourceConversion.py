@@ -210,7 +210,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # create combobox containing conversion mode options
         convModeComboBox = QtWidgets.QComboBox()
         convModeComboBox.addItems([
-                self.tr('Choose Conversion Mode'), self.tr('Map No Data'), self.tr('Strict Conversion')])
+                self.tr('Choose Conversion Mode'), self.tr('Flexible Conversion'), self.tr('Strict Conversion')])
         # set each widget to their column
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.OutDs, outDsComboBox)
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.Filter, filterPushButton)

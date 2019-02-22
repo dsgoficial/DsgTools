@@ -4275,7 +4275,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
         <source>Map No Data</source>
-        <translation>Mapear NoData</translation>
+        <translation type="obsolete">Mapear NoData</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
@@ -4328,7 +4328,7 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>nova</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="753"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="860"/>
         <source>Warning!</source>
         <translation>Atenção!</translation>
     </message>
@@ -4368,14 +4368,29 @@ para moldura não for selecionada, a moldura não será criada </translation>
         <translation>&lt;span style=&quot;color: #ff0000;&quot;&gt;&lt;br&gt;&lt;p&gt;TAREFA DE CONVERSÃO FOI CANCELADA.&lt;/span&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="829"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="843"/>
         <source>DSGTools Dataset Conversion</source>
         <translation>Ferramenta de Conversão de Fontes de Dados do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="864"/>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="885"/>
         <source>Convert Databases</source>
         <translation>Converter Bancos de Dados</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="212"/>
+        <source>Flexible Conversion</source>
+        <translation>Conversão Flexível</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="851"/>
+        <source>Dataset conversion has finished with some errors. Check conversion log for details.</source>
+        <translation>A conversão terminou com erros. Verifique o log da conversão para mais detalhes.</translation>
+    </message>
+    <message>
+        <location filename="../gui/DatabaseTools/ConversionTools/datasourceConversion.py" line="859"/>
+        <source>Dataset conversion has failed: &apos;{0}&apos;</source>
+        <translation>Conversão falhou: &apos;{0}&apos;</translation>
     </message>
 </context>
 <context>
@@ -4455,12 +4470,12 @@ geométrica</translation>
         <translation>nova</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="233"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="234"/>
         <source>Input Error!</source>
         <translation>Erro de entrada!</translation>
     </message>
     <message>
-        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="235"/>
+        <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/datasourceManagementWidget.py" line="236"/>
         <source>Output Error!</source>
         <translation>Erro de saída!</translation>
     </message>
@@ -4486,7 +4501,7 @@ geométrica</translation>
         <translation>Fonte de dados {0} já existe.</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="618"/>
+        <location filename="../core/DbTools/dbConverter.py" line="624"/>
         <source>
 Conversion Step {0} started...
 
@@ -4497,55 +4512,55 @@ Passo de conversão {0} iniciado...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="619"/>
+        <location filename="../core/DbTools/dbConverter.py" line="625"/>
         <source>[INPUT] Reading {0}&apos;s layers...
 </source>
         <translation>[ENTRADA] Lendo camadas de {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="642"/>
+        <location filename="../core/DbTools/dbConverter.py" line="648"/>
         <source>[OUTPUT] Reading {0}&apos;s layers...
 </source>
         <translation>[SAÍDA] Lendo camadas de {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="631"/>
+        <location filename="../core/DbTools/dbConverter.py" line="637"/>
         <source>[OUTPUT] Creating dataset {0}...
 </source>
         <translation>[SAÍDA] Criando fonte de dados {0}...
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="636"/>
+        <location filename="../core/DbTools/dbConverter.py" line="642"/>
         <source>Dataset creation error ({0}): &apos;{1}&apos;
 </source>
         <translation>Erro de criação de fonte de dados ({0}): &apos;{1}&apos;
 </translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="648"/>
+        <location filename="../core/DbTools/dbConverter.py" line="654"/>
         <source>Preparing {0}&apos;s layers for conversion...</source>
         <translation>Preparando as camadas de {0} para a conversão...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="653"/>
+        <location filename="../core/DbTools/dbConverter.py" line="659"/>
         <source>Mapping features...</source>
         <translation>Mapeando feições...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="658"/>
+        <location filename="../core/DbTools/dbConverter.py" line="664"/>
         <source>Loading layers to {0}...</source>
         <translation>Carregando camadas para {0}...</translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="512"/>
+        <location filename="../core/DbTools/dbConverter.py" line="518"/>
         <source>{0} successfully loaded.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../core/DbTools/dbConverter.py" line="515"/>
+        <location filename="../core/DbTools/dbConverter.py" line="521"/>
         <source>{0} failed to be loaded.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -7232,7 +7247,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Versão do banco de dados não coincide com a versão da caixa de ferramentas de campo.</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="525"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="529"/>
         <source>Information!</source>
         <translation>Informação!</translation>
     </message>
@@ -7264,7 +7279,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
 </translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="548"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="557"/>
         <source>Select Stored Config (optional)</source>
         <translation>Selecionar configuração gravada (opcional)</translation>
     </message>
@@ -7279,7 +7294,7 @@ Ao segurar a tecla Control, a obrigatoriedade de ângulos retos é desligada enq
         <translation>Reclassificação do DSGTools</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="525"/>
+        <location filename="../gui/ProductionTools/Toolboxes/FieldToolBox/field_toolbox.py" line="529"/>
         <source>{} features reclassified with success!</source>
         <translation>{} feições reclassificadas com sucesso!</translation>
     </message>
@@ -14519,7 +14534,7 @@ camada</translation>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="134"/>
         <source>Spatial Rules Set</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Conjunto de regras espaciais</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="140"/>
