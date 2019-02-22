@@ -487,11 +487,13 @@ class DbConverter(QgsTask):
     #                 fannedOutLayers[value][layer] = fannedOut
     #     return fannedOutLayers
 
-    def loadToOuput(self, featuresMap, outputLayers, featureConversionMap=None, feedback=None):
+    def loadToOuput(self, featuresMap, outputLayers, conversionMode, featureConversionMap=None, feedback=None):
         """
         Loads converted features to output dataset.
         :param preparedLayers: (dict) map of (list-of-QgsFeature) features to be added to output layer.
         :param outputLayers: (dict) map of (list-of-QgsVectorLayer) output's layers.
+        :param conversionMode: (int) current step conversion mode.
+        :param featureConversionMap: (dict) maps features from input structure to the output model structure.
         :param feedback: (QgsProcessingMultiStepFeedback) QGIS tool for progress tracking.
         :return: (tuple-of-dict) successful features addition and failed ones.
         """
@@ -499,12 +501,16 @@ class DbConverter(QgsTask):
         fail = dict()
         if feedback is not None:
             stepSize = 100 / len(featuresMap) if len(featuresMap) else 0
+        flexibleConversion = conversionMode == DsgEnums.FlexibleConversion
         for current, (layer, featureSet) in enumerate(featuresMap.items()):
             if feedback is not None and feedback.isCanceled():
                 break
             vl = outputLayers[layer]
             vl.startEditing()
-            vl.addFeatures(featureSet)
+            if not vl.addFeatures(featureSet) and flexibleConversion:
+                # in case conversion mode is set to flexible, only defective features will be ignored
+                while featureSet:
+                    vl.addFeature(featureSet.pop())
             vl.updateExtents()
             if vl.commitChanges():
                 self.conversionUpdated.emit(self.tr("{0} successfully loaded.").format(vl.name()))
@@ -652,7 +658,10 @@ class DbConverter(QgsTask):
                 self.conversionUpdated.emit(self.tr("Loading layers to {0}...").format(outputDb))
                 multiStepFeedback.setCurrentStep(currentStep)
                 currentStep += 1
-                successfulLayers, failedLayers = self.loadToOuput(mappedFeatures, outputLayers, feedback=multiStepFeedback)
+                successfulLayers, failedLayers = self.loadToOuput(
+                                                    mappedFeatures, outputLayers, conversionStepMap["conversionMode"],\
+                                                    feedback=multiStepFeedback
+                                                 )
                 # log update
                 conversionSummary += self.addConversionStepToLog(conversionStep, inputDb, outputDb, inputLayers, \
                                             errors, successfulLayers, failedLayers, "{0:.2f} s".format(time.time() - startTime))
