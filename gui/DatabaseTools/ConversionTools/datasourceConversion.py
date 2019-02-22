@@ -839,7 +839,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         try:
             if conv.run():
                 # advise conversion has failed
-                msg = self.tr("Dataset conversion has failed.")
+                msg = self.tr("Dataset conversion has failed. Check conversion log for details.")
                 iface.messageBar().pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
             summaryDlg.setHtml(conv.output['log'])
             summaryDlg.cancelPushButton.hide()
