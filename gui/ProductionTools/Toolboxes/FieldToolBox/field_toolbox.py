@@ -486,20 +486,20 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             self.disconnectLayerSignals()
     
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
-
-            #suppressing the form dialog
-            reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
-            #connecting addedFeature signal
-            reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
-            reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
-            #triggering the add feature tool
-            if reclassificationLayer != self.iface.activeLayer():
-                self.iface.blockSignals(True)
-                self.iface.setActiveLayer(reclassificationLayer)
-                self.iface.blockSignals(False)
-            self.iface.actionAddFeature().trigger()
-            #setting the previous layer             
-            self.prevLayer = reclassificationLayer
+            if reclassificationLayer is not None:
+                #suppressing the form dialog
+                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
+                #connecting addedFeature signal
+                reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
+                reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
+                #triggering the add feature tool
+                if reclassificationLayer != self.iface.activeLayer():
+                    self.iface.blockSignals(True)
+                    self.iface.setActiveLayer(reclassificationLayer)
+                    self.iface.blockSignals(False)
+                self.iface.actionAddFeature().trigger()
+                #setting the previous layer             
+                self.prevLayer = reclassificationLayer
         else:
             #disconnecting the previous layer
             self.disconnectLayerSignals()
@@ -514,11 +514,20 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         #button that sent the signal
         self.buttonName = self.sender().text().split(' [')[0].replace('&', '')
         (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
-        reclassificationDict = self.reclassificationDict[self.category][self.edgvClass][self.buttonName]
-        reclassifiedFeatures = self.layerHandler.reclassifySelectedFeatures(reclassificationLayer, reclassificationDict)
-        self.iface.mapCanvas().refreshAllLayers()
-        if reclassifiedFeatures > 0:
-            self.iface.messageBar().pushMessage(self.tr('Information!'), self.tr('{} features reclassified with success!').format(reclassifiedFeatures), level=Qgis.Info, duration=3)
+        if reclassificationLayer is not None:
+            reclassificationDict = self.reclassificationDict[self.category][self.edgvClass][self.buttonName]
+            reclassifiedFeatures = self.layerHandler.reclassifySelectedFeatures(
+                                        reclassificationLayer,
+                                        reclassificationDict
+                                    )
+            self.iface.mapCanvas().refreshAllLayers()
+            if reclassifiedFeatures > 0:
+                self.iface.messageBar().pushMessage(
+                    self.tr('Information!'),
+                    self.tr('{} features reclassified with success!').format(reclassifiedFeatures),
+                    level=Qgis.Info,
+                    duration=3
+                )
 
     def findReclassificationClass(self, button):
         """
