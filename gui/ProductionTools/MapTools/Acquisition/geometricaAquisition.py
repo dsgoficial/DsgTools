@@ -140,6 +140,23 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             pf = p4            
         return new_geom, pf
 
+    def bufferDistanceTest(self, geom, penult, last):
+        teste_answer = True
+        for i in range(len(geom)-1):
+            p1 = geom[i]
+            p2 = geom[i+1]
+            line = QgsGeometry.fromPolylineXY([p1,p2])
+            last_buffer = QgsGeometry.fromPointXY(last).buffer(self.minSegmentDistance,4).boundingBox()
+            penult_buffer = QgsGeometry.fromPointXY(penult).buffer(self.minSegmentDistance,4).boundingBox()
+            last_stop = line.intersects(last_buffer)
+            penult_stop = line.intersects(penult_buffer)
+            if (last_stop or last_stop):
+                teste_answer = False
+                break
+            else:
+                continue
+        return teste_answer
+
     def distanceBetweenLinesTest(self, geom, p):
         teste_answer = True
         for i in range(len(geom)-1):
