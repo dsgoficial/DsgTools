@@ -164,7 +164,6 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             p2 = geom[i+1]
             projected_point = self.projectPoint(p1,p2,p)
             distance = self.distanceToolTip.calculateDistance(projected_point,p2)
-            #print('Distancia: ' + str(i) + ' - ' + str(i+1) + ' = ' + str(distance))
             if distance > self.minSegmentDistance:
                 continue
             else:
