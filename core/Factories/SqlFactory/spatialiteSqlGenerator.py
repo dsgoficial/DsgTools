@@ -214,3 +214,14 @@ class SpatialiteSqlGenerator(SqlGenerator):
     def getQmlRecords(self, layerList):
         sql = """select layername, domainqml from public_domain_qml where layername in ('{0}')""".format("','".join(layerList))
         return sql
+
+    def databaseInfo(self):
+        """
+        Gets database information to be displayed.
+        :return: (str) SQL to executed.
+        """
+        sql = """
+            SELECT f_table_name, f_geometry_column, type, srid
+                FROM geometry_columns
+                ORDER BY f_table_name ASC"""
+        return sql

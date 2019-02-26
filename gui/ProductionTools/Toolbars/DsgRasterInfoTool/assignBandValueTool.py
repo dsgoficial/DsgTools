@@ -28,7 +28,7 @@ from qgis.gui import QgsMapTool, QgsRubberBand, QgsMapToolEmitPoint, \
 from qgis import core
 from qgis.core import QgsPointXY, QgsRectangle, QgsVectorLayer, QgsGeometry, \
                       QgsEditFormConfig, QgsRaster, QgsFeature, QgsWkbTypes, \
-                      QgsProject, QgsVectorLayerUtils
+                      QgsProject, QgsVectorLayerUtils, Qgis
 from qgis.PyQt.QtCore import QSettings
 from qgis.PyQt import QtCore, QtGui
 from qgis.PyQt.QtGui import QColor, QCursor
@@ -218,7 +218,7 @@ class AssignBandValueTool(QgsMapTool):
             if value is not None:
                 feature.setAttribute(i, value)                
         form = QgsAttributeDialog(layer, feature, False)
-        form.setMode(QgsAttributeForm.AddFeatureMode)
+        form.setMode(int(QgsAttributeForm.AddFeatureMode))
         formSuppress = layer.editFormConfig().suppress()
         if formSuppress == QgsEditFormConfig.SuppressDefault:
             if self.getSuppressOptions(): #this is calculated every time because user can switch options while using tool
@@ -265,7 +265,7 @@ class AssignBandValueTool(QgsMapTool):
         # self.iface.mapCanvas().setMapTool(self)
         layer = self.iface.mapCanvas().currentLayer()
         if not layer or not isinstance(layer, QgsVectorLayer):
-            self.iface.messageBar().pushInfo(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"), duration=10)
+            self.iface.messageBar().pushMessage(self.tr("Warning"), self.tr("Select a point vector layer as the active layer"), level=Qgis.Warning, duration=5)
             self.deactivate()
 
     def getPixelValue(self, rasterLayer):

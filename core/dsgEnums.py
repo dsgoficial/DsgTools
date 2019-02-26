@@ -33,3 +33,7 @@ class DsgEnums(object):
     NoDriver, PostGIS, NewPostGIS, SpatiaLite, NewSpatiaLite, Shapefile, NewShapefile, Geopackage, NewGeopackage = list(range(9))
     # node types enum
     Flag, Sink, WaterwayBegin, UpHillNode, DownHillNode, Confluence, Ramification, AttributeChange, NodeNextToWaterBody, AttributeChangeFlag, NodeOverload, DisconnectedLine = list(range(12))
+    # available drivers enum
+    DriverPostGIS, DriverSpatiaLite, DriverGeopackage, DriverShapefile, DriverOthers = list(range(5))
+    # conversion modes available in Conversion Dataset Tool
+    FlexibleConversion, StrictConversion = 1, 2

@@ -82,8 +82,8 @@ class DatabaseGuiManager(QObject):
         self.singleDbCreator.initGui()
         self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.batchCreator.initGui()
-        self.datasourceSelectionWidget = DatasourceConversion(manager=self, parentMenu=self.menu)
-        self.datasourceSelectionWidget.initGui()
+        self.datasourceConversion = DatasourceConversion(manager=self, parentMenu=self.menu)
+        self.datasourceConversion.initGui()
 
     def unload(self):
         """
@@ -91,7 +91,7 @@ class DatabaseGuiManager(QObject):
         """
         self.singleDbCreator.unload()
         self.batchCreator.unload()
-        self.datasourceSelectionWidget.unload()
+        self.datasourceConversion.unload()
 
     def createDatabase(self, isBatchCreation):
         """
@@ -99,7 +99,7 @@ class DatabaseGuiManager(QObject):
         :param isBatchCreation: (bool) indicates whether creation is in batch or not.
         """
         try:
-            self.stackButton.setDefaultAction(self.toolbar.sender())
+            self.stackButton.setDefaultAction(self.sender())
         except:
             pass
         if not isBatchCreation:

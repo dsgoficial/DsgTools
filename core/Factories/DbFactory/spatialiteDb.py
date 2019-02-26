@@ -25,11 +25,13 @@ from builtins import range
 
 from qgis.PyQt.QtSql import QSqlQuery, QSqlDatabase
 from qgis.PyQt.QtWidgets import QFileDialog
+from qgis.core import QgsCoordinateReferenceSystem 
 
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.core.dsgEnums import DsgEnums
+
 from osgeo import ogr, osr
-from qgis.core import QgsCoordinateReferenceSystem 
 
 class SpatialiteDb(AbstractDb):
 
@@ -39,8 +41,12 @@ class SpatialiteDb(AbstractDb):
         '''
         super(SpatialiteDb,self).__init__()
         self.db = QSqlDatabase('QSQLITE')
-        self.gen = SqlGeneratorFactory().createSqlGenerator(True)
-    
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverSpatiaLite)
+
+    def closeDatabase(self):
+        if self.db is not None and self.db.isOpen():
+            self.db.close()
+
     def getDatabaseName(self):
         '''
         Gets the database name
@@ -80,7 +86,7 @@ class SpatialiteDb(AbstractDb):
         while query.next():
             tableName = str(query.value(0))
             layerName = tableName
-            if tableName[-2:] in ["_p", "_l", "_a"]:
+            if tableName[-2:].lower() in ["_p", "_l", "_a"]:
                 classList.append(layerName)
         return classList
     
@@ -579,3 +585,25 @@ class SpatialiteDb(AbstractDb):
                     13:'CURVE',
                     14:'SURFACE'}
         return geomDict[geometryType]
+
+    def databaseInfo(self):
+        """
+        Gives information about all tables present in the database. Output is composed by
+        schema, layer, geometry column, geometry type and srid, in that order.
+        :return: (list-of-dict) database information.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.databaseInfo()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        out = []
+        while query.next():
+            rowDict = dict()
+            rowDict['schema'] = query.value(0).split('_')[0]
+            rowDict['layer'] = query.value(0)[len(rowDict['schema']) + 1 :]
+            rowDict['geomCol'] = query.value(1)
+            rowDict['geomType'] = query.value(2)
+            rowDict['srid'] = str(query.value(3))
+            out.append(rowDict)
+        return out

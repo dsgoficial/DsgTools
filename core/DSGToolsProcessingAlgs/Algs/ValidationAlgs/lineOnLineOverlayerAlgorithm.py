@@ -20,36 +20,34 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -77,6 +75,12 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
                 defaultValue=1.0
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer with overlayed lines')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -90,21 +94,53 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Identifying dangles on {layer}...').format(layer=inputLyr.name()))
-        dangleLyr = algRunner.runIdentifyDangles(inputLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Identifying dangles on {layer}...'
+                ).format(layer=inputLyr.name()))
+        dangleLyr = algRunner.runIdentifyDangles(
+            inputLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
         multiStepFeedback.setCurrentStep(1)
-        layerHandler.filterDangles(dangleLyr, tol, feedback = multiStepFeedback) 
+        layerHandler.filterDangles(
+            dangleLyr,
+            tol,
+            feedback=multiStepFeedback
+            )
 
         multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Snapping layer {layer} to dangles...').format(layer=inputLyr.name()))
-        algRunner.runSnapLayerOnLayer(inputLyr, dangleLyr, tol, context, feedback=multiStepFeedback, onlySelected=onlySelected)
-        
-        multiStepFeedback.setCurrentStep(3)
-        multiStepFeedback.pushInfo(self.tr('Cleanning layer {layer}...').format(layer=inputLyr.name()))
-        algRunner.runDsgToolsClean(inputLyr, context, snap=tol, feedback=multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Snapping layer {layer} to dangles...'
+                ).format(layer=inputLyr.name()))
+        algRunner.runSnapLayerOnLayer(
+            inputLyr,
+            dangleLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
-        return {self.INPUT: inputLyr}
+        multiStepFeedback.setCurrentStep(3)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Cleanning layer {layer}...'
+                ).format(layer=inputLyr.name()))
+        algRunner.runDsgToolsClean(
+            inputLyr,
+            context,
+            snap=tol,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
+
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """
@@ -141,7 +177,7 @@ class LineOnLineOverlayerAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('LineOnLineOverlayerAlgorithm', string)
 
     def createInstance(self):
         return LineOnLineOverlayerAlgorithm()

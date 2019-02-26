@@ -29,7 +29,7 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
 
 # DSGTools imports
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 
 import json
 

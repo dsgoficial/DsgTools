@@ -23,7 +23,7 @@
 """
 from __future__ import print_function
 from builtins import range
-from qgis.core import QgsPoint, QgsGeometry, QgsFeature
+from qgis.core import QgsPointXY, QgsGeometry, QgsFeature
 import string, os
 from qgis.PyQt.QtCore import QObject
 
@@ -118,34 +118,34 @@ class UtmGrid(QObject):
         
         polyline = []
 
-        point = QgsPoint(xmin, ymin)
+        point = QgsPointXY(xmin, ymin)
         polyline.append(point)
-        point = QgsPoint(xmin+dx, ymin)
+        point = QgsPointXY(xmin+dx, ymin)
         polyline.append(point)
-        point = QgsPoint(xmax-dx, ymin) 
+        point = QgsPointXY(xmax-dx, ymin) 
         polyline.append(point)
-        point = QgsPoint(xmax, ymin)
+        point = QgsPointXY(xmax, ymin)
         polyline.append(point)
-        point = QgsPoint(xmax, ymin+dy)
+        point = QgsPointXY(xmax, ymin+dy)
         polyline.append(point)
-        point = QgsPoint(xmax, ymax-dy)
+        point = QgsPointXY(xmax, ymax-dy)
         polyline.append(point)
-        point = QgsPoint(xmax, ymax)
+        point = QgsPointXY(xmax, ymax)
         polyline.append(point)
-        point = QgsPoint(xmax-dx, ymax)
+        point = QgsPointXY(xmax-dx, ymax)
         polyline.append(point)
-        point = QgsPoint(xmin+dx, ymax)
+        point = QgsPointXY(xmin+dx, ymax)
         polyline.append(point)
-        point = QgsPoint(xmin, ymax)
+        point = QgsPointXY(xmin, ymax)
         polyline.append(point)
-        point = QgsPoint(xmin, ymax-dy)
+        point = QgsPointXY(xmin, ymax-dy)
         polyline.append(point)
-        point = QgsPoint(xmin, ymin+dy)
+        point = QgsPointXY(xmin, ymin+dy)
         polyline.append(point)
-        point = QgsPoint(xmin, ymin)
+        point = QgsPointXY(xmin, ymin)
         polyline.append(point)
 
-        qgsPolygon = QgsGeometry.fromMultiPolygon([[polyline]])
+        qgsPolygon = QgsGeometry.fromMultiPolygonXY([[polyline]])
         return qgsPolygon
         
     def getHemisphereMultiplier(self,inomen):
@@ -165,7 +165,7 @@ class UtmGrid(QObject):
             l=inomen[1].upper()
             y = 0.0
             operator=self.getHemisphereMultiplier(inomen)
-            verticalPosition=string.uppercase.index(l)
+            verticalPosition=string.ascii_uppercase.index(l)
             y=(y+4*verticalPosition)*operator
             if (operator<0): y-=4
         except:
@@ -342,16 +342,9 @@ class UtmGrid(QObject):
         for k,v in miDict.items():
             if v == hundredInom:
                 return '-'.join([k]+remains)
-
-if (__name__=="__main__"):
-    test=UtmGrid()
-    #mi="2895-1"
-    #inomen=test.getINomenFromMI(mi)
-    #print 'Working test:',inomen,'.'
-    #mi='teste'
-    #inomen=test.getINomenFromMI(mi)
-    #print 'Not working test:',inomen,'.'
-    #print test.getQgsPolygonFrame(inomen).exportToWkt()
-    inom = 'SA-23-Y-C-IV-4'
-    # fix_print_with_import
-    print(test.getMIfromInom(inom))
+    
+    def get_MI_MIR_from_inom(self, inom):
+        if len(inom.split('-')) > 4:
+            return self.getMIfromInom(inom)
+        else:
+            return self.getINomenFromMIR(inom)

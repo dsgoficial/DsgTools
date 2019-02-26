@@ -21,29 +21,29 @@
  ***************************************************************************/
 """
 #DsgTools Imports
-from DsgTools.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
+from DsgTools.core.Factories.DbCustomizationFactory.dbCustomization import DbCustomization
 
 class DefaultCustomization(DbCustomization):
     def __init__(self, customJson):
         super(DefaultCustomization, self).__init__(customJson)
     
     def buildSql(self, abstractDb):
-        '''
+        """
         {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
-        '''
+        """
         #Abstract method. Must be reimplemented in each child.
-        sql = ''''''
+        sql = """"""
         for modItem in self.customJson['ChangeDefault']:
-            sql += '''ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" SET DEFAULT {3};\n'''.format(modItem['schema'], modItem['table'], modItem['attrName'], modItem['newValue'])
+            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" SET DEFAULT {3};\n""".format(modItem['schema'], modItem['table'], modItem['attrName'], modItem['newValue'])
         return sql
     
     def buildUndoSql(self):
-        '''
+        """
         {'schema': schema, 'table': table, 'attrName':attrName, 'oldValue':oldValue, 'newValue':newValue}
-        '''
+        """
         #Abstract method. Must be reimplemented in each child.
-        sql = ''''''
+        sql = """"""
         for modItem in self.customJson['ChangeDefault']:
-            sql += '''ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" SET DEFAULT {3};\n'''.format(modItem['schema'], modItem['table'], modItem['attrName'], modItem['oldValue'])
+            sql += """ALTER TABLE ONLY "{0}"."{1}" ALTER COLUMN "{2}" SET DEFAULT {3};\n""".format(modItem['schema'], modItem['table'], modItem['attrName'], modItem['oldValue'])
         return sql
         

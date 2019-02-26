@@ -30,14 +30,14 @@ from qgis.PyQt.QtGui import QCursor
 
 from qgis.core import QgsMessageLog
 
-from DsgTools.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.UserTools.permission_properties import PermissionProperties
-from DsgTools.UserTools.manageServerUsers import ManageServerUsers
-from DsgTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
-from DsgTools.UserTools.profileUserManager import ProfileUserManager
-from DsgTools.UserTools.dbProfileManager import DbProfileManager
-from DsgTools.ServerManagementTools.permissionManager import PermissionManager
-from DsgTools.UserTools.serverProfilesManager import ServerProfilesManager
+from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.DatabaseTools.UserTools.manageServerUsers import ManageServerUsers
+from DsgTools.gui.DatabaseTools.UserTools.PermissionManagerWizard.permissionWizard import PermissionWizard
+from DsgTools.gui.DatabaseTools.UserTools.profileUserManager import ProfileUserManager
+from DsgTools.gui.DatabaseTools.UserTools.dbProfileManager import DbProfileManager
+from DsgTools.core.ServerManagementTools.permissionManager import PermissionManager
+from DsgTools.gui.DatabaseTools.UserTools.serverProfilesManager import ServerProfilesManager
 
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -59,6 +59,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.permissionTreeWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.permissionTreeWidget.customContextMenuRequested.connect(self.createMenuAssigned)
 
+    # @pyqtSlot(bool, name='on_manageProfilesPushButton_clicked')
     @pyqtSlot(bool, name='on_databasePerspectivePushButton_clicked')
     @pyqtSlot(bool, name='on_userPerspectivePushButton_clicked')
     def refresh(self):
@@ -101,7 +102,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.permissionTreeWidget.expandAll()
     
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
     
@@ -130,7 +131,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_manageProfilesPushButton_clicked(self):
         try:
             dlg = ServerProfilesManager(self.permissionManager)
-            dlg.profilesChanged.connect(self.refresh)
+            # dlg.profilesChanged.connect(self.refresh)
             dlg.exec_()
         except Exception as e:
             QMessageBox.warning(self, self.tr('Error!'), ':'.join(e.args))
@@ -265,8 +266,9 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
     def on_importPushButton_clicked(self):
         fd = QFileDialog()
         filename = fd.getOpenFileName(caption=self.tr('Select a dsgtools profile'),filter=self.tr('json file (*.json)'))
+        filename = filename[0] if isinstance(filename, tuple) else filename
         if filename == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a file to import!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -276,7 +278,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Problem importing permission: ') + ':'.join(e.args))
-        self.refreshProfileList()
+        # self.refreshProfileList()
     
     @pyqtSlot(bool)
     def on_exportPushButton_clicked(self):
@@ -287,7 +289,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
             return
         profileName = self.permissionTreeWidget.currentItem().text(1)
         dbName = self.permissionTreeWidget.currentItem().parent().text(0)
@@ -306,7 +308,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder to output'))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a output!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -322,7 +324,7 @@ class PermissionWidget(QtWidgets.QWidget, FORM_CLASS):
         fd = QFileDialog()
         folder = fd.getExistingDirectory(caption = self.tr('Select a folder with permissions: '))
         if folder == '':
-            QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
+            # QMessageBox.warning(self, self.tr('Warning!'), self.tr('Error! Select a input folder!'))
             return
         try:
             QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))

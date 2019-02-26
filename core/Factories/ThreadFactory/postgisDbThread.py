@@ -32,6 +32,7 @@ import os, codecs
 from .genericThread import GenericThread
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ..DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 class PostgisDbMessages(QObject):
     def __init__(self, thread):
@@ -80,7 +81,7 @@ class PostgisDbThread(GenericThread):
 
         self.factory = SqlGeneratorFactory()
         #setting the sql generator
-        self.gen = self.factory.createSqlGenerator(False)
+        self.gen = self.factory.createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.messenger = PostgisDbMessages(self)
         self.dbFactory = DbFactory()
         self.parent = parent
@@ -114,7 +115,7 @@ class PostgisDbThread(GenericThread):
         port = self.abstractDb.db.port()
         user = self.abstractDb.db.userName()
         password = self.abstractDb.db.password()
-        template = self.dbFactory.createDbFactory('QPSQL')
+        template = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         template.connectDatabaseWithParameters(host, port, database, user, password)
         template.checkAndOpenDb()
         if setInnerDb:
@@ -129,6 +130,8 @@ class PostgisDbThread(GenericThread):
         currentPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool')
         if self.version == '2.1.3':
             edgvPath = os.path.join(currentPath, 'sqls', '213', 'edgv213.sql')
+        elif self.version == '2.1.3 Pro':
+            edgvPath = os.path.join(currentPath, 'sqls', '213_Pro', 'edgv213_pro.sql')
         elif self.version == '3.0':
             edgvPath = os.path.join(currentPath, 'sqls', '3', 'edgv3.sql')
         elif self.version == 'FTer_2a_Ed':
@@ -194,6 +197,8 @@ class PostgisDbThread(GenericThread):
             self.db.commit()
             if self.version == '2.1.3':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';' % self.db.databaseName()
+            elif self.version == '2.1.3 Pro':
+                sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'edgv\',\'dominios\';' % self.db.databaseName()
             elif self.version == 'FTer_2a_Ed':
                 sql = 'ALTER DATABASE %s SET search_path = "$user", public, topology,\'pe\',\'ge\',\'complexos\',\'dominios\';' % self.db.databaseName()
             elif self.version == '3.0':
@@ -213,7 +218,7 @@ class PostgisDbThread(GenericThread):
             self.abstractDb.createDbFromTemplate(self.dbName, templateName, parentWidget = self.parent)
             self.signals.stepProcessed.emit(self.getId())
             #5. alter spatial structure
-            createdDb = self.dbFactory.createDbFactory('QPSQL')
+            createdDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             createdDb.connectDatabaseWithParameters(self.abstractDb.db.hostName(), self.abstractDb.db.port(), self.dbName, self.abstractDb.db.userName(), self.abstractDb.db.password())
             errorTuple = createdDb.updateDbSRID(self.epsg, parentWidget = self.parent, threading = True)
             # if an error occur during the thread we should pass the message to the main thread

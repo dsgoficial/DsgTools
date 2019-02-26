@@ -20,24 +20,21 @@
  *                                                                         *
  ***************************************************************************/
 """
+from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedHierarchicalSnapLayerWidget import \
+    OrderedHierarchicalSnapLayerWidget
 from processing.gui.wrappers import WidgetWrapper
-from DsgTools.gui.CustomWidgets.OrderedPropertyWidgets.orderedRecursiveSnapWidget import OrderedRecursiveSnapWidget
 
 class SnapHierarchyWrapper(WidgetWrapper):
     def __init__(self, *args, **kwargs):
         super(SnapHierarchyWrapper, self).__init__(*args, **kwargs)
     
     def createPanel(self):
-        return OrderedRecursiveSnapWidget()
+        return OrderedHierarchicalSnapLayerWidget()
     
     def createWidget(self):
         self.panel = self.createPanel()
         self.panel.dialogType = self.dialogType
-        if self.dialogType == DIALOG_MODELER:
-            #TODO
-            return self.panel
-        else:
-            return self.panel
+        return self.panel
     
     def parentLayerChanged(self, layer=None):
         pass
@@ -49,4 +46,10 @@ class SnapHierarchyWrapper(WidgetWrapper):
         pass
     
     def value(self):
+        return self.panel.getHierarchicalSnapDict()
+    
+    def postInitialize(self, wrappers):
         pass
+        # for wrapper in wrappers:
+        #     if wrapper.parameterDefinition().name() == self.parameterDefinition().parentLayerParameter():
+        #         pass

@@ -30,10 +30,10 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlQuery
 
 # DSGTools imports
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
+from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.gui.Misc.PostgisCustomization.CustomJSONTools.customJSONBuilder import CustomJSONBuilder
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'newAttributeWidget.ui'))

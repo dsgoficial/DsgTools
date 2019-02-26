@@ -20,25 +20,22 @@
  ***************************************************************************/
 """
 
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingException,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -172,7 +169,7 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyDuplicatedFeaturesAlgorithm', string)
 
     def createInstance(self):
         return IdentifyDuplicatedFeaturesAlgorithm()

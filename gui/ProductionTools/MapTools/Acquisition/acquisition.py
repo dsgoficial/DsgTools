@@ -14,8 +14,6 @@ class Acquisition(QObject):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.tool = None
-        self.iface.currentLayerChanged.connect(self.checkToDeactivate)
-        self.iface.actionToggleEditing().triggered.connect(self.setToolsEnabled)
         self.polygonAction = None
         self.circleAction = None
     
@@ -34,17 +32,6 @@ class Acquisition(QObject):
             )
         self.setPolygonAction(action)
 
-        icon_path = iconBasePath +'circle.png'
-        action = manager.add_action(
-            icon_path,
-            text=self.tr('DSGTools: Circle Digitizing'),
-            callback=self.acquisitionCircle,
-            add_to_menu=False,
-            add_to_toolbar=True,
-            withShortcut = True,
-            parentToolbar =parentMenu)
-        self.setCircleAction(action)
-
     def setPolygonAction(self, action):
         self.polygonAction = action
     
@@ -56,18 +43,15 @@ class Acquisition(QObject):
 
     def acquisitionCircle(self):
         self.run(Circle, self.circleAction)
-
-    def checkToDeactivate(self, layer):
-        enabled = self.setToolsEnabled(layer)
-        if not enabled and self.tool:
-            self.tool.deactivate()
     
-    def setToolsEnabled(self, layer):
-        layer = self.iface.mapCanvas().currentLayer()
-        if not layer or not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QgsWkbTypes.PointGeometry or not layer.isEditable():
+    def setToolEnabled(self):
+        layer = self.iface.activeLayer()  
+        if not isinstance(layer, QgsVectorLayer) or layer.geometryType() == QgsWkbTypes.PointGeometry or not layer.isEditable():
             enabled = False
         else:
             enabled = True
+        if not enabled and self.tool:
+            self.tool.deactivate()
         if self.polygonAction:
             self.polygonAction.setEnabled(enabled)
         if self.circleAction:

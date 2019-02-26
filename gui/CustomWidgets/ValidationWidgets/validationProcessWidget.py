@@ -43,34 +43,17 @@ class ValidationProcessWidget(QtWidgets.QWidget, FORM_CLASS):
         self.parent = parent
         if self.parent:
             self.validationManager = parent.validationManager
-        self.validKeys = ['parameters', 'validationProcess']
+        self.validKeys = ['halt', 'validationProcess']
         self.parameters = None
-        self.processChain = None
         self.setInitialState()
         if parameterDict != {}:
             self.populateInterface(parameterDict)
     
     def setInitialState(self):
         self.validationProcessComboBox.clear()
-        self.validationProcessComboBox.addItem(self.tr('Select a validation process'))
-        self.validationProcessComboBox.addItems(list(self.validationManager.processDict.keys()))
-    
-    @pyqtSlot(int)
-    def on_validationProcessComboBox_currentIndexChanged(self):
-        styleSheet = "background-color:rgb({0},{1},{2});".format(255, 0, 0)
-        self.parametersPushButton.setStyleSheet(styleSheet)
-        self.parametersPushButton.setToolTip(self.tr('Set parameters'))
-    
-    @pyqtSlot(bool)
-    def on_parametersPushButton_clicked(self):
-        if self.validationProcessComboBox.currentIndex() < 1:
-            self.parameters = None
-            self.processChain = None
-            return
-        processAlias = self.validationProcessComboBox.currentText()
-        self.parameters, self.processChain = self.validationManager.getParams(processAlias, restoreOverride = False, withElements = False)
-        if self.parameters:
-            self.parametersPushButton.setStyleSheet('')
+        self.validationProcessComboBox.addItem(self.tr('Select a model'))
+        for model in self.validationManager.modelList:
+            self.validationProcessComboBox.addItem(model.displayName())
     
     def clearAll(self):
         """
@@ -88,7 +71,6 @@ class ValidationProcessWidget(QtWidgets.QWidget, FORM_CLASS):
             raise Exception(self.invalidatedReason())
         parameterDict = dict()
         parameterDict['validationProcess'] = self.validationProcessComboBox.currentText()
-        parameterDict['parameters'] = self.parameters
         return parameterDict
 
     def populateInterface(self, parameterDict):

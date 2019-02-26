@@ -229,12 +229,14 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         try:
             formerLayer = self.iface.activeLayer()
             layer = self.rasterComboBox.currentLayer()
-            # in order to not interfere with the other tool behavior
-            self.iface.mapCanvas().currentLayerChanged.disconnect(self.enableAssignValue)
+            # keep track of current tool status
+            assignValueStatus = self.valueSetterButton.isChecked()
             self.iface.setActiveLayer(layer)
             self.iface.mainWindow().findChild( QAction, 'mActionLocalCumulativeCutStretch' ).trigger()
             self.iface.setActiveLayer(formerLayer)
-            self.iface.mapCanvas().currentLayerChanged.connect(self.enableAssignValue)
+            # make sure it still be on, if necessary
+            if assignValueStatus:
+                self.valueSetterButton.setChecked(assignValueStatus)
         except AttributeError:
             pass
 
@@ -303,6 +305,7 @@ class DsgRasterInfoTool(QWidget, Ui_DsgRasterInfoTool):
         except:
             pass
         self.iface.unregisterMainWindowAction(self.activateToolAction)
+        self.iface.unregisterMainWindowAction(self.valueSetterButtonAction)
         self.iface.unregisterMainWindowAction(self.bandTooltipButtonAction)
         self.iface.unregisterMainWindowAction(self.dynamicHistogramButtonAction)
 

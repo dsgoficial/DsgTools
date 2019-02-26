@@ -20,28 +20,31 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import object
-import os
 
 from qgis.PyQt.QtSql import QSqlDatabase
+from qgis.core import QgsMessageLog, Qgis
 
 #DSG Tools imports
 from .spatialiteDb import SpatialiteDb
 from .postgisDb import PostgisDb
+from .geopackageDb import GeopackageDb
+from .shapefileDb import ShapefileDb
+from DsgTools.core.dsgEnums import DsgEnums
 
-from qgis.core import QgsMessageLog, Qgis
+from builtins import object
+import os
 
 class DbFactory(object):
-    def createDbFactory(self,driverName):
+    def createDbFactory(self, driver):
         #TODO Treat none return
         if not ('QPSQL' in QSqlDatabase.drivers()): #Driver wasn't loaded
             raise Exception('QT PSQL driver not installed!')
         if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
             raise Exception('QT QSQLITE driver not installed!')
-        
-        if driverName == "QSQLITE":
-            return SpatialiteDb()
-        if driverName == "QPSQL":
-            return PostgisDb()
-        else:
-            return None
+        dbs = {
+            DsgEnums.DriverSpatiaLite : lambda : SpatialiteDb(),
+            DsgEnums.DriverPostGIS : lambda : PostgisDb(),
+            DsgEnums.DriverGeopackage : lambda : GeopackageDb(),
+            DsgEnums.DriverShapefile : lambda : ShapefileDb()
+        }
+        return dbs[driver]() if driver in dbs else None

@@ -31,6 +31,7 @@ from qgis.core import QgsCredentials, QgsMessageLog, QgsDataSourceUri, QgsFeatur
 from .abstractDb import AbstractDb
 from ..SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 from osgeo import ogr
 from uuid import uuid4
@@ -47,8 +48,13 @@ class PostgisDb(AbstractDb):
         #setting database type to postgresql
         self.db = QSqlDatabase('QPSQL')
         #setting up a sql generator
-        self.gen = SqlGeneratorFactory().createSqlGenerator(False)
+        self.gen = SqlGeneratorFactory().createSqlGenerator(driver=DsgEnums.DriverPostGIS)
         self.databaseEncoding = 'utf-8'
+
+    def closeDatabase(self):
+        if self.db is not None and self.db.isOpen():
+            # self.dropAllConections(self.getDatabaseName())
+            self.db.close()
 
     def getDatabaseParameters(self):
         """
@@ -91,9 +97,9 @@ class PostgisDb(AbstractDb):
         """
         if not self.testCredentials(host, port, database, user, password):
             self.getCredentials(host, port, user, database)
-        
+
     def getCredentials(self, host, port, user, database):
-        conInfo = 'host='+host+' port='+port+' dbname='+database
+        conInfo = "host={0} port={1} dbname={2}".format(host, port, database)
         check = False
         while not check:
             (success, user, password) = QgsCredentials.instance().get(conInfo, user, None)
@@ -106,10 +112,9 @@ class PostgisDb(AbstractDb):
     def testCredentials(self, host, port, database, user, password):
         try:
             self.db.setHostName(host)
-            if type(port) != 'int':
-                self.db.setPort(int(port))
-            else:
-                self.db.setPort(port)
+            if not isinstance(port, int):
+                port = int(port)
+            self.db.setPort(port)
             self.db.setDatabaseName(database)
             self.db.setUserName(user)
             self.db.setPassword(password)
@@ -712,7 +717,7 @@ class PostgisDb(AbstractDb):
 
         while query.next():
             #table name
-            ret.append(query.value(0))
+            ret.append("{0}.{1}".format(query.value(0), query.value(1)))
 
         return ret
 
@@ -1929,7 +1934,7 @@ class PostgisDb(AbstractDb):
             raise Exception(self.tr('Style ')+styleFolder+self.tr(' does not match the version of database ') + self.db.databaseName())
         path = os.path.join(os.path.dirname(__file__),'..', '..','Styles')
         stylePath = os.path.join(path,styleFolder)
-        availableStyles = os.walk(stylePath).next()[2]
+        availableStyles = next(os.walk(stylePath))[2]
         created = self.checkAndCreateStyleTable(useTransaction = useTransaction)
         for style in availableStyles:
             #filtering and checking file names for special characters
@@ -2691,7 +2696,7 @@ class PostgisDb(AbstractDb):
 
     def createFrame(self, type, scale, param, paramDict = dict()):
         mi, inom, frame = self.prepareCreateFrame(type, scale, param)
-        self.insertFrame(scale, mi, inom, binascii.hexlify(frame.asWkb()), paramDict = paramDict)
+        self.insertFrame(scale, mi, inom, frame.asWkb(), paramDict = paramDict)
         return frame
     
     def getUsersFromServer(self):
@@ -2850,7 +2855,7 @@ class PostgisDb(AbstractDb):
     
     def deletePermissionProfile(self, name, edgvversion):
         """
-        Deletes profile from from public.permission_profiles
+        Deletes profile from public.permission_profiles
         """
         self.checkAndOpenDb()
         sql = self.gen.deletePermissionProfile(name, edgvversion)
@@ -3189,7 +3194,7 @@ class PostgisDb(AbstractDb):
     
     def deleteSettingFromAdminDb(self, settingType, name, edgvversion):
         """
-        Deletes profile from from public.permission_profiles
+        Deletes profile from public.permission_profiles
         """
         self.checkAndOpenDb()
         sql = self.gen.deleteSettingFromAdminDb(settingType, name, edgvversion)
@@ -3743,3 +3748,25 @@ class PostgisDb(AbstractDb):
             if domainTable.split('.')[-1] in attrList:
                 filterDict[tableName] = jsonDict[domainTable.split('.')[-1]]
         return filterDict
+
+    def databaseInfo(self):
+        """
+        Gives information about all tables present in the database. Output is composed by
+        schema, layer, geometry column, geometry type and srid, in that order.
+        :return: (list-of-dict) database information.
+        """
+        self.checkAndOpenDb()
+        sql = self.gen.databaseInfo()
+        query = QSqlQuery(sql, self.db)
+        if not query.isActive():
+            raise Exception(self.tr("Problem getting geom schemas from db: ")+query.lastError().text())
+        out = []
+        while query.next():
+            rowDict = dict()
+            rowDict['schema'] = query.value(0)
+            rowDict['layer'] = query.value(1)
+            rowDict['geomCol'] = query.value(2)
+            rowDict['geomType'] = query.value(3)
+            rowDict['srid'] = str(query.value(4))
+            out.append(rowDict)
+        return out

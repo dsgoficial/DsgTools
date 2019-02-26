@@ -38,7 +38,7 @@ from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressW
 class SpatialiteLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
         """Constructor."""
-        super(self.__class__, self).__init__(iface, abstractDb, loadCentroids)
+        super(SpatialiteLayerLoader, self).__init__(iface, abstractDb, loadCentroids)
         
         self.provider = 'spatialite'
         
@@ -154,7 +154,7 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
         if stylePath:
             fullPath = self.getStyle(stylePath, tableName)
             if fullPath:
-                vlayer.importNamedStyle(fullPath)
+                vlayer.loadNamedStyle(fullPath, True)
         parentNode.addLayer(vlayer) 
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
@@ -224,3 +224,16 @@ class SpatialiteLayerLoader(EDGVLayerLoader):
                 valueRelationDict['Layer'] = domLayer.id()
                 vlayer.setEditorWidgetSetup(i, valueRelationDict)
         return vlayer
+
+    def getLayerByName(self, layer):
+        """
+        Return the layer layer from a given layer name.
+        :param layer: (str) layer name.
+        :return: (QgsVectorLayer) vector layer. 
+        """
+        # parent class reimplementation
+        schema = layer.split('_')[0]
+        table = layer[len(schema) + 1:]
+        lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
+        self.setDataSource('', layer, geomColumn, '')
+        return QgsVectorLayer(self.uri.uri(), table, self.provider)

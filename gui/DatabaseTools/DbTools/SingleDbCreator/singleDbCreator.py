@@ -25,7 +25,7 @@
 import os, sqlite3
 import json
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 from qgis.PyQt.QtWidgets import QMessageBox, QFileDialog, QApplication
@@ -62,8 +62,29 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         self.tabDbSelectorWidget.outputDirSelector.label.setText(self.tr('Select Database Path'))
         self.okPushButton.clicked.connect(self.validateParameters)
         self.cancelPushButton.clicked.connect(self.close_)
-    
+
     def getParameters(self):
+        """
+        parameterDict = {
+            'srid' : string with auth id of the coordinate reference system,
+            'version' : string with edgv version,
+            'nonDefaultTemplate' : boolean (True for non edgv False otherwise),
+            'dbBaseName' : string with database basename,
+            'driverName' : string with the name of the driver,
+            'factoryParam' : string with the factory parameter,
+            'templateInfo' : {
+                'templateName' : name of the template, if it is an edgv database, serverAbstractDb returns the name,
+                'version' : version of the template,
+                'isTemplateEdgv' : True if is edgv, else False,
+                'tableSchema' : optional parameter in case of creating frame,
+                'tableName' : optional parameter in case of creating frame,
+                'geom' : optional parameter in case of creating frame,
+                'miAttr' : optional parameter in case of creating frame,
+                'inomAttr' : optional parameter in case of creating frame,
+                'geomType' : optional parameter in case of creating frame
+            }
+        }
+        """
         #Get outputDir, outputList, refSys
         parameterDict = dict()
         parameterDict['srid'] = self.databaseParameterWidget.mQgsProjectionSelectionWidget.crs().authid().split(':')[-1]
@@ -102,6 +123,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             logMsg += self.tr('Check log for more details.')
         msg = [i for i in (creationMsg, errorMsg, logMsg) if i != '']
         QMessageBox.warning(self, self.tr('Info!'), self.tr('Process finished.')+'\n'+'\n'.join(msg))
+        self.close()
         return True
     
     def createDatabases(self, parameterDict):
@@ -114,7 +136,6 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
             dbDict[parameterDict['dbBaseName']] = newDb
         except Exception as e:
             errorDict[parameterDict['dbBaseName']] = ':'.join(map(str, e.args))
-        dbDict[parameterDict['dbBaseName']] = newDb
         QApplication.restoreOverrideCursor()        
         return dbDict, errorDict
 

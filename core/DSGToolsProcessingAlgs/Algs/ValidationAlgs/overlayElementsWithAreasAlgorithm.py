@@ -20,32 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDistance,
-                       QgsProcessingException)
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -53,6 +48,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
     OVERLAY = 'OVERLAY'
     SELECTED_OVERLAY = 'SELECTED_OVERLAY'
     BEHAVIOR = 'BEHAVIOR'
+    OUTPUT = 'OUTPUT'
     RemoveOutside, RemoveInside, OverlayAndKeep = list(range(3))
 
     def initAlgorithm(self, config):
@@ -98,6 +94,12 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
                 defaultValue=0
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer with overlayed elements')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -106,23 +108,63 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         layerHandler = LayerHandler()
         self.algRunner = AlgRunner()
 
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        inputLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.INPUT,
+            context
+            )
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        overlayLyr = self.parameterAsVectorLayer(parameters, self.OVERLAY, context)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                    )
+                )
+        overlayLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.OVERLAY,
+            context
+            )
         if overlayLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.OVERLAY))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        onlySelectedOverlay = self.parameterAsBool(parameters, self.SELECTED_OVERLAY, context)
-        behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.OVERLAY
+                    )
+                )
+        onlySelected = self.parameterAsBool(
+            parameters,
+            self.SELECTED,
+            context
+            )
+        onlySelectedOverlay = self.parameterAsBool(
+            parameters,
+            self.SELECTED_OVERLAY,
+            context
+            )
+        behavior = self.parameterAsEnum(
+            parameters,
+            self.BEHAVIOR,
+            context
+            )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(4, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [inputLyr],
+            geomType=inputLyr.wkbType(),
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback
+            )
         multiStepFeedback.setCurrentStep(1)
         if onlySelectedOverlay:
-            overlayLyr = layerHandler.createAndPopulateUnifiedVectorLayer([overlayLyr], geomType=overlayLyr.wkbType(), onlySelected = onlySelectedOverlay, feedback=multiStepFeedback)
+            overlayLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+                [overlayLyr],
+                geomType=overlayLyr.wkbType(),
+                onlySelected=onlySelectedOverlay,
+                feedback=multiStepFeedback
+                )
             overlayLyr.startEditing()
             overlayLyr.renameAttribute(0, 'fid')
             overlayLyr.renameAttribute(1, 'cl')
@@ -133,12 +175,23 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         # 4- if remove inside, use symetric difference
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Running overlay...'))
-        outputLyr = self.runOverlay(auxLyr, overlayLyr, behavior, context, multiStepFeedback)
+        outputLyr = self.runOverlay(
+            auxLyr,
+            overlayLyr,
+            behavior,
+            context,
+            multiStepFeedback
+            )
         multiStepFeedback.setCurrentStep(3)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], outputLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [inputLyr],
+            outputLyr,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
-        return {self.INPUT : inputLyr}
+        return {self.OUTPUT : inputLyr}
     
     def runOverlay(self, lyr, overlayLyr, behavior, context, feedback):
         nSteps = 2 if behavior == 2 else 1
@@ -199,7 +252,7 @@ class OverlayElementsWithAreasAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('OverlayElementsWithAreasAlgorithm', string)
 
     def createInstance(self):
         return OverlayElementsWithAreasAlgorithm()

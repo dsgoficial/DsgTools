@@ -20,21 +20,19 @@
  ***************************************************************************/
 """
 
+from PyQt5.QtCore import QCoreApplication
+
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
 from .validationAlgorithm import ValidationAlgorithm
 
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterNumber)
 
 class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -90,7 +88,7 @@ class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr)           
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
 
         for current, feat in enumerate(featureList):
             # Stop the algorithm if cancel button has been clicked
@@ -139,7 +137,7 @@ class IdentifySmallPolygonsAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifySmallPolygonsAlgorithm', string)
 
     def createInstance(self):
         return IdentifySmallPolygonsAlgorithm()

@@ -29,10 +29,10 @@ from qgis.PyQt.QtWidgets import QListWidgetItem, QMessageBox, QMenu, QApplicatio
 from qgis.PyQt.QtGui import QCursor
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
-from DsgTools.UserTools.permission_properties import PermissionProperties
-from DsgTools.ServerTools.createView import CreateView
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.gui.ServerTools.createView import CreateView
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'manageDBAuxiliarStructure.ui'))

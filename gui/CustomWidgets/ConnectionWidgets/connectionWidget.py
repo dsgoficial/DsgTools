@@ -36,6 +36,7 @@ from ....core.Utils.utils import Utils
 from ....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'connectionWidget.ui'))
@@ -179,13 +180,13 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
         self.closeDatabase()
         try:
             if self.isSpatialite:
-                self.abstractDb = self.abstractDbFactory.createDbFactory('QSQLITE')
+                self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverSpatiaLite)
                 self.abstractDb.connectDatabase()
                 self.spatialiteFileEdit.setText(self.abstractDb.db.databaseName())
                 self.edgvSpatialiteVersionEdit.setText(self.abstractDb.getDatabaseVersion())
                     
             else:
-                self.abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+                self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
                 (host, port, user, password) = self.serverWidget.getServerParameters()
                 dbName = self.comboBoxPostgis.currentText()
                 self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
@@ -277,9 +278,10 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 
             else:
                 self.setInitialState()
+                QApplication.restoreOverrideCursor()
                 return
         except Exception as e:
+            QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
-            self.setInitialState()
             self.setInitialState()
         QApplication.restoreOverrideCursor()

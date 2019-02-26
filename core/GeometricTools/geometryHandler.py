@@ -126,7 +126,8 @@ class GeometryHandler(QObject):
         if not geomType:
             geomType = layer.geometryType()
         # getting whether geometry is multipart or not
-        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType()))
+        # features not yet commited to layer always have SINGLE geometry
+        isMulti = QgsWkbTypes.isMultiType(int(layer.wkbType())) and feature.id() > 0
         geom = feature.geometry()
         if geomType == 0:
             if isMulti:
@@ -150,7 +151,7 @@ class GeometryHandler(QObject):
             else:
                 nodes = geom.asPolyline()
                 nodes = nodes[::-1]
-                flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)         
+                flippedFeatureGeom = QgsGeometry.fromPolylineXY(nodes)
         elif geomType == 2:
             if isMulti:
                 nodes = geom.asMultiPolygon()                
@@ -416,6 +417,23 @@ class GeometryHandler(QObject):
         elif n:
             return n[-1]
 
+    def getFirstAndLastNode(self, lyr, feat, geomType=None):
+        """
+        Returns the first node and the last node of a line.
+        :param lyr: layer containing target feature.
+        :param feat: feature which initial node is requested.
+        :param geomType: (int) layer geometry type (1 for lines).
+        :return: starting node point (QgsPoint).
+        """
+        n = self.getFeatureNodes(layer=lyr, feature=feat, geomType=geomType)
+        isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
+        if isMulti:
+            if len(n) > 1:
+                return
+            return n[0][0], n[0][-1]
+        elif n:
+            return n[0], n[-1]
+
     def calculateAngleDifferences(self, startNode, endNode):
         """
         Calculates the angle in degrees formed between line direction ('startNode' -> 'endNode') and vertical passing over 
@@ -560,3 +578,53 @@ class GeometryHandler(QObject):
                 if feat not in nodeDict[pEnd]['end']:
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
+    
+    def makeQgsPolygonFromBounds(self, xmin, ymin, xmax, ymax, isMulti=True):
+        """
+        Creating a polygon for the given coordinates
+        """
+        dx = (xmax - xmin)/3
+        dy = (ymax - ymin)/3
+        
+        polyline = []
+
+        point = QgsPointXY(xmin, ymin)
+        polyline.append(point)
+        point = QgsPointXY(xmin+dx, ymin)
+        polyline.append(point)
+        point = QgsPointXY(xmax-dx, ymin) 
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymin)
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymin+dy)
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymax-dy)
+        polyline.append(point)
+        point = QgsPointXY(xmax, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmax-dx, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmin+dx, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymax)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymax-dy)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymin+dy)
+        polyline.append(point)
+        point = QgsPointXY(xmin, ymin)
+        polyline.append(point)
+
+        if isMulti:
+            qgsPolygon = QgsGeometry.fromMultiPolygonXY([[polyline]])
+        else:
+            qgsPolygon = QgsGeometry.fromPolygonXY([polyline])
+        return qgsPolygon
+    
+    def handleGeometryCollection(self, geom, geometryType, parameterDict=None, coordinateTransformer=None):
+        parameterDict = {} if parameterDict is None else parameterDict
+        outputList = []
+        for part in geom.asGeometryCollection():
+            if part.type() == geometryType:
+                outputList += self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer)
+        return outputList

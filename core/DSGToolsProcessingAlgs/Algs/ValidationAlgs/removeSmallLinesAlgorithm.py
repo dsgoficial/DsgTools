@@ -29,7 +29,8 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingMultiStepFeedback,
+                       QgsProcessingException)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -38,6 +39,7 @@ from .validationAlgorithm import ValidationAlgorithm
 class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
+    OUTPUT = 'OUTPUT'
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
 
@@ -49,7 +51,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                [QgsProcessing.TypeVectorLine ]
             )
         )
 
@@ -70,10 +72,10 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer without small lines')
             )
         )
 
@@ -84,23 +86,33 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT)
+                )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Identifying small lines in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallLines(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Identifying small lines in layer {0}...'
+                ).format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifySmallLines(
+            inputLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Removing small lines from layer {0}...').format(inputLyr.name()))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Removing small lines from layer {0}...'
+                ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Identifying remaining small lines in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallLines(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
-
-        return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
+        return {self.OUTPUT: inputLyr}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
@@ -152,7 +164,7 @@ class RemoveSmallLinesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveSmallLinesAlgorithm', string)
 
     def createInstance(self):
         return RemoveSmallLinesAlgorithm()

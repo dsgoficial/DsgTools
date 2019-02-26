@@ -229,7 +229,7 @@ class PermissionManager(GenericDbManager):
         for key1 in list(inputJsonDict.keys()):
             if not isinstance(inputJsonDict[key1], dict):
                 return False
-            if key1 not in ['database_2.1.3', 'database_FTer_2a_Ed','database_Non_EDGV']:
+            if key1 not in ['database_2.1.3', 'database_2.1.3_pro', 'database_3.0', 'database_FTer_2a_Ed','database_Non_EDGV']:
                 return False
             for key2 in list(inputJsonDict[key1].keys()):
                 if not isinstance(inputJsonDict[key1][key2],dict):

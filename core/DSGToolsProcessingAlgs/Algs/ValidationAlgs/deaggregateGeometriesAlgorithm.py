@@ -173,7 +173,7 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('DeaggregatorAlgorithm', string)
 
     def createInstance(self):
         return DeaggregatorAlgorithm()

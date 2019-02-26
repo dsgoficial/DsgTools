@@ -25,7 +25,7 @@ from builtins import range
 import os
 from os.path import expanduser
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 # Qt imports
 from qgis.PyQt import QtWidgets, uic
@@ -35,15 +35,16 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.ServerTools.viewServers import ViewServers
-from DsgTools.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.gui.ServerTools.viewServers import ViewServers
+from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 
-from DsgTools.UserTools.profile_editor import ProfileEditor
-from DsgTools.ServerTools.createView import CreateView
-from DsgTools.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
-from DsgTools.ServerTools.selectStyles import SelectStyles
+from DsgTools.gui.DatabaseTools.UserTools.profile_editor import ProfileEditor
+from DsgTools.gui.ServerTools.createView import CreateView
+from DsgTools.gui.ServerTools.manageDBAuxiliarStructure import ManageDBAuxiliarStructure
+from DsgTools.gui.ServerTools.selectStyles import SelectStyles
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'batchDbManager.ui'))
@@ -67,8 +68,15 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         self.dbsCustomSelector.selectionChanged.connect(self.populateStylesInterface)
         self.dbsCustomSelector.selectionChanged.connect(self.populateOtherInterfaces)
         self.previousTab = 0
-        self.dbDict = {'2.1.3':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[]}
-        self.correspondenceDict = {self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3', self.tr('Load Database Model EDGV Version 3.0'):'3.0', self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',self.tr('Load Other Database Models'):'Non_EDGV'}
+        self.dbDict = {'2.1.3':[], '2.1.3 Pro':[], 'FTer_2a_Ed':[],'Non_EDGV':[], '3.0':[], '3.0 Pro':[]}
+        self.correspondenceDict = {
+            self.tr('Load Database Model EDGV Version 2.1.3'):'2.1.3',
+            self.tr('Load Database Model EDGV Version 2.1.3 Pro'):'2.1.3 Pro',
+            self.tr('Load Database Model EDGV Version 3.0'):'3.0',
+            self.tr('Load Database Model EDGV Version 3.0 Pro'):'3.0 Pro',
+            self.tr('Load Database Model EDGV Version FTer_2a_Ed'):'FTer_2a_Ed',
+            self.tr('Load Other Database Models'):'Non_EDGV'
+        }
 
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):
@@ -116,13 +124,9 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     def instantiateAbstractDbs(self, instantiateTemplates = False):
         dbsDict = dict()
         selectedDbNameList = self.getSelectedDbList()
-        if instantiateTemplates:
-            for templateName in ['template_edgv_213', 'template_edgv_fter_2a_ed', 'template_edgv_3']:
-                if templateName not in selectedDbNameList:
-                    if templateName != 'dsgtools_admindb':
-                        selectedDbNameList.append(templateName)
+        selectedDbNameList = list(set(selectedDbNameList + ['template_edgv_213', 'template_edgv_fter_2a_ed', 'template_edgv_3', 'dsgtools_admindb'])) if instantiateTemplates else selectedDbNameList
         for dbName in selectedDbNameList:
-            localDb = self.dbFactory.createDbFactory('QPSQL')
+            localDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
             localDb.connectDatabaseWithParameters(self.serverWidget.abstractDb.db.hostName(), self.serverWidget.abstractDb.db.port(), dbName, self.serverWidget.abstractDb.db.userName(), self.serverWidget.abstractDb.db.password())
             dbsDict[dbName] = localDb
         return dbsDict
@@ -141,8 +145,10 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         if len(successList) > 0:
             msg += self.tr('\nSuccessful databases: ')
             msg +=', '.join(successList)
-        msg += self.logInternalError(exceptionDict)
-        QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
+        if exceptionDict != []:
+            msg += self.logInternalError(exceptionDict)
+        if successList != [] and exceptionDict != []:
+            QMessageBox.warning(self, self.tr('Operation Complete!'), msg)
     
     def logInternalError(self, exceptionDict):
         msg = ''
@@ -152,7 +158,8 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             msg+= ', '.join(errorDbList)
             msg+= self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
-                QgsMessageLog.logMessage(self.tr('Error for database ')+ errorDb + ': ' +exceptionDict[errorDb].decode('utf-8'), "DSG Tools Plugin", Qgis.Critical)
+                msg = self.tr("Error for database {0}: ").format(errorDb, exceptionDict[errorDb])
+                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", Qgis.Critical)
         return msg 
 
     @pyqtSlot(bool)
@@ -160,6 +167,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         selectedDbNameList = self.getSelectedDbList()
         if len(selectedDbNameList) == 0:
             QMessageBox.warning(self, self.tr('Warning'), self.tr('Please select one or more databases to drop!'))
+            return
         if QMessageBox.question(self, self.tr('Question'), self.tr('Do you really want to drop databases: ')+', '.join(selectedDbNameList), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
             return
         QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
@@ -183,9 +191,11 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
     def batchUpgradePostgis(self, dbList):
         exceptionDict = dict()
         successList = []
+        if QMessageBox.question(self, self.tr('Question'), self.tr('This operation will upgrade PostGIS version for templates databases as well as the selected databases. Would you like to continue?'), QMessageBox.Ok|QMessageBox.Cancel) == QMessageBox.Cancel:
+            return successList, exceptionDict
         dbsDict = self.instantiateAbstractDbs(instantiateTemplates = True)
         self.closeAbstractDbs(dbsDict)
-        for dbName in list(dbsDict.keys()):
+        for dbName in dbsDict:
             try:
                 if self.serverWidget.abstractDb.checkIfTemplate(dbName):
                     self.serverWidget.abstractDb.setDbAsTemplate(dbName = dbName, setTemplate = False)
@@ -217,34 +227,34 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         dbsDict = self.instantiateAbstractDbs()
         exceptionDict = dict()
         versionList = []
-        
-        for dbName in list(dbsDict.keys()):
-            try:
-                version = dbsDict[dbName].getDatabaseVersion()
-                if version not in versionList:
-                    versionList.append(version)
-            except Exception as e:
-                exceptionDict[dbName] = ':'.join(e.args)
-        if len(list(exceptionDict.keys()))>0:
-            self.logInternalError(exceptionDict)
-        if len(versionList) > 1:
-            QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
-            return
-        styleDir = self.getStyleDir(versionList)
-        styleList = self.getStyleList(styleDir)
-        dlg = SelectStyles(styleList)
-        dlg.exec_()
-        selectedStyles = dlg.selectedStyles
-        if len(selectedStyles) == 0:
-            return
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
-        QApplication.restoreOverrideCursor()
-        header = self.tr('Import operation complete. \n')
-        self.outputMessage(header, successList, exceptionDict)
-        self.populateStylesInterface()
-        closeExceptionDict = self.closeAbstractDbs(dbsDict)
-        self.logInternalError(closeExceptionDict)            
+        if dbsDict != {}:
+            for dbName in list(dbsDict.keys()):
+                try:
+                    version = dbsDict[dbName].getDatabaseVersion()
+                    if version not in versionList:
+                        versionList.append(version)
+                except Exception as e:
+                    exceptionDict[dbName] = ':'.join(e.args)
+            if len(list(exceptionDict.keys()))>0:
+                self.logInternalError(exceptionDict)
+            if len(versionList) > 1:
+                QMessageBox.warning(self, self.tr('Warning'), self.tr('Multiple edgv versions are not allowed!'))
+                return
+            styleDir = self.getStyleDir(versionList)
+            styleList = self.getStyleList(styleDir)
+            dlg = SelectStyles(styleList)
+            dlg.exec_()
+            selectedStyles = dlg.selectedStyles
+            if len(selectedStyles) == 0:
+                return
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            successList, exceptionDict = self.batchImportStyles(dbsDict, styleDir, selectedStyles, versionList[0])
+            QApplication.restoreOverrideCursor()
+            header = self.tr('Import operation complete. \n')
+            self.outputMessage(header, successList, exceptionDict)
+            self.populateStylesInterface()
+            closeExceptionDict = self.closeAbstractDbs(dbsDict)
+            self.logInternalError(closeExceptionDict)            
             
     
     def getStyleList(self, styleDir):
@@ -256,7 +266,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         else:
             parentFolder = os.path.dirname(styleDir)
             version = os.path.basename(parentFolder)
-        for style in os.walk(styleDir).next()[1]:
+        for style in next(os.walk(styleDir))[1]:
             styleList.append('/'.join([version,style]))
         if len(styleList) == 0:
             styleList = [version+'/'+os.path.basename(styleDir)]
@@ -282,8 +292,9 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         return successList, exceptionDict
     
     def getStyleDir(self, versionList):
-        currentPath = os.path.join(os.path.dirname(__file__),'..','Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
-        return currentPath
+        if versionList != []:
+            return os.path.join(os.path.dirname(__file__),'..', '..', 'core', 'Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
+        return ""
     
     def getStylesFromDbs(self, perspective = 'style'):
         '''
@@ -305,7 +316,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         return allStylesDict
 
     def createItem(self, parent, text, column):
-        item = QtGui.QTreeWidgetItem(parent)
+        item = QtWidgets.QTreeWidgetItem(parent)
         item.setText(column, text)
         return item
 
@@ -336,16 +347,18 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         styleDict = self.getStylesFromDbs()
         styleList = list(styleDict.keys())
         dlg = SelectStyles(styleList)
-        dlg.exec_()
+        execStatus = dlg.exec_()
         selectedStyles = dlg.selectedStyles
-        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
-        successList, exceptionDict = self.batchDeleteStyles(dbsDict, styleDict)
-        QApplication.restoreOverrideCursor()
-        header = self.tr('Delete operation complete. \n')
-        self.outputMessage(header, successList, exceptionDict)
-        self.populateStylesInterface()
-        closeExceptionDict = self.closeAbstractDbs(dbsDict)
-        self.logInternalError(closeExceptionDict)       
+        if execStatus != 0 and selectedStyles != []:
+            selectedStyleDict = { k : styleDict[k] for k in selectedStyles }
+            QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+            successList, exceptionDict = self.batchDeleteStyles(dbsDict, selectedStyleDict)
+            QApplication.restoreOverrideCursor()
+            header = self.tr('Delete operation complete. \n')
+            self.outputMessage(header, successList, exceptionDict)
+            self.populateStylesInterface()
+            closeExceptionDict = self.closeAbstractDbs(dbsDict)
+            self.logInternalError(closeExceptionDict)       
     
     def batchDeleteStyles(self, dbsDict, styleDict):
         exceptionDict = dict()

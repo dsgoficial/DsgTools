@@ -20,28 +20,26 @@
  ***************************************************************************/
 """
 
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingException)
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -68,6 +66,12 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
                 self.tr('{0} Flags').format(self.displayName())
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer without duplicated geometries')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -76,26 +80,41 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                    )
+                )
+        onlySelected = self.parameterAsBool(
+            parameters,
+            self.SELECTED,
+            context
+            )
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Identifying duplicated geometries in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Identifying duplicated geometries in layer {0}...'
+                ).format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifyDuplicatedGeometries(
+            inputLyr,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Removing duplicated geometries in layer {0}...').format(inputLyr.name()))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Removing duplicated geometries in layer {0}...'
+                ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Identifying remaining duplicated geometries in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifyDuplicatedGeometries(inputLyr, context, feedback = multiStepFeedback, onlySelected=onlySelected)
-
-        return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
+        return {self.OUTPUT: inputLyr}
     
     def removeFeatures(self, inputLyr, flagLyr, feedback):
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
-        currentProgress = feedback.progress()
         localTotal = 100/total if total else 0
         inputLyr.startEditing()
         for current, feat in enumerate(featureList):
@@ -105,7 +124,6 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             idRemoveList = [i for i in map(int, feat['reason'].split('(')[-1].split(')')[0].split(','))][1::]
             inputLyr.deleteFeatures(idRemoveList)
             feedback.setProgress(current * localTotal)
-        
 
     def name(self):
         """
@@ -142,7 +160,7 @@ class RemoveDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveDuplicatedGeometriesAlgorithm', string)
 
     def createInstance(self):
         return RemoveDuplicatedGeometriesAlgorithm()

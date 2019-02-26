@@ -20,31 +20,27 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class CleanGeometriesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -52,7 +48,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
     TOLERANCE = 'TOLERANCE'
     MINAREA = 'MINAREA'
     FLAGS = 'FLAGS'
-    
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -96,6 +92,12 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
                 self.tr('{0} Flags').format(self.displayName())
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Cleaned original layer')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -132,7 +134,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], cleanedLyr, feedback=multiStepFeedback, onlySelected=onlySelected)
         self.flagIssues(cleanedLyr, error, feedback)
 
-        return {self.INPUT : inputLyr, self.FLAGS : self.flag_id}
+        return {self.OUTPUT : inputLyr, self.FLAGS : self.flag_id}
 
     def flagIssues(self, cleanedLyr, error, feedback):
         overlapDict = dict()
@@ -199,7 +201,7 @@ class CleanGeometriesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('CleanGeometriesAlgorithm', string)
 
     def createInstance(self):
         return CleanGeometriesAlgorithm()

@@ -20,36 +20,33 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDistance,
-                       QgsProcessingException)
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -68,6 +65,12 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
                 self.tr('Process only selected features')
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer without empty geometries')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -77,23 +80,47 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                    )
+                )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
-        
+        multiStepFeedback.pushInfo(
+            self.tr('Populating temp layer...')
+            )
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [inputLyr],
+            geomType=inputLyr.wkbType(),
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback
+            )
+
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Removing empty geometries from layer {input}...').format(input=inputLyr.name()))
-        notNullLayer = algRunner.runRemoveNull(auxLyr, context, feedback=multiStepFeedback)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Removing empty geometries from layer {input}...'
+                ).format(input=inputLyr.name()))
+        notNullLayer = algRunner.runRemoveNull(
+            auxLyr,
+            context,
+            feedback=multiStepFeedback
+            )
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], notNullLayer, feedback=multiStepFeedback, onlySelected=onlySelected)
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [inputLyr],
+            notNullLayer,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
-        return {self.INPUT: inputLyr}
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """
@@ -130,7 +157,7 @@ class RemoveEmptyAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveEmptyAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return RemoveEmptyAndUpdateAlgorithm()
