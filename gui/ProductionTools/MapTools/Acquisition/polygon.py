@@ -78,19 +78,19 @@ class Polygon(GeometricaAcquisition):
                         projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                         if projectedMousePoint:                            
                             new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)
-                            if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
+                            if self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point):
                                 self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
                                 self.geometry.append(last_point)   
                                 self.endGeometry() 
                             else:
                                 self.iface.messageBar().pushMessage(
-                                        self.tr("Observation:"),
-                                        self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                        self.tr("Info:"),
+                                        self.tr("Not possible to digitise, segment smaller than minimun distance."),
                                         level=Qgis.Info
                                     )                        
                     else:
                         self.iface.messageBar().pushMessage(
-                                self.tr("Observation:"),
+                                self.tr("Info:"),
                                 self.tr("The right angle tool should be used only for rectangular shapes."),
                                 level=Qgis.Info
                             )
@@ -111,21 +111,22 @@ class Polygon(GeometricaAcquisition):
                         self.qntPoint += 1
                     else:
                         self.iface.messageBar().pushMessage(
-                                self.tr("Observation:"),
-                                self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                self.tr("Info:"),
+                                self.tr("Not possible to digitise, segment smaller than minimun distance."),
                                 level=Qgis.Info
                             )
                 else:
                     point = QgsPointXY(pointMap)
                     projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if projectedMousePoint:
-                        if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
+                        new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)                        
+                        if self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point):
                             self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
                             self.qntPoint += 1
                         else:
                             self.iface.messageBar().pushMessage(
-                                    self.tr("Observation:"),
-                                    self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                    self.tr("Info:"),
+                                    self.tr("Not possible to digitise, segment smaller than minimun distance."),
                                     level=Qgis.Info
                                 )
 
