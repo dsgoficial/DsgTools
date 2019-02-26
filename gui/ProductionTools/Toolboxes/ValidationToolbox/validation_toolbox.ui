@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>437</width>
-    <height>815</height>
+    <width>426</width>
+    <height>610</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,17 @@
    <layout class="QGridLayout" name="gridLayout_15">
     <item row="0" column="0">
      <widget class="QTabWidget" name="validationTabWidget">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="toolTip">
-       <string>Configure </string>
+       <string/>
       </property>
       <property name="currentIndex">
        <number>0</number>
@@ -27,51 +36,24 @@
        <attribute name="title">
         <string>Processes</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout_14">
+       <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0" colspan="2">
-         <widget class="ConnectionComboBox" name="connectionSelectorComboBox" native="true"/>
-        </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QgsCollapsibleGroupBox" name="ProcessesGroupBox">
-          <property name="title">
-           <string>Validation Processes</string>
+         <widget class="ConnectionComboBox" name="connectionSelectorComboBox" native="true">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
           </property>
-          <property name="saveCollapsedState" stdset="0">
-           <bool>false</bool>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
           </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
-            <widget class="QLineEdit" name="filterLineEdit">
-             <property name="placeholderText">
-              <string>Filter by process name</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QTreeWidget" name="processTreeWidget">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="dragEnabled">
-              <bool>false</bool>
-             </property>
-             <property name="dragDropMode">
-              <enum>QAbstractItemView::NoDragDrop</enum>
-             </property>
-             <column>
-              <property name="text">
-               <string>Available Processes</string>
-              </property>
-             </column>
-            </widget>
-           </item>
-          </layout>
          </widget>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item row="1" column="0" colspan="2">
          <widget class="QGroupBox" name="groupBox_7">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
@@ -79,10 +61,16 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="title">
            <string>Validation Workflow</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_13">
+          <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
             <widget class="ValidationWorkflowCompactPropertyManagerWidget" name="validationWorkflowPropertyManagerWidget" native="true"/>
            </item>
@@ -129,7 +117,7 @@
           </layout>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="2" column="0">
          <widget class="QPushButton" name="reRunButton">
           <property name="toolTip">
            <string>Re-Run Last Process</string>
@@ -143,7 +131,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
+        <item row="2" column="1">
          <widget class="QPushButton" name="runButton">
           <property name="sizePolicy">
            <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
@@ -155,7 +143,7 @@
            <string>Run Process</string>
           </property>
           <property name="text">
-           <string>Run Process Workflow</string>
+           <string>Run Workflow</string>
           </property>
           <property name="icon">
            <iconset resource="../../../../resources.qrc">
@@ -169,7 +157,7 @@
        <attribute name="title">
         <string>Flags</string>
        </attribute>
-       <layout class="QGridLayout" name="gridLayout">
+       <layout class="QGridLayout" name="gridLayout_7">
         <item row="0" column="0">
          <widget class="QComboBox" name="filterTypeComboBox">
           <item>
@@ -189,6 +177,12 @@
         </item>
         <item row="1" column="0" colspan="2">
          <widget class="QTableView" name="tableView">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="contextMenuPolicy">
            <enum>Qt::CustomContextMenu</enum>
           </property>
@@ -231,7 +225,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
+        <item row="3" column="0">
          <widget class="QPushButton" name="historyButton">
           <property name="text">
            <string>Open History</string>
@@ -244,78 +238,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Settings</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout_7">
-        <item row="0" column="0">
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Spatial Rules</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_5">
-           <item row="0" column="0">
-            <widget class="QRadioButton" name="spatialRuleEnforcerRadio">
-             <property name="text">
-              <string>Start/Stop Spatial Rule Enforcer</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="GenericCompactPropertyManagerWidget" name="spatialRulePropertyManagerWidget" native="true"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Attribute Rules</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_4">
-           <item row="0" column="0">
-            <widget class="QRadioButton" name="attributeRuleEnforcerRadio">
-             <property name="text">
-              <string>Start/Stop Attrib&amp;ute Rule Enforcer</string>
-             </property>
-             <property name="checkable">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0" colspan="2">
-            <widget class="AttributeRulesCompactPropertyManagerWidget" name="attributeRulePropertyManagerWidget" native="true"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="title">
-           <string>Validation Workflows</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_6"/>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>119</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
      </widget>
     </item>
    </layout>
@@ -323,27 +245,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QgsCollapsibleGroupBox</class>
-   <extends>QGroupBox</extends>
-   <header>qgscollapsiblegroupbox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>DsgCustomComboBox</class>
    <extends>QWidget</extends>
    <header>DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>GenericCompactPropertyManagerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.genericCompactPropertyManagerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>AttributeRulesCompactPropertyManagerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.DatabasePropertiesWidgets.CompactPropertyWidgets.attributeRulesCompactPropertyManagerWidget.h</header>
    <container>1</container>
   </customwidget>
   <customwidget>

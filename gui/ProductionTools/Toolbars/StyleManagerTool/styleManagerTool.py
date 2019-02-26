@@ -34,6 +34,7 @@ from .....core.Factories.DbFactory.dbFactory import DbFactory
 from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from .....core.Utils.utils import Utils
 from .....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'styleManagerTool.ui'))
@@ -158,10 +159,14 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbParameters['port'] = candidateUri.port()
             dbParameters['user'] = candidateUri.username()
             dbParameters['password'] = candidateUri.password()
-            return dbParameters, 'QPSQL'
-        if currLyr.providerType() == 'spatialite':
+            return dbParameters, DsgEnums.DriverPostGIS
+        elif currLyr.providerType() == 'spatialite':
             dbParameters['dbPath'] = candidateUri.database()
-            return dbParameters, 'QSQLITE'
+            return dbParameters, DsgEnums.DriverSpatiaLite
+        elif currLyr.providerType() == 'ogr':
+            # geopackage provider type is ogr
+            dbParameters['dbPath'] = candidateUri.database()
+            return dbParameters, DsgEnums.DriverGeopackage
         else:
             raise Exception(self.tr('Feature only implemented for PostGIS and Spatialite'))
     
@@ -194,20 +199,13 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             return self.getStyleFromFile(stylePath, className)
     
     def getStyleFromFile(self, stylePath, className):
-        # availableStyles = next(os.walk(stylePath))[2]
-        availableStyles = []
-        for f in os.listdir(stylePath):
-            if '.qml' not in f.lower():
-                continue
-            availableStyles.append(f)
-        styleName = className+'.qml'
-        if styleName in availableStyles:
-            path = os.path.join(stylePath, styleName)
-            qml = self.utils.parseStyle(path)
+        styleName = "{0}.qml".format(className)
+        if styleName.lower() in [f.lower() for f in os.listdir(stylePath)]:
+            qml = self.utils.parseStyle(os.path.join(stylePath, styleName))
             # dsgtools have the right to write on its own directory
             # a temporary file "temp.qml"
             tempPath = os.path.join(stylePath, "temp.qml")
-            with open(tempPath, "w") as f:
+            with open(tempPath, "w", encoding='utf-8') as f:
                 f.writelines(qml)
                 f.close()
             return tempPath

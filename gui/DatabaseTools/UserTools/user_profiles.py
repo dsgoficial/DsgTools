@@ -30,13 +30,13 @@ from qgis.PyQt.QtSql import QSqlQuery
 from qgis.PyQt.QtWidgets import QMenu, QMessageBox
 
 # DSGTools imports
-from DsgTools.Utils.utils import Utils
-from DsgTools.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
-from DsgTools.UserTools.create_profile import CreateProfile
-from DsgTools.UserTools.assign_profiles import AssignProfiles
-from DsgTools.UserTools.create_user import CreateUser
-from DsgTools.UserTools.alter_user_password import AlterUserPassword
-from DsgTools.UserTools.permission_properties import PermissionProperties
+from DsgTools.core.Utils.utils import Utils
+from DsgTools.core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
+from DsgTools.gui.DatabaseTools.UserTools.create_profile import CreateProfile
+from DsgTools.gui.DatabaseTools.UserTools.assign_profiles import AssignProfiles
+from DsgTools.gui.DatabaseTools.UserTools.create_user import CreateUser
+from DsgTools.gui.DatabaseTools.UserTools.alter_user_password import AlterUserPassword
+from DsgTools.gui.DatabaseTools.UserTools.permission_properties import PermissionProperties
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'user_profiles.ui'))

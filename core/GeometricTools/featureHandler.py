@@ -22,12 +22,15 @@
 """
 from __future__ import absolute_import
 from builtins import range
+import itertools
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
-                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, QgsWkbTypes
-from qgis.PyQt.Qt import QObject
+                      QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
+                      QgsCoordinateTransform, QgsWkbTypes, QgsProcessingMultiStepFeedback, QgsVectorLayerUtils
+from qgis.PyQt.Qt import QObject, QVariant
 
 from .geometryHandler import GeometryHandler
 from .attributeHandler import AttributeHandler
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
 class FeatureHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -38,6 +41,8 @@ class FeatureHandler(QObject):
             self.canvas = iface.mapCanvas()
         self.geometryHandler = GeometryHandler(iface)
         self.attributeHandler = AttributeHandler(iface)
+        self.utmGrid = UtmGrid()
+        self.stepsTotal = 0
     
     def reclassifyFeatures(self, featureList, destinationLayer, reclassificationDict, coordinateTransformer, parameterDict):
         newFeatList = []
@@ -78,7 +83,7 @@ class FeatureHandler(QObject):
     
     def getNewFeatureWithoutGeom(self, referenceFeature, lyr):
         newFeat = QgsFeature(referenceFeature)
-        provider = lyr.dataProvider()
+        # provider = lyr.dataProvider()
         for idx in lyr.primaryKeyAttributes():
             newFeat.setAttribute(idx, None)
         return newFeat
@@ -87,7 +92,7 @@ class FeatureHandler(QObject):
         parameterDict = {} if parameterDict is None else parameterDict
         geomList = []
         for feat in featList:
-            geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict)
+            geomList += self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
         geomToUpdate = None
         newFeatList = []
         if not geomList:
@@ -101,7 +106,17 @@ class FeatureHandler(QObject):
                 newFeat.setGeometry(geom)
                 newFeatList.append(newFeat)
         return geomToUpdate, newFeatList, False
-    
+
+    def handleConvertedFeature(self, feat, lyr, parameterDict = None, coordinateTransformer = None):
+        parameterDict = {} if parameterDict is None else parameterDict
+        geomList = self.geometryHandler.handleGeometry(feat.geometry(), parameterDict, coordinateTransformer)
+        newFeatSet = set()
+        for geom in geomList:
+            attrMap = { idx : feat[field.name()] for idx, field in enumerate(feat.fields()) if idx not in lyr.primaryKeyAttributes()}
+            newFeat = QgsVectorLayerUtils.createFeature(lyr, geom, attrMap)
+            newFeatSet.add(newFeat)
+        return newFeatSet
+
     def getFeatureOuterShellAndHoles(self, feat, isMulti):
         geom = feat.geometry()
         
@@ -151,3 +166,35 @@ class FeatureHandler(QObject):
         for id, geom in changeDict.items():
             lyr.changeGeometry(id, geom)
     
+    def getNewGridFeat(self, index, geom, fields):
+        feat = QgsFeature(fields)
+        feat['inom'] = index
+        feat['mi'] = self.utmGrid.get_MI_MIR_from_inom(index)
+        feat.setGeometry(geom)
+        return feat
+    
+    def getSystematicGridFeatures(self, featureList, index, stopScale, coordinateTransformer, fields, feedback=None):
+        if feedback is not None and feedback.isCanceled():
+            return
+        scale = self.utmGrid.getScale(index)
+        if (self.stepsTotal == 0):
+            self.stepsTotal = self.utmGrid.computeNumberOfSteps(self.utmGrid.getScaleIdFromScale(scale), self.utmGrid.getScaleIdFromScale(stopScale))
+            self.stepsDone = 0
+            self.stepPerc = 100/self.stepsTotal
+        if scale == stopScale:
+            frameGeom = self.utmGrid.getQgsPolygonFrame(index)
+            frameGeom.transform(coordinateTransformer)
+            newFeat = self.getNewGridFeat(index, frameGeom, fields)
+            featureList.append(newFeat)
+            self.stepsDone += 1
+            feedback.setProgress(self.stepPerc * self.stepsDone)
+        else:
+            scaleId = self.utmGrid.getScaleIdFromiNomen(index)
+            sufixIterator = itertools.chain.from_iterable(self.utmGrid.scaleText[scaleId+1]) #flatten list into one single list
+            for line in sufixIterator:
+                if feedback is not None:
+                    if feedback.isCanceled():
+                        break
+                inomen2 = '{oldInomem}-{newPart}'.format(oldInomem=index, newPart=line)
+                self.getSystematicGridFeatures(featureList, inomen2, stopScale, coordinateTransformer, fields, feedback=feedback)
+

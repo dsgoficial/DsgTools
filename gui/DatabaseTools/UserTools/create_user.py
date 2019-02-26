@@ -76,7 +76,7 @@ class CreateUser(QtWidgets.QDialog, FORM_CLASS):
         try:
             self.abstractDb.createUser(user, password, isSuperUser)
         except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
+            QtWidgets.QMessageBox.critical(self, self.tr('Critical!'), ':'.join(e.args))
             self.refreshScreen()
             return
 

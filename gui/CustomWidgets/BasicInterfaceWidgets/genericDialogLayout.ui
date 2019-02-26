@@ -14,12 +14,6 @@
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_3">
-   <item row="1" column="0">
-    <layout class="QVBoxLayout" name="outVLayout"/>
-   </item>
-   <item row="1" column="1">
-    <layout class="QHBoxLayout" name="outHLayout"/>
-   </item>
    <item row="1" column="2">
     <spacer name="horizontalSpacer">
      <property name="orientation">
@@ -32,6 +26,9 @@
       </size>
      </property>
     </spacer>
+   </item>
+   <item row="1" column="1">
+    <layout class="QHBoxLayout" name="outHLayout"/>
    </item>
    <item row="1" column="3">
     <widget class="QWidget" name="buttonWidget" native="true">
@@ -59,6 +56,9 @@
      </layout>
     </widget>
    </item>
+   <item row="1" column="0">
+    <layout class="QVBoxLayout" name="outVLayout"/>
+   </item>
    <item row="0" column="0" colspan="4">
     <widget class="QScrollArea" name="scrollArea">
      <property name="widgetResizable">
@@ -75,10 +75,10 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="0">
-        <layout class="QVBoxLayout" name="vLayout"/>
+        <layout class="QHBoxLayout" name="hLayout"/>
        </item>
        <item row="1" column="0">
-        <layout class="QHBoxLayout" name="hLayout"/>
+        <layout class="QVBoxLayout" name="vLayout"/>
        </item>
        <item row="2" column="0">
         <spacer name="verticalSpacer">
@@ -101,9 +101,6 @@
   <zorder>horizontalSpacer</zorder>
   <zorder>buttonWidget</zorder>
   <zorder>scrollArea</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder>verticalLayoutWidget_2</zorder>
-  <zorder>horizontalLayoutWidget_2</zorder>
  </widget>
  <resources/>
  <connections/>

@@ -20,29 +20,25 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class MergeLinesAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
@@ -51,6 +47,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
     IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
     IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     IGNORE_NETWORK = 'IGNORE_NETWORK'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -101,23 +98,60 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 defaultValue=False
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer with merged lines')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        algRunner = AlgRunner()
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
-        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
-        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
-        ignoreNetwork = self.parameterAsBool(parameters, self.IGNORE_NETWORK, context)
+        inputLyr = self.parameterAsVectorLayer(
+            parameters,
+            self.INPUT,
+            context
+            )
+        onlySelected = self.parameterAsBool(
+            parameters,
+            self.SELECTED,
+            context
+            )
+        attributeBlackList = self.parameterAsFields(
+            parameters,
+            self.ATTRIBUTE_BLACK_LIST,
+            context
+            )
+        ignoreVirtual = self.parameterAsBool(
+            parameters,
+            self.IGNORE_VIRTUAL_FIELDS,
+            context
+            )
+        ignorePK = self.parameterAsBool(
+            parameters,
+            self.IGNORE_PK_FIELDS,
+            context
+            )
+        ignoreNetwork = self.parameterAsBool(
+            parameters,
+            self.IGNORE_NETWORK,
+            context
+            )
 
-        layerHandler.mergeLinesOnLayer(inputLyr, feedback = feedback, onlySelected=onlySelected, ignoreVirtualFields = ignoreVirtual, attributeBlackList = attributeBlackList, excludePrimaryKeys=ignorePK, ignoreNetwork = ignoreNetwork)
+        layerHandler.mergeLinesOnLayer(
+            inputLyr,
+            feedback=feedback,
+            onlySelected=onlySelected,
+            ignoreVirtualFields=ignoreVirtual,
+            attributeBlackList=attributeBlackList,
+            excludePrimaryKeys=ignorePK,
+            ignoreNetwork=ignoreNetwork
+            )
 
-        return {self.INPUT: inputLyr}
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """
@@ -154,7 +188,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('MergeLinesAlgorithm', string)
 
     def createInstance(self):
         return MergeLinesAlgorithm()

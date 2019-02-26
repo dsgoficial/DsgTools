@@ -25,15 +25,20 @@ import os
 
 from .spatialiteSqlGenerator import SpatialiteSqlGenerator
 from .postgisSqlGenerator import PostGISSqlGenerator
+from .geopackageSqlGenerator import GeopackageSqlGenerator
+from DsgTools.core.dsgEnums import DsgEnums
+
 
 class SqlGeneratorFactory(object):
-    def createSqlGenerator(self, isSpatialite):
+    def createSqlGenerator(self, driver):
         """
         Returns the specific sql generator
-        :param isSpatialite:
+        :param driver: (DsgEnums) driver code.
         :return:
         """
-        if isSpatialite:
-            return SpatialiteSqlGenerator()
-        else:
-            return PostGISSqlGenerator()
+        genDict = {
+            DsgEnums.DriverGeopackage : lambda : GeopackageSqlGenerator(),
+            DsgEnums.DriverSpatiaLite : lambda : SpatialiteSqlGenerator(),
+            DsgEnums.DriverPostGIS : lambda : PostGISSqlGenerator()
+        }
+        return genDict[driver]()

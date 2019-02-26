@@ -25,6 +25,9 @@ from builtins import object
 import os.path
 import sys
 
+from qgis.PyQt.QtCore import pyqtSignal
+from qgis.core import QgsVectorLayer
+
 from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
 from .Acquisition.acquisition import Acquisition
 from .FlipLineTool.flipLineTool import FlipLine
@@ -32,6 +35,9 @@ from .FreeHandTool.freeHandMain import FreeHandMain
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
+    # signals to replicate current layer's editing started/stopped signal
+    editingStarted = pyqtSignal()
+    editingStopped = pyqtSignal()
 
     def __init__(self, manager, iface, parentMenu = None, toolbar = None):
         """Constructor.
@@ -42,7 +48,11 @@ class MapToolsGuiManager(QObject):
         self.parentMenu = parentMenu
         self.toolbar = toolbar
         self.iconBasePath = ':/plugins/DsgTools/icons/'
-    
+        # initiate current layer and make sure signals are connected
+        self.currentLayer = None
+        self.resetCurrentLayerSignals()
+        self.iface.currentLayerChanged.connect(self.resetCurrentLayerSignals)
+
     def initGui(self):
         #adding generic selection tool
         self.genericTool = GenericSelectionTool(self.iface)
@@ -54,13 +64,52 @@ class MapToolsGuiManager(QObject):
         #adding acquisition
         self.acquisition = Acquisition(self.iface)
         self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.acquisition.setToolEnabled()
         #adding free hand tool
         self.freeHandAcquisiton = FreeHandMain(self.iface)
         self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
-        
-    
+        self.freeHandAcquisiton.acquisitionFreeController.setToolEnabled()
+        self.initiateToolsSignals()
+
+    def resetCurrentLayerSignals(self):
+        """
+        Resets all signals used from current layer connected to maptools to current selection.
+        """
+        if isinstance(self.currentLayer, QgsVectorLayer):
+            # disconnect previous selection's signals, if any
+            try:
+                self.currentLayer.editingStarted.disconnect(self.editingStarted)
+                self.currentLayer.editingStopped.disconnect(self.editingStopped)
+            except:
+                pass
+        # now retrieve current selection and reset signal connection
+        self.currentLayer = self.iface.mapCanvas().currentLayer()
+        if isinstance(self.currentLayer, QgsVectorLayer):
+            self.currentLayer.editingStarted.connect(self.editingStarted)
+            self.currentLayer.editingStopped.connect(self.editingStopped)
+
+    def initiateToolsSignals(self):
+        """
+        Connects all tools' signals.
+        """
+        for tool in [self.flipLineTool, self.acquisition, self.freeHandAcquisiton.acquisitionFreeController]:
+            # connect current layer changed signal to all tools that use it
+            self.iface.currentLayerChanged.connect(tool.setToolEnabled)
+            # connect editing started/stopped signals to all tools that use it
+            self.editingStarted.connect(tool.setToolEnabled)
+            self.editingStopped.connect(tool.setToolEnabled)
+            # connect edit button toggling signal to all tools that use it
+            self.iface.actionToggleEditing().triggered.connect(tool.setToolEnabled)
+        # free hand has its own signal connected when started
+        self.freeHandAcquisiton.acquisitionFreeController.actionAcquisitionFree.triggered.connect(\
+                self.freeHandAcquisiton.acquisitionFreeController.activateTool)
+        self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.acquisitionFinished.connect(\
+                self.freeHandAcquisiton.acquisitionFreeController.createFeature)
+        self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.reshapeLineCreated.connect(\
+                self.freeHandAcquisiton.acquisitionFreeController.reshapeSimplify)
+
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
-    
+
     def unload(self):
         self.genericTool.unload()

@@ -1082,7 +1082,7 @@ class PostGISSqlGenerator(SqlGenerator):
             geomType = paramDict['geomType']
 
         if geomType == 'MULTIPOLYGON':
-            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_SetSRID(ST_Multi('{2}'),{3}), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
+            sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform(ST_Multi(ST_GeomFromWKB({2},{3})), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         else:
             sql = """INSERT INTO "{5}"."{6}" ({7},{8},{9}) VALUES ('{0}','{1}',ST_Transform((ST_SetSRID( (ST_Dump('{2}')).geom,{3})), {4}))""".format(mi, inom, frame, geoSrid, srid, tableSchema, tableName, miAttr, inomAttr, geometryColumn)
         return sql
@@ -1113,6 +1113,8 @@ class PostGISSqlGenerator(SqlGenerator):
     def alterSearchPath(self, dbName, version):
         if version == '2.1.3':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'cb\',\'complexos\',\'dominios\';'.format(dbName)
+        elif version == '2.1.3 Pro':
+            sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'edgv\',\'dominios\';'.format(dbName)
         elif version == '3.0':
             sql = 'ALTER DATABASE "{0}" SET search_path = "$user", public, topology,\'edgv\',\'complexos\',\'dominios\';'.format(dbName)
         elif version == 'FTer_2a_Ed':
@@ -1167,7 +1169,7 @@ class PostGISSqlGenerator(SqlGenerator):
         elif settingType == 'ValidationWorkflow':
             tableName = 'validation_workflow'
         else:
-            raise Exception(self.tr('Setting type not defined!'))
+            raise Exception('Setting type not defined!')
         return tableName
 
     def insertSettingIntoAdminDb(self, settingType, name, jsondict, edgvversion):
@@ -1743,4 +1745,15 @@ class PostGISSqlGenerator(SqlGenerator):
     
     def getFilterJsonList(self, domainName):
         sql = """select row_to_json(a) from (select * from dominios.{0}) as a """.format(domainName)
+        return sql
+
+    def databaseInfo(self):
+        """
+        Gets database information to be displayed.
+        :return: (str) SQL to executed.
+        """
+        sql = """
+            SELECT f_table_schema, f_table_name, f_geometry_column, type, srid
+                FROM public.geometry_columns
+                ORDER BY f_table_schema, f_table_name ASC"""
         return sql

@@ -20,36 +20,34 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterDistance,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance)
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -78,6 +76,12 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
                 defaultValue=0.0001
             )
         )
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer with features snapped to grid')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -87,24 +91,56 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                    )
+                )
+        onlySelected = self.parameterAsBool(
+            parameters,
+            self.SELECTED,
+            context
+            )
+        tol = self.parameterAsDouble(
+            parameters,
+            self.TOLERANCE,
+            context
+            )
+
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
+        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer(
+            [inputLyr],
+            geomType=inputLyr.wkbType(),
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback
+            )
         
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Snapping geometries from layer {input} to grid with size {tol}...').format(input=inputLyr.name(), tol=tol))
-        snappedLayer = algRunner.runSnapToGrid(auxLyr, tol, context, feedback=multiStepFeedback)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Snapping geometries from layer {input} to grid with size {tol}...'
+                ).format(input=inputLyr.name(), tol=tol)
+            )
+        snappedLayer = algRunner.runSnapToGrid(
+            auxLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback
+            )
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], snappedLayer, feedback=multiStepFeedback, onlySelected=onlySelected)
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            [inputLyr],
+            snappedLayer,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
-        return {self.INPUT: inputLyr}
+        return {self.OUTPUT: inputLyr}
 
     def name(self):
         """
@@ -141,7 +177,7 @@ class SnapToGridAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('SnapToGridAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return SnapToGridAndUpdateAlgorithm()

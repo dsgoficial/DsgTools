@@ -33,6 +33,7 @@ from .BDGExTools.bdgexGuiManager import BDGExGuiManager
 from .LayerTools.layerToolsGuiManager import LayerToolsGuiManager
 from .ProductionTools.productionToolsGuiManager import ProductionToolsGuiManager
 from .DatabaseTools.databaseManager import DatabaseGuiManager
+from .ServerTools.serverToolsGuiManager import ServerToolsGuiManager
 from .AboutAndFurtherInfo.aboutAndFurtherInfoGuiManager import AboutAndFurtherInfoGuiManager
 
 class GuiManager(QObject):
@@ -156,14 +157,16 @@ class GuiManager(QObject):
         return action
     
     def instantiateManagers(self):
+        self.serverToolsGuiManager = ServerToolsGuiManager(self, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
+        self.managerList.append(self.serverToolsGuiManager)
         self.databaseGuiManager = DatabaseGuiManager(self, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
         self.managerList.append(self.databaseGuiManager)
         self.layerToolsGuiManager = LayerToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.layerToolsGuiManager)
-        self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
-        self.managerList.append(self.bdgexGuiManager)
         self.productionToolsGuiManager = ProductionToolsGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.productionToolsGuiManager)
+        self.bdgexGuiManager = BDGExGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
+        self.managerList.append(self.bdgexGuiManager)
         self.aboutAndFurtherGuiManager = AboutAndFurtherInfoGuiManager(self, self.iface, parentMenu = self.menu, toolbar = self.toolbar)
         self.managerList.append(self.aboutAndFurtherGuiManager)
     

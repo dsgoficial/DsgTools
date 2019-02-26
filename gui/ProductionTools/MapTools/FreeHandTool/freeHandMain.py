@@ -45,6 +45,7 @@ class FreeHandMain(QObject):
             add_to_menu=False,
             add_to_toolbar=True,
             withShortcut=True,
+            tooltip = self.tr('DSGTools: Free Hand Acquisition\nAcquires polygon or linestring features with mouse movement.\nIf CTRL is held, overlapped feature is reshaped.'),
             parentToolbar=parentMenu
         )
         self.setAction(action)
@@ -64,7 +65,6 @@ class FreeHandMain(QObject):
     def registerActionOnController(self, action):
         acquisitionFreeController = self.getAcquisitionFreeController()
         acquisitionFreeController.setActionAcquisitionFree(action)
-        acquisitionFreeController.connectToolSignals()
 
     def setAction(self, action):
         self.registerActionOnController(action)

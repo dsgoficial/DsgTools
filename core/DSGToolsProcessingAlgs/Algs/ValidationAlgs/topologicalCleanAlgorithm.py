@@ -20,30 +20,26 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class TopologicalCleanAlgorithm(ValidationAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
@@ -51,7 +47,6 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
     TOLERANCE = 'TOLERANCE'
     MINAREA = 'MINAREA'
     FLAGS = 'FLAGS'
-    
 
     def initAlgorithm(self, config):
         """
@@ -88,7 +83,6 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
                 type=QgsProcessingParameterNumber.Double
             )
         )
-        
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.FLAGS,
@@ -105,30 +99,68 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
 
         inputLyrList = self.parameterAsLayerList(parameters, self.INPUTLAYERS, context)
         if inputLyrList is None or inputLyrList == []:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUTLAYERS))
-        onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        snap = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        minArea = self.parameterAsDouble(parameters, self.MINAREA, context)
-        self.prepareFlagSink(parameters, inputLyrList[0], QgsWkbTypes.MultiPolygon, context)
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUTLAYERS
+                    )
+                )
+        onlySelected = self.parameterAsBool(
+            parameters,
+            self.SELECTED,
+            context
+            )
+        snap = self.parameterAsDouble(
+            parameters,
+            self.TOLERANCE,
+            context
+            )
+        minArea = self.parameterAsDouble(
+            parameters,
+            self.MINAREA,
+            context
+            )
+        self.prepareFlagSink(
+            parameters,
+            inputLyrList[0],
+            QgsWkbTypes.MultiPolygon,
+            context
+            )
 
         multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
         multiStepFeedback.setCurrentStep(0)
         multiStepFeedback.pushInfo(self.tr('Building unified layer...'))
-        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, geomType=QgsWkbTypes.MultiPolygon, onlySelected = onlySelected, feedback=multiStepFeedback)
-        
+        coverage = layerHandler.createAndPopulateUnifiedVectorLayer(
+            inputLyrList,
+            geomType=QgsWkbTypes.MultiPolygon,
+            onlySelected=onlySelected,
+            feedback=multiStepFeedback
+            )
+
         multiStepFeedback.setCurrentStep(1)
         multiStepFeedback.pushInfo(self.tr('Running clean on unified layer...'))
-        cleanedCoverage, error = algRunner.runClean(coverage, \
-                                                    [algRunner.RMSA, algRunner.Break, algRunner.RmDupl, algRunner.RmDangle], \
-                                                    context, \
-                                                    returnError=True, \
-                                                    snap=snap, \
-                                                    minArea=minArea,
-                                                    feedback=multiStepFeedback)
+        cleanedCoverage, error = algRunner.runClean(
+            coverage,
+            [
+                algRunner.RMSA,
+                algRunner.Break,
+                algRunner.RmDupl,
+                algRunner.RmDangle
+                ],
+            context,
+            returnError=True,
+            snap=snap,
+            minArea=minArea,
+            feedback=multiStepFeedback
+            )
 
         multiStepFeedback.setCurrentStep(2)
         multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer(inputLyrList, cleanedCoverage, feedback=multiStepFeedback)
+        layerHandler.updateOriginalLayersFromUnifiedLayer(
+            inputLyrList,
+            cleanedCoverage,
+            feedback=multiStepFeedback
+            )
         self.flagCoverageIssues(cleanedCoverage, error, feedback)
 
         return {self.INPUTLAYERS : inputLyrList, self.FLAGS : self.flagSink}
@@ -178,7 +210,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Topological Clean Geometries')
+        return self.tr('Topological Clean Polygons')
 
     def group(self):
         """
@@ -198,7 +230,7 @@ class TopologicalCleanAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Topological Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('TopologicalCleanAlgorithm', string)
 
     def createInstance(self):
         return TopologicalCleanAlgorithm()

@@ -40,7 +40,6 @@ from functools import partial
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
 class GenericSelectionTool(QgsMapTool):
-    finished = QtCore.pyqtSignal(list)
     def __init__(self, iface):
         """
         Tool Behaviours: (all behaviours start edition, except for rectangle one)

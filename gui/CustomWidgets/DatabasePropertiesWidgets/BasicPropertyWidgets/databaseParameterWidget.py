@@ -195,7 +195,7 @@ class DatabaseParameterWidget(QtWidgets.QWidget, FORM_CLASS):
             return paramDict           
         else:
             paramDict = dict()
-            paramDict['templateName'] = self.comboBoxPostgis.currentText().split(' (')[0]
+            paramDict['templateName'] = self.comboBoxPostgis.currentDb()
             paramDict['isTemplateEdgv'] = False
             if self.useFrame:
                 selected = self.tableDict[self.frameComboBox.currentText()]

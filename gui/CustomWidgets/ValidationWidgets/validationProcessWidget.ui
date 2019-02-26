@@ -6,34 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>323</width>
-    <height>43</height>
+    <width>273</width>
+    <height>79</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="leftMargin">
-    <number>12</number>
-   </property>
-   <property name="topMargin">
-    <number>6</number>
-   </property>
-   <property name="rightMargin">
-    <number>12</number>
-   </property>
-   <property name="bottomMargin">
-    <number>6</number>
-   </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Validation Process</string>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
     <widget class="DsgCustomComboBox" name="validationProcessComboBox" native="true">
      <property name="sizePolicy">
       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -49,26 +30,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2">
-    <widget class="QPushButton" name="parametersPushButton">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>25</width>
-       <height>25</height>
-      </size>
-     </property>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="haltIfFlagsRaisedCheckBox">
      <property name="text">
-      <string/>
-     </property>
-     <property name="icon">
-      <iconset resource="../../../resources.qrc">
-       <normaloff>:/plugins/DsgTools/icons/config.png</normaloff>:/plugins/DsgTools/icons/config.png</iconset>
+      <string>Halt if flags are raised</string>
      </property>
     </widget>
    </item>

@@ -21,15 +21,16 @@
 """
 
 from PyQt5.QtCore import QCoreApplication
+
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterBoolean,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
 
 from ...algRunner import AlgRunner
 from .validationAlgorithm import ValidationAlgorithm
@@ -40,6 +41,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
     INPUT = 'INPUT'
     SELECTED = 'SELECTED'
     TOLERANCE = 'TOLERANCE'
+    OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
         """
@@ -69,10 +71,10 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             )
         )
 
-        self.addParameter(
-            QgsProcessingParameterFeatureSink(
-                self.FLAGS,
-                self.tr('{0} Flags').format(self.displayName())
+        self.addOutput(
+            QgsProcessingOutputVectorLayer(
+                self.OUTPUT,
+                self.tr('Original layer without small polygons')
             )
         )
 
@@ -83,28 +85,43 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         algRunner = AlgRunner()
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(
+                    parameters,
+                    self.INPUT
+                    )
+                )
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Identifying small polygons in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallPolygons(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Identifying small polygons in layer {0}...'
+                ).format(inputLyr.name()))
+        flagLyr = algRunner.runIdentifySmallPolygons(
+            inputLyr,
+            tol,
+            context,
+            feedback=multiStepFeedback,
+            onlySelected=onlySelected
+            )
 
         multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Removing small polygons from layer {0}...').format(inputLyr.name()))
+        multiStepFeedback.pushInfo(
+            self.tr(
+                'Removing small polygons from layer {0}...'
+                ).format(inputLyr.name()))
         self.removeFeatures(inputLyr, flagLyr, multiStepFeedback)
 
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Identifying remaining small polygons in layer {0}...').format(inputLyr.name()))
-        flagLyr = algRunner.runIdentifySmallPolygons(inputLyr, tol, context, feedback = multiStepFeedback, onlySelected=onlySelected)
+        return {self.OUTPUT: inputLyr}
 
-        return {self.INPUT: inputLyr, self.FLAGS : flagLyr}
-    
-    def removeFeatures(self, inputLyr, flagLyr, feedback, progressDelta = 100):
+    def removeFeatures(self, inputLyr, flagLyr, feedback):
+        """
+        Parses features from flagLyr to get ids from inputLyr to remove.
+        """
         featureList, total = self.getIteratorAndFeatureCount(flagLyr)
-        currentProgress = feedback.progress()
-        localTotal = progressDelta/total if total else 0
+        localTotal = 100/total if total else 0
         inputLyr.startEditing()
         idRemoveList = []
         for current, feat in enumerate(featureList):
@@ -112,7 +129,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             idRemoveList += [int(feat['reason'].split('=')[-1].split(' ')[0])]
-            feedback.setProgress(currentProgress + (current * localTotal))
+            feedback.setProgress(current * localTotal)
         inputLyr.deleteFeatures(idRemoveList)
         
 
@@ -151,7 +168,7 @@ class RemoveSmallPolygonsAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Correction Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('RemoveSmallPolygonsAlgorithm', string)
 
     def createInstance(self):
         return RemoveSmallPolygonsAlgorithm()

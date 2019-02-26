@@ -36,7 +36,7 @@ from qgis.PyQt.QtGui import QCursor
 import qgis as qgis
 
 #DsgTools imports
-from DsgTools.Factories.LayerFactory.layerFactory import LayerFactory
+from DsgTools.core.Factories.LayerFactory.layerFactory import LayerFactory
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'load_by_class_base.ui'))

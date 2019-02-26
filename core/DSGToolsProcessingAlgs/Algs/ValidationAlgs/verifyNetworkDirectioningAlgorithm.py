@@ -20,39 +20,39 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-from ....dsgEnums import DsgEnums
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.networkHandler import NetworkHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterDistance,
-                       QgsProcessingException)
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsSpatialIndex, QgsWkbTypes)
+
+from ....dsgEnums import DsgEnums
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
     NETWORK_LAYER = 'NETWORK_LAYER'
+    ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
+    IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
+    IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
     NODE_LAYER = 'NODE_LAYER'
     SINK_LAYER = 'SINK_LAYER'
+    SPILLWAY_LAYER = 'SPILLWAY_LAYER'
     REF_LAYER = 'REF_LAYER'
     WATER_BODY_LAYERS = 'WATER_BODY_LAYERS'
     MAX_CYCLES = 'MAX_CYCLES'
@@ -60,6 +60,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
     SELECT_ALL_VALID = 'SELECT_ALL_VALID'
     FLAGS = 'FLAGS'
     LINE_FLAGS = 'LINE_FLAGS'
+    DITCH_LAYER = 'DITCH_LAYER'
 
     def initAlgorithm(self, config):
         """
@@ -70,6 +71,31 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 self.NETWORK_LAYER,
                 self.tr('Network layer'),
                 [QgsProcessing.TypeVectorLine]
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterField(
+                self.ATTRIBUTE_BLACK_LIST,
+                self.tr('Fields to ignore'),
+                None,
+                'NETWORK_LAYER',
+                QgsProcessingParameterField.Any,
+                allowMultiple=True,
+                optional = True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_VIRTUAL_FIELDS,
+                self.tr('Ignore virtual fields'),
+                defaultValue=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.IGNORE_PK_FIELDS,
+                self.tr('Ignore primary key fields'),
+                defaultValue=True
             )
         )
         self.addParameter(
@@ -95,10 +121,26 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.SPILLWAY_LAYER,
+                self.tr('Spillway layer'),
+                [QgsProcessing.TypeVectorPoint],
+                optional=True
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterMultipleLayers(
                 self.WATER_BODY_LAYERS,
                 self.tr('Water body layers'),
                 QgsProcessing.TypeVectorPolygon,
+                optional=True
+            )
+        )
+        self.addParameter(
+            QgsProcessingParameterVectorLayer(
+                self.DITCH_LAYER,
+                self.tr('Ditch layer'),
+                [QgsProcessing.TypeVectorLine],
                 optional=True
             )
         )
@@ -138,9 +180,6 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 self.tr('{0} line errors').format(self.displayName())
             )
         )
-        self.nodeIdDict = None
-        self.nodeDict = None
-        self.nodeTypeDict = None
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -149,7 +188,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         #get the network handler
         layerHandler = LayerHandler()
         networkHandler = NetworkHandler()
-        self.nodeTypeNameDict = networkHandler.nodeTypeDict
+        algRunner = AlgRunner()
         # get network layer
         networkLayer = self.parameterAsLayer(parameters, self.NETWORK_LAYER, context)
         if networkLayer is None:
@@ -162,100 +201,77 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         networkNodeLayer.startEditing()
         # get water sink layer
         waterSinkLayer = self.parameterAsLayer(parameters, self.SINK_LAYER, context)
+        # get spillway layer
+        spillwayLayer = self.parameterAsLayer(parameters, self.SPILLWAY_LAYER, context)
         # get frame layer
         frameLayer = self.parameterAsLayer(parameters, self.REF_LAYER, context)
         if frameLayer is None:
             raise QgsProcessingException(self.invalidSourceError(parameters, self.REF_LAYER))
-        frame = layerHandler.getFrameOutterBounds(frameLayer, self.algRunner, context, feedback=feedback)
-        # prepare point flag sink
-        self.prepareFlagSink(parameters, networkLayer, networkLayer.wkbType(), context)
+        # get ditch layer
+        ditchLayer = self.parameterAsLayer(parameters, self.DITCH_LAYER, context)
+        attributeBlackList = self.parameterAsFields(parameters, self.ATTRIBUTE_BLACK_LIST, context)
+        ignoreVirtual = self.parameterAsBool(parameters, self.IGNORE_VIRTUAL_FIELDS, context)
+        ignorePK = self.parameterAsBool(parameters, self.IGNORE_PK_FIELDS, context)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        frame = layerHandler.getFrameOutterBounds(frameLayer, algRunner, context, feedback=multiStepFeedback)
         # get search radius
         searchRadius = self.parameterAsDouble(parameters, self.SEARCH_RADIUS, context)
         selectValid = self.parameterAsBool(parameters, self.SELECT_ALL_VALID, context)
-        networkLayerGeomType = networkLayer.geometryType()
+        max_amount_cycles = self.parameterAsInt(parameters, self.MAX_CYCLES, context)
+        nodeFlags, featList, nodeIdDict = networkHandler.verifyNetworkDirectioning(
+            networkLayer,
+            networkNodeLayer,
+            frame,
+            searchRadius,
+            waterBodyClasses=waterBodyClasses,
+            waterSinkLayer=waterSinkLayer,
+            spillwayLayer=spillwayLayer,
+            max_amount_cycles=max_amount_cycles,
+            feedback=multiStepFeedback,
+            selectValid=selectValid,
+            ditchLayer=ditchLayer,
+            attributeBlackList=attributeBlackList,
+            excludePrimaryKeys=ignorePK,
+            ignoreVirtualFields=ignoreVirtual
+        )
+        multiStepFeedback.setCurrentStep(1)
+        #these are counted as one set of operations
+        flag_line_sink_id = self.addFeaturesToFlagLineSink(featList, parameters, networkLayer, context)
+        self.prepareFlagSink(parameters, networkLayer, QgsWkbTypes.Point, context)
+        self.buildFlagList(nodeFlags, networkLayer, nodeIdDict, multiStepFeedback)
 
-        self.nodeDict = networkHandler.identifyAllNodes(networkLayer=networkLayer)
-        # declare reclassification function from createNetworkNodesProcess object - parameter is [node, nodeTypeDict] 
-        self.classifyNode = lambda x : networkHandler.nodeType(nodePoint=x[0], networkLayer=networkLayer, frameLyrContourList=frame, \
-                                    waterBodiesLayers=waterBodyClasses, searchRadius=searchRadius, waterSinkLayer=waterSinkLayer, \
-                                    nodeTypeDict=x[1], networkLayerGeomType=networkLayerGeomType)
-        # update createNetworkNodesProcess object node dictionary
-        networkHandler.nodeDict = self.nodeDict
-        self.nodeTypeDict, self.nodeIdDict = networkHandler.getNodeTypeDictFromNodeLayer(networkNodeLayer=networkNodeLayer)
-        # initiate nodes, invalid/valid lines dictionaries
-        nodeFlags, inval, val = dict(), dict(), dict()
-        # cycle count start
-        cycleCount = 0
-        # get max amount of orientation cycles
-        MAX_AMOUNT_CYCLES = self.parameterAsInteger(parameters, self.MAX_CYCLES, context)
-        MAX_AMOUNT_CYCLES = MAX_AMOUNT_CYCLES if MAX_AMOUNT_CYCLES > 0 else 1
-        # validation method FINALLY starts...
-        # to speed up modifications made to layers
-        multiStepFeedback = QgsProcessingMultiStepFeedback(MAX_AMOUNT_CYCLES, feedback)
-        multiStepFeedback.setCurrentStep(cycleCount)
-        networkNodeLayer.beginEditCommand('Reclassify Nodes')
-        networkLayer.beginEditCommand('Flip/Merge Lines')
-        while True:
-            nodeFlags_, inval_, val_ = networkHandler.directNetwork(networkLayer=networkLayer, nodeLayer=networkNodeLayer)
-            cycleCount += 1
-            # Log amount of cycles completed
-            cycleCountLog = self.tr("Cycle {0}/{1} completed.").format(cycleCount, MAX_AMOUNT_CYCLES)
-            multiStepFeedback.pushInfo(cycleCountLog)
-            multiStepFeedback.setCurrentStep(cycleCount)
-            self.reclassifyNodeType = dict()
-            # stop conditions: max amount of cycles exceeded, new flags is the same as previous flags (there are no new issues) and no change
-            # change to valid lines list was made (meaning that the algorithm did not change network state) or no flags found
-            if (cycleCount == MAX_AMOUNT_CYCLES) or (not nodeFlags_) or \
-            (set(nodeFlags.keys()) == set(nodeFlags_.keys()) and val == val_):
-                # copy values to final dict
-                nodeFlags, inval, val = nodeFlags_, inval_, val_
-                # no more modifications to those layers will be done
-                networkLayer.endEditCommand()
-                networkNodeLayer.endEditCommand()
-                # try to load auxiliary line layer to fill it with invalid lines
-                flag_line_sink_id = self.createFlagLineSink(networkLayer, val, inval, networkHandler, parameters, networkLayer, context)
-                invalidLinesLog = self.tr("Invalid lines were exposed in layer {0}).").format(self.tr('{0} line errors').format(self.displayName()))
-                multiStepFeedback.setCurrentStep(invalidLinesLog)
-                vLines = val.keys()
-                iLines = inval.keys()
-                intersection = set(vLines) & set(iLines)
-                if intersection:
-                    map(val.pop, intersection)
-                    # remove unnecessary variables
-                    del vLines, iLines, intersection
-                break
-            # for the next iterations
-            nodeFlags, inval, val = nodeFlags_, inval_, val_
-            # pop all nodes to be popped and reset list
-            for node in networkHandler.nodesToPop:
-                # those were nodes connected to lines that were merged and now are no longer to be used
-                networkHandler.nodeDict.pop(node, None)
-                networkHandler.nodeDict.pop(node, None)
-            networkHandler.nodesToPop = []
-        if selectValid:
-            networkHandler.setSelectedFeatures(list(val.keys()))
-        percValid = float(len(val))*100.0/float(networkLayer.featureCount()) if networkLayer.featureCount() else 0
-        if nodeFlags:
-            msg = self.tr('{0} nodes may be invalid ({1:.2f}' + '% of network is well directed). Check flags.')\
-                        .format(len(nodeFlags), percValid)
-        else:
-            msg = self.tr('{1:.2f}' + '% of network is well directed.')\
-                        .format(len(nodeFlags), percValid)
-        multiStepFeedback.pushInfo(msg)
-        self.buildFlagList(nodeFlags, networkLayer, multiStepFeedback)
         return {self.NETWORK_LAYER : networkLayer, self.FLAGS : self.flag_id, self.LINE_FLAGS : flag_line_sink_id}
 
-    def buildFlagList(self, nodeFlags, source, feedback):
+    def addFeaturesToFlagLineSink(self, featList, parameters, source, context):
+        """
+        Adds line flags raised by networkHandler to flag line sink.
+        """
+        flag_line_sink, flag_line_sink_id = self.prepareAndReturnFlagSink(
+                                                                            parameters,
+                                                                            source,
+                                                                            QgsWkbTypes.LineString,
+                                                                            context,
+                                                                            self.LINE_FLAGS
+                                                                        )
+        flag_line_sink.addFeatures(featList, QgsFeatureSink.FastInsert)
+        return flag_line_sink_id
+    
+    def buildFlagList(self, nodeFlags, source, nodeIdDict, feedback):
         """
         Builds record list from pointList to raise flags.
         :param nodeFlags: (dict) dictionary containing invalid node 
                             and its reason ( { (QgsPoint) node : (str) reason } )
         """
-        recordList = []
+        # prepare point flag sink
         countNodeNotInDb = 0
-        for node, reason in nodeFlags.items():
-            if node in self.nodeIdDict:
-                featid = self.nodeIdDict[node] if self.nodeIdDict[node] is not None else -9999
+        nodeNumber = len(nodeFlags)
+        size = 100/nodeNumber if nodeNumber else 0
+        for current, (node, reason) in enumerate(nodeFlags.items()):
+            if feedback.isCanceled():
+                break
+            if node in nodeIdDict:
+                featid = nodeIdDict[node] if nodeIdDict[node] is not None else -9999
             else:
                 # if node is not previously classified on database, but then motivates a flag, it should appear on Flags list
                 featid = -9999
@@ -265,33 +281,13 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
                 lyrName=source.name(),
                 msg=reason
             )
-            flagGeom = QgsGeometry.fromMultiPoint([node])
+            flagGeom = QgsGeometry.fromMultiPointXY([node])
             self.flagFeature(flagGeom, flagText)
+            feedback.setProgress(size * current)
         if countNodeNotInDb:
             # in case there are flagged nodes that are not loaded in DB, user is notified
             msg = self.tr('There are {0} flagged nodes that were introduced to network. Node reclassification is indicated.').format(countNodeNotInDb)
             feedback.pushInfo(msg)
-
-    def createFlagLineSink(self, networkLayer, val, inval, networkHandler, parameters, source, context):
-        # get non-validated lines and add it to invalid lines layer as well
-        nonValidatedLines = set()
-        for line in networkLayer.getFeatures():
-            lineId = line.id()
-            if lineId in val or lineId in inval:
-                # ignore if line are validated
-                continue
-            nonValidatedLines.add(line)
-        featList = networkHandler.getAuxiliaryLines(fields=self.getFlagFields(), invalidLinesDict=inval,\
-                                        nonValidatedLines=nonValidatedLines, networkLayerName=networkLayer.name())
-        flag_line_sink, flag_line_sink_id = self.prepareAndReturnFlagSink(
-                                                                            parameters,
-                                                                            source,
-                                                                            QgsWkbTypes.Line,
-                                                                            context,
-                                                                            self.LINE_FLAGS
-                                                                        )
-        flag_line_sink.addFeatures(featList, QgsFeatureSink.FastInsert)
-        return flag_line_sink_id
 
     def name(self):
         """
@@ -308,7 +304,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Verify Network Directioning')
+        return self.tr('Verify Drainage Network Directioning')
 
     def group(self):
         """
@@ -328,7 +324,7 @@ class VerifyNetworkDirectioningAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Network Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('VerifyNetworkDirectioningAlgorithm', string)
 
     def createInstance(self):
         return VerifyNetworkDirectioningAlgorithm()

@@ -30,9 +30,10 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt.QtSql import QSqlDatabase
 from .serverConfigurator import ServerConfigurator
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 
 from ...core.Factories.DbFactory.dbFactory import DbFactory
+from DsgTools.core.dsgEnums import DsgEnums
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'ui_viewServers.ui'))
@@ -45,8 +46,8 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         self.setupUi(self)
         self.abstractDbFactory = DbFactory()
         self.initGui()
-        host, port, user, password = self.getDefaultConnectionParameters()
-        self.defaultConnectionDict = self.setDefaultConnectionParameters(host, port, user, password)
+        connection, host, port, user, password = self.getDefaultConnectionParameters()
+        self.defaultConnectionDict = self.setDefaultConnectionParameters(connection, host, port, user, password)
     
     def initGui(self):
         '''
@@ -72,18 +73,28 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Not Saved')))
             else:
                 self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
-            radio = QRadioButton()
+            radio = QRadioButton(self.tableWidget)
+            radio.setAutoExclusive(True)
             if isDefault:
                 radio.setChecked(True)
             self.tableWidget.setCellWidget(i, 5, radio)
     
-    def setDefaultConnectionParameters(self, host, port, user, password):
+    def setDefaultConnectionParameters(self, connection, host, port, user, password):
         defaultConnectionDict = dict()
         if host and port and user and password:
             defaultConnectionDict['host'] = host
             defaultConnectionDict['port'] = port
             defaultConnectionDict['user'] = user
             defaultConnectionDict['password'] = password
+            # set all connection on QSettings to not default and this connetion to default
+            settings = QSettings()
+            settings.beginGroup('PostgreSQL/servers')
+            connections = settings.childGroups()
+            settings.endGroup()
+            for conn in connections:
+                settings.beginGroup('PostgreSQL/servers/{0}'.format(conn))
+                settings.setValue('isDefault', conn == connection)
+                settings.endGroup()
         else:
             defaultConnectionDict = dict()
         return defaultConnectionDict
@@ -93,8 +104,8 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         for i, connection in enumerate(currentConnections):
             (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
             if isDefault == True or isDefault == u'true':
-                return (host, port, user, password)
-        return (None, None, None, None)
+                return (connection, host, port, user, password)
+        return (None, None, None, None, None)
 
         
     @pyqtSlot(bool)
@@ -110,7 +121,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
                 dlg = ServerConfigurator(self)
                 dlg.setServerConfiguration(connection)
                 dlg.storeServerConfiguration(connection, host, port, user, password, isDefault = True)
-                self.defaultConnectionDict = self.setDefaultConnectionParameters(host, port, user, password)
+                self.defaultConnectionDict = self.setDefaultConnectionParameters(connection, host, port, user, password)
                 self.defaultChanged.emit()
                 self.done(0)
                 return
@@ -212,7 +223,7 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         '''
         Tests if the server is online
         '''
-        abstractDb = self.abstractDbFactory.createDbFactory('QPSQL')
+        abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         if not abstractDb:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             return False
@@ -220,11 +231,13 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
         abstractDb.connectDatabaseWithParameters(host, port, 'postgres', user, password)
         try:
             abstractDb.checkAndOpenDb()
+            abstractDb.closeDatabase()
+            return True
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            abstractDb.closeDatabase()
             return False
-        return True
     
     def returnSelectedName(self):
         '''

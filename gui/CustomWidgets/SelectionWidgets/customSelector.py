@@ -50,6 +50,8 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Clears everything to return to the initial state
         """
+        self.fromLs = []
+        self.toLs = []
         self.fromList.clear()
         self.toList.clear()
         self.filterLineEdit.clear()
@@ -58,10 +60,7 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Sets the initial state
         """
-        self.fromLs = []
-        self.toLs = []
-        self.fromList.clear()
-        self.toList.clear()
+        self.clearAll()
         if not isinstance(fromList, int):
             self.setFromList(fromList, unique)
     
@@ -69,13 +68,10 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Setting the "from" items (QListWidget and python list)
         """
+        fromList = list(fromList)
         if unique:
-            uniqueList = []
-            for i in fromList:
-                if i not in uniqueList:
-                    uniqueList.append(i)
-            self.fromLs = uniqueList
-            self.fromList.addItems(uniqueList)
+            self.fromLs = list(set(fromList))
+            self.fromList.addItems(self.fromLs)
             self.fromList.sortItems()
         else:
             self.fromLs = fromList
@@ -122,8 +118,8 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         """
         Setting the "to" items (QListWidget and python list)
         """
-        self.toLs = toList
-        self.toList.addItems(toList)
+        self.toLs = list(toList)
+        self.toList.addItems(self.toLs)
         self.toList.sortItems()
     
     def setTitle(self,title):
@@ -133,10 +129,11 @@ class CustomSelector(QtWidgets.QWidget, FORM_CLASS):
         self.groupBox.setTitle(title)
 
     @pyqtSlot(bool, name='on_pushButtonSelectOne_clicked')
-    def selectItems(self, isSelected, selectedItems=[]):
+    def selectItems(self, isSelected, selectedItems=None):
         """
         Adds the selected items to the "to" list
         """
+        selectedItems = [] if selectedItems is None else selectedItems
         if len(selectedItems) != 0:
             listedItems = []
             for i in range(self.fromList.__len__()):

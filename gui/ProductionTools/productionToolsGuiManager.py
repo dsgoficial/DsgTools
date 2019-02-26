@@ -49,8 +49,10 @@ class ProductionToolsGuiManager(QObject):
     def initGui(self):
         self.toolBoxesGuiManager = ToolBoxesGuiManager(self.manager, self.iface, parentMenu=self.menu, stackButton=self.stackButton)
         self.toolBoxesGuiManager.initGui()
+        self.menu.addSeparator()
         self.mapToolsGuiManager = MapToolsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar = self.toolbar)
         self.mapToolsGuiManager.initGui()
+        self.menu.addSeparator()
         self.toolbarsGuiManager = ToolbarsGuiManager(self.manager, self.iface, parentMenu=self.menu, toolbar=self.toolbar)
         self.toolbarsGuiManager.initGui()
     

@@ -20,16 +20,23 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 from __future__ import absolute_import
 from builtins import range
+
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
                       QgsCoordinateTransform, QgsWkbTypes, edit, QgsCoordinateReferenceSystem, QgsProject, \
-                      QgsProcessingMultiStepFeedback
+                      QgsProcessingMultiStepFeedback, QgsProcessingContext, QgsVectorLayerUtils
 from qgis.PyQt.Qt import QObject, QVariant
+from qgis.analysis import QgsGeometrySnapper, QgsInternalGeometrySnapper
 
 from .featureHandler import FeatureHandler
+
 from .geometryHandler import GeometryHandler
+
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
+from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
 
 class LayerHandler(QObject):
     def __init__(self, iface = None, parent = None):
@@ -41,7 +48,7 @@ class LayerHandler(QObject):
         self.featureHandler = FeatureHandler(iface)
         self.geometryHandler = GeometryHandler(iface)
     
-    def getFeatureList(self, lyr, onlySelected = False, returnIterator = True, returnSize = True):
+    def getFeatureList(self, lyr, onlySelected=False, returnIterator=True, returnSize=True):
         """
         Gets the features from lyr acording to parameters.
         :param (QgsVectorLayer) lyr: layer;
@@ -84,6 +91,7 @@ class LayerHandler(QObject):
         destinationLayer.startEditing()
         destinationLayer.beginEditCommand(self.tr('DsgTools reclassification'))
         for lyr, featureList in selectedDict.items():
+            featureList = featureList[0] if isinstance(featureList, tuple) else featureList
             coordinateTransformer = self.getCoordinateTransformer(lyr, destinationLayer)
             newFeatList, deleteList = self.featureHandler.reclassifyFeatures(featureList, lyr, reclassificationDict, coordinateTransformer, parameterDict)
             featuresAdded = destinationLayer.addFeatures(newFeatList)
@@ -120,29 +128,29 @@ class LayerHandler(QObject):
         coordinateTransformer = QgsCoordinateTransform(inputSrc, outputSrc, QgsProject.instance())
         return coordinateTransformer
     
-    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType = None, epsg = None, attributeTupple = False, attributeBlackList = '', onlySelected = False, feedback = None):
+    def createAndPopulateUnifiedVectorLayer(self, layerList, geomType=None, epsg=None, attributeTupple=False, attributeBlackList='', onlySelected=False, feedback=None):
         if not epsg:
             epsg = layerList[0].crs().authid().split(':')[-1]
         if not geomType:
             geomType = layerList[0].geometryType()
         unified_layer = self.createUnifiedVectorLayer(geomType, epsg, \
-                                                      attributeTupple = attributeTupple)
+                                                      attributeTupple=attributeTupple)
         parameterDict = self.getDestinationParameters(unified_layer)
         featList = self.getUnifiedLayerFeatures(unified_layer, layerList, \
                                                       attributeTupple=attributeTupple, \
                                                       attributeBlackList=attributeBlackList, \
                                                       onlySelected=onlySelected, \
                                                       parameterDict=parameterDict, \
-                                                      feedback = feedback)
+                                                      feedback=feedback)
         self.addFeaturesToLayer(unified_layer, featList, msg='Populating unified layer')
         return unified_layer
 
-    def createUnifiedVectorLayer(self, geomType, srid, attributeTupple = False):
+    def createUnifiedVectorLayer(self, geomType, srid, attributeTupple=False):
         """
         Creates a unified vector layer for validation purposes.
         """
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
-        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType),srid)
+        lyrUri = "{0}?crs=epsg:{1}".format(QgsWkbTypes.displayString(geomType), srid)
         lyr = QgsVectorLayer(lyrUri, "unified_layer", "memory")
         lyr.startEditing()
         fields = self.getUnifiedVectorFields(attributeTupple=attributeTupple)
@@ -150,7 +158,7 @@ class LayerHandler(QObject):
         lyr.updateFields()
         return lyr
     
-    def getUnifiedVectorFields(self, attributeTupple = False):
+    def getUnifiedVectorFields(self, attributeTupple=False):
         if not attributeTupple:
             fields = [QgsField('featid', QVariant.Int), 
                       QgsField('layer', QVariant.String)
@@ -164,7 +172,7 @@ class LayerHandler(QObject):
         return fields
     
 
-    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple = False, attributeBlackList = '', onlySelected = False, parameterDict = None, feedback = None):
+    def getUnifiedLayerFeatures(self, unifiedLyr, layerList, attributeTupple=False, attributeBlackList='', onlySelected=False, parameterDict=None, feedback=None):
         parameterDict = {} if parameterDict is None else parameterDict
         featList = []
         blackList = attributeBlackList.split(',') if ',' in attributeBlackList else []
@@ -193,7 +201,7 @@ class LayerHandler(QObject):
                     multiStepFeedback.setProgress(current*size)
         return featList
 
-    def addFeaturesToLayer(self, lyr, featList, commitChanges = True, msg = ''):
+    def addFeaturesToLayer(self, lyr, featList, commitChanges=True, msg=''):
         lyr.startEditing()
         lyr.beginEditCommand(msg)
         res = lyr.addFeatures(featList)
@@ -210,7 +218,7 @@ class LayerHandler(QObject):
         for lyr in lyrList:
             self.updateOriginalLayerFromUnifiedLayer(lyr, unifiedLyr)
     
-    def buildInputDict(self, inputLyr, pk = None, feedback = None, onlySelected = False):
+    def buildInputDict(self, inputLyr, pk=None, feedback=None, onlySelected=False):
         """
         Maps inputLyr into a dict with its attributes.
         """
@@ -234,7 +242,7 @@ class LayerHandler(QObject):
                 feedback.setProgress(localTotal*current)
         return inputDict
     
-    def populateInputDictFeatList(self, lyr, inputDict, pk = None, request = None, feedback = None):
+    def populateInputDictFeatList(self, lyr, inputDict, pk=None, request=None, feedback=None):
         iterator = lyr.getFeatures(request) if request else lyr.getFeatures()
         localTotal = 100/lyr.featureCount() if lyr.featureCount() else 0
         for current, feat in enumerate(iterator):
@@ -291,7 +299,7 @@ class LayerHandler(QObject):
             innerFeedback.setCurrentStep(2)
             self.updateOriginalLayerFeatures(lyr, inputDict, parameterDict = parameterDict, coordinateTransformer = coordinateTransformer, feedback=innerFeedback)
     
-    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict = None, coordinateTransformer = None, keepFeatures = False, feedback = None):
+    def updateOriginalLayerFeatures(self, lyr, inputDict, parameterDict=None, coordinateTransformer=None, keepFeatures=False, feedback=None):
         """
         Updates lyr using inputDict
         """
@@ -407,7 +415,8 @@ class LayerHandler(QObject):
     def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, feedback = None):
         geomDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
-        iterator, size = self.getFeatureList(lyr, onlySelected=onlySelected)
+        iterator, featCount = self.getFeatureList(lyr, onlySelected=onlySelected)
+        size = 100/featCount if featCount else 0
         columns = self.getAttributesFromBlackList(lyr, attributeBlackList=attributeBlackList, ignoreVirtualFields=ignoreVirtualFields, excludePrimaryKeys=excludePrimaryKeys)
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
@@ -519,28 +528,28 @@ class LayerHandler(QObject):
     
     def filterDangles(self, lyr, searchRadius, feedback = None):
         deleteList = []
-        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
-        multiStepFeedback.setCurrentStep(0)
+        if feedback is not None:
+            multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+            multiStepFeedback.setCurrentStep(0)
+        else:
+            multiStepFeedback = None
         spatialIdx, idDict = self.buildSpatialIndexAndIdDict(lyr, feedback=multiStepFeedback)
-        multiStepFeedback.setCurrentStep(1)
+        if multiStepFeedback is not None:
+            multiStepFeedback.setCurrentStep(1)
         featSize = len(idDict)
         size = 100 / featSize if featSize else 0
         for current, (id, feat) in enumerate(idDict.items()):
-            if feedback:
-                if feedback.isCanceled():
-                    break
-            if id in deleteList:
-                if feedback:
-                    multiStepFeedback.setProgress(size * current)    
-                continue
-            buffer = feat.geometry().buffer(searchRadius, -1)
-            bufferBB = buffer.boundingBox()
-            #gets candidates from spatial index
-            candidateIds = spatialIdx.intersects(bufferBB)
-            for fid in candidateIds:
-                if fid != id and fid not in deleteList and buffer.intersects(feat.geometry()):
-                    deleteList.append(fid)
-            if feedback:
+            if feedback is not None and feedback.isCanceled():
+                break
+            if id not in deleteList:
+                buffer = feat.geometry().buffer(searchRadius, -1)
+                bufferBB = buffer.boundingBox()
+                #gets candidates from spatial index
+                candidateIds = spatialIdx.intersects(bufferBB)
+                for fid in candidateIds:
+                    if fid != id and fid not in deleteList and buffer.intersects(feat.geometry()):
+                        deleteList.append(fid)
+            if feedback is not None:
                 multiStepFeedback.setProgress(size * current)
         
         lyr.startEditing()
@@ -549,23 +558,46 @@ class LayerHandler(QObject):
         lyr.commitChanges()
 
 
-    def buildSpatialIndexAndIdDict(self, inputLyr, feedback = None):
+    def buildSpatialIndexAndIdDict(self, inputLyr, feedback = None, featureRequest=None):
         """
         creates a spatial index for the input layer
+        :param inputLyr: (QgsVectorLayer) input layer;
+        :param feedback: (QgsProcessingFeedback) processing feedback;
+        :param featureRequest: (QgsFeatureRequest) optional feature request;
         """
         spatialIdx = QgsSpatialIndex()
         idDict = {}
         featCount = inputLyr.featureCount()
         size = 100/featCount if featCount else 0
-        for current, feat in enumerate(inputLyr.getFeatures()):
-            if feedback:
-                if feedback.isCanceled():
-                    break
-            spatialIdx.insertFeature(feat)
-            idDict[feat.id()] = feat
-            if feedback:
-                feedback.setProgress(size * current)
+        iterator = inputLyr.getFeatures() if featureRequest is None else inputLyr.getFeatures(featureRequest)
+        addFeatureAlias = lambda x : self.addFeatureToSpatialIndex(
+            current=x[0],
+            feat=x[1],
+            spatialIdx=spatialIdx,
+            idDict=idDict,
+            size=size,
+            feedback=feedback
+        )
+        list(map(addFeatureAlias, enumerate(iterator)))
         return spatialIdx, idDict
+    
+    def addFeatureToSpatialIndex(self, current, feat, spatialIdx, idDict, size, feedback):
+        """
+        Adds feature to spatial index. Used along side with a python map operator
+        to improve performance.
+        :param current : (int) current index
+        :param feat : (QgsFeature) feature to be added on spatial index and on idDict
+        :param spatialIdx: (QgsSpatialIndex) spatial index
+        :param idDict: (dict) dictionary with format {feat.id(): feat}
+        :param size: (int) size to be used to update feedback
+        :param feedback: (QgsProcessingFeedback) feedback to be used on processing
+        """
+        if feedback is not None and feedback.isCanceled():
+            return
+        idDict[feat.id()] = feat
+        spatialIdx.insertFeature(feat)
+        if feedback is not None:
+            feedback.setProgress(size * current)
     
     def getFrameOutterBounds(self, frameLayer, algRunner, context, feedback = None):
         """
@@ -638,3 +670,148 @@ class LayerHandler(QObject):
                 if feat not in nodeDict[pEnd]['end']:
                     nodeDict[pEnd]['end'].append(feat)
         return nodeDict
+    
+    def snapToLayer(self, inputLyr, refLyr, tol, behavior, onlySelected=False, feedback=None):
+        """
+        Snaps and updates inpytLyr
+        """
+        snapper = QgsGeometrySnapper(refLyr) if inputLyr != refLyr and behavior != 7 else QgsInternalGeometrySnapper(tol, behavior)
+        iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
+        size = 100/featCount if featCount else 0
+        deleteList = []
+        inputLyr.startEditing()
+        inputLyr.beginEditCommand('Snapping Features')
+        for current, feat in enumerate(iterator):
+            featid = feat.id()
+            geom = feat.geometry()
+            if feedback is not None and feedback.isCanceled():
+                break
+            elif not feat.hasGeometry() or geom.isNull() or geom.isEmpty():
+                deleteList.append(featid)
+            elif geom.type() == QgsWkbTypes.LineGeometry and geom.length() < tol:
+                deleteList.append(featid)
+            else:
+                # remove duplicate nodes to avoid problem in snapping
+                geom.removeDuplicateNodes()
+                fixedGeom = geom.makeValid()
+                if not fixedGeom.isNull():
+                    outputGeom = snapper.snapGeometry(fixedGeom, tol, behavior) if inputLyr != refLyr and behavior != 7 else snapper.snapFeature(feat)
+                    if geom is None:
+                        deleteList.append(featid)
+                    else:
+                        inputLyr.changeGeometry(featid, outputGeom)
+            if feedback is not None:
+                feedback.setProgress(size * current)
+        inputLyr.deleteFeatures(deleteList)
+        inputLyr.endEditCommand()
+    
+    def getContourLineOutOfThreshold(self, contourLyr, terrainPolygonLyr, threshold, refLyr=None, feedback=None):
+        """
+        todo
+        """
+        #1. Build contour spatial index
+
+        #2. 
+        pass
+
+    def filterByExpression(self, layer, expression, context, feedback=None):
+        """
+        Filters a given layer using a filtering expression. The original layer is not modified.
+        :param layer: (QgsVectorLayer) layer to be filtered.
+        :param expression: (str) expression to be used as filter.
+        :param context: (QgsProcessingContext) processing context in which algorithm should be executed.
+        :param feedback: (QgsFeedback) QGIS feedback component (progress bar).
+        :return: (QgsVectorLayer) filtered layer.
+        """
+        return AlgRunner().runFilterExpression(
+                inputLyr=layer,
+                context=context,
+                expression = expression,
+                feedback=feedback
+            )
+
+    def prepareConversion(self, inputLyr, context, inputExpression=None, filterLyr=None,\
+                         behavior=None, bufferRadius=0, conversionMap=None, feedback=None):
+        algRunner = AlgRunner()
+        if feedback is not None:
+            count = 0
+            if inputExpression is not None:
+                count += 1
+            if filterLyr is not None:
+                count += 1
+                if behavior == 3:
+                    count += 1
+            elif count == 0:
+                return inputLyr
+            multiStepFeedback = QgsProcessingMultiStepFeedback(count, feedback)
+        else:
+            multiStepFeedback = None
+        localLyr = inputLyr
+        currentStep = 0
+        if inputExpression is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            localLyr = algRunner.runFilterExpression(
+                inputLyr=localLyr,
+                context=context,
+                expression = inputExpression,
+                feedback=multiStepFeedback
+            )
+            currentStep+=1
+        if filterLyr is not None:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(currentStep)
+            if behavior == 3:
+                filterLyr = algRunner.runBuffer(filterLyr, bufferRadius, context, feedback=multiStepFeedback)
+                currentStep += 1
+            localLyr = algRunner.runIntersection(localLyr, context, overlayLyr=filterLyr)
+        return localLyr
+    
+    def identifyAndFixInvalidGeometries(self, inputLyr, fixInput=False, onlySelected=False, feedback=None):
+        iterator, featCount = self.getFeatureList(inputLyr, onlySelected=onlySelected)
+        stepSize = 100/featCount if featCount else 0
+        flagDict = dict()
+        parameterDict = self.getDestinationParameters(inputLyr)
+        geometryType = inputLyr.geometryType()
+        newFeatSet = set()
+        if fixInput:
+            inputLyr.startEditing()
+            inputLyr.beginEditCommand('Fixing geometries')
+        for current, feat in enumerate(iterator):
+            if feedback is not None and feedback.isCanceled():
+                break
+            geom = feat.geometry()
+            id = feat.id()
+            attrMap = { idx : feat[field.name()] for idx, field in enumerate(feat.fields()) if idx not in inputLyr.primaryKeyAttributes()}
+            for i, validate_type in enumerate(['GEOS', 'QGIS']):
+                if feedback is not None and feedback.isCanceled():
+                    break
+                for error in geom.validateGeometry(i):
+                    if feedback is not None and feedback.isCanceled():
+                        break
+                    if error.hasWhere():
+                        errorPointXY = error.where()
+                        if errorPointXY not in flagDict:
+                            flagDict[errorPointXY] = {
+                                'geom' : QgsGeometry.fromPointXY(errorPointXY),
+                                'reason' : ''
+                            }
+                        flagDict[errorPointXY]['reason'] += '{type} invalid reason: {text}\n'.format(
+                            type=validate_type,
+                            text=error.what()
+                        )
+            if fixInput:
+                geom.removeDuplicateNodes(useZValues=parameterDict['hasZValues'])
+                fixedGeom = geom.makeValid()
+                for idx, newGeom in enumerate(self.geometryHandler.handleGeometryCollection(fixedGeom, geometryType, parameterDict=parameterDict)):
+                    if idx == 0:
+                        inputLyr.changeGeometry(id, newGeom)
+                    else:
+                        newFeat = QgsVectorLayerUtils.createFeature(inputLyr, newGeom, attrMap)
+            if feedback is not None:
+                feedback.setProgress(stepSize*current)
+        if fixInput:
+            inputLyr.addFeatures(newFeatSet)
+            inputLyr.endEditCommand()
+
+        return flagDict

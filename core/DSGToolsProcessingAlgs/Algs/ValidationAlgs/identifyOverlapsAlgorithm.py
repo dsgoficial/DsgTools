@@ -20,28 +20,24 @@
  ***************************************************************************/
 """
 
-from .validationAlgorithm import ValidationAlgorithm
+from PyQt5.QtCore import QCoreApplication
+
+import processing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-
-from PyQt5.QtCore import QCoreApplication
-import processing
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterMultipleLayers,
-                       QgsWkbTypes,
-                       QgsProcessingUtils,
-                       QgsProject,
-                       QgsProcessingMultiStepFeedback)
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsProject, QgsWkbTypes)
+
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -177,7 +173,7 @@ class IdentifyOverlapsAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyOverlapsAlgorithm', string)
 
     def createInstance(self):
         return IdentifyOverlapsAlgorithm()

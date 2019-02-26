@@ -27,12 +27,14 @@ import csv
 import shutil
 from osgeo import gdal, ogr
 
-from qgis.PyQt.Qt import QObject
+from qgis.PyQt.Qt import QObject, QVariant
 from qgis.PyQt.QtCore import pyqtSlot
 
 # Import the PyQt and QGIS libraries
-from qgis.core import QgsMessageLog, QgsVectorFileWriter, QgsVectorLayer, QgsCoordinateReferenceSystem, QgsCoordinateTransform, QgsGeometry, QgsField, QgsPoint
-from qgis._core import QgsAction, QgsPoint
+from qgis.core import QgsMessageLog, QgsVectorFileWriter, QgsVectorLayer, \
+                      QgsCoordinateReferenceSystem, QgsCoordinateTransform, \
+                      QgsGeometry, QgsField, QgsPointXY, QgsProcessingMultiStepFeedback,\
+                      QgsFeature, QgsProject, QgsFields
 
 from .genericThread import GenericThread
 
@@ -91,6 +93,16 @@ class InventoryThread(GenericThread):
         self.files = list()
         gdal.DontUseExceptions()
         ogr.DontUseExceptions()
+        self.layer_attributes = [
+            QgsField('filename', QVariant.String),
+            QgsField('date', QVariant.String),
+            QgsField('size', QVariant.String),
+            QgsField('extension', QVariant.String)
+            ]
+        self.qgsattr = QgsFields()
+        for i in self.layer_attributes:
+            self.qgsattr.append(i)
+         
         
     def setParameters(self, parentFolder, outputFile, makeCopy, destinationFolder, formatsList, isWhitelist, isOnlyGeo, stopped):
         self.parentFolder = parentFolder
@@ -113,6 +125,80 @@ class InventoryThread(GenericThread):
             self.signals.loadFile.emit(self.outputFile, self.isOnlyGeo)
         
         self.signals.processingFinished.emit(ret, msg, self.getId())
+    
+    def get_format_set(self, format_list):
+        if 'shp' in format_list:
+            return set(format_list + ['prj'])
+        else:
+            return set(format_list)
+    
+    def make_inventory_from_processing(self, parent_folder, format_list, destination_folder=None, make_copy=False, onlyGeo=True, feedback=None):
+        featList = []
+        fileList = []
+        format_set = self.get_format_set(format_list)
+        tuple_list = [i for i in os.walk(parent_folder)]
+        nSteps = len(tuple_list) if make_copy else len(tuple_list) - 1
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback) if feedback else None
+        for current_step, [root, dirs, files] in enumerate(tuple_list):
+            if feedback is not None:
+                if feedback.isCanceled():
+                    return []
+                multiStepFeedback.setCurrentStep(current_step)
+            n_files = len(files)
+            files_progress = 100/n_files if n_files else 0
+            for current, current_file in enumerate(files):
+                if multiStepFeedback is not None and multiStepFeedback.isCanceled():
+                    break
+                extension = current_file.split('.')[-1]
+                if extension not in format_set:
+                    continue
+                full_path = self.get_full_path(current_file, root)
+                if gdal.Open(full_path) or ogr.Open(full_path):
+                    bbox_geom, attributes = self.computeBoxAndAttributes(None, full_path, extension, insertIntoMemory=False)
+                    new_feat = self.get_new_feat(bbox_geom, attributes)
+                    featList.append(new_feat)
+                    fileList.append(full_path)
+                if multiStepFeedback is not None:
+                    multiStepFeedback.setProgress(files_progress * current)
+        if make_copy:
+            if multiStepFeedback is not None:
+                multiStepFeedback.setCurrentStep(nSteps)
+            copy_len = len(fileList)
+            for current, file_ in fileList:
+                if multiStepFeedback is not None and multiStepFeedback.isCanceled:
+                    break
+                try:
+                    self.copy_single_file(file_, destination_folder)
+                    if multiStepFeedback is not None:
+                        multiStepFeedback.pushInfo(
+                            self.tr('File {file} copied to {destination}').format(
+                                file=file_,
+                                destination=destination_folder
+                            )
+                        )
+                except Exception as e:
+                    if multiStepFeedback is not None:
+                        multiStepFeedback.pushInfo(
+                            self.tr('Error copying file {file}: {exception}\n').format(
+                                file=file_,
+                                exception='\n'.join(e.args)
+                            )
+                        )
+        return featList
+        
+
+    
+    def get_full_path(self, file_name, root):
+        line = os.path.join(root,file_name)
+        line = line.encode(encoding='UTF-8')
+        return line
+
+    def get_new_feat(self, geom, attributes):
+        new_feat = QgsFeature(self.qgsattr)
+        new_feat.setAttributes(attributes)
+        new_feat.setGeometry(geom)
+        return new_feat
+
     
     def makeInventory(self, parentFolder, outputFile, destinationFolder):
         """
@@ -192,7 +278,7 @@ class InventoryThread(GenericThread):
             QgsMessageLog.logMessage(self.messenger.getSuccessInventoryMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
             return (1, self.messenger.getSuccessInventoryMessage())
         
-    def computeBoxAndAttributes(self, layer, line, extension):
+    def computeBoxAndAttributes(self, layer, line, extension, insertIntoMemory=True):
         """
         Computes bounding box and inventory attributes
         """
@@ -208,6 +294,8 @@ class InventoryThread(GenericThread):
         # making the attributes
         attributes = self.makeAttributes(line, extension)
         # inserting into memory layer
+        if not insertIntoMemory:
+            return qgsPolygon, attributes
         self.insertIntoMemoryLayer(layer, qgsPolygon, attributes)
         
     def copyFiles(self, destinationFolder):
@@ -261,6 +349,18 @@ class InventoryThread(GenericThread):
         QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
     
+    def copy_single_file(self, file_name, destination_folder):
+        file_name = file_name.replace('/', os.sep)
+        file_ = file_name.split(os.sep)[-1]
+        newFileName = os.path.join(destination_folder, file_)
+        newFileName = newFileName.replace('/', os.sep)
+        gdalSrc = gdal.Open(fileName)
+        ogrSrc = ogr.Open(fileName)
+        if ogrSrc:
+            self.copyOGRDataSource(ogrSrc, newFileName)
+        elif gdalSrc:
+            self.copyGDALDataSource(gdalSrc, newFileName)
+
     def copyGDALDataSource(self, gdalSrc, newFileName):
         """
         Copies a GDAL datasource
@@ -321,7 +421,7 @@ class InventoryThread(GenericThread):
         creationDate = time.ctime(os.path.getctime(line))
         size = os.path.getsize(line)/1000.
         
-        return [line, creationDate, size, extension]
+        return [str(line), creationDate, size, extension]
         
     def getRasterExtent(self, gt, cols, rows):
         """ 
@@ -403,8 +503,7 @@ class InventoryThread(GenericThread):
         if not layer.isValid():
             return None
         provider = layer.dataProvider()
-        provider.addAttributes([QgsField('fileName', QVariant.String), QgsField('date', QVariant.String),
-                                QgsField('size (KB)', QVariant.String), QgsField('extension)', QVariant.String)])
+        provider.addAttributes(self.layer_attributes)
         layer.updateFields()
         return layer
     
@@ -415,15 +514,16 @@ class InventoryThread(GenericThread):
         ogrPoly: ogr polygon
         """
         crsDest = QgsCoordinateReferenceSystem(4326)
-        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest)
+        coordinateTransformer = QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
         
         newPolyline = []
         ring = ogrPoly.GetGeometryRef(0)
         for i in range(ring.GetPointCount()):
             pt = ring.GetPoint(i)
-            point = QgsPoint(pt[0], pt[1])
-            newPolyline.append(coordinateTransformer.transform(point))
-        qgsPolygon = QgsGeometry.fromPolygon([newPolyline])
+            point = QgsPointXY(pt[0], pt[1])
+            newPolyline.append(point)
+        qgsPolygon = QgsGeometry.fromPolygonXY([newPolyline])
+        qgsPolygon.transform(coordinateTransformer)
         return qgsPolygon
     
     def insertIntoMemoryLayer(self, layer, poly, attributes):

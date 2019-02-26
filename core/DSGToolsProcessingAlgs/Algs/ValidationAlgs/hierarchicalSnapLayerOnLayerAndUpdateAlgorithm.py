@@ -20,36 +20,31 @@
  *                                                                         *
  ***************************************************************************/
 """
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-from .validationAlgorithm import ValidationAlgorithm
-from ...algRunner import AlgRunner
-import processing
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
+
+import processing
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsGeometry, QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
                        QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
                        QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterDistance,
                        QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType)
+                       QgsProcessingParameterDistance,
+                       QgsProcessingParameterEnum,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterField,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterType,
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsSpatialIndex, QgsWkbTypes)
+
+from ...algRunner import AlgRunner
+from .validationAlgorithm import ValidationAlgorithm
 
 class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
-    INPUTLYRLIST = 'INPUTLYRLIST'
     SELECTED = 'SELECTED'
     SNAP_HIERARCHY = 'SNAP_HIERARCHY'
     BEHAVIOR = 'BEHAVIOR'
@@ -59,8 +54,10 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         Parameter setting.
         """
 
-        hierarchy = hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(self.SNAP_HIERARCHY,
-                                                             description=self.tr('Snap hierarchy'))
+        hierarchy = ParameterSnapHierarchy(
+            self.SNAP_HIERARCHY,
+            description=self.tr('Snap hierarchy')
+            )
         hierarchy.setMetadata({
             'widget_wrapper': 'DsgTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'
         })
@@ -89,35 +86,48 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
                 defaultValue=0
             )
         )
+    
+    def parameterAsSnapHierarchy(self, parameters, name, context):
+        return parameters[name]
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
         layerHandler = LayerHandler()
-        algRunner = AlgRunner()
-        
+        snapDict = self.parameterAsSnapHierarchy(parameters, self.SNAP_HIERARCHY, context)
+
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-        refLyr = self.parameterAsVectorLayer(parameters, self.REFERENCE_LAYER, context)
-        if refLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.REFERENCE_LAYER))
-        tol = self.parameterAsDouble(parameters, self.TOLERANCE, context)
+
         behavior = self.parameterAsEnum(parameters, self.BEHAVIOR, context)
-        
-        multiStepFeedback = QgsProcessingMultiStepFeedback(3, feedback)
-        multiStepFeedback.setCurrentStep(0)
-        multiStepFeedback.pushInfo(self.tr('Populating temp layer...'))
-        auxLyr = layerHandler.createAndPopulateUnifiedVectorLayer([inputLyr], geomType=inputLyr.wkbType(), onlySelected = onlySelected, feedback=multiStepFeedback)
-        
-        multiStepFeedback.setCurrentStep(1)
-        multiStepFeedback.pushInfo(self.tr('Snapping geometries from layer {input} to {reference}...').format(input=inputLyr.name(), reference=refLyr.name()))
-        snappedLayer = algRunner.runSnapGeometriesToLayer(auxLyr, refLyr, tol, context, feedback=multiStepFeedback, behavior=behavior)
-
-        multiStepFeedback.setCurrentStep(2)
-        multiStepFeedback.pushInfo(self.tr('Updating original layer...'))
-        layerHandler.updateOriginalLayersFromUnifiedLayer([inputLyr], snappedLayer, feedback=multiStepFeedback, onlySelected=onlySelected)
-
-        return {self.INPUT: inputLyr}
+        nSteps = 0
+        for item in snapDict:
+            nSteps += len(item['snapLayerList'])
+        currStep = 0
+        multiStepFeedback = QgsProcessingMultiStepFeedback(nSteps, feedback)
+        for current, item in enumerate(snapDict):
+            refLyr = item['referenceLayer']
+            for i, lyr in enumerate(item['snapLayerList']):
+                if multiStepFeedback.isCanceled():
+                    break
+                multiStepFeedback.setCurrentStep(currStep)
+                multiStepFeedback.pushInfo(
+                    self.tr('Snapping geometries from layer {input} to {reference} with snap {snap}...').format(
+                        input=lyr.name(),
+                        reference=refLyr.name(),
+                        snap=item['snap']
+                        )
+                    )
+                layerHandler.snapToLayer(
+                    lyr,
+                    refLyr,
+                    item['snap'],
+                    behavior,
+                    onlySelected=onlySelected,
+                    feedback=multiStepFeedback
+                    )
+                currStep += 1
+        return {}
 
     def name(self):
         """
@@ -154,67 +164,67 @@ class HierarchicalSnapLayerOnLayerAndUpdateAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Manipulation Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('HierarchicalSnapLayerOnLayerAndUpdateAlgorithm', string)
 
     def createInstance(self):
         return HierarchicalSnapLayerOnLayerAndUpdateAlgorithm()
 
-    class ParameterSnapHierarchyType(QgsProcessingParameterType):
+class ParameterSnapHierarchyType(QgsProcessingParameterType):
 
-        def __init__(self):
-            super(QgsProcessingParameterType).__init__()
+    def __init__(self):
+        super().__init__()
 
-        def create(self, name):
-            return hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterSnapHierarchy(name) #mudar
+    def create(self, name):
+        return ParameterSnapHierarchy(name) #mudar
 
-        def metadata(self):
-            return {'widget_wrapper': 'processing.algs.qgis.ui.FieldsMappingPanel.FieldsMappingWidgetWrapper'} #mudar
+    def metadata(self):
+        return {'widget_wrapper': 'DsgTools.gui.ProcessingUI.snapHierarchyWrapper.SnapHierarchyWrapper'} #mudar
 
-        def name(self):
-            return QCoreApplication.translate('Processing', 'Snap Hierarchy')
+    def name(self):
+        return QCoreApplication.translate('Processing', 'Snap Hierarchy')
 
-        def id(self):
-            return 'snap_hierarchy'
+    def id(self):
+        return 'snap_hierarchy'
 
-        def description(self):
-            return QCoreApplication.translate('Processing', 'An hierarchical snapping type. Used in the Hierarchical Snap Layer on Layer algorithm.')
+    def description(self):
+        return QCoreApplication.translate('Processing', 'An hierarchical snapping type. Used in the Hierarchical Snap Layer on Layer algorithm.')
 
-    class ParameterSnapHierarchy(QgsProcessingParameterDefinition):
+class ParameterSnapHierarchy(QgsProcessingParameterDefinition):
 
-        def __init__(self, name, description=''):
-            super(QgsProcessingParameterDefinition).__init__(name, description)
+    def __init__(self, name, description=''):
+        super().__init__(name, description)
 
-        def clone(self):
-            copy = hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.ParameterFieldsMapping(self.name(), self.description())
-            return copy
+    def clone(self):
+        copy = ParameterSnapHierarchy(self.name(), self.description())
+        return copy
 
-        def type(self):
-            return self.typeName()
+    def type(self):
+        return self.typeName()
 
-        @staticmethod
-        def typeName():
-            return 'snap_hierarchy'
+    @staticmethod
+    def typeName():
+        return 'snap_hierarchy'
 
-        def checkValueIsAcceptable(self, value, context=None):
-            if not isinstance(value, list):
-                return False
-            for field_def in value:
-                if not isinstance(field_def, dict):
-                    return False
-                if 'name' not in field_def.keys():
-                    return False
-                if 'type' not in field_def.keys():
-                    return False
-                if 'expression' not in field_def.keys():
-                    return False
-            return True
+    def checkValueIsAcceptable(self, value, context=None):
+        # if not isinstance(value, list):
+        #     return False
+        # for field_def in value:
+        #     if not isinstance(field_def, dict):
+        #         return False
+        #     if 'name' not in field_def.keys():
+        #         return False
+        #     if 'type' not in field_def.keys():
+        #         return False
+        #     if 'expression' not in field_def.keys():
+        #         return False
+        return True
 
-        def valueAsPythonString(self, value, context):
-            return str(value)
+    def valueAsPythonString(self, value, context):
+        return str(value)
 
-        def asScriptCode(self):
-            raise NotImplementedError()
+    def asScriptCode(self):
+        raise NotImplementedError()
 
-        @classmethod
-        def fromScriptCode(cls, name, description, isOptional, definition):
-            raise NotImplementedError()
+    @classmethod
+    def fromScriptCode(cls, name, description, isOptional, definition):
+        raise NotImplementedError()

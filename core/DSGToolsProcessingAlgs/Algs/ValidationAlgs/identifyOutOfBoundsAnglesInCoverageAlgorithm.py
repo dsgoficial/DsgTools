@@ -19,24 +19,24 @@
  *                                                                         *
  ***************************************************************************/
 """
-from .validationAlgorithm import ValidationAlgorithm
+from PyQt5.QtCore import QCoreApplication
+
+import processing
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from DsgTools.core.GeometricTools.layerHandler import LayerHandler
-import processing
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
+from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
+                       QgsProcessing, QgsProcessingAlgorithm,
+                       QgsProcessingException, QgsProcessingOutputVectorLayer,
                        QgsProcessingParameterBoolean,
+                       QgsProcessingParameterFeatureSink,
+                       QgsProcessingParameterFeatureSource,
+                       QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers)
+                       QgsProcessingParameterVectorLayer, QgsProcessingUtils,
+                       QgsWkbTypes)
+
+from .validationAlgorithm import ValidationAlgorithm
+
 
 class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -89,7 +89,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         output = processing.run('dsgtools:identifyoutofboundsangles', parameters, context = context)
         self.flagFeaturesFromProcessOutput(output)
     
-    def cleanCoverage(self, coverage):
+    def cleanCoverage(self, coverage, context):
         output = QgsProcessingUtils.generateTempFilename('output.shp')
         error = QgsProcessingUtils.generateTempFilename('error.shp')
         parameters = {
@@ -130,7 +130,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
             self.runIdentifyOutOfBoundsAngles(lyr, onlySelected, tol, context)
         epsg = inputLyrList[0].crs().authid().split(':')[-1]
         coverage = layerHandler.createAndPopulateUnifiedVectorLayer(inputLyrList, QgsWkbTypes.Point, epsg, onlySelected = onlySelected)
-        cleanedCoverage = self.cleanCoverage(coverage)
+        cleanedCoverage = self.cleanCoverage(coverage, context)
         segmentDict = self.geometryHandler.getSegmentDict(cleanedCoverage)
         # Compute the number of steps to display within the progress bar and
         # get features from source
@@ -185,7 +185,7 @@ class IdentifyOutOfBoundsAnglesInCoverageAlgorithm(ValidationAlgorithm):
         return 'DSGTools: Validation Tools (Identification Processes)'
 
     def tr(self, string):
-        return QCoreApplication.translate('Processing', string)
+        return QCoreApplication.translate('IdentifyOutOfBoundsAnglesInCoverageAlgorithm', string)
 
     def createInstance(self):
         return IdentifyOutOfBoundsAnglesInCoverageAlgorithm()
