@@ -84,13 +84,13 @@ class Polygon(GeometricaAcquisition):
                                 self.endGeometry() 
                             else:
                                 self.iface.messageBar().pushMessage(
-                                        self.tr("Observation:"),
-                                        self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                        self.tr("Info:"),
+                                        self.tr("Not possible to digitise, segment smaller than minimun distance."),
                                         level=Qgis.Info
                                     )                        
                     else:
                         self.iface.messageBar().pushMessage(
-                                self.tr("Observation:"),
+                                self.tr("Info:"),
                                 self.tr("The right angle tool should be used only for rectangular shapes."),
                                 level=Qgis.Info
                             )
@@ -111,8 +111,8 @@ class Polygon(GeometricaAcquisition):
                         self.qntPoint += 1
                     else:
                         self.iface.messageBar().pushMessage(
-                                self.tr("Observation:"),
-                                self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                self.tr("Info:"),
+                                self.tr("Not possible to digitise, segment smaller than minimun distance."),
                                 level=Qgis.Info
                             )
                 else:
@@ -125,8 +125,8 @@ class Polygon(GeometricaAcquisition):
                             self.qntPoint += 1
                         else:
                             self.iface.messageBar().pushMessage(
-                                    self.tr("Observation:"),
-                                    self.tr("Not possible to digitalize, segment smaller than minimun distance."),
+                                    self.tr("Info:"),
+                                    self.tr("Not possible to digitise, segment smaller than minimun distance."),
                                     level=Qgis.Info
                                 )
 
