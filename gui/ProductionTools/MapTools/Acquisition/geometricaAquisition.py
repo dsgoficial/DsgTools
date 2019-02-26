@@ -23,10 +23,11 @@ from builtins import range
 from qgis.PyQt.QtCore import Qt, QSettings
 from qgis.PyQt.QtGui import QCursor, QPixmap, QColor
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsAttributeDialog, QgsMapToolAdvancedDigitizing,\
-                     QgsAttributeForm
+                     QgsAttributeForm, QgsSnapIndicator
 from qgis.utils import iface
 from qgis.core import QgsPointXY, QgsFeature, QgsGeometry, Qgis, QgsCoordinateReferenceSystem,\
-                      QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject
+                      QgsCoordinateTransform, QgsEditFormConfig, QgsWkbTypes, QgsProject, \
+                      QgsPointLocator
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.distanceToolTip import DistanceToolTip
 
@@ -119,10 +120,10 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             self.rubberBand = None
         self.qntPoint = 0
         self.geometry = []
-        if self.snapCursorRubberBand:
-            self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
-            self.snapCursorRubberBand.hide()
-            self.snapCursorRubberBand = None
+        # if self.snapCursorRubberBand:
+        #     self.snapCursorRubberBand.reset(geometryType=QgsWkbTypes.PointGeometry)
+        #     self.snapCursorRubberBand.hide()
+        #     self.snapCursorRubberBand = None
 
     def getMinSegmentDistance(self):
         parameters = self.getParametersFromConfig()
