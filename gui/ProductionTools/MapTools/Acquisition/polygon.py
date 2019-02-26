@@ -120,8 +120,6 @@ class Polygon(GeometricaAcquisition):
                     projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if projectedMousePoint:
                         new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)                        
-                        testando = self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point)
-                        
                         if self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point):
                             self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
                             self.qntPoint += 1
