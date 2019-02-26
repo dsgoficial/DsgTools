@@ -158,9 +158,6 @@ class Polygon(GeometricaAcquisition):
                     projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if projectedMousePoint:
                         geom, pf = self.completePolygon(self.geometry, projectedMousePoint)
-                        #print('oldPoint:', oldPoint)
-                        #print('point:', point)
-                        #print('pf:', pf)
                         self.rubberBand.setToGeometry(geom, None)
         else:
             self.initVariable()
