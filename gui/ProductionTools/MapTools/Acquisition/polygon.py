@@ -78,7 +78,7 @@ class Polygon(GeometricaAcquisition):
                         projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                         if projectedMousePoint:                            
                             new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)
-                            if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
+                            if self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point):
                                 self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
                                 self.geometry.append(last_point)   
                                 self.endGeometry() 
@@ -119,7 +119,10 @@ class Polygon(GeometricaAcquisition):
                     point = QgsPointXY(pointMap)
                     projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if projectedMousePoint:
-                        if self.distanceBetweenLinesTest(self.geometry, projectedMousePoint):
+                        new_geom, last_point = self.completePolygon(self.geometry, projectedMousePoint)                        
+                        testando = self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point)
+                        
+                        if self.bufferDistanceTest(self.geometry, projectedMousePoint, last_point):
                             self.geometry.append(QgsPointXY(projectedMousePoint.x(), projectedMousePoint.y()))        
                             self.qntPoint += 1
                         else:
@@ -157,6 +160,9 @@ class Polygon(GeometricaAcquisition):
                     projectedMousePoint = self.projectPoint(self.geometry[-2], self.geometry[-1], point)
                     if projectedMousePoint:
                         geom, pf = self.completePolygon(self.geometry, projectedMousePoint)
+                        #print('oldPoint:', oldPoint)
+                        #print('point:', point)
+                        #print('pf:', pf)
                         self.rubberBand.setToGeometry(geom, None)
         else:
             self.initVariable()
