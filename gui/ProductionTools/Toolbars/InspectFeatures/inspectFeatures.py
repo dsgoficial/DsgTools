@@ -84,7 +84,6 @@ class InspectFeatures(QWidget,Ui_Form):
 	    return self.mMapLayerComboBox.currentLayer()
 
     def enableTool(self, enabled = True):
-        from qgis.core import QgsVectorLayer
         if enabled == None or not isinstance(enabled, QgsVectorLayer):
             allowed = False
         else:
