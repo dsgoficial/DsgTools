@@ -40,7 +40,7 @@ class ShapeTool(QgsMapTool):
         QgsMapTool.__init__(self, canvas)
         self.canvas = canvas
         self.active = False
-        self.geometryType = geometryType
+        self.geometryType = self.tr(geometryType)
         self.param=param
         self.type=type       
         self.cursor=None
