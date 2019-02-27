@@ -61,7 +61,7 @@ class EDGVLayerLoader(QObject):
             else:
                 return inputList, False
 
-    def load(self, layerList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False):
+    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, loadEditingStructure=False, parent=None):
         return None
     
     def getStyle(self, stylePath, className):
