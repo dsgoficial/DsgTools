@@ -116,7 +116,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             finalList = [i['tableName'] for i in finalList]
         return finalList
 
-    def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, customForm = False, parent = None):
+    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, loadEditingStructure=False, parent=None):
         """
         1. Get loaded layers
         2. Filter layers;
