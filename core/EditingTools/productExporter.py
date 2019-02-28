@@ -32,10 +32,10 @@ class ProductExporter(object):
         templateDomDoc = QDomDocument()
         templateDomDoc.setContent(templateXMLContent)
         self.layout.loadFromTemplate(templateDomDoc, QgsReadWriteContext())
-    
+
     def export(self, parameterDict):
         pass
-    
+
     def exportPdf(self, outputPath, feedback=None):
         exporter = QgsLayoutExporter(self.layout)
         result, error = exporter.exportToPdfs(self.layout.atlas(),
