@@ -20,9 +20,12 @@ Some parts were inspired by QGIS plugin FreeHandEditting
 
 from builtins import range
 from builtins import object
+
 from qgis.PyQt import QtGui, QtCore
+from qgis.PyQt.QtWidgets import QMessageBox
 from qgis import core, gui
-from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsWkbTypes, QgsProject
+from qgis.core import QgsPoint, QgsLineString, QgsVectorLayer, QgsWkbTypes, \
+                      QgsProject, QgsMessageLog, Qgis
 
 from DsgTools.gui.ProductionTools.MapTools.FreeHandTool.models.acquisitionFree import AcquisitionFree
 
@@ -138,10 +141,21 @@ class AcquisitionFreeController(object):
         sGeom = geom
         for x in range(int(parameters[u'algIterations'])):
             sGeom = sGeom.simplify(float(tolerance))
-            sGeom = sGeom.smooth(
-                int(parameters[u'freeHandSmoothIterations']),
-                float(parameters[u'freeHandSmoothOffset'])
-            )
+            try:
+                sGeom = sGeom.smooth(
+                    int(parameters[u'freeHandSmoothIterations']),
+                    float(parameters[u'freeHandSmoothOffset'])
+                )
+            except:
+                msg = QMessageBox().tr('Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not simplified.')
+                QMessageBox.warning(
+                    self.iface.mainWindow(),
+                    QMessageBox().tr('Error!'),
+                    msg
+                )
+                QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
+                return geom
+                
         return sGeom
 
     def reprojectGeometry(self, geom):
