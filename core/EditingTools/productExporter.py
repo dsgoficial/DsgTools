@@ -20,21 +20,31 @@
  *                                                                         *
  ***************************************************************************/
 """
+from builtins import object
+from qgis.core import QgsLayoutExporter, QgsProject, QgsPrintLayout, QgsReadWriteContext
+from qgis.PyQt.QtXml import QDomDocument
 
-class ProductExporter:
+class ProductExporter(object):
     def __init__(self):
+        self.layout = QgsPrintLayout(QgsProject.instance())
+    
+    def populateTemplate(self, templateXMLContent):
+        templateDomDoc = QDomDocument()
+        templateDomDoc.setContent(templateXMLContent)
+        self.layout.loadFromTemplate(templateDomDoc, QgsReadWriteContext())
+    
+    def export(self, parameterDict):
         pass
     
-    def populateTemplate(self, template):
-        populatedTemplate = None
-        return populatedTemplate
-    
-    def setParameters(self, parameterDict):
-        pass
-    
-    def exportPdf(self):
-        pass
-    
+    def exportPdf(self, outputPath, feedback=None):
+        exporter = QgsLayoutExporter(self.layout)
+        result, error = exporter.exportToPdfs(self.layout.atlas(),
+                                              outputPath,
+                                              settings=QgsLayoutExporter.PdfExportSettings(),
+                                              feedback=feedback
+                                            )
+        return result, error
+
     def exportTiff(self):
         pass
     

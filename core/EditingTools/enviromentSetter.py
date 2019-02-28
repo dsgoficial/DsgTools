@@ -23,43 +23,53 @@
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
 class EnviromentSetter:
-    def __init__(self, iface, parent=None):
+    def __init__(self, iface):
         self.layerFactory = LayerLoaderFactory()
         self.iface = iface
     
     def setEnviroment(self, parameterDict):
         """
-        :param parameterDict (dict): dictionary with parameters to set de Editing Enviroment.
+        :param parameterDict (dict): dictionary with parameters
+        to set de Editing Enviroment.
         parameterDict = {
             'abstractDb' : database,
             'layerList': [list of layer names, ordered by exibition],
-            'stylePath' : path of the style
+            'stylePath' : path of the style,
+            'framePolygon' : polygon of the working area
         }
         """
         #Step 1: Load layers
-        layerLoader = self.layerFactory.makeLoader(self.iface, parameterDict['abstractDb'])
+        layerLoader = self.layerFactory.makeLoader(
+            iface=self.iface,
+            abstractDb=parameterDict['abstractDb']
+        )
         loadedLayerDict = layerLoader.loadedLayers(
             inputList=parameterDict['layerList'],
             stylePath=parameterDict['stylePath'],
             loadEditingStructure=True
         )
-        self.setLayerOrdering(loadedLayerDict, parameterDict['layerList'])
-    
-    def createGrid(self, extents):
+        self.setLayerOrdering(
+            vectorLayerDict=loadedLayerDict,
+            layerOrder=parameterDict['layerList']
+        )
+        self.createGrid(parameterDict['workingAreaPolygon'])
+        self.setWorkArea(parameterDict['workingAreaPolygon'])
+
+    def createGrid(self, workingAreaPolygon):
         """
         :param extents: [xmin, ymin, xmax, ymax]
-        Creates the grid of 
+        Creates the grid of workingAreaPolygon
         }
         """
         pass
-    
-    def setWorkArea(self, extents):
+
+    def setWorkArea(self, workingAreaPolygon):
         """
         :param extents: [xmin, ymin, xmax, ymax]
         """
         pass
-    
-    def setLayerOrdering(self, vectorLayerList, layerOrder):
+
+    def setLayerOrdering(self, vectorLayerDict, layerOrder):
         """
         :param vectorLayerList: list of QgsVectorLayers,
         :param layerOrder: order of each layer
