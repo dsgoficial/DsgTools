@@ -160,7 +160,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, customForm = customForm)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, loadEditingStructure=loadEditingStructure, customForm = customForm)
                         if vlayer is not None:
                             if isinstance(lyr, dict):
                                 key = lyr['lyrName']
@@ -180,7 +180,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.iface.mapCanvas().freeze(False) #done to speedup things
         return loadedDict
 
-    def loadLayer(self, inputParam, parentNode, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, customForm = False):
+    def loadLayer(self, inputParam, parentNode, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, loadEditingStructure=False, customForm = False):
         """
         Loads a layer
         :param lyrName: Layer name
@@ -221,6 +221,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     del fullPath
             if customForm:
                 vlayer = self.loadFormCustom(vlayer)
+            if loadEditingStructure:
+                pass
             parentNode.addLayer(vlayer)
             if not vlayer.isValid():
                 QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
