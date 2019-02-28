@@ -61,6 +61,6 @@ tags
 
 #DSGTools styles
 # =========================
-#Styles/
+Styles/
 LayerTools/CustomFormTools/formsCustom
 gui/DatabaseTools/ConversionTools/conversion_map.json
