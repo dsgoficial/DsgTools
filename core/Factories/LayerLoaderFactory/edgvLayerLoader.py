@@ -29,7 +29,8 @@ from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QVariant
 from qgis.PyQt.Qt import QObject
 
 # QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, QgsWkbTypes
+from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsField, \
+                      QgsWkbTypes, QgsVectorLayerJoinInfo
 from qgis.utils import iface
 
 #DsgTools imports
@@ -266,3 +267,23 @@ class EDGVLayerLoader(QObject):
             return QgsVectorLayer(self.uri.uri(), table, self.provider)
         except:
             return None
+    
+    def buildJoin(self, originalLyr, originalLyrFieldName, joinnedLyr, joinLyrFieldName):
+        """
+        Builds a join bewteen lyr and joinnedLyr.
+        :param originalLyr: QgsVectorLayer original layer;
+        :param originalLyrFieldName: (str) name of the field;
+        :param joinnedLyr: QgsVectorLayer lyr to be joinned to originalLayer;
+        :param joinLyrFieldName: (str) name of the join field name (usually primary key of joinnedLyr)
+        """
+        joinObject = QgsVectorLayerJoinInfo()
+        joinObject.setJoinFieldName(joinLyrFieldName)
+        joinObject.setTargetFieldName(originalLyrFieldName)
+        joinObject.setJoinLayer(joinnedLyr)
+        joinObject.setJoinFieldNamesSubset()
+        joinObject.upsertOnEdit(True) #set to enable edit on original lyr
+        joinObject.setCascadedDelete(True)
+        joinObject.setDynamicFormEnabled(True)
+        joinObject.setEditable(True)
+        joinObject.setUsingMemoryCache(True)
+        originalLyr.addJoin(joinObject)

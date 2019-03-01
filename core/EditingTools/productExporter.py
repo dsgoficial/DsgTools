@@ -27,10 +27,13 @@ from qgis.PyQt.QtXml import QDomDocument
 class ProductExporter(object):
     def __init__(self):
         self.layout = QgsPrintLayout(QgsProject.instance())
-    
+
     def populateTemplate(self, templateXMLContent):
         templateDomDoc = QDomDocument()
         templateDomDoc.setContent(templateXMLContent)
+        #TODO: Adicionar um parser para o XML para substituir
+        # informações pertinentes, como por exemplo, id da
+        # camada de atlas.
         self.layout.loadFromTemplate(templateDomDoc, QgsReadWriteContext())
 
     def export(self, parameterDict):
@@ -47,14 +50,14 @@ class ProductExporter(object):
 
     def exportTiff(self):
         pass
-    
+
     def generateProductionStepsHTML(self, parameterDict):
         """
         Para gerar a tabela de etapas de produção.
         Nos parâmetros deve vir a ordem de supressão caso seja necessário.
         """
         pass
-    
+
     def exportPopulatedQPT(self, parameterDict):
         """
         easter egg
