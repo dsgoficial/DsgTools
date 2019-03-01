@@ -147,7 +147,7 @@ class AcquisitionFreeController(object):
                     float(parameters[u'freeHandSmoothOffset'])
                 )
             except:
-                msg = QMessageBox().tr('Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not simplified.')
+                msg = QMessageBox().tr('Probably too many smoothing iteration, try reducing it (3 usually is enough). Geometry was not smoothened.')
                 QMessageBox.warning(
                     self.iface.mainWindow(),
                     QMessageBox().tr('Error!'),
