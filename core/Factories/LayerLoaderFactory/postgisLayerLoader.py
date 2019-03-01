@@ -141,6 +141,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         multiColumnsDict = self.abstractDb.getMultiColumnsDict()
         notNullDict = self.abstractDb.getNotNullDictV2()
         lyrDict = self.getLyrDict(filteredDictList, isEdgv=isEdgv)
+        editingDict = self.abstractDb.getEditingDict() if loadEditingStructure else None
         if customForm:
             self.filterDict = self.abstractDb.getFilterDict()
             self.rulesDict = dict()
@@ -160,7 +161,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             for cat in list(lyrDict[prim].keys()):
                 for lyr in lyrDict[prim][cat]:
                     try:
-                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, loadEditingStructure=loadEditingStructure, customForm = customForm)
+                        vlayer = self.loadLayer(lyr, groupDict[prim][cat], useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, editingDict=editingDict, customForm = customForm)
                         if vlayer is not None:
                             if isinstance(lyr, dict):
                                 key = lyr['lyrName']
@@ -180,7 +181,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.iface.mapCanvas().freeze(False) #done to speedup things
         return loadedDict
 
-    def loadLayer(self, inputParam, parentNode, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, loadEditingStructure=False, customForm = False):
+    def loadLayer(self, inputParam, parentNode, useInheritance, useQml, uniqueLoad, stylePath, domainDict, multiColumnsDict, domLayerDict, edgvVersion, geomColumn = None, isView = False, editingDict=None, customForm = False):
         """
         Loads a layer
         :param lyrName: Layer name
@@ -221,13 +222,23 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     del fullPath
             if customForm:
                 vlayer = self.loadFormCustom(vlayer)
-            if loadEditingStructure:
-                pass
+            if editingDict is not None:
+                editLyr, joinLyrFieldName = self.loadEditLayer(lyrName, editingDict)
+                self.buildJoin(vlayer, pkColumn, editLyr, joinLyrFieldName)
             parentNode.addLayer(vlayer)
             if not vlayer.isValid():
                 QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
         vlayer = self.createMeasureColumn(vlayer)
         return vlayer
+    
+    def loadEditLayer(self, schema, tableName):
+        """
+        Parses database to check which is the referenced edit layer and loads it
+        :param schema: original table schema
+        :param tableName: original table name
+        returns editLyr, joinLyrFieldName
+        """
+        editLyrSchema, editLyrTableName, joinLyrFieldName = self.abstractDb.getEditTable()
     
     def loadDomain(self, domainTableName, domainGroup):
         """

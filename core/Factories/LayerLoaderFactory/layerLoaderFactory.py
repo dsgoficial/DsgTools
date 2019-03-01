@@ -21,12 +21,11 @@
  ***************************************************************************/
 """
 from builtins import object
-import os
 
 from .postgisLayerLoader import PostGISLayerLoader
 from .spatialiteLayerLoader import SpatialiteLayerLoader
 from .geopackageLayerLoader import GeopackageLayerLoader
-from .shapefileLayerLoader import ShapefileLayerLoader 
+from .shapefileLayerLoader import ShapefileLayerLoader
 
 class LayerLoaderFactory(object):
     def makeLoader(self, iface, abstractDb, loadCentroids=False):
