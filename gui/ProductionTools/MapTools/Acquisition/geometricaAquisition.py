@@ -151,7 +151,7 @@ class GeometricaAcquisition(QgsMapToolAdvancedDigitizing):
             penult_buffer = QgsGeometry.fromPointXY(penult).buffer(self.minSegmentDistance,4).boundingBox()
             last_stop = line.intersects(last_buffer)
             penult_stop = line.intersects(penult_buffer)
-            if (last_stop or last_stop):
+            if (last_stop or penult_stop):
                 teste_answer = False
                 break
             else:
