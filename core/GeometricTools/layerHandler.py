@@ -808,6 +808,7 @@ class LayerHandler(QObject):
                         inputLyr.changeGeometry(id, newGeom)
                     else:
                         newFeat = QgsVectorLayerUtils.createFeature(inputLyr, newGeom, attrMap)
+                        newFeatSet.add(newFeat)
             if feedback is not None:
                 feedback.setProgress(stepSize*current)
         if fixInput:
