@@ -29,7 +29,7 @@ from qgis.PyQt import QtWidgets, uic, QtCore
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer, Qgis
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QMessageBox
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
