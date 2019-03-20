@@ -269,7 +269,10 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         styleWalkList = list(os.walk(styleDir))
         if styleWalkList == []:
             return []
-        for style in styleWalkList[1]:
+        stylePath, styles, files = styleWalkList[0]
+        for style in styles:
+            if style == []:
+                continue
             styleList.append('/'.join([version,style]))
         if len(styleList) == 0:
             styleList = [version+'/'+os.path.basename(styleDir)]
