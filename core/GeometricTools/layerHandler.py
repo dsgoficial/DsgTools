@@ -422,20 +422,23 @@ class LayerHandler(QObject):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback else None
         multiStepFeedback.setCurrentStep(0)
         #builds bounding box dict to do a geos comparison for each feat in list
-        bbDict = self.getFeaturesWithSameBoundingBox(iterator, feedback=feedback)
+        bbDict = self.getFeaturesWithSameBoundingBox(iterator, columns=columns, feedback=feedback)
         multiStepFeedback.setCurrentStep(1)
         for current, (key, featList) in enumerate(bbDict.items()):
             if feedback is not None and feedback.isCanceled():
                 break
             if len(value) <= 1:
                 continue
-            duplicatedDict = self.searchDuplicatedFeatures(featList, columns)
+            duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns)
             geomDict.update(duplicatedDict)
             if feedback is not None:
                 feedback.setProgress(size * current)
         return geomDict
     
-    def getFeaturesWithSameBoundingBox(self, iterator, columns, feedback=None):
+    def getFeaturesWithSameBoundingBox(self, iterator, columns=None, feedback=None):
+        """
+        Iterates over iterator and gets 
+        """
         bbDict = dict()
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
@@ -447,17 +450,18 @@ class LayerHandler(QObject):
             geomBB_key = geom.boundingBox().asWktPolygon()
             if geomBB_key not in bbDict:
                 bbDict[geomBB_key] = dict()
-            attrKey = ','.join(['{}'.format(feat[column]) for column in columns])
-            bbDict[geomBB_key].append({'geom':geom, 'feat':feat})
+            attrKey = ','.join(['{}'.format(feat[column]) for column in columns]) if columns is not None else ''
+            bbDict[geomBB_key].append({'geom':geom, 'feat':feat, 'attrKey':attrKey})
             if feedback is not None:
                 feedback.setProgress(size * current)
     
-    def searchDuplicatedFeatures(self, featList, columns):
+    def searchDuplicatedFeatures(self, featList, useAttributes=False):
         """
         featList = list of {'geom': geom, 'feat':feat}
         returns geomKey, duplicatedFeats
         """
-        for feat1, feat2 in combinations(featList, 2):
+        duplicatedDict = dict()
+        for dict_feat1, dict_feat2 in combinations(featList, 2):
             pass
 
     def addFeatToDict(self, endVerticesDict, line, featid):
