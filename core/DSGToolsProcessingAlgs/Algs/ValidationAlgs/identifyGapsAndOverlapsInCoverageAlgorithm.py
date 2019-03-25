@@ -132,7 +132,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
         return lyr
     
-    def getGapsOfCoverageWithFrame(self, coverage, frameLyr, context):
+    def getGapsOfCoverageWithFrame(self, coverage, frameLyr, context, feedback=None, onFinish=None):
         dissolveParameters = {
             'INPUT' : coverage,
             'FIELD':[],
@@ -158,7 +158,7 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             'OVERLAY' : donutHoleExtractorOutput['OUTERSHELL'],
             'OUTPUT':'memory:'
         }
-        differenceOutput = processing.run('native:difference', differenceParameters, context = context)
+        differenceOutput = processing.run('native:difference', differenceParameters, onFinish, feedback, context)
         geometryHandler = GeometryHandler()
         for feat in differenceOutput['OUTPUT'].getFeatures():
             for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
