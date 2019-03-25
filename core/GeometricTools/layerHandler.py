@@ -844,3 +844,16 @@ class LayerHandler(QObject):
             inputLyr.endEditCommand()
 
         return flagDict
+
+    def runGrassDissolve(self, inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None):
+        """
+        Runs dissolve from GRASS algorithm provider.
+        :param inputLyr: (QgsVectorLayer) layer to be dissolved.
+        :param context: (QgsProcessingContext) processing context.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        :param column: ()
+        :param outputLyr: (str) URI to output layer.
+        :param onFinish: (list-of-str) sequence of algs to be run after dissolve is executed, in execution order.
+        :return: (QgsVectorLayer) dissolved (output) layer.
+        """
+        return AlgRunner().runGrassDissolve(inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None)

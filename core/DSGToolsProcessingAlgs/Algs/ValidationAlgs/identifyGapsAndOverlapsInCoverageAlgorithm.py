@@ -138,16 +138,32 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             'FIELD':[],
             'OUTPUT':'memory:'
         }
-        dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)
+        try:
+            dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)['OUTPUT']
+        except:
+            # dissolve should take the fixed coverage as input
+            LayerHandler().identifyAndFixInvalidGeometries(coverage, True)
+            dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)['OUTPUT']
+        # dissolveOutput = LayerHandler().runGrassDissolve(coverage, context)
+        donutHoleParameters = {
+            'INPUT' : dissolveOutput,
+            'SELECTED' : False,
+            'OUTERSHELL' : 'memory:',
+            'DONUTHOLE' : 'memory:'
+        }
+        donutHoleExtractorOutput = processing.run('dsgtools:donutholeextractor', donutHoleParameters, context=context)
+
         differenceParameters = {
             'INPUT' : frameLyr,
-            'OVERLAY' : dissolveOutput['OUTPUT'],
+            'OVERLAY' : donutHoleExtractorOutput['OUTERSHELL'],
             'OUTPUT':'memory:'
         }
         differenceOutput = processing.run('native:difference', differenceParameters, context = context)
+        geometryHandler = GeometryHandler()
         for feat in differenceOutput['OUTPUT'].getFeatures():
-            self.flagFeature(feat.geometry(), self.tr('Gap in coverage with frame'))
-    
+            for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
+                self.flagFeature(geom, self.tr('Gap in coverage with frame'))
+
     def getGeomDict(self, featureList, isMulti, feedback, total):
         geomDict = dict()
         for current, feat in enumerate(featureList):
