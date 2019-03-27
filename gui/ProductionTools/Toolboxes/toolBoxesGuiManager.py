@@ -29,7 +29,7 @@ from qgis.PyQt.QtCore import QObject, Qt
 
 from .AttributeTools.code_list import CodeList
 from .FieldToolBox.field_toolbox import FieldToolbox
-from .ValidationToolbox.validation_toolbox import ValidationToolbox
+#from .ValidationToolbox.validation_toolbox import ValidationToolbox
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
 
@@ -47,8 +47,8 @@ class ToolBoxesGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        self.validationToolbox = ValidationToolbox(self.iface)
-        self.validationToolbox.addTool(self.manager, self.showValidationToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
+        #self.validationToolbox = ValidationToolbox(self.iface)
+        #self.validationToolbox.addTool(self.manager, self.showValidationToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
         self.fieldToolbox = FieldToolbox(self.iface)
         self.fieldToolbox.addTool(self.manager, self.showFieldToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
         self.calcContour = CalcContour(self.iface)
@@ -79,15 +79,15 @@ class ToolBoxesGuiManager(QObject):
             self.fieldToolbox = FieldToolbox(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
 
-    def showValidationToolbox(self):
-        """
-        Shows the Validation Dock
-        """
-        if self.validationToolbox:
-            self.iface.removeDockWidget(self.validationToolbox)
-        else:
-            self.validationToolbox = ValidationToolbox(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+    # def showValidationToolbox(self):
+    #     """
+    #     Shows the Validation Dock
+    #     """
+    #     if self.validationToolbox:
+    #         self.iface.removeDockWidget(self.validationToolbox)
+    #     else:
+    #         self.validationToolbox = ValidationToolbox(self.iface)
+    #     self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
 
     def showCalcContourToolbox(self):
         """
