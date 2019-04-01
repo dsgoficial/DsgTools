@@ -99,12 +99,12 @@ class BDGExRequestHandler(QObject):
         password = settings.value('proxyPassword')
         type = settings.value('proxyType')
         excludedUrls = settings.value('proxyExcludedUrls')
-        try:
-            urlsList = excludedUrls.split('|')
-        except:
-            urlsList = []
+        # try:
+        #     urlsList = excludedUrls.split('|')
+        # except:
+        #     urlsList = []
         settings.endGroup()
-        return (enabled, host, port, user, password, type, urlsList)
+        return (enabled, host, port, user, password, type, excludedUrls)
 
     def get_url_string(self, service, layerList, serviceType):
         """
@@ -229,7 +229,7 @@ class BDGExRequestHandler(QObject):
                 styles_tag=styles_tag,
                 url=url
             )
-        if serviceType == 'WFS':
+        elif serviceType == 'WFS':
             requestString = """pagingEnabled='true' restrictToRequestBBOX='1' srsname='{epsg}' typename='{layer_name}' url='{url}' version='auto' table="" sql=""".format(
                 epsg=infoDict['SRS'],
                 layer_name=infoDict['Name'],
