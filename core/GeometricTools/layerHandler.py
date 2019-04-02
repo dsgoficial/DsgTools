@@ -462,7 +462,20 @@ class LayerHandler(QObject):
         """
         duplicatedDict = dict()
         for dict_feat1, dict_feat2 in combinations(featList, 2):
-            pass
+            geom1 = dict_feat1['geom']
+            geom2 = dict_feat2['geom']
+            wkb1 = geom1.asWkb()
+            wkb2 = geom2.asWkb()
+            if not geom1.isGeosEqual(geom2):
+                continue
+            if wkb1 not in duplicatedDict:
+                duplicatedDict[wkb1] = []
+            if wkb2 not in duplicatedDict:
+                duplicatedDict[wkb2] = []
+            duplicatedDict[wkb1].append(dict_feat1['feat'])
+            duplicatedDict[wkb1].append(dict_feat2['feat'])
+
+
 
     def addFeatToDict(self, endVerticesDict, line, featid):
         self.addPointToDict(line[0], endVerticesDict, featid)
