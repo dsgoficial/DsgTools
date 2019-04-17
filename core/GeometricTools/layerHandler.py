@@ -77,6 +77,8 @@ class LayerHandler(QObject):
         """
         selectedDict = dict()
         for lyr in self.canvas.layers():
+            if not isinstance(lyr, QgsVectorLayer):
+                continue
             featureList = self.getFeatureList(lyr, onlySelected=True, returnIterator=False)
             if featureList:
                 selectedDict[lyr] = featureList
