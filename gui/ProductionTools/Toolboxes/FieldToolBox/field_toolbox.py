@@ -75,6 +75,7 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             parentMenu = parentMenu,
             parentButton = parentStackButton
             )
+        parentStackButton.setDefaultAction(action)
     
     def defineFactory(self, abstractDb):
         """

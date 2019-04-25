@@ -130,24 +130,53 @@ class IdentifyGapsAndOverlapsInCoverageAlgorithm(ValidationAlgorithm):
             }
         x = processing.run('grass7:v.overlay', parameters, context = context)
         lyr = QgsProcessingUtils.mapLayerFromString(x['output'], context)
+        lyr.setCrs(coverage.crs())
         return lyr
     
-    def getGapsOfCoverageWithFrame(self, coverage, frameLyr, context):
-        dissolveParameters = {
+    def getGapsOfCoverageWithFrame(self, coverage, frameLyr, context, feedback=None, onFinish=None):
+        """
+        Identifies all gaps inside coverage layer and between coverage and frame layer.
+        :param coverage: (QgsVectorLayer) unified coverage layer.
+        :param frameLyr: (QgsVectorLayer) frame layer.
+        :param context: (QgsProcessingContext)
+        :param feedback: (QgsProcessingFeedback) QGIS' object for progress tracking and controlling.
+        :param onFinish: (list-of-str) list of alg names to be executed after difference alg.
+        """
+        # identify all holes in coverage layer first
+        coverageHolesParam = {
             'INPUT' : coverage,
-            'FIELD':[],
-            'OUTPUT':'memory:'
+            'FLAGS':'memory:',
+            'SELECTED': False
         }
-        dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)
+        coverageHoles = processing.run('dsgtools:identifygaps', coverageHolesParam, None, feedback, context)['FLAGS']
+        geometryHandler = GeometryHandler()
+        gapSet = set()
+        for feat in coverageHoles.getFeatures():
+            for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
+                self.flagFeature(geom, self.tr('Gap in coverage layer'))
+                gapSet.add(geom)
+        # missing possible holes between coverage and frame, but gaps in coverage may cause invalid geometries
+        # while executing difference alg. Since its already identified, "add" them to the coverage
+        layerHandler = LayerHandler()
+        filledCoverage = layerHandler.createAndPopulateUnifiedVectorLayer([coverage, coverageHoles], QgsWkbTypes.Polygon)
+        # dissolveParameters = {
+        #     'INPUT' : filledCoverage,
+        #     'FIELD':[],
+        #     'OUTPUT':'memory:'
+        # }
+        # dissolveOutput = processing.run('native:dissolve', dissolveParameters, context = context)['OUTPUT']
+        dissolveOutput = LayerHandler().runGrassDissolve(filledCoverage, context)
         differenceParameters = {
             'INPUT' : frameLyr,
-            'OVERLAY' : dissolveOutput['OUTPUT'],
+            'OVERLAY' : dissolveOutput,
             'OUTPUT':'memory:'
         }
-        differenceOutput = processing.run('native:difference', differenceParameters, context = context)
+        differenceOutput = processing.run('native:difference', differenceParameters, onFinish, feedback, context)
         for feat in differenceOutput['OUTPUT'].getFeatures():
-            self.flagFeature(feat.geometry(), self.tr('Gap in coverage with frame'))
-    
+            for geom in geometryHandler.deaggregateGeometry(feat.geometry()):
+                if geom not in gapSet:
+                    self.flagFeature(geom, self.tr('Gap in coverage with frame'))
+
     def getGeomDict(self, featureList, isMulti, feedback, total):
         geomDict = dict()
         for current, feat in enumerate(featureList):
