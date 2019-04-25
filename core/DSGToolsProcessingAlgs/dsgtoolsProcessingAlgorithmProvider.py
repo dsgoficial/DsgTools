@@ -110,6 +110,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm imp
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
     IdentifyAndFixInvalidGeometriesAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
+    CreateEditingGridAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -163,7 +166,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 CreateFrameAlgorithm(),
                 FileInventoryAlgorithm(),
                 RaiseFlagsAlgorithm(),
-                IdentifyAndFixInvalidGeometriesAlgorithm()]
+                IdentifyAndFixInvalidGeometriesAlgorithm(),
+                CreateEditingGridAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
