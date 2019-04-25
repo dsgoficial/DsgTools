@@ -22,9 +22,6 @@
 from builtins import str
 
 from PyQt5.QtCore import QCoreApplication
-
-from DsgTools.core.ValidationTools.ValidationProcesses.identifyDanglesProcess import \
-    IdentifyDanglesProcess
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingException, QgsProcessingOutputVectorLayer,

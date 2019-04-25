@@ -23,6 +23,7 @@
 
 from __future__ import absolute_import
 from builtins import range
+from itertools import combinations
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
@@ -76,6 +77,8 @@ class LayerHandler(QObject):
         """
         selectedDict = dict()
         for lyr in self.canvas.layers():
+            if not isinstance(lyr, QgsVectorLayer):
+                continue
             featureList = self.getFeatureList(lyr, onlySelected=True, returnIterator=False)
             if featureList:
                 selectedDict[lyr] = featureList
@@ -418,6 +421,27 @@ class LayerHandler(QObject):
         iterator, featCount = self.getFeatureList(lyr, onlySelected=onlySelected)
         size = 100/featCount if featCount else 0
         columns = self.getAttributesFromBlackList(lyr, attributeBlackList=attributeBlackList, ignoreVirtualFields=ignoreVirtualFields, excludePrimaryKeys=excludePrimaryKeys)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback else None
+        multiStepFeedback.setCurrentStep(0)
+        #builds bounding box dict to do a geos comparison for each feat in list
+        bbDict = self.getFeaturesWithSameBoundingBox(iterator, columns=columns, feedback=feedback)
+        multiStepFeedback.setCurrentStep(1)
+        for current, (key, featList) in enumerate(bbDict.items()):
+            if feedback is not None and feedback.isCanceled():
+                break
+            if len(value) <= 1:
+                continue
+            duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns)
+            geomDict.update(duplicatedDict)
+            if feedback is not None:
+                feedback.setProgress(size * current)
+        return geomDict
+    
+    def getFeaturesWithSameBoundingBox(self, iterator, columns=None, feedback=None):
+        """
+        Iterates over iterator and gets 
+        """
+        bbDict = dict()
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -425,12 +449,35 @@ class LayerHandler(QObject):
             if isMulti and not geom.isMultipart():
                 geom.convertToMultiType()
             geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = dict()
-            self.appendFeatOnAttrsDict(geomDict[geomKey], feat, columns)
+            geomBB_key = geom.boundingBox().asWktPolygon()
+            if geomBB_key not in bbDict:
+                bbDict[geomBB_key] = dict()
+            attrKey = ','.join(['{}'.format(feat[column]) for column in columns]) if columns is not None else ''
+            bbDict[geomBB_key].append({'geom':geom, 'feat':feat, 'attrKey':attrKey})
             if feedback is not None:
                 feedback.setProgress(size * current)
-        return geomDict
+    
+    def searchDuplicatedFeatures(self, featList, useAttributes=False):
+        """
+        featList = list of {'geom': geom, 'feat':feat}
+        returns geomKey, duplicatedFeats
+        """
+        duplicatedDict = dict()
+        for dict_feat1, dict_feat2 in combinations(featList, 2):
+            geom1 = dict_feat1['geom']
+            geom2 = dict_feat2['geom']
+            wkb1 = geom1.asWkb()
+            wkb2 = geom2.asWkb()
+            if not geom1.isGeosEqual(geom2):
+                continue
+            if wkb1 not in duplicatedDict:
+                duplicatedDict[wkb1] = []
+            if wkb2 not in duplicatedDict:
+                duplicatedDict[wkb2] = []
+            duplicatedDict[wkb1].append(dict_feat1['feat'])
+            duplicatedDict[wkb1].append(dict_feat2['feat'])
+
+
 
     def addFeatToDict(self, endVerticesDict, line, featid):
         self.addPointToDict(line[0], endVerticesDict, featid)
@@ -808,6 +855,7 @@ class LayerHandler(QObject):
                         inputLyr.changeGeometry(id, newGeom)
                     else:
                         newFeat = QgsVectorLayerUtils.createFeature(inputLyr, newGeom, attrMap)
+                        newFeatSet.add(newFeat)
             if feedback is not None:
                 feedback.setProgress(stepSize*current)
         if fixInput:
@@ -815,3 +863,16 @@ class LayerHandler(QObject):
             inputLyr.endEditCommand()
 
         return flagDict
+
+    def runGrassDissolve(self, inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None):
+        """
+        Runs dissolve from GRASS algorithm provider.
+        :param inputLyr: (QgsVectorLayer) layer to be dissolved.
+        :param context: (QgsProcessingContext) processing context.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        :param column: ()
+        :param outputLyr: (str) URI to output layer.
+        :param onFinish: (list-of-str) sequence of algs to be run after dissolve is executed, in execution order.
+        :return: (QgsVectorLayer) dissolved (output) layer.
+        """
+        return AlgRunner().runGrassDissolve(inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None)

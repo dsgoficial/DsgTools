@@ -23,7 +23,7 @@
 import uuid
 
 import processing
-from qgis.core import QgsProcessingUtils
+from qgis.core import QgsProcessingUtils, QgsVectorLayer
 
 
 class AlgRunner:
@@ -53,6 +53,32 @@ class AlgRunner:
         output = processing.run('native:dissolve', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
     
+    def runGrassDissolve(self, inputLyr, context, feedback=None, column=None, outputLyr=None, onFinish=None):
+        """
+        Runs dissolve from GRASS algorithm provider.
+        :param inputLyr: (QgsVectorLayer) layer to be dissolved.
+        :param context: (QgsProcessingContext) processing context.
+        :param feedback: (QgsProcessingFeedback) QGIS object to keep track of progress/cancelling option.
+        :param column: ()
+        :param outputLyr: (str) URI to output layer.
+        :param onFinish: (list-of-str) sequence of algs to be run after dissolve is executed, in execution order.
+        :return: (QgsVectorLayer) dissolved (output) layer.
+        """
+        parameters = {
+            'GRASS_MIN_AREA_PARAMETER' : 0.0001,
+            'GRASS_OUTPUT_TYPE_PARAMETER' : 0,
+            'GRASS_REGION_PARAMETER' : None,
+            'GRASS_SNAP_TOLERANCE_PARAMETER' : -1,
+            'GRASS_VECTOR_DSCO' : '',
+            'GRASS_VECTOR_EXPORT_NOCAT' : False,
+            'GRASS_VECTOR_LCO' : '',
+            'column' : column,
+            'input' : inputLyr,
+            'output' : outputLyr or QgsProcessingUtils.generateTempFilename('output.shp')
+        }
+        output = processing.run('grass7:v.dissolve', parameters, onFinish, feedback, context)
+        return self.getGrassReturn(output, context)
+
     def runDonutHoleExtractor(self, inputLyr, context, feedback = None, donuthole = 'memory:', outershell = 'memory:' , selected = False):
         parameters = {
             'INPUT' : inputLyr,

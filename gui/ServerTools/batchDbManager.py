@@ -266,7 +266,13 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         else:
             parentFolder = os.path.dirname(styleDir)
             version = os.path.basename(parentFolder)
-        for style in next(os.walk(styleDir))[1]:
+        styleWalkList = list(os.walk(styleDir))
+        if styleWalkList == []:
+            return []
+        stylePath, styles, files = styleWalkList[0]
+        for style in styles:
+            if style == []:
+                continue
             styleList.append('/'.join([version,style]))
         if len(styleList) == 0:
             styleList = [version+'/'+os.path.basename(styleDir)]
