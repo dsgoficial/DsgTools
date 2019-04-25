@@ -72,6 +72,12 @@ class EnviromentSetter:
     def setLayerOrdering(self, vectorLayerDict, layerOrder):
         """
         :param vectorLayerList: list of QgsVectorLayers,
-        :param layerOrder: order of each layer
+        :param layerOrder: ordered list with the names of each layer
         """
-        pass
+        order = self.iface.layerTreeCanvasBridge().customLayerOrder()
+        for layer_name in layerOrder:
+            if layer_name in vectorLayerDict:
+                lyr = vectorLayerDict[layer_name]
+                order.insert(0, order.pop())
+        order = self.iface.layerTreeCanvasBridge().customLayerOrder()
+
