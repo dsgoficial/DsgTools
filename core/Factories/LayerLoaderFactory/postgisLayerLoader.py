@@ -220,7 +220,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     self.utils.deleteQml(fullPath)
                     # clear fullPath variable
                     del fullPath
-            if customForm:
+            if customForm is not None:
                 vlayer = self.loadFormCustom(vlayer)
             if editingDict is not None:
                 editLyr, joinLyrFieldName = self.loadEditLayer(lyrName, editingDict)
@@ -238,7 +238,17 @@ class PostGISLayerLoader(EDGVLayerLoader):
         :param tableName: original table name
         returns editLyr, joinLyrFieldName
         """
-        editLyrSchema, editLyrTableName, joinLyrFieldName = self.abstractDb.getEditTable()
+        editLyrSchema, editLyrTableName, pkName, joinLyrFieldName = self.abstractDb.getEditTable(schema, tableName)
+        uri = """dbname='{database}' host={host} port={port} user='{user}' password='{password}' key={primary_key} table=\"{schema}\".\"{table}\" sql=""".format(
+                database=self.database,
+                host=self.host,
+                port=self.port,
+                user=self.user,
+                password=self.password,
+                primary_key= pkName,
+                schema=editLyrSchema,
+                table=editLyrTableName
+            )
     
     def loadDomain(self, domainTableName, domainGroup):
         """
