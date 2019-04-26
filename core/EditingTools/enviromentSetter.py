@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
+from qgis.core import QgsProject
 
 class EnviromentSetter:
     def __init__(self, iface):
@@ -71,13 +72,15 @@ class EnviromentSetter:
 
     def setLayerOrdering(self, vectorLayerDict, layerOrder):
         """
-        :param vectorLayerList: list of QgsVectorLayers,
+        :param vectorLayerDict: dict of QgsVectorLayers,
         :param layerOrder: ordered list with the names of each layer
         """
-        order = self.iface.layerTreeCanvasBridge().customLayerOrder()
+        root = QgsProject.instance().layerTreeRoot()
+        order = root.customLayerOrder()
+        count = 0
         for layer_name in layerOrder:
             if layer_name in vectorLayerDict:
-                lyr = vectorLayerDict[layer_name]
-                order.insert(0, order.pop())
-        order = self.iface.layerTreeCanvasBridge().customLayerOrder()
-
+                order.insert(count, vectorLayerDict[layer_name])
+                count += 1
+        root.setCustomLayerOrder(order)
+        root.setHasCustomLayerOrder(True)
