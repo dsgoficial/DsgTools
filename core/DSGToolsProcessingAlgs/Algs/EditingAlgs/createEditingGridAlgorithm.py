@@ -103,7 +103,7 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
 
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.CROSSES_X,
+                self.CROSSES_Y,
                 self.tr('Number of vertical crosses'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
