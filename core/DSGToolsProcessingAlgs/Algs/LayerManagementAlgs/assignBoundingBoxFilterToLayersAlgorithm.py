@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -53,11 +54,11 @@ from qgis.core import (QgsProcessing,
                        QgsField,
                        QgsFields,
                        QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterExtent)
 
-class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
+class AssignBoundingBoxFilterToLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
-    FILTER = 'FILTER'
+    BB_FILTER = 'BB_FILTER'
     BEHAVIOR = 'BEHAVIOR'
     OUTPUT = 'OUTPUT'
     AndMode, OrMode, ReplaceMode = list(range(3))
@@ -74,8 +75,8 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         )
 
         self.addParameter(
-            QgsProcessingParameterString(
-                self.FILTER,
+            QgsProcessingParameterExtent(
+                self.BB_FILTER,
                 self.tr('Filter')
             )
         )
@@ -110,9 +111,9 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYERS,
             context
         )
-        inputFilterExpression = self.parameterAsString(
+        boundingBoxGeometry = self.parameterAsExtentGeometry(
             parameters,
-            self.FILTER,
+            self.BB_FILTER,
             context
         )
         behavior = self.parameterAsEnum(
@@ -120,21 +121,43 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
             self.BEHAVIOR,
             context
             )
-        for lyr in inputLyrList:
-            filterExpression = self.adaptFilter(lyr, inputFilterExpression, behavior)
+        progressStep = 100 / len(inputLyrList) if len(inputLyrList) else 0
+        for current, lyr in enumerate(inputLyrList):
+            if feedback.isCanceled():
+                break
+            if lyr.dataProvider().name() != 'postgres':
+                feedback.pushInfo(self.tr('Operation only defined for postgres provider. Layer {layer} will be skipped.'))
+                continue
+            bboxClause = self.buildSpatialClause(lyr, boundingBoxGeometry)
+            if bboxClause == '':
+                continue
+            filterExpression = self.adaptFilter(lyr, bboxClause, behavior)
             lyr.setSubsetString(filterExpression)
+            feedback.setProgress(current*progressStep)
 
         return {self.OUTPUT: inputLyrList}
 
-    def adaptFilter(self, lyr, inputFilter, behavior):
+    def adaptFilter(self, lyr, bboxClause, behavior):
         """
         Adapts filter according to the selected mode
         """
         originalFilter = lyr.subsetString()
-        if behavior == AssignFilterToLayersAlgorithm.ReplaceMode or originalFilter == '':
-            return inputFilter
-        clause = ' AND ' if behavior == AssignFilterToLayersAlgorithm.AndMode else ' OR '
-        return clause.join([originalFilter, inputFilter])
+        if behavior == AssignBoundingBoxFilterToLayersAlgorithm.ReplaceMode or originalFilter == '':
+            return bboxClause
+        clause = ' AND ' if behavior == AssignBoundingBoxFilterToLayersAlgorithm.AndMode else ' OR '
+        return clause.join([originalFilter, bboxClause])
+    
+    def buildSpatialClause(self, lyr, boundingBoxGeometry):
+        geometryColumn = QgsDataSourceUri(lyr.dataProvider().dataSourceUri()).geometryColumn()
+        if geometryColumn == '':
+            return ''
+        epsg = lyr.crs().authid().replace('EPSG:','SRID=')
+        GeometryHandler().reprojectFeature(boundingBoxGeometry, lyr.crs())
+        geomEwkt = ' ; '.join([epsg, boundingBoxGeometry.asWkt()])
+        return """ST_INTERSECTS({geom}, ST_GEOMFROMEWKT('{ewkt}'))""".format(
+            geom=geometryColumn,
+            ewkt=geomEwkt
+        )
 
 
     def name(self):
@@ -145,14 +168,14 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignfiltertolayers'
+        return 'assignboundingboxfiltertolayers'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Filter to Layers')
+        return self.tr('Assign Bounding Box Filter to Layers')
 
     def group(self):
         """
@@ -172,7 +195,7 @@ class AssignFilterToLayersAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignFilterToLayersAlgorithm', string)
+        return QCoreApplication.translate('AssignBoundingBoxFilterToLayersAlgorithm', string)
 
     def createInstance(self):
-        return AssignFilterToLayersAlgorithm()
+        return AssignBoundingBoxFilterToLayersAlgorithm()

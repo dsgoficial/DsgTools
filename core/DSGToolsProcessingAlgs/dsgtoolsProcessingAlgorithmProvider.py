@@ -116,6 +116,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgo
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
     AssignFilterToLayersAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundingBoxFilterToLayersAlgorithm import \
+    AssignBoundingBoxFilterToLayersAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -171,7 +174,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 RaiseFlagsAlgorithm(),
                 IdentifyAndFixInvalidGeometriesAlgorithm(),
                 CreateEditingGridAlgorithm(),
-                AssignFilterToLayersAlgorithm()]
+                AssignFilterToLayersAlgorithm(),
+                AssignBoundingBoxFilterToLayersAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
