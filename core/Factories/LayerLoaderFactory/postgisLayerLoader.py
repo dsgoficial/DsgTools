@@ -245,7 +245,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 port=self.port,
                 user=self.user,
                 password=self.password,
-                primary_key= pkName,
+                primary_key=pkName,
                 schema=editLyrSchema,
                 table=editLyrTableName
             )
