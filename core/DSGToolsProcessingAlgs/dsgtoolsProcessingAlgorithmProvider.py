@@ -113,6 +113,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInva
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
     CreateEditingGridAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
+    AssignFilterToLayersAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -167,7 +170,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 FileInventoryAlgorithm(),
                 RaiseFlagsAlgorithm(),
                 IdentifyAndFixInvalidGeometriesAlgorithm(),
-                CreateEditingGridAlgorithm()]
+                CreateEditingGridAlgorithm(),
+                AssignFilterToLayersAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
