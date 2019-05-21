@@ -20,8 +20,9 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
+from collections import defaultdict
 
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingException, QgsProcessingOutputVectorLayer,
@@ -77,28 +78,32 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
-        geomDict = dict()
-        for current, feat in enumerate(featureList):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
-                break
-            geom = feat.geometry()
-            if isMulti and not geom.isMultipart():
-                geom.convertToMultiType()
-            geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = []
-            geomDict[geomKey].append(feat)
-            # # Update the progress bar
-            feedback.setProgress(int(current * total))
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)
+        geomDict = defaultdict(set)
+        featureList = list(featureList)
+        for idx1, f1 in enumerate(featureList):
+            geomDict[f1.geometry()].add(f1)
+            for idx2, f2 in enumerate(featureList):
+                if feedback.isCanceled():
+                    break
+                if idx2 <= idx1 or not f1.geometry().isGeosEqual(f2.geometry()):
+                    feedback.setProgress(int(idx1 * total + idx2))
+                    continue
+                for geom in geomDict:
+                    if geom.isGeosEqual(f1.geometry()) or geom.isGeosEqual(f2.geometry()):
+                        geomDict[geom] |= {f1, f2}
+                        break
+                else:
+                    geomDict[f1.geometry()].add(f2)
+                feedback.setProgress(int(idx1 * total + idx2))
         for k, v in geomDict.items():
             if feedback.isCanceled():
                 break
             if len(v) > 1:
                 idStrList = ','.join( map(str, [i.id() for i in v] ) )
-                flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.').format(inputLyr.name(), idStrList)
-                self.flagFeature(v[0].geometry(), flagText)      
+                flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.')\
+                            .format(inputLyr.name(), idStrList)
+                self.flagFeature(v.pop().geometry(), flagText)      
 
         return {self.FLAGS: self.flag_id}
 
