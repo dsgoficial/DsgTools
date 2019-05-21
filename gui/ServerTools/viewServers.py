@@ -248,6 +248,13 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
             return
         return self.tableWidget.selectedItems()[0]
 
+    def connectionParameters(self):
+        """
+        Gets selection's connection parameters.
+        :return: (dict) connection paramters map.
+        """
+        return self.defaultConnectionDict
+
 class ViewServersStatic(ViewServers):
     """
     Class desgined to select servers' configs statically. Selections using this
@@ -311,12 +318,13 @@ class ViewServersStatic(ViewServers):
             if self.tableWidget.cellWidget(i, 5).isChecked():
                 host, port, user, password, _ = self.getServerConfiguration(connection)
                 self._connParameters = {
-                    'connection' : self.tableWidget.item(i, 0),
-                    'address' : self.tableWidget.item(i, 1),
-                    'port' : self.tableWidget.item(i, 2),
-                    'user' : self.tableWidget.item(i, 3),
+                    'connection' : self.tableWidget.item(i, 0).text(),
+                    'host' : self.tableWidget.item(i, 1).text(),
+                    'port' : self.tableWidget.item(i, 2).text(),
+                    'user' : self.tableWidget.item(i, 3).text(),
                     'password' : password
                 }
+                self.defaultChanged.emit()
                 self.done(0)
                 return
         QMessageBox.warning(self, self.tr('Info!'), self.tr('Select a connection before closing!'))
@@ -326,7 +334,20 @@ class ViewServersStatic(ViewServers):
         Gets selection's connection parameters.
         :return: (dict) connection paramters map.
         """
-        return self._connParameters
+        if self._connParameters:
+            return self._connParameters
+        connection, host, port, user, password = [None] * 5
+        for i, connection in enumerate(self.getServers()):
+            (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
+            if isDefault == True or isDefault == u'true':
+                return {
+                    'connection' : connection,
+                    'host' : host,
+                    'port' : port,
+                    'user' : user,
+                    'password' : password
+                }
+        return dict()
 
     def getDefaultConnectionParameters(self):
         """
@@ -337,14 +358,10 @@ class ViewServersStatic(ViewServers):
         connParam = self.connectionParameters()
         if connParam:
             return (
-                self._connParameters['connection'],
-                self._connParameters['host'],
-                self._connParameters['port'],
-                self._connParameters['user'],
-                self._connParameters['password']
+                connParam['connection'],
+                connParam['host'],
+                connParam['port'],
+                connParam['user'],
+                connParam['password']
             )
-        for i, connection in enumerate(currentConnections):
-            (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
-            if isDefault == True or isDefault == u'true':
-                return (connection, host, port, user, password)
         return (None, None, None, None, None)

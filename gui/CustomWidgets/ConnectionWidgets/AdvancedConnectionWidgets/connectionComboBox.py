@@ -62,7 +62,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         else:
             from DsgTools.gui.ServerTools.viewServers import ViewServers
             self.viewServers = ViewServers()
-            self.viewServers.defaultChanged.connect(self.loadServerAbstractDb)
+        self.viewServers.defaultChanged.connect(self.loadServerAbstractDb)
         self.connectionSelectorComboBox.addItem(self.tr('Select database'))
         self.loadServerAbstractDb()
     
@@ -78,7 +78,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         Checks if there is a default db in self.viewServers . If there isn't one, disables connection combo
         """
-        if self.viewServers.defaultConnectionDict == dict():
+        if self.viewServers.connectionParameters() == dict():
             self.connectionSelectorComboBox.setEnabled(False)
         else:
             self.connectionSelectorComboBox.setEnabled(True)
