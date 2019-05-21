@@ -422,20 +422,19 @@ class LayerHandler(QObject):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback else None
         multiStepFeedback.setCurrentStep(0)
         #builds bounding box dict to do a geos comparison for each feat in list
-        bbDict = self.getFeaturesWithSameBoundingBox(iterator, columns=columns, feedback=feedback)
+        bbDict = self.getFeaturesWithSameBoundingBox(iterator, isMulti, featCount, columns=columns, feedback=feedback)
         multiStepFeedback.setCurrentStep(1)
         for current, (key, featList) in enumerate(bbDict.items()):
             if feedback is not None and feedback.isCanceled():
                 break
-            if len(value) <= 1:
-                continue
-            duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns)
-            geomDict.update(duplicatedDict)
+            if len(featList) > 1:
+                duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns)
+                geomDict.update(duplicatedDict)
             if feedback is not None:
                 feedback.setProgress(size * current)
         return geomDict
     
-    def getFeaturesWithSameBoundingBox(self, iterator, columns=None, feedback=None):
+    def getFeaturesWithSameBoundingBox(self, iterator, isMulti, size, columns=None, feedback=None):
         """
         Iterates over iterator and gets 
         """
@@ -474,8 +473,6 @@ class LayerHandler(QObject):
                 duplicatedDict[wkb2] = []
             duplicatedDict[wkb1].append(dict_feat1['feat'])
             duplicatedDict[wkb1].append(dict_feat2['feat'])
-
-
 
     def addFeatToDict(self, endVerticesDict, line, featid):
         self.addPointToDict(line[0], endVerticesDict, featid)
