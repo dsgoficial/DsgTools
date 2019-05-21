@@ -374,9 +374,9 @@ class GeneratorCustomForm(object):
                     allWidgetsTabAttr += self.createComboBox(u'filter', rowAttr)
                     rowAttr+=1
                 allWidgetsTabAttr += self.createComboBox(field, rowAttr)
-            elif vlayer.editFormConfig().widgetType(idx) == 'ValueMap':
+            elif vlayer.editorWidgetSetup(idx).type() == 'ValueMap':
                 allWidgetsTabAttr += self.createComboBox(field, rowAttr)
-            elif vlayer.editFormConfig().widgetType(idx) in ['LineEdit', 'UniqueValues']:
+            elif vlayer.editorWidgetSetup(idx).type() in ['LineEdit', 'UniqueValues']:
                 allWidgetsTabAttr += self.createLineEdit(field, rowAttr)
             rowAttr+=1
         if vlayer.geometryType() == 1:
