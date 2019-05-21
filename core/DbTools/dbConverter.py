@@ -23,7 +23,7 @@
 import os, collections
 import time
 
-from qgis.PyQt.QtCore import QObject, pyqtSignal
+from qgis.PyQt.QtCore import QObject, pyqtSignal, QSettings
 from qgis.core import QgsFeatureRequest, QgsProject, QgsProcessingContext, \
                       QgsProcessingMultiStepFeedback, QgsProcessingMultiStepFeedback, \
                       QgsTask, QgsProcessingFeedback
@@ -211,6 +211,24 @@ class DbConverter(QgsTask):
         parameters['driver'] = drivers[driver]
         return parameters
 
+    def userPasswordFromHost(self, hostname, username):
+        """
+        Gets the password of an user to a server from its name. 
+        """
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers')
+        connections = settings.childGroups()
+        settings.endGroup()
+        for connection in connections:
+            settings.beginGroup('PostgreSQL/servers/{0}'.format(connection))
+            host = settings.value('host')
+            user = settings.value('username')
+            password = settings.value('password')
+            settings.endGroup()
+            if host == hostname and username == user:
+                return password
+        return None
+
     def connectToPostgis(self, parameters):
         """
         Stablishes connection to a Postgis database.
@@ -221,7 +239,7 @@ class DbConverter(QgsTask):
         # initiate abstractDb
         abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverPostGIS)
         # ignore all info except for the password
-        _, _, _, password = abstractDb.getServerConfiguration(name=host)
+        password = self.userPasswordFromHost(hostname=host, username=user)
         return abstractDb if abstractDb.testCredentials(host, port, db, user, password) else None
 
     def connectToSpatialite(self, parameters):
