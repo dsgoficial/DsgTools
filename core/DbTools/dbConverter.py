@@ -528,7 +528,7 @@ class DbConverter(QgsTask):
         """
         # any header info insertion should be through template
         # header's data handling should be in this method!
-        with open(os.path.join(os.path.dirname(__file__), 'headerConversionSummaryTemplate.html'), 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'Templates', 'headerConversionSummaryTemplate.html'), 'r') as f:
             return f.read()
 
     def addConversionStepToLog(self, conversionStep, inputDb, outputDb, inputLayers, creationErrors, successfulLayers, failedLayers, elapsedTime):
@@ -544,7 +544,7 @@ class DbConverter(QgsTask):
         :param elapsedTime: (str) current step elapsed time.
         :return: (str) conversion step HTML text.
         """
-        with open(os.path.join(os.path.dirname(__file__), 'bodyConversionSummaryTemplate.html'), 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'Templates', 'bodyConversionSummaryTemplate.html'), 'r') as f:
             bodyHtml = f.read()
         bodyHtml = bodyHtml.replace('CONVERSION_STEP', str(conversionStep))
         bodyHtml = bodyHtml.replace('INPUT_DATASET', inputDb)
