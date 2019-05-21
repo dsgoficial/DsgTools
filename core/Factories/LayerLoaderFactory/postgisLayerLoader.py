@@ -37,8 +37,8 @@ from qgis.utils import iface
 #DsgTools imports
 from .edgvLayerLoader import EDGVLayerLoader
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
-from ....gui.LayerTools.CustomFormTools.generatorCustomForm import GeneratorCustomForm
-from ....gui.LayerTools.CustomFormTools.generatorCustomInitCode import GeneratorCustomInitCode
+from ....core.LayerTools.CustomFormTools.generatorCustomForm import GeneratorCustomForm
+from ....core.LayerTools.CustomFormTools.generatorCustomInitCode import GeneratorCustomInitCode
 
 class PostGISLayerLoader(EDGVLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
@@ -220,7 +220,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     self.utils.deleteQml(fullPath)
                     # clear fullPath variable
                     del fullPath
-            if customForm is not None:
+            if not customForm:
                 vlayer = self.loadFormCustom(vlayer)
             if editingDict is not None:
                 editLyr, joinLyrFieldName = self.loadEditLayer(lyrName, editingDict)
@@ -358,7 +358,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         return pathUiForm
 
     def newUiForm(self, pathUiForm):
-        formFile = open(pathUiForm, "w")
+        formFile = open(pathUiForm, "wb")
         return formFile
     
     def loadFormCustom(self, lyr):
