@@ -24,6 +24,7 @@
 from __future__ import absolute_import
 from builtins import range
 from itertools import combinations
+from collections import defaultdict
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
@@ -440,7 +441,7 @@ class LayerHandler(QObject):
         """
         Iterates over iterator and gets 
         """
-        bbDict = dict()
+        bbDict = defaultdict(list)
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -449,14 +450,13 @@ class LayerHandler(QObject):
                 geom.convertToMultiType()
             geomKey = geom.asWkb()
             geomBB_key = geom.boundingBox().asWktPolygon()
-            if geomBB_key not in bbDict:
-                bbDict[geomBB_key] = dict()
             attrKey = ','.join(['{}'.format(feat[column]) for column in columns]) if columns is not None else ''
             bbDict[geomBB_key].append({'geom':geom, 'feat':feat, 'attrKey':attrKey})
             if feedback is not None:
                 feedback.setProgress(size * current)
+        return bbDict
     
-    def searchDuplicatedFeatures(self, featList, useAttributes=False):
+    def searchDuplicatedFeatures(self, featList, columns, useAttributes=False):
         """
         featList = list of {'geom': geom, 'feat':feat}
         returns geomKey, duplicatedFeats
@@ -469,12 +469,16 @@ class LayerHandler(QObject):
             wkb2 = geom2.asWkb()
             if not geom1.isGeosEqual(geom2):
                 continue
-            if wkb1 not in duplicatedDict:
-                duplicatedDict[wkb1] = []
-            if wkb2 not in duplicatedDict:
-                duplicatedDict[wkb2] = []
-            duplicatedDict[wkb1].append(dict_feat1['feat'])
-            duplicatedDict[wkb1].append(dict_feat2['feat'])
+            elif useAttributes:
+                # do things to check attributes
+                print()
+            if wkb1 in duplicatedDict:
+                duplicatedDict[wkb1].append(dict_feat2['feat'])
+            elif wkb2 in duplicatedDict:
+                duplicatedDict[wkb2].append(dict_feat1['feat'])
+            else:
+                duplicatedDict[wkb1] = [dict_feat2['feat']]
+        return duplicatedDict
 
     def addFeatToDict(self, endVerticesDict, line, featid):
         self.addPointToDict(line[0], endVerticesDict, featid)
