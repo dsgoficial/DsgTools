@@ -41,15 +41,16 @@ class PostgisWidget(AbstractSelectionWidget):
         # reset source attribute value as now it is defined as a PostGIS
         self.source = DsgEnums.PostGIS
         # initiate new instance of actual class widget
-        self.selectionWidget = self.getNewSelectionWidget(parent=parent)
+        self.selectionWidget = self.getNewSelectionWidget(parent=parent, isStatic=True)
 
-    def getNewSelectionWidget(self, parent=None):
+    def getNewSelectionWidget(self, parent=None, isStatic=True):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.
         :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
+        :param isStatic: (bool) indicates whether server selection will be static (no default).
         :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
-        return ConnectionComboBox(parent=parent)
+        return ConnectionComboBox(parent=parent, isStatic=True)
 
     def getDatasourceConnectionName(self):
         """

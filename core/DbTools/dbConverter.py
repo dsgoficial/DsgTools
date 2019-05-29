@@ -23,7 +23,7 @@
 import os, collections
 import time
 
-from qgis.PyQt.QtCore import QObject, pyqtSignal
+from qgis.PyQt.QtCore import QObject, pyqtSignal, QSettings
 from qgis.core import QgsFeatureRequest, QgsProject, QgsProcessingContext, \
                       QgsProcessingMultiStepFeedback, QgsProcessingMultiStepFeedback, \
                       QgsTask, QgsProcessingFeedback
@@ -211,6 +211,24 @@ class DbConverter(QgsTask):
         parameters['driver'] = drivers[driver]
         return parameters
 
+    def userPasswordFromHost(self, hostname, username):
+        """
+        Gets the password of an user to a server from its name. 
+        """
+        settings = QSettings()
+        settings.beginGroup('PostgreSQL/servers')
+        connections = settings.childGroups()
+        settings.endGroup()
+        for connection in connections:
+            settings.beginGroup('PostgreSQL/servers/{0}'.format(connection))
+            host = settings.value('host')
+            user = settings.value('username')
+            password = settings.value('password')
+            settings.endGroup()
+            if host == hostname and username == user:
+                return password
+        return None
+
     def connectToPostgis(self, parameters):
         """
         Stablishes connection to a Postgis database.
@@ -221,7 +239,7 @@ class DbConverter(QgsTask):
         # initiate abstractDb
         abstractDb = DbFactory().createDbFactory(driver=DsgEnums.DriverPostGIS)
         # ignore all info except for the password
-        _, _, _, password = abstractDb.getServerConfiguration(name=host)
+        password = self.userPasswordFromHost(hostname=host, username=user)
         return abstractDb if abstractDb.testCredentials(host, port, db, user, password) else None
 
     def connectToSpatialite(self, parameters):
@@ -528,7 +546,7 @@ class DbConverter(QgsTask):
         """
         # any header info insertion should be through template
         # header's data handling should be in this method!
-        with open(os.path.join(os.path.dirname(__file__), 'headerConversionSummaryTemplate.html'), 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'Templates', 'headerConversionSummaryTemplate.html'), 'r') as f:
             return f.read()
 
     def addConversionStepToLog(self, conversionStep, inputDb, outputDb, inputLayers, creationErrors, successfulLayers, failedLayers, elapsedTime):
@@ -544,7 +562,7 @@ class DbConverter(QgsTask):
         :param elapsedTime: (str) current step elapsed time.
         :return: (str) conversion step HTML text.
         """
-        with open(os.path.join(os.path.dirname(__file__), 'bodyConversionSummaryTemplate.html'), 'r') as f:
+        with open(os.path.join(os.path.dirname(__file__), 'Templates', 'bodyConversionSummaryTemplate.html'), 'r') as f:
             bodyHtml = f.read()
         bodyHtml = bodyHtml.replace('CONVERSION_STEP', str(conversionStep))
         bodyHtml = bodyHtml.replace('INPUT_DATASET', inputDb)
