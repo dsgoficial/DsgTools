@@ -247,3 +247,121 @@ class ViewServers(QtWidgets.QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Select one server.'))
             return
         return self.tableWidget.selectedItems()[0]
+
+    def connectionParameters(self):
+        """
+        Gets selection's connection parameters.
+        :return: (dict) connection paramters map.
+        """
+        return self.defaultConnectionDict
+
+class ViewServersStatic(ViewServers):
+    """
+    Class desgined to select servers' configs statically. Selections using this
+    widget will not affect default behaviour.
+    """
+    def __init__(self, iface=None, parent=None):
+        """
+        Class constructor.
+        :param iface: (QgisInterface) QGIS interface object (for runtime operations).
+        :param parent: (QWidget) widget parent to a ViewServersStatic new instance.
+        """
+        self._connParameters = dict()
+        super(ViewServersStatic, self).__init__(iface, parent)
+        self.renameColumnHeaders()
+
+    def renameColumnHeaders(self):
+        """
+        Sets column headers to match the case of static server selection.
+        """
+        self.tableWidget.setHorizontalHeaderLabels([
+            self.tr("Server Name"),
+            self.tr("Address"),
+            self.tr("Port"),
+            self.tr("User"),
+            self.tr("Password"),
+            self.tr("Selected")
+        ])
+        # header = self.tableWidget.horizontalHeader()
+        # header.setSectionResizeMode(header.ResizeToContents)
+        # header.setSectionResizeMode(header.Interactive)
+
+    def populateTable(self):
+        """
+        Populates the servers table
+        """
+        currentConnections = self.getServers()
+        self.tableWidget.setRowCount(len(currentConnections))
+        connParam = self.connectionParameters()
+        for i, connection in enumerate(currentConnections):
+            self.tableWidget.setItem(i, 0, QTableWidgetItem(connection))
+            (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
+            self.tableWidget.setItem(i, 1, QTableWidgetItem(host))
+            self.tableWidget.setItem(i, 2, QTableWidgetItem(port))
+            self.tableWidget.setItem(i, 3, QTableWidgetItem(user))
+            if not password or len(password) == 0:
+                self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Not Saved')))
+            else:
+                self.tableWidget.setItem(i, 4, QTableWidgetItem(self.tr('Saved')))
+            radio = QRadioButton(self.tableWidget)
+            radio.setAutoExclusive(True)
+            if (not connParam and isDefault) or (connParam and connParam['connection'] == connection):
+                radio.setChecked(True)
+            self.tableWidget.setCellWidget(i, 5, radio)
+
+    def on_closeButton_clicked(self):
+        """
+        Closes the dialog if default connection is set
+        """
+        currentConnections = self.getServers()
+        for i, connection in enumerate(currentConnections):
+            if self.tableWidget.cellWidget(i, 5).isChecked():
+                host, port, user, password, _ = self.getServerConfiguration(connection)
+                self._connParameters = {
+                    'connection' : self.tableWidget.item(i, 0).text(),
+                    'host' : self.tableWidget.item(i, 1).text(),
+                    'port' : self.tableWidget.item(i, 2).text(),
+                    'user' : self.tableWidget.item(i, 3).text(),
+                    'password' : password
+                }
+                self.defaultChanged.emit()
+                self.done(0)
+                return
+        QMessageBox.warning(self, self.tr('Info!'), self.tr('Select a connection before closing!'))
+
+    def connectionParameters(self):
+        """
+        Gets selection's connection parameters.
+        :return: (dict) connection paramters map.
+        """
+        if self._connParameters:
+            return self._connParameters
+        connection, host, port, user, password = [None] * 5
+        for i, connection in enumerate(self.getServers()):
+            (host, port, user, password, isDefault) = self.getServerConfiguration(connection)
+            if isDefault == True or isDefault == u'true':
+                return {
+                    'connection' : connection,
+                    'host' : host,
+                    'port' : port,
+                    'user' : user,
+                    'password' : password
+                }
+        return dict()
+
+    def getDefaultConnectionParameters(self):
+        """
+        Reimplementation to maintain expected behaviour.
+        :return: (tuple) connection parameters.
+        """
+        currentConnections = self.getServers()
+        connParam = self.connectionParameters()
+        if connParam:
+            return (
+                connParam['connection'],
+                connParam['host'],
+                connParam['port'],
+                connParam['user'],
+                connParam['password']
+            )
+        return (None, None, None, None, None)
