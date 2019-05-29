@@ -623,8 +623,8 @@ class GeometryHandler(QObject):
     
     def handleGeometryCollection(self, geom, geometryType, parameterDict=None, coordinateTransformer=None):
         parameterDict = {} if parameterDict is None else parameterDict
-        outputList = []
+        outputSet = set()
         for part in geom.asGeometryCollection():
             if part.type() == geometryType:
-                outputList += self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer)
-        return outputList
+                outputSet.add(self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer))
+        return list(outputSet)
