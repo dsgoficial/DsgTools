@@ -525,14 +525,17 @@ class DbConverter(QgsTask):
                 break
             vl = outputLayers[layer]
             vl.startEditing()
-            if not vl.addFeatures(featureSet) and flexibleConversion:
+            count = 0
+            if vl.addFeatures(featureSet):
+                count = len(featureSet)
+            elif flexibleConversion:
                 # in case conversion mode is set to flexible, only defective features will be ignored
                 while featureSet:
-                    vl.addFeature(featureSet.pop())
+                    count += vl.addFeature(featureSet.pop())
             vl.updateExtents()
             if vl.commitChanges():
                 self.conversionUpdated.emit(self.tr("{0} successfully loaded.").format(vl.name()))
-                success[layer] = len(featureSet)
+                success[layer] = count
             else:
                 self.conversionUpdated.emit(self.tr("{0} failed to be loaded.").format(vl.name()))
                 fail[layer] = outputLayers[layer].commitErrors()[0]
