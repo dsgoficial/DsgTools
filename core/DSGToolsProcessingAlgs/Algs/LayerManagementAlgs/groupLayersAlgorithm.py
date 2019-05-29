@@ -81,7 +81,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterNumber(
-                self.CATEGORY_TOKEN,
+                self.CATEGORY_TOKEN_INDEX,
                 self.tr('Category token index'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
@@ -110,7 +110,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             self.CATEGORY_TOKEN,
             context
         )
-        categoryTokenIndex = self.parameterAsInteger(
+        categoryTokenIndex = self.parameterAsInt(
             parameters,
             self.CATEGORY_TOKEN_INDEX,
             context
@@ -120,7 +120,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         notSuccessfulList = []
         rootNode = QgsProject.instance().layerTreeRoot()
         rootNodeSet = set()
-        inputLyrList.sort(key= lambda x: x.layerName())
+        inputLyrList.sort(key= lambda x: x.name())
         geometryNodeDict = {
             0 : self.tr('Point'),
             1 : self.tr('Line'),
@@ -134,6 +134,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             geometryNode = self.createGroup(geometryNodeDict[lyr.geometryType()], rootDatabaseNode)
             categoryNode = self.getLayerCategoryNode(lyr, geometryNode, categoryToken, categoryTokenIndex)
             categoryNode.addLayer(lyr)
+            rootDatabaseNode.removeLayer(lyr)
             feedback.setProgress(current*progressStep)
 
         return {self.OUTPUT: inputLyrList}
@@ -158,7 +159,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
     def getLayerCategoryNode(self, lyr, rootNode, categoryToken, categoryTokenIndex):
         categorySplit = lyr.name().split(categoryToken)
         categoryText = categorySplit[categoryTokenIndex] if categoryTokenIndex <= len(categorySplit) else 0
-        return self.createGroup(categoryText, rootDatabaseNode)
+        return self.createGroup(categoryText, rootNode)
 
     def createGroup(self, groupName, rootNode):
         groupNode = rootNode.findGroup(groupName)
