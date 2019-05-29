@@ -133,8 +133,8 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             rootNodeSet.add(rootDatabaseNode)
             geometryNode = self.createGroup(geometryNodeDict[lyr.geometryType()], rootDatabaseNode)
             categoryNode = self.getLayerCategoryNode(lyr, geometryNode, categoryToken, categoryTokenIndex)
-            categoryNode.addLayer(lyr)
-            rootDatabaseNode.removeLayer(lyr)
+            lyrNode = rootNode.findLayer(lyr.id())
+            categoryNode.addChildNode(lyrNode)
             feedback.setProgress(current*progressStep)
 
         return {self.OUTPUT: inputLyrList}
