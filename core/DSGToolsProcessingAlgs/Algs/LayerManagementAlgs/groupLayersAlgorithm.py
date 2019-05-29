@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -72,20 +73,26 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterString(
+                self.CATEGORY_TOKEN,
+                self.tr('Category Token'),
+                defaultValue='_'
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterNumber(
                 self.CATEGORY_TOKEN,
                 self.tr('Category token index'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Integer,
-                defaultValue=0,
-                optional=True
+                defaultValue=0
             )
         )
 
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
-                self.tr('Original layers with measure column')
+                self.tr('Original reorganized layers')
             )
         )
 
@@ -98,34 +105,67 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYERS,
             context
         )
+        categoryToken = self.parameterAsString(
+            parameters,
+            self.CATEGORY_TOKEN,
+            context
+        )
+        categoryTokenIndex = self.parameterAsInteger(
+            parameters,
+            self.CATEGORY_TOKEN_INDEX,
+            context
+        )
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        progressStep = 100/listSize if listSize else 0
         notSuccessfulList = []
+        rootNode = QgsProject.instance().layerTreeRoot()
+        rootNodeSet = set()
+        inputLyrList.sort(key= lambda x: x.layerName())
+        geometryNodeDict = {
+            0 : self.tr('Point'),
+            1 : self.tr('Line'),
+            2 : self.tr('Polygon')
+        }
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            try:
-                self.createMeasureColumn(lyr)
-            except:
-                notSuccessfulList.append(lyr)
+            rootDatabaseNode = self.getLayerRootNode(lyr, rootNode)
+            rootNodeSet.add(rootDatabaseNode)
+            geometryNode = self.createGroup(geometryNodeDict[lyr.geometryType()], rootDatabaseNode)
+            categoryNode = self.getLayerCategoryNode(lyr, geometryNode, categoryToken, categoryTokenIndex)
+            categoryNode.addLayer(lyr)
+            feedback.setProgress(current*progressStep)
 
         return {self.OUTPUT: inputLyrList}
+    
+    def getLayerRootNode(self, lyr, rootNode):
+        uriText = lyr.dataProvider().dataSourceUri()
+        candidateUri = QgsDataSourceUri(uriText)
+        rootNodeName = candidateUri.database()
+        if not rootNodeName:
+            rootNodeName = self.getRootNodeName(uriText)
+        #creates database root
+        return self.createGroup(rootNodeName, rootNode)
+    
+    def getRootNodeName(self, uriText):
+        if 'memory?' in uriText:
+            rootNodeName = 'memory'
+        elif not database and 'dbname' in uriText:
+            rootNodeName = uriText.replace('dbname=','').split(' ')[0]
+        elif not database and '|' in uriText:
+            rootNodeName = os.path.dirname(uriText.split(' ')[0].split('|')[0])
 
-    def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
-            layer.addExpressionField(
-                    '$area',
-                    QgsField(self.tr('area_otf'),
-                    QVariant.Double
-                    )
-                )
-        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField(
-                    '$length',
-                    QgsField(self.tr('lenght_otf'),
-                    QVariant.Double)
-                )
-        return layer
+    def getLayerCategoryNode(self, lyr, rootNode, categoryToken, categoryTokenIndex):
+        categorySplit = lyr.name().split(categoryToken)
+        categoryText = categorySplit[categoryTokenIndex] if categoryTokenIndex <= len(categorySplit) else 0
+        return self.createGroup(categoryText, rootDatabaseNode)
+
+    def createGroup(self, groupName, rootNode):
+        groupNode = rootNode.findGroup(groupName)
+        if groupNode:
+            return groupNode
+        else:
+            return rootNode.addGroup(groupName)
 
     def name(self):
         """

@@ -122,6 +122,9 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundin
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
+    GroupLayersAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -179,7 +182,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 CreateEditingGridAlgorithm(),
                 AssignFilterToLayersAlgorithm(),
                 AssignBoundingBoxFilterToLayersAlgorithm(),
-                AssignMeasureColumnToLayersAlgorithm()]
+                AssignMeasureColumnToLayersAlgorithm(),
+                GroupLayersAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
