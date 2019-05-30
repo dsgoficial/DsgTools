@@ -477,7 +477,7 @@ class LayerHandler(QObject):
             elif wkb2 in duplicatedDict:
                 duplicatedDict[wkb2].append(dict_feat1['feat'])
             else:
-                duplicatedDict[wkb1] = [dict_feat2['feat']]
+                duplicatedDict[wkb1] = [dict_feat1['feat'], dict_feat2['feat']]
         return duplicatedDict
 
     def addFeatToDict(self, endVerticesDict, line, featid):
