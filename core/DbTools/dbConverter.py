@@ -577,7 +577,7 @@ class DbConverter(QgsTask):
                 <td>{0}</td>
                 <td style="text-align: center;">{1}</td>
             </tr>
-            """.format(layer, vl.featureCount())
+            """.format(layer, len([f for f in vl.getFeatures()])
         bodyHtml = bodyHtml.replace('INPUT_TABLE', inputTable)
         outputTable = ""
         for layer, feat_count in successfulLayers.items():
