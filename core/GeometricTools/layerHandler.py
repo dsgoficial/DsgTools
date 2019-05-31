@@ -416,7 +416,7 @@ class LayerHandler(QObject):
                 feedback.setProgress(size*current)
         return endVerticesDict
     
-    def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, feedback = None):
+    def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, useAttributes=False, feedback = None):
         geomDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         iterator, featCount = self.getFeatureList(lyr, onlySelected=onlySelected)
@@ -431,7 +431,7 @@ class LayerHandler(QObject):
             if feedback is not None and feedback.isCanceled():
                 break
             if len(featList) > 1:
-                duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns)
+                duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns, useAttributes=useAttributes)
                 geomDict.update(duplicatedDict)
             if feedback is not None:
                 feedback.setProgress(size * current)
@@ -462,22 +462,33 @@ class LayerHandler(QObject):
         returns geomKey, duplicatedFeats
         """
         duplicatedDict = dict()
+        if featList:
+            fields = [f.name() for f in featList[0]['feat'].fields()]
         for dict_feat1, dict_feat2 in combinations(featList, 2):
             geom1 = dict_feat1['geom']
             geom2 = dict_feat2['geom']
+            feat1 = dict_feat1['feat']
+            feat2 = dict_feat2['feat']
             wkb1 = geom1.asWkb()
             wkb2 = geom2.asWkb()
             if not geom1.isGeosEqual(geom2):
                 continue
             elif useAttributes:
                 # do things to check attributes
-                print()
+                try:
+                    for attr in fields:
+                        if attr not in columns:
+                            continue
+                        elif feat1[attr] != feat2[attr]:
+                            raise Exception('Skip outter loop')
+                except:
+                    continue
             if wkb1 in duplicatedDict:
-                duplicatedDict[wkb1].append(dict_feat2['feat'])
+                duplicatedDict[wkb1].append(feat2)
             elif wkb2 in duplicatedDict:
-                duplicatedDict[wkb2].append(dict_feat1['feat'])
+                duplicatedDict[wkb2].append(feat1)
             else:
-                duplicatedDict[wkb1] = [dict_feat1['feat'], dict_feat2['feat']]
+                duplicatedDict[wkb1] = [feat1, feat2]
         return duplicatedDict
 
     def addFeatToDict(self, endVerticesDict, line, featid):

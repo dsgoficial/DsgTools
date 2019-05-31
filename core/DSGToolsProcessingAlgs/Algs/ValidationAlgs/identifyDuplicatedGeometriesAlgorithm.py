@@ -87,33 +87,8 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
         geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback)
-        # for idx1, f1 in enumerate(featureList):
-        #     if multiStepFeedback.isCanceled():
-        #         break
-        #     geomDict[f1.geometry()].add(f1)
-        #     for idx2, f2 in enumerate(featureList):
-        #         if multiStepFeedback.isCanceled():
-        #             break
-        #         if idx2 <= idx1 or not f1.geometry().isGeosEqual(f2.geometry()):
-        #             multiStepFeedback.setProgress(float(idx1 * total + idx2) / size)
-        #             continue
-        #         for geom in geomDict:
-        #             if geom.isGeosEqual(f1.geometry()) or geom.isGeosEqual(f2.geometry()):
-        #                 geomDict[geom] |= {f1, f2}
-        #                 break
-        #         else:
-        #             geomDict[f1.geometry()].add(f2)
-        #         multiStepFeedback.setProgress(float(idx1 * total + idx2) / size)
         multiStepFeedback.setCurrentStep(1)
         self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
-        # for k, v in geomDict.items():
-        #     if feedback.isCanceled():
-        #         break
-        #     if len(v) > 1:
-        #         idStrList = ','.join( map(str, [i.id() for i in v] ) )
-        #         flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.')\
-        #                     .format(inputLyr.name(), idStrList)
-        #         self.flagFeature(v.pop().geometry(), flagText)      
         multiStepFeedback.setCurrentStep(2)
         
         return {self.FLAGS: self.flag_id}
