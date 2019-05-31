@@ -110,6 +110,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm imp
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
     IdentifyAndFixInvalidGeometriesAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import PecCalculatorAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -163,7 +165,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 CreateFrameAlgorithm(),
                 FileInventoryAlgorithm(),
                 RaiseFlagsAlgorithm(),
-                IdentifyAndFixInvalidGeometriesAlgorithm()]
+                IdentifyAndFixInvalidGeometriesAlgorithm(),
+                PecCalculatorAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
