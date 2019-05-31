@@ -114,7 +114,15 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, attributeBlackList=attributeBlackList, excludePrimaryKeys=ignorePK, ignoreVirtualFields=ignoreVirtual, feedback=multiStepFeedback)
+        geomDict = layerHandler.getDuplicatedFeaturesDict(
+                        inputLyr,
+                        onlySelected=onlySelected,
+                        attributeBlackList=attributeBlackList,
+                        excludePrimaryKeys=ignorePK,
+                        ignoreVirtualFields=ignoreVirtual,
+                        useAttributes=True,
+                        feedback=multiStepFeedback
+                    )
         multiStepFeedback.setCurrentStep(1)
         self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
 
@@ -126,7 +134,7 @@ class IdentifyDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             if len(featList) > 1:
-                idStrList = ','.join(map(str, [feat.id() for feat in featList]))
+                idStrList = ', '.join(map(str, [feat.id() for feat in featList]))
                 flagText = self.tr('Features from layer {0} with ids=({1}) have the same set of attributes.').format(inputLyr.name(), idStrList)
                 self.flagFeature(featList[0].geometry(), flagText)
             feedback.setProgress(size * current)
