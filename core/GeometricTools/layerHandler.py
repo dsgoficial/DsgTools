@@ -94,7 +94,7 @@ class LayerHandler(QObject):
         reclassifyCount = 0
         destinationLayer.startEditing()
         destinationLayer.beginEditCommand(self.tr('DsgTools reclassification'))
-        for lyr, featureList in selectedDict.items():
+        for lyr, featureList in [(k, v) for k, v in selectedDict.items() if len(v[0]) > 0]:
             featureList = featureList[0] if isinstance(featureList, tuple) else featureList
             coordinateTransformer = self.getCoordinateTransformer(lyr, destinationLayer)
             newFeatList, deleteList = self.featureHandler.reclassifyFeatures(featureList, lyr, reclassificationDict, coordinateTransformer, parameterDict)
