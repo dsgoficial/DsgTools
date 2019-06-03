@@ -64,7 +64,7 @@ class GeometryHandler(QObject):
             if parameterDict['isMulti'] and not geom.isMultipart():
                 geom.convertToMultiType()
                 geomList.append(geom)
-            if not parameterDict['isMulti'] and geom.isMultipart():
+            elif not parameterDict['isMulti'] and geom.isMultipart():
                 #deaggregate here
                 parts = geom.asGeometryCollection()
                 for part in parts:
