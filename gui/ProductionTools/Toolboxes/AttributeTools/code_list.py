@@ -90,13 +90,36 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         Updates current registry of layers and their value map.
         """
         self._classFieldMap = self.readClassFieldMap()
+        # always prefer EDGV domains
+        for layer in self.iface.mapCanvas().layers():
+            layername = layer.name()
+            for f in layer.fields():
+                fName = f.name()
+                fMap = self.getEdgvDomainsFromTableName(layer, fName)
+                if fMap:
+                    self._classFieldMap[layername][fName] = fMap
 
     def availableLayers(self):
         """
         Gets all layers that have attributes with a value map associated to it.
         :return: (list-of-str) sorted list of layers.
         """
-        return sorted(self._classFieldMap.keys())
+        layers = []
+        for layer in self._classFieldMap.keys():
+            uriString = self.layerByName(layer).dataProvider().dataSourceUri()
+            if "'" in uriString:
+                splitToken = "'" 
+                idx = 1
+            elif "|" in uriString:
+                splitToken = "|"
+                idx = 1
+            else:
+                splitToken = ""
+                idx = 0
+            db_name = uriString.split(splitToken)[idx] if splitToken != "" else uriString
+            layers.append("{db}: {layer}".format(db=db_name, layer=layer))
+        layers.sort()
+        return layers
 
     def resetClasses(self):
         """
@@ -188,21 +211,23 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         self.resetClasses()
         self.resetFields()
 
-    def getEdgvDomains(self):
+    def getEdgvDomainsFromTableName(self, table, field=None):
         """
         EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
-        :param fieldConfig: (dict) field config.
+        :param table: (str) layer to be checked for its EDGV mapping.
+        :param table: (QgsVectorLayer) overloaded method - layer to be checked for its EDGV mapping.
+        :param field: (str) field to be checked.
         :return: (dict) value map.
         """
         ret = dict()
-        currentLayer = self.currentLayer()
+        currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
         if currentLayer.isValid():
             try:
-                uri = QgsDataSourceUri(self.currentLayer().dataProvider().dataSourceUri())
+                uri = QgsDataSourceUri(currentLayer.dataProvider().dataSourceUri())
                 if uri.host() == '':
                     db = QSqlDatabase('QSQLITE')
                     db.setDatabaseName(uri.database())
-                    sql = 'select code, code_name from dominios_{tablename} order by code'.format(tablename=self.currentField())
+                    sql = 'select code, code_name from dominios_{field} order by code'.format(field=(field or self.currentField()))
                 else:
                     db = QSqlDatabase('QPSQL')
                     db.setHostName(uri.host())
@@ -210,7 +235,7 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
                     db.setDatabaseName(uri.database())
                     db.setUserName(uri.username())
                     db.setPassword(uri.password())
-                    sql = 'select code, code_name from dominios.{tablename} order by code'.format(tablename=self.currentField())    
+                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=self.currentField())    
                 if not db.open():
                     db.close()
                     return ret
@@ -226,6 +251,13 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
             except:
                 pass
         return ret
+
+    def getEdgvDomains(self):
+        """
+        EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
+        :return: (dict) value map.
+        """
+        return self.getEdgvDomainsFromTableName(self.currentLayerName())
 
     @pyqtSlot(int, name='on_comboBox_currentIndexChanged')
     def populateFieldsTable(self):
