@@ -316,7 +316,7 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         Populates field map to codelist table.
         """
         # always prefer EDGV domain tables, if available
-        fieldMap = self.getEdgvDomains() or self.currentFieldMap()
+        fieldMap = self.currentFieldMap()
         self.tableWidget.setRowCount(len(fieldMap))
         for row, (code, value) in enumerate(fieldMap.items()):
             self.tableWidget.setItem(row, 0, QTableWidgetItem(value))
