@@ -197,31 +197,34 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         ret = dict()
         currentLayer = self.currentLayer()
         if currentLayer.isValid():
-            uri = QgsDataSourceUri(self.currentLayer().dataProvider().dataSourceUri())
-            if uri.host() == '':
-                db = QSqlDatabase('QSQLITE')
-                db.setDatabaseName(uri.database())
-                sql = 'select code, code_name from dominios_{tablename} order by code'.format(tablename=self.currentField())
-            else:
-                db = QSqlDatabase('QPSQL')
-                db.setHostName(uri.host())
-                db.setPort(int(uri.port()))
-                db.setDatabaseName(uri.database())
-                db.setUserName(uri.username())
-                db.setPassword(uri.password())
-                sql = 'select code, code_name from dominios.{tablename} order by code'.format(tablename=self.currentField())    
-            if not db.open():
+            try:
+                uri = QgsDataSourceUri(self.currentLayer().dataProvider().dataSourceUri())
+                if uri.host() == '':
+                    db = QSqlDatabase('QSQLITE')
+                    db.setDatabaseName(uri.database())
+                    sql = 'select code, code_name from dominios_{tablename} order by code'.format(tablename=self.currentField())
+                else:
+                    db = QSqlDatabase('QPSQL')
+                    db.setHostName(uri.host())
+                    db.setPort(int(uri.port()))
+                    db.setDatabaseName(uri.database())
+                    db.setUserName(uri.username())
+                    db.setPassword(uri.password())
+                    sql = 'select code, code_name from dominios.{tablename} order by code'.format(tablename=self.currentField())    
+                if not db.open():
+                    db.close()
+                    return ret
+                query = QSqlQuery(sql, db)
+                if not query.isActive():
+                    # QMessageBox.critical(self.iface.mainWindow(), self.tr("Error!"), self.tr("Problem obtaining domain values: ")+query.lastError().text())
+                    return ret       
+                while query.next():
+                    code = str(query.value(0))
+                    code_name = query.value(1)
+                    ret[code_name] = code      
                 db.close()
-                return ret
-            query = QSqlQuery(sql, db)
-            if not query.isActive():
-                # QMessageBox.critical(self.iface.mainWindow(), self.tr("Error!"), self.tr("Problem obtaining domain values: ")+query.lastError().text())
-                return ret       
-            while query.next():
-                code = str(query.value(0))
-                code_name = query.value(1)
-                ret[code_name] = code      
-            db.close()
+            except:
+                pass
         return ret
 
     @pyqtSlot(int, name='on_comboBox_currentIndexChanged')
