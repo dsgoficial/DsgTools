@@ -20,19 +20,14 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import str
-from builtins import map
 from collections import defaultdict
 import os
 
-# Qt imports
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
-
-# QGIS imports
-from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProject
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QDockWidget
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProject
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
