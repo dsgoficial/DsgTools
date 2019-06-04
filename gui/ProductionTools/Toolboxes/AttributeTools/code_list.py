@@ -26,19 +26,18 @@ from collections import defaultdict
 import os
 
 # Qt imports
-from qgis.PyQt import QtWidgets, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
 
 # QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, QgsMessageLog,\
-                      QgsVectorLayer, Qgis, QgsProject
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QMessageBox
+from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProject
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QDockWidget
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
 
-class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
+class CodeList(QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(CodeList, self).__init__()
@@ -286,13 +285,12 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
                     db.setDatabaseName(uri.database())
                     db.setUserName(uri.username())
                     db.setPassword(uri.password())
-                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=self.currentField())    
+                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=(field or self.currentField()))    
                 if not db.open():
                     db.close()
                     return ret
                 query = QSqlQuery(sql, db)
                 if not query.isActive():
-                    # QMessageBox.critical(self.iface.mainWindow(), self.tr("Error!"), self.tr("Problem obtaining domain values: ")+query.lastError().text())
                     return ret       
                 while query.next():
                     code = str(query.value(0))
@@ -315,7 +313,6 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         """
         Populates field map to codelist table.
         """
-        # always prefer EDGV domain tables, if available
         fieldMap = self.currentFieldMap()
         self.tableWidget.setRowCount(len(fieldMap))
         for row, (code, value) in enumerate(fieldMap.items()):
