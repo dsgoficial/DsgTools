@@ -44,8 +44,6 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         super(CodeList, self).__init__()
         self.setupUi(self)
         self.iface = iface
-        # self.currLayer = None
-        # self.refreshClassesDictList() # creates and populates self.classesFieldDict
         self.setInitialState()
     
     def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
@@ -61,28 +59,44 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
             parentButton = parentStackButton
             )
 
-    def readClassFieldMap(self):
+    def blockAllSignals(self, status):
+        """
+        Blocks (or unblocks) signals emitted from all GUI components.
+        :param status: (bool) whether should be blocked
+        """
+        self.comboBox.blockSignals(status)
+        self.classComboBox.blockSignals(status)
+        self.refreshButton.blockSignals(status)
+
+    def readClassFieldMap(self, preferEdgvMapping=True):
         """
         Gets all layers with value maps.
+        :param preferEdgvMapping: (bool) whether edgv mapping should be preferred, if exists.
         :return: (dict) a map from layer to list of fields with a value map. 
         """
         classFieldMap = defaultdict(dict)
         for layer in self.iface.mapCanvas().layers():
             if not isinstance(layer, QgsVectorLayer):
                 continue
+            layername = layer.name()
+            if preferEdgvMapping:
+                fMap = self.getAllEdgvDomainsFromTableName(layername)
+                if fMap:
+                    classFieldMap[layername] = fMap
+                    continue
             for field in layer.fields():
-                fieldConfig = field.editorWidgetSetup().config()
                 fieldName = field.name()
+                fieldConfig = field.editorWidgetSetup().config()
                 if 'map' not in fieldConfig or fieldName in ('UseHtml', 'IsMultiline'):
                     continue
                 if isinstance(fieldConfig['map'], list):
                     for map_ in fieldConfig['map']:
-                        if fieldName not in classFieldMap[layer.name()]:
-                            classFieldMap[layer.name()][fieldName] = map_
+                        if fieldName not in classFieldMap[layername]:
+                            classFieldMap[layername][fieldName] = map_
                         else:
-                            classFieldMap[layer.name()][fieldName].update(map_)
+                            classFieldMap[layername][fieldName].update(map_)
                 else:
-                    classFieldMap[layer.name()][fieldName] = fieldConfig['map']
+                    classFieldMap[layername][fieldName] = fieldConfig['map']
         return classFieldMap
 
     def updateClassFieldMap(self):
@@ -90,14 +104,6 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         Updates current registry of layers and their value map.
         """
         self._classFieldMap = self.readClassFieldMap()
-        # always prefer EDGV domains
-        for layer in self.iface.mapCanvas().layers():
-            layername = layer.name()
-            for f in layer.fields():
-                fName = f.name()
-                fMap = self.getEdgvDomainsFromTableName(layer, fName)
-                if fMap:
-                    self._classFieldMap[layername][fName] = fMap
 
     def availableLayers(self):
         """
@@ -207,9 +213,54 @@ class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
         """
         Sets interface components to its initial state.
         """
+        self.blockAllSignals(True)
         self.updateClassFieldMap()
         self.resetClasses()
+        self.blockAllSignals(False)
         self.resetFields()
+
+    def getAllEdgvDomainsFromTableName(self, table):
+        """
+        EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
+        It checks for all attributes found.
+        :param table: (str) layer to be checked for its EDGV mapping.
+        :param table: (QgsVectorLayer) overloaded method - layer to be checked for its EDGV mapping.
+        :param field: (str) field to be checked.
+        :return: (dict) value map for all attributes that have one.
+        """
+        ret = defaultdict(dict)
+        currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        if currentLayer.isValid():
+            try:
+                uri = QgsDataSourceUri(currentLayer.dataProvider().dataSourceUri())
+                if uri.host() == '':
+                    db = QSqlDatabase('QSQLITE')
+                    db.setDatabaseName(uri.database())
+                    sql = 'select code, code_name from dominios_{field} order by code'
+                else:
+                    db = QSqlDatabase('QPSQL')
+                    db.setHostName(uri.host())
+                    db.setPort(int(uri.port()))
+                    db.setDatabaseName(uri.database())
+                    db.setUserName(uri.username())
+                    db.setPassword(uri.password())
+                    sql = 'select code, code_name from dominios.{field} order by code'   
+                if not db.open():
+                    db.close()
+                    return ret
+                for field in currentLayer.fields():
+                    fieldName = field.name()
+                    query = QSqlQuery(sql.format(field=fieldName), db)
+                    if not query.isActive():
+                        continue
+                    while query.next():
+                        code = str(query.value(0))
+                        code_name = query.value(1)
+                        ret[fieldName][code_name] = code    
+                db.close()
+            except:
+                pass
+        return ret
 
     def getEdgvDomainsFromTableName(self, table, field=None):
         """
