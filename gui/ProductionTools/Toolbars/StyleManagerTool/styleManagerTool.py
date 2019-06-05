@@ -119,19 +119,26 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         for lyr in self.iface.mapCanvas().layers():
             if isinstance(lyr, QgsVectorLayer):
                 candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
-                if candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']:
+                if (candidateUri.database() == dbName and lyr.providerType() in ['postgres', 'spatialite']) \
+                    or (os.path.splitext(os.path.basename(candidateUri.uri().split('|')[0]))[0] == dbName and lyr.providerType() == 'ogr'):
                     lyrList.append(lyr)
         return lyrList
     
     def getDatabaseList(self):
-        dbList = []
+        # dbList = list()
+        dbSet = set()
         for lyr in self.iface.mapCanvas().layers():
             if isinstance(lyr, QgsVectorLayer):
                 candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
                 dbName = candidateUri.database()
-                if dbName not in dbList and lyr.providerType() in ['postgres', 'spatialite']:
-                    dbList.append(dbName)
-        return dbList
+                # if dbName not in dbList and lyr.providerType() in ['postgres', 'spatialite']:
+                if lyr.providerType() in ['postgres', 'spatialite']:
+                    dbSet.add(dbName)
+                elif lyr.providerType() == 'ogr':
+                    dbName = os.path.splitext(os.path.basename(lyr.dataProvider().dataSourceUri().split('|')[0]))[0]
+                    # if db not in dbList:
+                    dbSet.add(dbName)
+        return dbSet
     
     def loadStylesCombo(self, abstractDb):
         dbVersion = abstractDb.getDatabaseVersion()
@@ -150,7 +157,8 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         for lyr in self.iface.mapCanvas().layers():
           if isinstance(lyr, QgsVectorLayer):
             candidateUri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
-            if candidateUri.database() == dbName:
+            if candidateUri.database() == dbName or \
+                    os.path.splitext(os.path.basename(candidateUri.uri().split('|')[0]))[0] == dbName:
                 currLyr = lyr
                 break
         dbParameters = dict()
