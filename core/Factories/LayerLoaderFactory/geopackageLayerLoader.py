@@ -64,8 +64,7 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
         lyr = self.checkLoaded(tableName)
         if uniqueLoad and lyr:
             return lyr
-        self.setDataSource('', '_'.join([schema,tableName]), geomColumn, '')
-        vlayer = QgsVectorLayer("{0}|table={1}".format(self.abstractDb.db.databaseName(), tableName), tableName, "ogr")
+        vlayer = self.getLayerByName("{0}_{1}".format(schema, tableName))
         if not vlayer.isValid():
             QgsMessageLog.logMessage(vlayer.error().summary(), "DSG Tools Plugin", Qgis.Critical)
         QgsProject.instance().addMapLayer(vlayer, addToLegend = False)
@@ -84,7 +83,7 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
     def getLayerByName(self, layer):
         """
         Return the layer layer from a given layer name.
-        :param layer: (str) layer name.
+        :param layer: (str) table name.
         :return: (QgsVectorLayer) vector layer. 
         """
         # parent class reimplementation
@@ -92,4 +91,4 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
         table = layer[len(schema) + 1:]
         lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
         self.setDataSource('', layer, geomColumn, '')
-        return QgsVectorLayer("{0}|table={1}".format(self.abstractDb.db.databaseName(), table), table, "ogr")
+        return QgsVectorLayer("{0}|table={1}".format(self.abstractDb.db.databaseName(), layer), table, "ogr")
