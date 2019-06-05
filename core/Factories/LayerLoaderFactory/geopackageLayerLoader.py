@@ -83,7 +83,7 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
     def getLayerByName(self, layer):
         """
         Return the layer layer from a given layer name.
-        :param layer: (str) table name.
+        :param layer: (str) table name - for GPKG it is [SCHEMA]_[CATEGORY]_[CLASS].
         :return: (QgsVectorLayer) vector layer. 
         """
         # parent class reimplementation
