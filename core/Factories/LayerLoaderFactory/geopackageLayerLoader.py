@@ -22,18 +22,9 @@
 """
 import os
 
-# Qt imports
-from qgis.PyQt import QtGui, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
-from qgis.PyQt.Qt import QObject
+from qgis.core import QgsVectorLayer, QgsMessageLog, QgsCoordinateReferenceSystem, Qgis, QgsProject
 
-# QGIS imports
-from qgis.core import QgsVectorLayer,QgsDataSourceUri, QgsMessageLog, QgsCoordinateReferenceSystem, QgsMessageLog, Qgis, QgsProject, QgsEditorWidgetSetup
-from qgis.utils import iface
-
-#DsgTools imports
 from .spatialiteLayerLoader import SpatialiteLayerLoader
-from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 
 class GeopackageLayerLoader(SpatialiteLayerLoader):
     def __init__(self, iface, abstractDb, loadCentroids):
@@ -91,4 +82,4 @@ class GeopackageLayerLoader(SpatialiteLayerLoader):
         table = layer[len(schema) + 1:]
         lyrName, schema, geomColumn, tableName, srid = self.getParams(table)
         self.setDataSource('', layer, geomColumn, '')
-        return QgsVectorLayer("{0}|table={1}".format(self.abstractDb.db.databaseName(), layer), table, "ogr")
+        return QgsVectorLayer("{0}|layername={1}".format(self.abstractDb.db.databaseName(), layer), table, "ogr")
