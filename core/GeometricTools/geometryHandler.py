@@ -626,5 +626,7 @@ class GeometryHandler(QObject):
         outputSet = set()
         for part in geom.asGeometryCollection():
             if part.type() == geometryType:
-                outputSet.add(self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer))
+                handledList = self.handleGeometry(part, parameterDict=parameterDict, coordinateTransformer=coordinateTransformer)
+                for item in handledList:
+                    outputSet.add(item)
         return list(outputSet)
