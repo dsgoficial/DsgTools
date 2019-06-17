@@ -155,12 +155,14 @@ class FeatureHandler(QObject):
                 geom_a = feat_a.geometry()
                 geom_b = feat_b.geometry()
                 if geom_a.touches(geom_b):
-                    point = geom_a.intersection(geom_b).asPoint()
-                    if ignoreNetwork or (point in networkDict and len(networkDict[point]) == 2):
-                        newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(), parameterDict)[0] #only one candidate is possible because features are touching
-                        feat_a.setGeometry(newGeom)
-                        idsToRemove.append(id_b)
-                        changeDict[id_a] = newGeom
+                    intersectionPoint = geom_a.intersection(geom_b)
+                    for pointPart in intersectionPoint.asGeometryCollection():
+                        point = pointPart.asPoint()
+                        if ignoreNetwork or (point in networkDict and len(networkDict[point]) == 2):
+                            newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(), parameterDict)[0] #only one candidate is possible because features are touching
+                            feat_a.setGeometry(newGeom)
+                            idsToRemove.append(id_b)
+                            changeDict[id_a] = newGeom
             if feedback:
                 feedback.setProgress(size*current)
         for id, geom in changeDict.items():
