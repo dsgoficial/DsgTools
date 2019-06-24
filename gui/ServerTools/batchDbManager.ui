@@ -199,13 +199,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QPushButton" name="createViewsPushButton">
-            <property name="text">
-             <string>Create Domain Resolved Views</string>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="0">
            <widget class="QPushButton" name="upgradePostgisPushButton">
             <property name="text">
