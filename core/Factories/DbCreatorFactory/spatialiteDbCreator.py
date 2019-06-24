@@ -46,7 +46,7 @@ class SpatialiteDbCreator(DbCreator):
             edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', '213', 'seed_edgv213.sqlite')
         elif version == 'FTer_2a_Ed':
             edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', 'FTer_2a_Ed', 'seed_edgvfter_2a_ed.sqlite')
-        elif version == 'FTer_2a_Ed':
+        elif version == '3.0':
             edgvPath = os.path.join(currentPath,'..','..','..','core','DbModels','SpatiaLite', '3', 'seed_edgv3.sqlite')
         return edgvPath
     
