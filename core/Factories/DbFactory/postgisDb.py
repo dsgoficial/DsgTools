@@ -2657,7 +2657,7 @@ class PostgisDb(AbstractDb):
     def getImplementationVersionFromFile(self, edgvVersion):
         edgvPath = self.getCreationSqlPath(edgvVersion)
         commands = self.getCommandsFromFile(edgvPath)
-        searchString = 'INSERT INTO public.db_metadata (edgvversion,dbimplversion) VALUES ('
+        searchString = 'INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('
         for command in commands:
             if searchString in command:
                 return command.split(searchString)[-1].split(',')[-1].replace(')','').replace("'","")
