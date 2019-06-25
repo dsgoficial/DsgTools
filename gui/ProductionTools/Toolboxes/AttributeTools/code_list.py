@@ -244,7 +244,14 @@ class CodeList(QDockWidget, FORM_CLASS):
                     return ret
                 for field in currentLayer.fields():
                     fieldName = field.name()
-                    query = QSqlQuery(sql.format(field=fieldName), db)
+                    if fieldName in self.specialEdgvAttributes():
+                        # EDGV "special" attributes that are have different domains depending on 
+                        # which class it belongs to
+                        category = (table if isinstance(table, str) else table.name()).split("_")[0]
+                        fieldN = "{attribute}_{cat}".format(attribute=fieldName, cat=category)
+                        query = QSqlQuery(sql.format(field=fieldN), db)
+                    else:
+                        query = QSqlQuery(sql.format(field=fieldName), db)
                     if not query.isActive():
                         continue
                     while query.next():
@@ -255,6 +262,14 @@ class CodeList(QDockWidget, FORM_CLASS):
             except:
                 pass
         return ret
+
+    def specialEdgvAttributes(self):
+        """
+        Gets the list of attributes shared by many EDGV classes and have a different domain
+        depending on which category the EDGV class belongs to.
+        :return: (list-of-str) list of "special" EDGV classes. 
+        """
+        return ["finalidade", "relacionado", "coincidecomdentrode"]
 
     def getEdgvDomainsFromTableName(self, table, field=None):
         """
@@ -269,10 +284,16 @@ class CodeList(QDockWidget, FORM_CLASS):
         if currentLayer.isValid():
             try:
                 uri = QgsDataSourceUri(currentLayer.dataProvider().dataSourceUri())
+                field = field or self.currentField()
+                if field in self.specialEdgvAttributes():
+                    # EDGV "special" attributes that are have different domains depending on 
+                    # which class it belongs to
+                    category = self.currentLayerName().split("_")[0]
+                    field = "{attribute}_{cat}".format(attribute=field, cat=category)
                 if uri.host() == '':
                     db = QSqlDatabase('QSQLITE')
                     db.setDatabaseName(uri.database())
-                    sql = 'select code, code_name from dominios_{field} order by code'.format(field=(field or self.currentField()))
+                    sql = 'select code, code_name from dominios_{field} order by code'.format(field=field)
                 else:
                     db = QSqlDatabase('QPSQL')
                     db.setHostName(uri.host())
@@ -280,7 +301,7 @@ class CodeList(QDockWidget, FORM_CLASS):
                     db.setDatabaseName(uri.database())
                     db.setUserName(uri.username())
                     db.setPassword(uri.password())
-                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=(field or self.currentField()))    
+                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=field)    
                 if not db.open():
                     db.close()
                     return ret
