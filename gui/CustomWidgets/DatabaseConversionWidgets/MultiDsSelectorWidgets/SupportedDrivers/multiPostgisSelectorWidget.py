@@ -79,9 +79,9 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         self.clearGridLayout()
         # get selected server
         serverName = self.exploreServerWidget.serversCombo.currentText()
-        serverName = serverName.split(' ')[0] if serverName != self.tr('Select Server') else ''
+        serverName = serverName.split(' ')[0] if self.exploreServerWidget.serversCombo.currentIndex() != 0 else ''
         # get available databases
-        if serverName and serverName != self.tr('Select Server'):
+        if serverName:
             dbList = self.getDbsFromServer(name=serverName)
         else:
             dbList = []
