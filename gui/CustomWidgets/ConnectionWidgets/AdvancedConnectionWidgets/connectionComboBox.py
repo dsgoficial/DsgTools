@@ -150,7 +150,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 if not self.instantiateAbstractDb:
                     self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()
-                    dbName = self.connectionSelectorComboBox.currentText().split(' (')[0]
+                    dbName = self.connectionSelectorComboBox.itemText(idx).split(' (')[0]
                     self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                     self.abstractDb.checkAndOpenDb()
                     self.dbChanged.emit(self.abstractDb)
