@@ -32,9 +32,8 @@ DSGTools 3.1 has the following features:
 
 Requirements for LINUX (Ubuntu/Debian):
 Install the following packages as follows:
-sudo apt-get install python-qt4-sql
-sudo apt-get install libqt4-sql-psql
-sudo apt-get install libqt4-sql-sqlite
+sudo apt-get install libqt5sql5-psql
+sudo apt-get install libqt5sql5-sqlite
 
 For further information, go to https://github.com/dsgoficial/DsgTools/wiki or http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
 
