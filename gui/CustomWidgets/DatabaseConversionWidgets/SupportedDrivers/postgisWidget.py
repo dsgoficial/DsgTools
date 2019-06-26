@@ -75,11 +75,13 @@ class PostgisWidget(AbstractSelectionWidget):
         Sets the datasource selected on current widget.
         :param newDatasource: (dict) { db : (host, port, username, password) }.
         """
+        # the input parameter is a dict due to a standard behavior on the other widgets (keep parallel)
         if self.selectionWidget:
             for db, (host, port, username, password) in newDatasource.items():
-                idx = self.selectionWidget.connectionSelectorComboBox.findText(db)
-                self.selectionWidget.loadDatabase(idx)
-                self.selectionWidget.connectionSelectorComboBox.setCurrentIndex(idx)
+                self.selectionWidget.connectionSelectorComboBox.setCurrentIndex(
+                    self.selectionWidget.connectionSelectorComboBox.findText(db)
+                )
+                return # first item will be set (if more than one is given)
 
     def getDatasource(self):
         """

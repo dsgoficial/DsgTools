@@ -217,9 +217,8 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         result = self.selector.exec_()
         if not result:
             # if ok was selected on multiselector, check for database selection
-            dbList = self.selector.dbList
-            if dbList:
-                self.datasources = self.getDbListServerInfo(dbList=dbList)
+            if self.selector.dbList:
+                self.datasources = self.getDbListServerInfo(dbList=self.selector.dbList)
             if self.datasources:
                 # there was a selection (operation was successful)
                 return 0
