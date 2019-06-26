@@ -53,6 +53,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         self.dbFactory = DbFactory()
         self.factory = SqlGeneratorFactory()
         self.abstractDb = None
+        self.populateServersCombo()
 
     def getServers(self):
         """
