@@ -34,9 +34,8 @@ about=
 	-Tool to reclassify features (move them to another layer) with predefined attributes
 	Requirements for LINUX (Ubuntu/Debian):
 	Install the following packages as follows:
-	sudo apt-get install python-qt4-sql
-	sudo apt-get install libqt4-sql-psql
-	sudo apt-get install libqt4-sql-sqlite
+	sudo apt-get install libqt5sql5-psql
+	sudo apt-get install libqt5sql5-sqlite
 
 # End of mandatory metadata
 
