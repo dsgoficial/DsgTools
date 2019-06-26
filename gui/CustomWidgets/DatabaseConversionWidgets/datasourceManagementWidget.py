@@ -172,8 +172,7 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             result = dlg.exec_()
             if not result:
                 # in case Ok was selected
-                datasourcesDict = dlg.datasources
-                for ds, dsPath in datasourcesDict.items():
+                for ds, dsPath in dlg.datasources.items():
                     # add new widget container for it
                     container = self.addDatasourceWidget()
                     # set datasource to it
