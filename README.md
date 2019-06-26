@@ -31,9 +31,12 @@ DSGTools 3.1 has the following features:
 - Validation Tools: fix geometry problems prior to creating a topology structure;
 
 Requirements for LINUX (Ubuntu/Debian):
+
 Install the following packages as follows:
+```
 sudo apt-get install libqt5sql5-psql
 sudo apt-get install libqt5sql5-sqlite
+```
 
 For further information, go to https://github.com/dsgoficial/DsgTools/wiki or http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
 
@@ -71,3 +74,11 @@ Estão disponíveis as seguintes funcionalidades no plugin em sua versão 3.1 (c
 - Ferramentas de validação geométrica;
 
 Para maiores informações, acesse https://github.com/dsgoficial/DsgTools/wiki ou http://www.geoportal.eb.mil.br/index.php/qgis-menu/dsgtools/dsgtools-generalidades
+
+Dependências a serem instaladas (Ubuntu/Debian):
+
+Instalar os seguintes pacotes de acordo com o código abaixo:
+```
+sudo apt-get install libqt5sql5-psql
+sudo apt-get install libqt5sql5-sqlite
+```
