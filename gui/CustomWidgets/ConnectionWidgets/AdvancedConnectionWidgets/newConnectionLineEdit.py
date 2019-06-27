@@ -48,7 +48,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
     def __init__(self, parent=None, isStatic=False):
         """
         Class contructor.
-        :param parent: (QWidget) widget parent to newly instantiated ConnectionComboBox.
+        :param parent: (QWidget) widget parent to newly instantiated NewConnectionLineEdit.
         :param isStatic: (bool) indicates whether server selection will be static (no default).
         """
         super(NewConnectionLineEdit, self).__init__()
