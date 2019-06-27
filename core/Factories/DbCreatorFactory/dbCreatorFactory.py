@@ -27,6 +27,7 @@ from qgis.PyQt.QtSql import QSqlDatabase
 #DSG Tools imports
 from .spatialiteDbCreator import SpatialiteDbCreator
 from .postgisDbCreator import PostgisDbCreator
+from .geopackageDbCreator import GeopackageDbCreator
 
 class DbCreatorFactory(object):
     def createDbCreatorFactory(self, driverName, createParam, parentWidget = None):
@@ -40,6 +41,6 @@ class DbCreatorFactory(object):
         creators = {
             "QSQLITE" : SpatialiteDbCreator,
             "QPSQL" : PostgisDbCreator,
-            "GPKG" : lambda : None
+            "GPKG" : GeopackageDbCreator
         }
         return creators[driverName](createParam, parentWidget) if driverName in creators else None

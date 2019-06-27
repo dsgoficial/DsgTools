@@ -29,10 +29,10 @@ from DsgTools.core.Factories.DbCreatorFactory.dbCreator import DbCreator
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
 
-class SpatialiteDbCreator(DbCreator):
+class GeopackageDbCreator(DbCreator):
     
     def __init__(self, createParam, parentWidget = None):
-        super(self.__class__,self).__init__(createParam)
+        super(GeopackageDbCreator,self).__init__(createParam)
         self.parentWidget = parentWidget
     
     def instantiateNewDb(self, dbPath):
@@ -86,7 +86,7 @@ class SpatialiteDbCreator(DbCreator):
     def defineSrid(self, destination, srid):
         con = sqlite3.connect(destination)
         cursor = con.cursor()
-        cursor.execute("UPDATE gpkg_geometry_columns SET srid={srid}".format(srid=srid))
+        cursor.execute("UPDATE gpkg_geometry_columns SET srs_id={srid}".format(srid=srid))
         con.commit()
         cursor.close()
         con.close()
