@@ -82,7 +82,7 @@ class DatabaseGuiManager(QObject):
         self.singleDbCreator.initGui()
         self.batchCreator = BatchDbCreator(manager=self, parentButton=self.stackButton, parentMenu=self.menu)
         self.batchCreator.initGui()
-        self.datasourceConversion = DatasourceConversion(manager=self, parentMenu=self.menu)
+        self.datasourceConversion = DatasourceConversion(manager=self, parentMenu=self.menu, parentButton=self.stackButton)
         self.datasourceConversion.initGui()
 
     def unload(self):
