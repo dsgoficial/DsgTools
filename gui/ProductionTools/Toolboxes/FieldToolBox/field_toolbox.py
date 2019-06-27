@@ -62,20 +62,6 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.addedFeatures = []
         self.configFromDbDict = dict()
         self.layerHandler = LayerHandler(iface)
-
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'fieldToolbox.png'
-        text = self.tr('Feature Classification Tool')
-        action = manager.add_action(
-            icon_path,
-            text=text,
-            callback=callback,
-            add_to_menu=False,
-            add_to_toolbar=False,
-            parentMenu = parentMenu,
-            parentButton = parentStackButton
-            )
-        parentStackButton.setDefaultAction(action)
     
     def defineFactory(self, abstractDb):
         """
