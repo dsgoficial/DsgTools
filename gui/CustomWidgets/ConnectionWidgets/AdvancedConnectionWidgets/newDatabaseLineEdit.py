@@ -166,8 +166,8 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             msg = self.validate()
             self.dbChanged.emit(self.abstractDb)
             self.connectionChanged.emit()
-            if msg:
-                raise Exception(msg)
+            # if msg:
+            #     raise Exception(msg)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
