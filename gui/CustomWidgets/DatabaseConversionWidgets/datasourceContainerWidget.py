@@ -28,6 +28,7 @@ from qgis.utils import iface
 from qgis.core import QgsProject
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.genericDialogLayout import GenericDialogLayout
+from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.filterDialog import FilterDialog
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceSelectionWidgetFactory import DatasourceSelectionWidgetFactory
 
 import os
@@ -332,38 +333,40 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         no update to filters contents will be made. This dialog is repopulated as filter push button from container
         is pressed. 
         """
-        # if self.filterDlg:
-        #         # if dialog is already created, old signals must be blocked
-        #         self.filterDlg.blockSignals(True)
-        #         # and clear it
-        #         self.filterDlg = None
-        if self.filterDlg is None:#self.connectionWidget:
-            if not self.connectionWidget.getDatasourcePath():
-                # in case a connection path is not found, a connection was not made ('generic text' is selected)
-                return
-            # instantiate a new filter dialog
-            self.filterDlg = GenericDialogLayout()
-            # set dialog title to current datasource path
-            title = '{0}: {1}'.format(self.groupBox.title(), self.connectionWidget.getDatasourcePath())
-            self.filterDlg.setWindowTitle(title)
-            # setup the interface regarding spatial layers (e.g. layer with one and only one geometric primitive)
-            self.setupGroupBoxFilters(isSpatial=True)            
-            # setup the interface regarding complex layers (e.g. aggregates more than a geometric primitive, hence it does not have spatial)
-            self.setupGroupBoxFilters(isSpatial=False)
-            # setup spatial filter part
-            self.setupSpatialFilterWidgets()
-            self.fillSpatialFilterInformation()
-            # connect cancel push button to close method
-            if not self.filters['layer_filter']:
-                # if no filters dict was set, set it to initial state
-                # this method is suppoded to be replaced by a filling one
-                self.resetLayerFilters()
-            closeAlias = lambda : self.filterDlg.close()
-            self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
-            # connect Ok push button from Filter Dialog to filter dict update method
-            self.filterDlg.okPushButton.clicked.connect(self.resetLayerFilters)
-            # for last, open dialog            
-        self.filterDlg.exec_()
+        fd = FilterDialog()
+        fd.exec_()
+        # # if self.filterDlg:
+        # #         # if dialog is already created, old signals must be blocked
+        # #         self.filterDlg.blockSignals(True)
+        # #         # and clear it
+        # #         self.filterDlg = None
+        # if self.filterDlg is None:#self.connectionWidget:
+        #     if not self.connectionWidget.getDatasourcePath():
+        #         # in case a connection path is not found, a connection was not made ('generic text' is selected)
+        #         return
+        #     # instantiate a new filter dialog
+        #     self.filterDlg = GenericDialogLayout()
+        #     # set dialog title to current datasource path
+        #     title = '{0}: {1}'.format(self.groupBox.title(), self.connectionWidget.getDatasourcePath())
+        #     self.filterDlg.setWindowTitle(title)
+        #     # setup the interface regarding spatial layers (e.g. layer with one and only one geometric primitive)
+        #     self.setupGroupBoxFilters(isSpatial=True)            
+        #     # setup the interface regarding complex layers (e.g. aggregates more than a geometric primitive, hence it does not have spatial)
+        #     self.setupGroupBoxFilters(isSpatial=False)
+        #     # setup spatial filter part
+        #     self.setupSpatialFilterWidgets()
+        #     self.fillSpatialFilterInformation()
+        #     # connect cancel push button to close method
+        #     if not self.filters['layer_filter']:
+        #         # if no filters dict was set, set it to initial state
+        #         # this method is suppoded to be replaced by a filling one
+        #         self.resetLayerFilters()
+        #     closeAlias = lambda : self.filterDlg.close()
+        #     self.filterDlg.cancelPushButton.clicked.connect(closeAlias)
+        #     # connect Ok push button from Filter Dialog to filter dict update method
+        #     self.filterDlg.okPushButton.clicked.connect(self.resetLayerFilters)
+        #     # for last, open dialog            
+        # self.filterDlg.exec_()
 
     def getSpatialFilterInformation(self):
         """
