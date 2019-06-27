@@ -118,125 +118,6 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # finally, emits removal signal
         self.removeWidget.emit(self)
 
-    def clearWidget(self, widget):
-        """
-        Clear a widget before in order to reassign it.
-        :param widget: widget to be cleared.
-        """
-        try:
-            widget.blockSignals(True)
-            # widget.setParent(None)
-            widget = None
-        except:
-            # in case the python wrapper for a QgsFilterExpressionWidget is deleted before the object
-            widget = None
-
-    def getClipRelationParameterWidget(self):
-        """
-        Gets the widget for a Cut spatial filter.
-        :return: (QWidget) the topological relation parameter widget.        
-        """
-        # widget will ask for a cut mode
-        w = QtWidgets.QComboBox()
-        w.addItems([self.tr('Choose a region...'), self.tr('Inside Features'), self.tr('Outside Features')])
-        return w
-        
-    def getBufferRelationParameterWidget(self):
-        """
-        Gets the widget for a Cut spatial filter.
-        :return: (QWidget) the topological relation parameter widget.        
-        """
-        # widget will ask for a double (buffer distance)
-        w = QtWidgets.QDoubleSpinBox()
-        # colocar regras de preenchimento! > 0...
-        return w
-
-    @pyqtSlot(int)
-    def setTopologicalParameter(self, idx):
-        """
-        Sets the widget for capturing the topological relationship comparison parameter.
-        :param idx: current topological operation index.
-        """
-        if self.topologicalRelationWidget:
-            try:
-                self.filterDlg.outHLayout.removeWidget(self.topologicalRelationWidget)
-                self.topologicalRelationWidget.setParent(None)
-            except:
-                pass
-                # problems with a qgis python wrappers for its widgets... 
-            self.clearWidget(widget=self.topologicalRelationWidget)
-        widgetDict = {
-            self.tr('Clip') : lambda : self.getClipRelationParameterWidget(), 
-            self.tr('Buffer') : lambda : self.getBufferRelationParameterWidget(), 
-            self.tr('Intersects') : lambda : None, # no widget is necessary
-        }
-        try:
-            if isinstance(idx, int):
-                self.topologicalRelationWidget = widgetDict[self.topologicalTestWidget.currentText()]()
-            else:
-                self.topologicalRelationWidget = widgetDict[idx]()
-            if self.topologicalRelationWidget:
-                self.filterDlg.outHLayout.addWidget(self.topologicalRelationWidget)
-        except:
-            return
-
-    @pyqtSlot(int)
-    def spatialFilterLayerChanged(self, idx):
-        """
-        Sets up interface according to a spatial filtering layer selection.
-        """
-        currentLayer = self.layersComboBox.currentText()
-        if currentLayer == self.tr('Select a layer...'):
-            return
-        vLayer = QgsProject.instance().mapLayersByName(currentLayer)
-        if vLayer:
-            self.filterExpressionWidget.setLayer(vLayer[0])
-
-    def setupSpatialFilterWidgets(self):
-        """
-        Sets up widgets into filter dialog.
-        """
-        # prepare layer selection combo box
-        if self.layersComboBox:
-            # self.filterDlg.outHLayout.removeWidget(self.layersComboBox)
-            # clear layer selection combo box, if it exists 
-            self.clearWidget(widget=self.layersComboBox)
-        try:
-            self.layersComboBox = QtWidgets.QComboBox()
-        except:
-            # no idea why, but the C++ object gets deleted only after you try using it...
-            self.layersComboBox = QtWidgets.QComboBox()
-        layerList = [self.tr('Select a layer...')] + sorted([l.name() for l in iface.mapCanvas().layers()])
-        self.layersComboBox.addItems(layerList)
-        # prepare layer feature filter widget
-        if self.filterExpressionWidget:
-            # self.filterDlg.outHLayout.removeWidget(self.filterExpressionWidget)
-            # clear layer selection combo box, if it exists 
-            self.clearWidget(widget=self.filterExpressionWidget)
-        self.filterExpressionWidget = QgsFieldExpressionWidget()
-        # prepare layer selection combo box
-        if self.topologicalTestWidget:
-            # self.filterDlg.outHLayout.removeWidget(self.topologicalTestWidget)
-            # clear layer selection combo box, if it exists 
-            self.clearWidget(widget=self.topologicalTestWidget)
-        try:
-            self.topologicalTestWidget = QtWidgets.QComboBox()
-        except:
-            # no idea why, but the C++ object gets deleted only after you try using it...
-            self.topologicalTestWidget = QtWidgets.QComboBox()
-        # current supported topological relations
-        topoRelList = sorted([self.tr('Clip'), self.tr('Buffer'), self.tr('Intersects')])
-        self.topologicalTestWidget.addItems(topoRelList)
-        # topological parameter is adjusted accordingly chosen topological relation
-        self.topologicalTestWidget.currentIndexChanged.connect(self.setTopologicalParameter)
-        # first execution does not activate signal, so use it manually
-        self.layersComboBox.currentIndexChanged.connect(self.spatialFilterLayerChanged)
-        if self.filterDlg:
-            self.filterDlg.outHLayout.addWidget(self.layersComboBox)
-            self.filterDlg.outHLayout.addWidget(self.filterExpressionWidget)
-            self.filterDlg.outHLayout.addWidget(self.topologicalTestWidget)
-            self.setTopologicalParameter(topoRelList[0])
-
     def fillSpatialFilterInformation(self):
         """
         Fills the filter information set to its GUI.
@@ -333,7 +214,10 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         no update to filters contents will be made. This dialog is repopulated as filter push button from container
         is pressed. 
         """
-        fd = FilterDialog()
+        fd = FilterDialog(
+                {l : {'layer' : self.connectionWidget.getLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getLayersDict().items()},
+                {l : {'layer' : self.connectionWidget.getComplexLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getComplexDict().items()}
+            )
         fd.exec_()
         # # if self.filterDlg:
         # #         # if dialog is already created, old signals must be blocked
