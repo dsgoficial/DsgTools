@@ -37,10 +37,9 @@ class DbCreatorFactory(object):
         if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
             QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSG Tools Plugin', Qgis.Critical)
             return None        
-        
-        if driverName == "QSQLITE":
-            return SpatialiteDbCreator(createParam, parentWidget)
-        if driverName == "QPSQL":
-            return PostgisDbCreator(createParam, parentWidget)
-        else:
-            return None
+        creators = {
+            "QSQLITE" : SpatialiteDbCreator,
+            "QPSQL" : PostgisDbCreator,
+            "GPKG" : lambda : None
+        }
+        return creators[driverName](createParam, parentWidget) if driverName in creators else None
