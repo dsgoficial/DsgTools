@@ -39,19 +39,6 @@ class CodeList(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self.setInitialState()
-    
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'codelist.png'
-        text = self.tr('View Code List Codes and Values')
-        action = manager.add_action(
-            icon_path,
-            text=text,
-            callback=callback,
-            add_to_menu=False,
-            add_to_toolbar=False,
-            parentMenu = parentMenu,
-            parentButton = parentStackButton
-            )
 
     def blockAllSignals(self, status):
         """
