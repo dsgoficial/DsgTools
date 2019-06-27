@@ -84,6 +84,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         # in case a valid driver is selected, add its widget to the interface
         self.connectionWidget = DatasourceSelectionWidgetFactory.getSelectionWidget(source=self.source)
         self.driverLayout.addWidget(self.connectionWidget.selectionWidget)
+        self.connectionWidget.selectionWidget.dbChanged.connect(lambda : self.refreshFilterDialog)
 
     def getDatasourceConnectionName(self):
         """
@@ -312,6 +313,18 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
                     layout.addWidget(fieldExpressionWidget, row, 1)
                     row += 1
 
+    def refreshFilterDialog(self):
+        """
+        Resets filter dialog to its initial state.
+        """
+        if self.filterDlg:
+            # if dialog is already created, old signals must be blocked
+            self.filterDlg.blockSignals(True)
+            # and clear it
+            del self.filterDlg
+            self.filterDlg = None
+            self.on_filterPushButton_clicked()
+
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
         """
@@ -319,21 +332,20 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         no update to filters contents will be made. This dialog is repopulated as filter push button from container
         is pressed. 
         """
-        if self.filterDlg:
-                # if dialog is already created, old signals must be blocked
-                self.filterDlg.blockSignals(True)
-                # and clear it
-                self.filterDlg = None
-        if self.connectionWidget:
+        # if self.filterDlg:
+        #         # if dialog is already created, old signals must be blocked
+        #         self.filterDlg.blockSignals(True)
+        #         # and clear it
+        #         self.filterDlg = None
+        if self.filterDlg is None:#self.connectionWidget:
             if not self.connectionWidget.getDatasourcePath():
                 # in case a connection path is not found, a connection was not made ('generic text' is selected)
                 return
             # instantiate a new filter dialog
-            filterDlg = GenericDialogLayout()
+            self.filterDlg = GenericDialogLayout()
             # set dialog title to current datasource path
             title = '{0}: {1}'.format(self.groupBox.title(), self.connectionWidget.getDatasourcePath())
-            filterDlg.setWindowTitle(title)
-            self.filterDlg = filterDlg
+            self.filterDlg.setWindowTitle(title)
             # setup the interface regarding spatial layers (e.g. layer with one and only one geometric primitive)
             self.setupGroupBoxFilters(isSpatial=True)            
             # setup the interface regarding complex layers (e.g. aggregates more than a geometric primitive, hence it does not have spatial)
@@ -351,7 +363,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # connect Ok push button from Filter Dialog to filter dict update method
             self.filterDlg.okPushButton.clicked.connect(self.resetLayerFilters)
             # for last, open dialog            
-            self.filterDlg.exec_()
+        self.filterDlg.exec_()
 
     def getSpatialFilterInformation(self):
         """
