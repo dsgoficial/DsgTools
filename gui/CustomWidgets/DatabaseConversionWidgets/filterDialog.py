@@ -22,22 +22,25 @@
 """
 
 import os
+from collections import defaultdict
 
 from qgis.core import QgsProject
+from qgis.gui import QgsFieldExpressionWidget
 from qgis.utils import iface
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
-from qgis.PyQt.QtWidgets import QDialog
+from qgis.PyQt.QtWidgets import QDialog, QCheckBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'filterDialog.ui'))
 
 class FilterDialog(QDialog, FORM_CLASS):
-    def __init__(self, spatialLayers, complexLayers, parent=None):
+    def __init__(self, spatialLayers, complexLayers, abstractDb, parent=None):
         """
         Class constructor.
         :param spatialLayers: (list-of-QgsVectorLayer) list of spatial layers.
         :param complexLayers: (list-of-QgsVectorLayer) list of complex layers.
+        :param complexLayers: (AbstractDb) database object for data handling.
         :param parent: (QtWidgets) any widget that should be parent to newly 
                        instantiated object.
         """
@@ -45,6 +48,9 @@ class FilterDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.spatialLayers = spatialLayers
         self.complexLayers = complexLayers
+        self._currentSelection = dict()
+        self._abstractDb = abstractDb
+        self.setupLayerFilters()
         self.setupSpatialFilters()
 
     def layerNamesFromCanvas(self):
@@ -130,58 +136,137 @@ class FilterDialog(QDialog, FORM_CLASS):
         self.fillPredicates()
         self.fillClipOptions()
         self.setPredicateWidget()
-    
+
+    def clearSelection(self):
+        """
+        Clears the dict to its initial state.
+        """
+        self._currentSelection = {}
+        
     def setupLayerFilters(self):
         """
         Sets all layers to GUI.
         """
         self.setupGroupBoxFilters()
         if self.complexLayers:
-            # in case complex layers are provided
+            self.mGroupBox_2.show()
             self.setupGroupBoxFilters(isSpatial=False)
+        else:
+            self.mGroupBox_2.hide()
+        self._currentSelection = self.readFilters()
+        
+
+    def fetchSpatialParameter(self, predicate):
+        """
+        Return the topological predicate's parameter.
+        :param predicate: (str) target predicate.
+        :return: (tuple) spatial filter settings.
+        """
+        return {
+            self.tr('Clip') : self.comboBox.currentText() if self.comboBox.currentIndex() > 0 else None,
+            self.tr('Buffer') : self.doubleSpinBox.value(),
+            self.tr('Intersects') : None,
+            '' : None
+        }[predicate]
 
     def setupGroupBoxFilters(self, isSpatial=True):
         """
-        Sets up the part the sptial/complex layers' GUI part.
+        Sets up the part the spatial/complex layers' GUI part. It does not handle selection (e.g.
+        everyone is selected).
         :param isSpatial: (bool) indicates whether groupbox to be set is spatial (or complex).
         """
         gb = self.mGroupBox if isSpatial else self.mGroupBox_2
         layers = self.spatialLayers if isSpatial else self.complexLayers
-        # self.filterDlg.vLayout.addWidget(gb)
-        # # add a grid layout to add the widgets
-        # layout = QtWidgets.QGridLayout(gb)
-        # # gb.addLayout(layout)
-        # # initiate row counter
-        # row = 0
-        # # eliminate schema from layer name
-        # abstractDb = self.connectionWidget.getDatasource()
-        # for layerName, featCount in layers.items():
-        #     if layerName:
-        #         # add a new checkbox widget to layout for each layer found and a field expression widget
-        #         checkBoxWidget, fieldExpressionWidget = QtWidgets.QCheckBox(), QgsFieldExpressionWidget()
-        #         # set current check box status based on previous filters, if any
-        #         # eliminate schema from layer name
-        #         _, layer = abstractDb.getTableSchema(layerName)
-        #         previousFilters = not self.filters['layer'] or layer in self.filters['layer']
-        #         checkBoxWidget.setChecked(previousFilters)
-        #         # allow filtering option only when layer is marked to be filtered
-        #         checkBoxWidget.toggled.connect(fieldExpressionWidget.setEnabled)
-        #         msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-        #         checkBoxWidget.setText(msg.format(layerName, featCount))
-        #         if previousFilters:
-        #             # if layer is among the filtered ones, or if there are no previous filters, set it checked.__init__(self, *args, **kwargs):
-        #             checkBoxWidget.setChecked(True)
-        #             # in case no filters are added or if layer is among the filtered ones, set it checked
-        #         if layerName in self.filters['layer_filter']:
-        #             # if a layer feature filter was set, refill it back to UI
-        #             fieldExpressionWidget.setExpression(self.filters['layer_filter'][layerName])
-        #         # set layer to filter expression
-        #         layer = getLayerAlias(layerName)
-        #         if layer is not None and layer.isValid():
-        #             fieldExpressionWidget.setLayer(layer)
-        #         else:
-        #             checkBoxWidget.toggled.disconnect(fieldExpressionWidget.setEnabled)
-        #             fieldExpressionWidget.setEnabled(False)
-        #         layout.addWidget(checkBoxWidget, row, 0)
-        #         layout.addWidget(fieldExpressionWidget, row, 1)
-        #         row += 1
+        layout = self.spatialGridLayout if isSpatial else self.complexGridLayout
+        for row, (layerName, layerFcMap) in enumerate(layers.items()):
+            checkBoxWidget, fieldExpressionWidget = QCheckBox(), QgsFieldExpressionWidget()
+            _, layer = self._abstractDb.getTableSchema(layerName)
+            checkBoxWidget.setChecked(True)
+            # allow filtering option only when layer is marked to be filtered
+            checkBoxWidget.toggled.connect(fieldExpressionWidget.setEnabled)
+            msg = self.tr('{0} ({1} features)') if layerFcMap['featureCount'] > 1 else self.tr('{0} ({1} feature)')
+            checkBoxWidget.setText(msg.format(layer, layerFcMap['featureCount']))
+            fieldExpressionWidget.setLayer(layerFcMap['layer'])
+            layout.addWidget(checkBoxWidget, row, 0)
+            layout.addWidget(fieldExpressionWidget, row, 1)
+
+    def validateSpatialFilter(self, layer, expression, predicate, parameter=None):
+        """
+        Validates current selection of spatial filters settings.
+        :param layer: (str) layer (name) used as spatial reference.
+        :param expression: (str) filtering expression applied to reference layer.
+        :param predicate: (str) topological predicate to be applied to the dataset.
+        :param parameter: (object) topological predicate's parameter.
+        :return: (bool) whether the set of spatial filter settings may be applied to the dataset.
+        """
+        if predicate == self.tr("Clip"):
+            return parameter is not None and parameter != self.tr('Choose a region...')
+        elif predicate == self.tr("Buffer"):
+            return parameter is not None
+        return True
+
+    def readFilters(self):
+        """
+        Read filters from the interface.
+        :return: (dict) filters mapping.
+        """
+        layerFilters = defaultdict(dict)
+        # read layer filtering options
+        for layout in [self.spatialGridLayout, self.complexGridLayout]:
+            for row in range(layout.rowCount()):
+                checkBox = layout.itemAtPosition(row, 0).widget()
+                if not checkBox or not checkBox.isChecked():
+                    continue
+                label = checkBox.text().replace('&', '') # still no idea why the '&' got in there...
+                layer = label.split(' (')[0]
+                fieldExpressionWidget = layout.itemAtPosition(row, 1).widget()
+                layerFilters[layer]['featureCount'] = int(label.split(' (')[1].split(' ')[0])
+                layerFilters[layer]['expression'] = fieldExpressionWidget.currentText()
+        # read spatial filtering options
+        layername = self.spatialComboBox.currentText()
+        expression = self.mFieldExpressionWidget.currentText()
+        predicate = self.predicateComboBox.currentText()
+        parameter = self.fetchSpatialParameter(predicate)
+        spatialFilters = defaultdict(dict)
+        if self.validateSpatialFilter(layername, expression, predicate, parameter):
+            spatialFilters[layer]['layer'] = layername
+            spatialFilters[layer]['expression'] = expression
+            spatialFilters[layer]['predicate'] = predicate
+            spatialFilters[layer]['parameter'] = parameter
+        return {'layer_filter' : layerFilters, 'spatial_filter' : spatialFilters}
+
+    def resetSelection(self):
+        """
+        Resets layer selection to whatever state it was before the window was closed.
+        """
+        layerFilter = self._currentSelection['layer_filter']
+        spatialFilter = self._currentSelection['spatial_filter']
+        for layout in [self.spatialGridLayout, self.complexGridLayout]:
+            for row in range(layout.rowCount()):
+                checkBox = layout.itemAtPosition(row, 0).widget()
+                if not checkBox:
+                    continue
+                fieldExpressionWidget = layout.itemAtPosition(row, 1).widget()
+                label = checkBox.text().replace('&', '') # still no idea why the '&' got in there...
+                layer = label.split(' (')[0]
+                print(layer in layerFilter)
+                checkBox.setChecked(layer in layerFilter)
+                fieldExpressionWidget.setExpression(layerFilter[layer]['expression'])
+
+    def on_okPushButton_clicked(self):
+        """
+        Closes the dialog and informs the exit code. And save current selection.
+        :return: (int) exit code.
+        """
+        self._currentSelection = self.readFilters()
+        self.close()
+        self.done(0)
+
+    def on_cancelPushButton_clicked(self):
+        """
+        Closes the dialog and informs the exit code. Selection is restored.
+        :return: (int) exit code.
+        """
+        self.resetSelection()
+        self.close()
+        self.done(1)

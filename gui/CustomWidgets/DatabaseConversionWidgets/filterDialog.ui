@@ -6,77 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>717</width>
-    <height>333</height>
+    <width>706</width>
+    <height>353</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>DSGTools Conversion Tool - Layer Filters</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_5">
-   <item row="1" column="1">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>197</width>
-       <height>20</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="0" colspan="3">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
-       <property name="title">
-        <string>Spatial Layers</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="spatialGridLayout"/>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
-       <property name="title">
-        <string>Complex Layers</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_4">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="complexGridLayout"/>
-        </item>
-       </layout>
-       <zorder>mGroupBox</zorder>
-       <zorder>gridLayoutWidget_2</zorder>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>17</width>
-         <height>37</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item row="1" column="0">
+  <layout class="QGridLayout" name="gridLayout_3">
+   <item row="2" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <widget class="QComboBox" name="spatialComboBox"/>
      </item>
      <item>
-      <widget class="QgsFieldExpressionWidget" name="mFieldExpressionWidget">
+      <widget class="QgsFieldExpressionWidget" name="mFieldExpressionWidget" native="true">
        <property name="maximumSize">
         <size>
          <width>16777215</width>
@@ -106,7 +50,120 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="2">
+   <item row="0" column="0" colspan="3">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <widget class="QgsCollapsibleGroupBox" name="mGroupBox">
+       <property name="title">
+        <string>Spatial Layers</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>648</width>
+             <height>93</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="spatialGridLayout">
+              <item row="0" column="0">
+               <spacer name="verticalSpacer_2">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QgsCollapsibleGroupBox" name="mGroupBox_2">
+       <property name="title">
+        <string>Complex Layers</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QScrollArea" name="scrollArea_2">
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_2">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>648</width>
+             <height>92</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_5">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="complexGridLayout">
+              <item row="0" column="0">
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="1">
+    <spacer name="horizontalSpacer">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>197</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="2" column="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="okPushButton">
@@ -125,11 +182,7 @@
     </layout>
    </item>
   </layout>
-  <zorder>verticalSpacer</zorder>
-  <zorder>mGroupBox</zorder>
-  <zorder>mGroupBox_2</zorder>
-  <zorder>verticalSpacer</zorder>
-  <zorder></zorder>
+  <zorder>horizontalSpacer</zorder>
  </widget>
  <customwidgets>
   <customwidget>

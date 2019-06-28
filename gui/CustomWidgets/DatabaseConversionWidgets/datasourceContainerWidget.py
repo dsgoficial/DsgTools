@@ -214,11 +214,14 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         no update to filters contents will be made. This dialog is repopulated as filter push button from container
         is pressed. 
         """
-        fd = FilterDialog(
+        # filter dialog is only built on the first execution
+        if self.filterDlg is None:
+            self.filterDlg = FilterDialog(
                 {l : {'layer' : self.connectionWidget.getLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getLayersDict().items()},
-                {l : {'layer' : self.connectionWidget.getComplexLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getComplexDict().items()}
+                {l : {'layer' : self.connectionWidget.getComplexLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getComplexDict().items()},
+                self.connectionWidget.getDatasource(),
             )
-        fd.exec_()
+        self.filterDlg.exec_()
         # # if self.filterDlg:
         # #         # if dialog is already created, old signals must be blocked
         # #         self.filterDlg.blockSignals(True)
