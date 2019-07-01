@@ -22,7 +22,7 @@
 """
 
 import os
-from collections import defaultdict
+from functools import partial
 
 from qgis.core import QgsProject
 from qgis.gui import QgsFieldExpressionWidget
@@ -52,6 +52,14 @@ class FilterDialog(QDialog, FORM_CLASS):
         self._abstractDb = abstractDb
         self.setupLayerFilters()
         self.setupSpatialFilters()
+
+    def filters(self):
+        """
+        Since current filter selection is stored in a protected attribute,
+        this method is used to acces such filters.
+        :return: (dict) a map to current filters applied.
+        """
+        return self._currentSelection
 
     def layerNamesFromCanvas(self):
         """
@@ -154,7 +162,6 @@ class FilterDialog(QDialog, FORM_CLASS):
         else:
             self.mGroupBox_2.hide()
         self._currentSelection = self.readFilters()
-        
 
     def fetchSpatialParameter(self, predicate):
         """
@@ -168,6 +175,20 @@ class FilterDialog(QDialog, FORM_CLASS):
             self.tr('Intersects') : None,
             '' : None
         }[predicate]
+
+    def setPredicateParameter(self, predicate, parameter):
+        """
+        Sets given parameter to the GUI.
+        :param predicate: (str) predicate to which the parameter refers to.
+        :param parameter: (obj) parameter value to be filled. 
+        """
+        actionMap = {
+            self.tr('Clip') : self.comboBox.setCurrentText,
+            self.tr('Buffer') : self.doubleSpinBox.setValue,
+            self.tr('Intersects') : lambda : None
+        }
+        return actionMap[predicate](parameter) if parameter in actionMap else None
+
 
     def setupGroupBoxFilters(self, isSpatial=True):
         """
@@ -184,6 +205,7 @@ class FilterDialog(QDialog, FORM_CLASS):
             checkBoxWidget.setChecked(True)
             # allow filtering option only when layer is marked to be filtered
             checkBoxWidget.toggled.connect(fieldExpressionWidget.setEnabled)
+            checkBoxWidget.toggled.connect(partial(fieldExpressionWidget.setExpression, ""))
             msg = self.tr('{0} ({1} features)') if layerFcMap['featureCount'] > 1 else self.tr('{0} ({1} feature)')
             checkBoxWidget.setText(msg.format(layer, layerFcMap['featureCount']))
             fieldExpressionWidget.setLayer(layerFcMap['layer'])
@@ -210,48 +232,65 @@ class FilterDialog(QDialog, FORM_CLASS):
         Read filters from the interface.
         :return: (dict) filters mapping.
         """
-        layerFilters = defaultdict(dict)
+        layerFilters = dict()
         # read layer filtering options
         for layout in [self.spatialGridLayout, self.complexGridLayout]:
             for row in range(layout.rowCount()):
-                checkBox = layout.itemAtPosition(row, 0).widget()
-                if not checkBox or not checkBox.isChecked():
+                if row == 0:
+                    # for some reason the first row is behaving differently... 'Sem tempo, irmao'
+                    checkBox = layout.itemAt(1)
+                    if checkBox is not None:
+                        checkBox = layout.itemAt(1).widget()
+                else:
+                    checkBox = layout.itemAtPosition(row, 0).widget()
+                if checkBox is None or not checkBox.isChecked():
                     continue
                 label = checkBox.text().replace('&', '') # still no idea why the '&' got in there...
                 layer = label.split(' (')[0]
                 fieldExpressionWidget = layout.itemAtPosition(row, 1).widget()
+                layerFilters[layer] = dict()
                 layerFilters[layer]['featureCount'] = int(label.split(' (')[1].split(' ')[0])
                 layerFilters[layer]['expression'] = fieldExpressionWidget.currentText()
         # read spatial filtering options
-        layername = self.spatialComboBox.currentText()
-        expression = self.mFieldExpressionWidget.currentText()
-        predicate = self.predicateComboBox.currentText()
-        parameter = self.fetchSpatialParameter(predicate)
-        spatialFilters = defaultdict(dict)
-        if self.validateSpatialFilter(layername, expression, predicate, parameter):
-            spatialFilters[layer]['layer'] = layername
-            spatialFilters[layer]['expression'] = expression
-            spatialFilters[layer]['predicate'] = predicate
-            spatialFilters[layer]['parameter'] = parameter
+        spatialFilters = dict()
+        spatialFilters['layer'] = self.spatialComboBox.currentText() \
+                                    if self.spatialComboBox.currentIndex() else ""
+        spatialFilters['expression'] = self.mFieldExpressionWidget.currentText()
+        spatialFilters['predicate'] = self.predicateComboBox.currentText()
+        spatialFilters['parameter'] = self.fetchSpatialParameter(spatialFilters['predicate'])
         return {'layer_filter' : layerFilters, 'spatial_filter' : spatialFilters}
 
     def resetSelection(self):
         """
-        Resets layer selection to whatever state it was before the window was closed.
+        Resets layer selection to last state preserved into the private attribute holding current
+        layer selection.
         """
-        layerFilter = self._currentSelection['layer_filter']
-        spatialFilter = self._currentSelection['spatial_filter']
+        prevLayerFilter = self._currentSelection['layer_filter']
         for layout in [self.spatialGridLayout, self.complexGridLayout]:
             for row in range(layout.rowCount()):
-                checkBox = layout.itemAtPosition(row, 0).widget()
+                if row == 0:
+                    # for some reason the first row is behaving differently... 'Sem tempo, irmao'
+                    checkBox = layout.itemAt(1)
+                    if checkBox is not None:
+                        checkBox = layout.itemAt(1).widget()
+                else:
+                    checkBox = layout.itemAtPosition(row, 0).widget()
                 if not checkBox:
                     continue
                 fieldExpressionWidget = layout.itemAtPosition(row, 1).widget()
                 label = checkBox.text().replace('&', '') # still no idea why the '&' got in there...
                 layer = label.split(' (')[0]
-                print(layer in layerFilter)
-                checkBox.setChecked(layer in layerFilter)
-                fieldExpressionWidget.setExpression(layerFilter[layer]['expression'])
+                checkBox.setChecked(layer in prevLayerFilter)
+                exp = prevLayerFilter[layer]['expression'] if layer in prevLayerFilter else ""
+                fieldExpressionWidget.setExpression(exp)
+        # reset spatial filters
+        self.spatialComboBox.setCurrentText(self._currentSelection['spatial_filter']['layer'])
+        self.mFieldExpressionWidget.setExpression(self._currentSelection['spatial_filter']['expression'])
+        self.predicateComboBox.setCurrentText(self._currentSelection['spatial_filter']['predicate'])
+        self.setPredicateParameter(
+            self._currentSelection['spatial_filter']['predicate'],
+            self._currentSelection['spatial_filter']['parameter']
+        )
 
     def on_okPushButton_clicked(self):
         """
@@ -260,7 +299,6 @@ class FilterDialog(QDialog, FORM_CLASS):
         """
         self._currentSelection = self.readFilters()
         self.close()
-        self.done(0)
 
     def on_cancelPushButton_clicked(self):
         """
@@ -269,4 +307,3 @@ class FilterDialog(QDialog, FORM_CLASS):
         """
         self.resetSelection()
         self.close()
-        self.done(1)
