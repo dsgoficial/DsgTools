@@ -50,8 +50,8 @@ class FilterDialog(QDialog, FORM_CLASS):
         self.complexLayers = complexLayers
         self._currentSelection = dict()
         self._abstractDb = abstractDb
-        self.setupLayerFilters()
         self.setupSpatialFilters()
+        self.setupLayerFilters()
 
     def filters(self):
         """
