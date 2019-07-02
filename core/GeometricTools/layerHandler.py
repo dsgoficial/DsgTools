@@ -417,6 +417,11 @@ class LayerHandler(QObject):
         return endVerticesDict
     
     def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, useAttributes=False, feedback = None):
+        """
+        returns geomDict = {
+            'bbox_geom' : {geomKey : -list of duplicated feats-}
+        }
+        """
         geomDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         iterator, featCount = self.getFeatureList(lyr, onlySelected=onlySelected)
@@ -459,7 +464,7 @@ class LayerHandler(QObject):
     def searchDuplicatedFeatures(self, featList, columns, useAttributes=False):
         """
         featList = list of {'geom': geom, 'feat':feat}
-        returns geomKey, duplicatedFeats
+        returns {geomKey : -list of duplicated feats-}
         """
         duplicatedDict = dict()
         if featList:

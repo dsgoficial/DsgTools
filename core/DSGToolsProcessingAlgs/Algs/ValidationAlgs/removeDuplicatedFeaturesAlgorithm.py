@@ -128,7 +128,7 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         # get features from source
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        geomDict = layerHandler.getDuplicatedFeaturesDict(
+        duplicatedGeomDict = layerHandler.getDuplicatedFeaturesDict(
             inputLyr,
             onlySelected=onlySelected,
             attributeBlackList=attributeBlackList,
@@ -139,23 +139,20 @@ class RemoveDuplicatedFeaturesAlgorithm(ValidationAlgorithm):
         multiStepFeedback.setCurrentStep(1)
         self.deleteDuplicatedFeaturesFlags(
             inputLyr,
-            geomDict,
+            duplicatedGeomDict,
             multiStepFeedback
             )
 
         return {self.OUTPUT: inputLyr}
 
-    def deleteDuplicatedFeaturesFlags(self, inputLyr, geomDict, feedback):
-        size = 100/len(geomDict) if geomDict else 0
+    def deleteDuplicatedFeaturesFlags(self, inputLyr, duplicatedGeomDict, feedback):
+        size = 100/len(duplicatedGeomDict) if duplicatedGeomDict else 0
         deleteList = []
-        for current, attrDict in enumerate(geomDict.values()):
+        for current, (bboxKey, featList) in enumerate(duplicatedGeomDict.items()):
             if feedback.isCanceled():
                 break
-            for featList in attrDict.values():
-                if feedback.isCanceled():
-                    break
-                if len(featList) > 1:
-                    deleteList += [feat.id() for feat in featList[1::]]
+            if len(featList) > 1:
+                deleteList += [feat.id() for feat in featList[1::]]
             feedback.setProgress(size * current)
         inputLyr.startEditing()
         inputLyr.beginEditCommand('Deleting features')
