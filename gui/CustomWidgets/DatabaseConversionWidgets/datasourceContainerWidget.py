@@ -121,7 +121,18 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
             # and clear it
             del self.filterDlg
             self.filterDlg = None
-            self.on_filterPushButton_clicked()
+        self.filterDlg = FilterDialog(
+                {l : {'layer' : self.connectionWidget.getLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getLayersDict().items()},
+                {l : {'layer' : self.connectionWidget.getComplexLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getComplexDict().items()},
+                self.connectionWidget.getDatasource(),
+            )
+        self.filterDlg.setWindowTitle(
+            '{0}: {2} ({1})'.format(
+                    self.groupBox.title(),
+                    self.connectionWidget.getDatasourcePath(),
+                    self.connectionWidget.getDatasourceConnectionName()
+                )
+        )
 
     @pyqtSlot(bool)
     def on_filterPushButton_clicked(self):
@@ -132,11 +143,7 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         # filter dialog is only built on the first execution
         if self.filterDlg is None:
-            self.filterDlg = FilterDialog(
-                {l : {'layer' : self.connectionWidget.getLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getLayersDict().items()},
-                {l : {'layer' : self.connectionWidget.getComplexLayerByName(l), 'featureCount' : fc} for l, fc in self.connectionWidget.getComplexDict().items()},
-                self.connectionWidget.getDatasource(),
-            )
+            self.refreshFilterDialog()
         if self.filterDlg.exec_() == 0:
             # in case execution changed anything - e.g. if Ok was pressed
             self.filterSettingsChanged.emit(self)
@@ -158,6 +165,20 @@ class DatasourceContainerWidget(QtWidgets.QWidget, FORM_CLASS):
         """
         return self.filterDlg.filters() if self.filterDlg is not None \
                 else {'layer_filter' : dict(), 'spatial_filter' : dict()}
+
+    def driver(self):
+        """
+        Gets current datasource driver disposed for selection.
+        :return: (DsgEnums) driver enumerator.
+        """
+        return self.source
+
+    def selectionWidgetName(self):
+        """
+        Gets current datasource driver's name disposed for selection.
+        :return: (DsgEnums) driver enumerator.
+        """
+        return self.connectionWidget.getSelectionWidgetName(source=self.driver())
 
     def validate(self):
         """
