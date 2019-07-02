@@ -299,6 +299,7 @@ class FilterDialog(QDialog, FORM_CLASS):
         """
         self._currentSelection = self.readFilters()
         self.close()
+        return 0
 
     def on_cancelPushButton_clicked(self):
         """
@@ -307,3 +308,4 @@ class FilterDialog(QDialog, FORM_CLASS):
         """
         self.resetSelection()
         self.close()
+        return 1
