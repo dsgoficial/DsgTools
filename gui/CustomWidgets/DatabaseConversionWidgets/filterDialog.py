@@ -28,7 +28,7 @@ from qgis.core import QgsProject
 from qgis.gui import QgsFieldExpressionWidget
 from qgis.utils import iface
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtCore import pyqtSlot, Qt
 from qgis.PyQt.QtWidgets import QDialog, QCheckBox
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
@@ -259,6 +259,38 @@ class FilterDialog(QDialog, FORM_CLASS):
         spatialFilters['predicate'] = self.predicateComboBox.currentText()
         spatialFilters['parameter'] = self.fetchSpatialParameter(spatialFilters['predicate'])
         return {'layer_filter' : layerFilters, 'spatial_filter' : spatialFilters}
+
+    @staticmethod
+    def setWidgetToReadOnly(widget, readOnly):
+        """
+        Sets (or removes) a widget to read only mode. 
+        :param readOnly: (bool) whether widget will be read only mode.
+        """
+        widget.setAttribute(Qt.WA_TransparentForMouseEvents, readOnly)
+        widget.setFocusPolicy(Qt.NoFocus if readOnly else Qt.StrongFocus)
+
+    def enableEdition(self, enabled):
+        """
+        Sets all GUI components to read only mode (or removes it).
+        :param enabled: (bool) indicates whether components should be enabled
+                        - e.g. NOT in read only mode.
+        """
+        for layout in [self.spatialGridLayout, self.complexGridLayout]:
+            for row in range(layout.rowCount()):
+                if row == 0:
+                    # for some reason the first row is behaving differently... 'Sem tempo, irmao'
+                    checkBox = layout.itemAt(1)
+                    if checkBox is not None:
+                        checkBox = layout.itemAt(1).widget()
+                else:
+                    checkBox = layout.itemAtPosition(row, 0).widget()
+                if checkBox is None:
+                    continue
+                FilterDialog.setWidgetToReadOnly(checkBox, not enabled)
+                FilterDialog.setWidgetToReadOnly(layout.itemAtPosition(row, 1).widget(), not enabled)
+        for w in [self.spatialComboBox, self.mFieldExpressionWidget, self.predicateComboBox,\
+                    self.comboBox, self.doubleSpinBox]:
+            FilterDialog.setWidgetToReadOnly(w, not enabled)
 
     def resetSelection(self):
         """
