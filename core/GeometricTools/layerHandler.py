@@ -807,7 +807,7 @@ class LayerHandler(QObject):
             multiStepFeedback = None
         localLyr = inputLyr
         currentStep = 0
-        if inputExpression is not None:
+        if inputExpression is not None and inputExpression != '':
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
             localLyr = algRunner.runFilterExpression(
