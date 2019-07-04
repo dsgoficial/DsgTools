@@ -203,7 +203,8 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         if not dbList:
             dbList = self.getAvailableDb(serverName=self.selector.serverName)
-        serverInfo = self.getDbServerInfo(serverName=self.selector.serverName)
+        serverInfo = list(self.getDbServerInfo(serverName=self.selector.serverName))
+        serverInfo.insert(0, self.selector.serverName)
         return { dbname : serverInfo for dbname in dbList }
 
     def exec_(self):
@@ -213,9 +214,7 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # datasources are cleared once dialog is re-opened
         self.datasources = {}
-        # execute selector dialog
-        result = self.selector.exec_()
-        if not result:
+        if not self.selector.exec_():
             # if ok was selected on multiselector, check for database selection
             if self.selector.dbList:
                 self.datasources = self.getDbListServerInfo(dbList=self.selector.dbList)

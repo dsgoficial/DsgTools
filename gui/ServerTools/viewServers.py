@@ -365,3 +365,23 @@ class ViewServersStatic(ViewServers):
                 connParam['password']
             )
         return (None, None, None, None, None)
+
+    def setHost(self, hostname):
+        """
+        Sets a hostname as selected from its name.
+        :param serverName: (str) host to be set as selected.
+        """
+        for i, connection in enumerate(self.getServers()):
+            isDefault = hostname == self.tableWidget.item(i, 0).text()
+            self.tableWidget.cellWidget(i, 5).setChecked(isDefault)
+            if isDefault:
+                host, port, user, password, _ = self.getServerConfiguration(connection)
+                self._connParameters = {
+                    'connection' : self.tableWidget.item(i, 0).text(),
+                    'host' : self.tableWidget.item(i, 1).text(),
+                    'port' : self.tableWidget.item(i, 2).text(),
+                    'user' : self.tableWidget.item(i, 3).text(),
+                    'password' : password
+                }
+                self.defaultChanged.emit()
+                self.done(0)
