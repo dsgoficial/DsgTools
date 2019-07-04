@@ -167,10 +167,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # identify source
         source = self.sourceNameDict[self.datasourceComboBox.currentText()]
         if source != DsgEnums.NoDriver:
-            # get driver's multi selection dialog
             dlg = MultiDsWidgetFactory.getMultiDsSelector(driver=source)
-            result = dlg.exec_()
-            if not result:
+            if not dlg.exec_():
                 # in case Ok was selected
                 for ds, dsPath in dlg.datasources.items():
                     # add new widget container for it

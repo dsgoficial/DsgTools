@@ -223,3 +223,11 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         contents = self.abstractDb.databaseInfo() if self.abstractDb else []
         DatasourceInfoTable(contents=contents).exec_()
+
+    def setHost(self, hostname):
+        """
+        Sets a hostname as selected from its name.
+        :param serverName: (str) host to be set as selected.
+        """
+        # method needs to be ported to 'non-static' view server! 
+        self.viewServers.setHost(hostname)

@@ -77,7 +77,8 @@ class PostgisWidget(AbstractSelectionWidget):
         """
         # the input parameter is a dict due to a standard behavior on the other widgets (keep parallel)
         if self.selectionWidget:
-            for db, (host, port, username, password) in newDatasource.items():
+            for db, (serverName, host, port, username, password) in newDatasource.items():
+                self.selectionWidget.setHost(serverName)
                 self.selectionWidget.connectionSelectorComboBox.setCurrentIndex(
                     self.selectionWidget.connectionSelectorComboBox.findText(db)
                 )
