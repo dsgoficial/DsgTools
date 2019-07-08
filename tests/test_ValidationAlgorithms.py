@@ -271,6 +271,35 @@ class Tester:
                 ]
             },
 
+            "dsgtools:identifysmalllines" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS' : 'memory:',
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 5
+                    }
+                ]
+            },
+
+            "dsgtools:identifyduplicatedpolygonsoncoverage" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS' : 'memory:',
+                        'INPUTLAYERS' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao',
+                                ['cb_veg_campo_a', 'cb_veg_floresta_a']
+                            ),
+                        'SELECTED' : False
+                        
+                    }
+                ]
+            },
+
             "dsgtools:ALG" : {
                 "sqlite:banco_capacitacao" : [
                     {
@@ -413,7 +442,8 @@ class Tester:
                 "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
                 "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
                 "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
-                "dsgtools:identifyduplicatedlinesoncoverage"
+                "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
+                "dsgtools:identifyduplicatedpolygonsoncoverage"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
