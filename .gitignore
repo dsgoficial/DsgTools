@@ -64,3 +64,8 @@ tags
 Styles/
 LayerTools/CustomFormTools/formsCustom
 gui/DatabaseTools/ConversionTools/conversion_map.json
+
+# Physical database file handling 
+# =========================
+*.gpkg-shm
+*.gpkg-wal
