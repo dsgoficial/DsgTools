@@ -309,6 +309,8 @@ class Tester:
         for featId in targetFeaureIds:
             testFeat = target.getFeature(featId)
             refFeat = reference.getFeature(featId)
+            if not testFeat.geometry().equals(refFeat.geometry()):
+                return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if testFeat[attr] != refFeat[attr]:
                     return "Incorret set of attributes for feature {fid}.".format(fid=featId)
