@@ -230,6 +230,33 @@ class Tester:
                 ]
             },
 
+            "dsgtools:identifyandfixinvalidgeometries" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works. This test does not check fixes!",
+                        'FLAGS' : 'memory:',
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                            )[0],
+                        'SELECTED' : False,
+                        'TYPE' : False
+                    }
+                ]
+            },
+
+            "dsgtools:identifyduplicatedgeometries" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS' : 'memory:',
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
+                            )[0],
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
             "dsgtools:ALG" : {
                 "sqlite:banco_capacitacao" : [
                     {
@@ -369,8 +396,9 @@ class Tester:
         dataset = "banco_capacitacao"
         results = dict()
         algs = [
-                "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyoutofboundsangles",
-                "dsgtools:identifyoutofboundsanglesincoverage", "dsgtools:identifygaps"
+                "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
+                "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
+                "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
