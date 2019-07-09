@@ -300,6 +300,65 @@ class Tester:
                 ]
             },
 
+            "dsgtools:identifysmallpolygons" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS': 'memory:',
+                        'INPUT': self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                            )[0],
+                        'SELECTED': False,
+                        'TOLERANCE': 625
+                    }
+                ]
+            },
+
+            "dsgtools:identifydangles" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS' : 'memory:',
+                        'IGNOREINNER' : False,
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'LINEFILTERLAYERS' : '',
+                        'POLYGONFILTERLAYERS' : '',
+                        'SELECTED' : False,
+                        'TOLERANCE' : 2,
+                        'TYPE' : False
+                    }
+                ]
+            },
+
+            "dsgtools:identifyduplicatedpointsoncoverage" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS' : 'memory:',
+                        'INPUTLAYERS' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao',
+                                ['cb_adm_edif_pub_civil_p', 'cb_rel_ponto_cotado_altimetrico_p']
+                            ),
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:identifyoverlaps" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS': "memory:",
+                        'INPUT': self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
+                            )[0],
+                        'SELECTED': False
+                    }
+                ]
+            },
+
             "dsgtools:ALG" : {
                 "sqlite:banco_capacitacao" : [
                     {
@@ -443,7 +502,9 @@ class Tester:
                 "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
                 "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
                 "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
-                "dsgtools:identifyduplicatedpolygonsoncoverage"
+                "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
+                "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
+                "dsgtools:identifyoverlaps"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
