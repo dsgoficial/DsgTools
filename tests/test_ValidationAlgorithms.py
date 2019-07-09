@@ -28,6 +28,7 @@ It is supposed to be run through QGIS with DSGTools installed.
 """
 
 import os
+from osgeo import ogr
 
 import processing
 from qgis.utils import iface
@@ -113,6 +114,22 @@ class Tester:
             layers[l] = layerLoader.getComplexLayerByName(l)
         return layers
 
+    def readGeopackage(self, path):
+        """
+        Reads a Geopackage database.
+        :param path: (str) path do the Geopackage database.
+        :return: (dict) map to the Geopackage database's layers.
+        """
+        layers = dict()
+        for layer in ogr.Open(path):
+            layername = layer.GetName()
+            layers[layername] = QgsVectorLayer(
+                        "{0}|layername={1}".format(path, layername), 
+                        layername,
+                        "ogr"
+                    )
+        return layers
+
     def testingDataset(self, driver, dataset):
         """
         Reads a dataset accordingly to its driver.
@@ -122,16 +139,25 @@ class Tester:
         :return: (dict) a map from layer name to vector layer read from database.
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
+        gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
         datasets = {
             "sqlite" : {
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
+            },
+            "gpkg" : {
+                "testes" : os.path.join(gpkgPaths, 'testes.gpkg')
             }
+        }
+        # switch-case for dataset reading
+        funcs = {
+            "sqlite" : lambda ds : self.readSpatiaLite(datasets["sqlite"][ds]),
+            "gpkg" : lambda ds : self.readGeopackage(datasets["gpkg"][ds])
         }
         layers = dict()
         if driver in datasets and dataset in datasets[driver]:
             key = "{driver}:{dataset}".format(driver=driver, dataset=dataset)
             if key not in self.datasets:
-                self.datasets[key] = self.readSpatiaLite(datasets[driver][dataset])
+                self.datasets[key] = funcs[driver](dataset)
             layers = self.datasets[key]
         return layers
 
