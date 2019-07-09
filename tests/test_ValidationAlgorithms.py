@@ -359,6 +359,60 @@ class Tester:
                 ]
             },
 
+            "dsgtools:removeduplicatedfeatures" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'ATTRIBUTE_BLACK_LIST' : [],
+                        'IGNORE_PK_FIELDS' : True,
+                        'IGNORE_VIRTUAL_FIELDS' : True,
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
+                            )[0],
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:removeduplicatedgeometries" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'FLAGS' : 'memory:',
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
+                            )[0],
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:removesmalllines" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 5
+                    }
+                ]
+            },
+
+            "dsgtools:removesmallpolygons" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 625
+                    }
+                ]
+            },
+
             "dsgtools:ALG" : {
                 "sqlite:banco_capacitacao" : [
                     {
@@ -429,20 +483,34 @@ class Tester:
         # attribute names check
         targetFieldNames = [f.name() for f in target.fields()]
         for f in reference.fields():
-            if f.name() == 'fid':
+            fieldname = f.name()
+            if fieldname == 'fid' or '_otf' in fieldname:
                 # not sure if this should happen...
                 continue
-            if f.name() not in targetFieldNames:
-                return "Incorrect set of attributes for output layer."
+            if fieldname not in targetFieldNames:
+                return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
         # feature attribute check
-        for featId in targetFeaureIds:
-            testFeat = target.getFeature(featId)
-            refFeat = reference.getFeature(featId)
+        # it is considered that our testing datasets will always have their PK set to serial column 'OGC_FID'
+        try:
+            # identification algorithms have in-memory layers, and they do not have a PK column
+            testFeatureMap = { f['OGC_FID'] : f for f in target.getFeatures() }
+        except:
+            testFeatureMap = { f.id() : f for f in target.getFeatures() }
+        # testing datasets have their PK column set to 'fid'
+        refFeat = next(reference.getFeatures())
+        try:
+            pkColumn = 'OGC_FID'
+            refFeat[pkColumn]
+        except KeyError:
+            pkColumn = 'fid'
+            refFeat[pkColumn]
+        for featId, refFeat in { f[pkColumn] : f for f in reference.getFeatures() }.items():
+            testFeat = testFeatureMap[featId]
             if not testFeat.geometry().equals(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if testFeat[attr] != refFeat[attr]:
-                    return "Incorret set of attributes for feature {fid}.".format(fid=featId)
+                    return "Incorrect set of attributes for feature {fid}.".format(fid=featId)
         return ""
 
     def testAlg(self, algName, driver, dataset):
@@ -498,13 +566,17 @@ class Tester:
         dataset = "banco_capacitacao"
         results = dict()
         algs = [
+                # identification algs
                 "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
                 "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
                 "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
                 "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
                 "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
                 "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
-                "dsgtools:identifyoverlaps"
+                "dsgtools:identifyoverlaps",
+                # correction algs
+                "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
+                "dsgtools:removesmalllines", "dsgtools:removesmallpolygons"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
