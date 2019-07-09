@@ -145,7 +145,8 @@ class Tester:
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
             },
             "gpkg" : {
-                "testes" : os.path.join(gpkgPaths, 'testes.gpkg')
+                "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
+                "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg')
             }
         }
         # switch-case for dataset reading
@@ -164,6 +165,10 @@ class Tester:
     def getInputLayers(self, driver, dataset, layers):
         """
         Gets the vector layers from an input dataset.
+        :param driver: (str) driver's to be read.
+        :param dataset: (str) dataset's name.
+        :param layers: (list-of-str) layers to be read.
+        :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
         out = []
         vls = self.testingDataset(driver, dataset)
