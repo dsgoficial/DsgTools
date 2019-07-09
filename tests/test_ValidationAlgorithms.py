@@ -224,7 +224,7 @@ class Tester:
                         'FLAGS' : 'memory:',
                         'INPUT' : self.getInputLayers(
                                 'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
-                            ),
+                            )[0],
                         'SELECTED' : False
                     }
                 ]
