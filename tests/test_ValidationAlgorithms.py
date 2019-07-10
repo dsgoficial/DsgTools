@@ -443,6 +443,43 @@ class Tester:
                     }
                 ]
             },
+            
+            "dsgtools:overlayelementswithareas" : {
+                "gpkg:testes_sirgas2000_23s" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'BEHAVIOR' : 0,
+                        'INPUT' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                            )[0],
+                        'OVERLAY' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                            )[0],
+                        'SELECTED' : False,
+                        'SELECTED_OVERLAY' : False
+                    }
+                ]
+            },
+
+            "dsgtools:deaggregategeometries" : {
+                "gpkg:testes_sirgas2000_23s" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                            )[0],
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:ALG" : {
+                "gpkg:testes_sirgas2000_23s" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works."
+                    }
+                ]
+            },
 
             "dsgtools:ALG" : {
                 "sqlite:banco_capacitacao" : [
@@ -589,7 +626,8 @@ class Tester:
 
     def testAllAlgorithms(self):
         """
-        Executes all registered tests.
+        Executes all registered tests. Note that algorithms run in here should only
+        output one layer.
         :return: (dict) a map to the algorithm found and all tests and their results.
         """
         # still missing how to define default datasets
@@ -607,7 +645,9 @@ class Tester:
                 "dsgtools:identifyoverlaps",
                 # correction algs
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
-                "dsgtools:removesmalllines", "dsgtools:removesmallpolygons"
+                "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
+                # manipulation algs
+                "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
