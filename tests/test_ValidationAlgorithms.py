@@ -547,6 +547,32 @@ class Tester:
                 ]
             },
 
+            "dsgtools:mergelineswithsameattributeset" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 2
+                    }
+                ]
+            },
+
+            "dsgtools:adjustnetworkconnectivity" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 2
+                    }
+                ]
+            },
+
             "dsgtools:ALG" : {
                 "gpkg:testes_sirgas2000_23s" : [
                     {
@@ -706,7 +732,7 @@ class Tester:
         """
         # still missing how to define default datasets
         results = dict()
-        algs = [
+        spatialiteAlgs = [
                 # identification algs
                 "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
                 "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
@@ -719,7 +745,9 @@ class Tester:
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
                 "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
                 # manipulation algs
-                "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset"
+                "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
+                # network algs
+                "dsgtools:adjustnetworkconnectivity"
             ]
         gpkgAlgs = [
                 # manipulation algs
@@ -728,7 +756,7 @@ class Tester:
                 "dsgtools:snaplayeronlayer"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
-        for alg in algs:
+        for alg in spatialiteAlgs:
             try:
                 results[alg] = self.testAlg(alg, "sqlite", "banco_capacitacao")
             except KeyError:
