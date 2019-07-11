@@ -450,7 +450,7 @@ class Tester:
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
                         )[0],
                     'SELECTED' : False
                 }
@@ -492,7 +492,7 @@ class Tester:
                             'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_2']
                         )[0],
                     'SELECTED' : False,
-                    'TOLERANCE' : 5
+                    'TOLERANCE' : 25
                 }
             ],
 
@@ -639,6 +639,9 @@ class Tester:
                                 format(alg=algName, nr=i + 1)
                             )
                     msg = self.compareLayers(output, expected)
+                    # once layer is compared, revert all modifications in order to not compromise layer reusage
+                    output.rollBack() # soemtimes in = output
+                    expected.rollBack()
                     if msg:
                         raise Exception(msg)
                     self.addLayerToGroup(output, "DSGTools Algorithm Tests")
@@ -674,7 +677,7 @@ class Tester:
                 "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
                 "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
                 "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
-                "dsgtools:snaplayeronlayer"
+                "dsgtools:snaplayeronlayer",
                 # network algs
                 "dsgtools:adjustnetworkconnectivity"
             ]
