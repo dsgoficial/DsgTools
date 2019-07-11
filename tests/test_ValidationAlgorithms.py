@@ -472,6 +472,80 @@ class Tester:
                     }
                 ]
             },
+            
+            "dsgtools:dissolvepolygonswithsameattributes" : {
+                "gpkg:testes_sirgas2000_23s" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'ATTRIBUTE_BLACK_LIST' : [],
+                        'IGNORE_PK_FIELDS' : True,
+                        'IGNORE_VIRTUAL_FIELDS' : True,
+                        'INPUT' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                            )[0],
+                        'MIN_AREA' : None,
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:removeemptyandupdate" : {
+                "gpkg:testes_sirgas2000_23s" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
+                            )[0],
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:lineonlineoverlayer" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 1
+                    }
+                ]
+            },
+
+            "dsgtools:mergelineswithsameattributeset" : {
+                "sqlite:banco_capacitacao" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'ATTRIBUTE_BLACK_LIST' : [],
+                        'IGNORE_NETWORK' : False,
+                        'IGNORE_PK_FIELDS' : True,
+                        'IGNORE_VIRTUAL_FIELDS' : True,
+                        'INPUT' : self.getInputLayers(
+                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            )[0],
+                        'SELECTED' : False
+                    }
+                ]
+            },
+
+            "dsgtools:snaplayeronlayer" : {
+                "gpkg:testes_sirgas2000_23s" : [
+                    {
+                        '__comment' : "'Normal' test: checks if it works.",
+                        'BEHAVIOR' : 0,
+                        'INPUT' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                            )[0],
+                        'REFERENCE_LAYER' : self.getInputLayers(
+                                'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_2']
+                            )[0],
+                        'SELECTED' : False,
+                        'TOLERANCE' : 5
+                    }
+                ]
+            },
 
             "dsgtools:ALG" : {
                 "gpkg:testes_sirgas2000_23s" : [
@@ -631,8 +705,6 @@ class Tester:
         :return: (dict) a map to the algorithm found and all tests and their results.
         """
         # still missing how to define default datasets
-        driver = "sqlite"
-        dataset = "banco_capacitacao"
         results = dict()
         algs = [
                 # identification algs
@@ -647,12 +719,23 @@ class Tester:
                 "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
                 "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
                 # manipulation algs
-                "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries"
+                "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset"
+            ]
+        gpkgAlgs = [
+                # manipulation algs
+                "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
+                "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
+                "dsgtools:snaplayeronlayer"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
             try:
-                results[alg] = self.testAlg(alg, driver, dataset)
+                results[alg] = self.testAlg(alg, "sqlite", "banco_capacitacao")
+            except KeyError:
+                results[alg] = "No tests registered."
+        for alg in gpkgAlgs:
+            try:
+                results[alg] = self.testAlg(alg, "gpkg", "testes_sirgas2000_23s")
             except KeyError:
                 results[alg] = "No tests registered."
         return results
