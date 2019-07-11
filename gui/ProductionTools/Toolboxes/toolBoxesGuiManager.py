@@ -49,15 +49,29 @@ class ToolBoxesGuiManager(QObject):
     def initGui(self):
         #self.validationToolbox = ValidationToolbox(self.iface)
         #self.validationToolbox.addTool(self.manager, self.showValidationToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
-        self.fieldToolbox = FieldToolbox(self.iface)
-        self.fieldToolbox.addTool(self.manager, self.showFieldToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
-        self.calcContour = CalcContour(self.iface)
-        self.calcContour.addTool(self.manager, self.showCalcContourToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
-        self.codeList = CodeList(self.iface)
-        self.codeList.addTool(self.manager, self.showCodeList, self.parentMenu, self.iconBasePath, self.stackButton)
-        self.complexWindow = ComplexWindow(self.iface)
-        self.complexWindow.addTool(self.manager, self.showComplexDock, self.parentMenu, self.iconBasePath, self.stackButton)
-    
+        self.fieldToolbox = None
+        self.addTool(self.showFieldToolbox, 'fieldToolbox.png', self.tr('Feature Classification Tool'), setDefaultAction=True)
+        self.calcContour = None
+        self.addTool(self.showCalcContourToolbox, 'calccontour.png', self.tr('Assign Contour Values'))
+        self.codeList = None
+        self.addTool(self.showCodeList, 'codelist.png', self.tr('View Code List Codes and Values'))
+        self.complexWindow = None
+        self.addTool(self.showComplexDock, 'complex.png', self.tr('Build Complex Structures'))
+
+    def addTool(self, callback, iconBaseName, text, setDefaultAction=False):
+        action = self.manager.add_action(
+            os.path.join(self.iconBasePath, iconBaseName),
+            text=text,
+            callback=callback,
+            add_to_menu=False,
+            add_to_toolbar=False,
+            parentMenu = self.parentMenu,
+            parentButton = self.stackButton
+        )
+        if setDefaultAction:
+            self.stackButton.setDefaultAction(action)
+        return action
+
     def unload(self):
         pass
 
@@ -67,6 +81,8 @@ class ToolBoxesGuiManager(QObject):
         """
         if self.codeList:
             self.iface.removeDockWidget(self.codeList)
+        else:
+            self.codeList = CodeList(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.codeList)
 
     def showFieldToolbox(self):
