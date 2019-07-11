@@ -66,19 +66,6 @@ class CalcContour(QtWidgets.QDockWidget, FORM_CLASS):
         QgsProject.instance().layersAdded.connect(self.addLayers)
         QgsProject.instance().layersRemoved.connect(self.populateLayers)
 
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'calccontour.png'
-        text = self.tr('Assign Contour Values')
-        action = manager.add_action(
-            icon_path,
-            text=text,
-            callback=callback,
-            add_to_menu=False,
-            add_to_toolbar=False,
-            parentMenu = parentMenu,
-            parentButton = parentStackButton
-            )
-
     @pyqtSlot(bool, name = 'on_reactivatePushButton_clicked')
     def activateTool(self):
         """
