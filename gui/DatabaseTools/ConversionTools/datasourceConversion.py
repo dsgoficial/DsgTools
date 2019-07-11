@@ -747,6 +747,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # maybe we should connect to some parent resizing signal or something...
             msgBar.resize(QSize(self.geometry().size().width(), msgBar.geometry().height()))
             msgBar.pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
         return msg == ''
 
     def validateCurrentPage(self):
@@ -772,12 +773,16 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             if msg:
                 return msg
         # lists of inputs/outputs already checked
-        inChecked, outChecked = [], []
+        inChecked, outChecked = [], set()
         # it is assumed that containers' contents were already checked previously
         for row in range(self.tableWidget.rowCount()):
             # get row contents
             # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
             inDsName, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
+            outDsName = outDs.currentText()
+            # FTer was discontinued. conv should not allow dataset creation for this EDGV version
+            if outEdgv == 'EDGV 2.1.3 F Ter' and self.tr('new') in outDsName.split(' #')[0]:
+                return self.tr('EDGV 2.1.3 F Ter model was terminated. DSGTools no longer support its creation (row {1})').format(inDsName, row + 1)
             # check if a conversion mode was selected
             if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
                 return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
@@ -787,11 +792,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # # add input to the checked ones list
             # inChecked.append(inDsName)
             # add output to checked ones list, if it's not 'select a datasource'
-            outDsName = outDs.currentText()
             if outDsName == self.tr('Select a datasource'):
                 return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row + 1)
-            if outDsName not in outChecked:
-                outChecked.append(outDsName)
+            outChecked.add(outDsName)
         # last check: if all chosen outputs are listed
         splitAlias = lambda x : x.split(':')[0]
         if len(outChecked) != len(self.outDs):

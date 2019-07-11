@@ -69,7 +69,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
         versions = [
             self.tr("EDGV Version..."),
             "EDGV 2.1.3",
-            "EDGV 2.1.3 F Ter"
+            "EDGV 2.1.3 F Ter",
             "EDGV 2.1.3 Pro",
             "EDGV 3.0",
             "EDGV 3.0 Pro"
@@ -166,8 +166,8 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             msg = self.validate()
             self.dbChanged.emit(self.abstractDb)
             self.connectionChanged.emit()
-            if msg:
-                raise Exception(msg)
+            # if msg:
+            #     raise Exception(msg)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)

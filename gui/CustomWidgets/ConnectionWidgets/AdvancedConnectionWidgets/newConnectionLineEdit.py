@@ -48,7 +48,7 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
     def __init__(self, parent=None, isStatic=False):
         """
         Class contructor.
-        :param parent: (QWidget) widget parent to newly instantiated ConnectionComboBox.
+        :param parent: (QWidget) widget parent to newly instantiated NewConnectionLineEdit.
         :param isStatic: (bool) indicates whether server selection will be static (no default).
         """
         super(NewConnectionLineEdit, self).__init__()
@@ -164,8 +164,8 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
             msg = self.validate()
             self.dbChanged.emit(self.abstractDb)
             self.connectionChanged.emit()
-            if msg:
-                raise Exception(msg)
+            # if msg:
+            #     raise Exception(msg)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
