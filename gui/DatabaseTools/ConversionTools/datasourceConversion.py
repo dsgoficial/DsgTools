@@ -44,7 +44,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     # InDs, Filter, SpatialFilterFanOut, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
     InDs, Filter, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
 
-    def __init__(self, manager, parentMenu, parent=None):
+    def __init__(self, manager, parentMenu, parentButton, parent=None):
         """
         Class constructor.
         :param manager:
@@ -56,7 +56,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # self.setTitle(self.tr('Datasource Conversion Wizard'))
         self.manager = manager
         self.parentMenu = parentMenu
-        self.parentButton = None
+        self.parentButton = parentButton
         # fill output datasources including new datasources options
         self.datasourceManagementWidgetOut.fillSupportedDatasources(inputPage=False)
         self.connectToolSignals()
@@ -724,13 +724,20 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         pass
 
+    def execute(self):
+        """
+        Changes the default icon for stack button and opens dialog.
+        """
+        self.parentButton.setDefaultAction(self.sender())
+        self.exec_()
+
     def initGui(self):
         """
         Instantiate GUI for user, including button shortcut (if necessary) and tool insertion on DSGTools tab on QGIS. 
         """
         self.manager.addTool(
             text=self.tr('Convert Databases'),
-            callback=self.exec_,
+            callback=self.execute,
             parentMenu=self.parentMenu,
             icon='install.png',
             parentButton=self.parentButton,
