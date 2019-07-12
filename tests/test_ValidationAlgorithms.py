@@ -598,13 +598,7 @@ class Tester:
         except:
             testFeatureMap = { f.id() : f for f in target.getFeatures() }
         # testing datasets have their PK column set to 'fid'
-        refFeat = next(reference.getFeatures())
-        try:
-            pkColumn = 'OGC_FID'
-            refFeat[pkColumn]
-        except KeyError:
-            pkColumn = 'fid'
-            refFeat[pkColumn]
+        pkColumn = 'OGC_FID' if 'OGC_FID' in [f.name() for f in next(reference.getFeatures()).fields()] else 'fid'
         for featId, refFeat in { f[pkColumn] : f for f in reference.getFeatures() }.items():
             testFeat = testFeatureMap[featId]
             if not testFeat.geometry().equals(refFeat.geometry()):
