@@ -608,10 +608,11 @@ class Tester:
                     return "Incorrect set of attributes for feature {fid}.".format(fid=featId)
         return ""
 
-    def testAlg(self, algName):
+    def testAlg(self, algName, loadLayers=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
+        :param loadLayers: (bool) 
         :return: (str) failing reason.
         """
         parameters = self.algorithmParameters(algName)
@@ -634,7 +635,8 @@ class Tester:
                             )
                     msg = self.compareLayers(output, expected)
                     # once layer is compared, revert all modifications in order to not compromise layer reusage
-                    output.rollBack() # soemtimes in = output
+                    if expected.name() == output.name():
+                        output.rollBack() # soemtimes in = output
                     expected.rollBack()
                     if msg:
                         raise Exception(msg)
