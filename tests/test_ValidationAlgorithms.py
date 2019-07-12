@@ -460,7 +460,7 @@ class Tester:
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
                         )[0],
                     'SELECTED' : False,
                     'TOLERANCE' : 1
@@ -470,12 +470,12 @@ class Tester:
             "dsgtools:mergelineswithsameattributeset" : [
                 {
                     '__comment' : "'Normal' test: checks if it works.",
-                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'ATTRIBUTE_BLACK_LIST' : ['OGC_FID'],
                     'IGNORE_NETWORK' : False,
                     'IGNORE_PK_FIELDS' : True,
                     'IGNORE_VIRTUAL_FIELDS' : True,
                     'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_3']
                         )[0],
                     'SELECTED' : False
                 }
@@ -493,17 +493,6 @@ class Tester:
                         )[0],
                     'SELECTED' : False,
                     'TOLERANCE' : 25
-                }
-            ],
-
-            "dsgtools:mergelineswithsameattributeset" : [
-                {
-                    '__comment' : "'Normal' test: checks if it works.",
-                    'INPUT' : self.getInputLayers(
-                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                        )[0],
-                    'SELECTED' : False,
-                    'TOLERANCE' : 2
                 }
             ],
 
@@ -635,13 +624,12 @@ class Tester:
                             )
                     msg = self.compareLayers(output, expected)
                     # once layer is compared, revert all modifications in order to not compromise layer reusage
-                    if expected.name() == output.name():
-                        output.rollBack() # soemtimes in = output
-                    expected.rollBack()
+                    output.rollBack() # soemtimes in = output
                     if msg:
                         raise Exception(msg)
-                    self.addLayerToGroup(output, "DSGTools Algorithm Tests")
-                    self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
+                    if loadLayers:
+                        self.addLayerToGroup(output, "DSGTools Algorithm Tests")
+                        self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
         except Exception as e:
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
