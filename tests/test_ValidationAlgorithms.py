@@ -460,7 +460,7 @@ class Tester:
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'INPUT' : self.getInputLayers(
-                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_4']
                         )[0],
                     'SELECTED' : False,
                     'TOLERANCE' : 1
