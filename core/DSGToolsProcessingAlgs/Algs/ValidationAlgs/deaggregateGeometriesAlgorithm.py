@@ -34,6 +34,9 @@ from qgis.core import (QgsProcessing,
                        QgsWkbTypes,
                        QgsProcessingParameterBoolean)
 
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
+from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
+
 class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
     OUTPUT = 'OUTPUT'
     INPUT = 'INPUT'
@@ -68,28 +71,16 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-
-        # Retrieve the feature source and sink. The 'dest_id' variable is used
-        # to uniquely identify the feature sink, and must be included in the
-        # dictionary returned by the processAlgorithm function.
         source = self.parameterAsSource(parameters, self.INPUT, context)
-        # (sink, dest_id) = self.parameterAsSink(parameters, self.OUTPUT,
-        #         context, source.fields(), source.wkbType(), source.sourceCrs())
-
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
-
         target = self.parameterAsVectorLayer(parameters, self.INPUT, context)
 
         target.startEditing()
         target.beginEditCommand('Updating layer')
-        provider = target.dataProvider()
-        uri = QgsDataSourceUri(provider.dataSourceUri())
-        keyColumn = uri.keyColumn()
-        destType = target.geometryType()
-        destIsMulti = QgsWkbTypes.isMultiType(target.wkbType())
-
-        # Compute the number of steps to display within the progress bar and
-        # get features from source
+        fields = target.fields()
+        paramDict = LayerHandler().getDestinationParameters(target)
+        featHandler = FeatureHandler()
+        featuresToAdd = []
         if onlySelected:
             total = 100.0 / target.selectedFeatureCount() if target.selectedFeatureCount() else 0
             features = target.getSelectedFeatures()
@@ -98,38 +89,21 @@ class DeaggregatorAlgorithm(QgsProcessingAlgorithm):
             features = target.getFeatures()            
 
         for current, feature in enumerate(features):
-            # Stop the algorithm if cancel button has been clicked
             if feedback.isCanceled():
                 break
-
-            geom = feature.geometry()
-            if not geom:
+            if not feature.geometry():
                 target.deleteFeature(feature.id())
-                # Update the progress bar
                 feedback.setProgress(int(current * total))
                 continue
-            if geom.get().partCount() > 1:
-                parts = geom.asGeometryCollection()
-                for part in parts:
-                    if destIsMulti:
-                        part.convertToMultiType()
-                addList = []
-                for i in range(1,len(parts)):
-                    if parts[i]:
-                        newFeat = QgsFeature(feature)
-                        newFeat.setGeometry(parts[i])
-                        idx = newFeat.fieldNameIndex(keyColumn)
-                        newFeat.setAttribute(idx,provider.defaultValue(idx))
-                        addList.append(newFeat)
-                feature.setGeometry(parts[0])
+            updtGeom, newFeatList, update = featHandler.handleFeature([feature], feature, target, paramDict)
+            if not update:
+                feature.setGeometry(updtGeom)
                 target.updateFeature(feature)
-                target.addFeatures(addList, QgsFeatureSink.FastInsert)             
-
-            # Update the progress bar
+                featuresToAdd += newFeatList
             feedback.setProgress(int(current * total))
-
+        if featuresToAdd:
+            target.addFeatures(featuresToAdd, QgsFeatureSink.FastInsert)
         target.endEditCommand()
-
         # Return the results of the algorithm. In this case our only result is
         # the feature sink which contains the processed features, but some
         # algorithms may return multiple feature sinks, calculated numeric
