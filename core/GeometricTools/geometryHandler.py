@@ -61,19 +61,18 @@ class GeometryHandler(QObject):
                     geom.geometry().dropMValue()
                 if not parameterDict['hasZValues']:
                     geom.geometry().dropZValue()
-            if parameterDict['isMulti'] and not geom.isMultipart():
-                geom.convertToMultiType()
-                geomList.append(geom)
-            elif not parameterDict['isMulti'] and geom.isMultipart():
-                #deaggregate here
+            if geom.isMultipart():
                 parts = geom.asGeometryCollection()
                 for part in parts:
-                    part.convertToSingleType()
+                    if not parameterDict['isMulti']:
+                        part.convertToSingleType()
                     geomList.append(part)
             else:
+                if parameterDict['isMulti']:
+                    geom.convertToMultiType()
                 geomList.append(geom)
         return geomList
-
+ 
     def reprojectFeature(self, geom, referenceCrs, destinationCrs=None, coordinateTransformer=None, debugging=False):
         """
         Reprojects geom from the canvas crs to the reference crs.
