@@ -589,6 +589,8 @@ class Tester:
         # testing datasets have their PK column set to 'fid'
         pkColumn = 'OGC_FID' if 'OGC_FID' in [f.name() for f in next(reference.getFeatures()).fields()] else 'fid'
         for featId, refFeat in { f[pkColumn] : f for f in reference.getFeatures() }.items():
+            if featId not in testFeatureMap:
+                return "Feature id={0} was not found on output layer.".format(featId)
             testFeat = testFeatureMap[featId]
             if not testFeat.geometry().equals(refFeat.geometry()):
                 return "Feature {fid} has incorrect geometry.".format(fid=featId)
