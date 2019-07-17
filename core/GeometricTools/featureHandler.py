@@ -135,7 +135,7 @@ class FeatureHandler(QObject):
             donutHoleList.append(newFeat)
         return outershellList, donutHoleList
     
-    def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict = None, feedback = None, ignoreNetwork = False):
+    def mergeLineFeatures(self, featList, lyr, idsToRemove, networkDict, parameterDict=None, feedback=None):
         parameterDict = {} if parameterDict is None else parameterDict
         changeDict = dict()
         size = 100 / len(featList)
@@ -159,15 +159,16 @@ class FeatureHandler(QObject):
                     intersectionPoint = geom_a.intersection(geom_b)
                     for pointPart in intersectionPoint.asGeometryCollection():
                         point = pointPart.asPoint()
-                        if ignoreNetwork or (point in networkDict and len(networkDict[point]) == 2):
+                        if (point in networkDict and len(networkDict[point]) == 2):
                             newGeom = self.geometryHandler.handleGeometry(geom_a.combine(geom_b).mergeLines(), parameterDict)[0] #only one candidate is possible because features are touching
                             feat_a.setGeometry(newGeom)
+                            lyr.updateFeature(feat_a)
                             idsToRemove.append(id_b)
-                            changeDict[id_a] = newGeom
+                            # changeDict[id_a] = newGeom
             if feedback:
                 feedback.setProgress(size*current)
-        for id, geom in changeDict.items():
-            lyr.changeGeometry(id, geom)
+        # for id, geom in changeDict.items():
+        #     lyr.changeGeometry(id, geom)
     
     def getNewGridFeat(self, index, geom, fields):
         feat = QgsFeature(fields)

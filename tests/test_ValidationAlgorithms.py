@@ -471,7 +471,7 @@ class Tester:
                 {
                     '__comment' : "'Normal' test: checks if it works.",
                     'ATTRIBUTE_BLACK_LIST' : ['OGC_FID'],
-                    'IGNORE_NETWORK' : False,
+                    'IGNORE_NETWORK' : True,
                     'IGNORE_PK_FIELDS' : True,
                     'IGNORE_VIRTUAL_FIELDS' : True,
                     'INPUT' : self.getInputLayers(

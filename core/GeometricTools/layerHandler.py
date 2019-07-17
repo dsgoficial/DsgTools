@@ -25,6 +25,7 @@ from __future__ import absolute_import
 from builtins import range
 from itertools import combinations
 from collections import defaultdict
+from functools import partial
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
@@ -336,7 +337,7 @@ class LayerHandler(QObject):
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True, ignoreNetwork = False):
+    def mergeLinesOnLayer(self, lyr, onlySelected=False, feedback=None, ignoreVirtualFields=True, attributeBlackList=None, excludePrimaryKeys=True):
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         if feedback:
             localFeedback = QgsProcessingMultiStepFeedback(3, feedback)
@@ -358,14 +359,20 @@ class LayerHandler(QObject):
             mergeFeedback = QgsProcessingMultiStepFeedback(len(attributeFeatDict), localFeedback)
         lyr.startEditing()
         lyr.beginEditCommand(self.tr('Merging Lines'))
-        mergeLines = lambda x : self.featureHandler.mergeLineFeatures(featList=x[0], lyr=lyr, idsToRemove=x[1], parameterDict=parameterDict, feedback=x[2], networkDict=networkDict, ignoreNetwork = ignoreNetwork)
 
         for current, (key, featList) in enumerate(attributeFeatDict.items()):
             if feedback:
                 if feedback.isCanceled():
                     break
                 mergeFeedback.setCurrentStep(current)
-            mergeLines([featList,idsToRemove, mergeFeedback])
+            self.featureHandler.mergeLineFeatures(
+                featList=featList,
+                lyr=lyr,
+                idsToRemove=idsToRemove,
+                parameterDict=parameterDict,
+                feedback=mergeFeedback,
+                networkDict=networkDict
+            )
         lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
