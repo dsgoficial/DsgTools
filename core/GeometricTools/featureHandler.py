@@ -84,7 +84,8 @@ class FeatureHandler(QObject):
     def getNewFeatureWithoutGeom(self, referenceFeature, lyr):
         newFeat = QgsFeature(referenceFeature)
         # provider = lyr.dataProvider()
-        for idx in lyr.primaryKeyAttributes():
+        # in case of no PK found, use the FIRST registered column
+        for idx in lyr.primaryKeyAttributes() or [0]:
             newFeat.setAttribute(idx, None)
         return newFeat
     
