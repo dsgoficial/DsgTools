@@ -28,6 +28,7 @@ It is supposed to be run through QGIS with DSGTools installed.
 """
 
 import os
+from osgeo import ogr
 
 import processing
 from qgis.utils import iface
@@ -113,6 +114,22 @@ class Tester:
             layers[l] = layerLoader.getComplexLayerByName(l)
         return layers
 
+    def readGeopackage(self, path):
+        """
+        Reads a Geopackage database.
+        :param path: (str) path do the Geopackage database.
+        :return: (dict) map to the Geopackage database's layers.
+        """
+        layers = dict()
+        for layer in ogr.Open(path):
+            layername = layer.GetName()
+            layers[layername] = QgsVectorLayer(
+                        "{0}|layername={1}".format(path, layername), 
+                        layername,
+                        "ogr"
+                    )
+        return layers
+
     def testingDataset(self, driver, dataset):
         """
         Reads a dataset accordingly to its driver.
@@ -122,22 +139,36 @@ class Tester:
         :return: (dict) a map from layer name to vector layer read from database.
         """
         spatiaLitePaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'SpatiaLite')
+        gpkgPaths = os.path.join(self.CURRENT_PATH, "testing_datasets", 'Geopackage')
         datasets = {
             "sqlite" : {
                 "banco_capacitacao" : os.path.join(spatiaLitePaths, 'banco_capacitacao.sqlite')
+            },
+            "gpkg" : {
+                "testes_wgs84" : os.path.join(gpkgPaths, 'testes_wgs84.gpkg'),
+                "testes_sirgas2000_23s" : os.path.join(gpkgPaths, 'testes_sirgas2000_23s.gpkg')
             }
+        }
+        # switch-case for dataset reading
+        funcs = {
+            "sqlite" : lambda ds : self.readSpatiaLite(datasets["sqlite"][ds]),
+            "gpkg" : lambda ds : self.readGeopackage(datasets["gpkg"][ds])
         }
         layers = dict()
         if driver in datasets and dataset in datasets[driver]:
             key = "{driver}:{dataset}".format(driver=driver, dataset=dataset)
             if key not in self.datasets:
-                self.datasets[key] = self.readSpatiaLite(datasets[driver][dataset])
+                self.datasets[key] = funcs[driver](dataset)
             layers = self.datasets[key]
         return layers
 
     def getInputLayers(self, driver, dataset, layers):
         """
         Gets the vector layers from an input dataset.
+        :param driver: (str) driver's to be read.
+        :param dataset: (str) dataset's name.
+        :param layers: (list-of-str) layers to be read.
+        :return: (list-of-QgsVectorLayer) vector layers read from the dataset.
         """
         out = []
         vls = self.testingDataset(driver, dataset)
@@ -161,86 +192,328 @@ class Tester:
         QgsProject.instance().addMapLayer(layer, False)
         group.insertChildNode(1, QgsLayerTreeLayer(layer))
 
-    def algorithmParameters(self, algName, drivername, dataset=None):
+    def algorithmParameters(self, algName):
         """
-        Gets an algorithm's parameters map based on its name and the dataset it
-        will be run on.
+        Gets an algorithm's set of parameters for every test registered.
         :param algName: (str) target algorithm's name.
-        :param drivername: (str) name for the dataset's driver.
-        :param dataset: (str) dataset's name.
-        :return: (list-of-dict) map to an algorithm's parameters for a given testing
-                 dataset for all available tests.
+        :return: (list-of-dict) list of sets - maps -  of parameters to an algorithm's
+                 tests.
         """
         parameters = {
-            "dsgtools:identifyduplicatedfeatures" : {
-                "sqlite:banco_capacitacao" : [
-                    {
-                        '__comment' : "'Normal' test: checks if it works.",
-                        'ATTRIBUTE_BLACK_LIST' : [],
-                        'FLAGS' : "memory:",
-                        'IGNORE_PK_FIELDS' : True,
-                        'IGNORE_VIRTUAL_FIELDS' : True,
-                        'INPUT' : self.getInputLayers(
-                                'sqlite', 'banco_capacitacao',
-                                ['cb_rel_ponto_cotado_altimetrico_p']
-                            )[0],
-                        'SELECTED' : False
-                    }
-                ]
-            },
+            "dsgtools:identifyduplicatedfeatures" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'FLAGS' : "memory:",
+                    'IGNORE_PK_FIELDS' : True,
+                    'IGNORE_VIRTUAL_FIELDS' : True,
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao',
+                            ['cb_rel_ponto_cotado_altimetrico_p']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
 
-            "dsgtools:identifyoutofboundsangles" : {
-                "sqlite:banco_capacitacao" : [
-                    {
-                        '__comment' : "'Normal' test: checks if it works.",
-                        'FLAGS' : 'memory:',
-                        'INPUT' : self.getInputLayers(
-                                'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
-                            )[0],
-                        'SELECTED' : False,
-                        'TOLERANCE' : 10
-                    }
-                ]
-            },
+            "dsgtools:identifyoutofboundsangles" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 10
+                }
+            ],
 
-            "dsgtools:identifyoutofboundsanglesincoverage" : {
-                "sqlite:banco_capacitacao" : [
-                    {
-                        '__comment' : "'Normal' test: checks if it works.",
-                        'FLAGS' : 'memory:',
-                        'INPUTLAYERS' : self.getInputLayers(
-                                'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
-                            ),
-                        'SELECTED' : False,
-                        'TOLERANCE' : 10
-                    }
-                ]
-            },
+            "dsgtools:identifyoutofboundsanglesincoverage" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUTLAYERS' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                        ),
+                    'SELECTED' : False,
+                    'TOLERANCE' : 10
+                }
+            ],
 
-            "dsgtools:identifygaps" : {
-                "sqlite:banco_capacitacao" : [
-                    {
-                        '__comment' : "'Normal' test: checks if it works.",
-                        'FLAGS' : 'memory:',
-                        'INPUT' : self.getInputLayers(
-                                'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
-                            ),
-                        'SELECTED' : False
-                    }
-                ]
-            },
+            "dsgtools:identifygaps" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_terreno_suj_inundacao_a']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
 
-            "dsgtools:ALG" : {
-                "sqlite:banco_capacitacao" : [
-                    {
-                        '__comment' : "'Normal' test: checks if it works."
-                    }
-                ]
-            }
+            "dsgtools:identifyandfixinvalidgeometries" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works. This test does not check fixes!",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                        )[0],
+                    'SELECTED' : False,
+                    'TYPE' : False
+                }
+            ],
+
+            "dsgtools:identifyduplicatedgeometries" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:identifyduplicatedlinesoncoverage" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUTLAYERS' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao',
+                            ['cb_hid_corredeira_l', 'cb_hid_trecho_drenagem_l']
+                        ),
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:identifysmalllines" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 5
+                }
+            ],
+
+            "dsgtools:identifyduplicatedpolygonsoncoverage" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUTLAYERS' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao',
+                            ['cb_veg_campo_a', 'cb_veg_floresta_a']
+                        ),
+                    'SELECTED' : False
+                    
+                }
+            ],
+
+            "dsgtools:identifysmallpolygons" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS': 'memory:',
+                    'INPUT': self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                        )[0],
+                    'SELECTED': False,
+                    'TOLERANCE': 625
+                }
+            ],
+
+            "dsgtools:identifydangles" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'IGNOREINNER' : False,
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                        )[0],
+                    'LINEFILTERLAYERS' : '',
+                    'POLYGONFILTERLAYERS' : '',
+                    'SELECTED' : False,
+                    'TOLERANCE' : 2,
+                    'TYPE' : False
+                }
+            ],
+
+            "dsgtools:identifyduplicatedpointsoncoverage" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUTLAYERS' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao',
+                            ['cb_adm_edif_pub_civil_p', 'cb_rel_ponto_cotado_altimetrico_p']
+                        ),
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:identifyoverlaps" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS': "memory:",
+                    'INPUT': self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_ilha_a']
+                        )[0],
+                    'SELECTED': False
+                }
+            ],
+
+            "dsgtools:removeduplicatedfeatures" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'IGNORE_PK_FIELDS' : True,
+                    'IGNORE_VIRTUAL_FIELDS' : True,
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:removeduplicatedgeometries" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'FLAGS' : 'memory:',
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_rel_ponto_cotado_altimetrico_p']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:removesmalllines" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 5
+                }
+            ],
+
+            "dsgtools:removesmallpolygons" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_veg_campo_a']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 625
+                }
+            ],
+            
+            "dsgtools:overlayelementswithareas" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'BEHAVIOR' : 0,
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                        )[0],
+                    'OVERLAY' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                        )[0],
+                    'SELECTED' : False,
+                    'SELECTED_OVERLAY' : False
+                }
+            ],
+
+            "dsgtools:deaggregategeometries" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_1']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
+            
+            "dsgtools:dissolvepolygonswithsameattributes" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST' : [],
+                    'IGNORE_PK_FIELDS' : True,
+                    'IGNORE_VIRTUAL_FIELDS' : True,
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                        )[0],
+                    'MIN_AREA' : None,
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:removeemptyandupdate" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_2']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:lineonlineoverlayer" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_4']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 1
+                }
+            ],
+
+            "dsgtools:mergelineswithsameattributeset" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'ATTRIBUTE_BLACK_LIST' : ['OGC_FID'],
+                    'IGNORE_NETWORK' : False,
+                    'IGNORE_PK_FIELDS' : True,
+                    'IGNORE_VIRTUAL_FIELDS' : True,
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_linha_3']
+                        )[0],
+                    'SELECTED' : False
+                }
+            ],
+
+            "dsgtools:snaplayeronlayer" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'BEHAVIOR' : 0,
+                    'INPUT' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_1']
+                        )[0],
+                    'REFERENCE_LAYER' : self.getInputLayers(
+                            'gpkg', 'testes_sirgas2000_23s', ['camada_poligono_2']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 25
+                }
+            ],
+
+            "dsgtools:adjustnetworkconnectivity" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works.",
+                    'INPUT' : self.getInputLayers(
+                            'sqlite', 'banco_capacitacao', ['cb_hid_trecho_drenagem_l']
+                        )[0],
+                    'SELECTED' : False,
+                    'TOLERANCE' : 2
+                }
+            ],
+
+            "dsgtools:ALG" : [
+                {
+                    '__comment' : "'Normal' test: checks if it works."
+                }
+            ]
         }
-        key = "{driverName}:{dataset}".format(driverName=drivername, dataset=dataset)
-        # it is assumed that the algorithm's existance is checked on a prior moment
-        return parameters[algName][key] if key in parameters[algName] else dict()
+        return parameters[algName] if algName in parameters else dict()
 
     def runAlg(self, algName, parameters):
         """
@@ -300,37 +573,44 @@ class Tester:
         # attribute names check
         targetFieldNames = [f.name() for f in target.fields()]
         for f in reference.fields():
-            if f.name() == 'fid':
+            fieldname = f.name()
+            if fieldname == 'fid' or '_otf' in fieldname:
                 # not sure if this should happen...
                 continue
-            if f.name() not in targetFieldNames:
-                return "Incorrect set of attributes for output layer."
+            if fieldname not in targetFieldNames:
+                return "Incorrect set of attributes for output layer (missing '{attr}').".format(attr=fieldname)
         # feature attribute check
-        for featId in targetFeaureIds:
-            testFeat = target.getFeature(featId)
-            refFeat = reference.getFeature(featId)
+        # it is considered that our testing datasets will always have their PK set to serial column 'OGC_FID'
+        try:
+            # identification algorithms have in-memory layers, and they do not have a PK column
+            col = 'OGC_FID' if 'OGC_FID' in targetFieldNames else 'fid'
+            testFeatureMap = { f[col] : f for f in target.getFeatures() }
+        except:
+            testFeatureMap = { f.id() : f for f in target.getFeatures() }
+        # testing datasets have their PK column set to 'fid'
+        pkColumn = 'OGC_FID' if 'OGC_FID' in [f.name() for f in next(reference.getFeatures()).fields()] else 'fid'
+        for featId, refFeat in { f[pkColumn] : f for f in reference.getFeatures() }.items():
+            if featId not in testFeatureMap:
+                return "Feature id={0} fwas not found on output layer.".format(featId)
+            testFeat = testFeatureMap[featId]
+            if not testFeat.geometry().equals(refFeat.geometry()):
+                return "Feature {fid} has incorrect geometry.".format(fid=featId)
             for attr in targetFieldNames:
                 if testFeat[attr] != refFeat[attr]:
-                    return "Incorret set of attributes for feature {fid}.".format(fid=featId)
+                    return "Incorrect set o attributes for feature {fid}.".format(fid=featId)
         return ""
 
-    def testAlg(self, algName, driver, dataset):
+    def testAlg(self, algName, loadLayers=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
-        :param drivername: (str) name for the dataset's driver.
-        :param dataset: (str) dataset's name.
+        :param loadLayers: (bool) 
         :return: (str) failing reason.
         """
-        layers = self.testingDataset(driver, dataset)
-        if layers == dict():
-            return "Unable to read indicated input dataset ({0}:{1}).".format(
-                            driver, dataset
-                    )
-        parameters = self.algorithmParameters(algName, driver, dataset)
+        parameters = self.algorithmParameters(algName)
         if parameters == dict():
-            return "Unable to read a set of parameters for {2} (input dataset {0}:{1}).".format(
-                    driver, dataset, algName
+            return "Unable to read a set of parameters for {alg}'s tests.".format(
+                    alg=algName
                 )
         try:
             for i, param in enumerate(parameters):
@@ -346,10 +626,13 @@ class Tester:
                                 format(alg=algName, nr=i + 1)
                             )
                     msg = self.compareLayers(output, expected)
+                    # once layer is compared, revert all modifications in order to not compromise layer reusage
+                    output.rollBack() # soemtimes in = output
                     if msg:
                         raise Exception(msg)
-                    self.addLayerToGroup(output, "DSGTools Algorithm Tests")
-                    self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
+                    if loadLayers:
+                        self.addLayerToGroup(output, "DSGTools Algorithm Tests")
+                        self.addLayerToGroup(expected, "DSGTools Algorithm Tests")
         except Exception as e:
             return "Test #{nr} for '{alg}' has failed:\n'{msg}'".format(
                     msg=", ".join(map(str, e.args)), nr=i + 1, alg=algName
@@ -359,21 +642,36 @@ class Tester:
 
     def testAllAlgorithms(self):
         """
-        Executes all registered tests.
+        Executes all registered tests. Note that algorithms run in here should only
+        output one layer.
         :return: (dict) a map to the algorithm found and all tests and their results.
         """
         # still missing how to define default datasets
-        driver = "sqlite"
-        dataset = "banco_capacitacao"
         results = dict()
         algs = [
-                "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyoutofboundsangles",
-                "dsgtools:identifyoutofboundsanglesincoverage", "dsgtools:identifygaps"
+                # identification algs
+                "dsgtools:identifyoutofboundsangles", "dsgtools:identifyoutofboundsanglesincoverage",
+                "dsgtools:identifygaps", "dsgtools:identifyandfixinvalidgeometries",
+                "dsgtools:identifyduplicatedfeatures", "dsgtools:identifyduplicatedgeometries",
+                "dsgtools:identifyduplicatedlinesoncoverage", "dsgtools:identifysmalllines",
+                "dsgtools:identifyduplicatedpolygonsoncoverage", "dsgtools:identifysmallpolygons",
+                "dsgtools:identifydangles", "dsgtools:identifyduplicatedpointsoncoverage",
+                "dsgtools:identifyoverlaps",
+                # correction algs
+                "dsgtools:removeduplicatedfeatures", "dsgtools:removeduplicatedgeometries",
+                "dsgtools:removesmalllines", "dsgtools:removesmallpolygons",
+                # manipulation algs
+                "dsgtools:lineonlineoverlayer", "dsgtools:mergelineswithsameattributeset",
+                "dsgtools:overlayelementswithareas", "dsgtools:deaggregategeometries",
+                "dsgtools:dissolvepolygonswithsameattributes", "dsgtools:removeemptyandupdate",
+                "dsgtools:snaplayeronlayer",
+                # network algs
+                "dsgtools:adjustnetworkconnectivity"
             ]
         # for alg in self.readAvailableAlgs(self.DEFAULT_ALG_PATH):
         for alg in algs:
             try:
-                results[alg] = self.testAlg(alg, driver, dataset)
+                results[alg] = self.testAlg(alg)
             except KeyError:
                 results[alg] = "No tests registered."
         return results
