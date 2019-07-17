@@ -27,7 +27,7 @@ from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QTableWidgetItem, QDockWidget
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
-from qgis.core import QgsDataSourceUri, QgsVectorLayer, QgsProject
+from qgis.core import QgsVectorLayer, QgsProject
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
@@ -94,16 +94,12 @@ class CodeList(QDockWidget, FORM_CLASS):
         layers = []
         for layer in self._classFieldMap.keys():
             uriString = self.layerByName(layer).dataProvider().dataSourceUri()
-            if "'" in uriString:
-                splitToken = "'" 
-                idx = 1
-            elif "|" in uriString:
-                splitToken = "|"
-                idx = 1
+            if "|" in uriString:
+                db_name = os.path.basename(uriString.split("|")[0])
+            elif "'" in uriString:
+                db_name = os.path.basename(uriString.split("'")[1])
             else:
-                splitToken = ""
-                idx = 0
-            db_name = uriString.split(splitToken)[idx] if splitToken != "" else uriString
+                db_name = uriString
             layers.append("{db}: {layer}".format(db=db_name, layer=layer))
         layers.sort()
         return layers
@@ -213,10 +209,13 @@ class CodeList(QDockWidget, FORM_CLASS):
         currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
         if currentLayer.isValid():
             try:
-                uri = QgsDataSourceUri(currentLayer.dataProvider().dataSourceUri())
+                uri = currentLayer.dataProvider().uri()
                 if uri.host() == '':
                     db = QSqlDatabase('QSQLITE')
-                    db.setDatabaseName(uri.database())
+                    db.setDatabaseName(
+                        uri.uri().split("|")[0].strip() if uri.uri().split("|")[0].strip().endswith(".gpkg") \
+                            else uri.database()
+                    )
                     sql = 'select code, code_name from dominios_{field} order by code'
                 else:
                     db = QSqlDatabase('QPSQL')
@@ -270,7 +269,7 @@ class CodeList(QDockWidget, FORM_CLASS):
         currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
         if currentLayer.isValid():
             try:
-                uri = QgsDataSourceUri(currentLayer.dataProvider().dataSourceUri())
+                uri = currentLayer.dataProvider().uri()
                 field = field or self.currentField()
                 if field in self.specialEdgvAttributes():
                     # EDGV "special" attributes that are have different domains depending on 
@@ -279,7 +278,10 @@ class CodeList(QDockWidget, FORM_CLASS):
                     field = "{attribute}_{cat}".format(attribute=field, cat=category)
                 if uri.host() == '':
                     db = QSqlDatabase('QSQLITE')
-                    db.setDatabaseName(uri.database())
+                    db.setDatabaseName(
+                        uri.uri().split("|")[0].strip() if uri.uri().split("|")[0].strip().endswith(".gpkg") \
+                            else uri.database()
+                    )
                     sql = 'select code, code_name from dominios_{field} order by code'.format(field=field)
                 else:
                     db = QSqlDatabase('QPSQL')
