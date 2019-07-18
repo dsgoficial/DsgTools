@@ -28,7 +28,7 @@ def sqlParser(sqlFile, isSpatialite):
         data = file.read()
         file.close()
     except:
-        return dict()     
+        return dict(), dict() 
 
     commandList = data.split('#')
     createList = [command for command in commandList if 'CREATE TABLE' in command]
