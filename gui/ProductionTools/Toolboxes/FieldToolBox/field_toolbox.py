@@ -434,7 +434,9 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
                 self.prevLayer.editCommandEnded.disconnect(self.updateAttributesAfterAdding)
-                self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressDefault)
+                setup = self.prevLayer.editFormConfig()
+                setup.setSuppress(QgsEditFormConfig.SuppressDefault)
+                self.prevLayer.setEditFormConfig(setup)
             except:
                 pass
 
@@ -475,7 +477,9 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
             if reclassificationLayer is not None:
                 #suppressing the form dialog
-                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
+                setup = reclassificationLayer.editFormConfig()
+                setup.setSuppress(QgsEditFormConfig.SuppressOn)
+                reclassificationLayer.setEditFormConfig(setup)
                 #connecting addedFeature signal
                 reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
                 reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)
