@@ -223,9 +223,9 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
         currentPath = os.path.dirname(__file__)
         
         if self.edgvVersion == '2.1.3':
-            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', '213', 'edgv213.sql')
+            sqlPath = os.path.join(currentPath, '..', '..', '..', '..', 'core', 'DbModels', 'PostGIS', '213', 'edgv213.sql')
         elif self.edgvVersion == 'FTer_2a_Ed':
-            sqlPath = os.path.join(currentPath, '..', '..', 'DbTools', 'PostGISTool', 'sqls', 'FTer_2a_Ed', 'edgvFter_2a_Ed.sql')
+            sqlPath = os.path.join(currentPath, '..', '..', '..', '..', 'core', 'DbModels', 'PostGIS', '213', 'edgvFter_2a_Ed.sql')
         self.notNullDict, self.nullDict = acquisition_tools.sqlParser(sqlPath, True)
         qmlDict = self.buildQmlDict(fullTableName)
         count = 0
