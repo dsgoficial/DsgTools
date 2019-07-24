@@ -69,6 +69,8 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         :param abstractDb:
         :return:
         """
+        if abstractDb.db.databaseName() == "":
+            return
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
         try:
             self.populateConfigFromDb()
