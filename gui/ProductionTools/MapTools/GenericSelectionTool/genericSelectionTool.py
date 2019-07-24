@@ -22,20 +22,16 @@ Some parts were inspired by QGIS plugin MultipleLayerSelection
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import range
-from qgis.gui import QgsMapTool, QgsRubberBand
-from qgis.core import Qgis, QgsPointXY, QgsRectangle, QgsMapLayer, \
-                        QgsFeatureRequest, QgsVectorLayer, QgsDataSourceUri, \
-                        QgsCoordinateReferenceSystem, QgsCoordinateTransform, \
-                        QgsGeometry, QgsWkbTypes, QgsProject
-from qgis.PyQt.QtCore import QSettings
-from qgis.PyQt import QtCore, QtGui, QtWidgets
-from qgis.PyQt.QtGui import QColor, QCursor
-from qgis.PyQt.QtWidgets import QMenu
 
-import numpy as np
-from qgis.PyQt.QtCore import Qt
+import os
 from functools import partial
+
+from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.core import QgsPointXY, QgsRectangle, QgsFeatureRequest, QgsVectorLayer, \
+                        QgsProject, QgsWkbTypes
+from qgis.PyQt.QtCore import Qt, QSettings
+from qgis.PyQt.QtGui import QColor, QCursor
+from qgis.PyQt.QtWidgets import QMenu, QApplication
 
 from DsgTools.core.GeometricTools.geometryHandler import GeometryHandler
 
@@ -65,7 +61,7 @@ class GenericSelectionTool(QgsMapTool):
         self.reset()
         self.blackList = self.getBlackList()
         self.cursorChanged = False
-        self.cursorChangingHotkey = QtCore.Qt.Key_Alt
+        self.cursorChangingHotkey = Qt.Key_Alt
         self.menuHovered = False # indicates hovering actions over context menu
         self.geometryHandler = GeometryHandler(iface=self.iface)
     
@@ -91,10 +87,10 @@ class GenericSelectionTool(QgsMapTool):
         """
         if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
             self.cursorChanged = True
-            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         else:
             self.cursorChanged = False
-            QtWidgets.QApplication.restoreOverrideCursor()
+            QApplication.restoreOverrideCursor()
     
     def getBlackList(self):
         settings = QSettings()
@@ -120,10 +116,10 @@ class GenericSelectionTool(QgsMapTool):
         """
         if e.key() == self.cursorChangingHotkey and not self.cursorChanged:
             self.cursorChanged = True
-            QtWidgets.QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
+            QApplication.setOverrideCursor(QCursor(Qt.PointingHandCursor))
         else:
             self.cursorChanged = False
-            QtWidgets.QApplication.restoreOverrideCursor()         
+            QApplication.restoreOverrideCursor()         
 
     def canvasMoveEvent(self, e):
         """
@@ -173,7 +169,7 @@ class GenericSelectionTool(QgsMapTool):
         """
         After the rectangle is built, here features are selected.
         """
-        if QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+        if QApplication.keyboardModifiers() == Qt.ShiftModifier:
             firstGeom = self.checkSelectedLayers()
             self.isEmittingPoint = False
             r = self.rectangle()
@@ -197,7 +193,7 @@ class GenericSelectionTool(QgsMapTool):
         """
         Method used to build rectangle if shift is held, otherwise, feature select/deselect and identify is done.
         """
-        if QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ShiftModifier:
+        if QApplication.keyboardModifiers() == Qt.ShiftModifier:
             self.isEmittingPoint = True
             self.startPoint = self.toMapCoordinates(e.pos())
             self.endPoint = self.startPoint
@@ -236,15 +232,15 @@ class GenericSelectionTool(QgsMapTool):
         visibleLayers = QgsProject.instance().layerTreeRoot().checkedLayers()
         for lyr in self.iface.mapCanvas().layers(): #ordered layers
             #layer types other than VectorLayer are ignored, as well as layers in black list and layers that are not visible
-            if (lyr.type() != QgsMapLayer.VectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or lyr not in visibleLayers:
+            if not isinstance(lyr, QgsVectorLayer) or (self.layerHasPartInBlackList(lyr.name())) or lyr not in visibleLayers:
                 continue
-            if hasControlModifier and (not firstGeom) and (not list(primitiveDict.keys()) or lyr.geometryType() < firstGeom):
+            if hasControlModifier and (not firstGeom) and (not primitiveDict or lyr.geometryType() < firstGeom):
                 firstGeom = lyr.geometryType()
             geomType = lyr.geometryType()
-            if geomType not in list(primitiveDict.keys()):
+            if geomType not in primitiveDict:
                 primitiveDict[geomType] = []
             #removes selection
-            if (not hasControlModifier and e.button() == QtCore.Qt.LeftButton) or (hasControlModifier and e.button() == QtCore.Qt.RightButton):
+            if (not hasControlModifier and e.button() == Qt.LeftButton) or (hasControlModifier and e.button() == Qt.RightButton):
                 lyr.removeSelection()
             primitiveDict[geomType].append(lyr)
         if hasControlModifier and firstGeom in [0, 1, 2]:
@@ -256,7 +252,7 @@ class GenericSelectionTool(QgsMapTool):
         """
         Deactivate tool.
         """
-        QtWidgets.QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
         self.hoverRubberBand.reset(QgsWkbTypes.PolygonGeometry)
         try:
             self.rubberBand.reset()
@@ -427,14 +423,14 @@ class GenericSelectionTool(QgsMapTool):
         """
         if not geomType:
             geomType = layer.geometryType()
-        if e.button() == QtCore.Qt.LeftButton: 
+        if e.button() == Qt.LeftButton: 
             # line added to make sure the action is associated with current loop value,
             # lambda function is used with standard parameter set to current loops value.
             # triggeredAction = lambda t=[layer, feature] : self.setSelectionFeature(t[0], feature=t[1], selectAll=selectAll, setActiveLayer=True)
             triggeredAction = partial(self.setSelectionFeature, layer=layer, feature=feature, selectAll=selectAll, setActiveLayer=True)
             hoveredAction = partial(self.createRubberBand, feature=feature, layer=layer, geom=geomType)
-        elif e.button() == QtCore.Qt.RightButton:
-            selected = (QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        elif e.button() == Qt.RightButton:
+            selected = (QApplication.keyboardModifiers() == Qt.ControlModifier)
             if selected:
                 triggeredAction = partial(self.iface.setActiveLayer, layer)
                 hoveredAction = None
@@ -451,7 +447,7 @@ class GenericSelectionTool(QgsMapTool):
         :return: (tuple-of function_lambda) callbacks for triggered and hovered signals.
         """
         # setting the action for the "All" options
-        if e.button() == QtCore.Qt.LeftButton:
+        if e.button() == Qt.LeftButton:
             triggeredAction = partial(self.setSelectionListFeature, dictLayerFeature=dictLayerFeature, selectAll=selectAll)
         else:
             triggeredAction = partial(self.openMultipleFeatureForm, dictLayerFeature=dictLayerFeature)
@@ -482,6 +478,7 @@ class GenericSelectionTool(QgsMapTool):
             temp = []
             if '/' in dsUri or '\\' in dsUri:
                 db_name = dsUri.split("|")[0] if "|" in dsUri else dsUri
+                db_name = os.path.basename(db_name.split("'")[1]  if "'" in db_name else db_name)
                 # data source is a file, not a postgres database
                 dbIsFile = True
             elif 'memory' in dsUri:
@@ -497,10 +494,7 @@ class GenericSelectionTool(QgsMapTool):
                 orderedFeatIdList = sorted(list(featDict.keys()))
                 for featId in orderedFeatIdList:
                     feat = featDict[featId]
-                    if dbIsFile:
-                        s = '{0} (feat_id = {1})'.format(db_name, featId)
-                    else:
-                        s = '{0}.{1} (feat_id = {2})'.format(db_name, className, featId)
+                    s = f"{db_name} | {className} (feat_id = {featId})"
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
                     triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
@@ -513,11 +507,8 @@ class GenericSelectionTool(QgsMapTool):
                     self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
                 return dict()
-            if dbIsFile:
-                title = db_name
-            else:
-                title = '{0}.{1}'.format(db_name, className)
-            submenuDict[cl] = QtWidgets.QMenu(title=title, parent=parentMenu)
+            title = f"{db_name} | {className}"
+            submenuDict[cl] = QMenu(title=title, parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
             # order features by ID to be displayer ordered
@@ -553,23 +544,23 @@ class GenericSelectionTool(QgsMapTool):
         # finding out if one of either dictionaty are filled ("Exclusive or")
         selectedXORnotSelected = (selectedDict != notSelectedDict)
         # setting "All"-command name
-        if e.button() == QtCore.Qt.RightButton:
+        if e.button() == Qt.RightButton:
             genericAction = self.tr('Open All Feature Forms')
         else:
             genericAction = self.tr('Select All Features')
         # in case one of given dict is empty
         if selectedXORnotSelected:
             if selectedDict:
-                menuDict, menu = dictMenuSelected, QtWidgets.QMenu(title=self.tr('Selected Features'))
+                menuDict, menu = dictMenuSelected, QMenu(title=self.tr('Selected Features'))
                 genericAction = self.tr('Deselect All Features')
                 # if the dictionary is from selected features, we want commands to be able to deselect them
                 selectAll = False
             else:
-                menuDict, menu = dictMenuNotSelected, QtWidgets.QMenu(title=self.tr('Not Selected Features'))
+                menuDict, menu = dictMenuNotSelected, QMenu(title=self.tr('Not Selected Features'))
                 genericAction = self.tr('Select All Features')
                 # if the dictionary is from non-selected features, we want commands to be able to select them
                 selectAll = True
-            if e.button() == QtCore.Qt.RightButton:
+            if e.button() == Qt.RightButton:
                 genericAction = self.tr('Open All Feature Forms')
             self.createSubmenu(e=e, parentMenu=menu, menuDict=menuDict, genericAction=genericAction, selectAll=selectAll)
             if len(menuDict) != 1 and len(list(menuDict.values())) > 1:
@@ -579,9 +570,9 @@ class GenericSelectionTool(QgsMapTool):
                 self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
         elif selectedDict:
             # if both of them is empty one more QMenu level is added
-            menu = QtWidgets.QMenu()
-            selectedMenu = QtWidgets.QMenu(title=self.tr('Selected Features'))
-            notSelectedMenu = QtWidgets.QMenu(title=self.tr('Not Selected Features'))
+            menu = QMenu()
+            selectedMenu = QMenu(title=self.tr('Selected Features'))
+            notSelectedMenu = QMenu(title=self.tr('Not Selected Features'))
             menu.addMenu(selectedMenu)
             menu.addMenu(notSelectedMenu)
             selectedGenericAction = self.tr('Deselect All Features')
@@ -628,7 +619,7 @@ class GenericSelectionTool(QgsMapTool):
         Creates the context menu for overlapping layers.
         :param e: mouse event caught from canvas.
         """
-        selected = (QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
+        selected = (QApplication.keyboardModifiers() == Qt.ControlModifier)
         if selected:
             firstGeom = self.checkSelectedLayers()
         # setting a list of features to iterate over
@@ -677,8 +668,8 @@ class GenericSelectionTool(QgsMapTool):
                 else:
                     layer = list(lyrFeatDict.keys())[0]
                     feature = lyrFeatDict[layer][0]
-                    selected =  (QtWidgets.QApplication.keyboardModifiers() == QtCore.Qt.ControlModifier)
-                    if e.button() == QtCore.Qt.LeftButton:
+                    selected =  (QApplication.keyboardModifiers() == Qt.ControlModifier)
+                    if e.button() == Qt.LeftButton:
                         # if feature is selected, we want it to be de-selected
                         self.setSelectionFeature(layer=layer, feature=feature, selectAll=False, setActiveLayer=True)
                     elif selected:
