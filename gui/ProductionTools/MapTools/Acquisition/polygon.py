@@ -144,7 +144,7 @@ class Polygon(GeometricaAcquisition):
             if self.qntPoint == 1:
                 self.distanceToolTip.canvasMoveEvent(self.geometry[0], point)
                 geom = QgsGeometry.fromPolylineXY([self.geometry[0], point])
-                self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+                self.rubberBand.setToGeometry(geom, None)
             elif self.qntPoint >= 2:                
                 if self.free:
                     self.distanceToolTip.canvasMoveEvent(self.geometry[-1], point)
