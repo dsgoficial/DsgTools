@@ -24,14 +24,13 @@ import os
 
 from qgis.core import QgsCoordinateReferenceSystem,QgsMessageLog
 
-# Qt imports
+from qgis.core import Qgis
 from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, QSettings, Qt
 from qgis.PyQt.QtSql import QSqlDatabase
 from qgis.PyQt.QtWidgets import QApplication, QMessageBox
 from qgis.PyQt.QtGui import QCursor
 
-# DSGTools imports
 from ....core.Utils.utils import Utils
 from ....core.Factories.SqlFactory.sqlGeneratorFactory import SqlGeneratorFactory
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
