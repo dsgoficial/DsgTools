@@ -23,6 +23,7 @@
 from builtins import object
 import os
 
+from qgis.core import Qgis
 from qgis.PyQt.QtSql import QSqlDatabase
 #DSG Tools imports
 from .spatialiteDbCreator import SpatialiteDbCreator
