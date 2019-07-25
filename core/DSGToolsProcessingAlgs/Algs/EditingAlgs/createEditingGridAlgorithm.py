@@ -69,6 +69,8 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
     COLOR = 'COLOR'
     FONT = 'FONT'
     FONT_SIZE = 'FONT_SIZE'
+    FONT_LL = 'FONT_LL'
+    COLOR_LL = 'COLOR_LL'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
@@ -177,9 +179,27 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
                 self.tr('Font Size'),
                 minValue=0,
                 type=QgsProcessingParameterNumber.Double,
-                defaultValue=4.25
+                defaultValue=1.5
             )
         )
+
+        fontParameter = ParameterFont(
+            self.FONT_LL,
+            description=self.tr('Font of the LatLong label')
+            )
+        fontParameter.setMetadata({
+            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.fontWidgetWrapper.FontWidgetWrapper'
+        })
+        self.addParameter(fontParameter)
+
+        colorParameter = ParameterColor(
+            self.COLOR_LL,
+            description=self.tr('Lat Long Color')
+            )
+        colorParameter.setMetadata({
+            'widget_wrapper' : 'DsgTools.gui.ProcessingUI.colorWidgetWrapper.ColorWidgetWrapper'
+        })
+        self.addParameter(colorParameter)
 
         self.addOutput(
             QgsProcessingOutputVectorLayer(
@@ -210,7 +230,9 @@ class CreateEditingGridAlgorithm(QgsProcessingAlgorithm):
         scale = self.parameterAsDouble(parameters, self.MAP_SCALE, context)
         fontSize = self.parameterAsDouble(parameters, self.FONT_SIZE, context)
         font = self.parameterAsFont(parameters, self.FONT, context)
-        GridAndLabelCreator().geo_test(inputLyr, attribute, id_attribute, id_value, spacing, crossX, crossY, scale, color, fontSize, font)
+        fontLL = self.parameterAsFont(parameters, self.FONT_LL, context)
+        llcolor = self.parameterAsColor(parameters, self.COLOR_LL, context)
+        GridAndLabelCreator().geo_test(inputLyr, attribute, id_attribute, id_value, spacing, crossX, crossY, scale, color, fontSize, font, fontLL, llcolor)
 
         return {self.OUTPUT: inputLyr}
 
