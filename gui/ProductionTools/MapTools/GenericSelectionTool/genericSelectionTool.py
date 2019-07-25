@@ -494,7 +494,7 @@ class GenericSelectionTool(QgsMapTool):
                 orderedFeatIdList = sorted(list(featDict.keys()))
                 for featId in orderedFeatIdList:
                     feat = featDict[featId]
-                    s = f"{db_name} | {className} (feat_id = {featId})"
+                    s = "{db_name} | {className} (feat_id = {featId})".format(db_name=db_name, className=className, featId=featId)
                     # inserting action for each feature
                     action = parentMenu.addAction(s)
                     triggeredAction, hoveredAction = self.getCallback(e=e, layer=cl, feature=feat, geomType=geomType, selectAll=selectAll)
@@ -507,7 +507,7 @@ class GenericSelectionTool(QgsMapTool):
                     self.addCallBackToAction(action=action, onTriggeredAction=triggeredAction, onHoveredAction=hoveredAction)
                 # there is no mapping of class to be exposed, only information added to parent QMenu itself
                 return dict()
-            title = f"{db_name} | {className}"
+            title = "{db_name} | {className}".format(db_name=db_name, className=className)
             submenuDict[cl] = QMenu(title=title, parent=parentMenu)
             parentMenu.addMenu(submenuDict[cl])
             # inserting an entry for every feature of each class in its own context menu
