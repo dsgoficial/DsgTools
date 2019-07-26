@@ -33,7 +33,7 @@ import sys
 from . import resources_rc
 
 currentPath = os.path.dirname(__file__)
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(currentPath))
 
 from qgis.utils import showPluginHelp
 from qgis.core import QgsApplication
@@ -46,7 +46,7 @@ except Exception as e:
 
 try:
     # check version in metadata
-    with open(os.path.join(os.path.dirname(__file__), 'metadata.txt'), 'r') as meta:
+    with open(os.path.join(currentPath, 'metadata.txt'), 'r') as meta:
         metadata = meta.read()
         for line in metadata.split("\n"):
             if line.strip().startswith("version="):
@@ -55,9 +55,9 @@ try:
             commit = os.popen("cd {} && git log -1".format(currentPath)).readlines()[0].strip().split(" ")[1]
             # add the last commit to version tag
             with open(os.path.join(currentPath, 'metadata.txt'), 'w') as meta:
-                metadata.replace(version, "{0}_{1}".format(version, commit))
+                metadata = metadata.replace(version, "{0}_{1}".format(version, commit))
                 meta.write(metadata)
-except:
+except Exception as e:
     pass
 
 from .gui.guiManager import GuiManager
