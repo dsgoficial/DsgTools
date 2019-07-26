@@ -479,14 +479,10 @@ class GenericSelectionTool(QgsMapTool):
             if '/' in dsUri or '\\' in dsUri:
                 db_name = dsUri.split("|")[0] if "|" in dsUri else dsUri
                 db_name = os.path.basename(db_name.split("'")[1]  if "'" in db_name else db_name)
-                # data source is a file, not a postgres database
-                dbIsFile = True
             elif 'memory' in dsUri:
                 db_name = self.tr('{0} (Memory Layer)').format(className)
-                dbIsFile = True
             else:
                 db_name = dsUri.split("'")[1]
-                dbIsFile = False
             if len(menuDict) == 1:
                 # if dictionaty has only 1 class, no need for an extra QMenu - features will be enlisted directly
                 # order features by ID to be displayer ordered
