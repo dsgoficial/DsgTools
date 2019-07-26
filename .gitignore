@@ -72,3 +72,7 @@ gui/DatabaseTools/ConversionTools/conversion_map.json
 # =========================
 *.gpkg-shm
 *.gpkg-wal
+
+# Built files
+# =========================
+gui/AboutAndFurtherInfo/ui_about_.ui
