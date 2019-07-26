@@ -28,13 +28,13 @@ from qgis.PyQt.QtWidgets import QDialog
 with open(os.path.join(os.path.dirname(__file__), 'ui_about.ui'), 'r') as about, \
      open(os.path.join(os.path.dirname(__file__), '..', '..', 'metadata.txt'), 'r') as meta, \
      open(os.path.join(os.path.dirname(__file__), 'ui_about_.ui'), 'w') as filledUi:
-     t = Template(about.read())
-     for line in meta.readlines():
-         if line.strip().startswith("version="):
+    t = Template(about.read())
+    for line in meta.readlines():
+        if line.strip().startswith("version="):
             version = line.split("=")[1].strip()
             break
-     t = t.safe_substitute(version=version)
-     filledUi.write(t)
+    t = t.safe_substitute(version=version)
+    filledUi.write(t)
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'ui_about_.ui'))
 
