@@ -54,9 +54,10 @@ try:
         if "dev" in version:
             commit = os.popen("cd {} && git log -1".format(currentPath)).readlines()[0].strip().split(" ")[1]
             # add the last commit to version tag
-            with open(os.path.join(currentPath, 'metadata.txt'), 'w') as meta:
-                metadata = metadata.replace(version, "{0}_{1}".format(version, commit))
-                meta.write(metadata)
+            if commit not in version:
+                with open(os.path.join(currentPath, 'metadata.txt'), 'w') as meta:
+                    metadata = metadata.replace(version, "{0}_{1}".format(version, commit))
+                    meta.write(metadata)
 except Exception as e:
     pass
 
