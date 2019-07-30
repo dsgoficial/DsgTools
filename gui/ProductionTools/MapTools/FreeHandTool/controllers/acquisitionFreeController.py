@@ -225,8 +225,7 @@ class AcquisitionFreeController(object):
         reshapeLine_ = self.reprojectGeometry(reshapeLine)
         rsLine = self.simplifyGeometry(reshapeLine_, tolerance)
         request = core.QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
-        
-        for feat in layer.getFeatures(request):
+        for feat in layer.getSelectedFeatures(request) if layer.selectedFeatureCount() > 0 else layer.getFeatures(request):
             geom = feat.geometry() # geometria que receberá o reshape.
             if geom.intersects(rsLine): # Se intersecta e transforma frompolyline em geometria.
                 geom.reshapeGeometry(QgsLineString([QgsPoint(p) for p in rsLine.asPolyline()])) # realiza o reshape entre a linha e a geometria.
