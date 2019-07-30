@@ -32,6 +32,7 @@ from .GenericSelectionTool.genericSelectionTool import GenericSelectionTool
 from .Acquisition.acquisition import Acquisition
 from .FlipLineTool.flipLineTool import FlipLine
 from .FreeHandTool.freeHandMain import FreeHandMain
+from .FreeHandTool.freeHandReshape import FreeHandReshape
 from qgis.PyQt.QtCore import QObject
 
 class MapToolsGuiManager(QObject):
@@ -65,10 +66,14 @@ class MapToolsGuiManager(QObject):
         self.acquisition = Acquisition(self.iface)
         self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
         self.acquisition.setToolEnabled()
-        #adding free hand tool
+        #adding free hand tool (acquisition)
         self.freeHandAcquisiton = FreeHandMain(self.iface)
         self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
         self.freeHandAcquisiton.acquisitionFreeController.setToolEnabled()
+        #adding free hand tool (acquisition)
+        self.freeHandReshape = FreeHandReshape(self.iface)
+        self.freeHandReshape.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.freeHandReshape.acquisitionFreeController.setToolEnabled()
         self.initiateToolsSignals()
 
     def resetCurrentLayerSignals(self):
@@ -92,7 +97,8 @@ class MapToolsGuiManager(QObject):
         """
         Connects all tools' signals.
         """
-        for tool in [self.flipLineTool, self.acquisition, self.freeHandAcquisiton.acquisitionFreeController]:
+        for tool in [self.flipLineTool, self.acquisition, self.freeHandAcquisiton.acquisitionFreeController, \
+                     self.freeHandReshape.acquisitionFreeController]:
             # connect current layer changed signal to all tools that use it
             self.iface.currentLayerChanged.connect(tool.setToolEnabled)
             # connect editing started/stopped signals to all tools that use it
@@ -101,12 +107,13 @@ class MapToolsGuiManager(QObject):
             # connect edit button toggling signal to all tools that use it
             self.iface.actionToggleEditing().triggered.connect(tool.setToolEnabled)
         # free hand has its own signal connected when started
-        self.freeHandAcquisiton.acquisitionFreeController.actionAcquisitionFree.triggered.connect(\
-                self.freeHandAcquisiton.acquisitionFreeController.activateTool)
-        self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.acquisitionFinished.connect(\
-                self.freeHandAcquisiton.acquisitionFreeController.createFeature)
-        self.freeHandAcquisiton.acquisitionFreeController.acquisitionFree.reshapeLineCreated.connect(\
-                self.freeHandAcquisiton.acquisitionFreeController.reshapeSimplify)
+        for free_hand_tool in [self.freeHandAcquisiton, self.freeHandReshape]:
+            free_hand_tool.acquisitionFreeController.actionAcquisitionFree.triggered.connect(\
+                    free_hand_tool.acquisitionFreeController.activateTool)
+            free_hand_tool.acquisitionFreeController.acquisitionFree.acquisitionFinished.connect(\
+                    free_hand_tool.acquisitionFreeController.createFeature)
+            free_hand_tool.acquisitionFreeController.acquisitionFree.reshapeLineCreated.connect(\
+                    free_hand_tool.acquisitionFreeController.reshapeSimplify)
 
     def activateGenericTool(self):
         self.iface.mapCanvas().setMapTool(self.genericTool)
