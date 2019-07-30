@@ -17,12 +17,7 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
 
-from builtins import object
-from qgis.PyQt.QtCore import QObject
-from .models.acquisitionFree import AcquisitionFree
-from .controllers.acquisitionFreeController import AcquisitionFreeController
 from .freeHandMain import FreeHandMain
 
 class FreeHandReshape(FreeHandMain):    
