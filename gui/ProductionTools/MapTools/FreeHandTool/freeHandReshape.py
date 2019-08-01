@@ -17,61 +17,26 @@ Some parts were inspired by QGIS plugin FreeHandEditting
  *                                                                         *
  ***************************************************************************/
 """
-from __future__ import absolute_import
 
-from builtins import object
-from qgis.PyQt.QtCore import QObject
-from .models.acquisitionFree import AcquisitionFree
-from .controllers.acquisitionFreeController import AcquisitionFreeController
+from .freeHandMain import FreeHandMain
 
-class FreeHandMain(QObject):    
+class FreeHandReshape(FreeHandMain):    
 
     def __init__(self, iface):
         #construtor
-        super(FreeHandMain, self).__init__()
-        self.iface = iface
-        self.acquisitionFree = AcquisitionFree(iface)
-        self.acquisitionFreeController = AcquisitionFreeController(
-            self.acquisitionFree,
-            iface
-        )
+        super(FreeHandReshape, self).__init__(iface)
+        self.acquisitionFree.controlPressed = True
 
     def addTool(self, manager, callback, parentMenu, iconBasePath):
-        icon_path = iconBasePath + 'free_hand.png'
+        icon_path = iconBasePath + 'free_hand_reshape.png'
         action = manager.add_action(
             icon_path,
-            text=self.tr('DSGTools: Free Hand Acquisition'),
+            text=self.tr('DSGTools: Free Hand Reshape'),
             callback=self.run,
             add_to_menu=False,
             add_to_toolbar=True,
             withShortcut=True,
-            tooltip = self.tr('DSGTools: Free Hand Acquisition\nAcquires polygon or line features from mouse movement.'),
+            tooltip = self.tr('DSGTools: Free Hand Reshape\nReshapes polygon or line features from mouse movement.'),
             parentToolbar=parentMenu
         )
         self.setAction(action)
-
-    def setAcquisitionFreeController(self, acquisitionFreeController):
-        self.acquisitionFreeController = acquisitionFreeController
-    
-    def getAcquisitionFreeController(self):
-        return self.acquisitionFreeController
-
-    def setIface(self, iface):
-        self.iface = iface 
-
-    def getIface(self):
-        return self.iface
-
-    def registerActionOnController(self, action):
-        acquisitionFreeController = self.getAcquisitionFreeController()
-        acquisitionFreeController.setActionAcquisitionFree(action)
-
-    def setAction(self, action):
-        self.registerActionOnController(action)
-        self.action = action
-
-    def getAction(self):
-        return self.action
-
-    def run(self):
-        pass
