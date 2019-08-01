@@ -44,22 +44,22 @@ try:
 except Exception as e:
     pass
 
-try:
-    # check version in metadata
-    with open(os.path.join(currentPath, 'metadata.txt'), 'r') as meta:
-        metadata = meta.read()
-        for line in metadata.split("\n"):
-            if line.strip().startswith("version="):
-                version = line.split("=")[1].strip()
-        if "dev" in version:
-            commit = os.popen("cd {} && git log -1".format(currentPath)).readlines()[0].strip().split(" ")[1]
-            # add the last commit to version tag
-            if commit not in version:
-                with open(os.path.join(currentPath, 'metadata.txt'), 'w') as meta:
-                    metadata = metadata.replace(version, "{0}_{1}".format(version, commit))
-                    meta.write(metadata)
-except Exception as e:
-    pass
+# try:
+#     # check version in metadata
+#     with open(os.path.join(currentPath, 'metadata.txt'), 'r') as meta:
+#         metadata = meta.read()
+#         for line in metadata.split("\n"):
+#             if line.strip().startswith("version="):
+#                 version = line.split("=")[1].strip()
+#         if "dev" in version:
+#             commit = os.popen("cd {} && git log -1".format(currentPath)).readlines()[0].strip().split(" ")[1]
+#             # add the last commit to version tag
+#             if commit not in version:
+#                 with open(os.path.join(currentPath, 'metadata.txt'), 'w') as meta:
+#                     metadata = metadata.replace(version, "{0}_{1}".format(version, commit))
+#                     meta.write(metadata)
+# except Exception as e:
+#     pass
 
 from .gui.guiManager import GuiManager
 from .core.DSGToolsProcessingAlgs.dsgtoolsProcessingAlgorithmProvider import DSGToolsProcessingAlgorithmProvider
