@@ -240,7 +240,7 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
@@ -250,6 +250,29 @@ p, li { white-space: pre-wrap; }
 &lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Esse plugin foi desenvolvido de acordo com Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais (INDE).&lt;/span&gt;&lt;/p&gt;
 &lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
 &lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: 4.0-dev&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <location filename="../gui/AboutAndFurtherInfo/ui_about.ui" line="89"/>
+        <source>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Brazilian Army&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Geographic Service Bureau&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;This plugin was developed in accordance with the Technical Specifications of Brazilian National Spatial Data Infrastructure.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Version: ${version}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;.SF NS Text&apos;; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Exército Brasileiro&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Diretoria de Serviço Geográfico&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Este plugin foi desenvolvido de acordo com o preconizado nas Especificações Técnicas da Infraestrutura Nacional de Dados Espaciais.&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:&apos;MS Shell Dlg 2&apos;; font-size:10pt; font-weight:600;&quot;&gt;Versão: ${version}&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -629,27 +652,27 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="14"/>
         <source>Alter User Password</source>
-        <translation type="unfinished">Alterar Senha de Usuário</translation>
+        <translation>Alterar Senha de Usuário</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="20"/>
         <source>Repeat New Password</source>
-        <translation type="unfinished">Repetir Nova Senha</translation>
+        <translation>Repetir nova senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="37"/>
         <source>New Password</source>
-        <translation type="unfinished">Nova Senha</translation>
+        <translation>Nova senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="54"/>
         <source>Alter Password</source>
-        <translation type="unfinished">Alterar Senha</translation>
+        <translation>Alterar senha</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.ui" line="61"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/alter_user_password.py" line="73"/>
@@ -964,7 +987,8 @@ Usuários com erro:</translation>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/attributeRulesEditor.py" line="92"/>
         <source>Invalid tags for attributeRulesEditor!
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Tag inválida para o editor de regras de atributo!
+</translation>
     </message>
 </context>
 <context>
@@ -4016,12 +4040,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="20"/>
         <source>Form</source>
-        <translation type="unfinished">Formulário</translation>
+        <translation>Formulário</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="26"/>
         <source>Select Projection</source>
-        <translation type="unfinished">Selecione uma projeção</translation>
+        <translation>Selecione uma projeção</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="43"/>
@@ -4031,7 +4055,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="60"/>
         <source>2.1.3</source>
-        <translation type="unfinished">2.1.3</translation>
+        <translation>2.1.3</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="70"/>
@@ -4041,7 +4065,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="266"/>
         <source>&lt;prefix&gt;_&lt;database name&gt;_&lt;sufix&gt;</source>
-        <translation type="unfinished">&lt;prefixo&gt;_&lt;nome do banco de dados&gt;_&lt;sufixo&gt;</translation>
+        <translation>&lt;prefixo&gt;_&lt;nome do banco de dados&gt;_&lt;sufixo&gt;</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="100"/>
@@ -4051,7 +4075,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="314"/>
         <source>Database Name</source>
-        <translation type="unfinished">Nome do banco de dados</translation>
+        <translation>Nome do banco de dados</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="154"/>
@@ -4080,12 +4104,12 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="43"/>
         <source>Create from EDGV template</source>
-        <translation type="unfinished">Criar do template EDGV</translation>
+        <translation>Criar do template EDGV</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="81"/>
         <source>Create from a database template</source>
-        <translation type="unfinished">Criar banco a partir de um template</translation>
+        <translation>Criar banco a partir de um template</translation>
     </message>
     <message>
         <location filename="../CustomWidgets/databaseParameterWidget.ui" line="96"/>
@@ -4099,12 +4123,12 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="287"/>
         <source>Prefix (optional)</source>
-        <translation type="unfinished">Prefixo (opcional)</translation>
+        <translation>Prefixo (opcional)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="341"/>
         <source>Sufix (optional)</source>
-        <translation type="unfinished">Sufixo (opcional)</translation>
+        <translation>Sufixo (opcional)</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="146"/>
@@ -4116,17 +4140,17 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="131"/>
         <source>Select Frame Layer</source>
-        <translation type="unfinished">Selecione a camada de moldura</translation>
+        <translation>Selecione a camada de moldura</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="178"/>
         <source>Select index attribute</source>
-        <translation type="unfinished">Selecione o atributo MI</translation>
+        <translation>Selecione o atributo MI</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="225"/>
         <source>Select INOM attribute</source>
-        <translation type="unfinished">Selecione o atributo INOM</translation>
+        <translation>Selecione o atributo INOM</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.py" line="61"/>
@@ -4162,12 +4186,12 @@ para moldura não for selecionada, a moldura não será criada </translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="70"/>
         <source>3.0</source>
-        <translation type="unfinished">3.0</translation>
+        <translation>3.0</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabasePropertiesWidgets/BasicPropertyWidgets/databaseParameterWidget.ui" line="65"/>
         <source>2.1.3 Pro</source>
-        <translation type="unfinished">2.1.3 Pro</translation>
+        <translation>2.1.3 Pro</translation>
     </message>
 </context>
 <context>
@@ -4614,17 +4638,17 @@ Passo de conversão {0} iniciado...
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.ui" line="14"/>
         <source>Manage profiles</source>
-        <translation type="unfinished">Gerenciar perfis</translation>
+        <translation>Gerenciar Perfis</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.ui" line="20"/>
         <source>Apply Changes</source>
-        <translation type="unfinished">Aplicar mudanças</translation>
+        <translation>Aplicar mudanças</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.ui" line="27"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/dbProfileManager.py" line="50"/>
@@ -8524,37 +8548,37 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
         <translation>DSGTools: Seletor Genérico</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="485"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="483"/>
         <source>{0} (Memory Layer)</source>
         <translation>{0} (Camada de memória)</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="528"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="524"/>
         <source>{0} From Class {1}</source>
         <translation>{0} da camada {1}</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="564"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="560"/>
         <source>Open All Feature Forms</source>
         <translation>Abrir todos os formulários de feição</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="579"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="575"/>
         <source>Select All Features</source>
         <translation>Selecionar todos</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="574"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="570"/>
         <source>Selected Features</source>
         <translation>Selecionar feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="578"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="574"/>
         <source>Deselect All Features</source>
         <translation>Remover seleção de todas as feições</translation>
     </message>
     <message>
-        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="575"/>
+        <location filename="../gui/ProductionTools/MapTools/GenericSelectionTool/genericSelectionTool.py" line="571"/>
         <source>Not Selected Features</source>
         <translation>Feições não selecionadas</translation>
     </message>
@@ -11399,7 +11423,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="33"/>
         <source>Load by Class</source>
-        <translation type="unfinished">Carrega por Classe</translation>
+        <translation>Carregar por Classe</translation>
     </message>
     <message>
         <location filename="../LayerTools/load_by_class_base.ui" line="43"/>
@@ -11434,22 +11458,22 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="44"/>
         <source>Select the classes</source>
-        <translation type="unfinished">Selecione as Classes</translation>
+        <translation>Selecione as Classes</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="113"/>
         <source>Select All</source>
-        <translation type="unfinished">Selecionar Todos</translation>
+        <translation>Selecionar Todas</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="199"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="219"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="LayerTools/load_by_class.py" line="105"/>
@@ -11494,7 +11518,7 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="50"/>
         <source>Filter:</source>
-        <translation type="unfinished">Filtro:</translation>
+        <translation>Filtro:</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class.py" line="106"/>
@@ -11509,17 +11533,17 @@ Camada</translation>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="96"/>
         <source>Options</source>
-        <translation type="unfinished">Opções</translation>
+        <translation>Opções</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="136"/>
         <source>List only parent layers</source>
-        <translation type="unfinished">Listar somente classes pai</translation>
+        <translation>Listar somente classes pai</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class_base.ui" line="151"/>
         <source>Set Style</source>
-        <translation type="unfinished">Ajustar estilo</translation>
+        <translation>Ajustar estilo</translation>
     </message>
     <message>
         <location filename="../gui/LayerTools/load_by_class.py" line="206"/>
@@ -12191,23 +12215,23 @@ Camada</translation>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="14"/>
         <source>Multiple Datasource Selection</source>
-        <translation type="unfinished">Seleção de Múltiplas Fontes de Dados</translation>
+        <translation>Seleção de Múltiplas Fontes de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="26"/>
         <source>Nr. Datasources</source>
-        <translation type="unfinished">Qtd. de Fontes
+        <translation>Qtd. de Fontes
     de Dados</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="112"/>
         <source>Ok</source>
-        <translation type="unfinished">Ok</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.ui" line="131"/>
         <source>Cancel</source>
-        <translation type="unfinished">Cancelar</translation>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <location filename="../gui/CustomWidgets/DatabaseConversionWidgets/MultiDsSelectorWidgets/SupportedDrivers/multiNewDsSelector.py" line="79"/>
@@ -13629,7 +13653,7 @@ Camada</translation>
     <message>
         <location filename="../gui/DatabaseTools/UserTools/PermissionManagerWizard/permissionWizardProfile.ui" line="14"/>
         <source>WizardPage</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">WizardPage</translation>
     </message>
 </context>
 <context>
@@ -18658,49 +18682,49 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="20"/>
         <source>Create Validation Workspace</source>
-        <translation type="unfinished">Criar Workspace de Validação</translation>
+        <translation>Criar Workspace de Validação</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="28"/>
         <source>Workflow Name</source>
-        <translation type="unfinished">Nome do Fluxo de Trabalho</translation>
+        <translation>Nome do Fluxo de Trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="35"/>
         <source>Enter a workflow name</source>
-        <translation type="unfinished">Insira o nome do fluxo de trabalho</translation>
+        <translation>Insira o nome do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="42"/>
         <source>Author Name</source>
-        <translation type="unfinished">Nome do Autor</translation>
+        <translation>Nome do Autor</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="49"/>
         <source>Enter a workflow author name</source>
-        <translation type="unfinished">Insira o nome do autor do fluxo de trabalho</translation>
+        <translation>Insira o nome do autor do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="56"/>
         <source>Workflow Version</source>
-        <translation type="unfinished">Versão do fluxo
-  de trabalho</translation>
+        <translation>Versão do fluxo
+de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="63"/>
         <source>Enter a workflow version</source>
-        <translation type="unfinished">Insira a versão do fluxo de trabalho</translation>
+        <translation>Insira a versão do fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="70"/>
         <source>Workflow Version Date</source>
-        <translation type="unfinished">Data da versão do
- fluxo de trabalho</translation>
+        <translation>Data da versão do
+fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.ui" line="77"/>
         <source>dd/MM/yyyy</source>
-        <translation type="unfinished">dd/MM/yyyy</translation>
+        <translation>dd/MM/yyyy</translation>
     </message>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="57"/>
@@ -18715,7 +18739,7 @@ Não foi possível obter o tempo total gasto.</translation>
     <message>
         <location filename="../gui/ProductionTools/Toolboxes/ValidationToolbox/validationWorkflowCreator.py" line="71"/>
         <source>Invalid tag for attributeRulesEditor!</source>
-        <translation type="unfinished"></translation>
+        <translation>Tag inválida para o editor de regras de atributo!</translation>
     </message>
 </context>
 <context>
