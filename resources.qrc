@@ -47,6 +47,7 @@
         <file>icons/home.png</file> 
         <file>icons/bug.png</file> 
         <file>icons/free_hand.png</file>
+        <file>icons/free_hand_reshape.png</file>
         <file>icons/flipLineTool.png</file>
         <file>icons/rasterToolTip.png</file>
         <file>icons/band_tooltip.png</file>
