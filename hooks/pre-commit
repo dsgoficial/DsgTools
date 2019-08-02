@@ -11,15 +11,14 @@ try:
             if line.strip().startswith("version="):
                 version = line.split("=")[1].strip()
         if "dev" in version:
-            print(version)
             version_raw = version.rsplit("_", 1)[0] if "_" in version else version
-            print(version)
             commit = os.popen("cd {0} && git log -1".format(rootPath)).readlines()[0].strip().split(" ")[1]
             # add the last commit to version tag
             # if commit not in version:
             with open(os.path.join(rootPath, 'metadata.txt'), 'w') as meta:
                 metadata = metadata.replace(version, "{0}_{1}".format(version_raw, commit))
                 meta.write(metadata)
+            print("New dev version tag: {0}_{1}".format(version_raw, commit))
             os.popen('cd {0} && git add metadata.txt'.format(rootPath))
 except Exception as e:
     print("Could not apply version check (for dev versions): '{0}'".format(str(e)))
