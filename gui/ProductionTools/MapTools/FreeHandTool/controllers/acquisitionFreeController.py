@@ -129,8 +129,6 @@ class AcquisitionFreeController(object):
         #Parâmetro de entrada: layer (camada em uso)
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
-        if layer.crs().projectionAcronym() == "longlat":
-            return 0.000
         return parameters[u'freeHandTolerance']
 
     def simplifyGeometry(self, geom, tolerance):
@@ -139,6 +137,10 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
         sGeom = geom
+        source_crs = self.iface.activeLayer().crs()
+        dest_crs = core.QgsCoordinateReferenceSystem(3857)
+        tr = core.QgsCoordinateTransform(source_crs, dest_crs, core.QgsCoordinateTransformContext())
+        sGeom.transform(tr)
         for x in range(int(parameters[u'algIterations'])):
             sGeom = sGeom.simplify(float(tolerance))
             try:
@@ -155,7 +157,8 @@ class AcquisitionFreeController(object):
                 )
                 QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
                 return geom
-                
+        tr = core.QgsCoordinateTransform(dest_crs, source_crs, core.QgsCoordinateTransformContext())
+        sGeom.transform(tr)
         return sGeom
 
     def reprojectGeometry(self, geom):
