@@ -28,6 +28,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorA
     DonutHoleExtractorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
+    RuleStatisticsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import \
     UpdateOriginalLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import \
@@ -166,7 +168,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 FileInventoryAlgorithm(),
                 RaiseFlagsAlgorithm(),
                 IdentifyAndFixInvalidGeometriesAlgorithm(),
-                PecCalculatorAlgorithm()]
+                PecCalculatorAlgorithm(),
+                RuleStatisticsAlgorithm()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
