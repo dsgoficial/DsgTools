@@ -27,16 +27,20 @@ class FreeHandReshape(FreeHandMain):
         super(FreeHandReshape, self).__init__(iface)
         self.acquisitionFree.controlPressed = True
 
-    def addTool(self, manager, callback, parentMenu, iconBasePath):
+    def addTool(self, manager, callback, parentMenu, iconBasePath, parentButton=None, defaultButton=False):
+        self.parentButton = parentButton
         icon_path = iconBasePath + 'free_hand_reshape.png'
         action = manager.add_action(
             icon_path,
             text=self.tr('DSGTools: Free Hand Reshape'),
             callback=self.run,
             add_to_menu=False,
-            add_to_toolbar=True,
+            add_to_toolbar=False,
             withShortcut=True,
             tooltip = self.tr('DSGTools: Free Hand Reshape\nReshapes polygon or line features from mouse movement.'),
-            parentToolbar=parentMenu
+            parentToolbar=parentMenu,
+            parentButton=parentButton
         )
         self.setAction(action)
+        if defaultButton:
+            self.parentButton.setDefaultAction(action) 
