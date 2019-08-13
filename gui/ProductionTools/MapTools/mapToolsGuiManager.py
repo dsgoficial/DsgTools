@@ -67,17 +67,19 @@ class MapToolsGuiManager(QObject):
         self.acquisition = Acquisition(self.iface)
         self.acquisition.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
         self.acquisition.setToolEnabled()
+        #adding stack
+        self.freeHandStackButton = self.manager.createToolButton(self.toolbar, u'FreeHandTools')
         #adding free hand tool (acquisition)
         self.freeHandAcquisiton = FreeHandMain(self.iface)
-        self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.freeHandAcquisiton.addTool(self.manager, None, self.parentMenu, self.iconBasePath, parentButton=self.freeHandStackButton, defaultButton=True)
         self.freeHandAcquisiton.acquisitionFreeController.setToolEnabled()
         #adding free hand tool (acquisition)
         self.freeHandReshape = FreeHandReshape(self.iface)
-        self.freeHandReshape.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.freeHandReshape.addTool(self.manager, None, self.parentMenu, self.iconBasePath, parentButton=self.freeHandStackButton)
         self.freeHandReshape.acquisitionFreeController.setToolEnabled()
         #adding label toggling tool
         self.labelTool = LabelTogglingTool(self.iface)
-        self.labelTool.addTool(self.manager, None, self.parentMenu, self.iconBasePath)
+        self.labelTool.addTool(self.manager, None, self.toolbar, self.iconBasePath)
         #initiate tools signals
         self.initiateToolsSignals()
 
