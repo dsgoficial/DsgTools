@@ -98,10 +98,11 @@ class LabelTogglingTool(QgsMapTool):
         except:
             pass
 
-    def run(self, iface, mode=AllLayers):
+    def run(self, iface, mode=None):
         """
         Activate tool.
         """
+        mode = AllLayers if mode is None else mode
         try:
             self.stackButton.setDefaultAction(self.sender())
         except:
