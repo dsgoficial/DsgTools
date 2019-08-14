@@ -298,8 +298,10 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
         return successList, exceptionDict
     
     def getStyleDir(self, versionList):
-        if versionList != []:
+        if versionList != [] and versionList[0] in self.serverWidget.abstractDb.versionFolderDict:
             return os.path.join(os.path.dirname(__file__),'..', '..', 'core', 'Styles', self.serverWidget.abstractDb.versionFolderDict[versionList[0]])
+        elif versionList != []:
+            return os.path.join(os.path.dirname(__file__),'..', '..', 'core', 'Styles', "Non_EDGV")
         return ""
     
     def getStylesFromDbs(self, perspective = 'style'):

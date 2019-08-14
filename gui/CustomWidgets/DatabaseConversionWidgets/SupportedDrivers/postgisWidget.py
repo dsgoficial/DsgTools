@@ -41,15 +41,16 @@ class PostgisWidget(AbstractSelectionWidget):
         # reset source attribute value as now it is defined as a PostGIS
         self.source = DsgEnums.PostGIS
         # initiate new instance of actual class widget
-        self.selectionWidget = self.getNewSelectionWidget(parent=parent)
+        self.selectionWidget = self.getNewSelectionWidget(parent=parent, isStatic=True)
 
-    def getNewSelectionWidget(self, parent=None):
+    def getNewSelectionWidget(self, parent=None, isStatic=True):
         """
         Gets the widget according to selected datasource on datasource combobox on first page.
         :param parent: (QWidget) widget parent to newly instantiated geopackge widget.
+        :param isStatic: (bool) indicates whether server selection will be static (no default).
         :return: (QWidget) driver widget, if it's supported by conversion tool.
         """
-        return ConnectionComboBox(parent=parent)
+        return ConnectionComboBox(parent=parent, isStatic=True)
 
     def getDatasourceConnectionName(self):
         """
@@ -74,16 +75,14 @@ class PostgisWidget(AbstractSelectionWidget):
         Sets the datasource selected on current widget.
         :param newDatasource: (dict) { db : (host, port, username, password) }.
         """
+        # the input parameter is a dict due to a standard behavior on the other widgets (keep parallel)
         if self.selectionWidget:
-            for db, (host, port, username, password) in newDatasource.items():
-                # set selected host as container's default
-                self.selectionWidget.viewServers.\
-                    setDefaultConnectionParameters(host=host, port=port, user=username, password=password)
-                # sel selected db
-                # in order to emit datasource changed signal, force a change of index
-                idx = self.selectionWidget.connectionSelectorComboBox.findText(db)
-                self.selectionWidget.connectionSelectorComboBox.setCurrentText(db)
-                self.selectionWidget.loadDatabase(idx)
+            for db, (serverName, host, port, username, password) in newDatasource.items():
+                self.selectionWidget.setHost(serverName)
+                self.selectionWidget.connectionSelectorComboBox.setCurrentIndex(
+                    self.selectionWidget.connectionSelectorComboBox.findText(db)
+                )
+                return # first item will be set (if more than one is given)
 
     def getDatasource(self):
         """

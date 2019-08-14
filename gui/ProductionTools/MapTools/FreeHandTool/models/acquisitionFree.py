@@ -168,12 +168,12 @@ class AcquisitionFree(gui.QgsMapTool):
         elif event.key() == QtCore.Qt.Key_Escape:
             self.cancelEdition()
             event.ignore()
-        elif event.key() == QtCore.Qt.Key_Control:
-            self.controlPressed = True
+        # elif event.key() == QtCore.Qt.Key_Control:
+        #     self.controlPressed = True
 
-    def keyReleaseEvent(self, event):
-        if event.key() == QtCore.Qt.Key_Control:
-            self.controlPressed = False
+    # def keyReleaseEvent(self, event):
+        # if event.key() == QtCore.Qt.Key_Control:
+        #     self.controlPressed = False
 
     def cancelEdition(self): 
         #Método para cancelar aquisição

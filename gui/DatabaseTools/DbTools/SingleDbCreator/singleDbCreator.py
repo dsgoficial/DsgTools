@@ -145,7 +145,7 @@ class CreateSingleDatabase(QtWidgets.QDialog, FORM_CLASS):
         """
         callback = lambda : self.manager.createDatabase(isBatchCreation=False)
         self.manager.addTool(
-            text=self.tr('Create a PostGIS or a SpatiaLite Database'),
+            text=self.tr('Create a PostGIS, SpatiaLite or Geopackage Database'),
             callback=callback,
             parentMenu=self.parentMenu,
             icon='database.png',

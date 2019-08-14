@@ -75,7 +75,7 @@ class BatchDbCreator(QtWidgets.QWizard, FORM_CLASS):
         """
         callback = lambda : self.manager.createDatabase(isBatchCreation=True)
         self.manager.addTool(
-            text=self.tr('Create batches of PostGIS/SpatiaLite Databases'),
+            text=self.tr('Create batches of PostGIS, SpatiaLite or Geopackage Databases'),
             callback=callback,
             parentMenu=self.parentMenu,
             icon='batchDatabase.png',

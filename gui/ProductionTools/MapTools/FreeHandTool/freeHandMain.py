@@ -36,19 +36,23 @@ class FreeHandMain(QObject):
             iface
         )
 
-    def addTool(self, manager, callback, parentMenu, iconBasePath):
+    def addTool(self, manager, callback, parentMenu, iconBasePath, parentButton=None, defaultButton=False):
+        self.parentButton = parentButton
         icon_path = iconBasePath + 'free_hand.png'
         action = manager.add_action(
             icon_path,
             text=self.tr('DSGTools: Free Hand Acquisition'),
             callback=self.run,
             add_to_menu=False,
-            add_to_toolbar=True,
+            add_to_toolbar=False,
             withShortcut=True,
-            tooltip = self.tr('DSGTools: Free Hand Acquisition\nAcquires polygon or linestring features with mouse movement.\nIf CTRL is held, overlapped feature is reshaped.'),
-            parentToolbar=parentMenu
+            tooltip = self.tr('DSGTools: Free Hand Acquisition\nAcquires polygon or line features from mouse movement.'),
+            parentToolbar=parentMenu,
+            parentButton=parentButton
         )
         self.setAction(action)
+        if defaultButton:
+            self.parentButton.setDefaultAction(action)
 
     def setAcquisitionFreeController(self, acquisitionFreeController):
         self.acquisitionFreeController = acquisitionFreeController
@@ -74,4 +78,7 @@ class FreeHandMain(QObject):
         return self.action
 
     def run(self):
-        pass
+        try:
+            self.parentButton.setDefaultAction(self.action)
+        except:
+            pass

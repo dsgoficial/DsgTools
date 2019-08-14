@@ -59,9 +59,20 @@ tags
 .pydevproject
 .vscode/
 
-#DSGTools styles
+# DSGTools styles
 # =========================
 Styles/
 LayerTools/CustomFormTools/formsCustom
-core/LayerTools/CustomFormTools/formsCustom
+
+# DSGTools conversion maps
+# =========================
 gui/DatabaseTools/ConversionTools/conversion_map.json
+
+# Physical database file handling 
+# =========================
+*.gpkg-shm
+*.gpkg-wal
+
+# Built files
+# =========================
+gui/AboutAndFurtherInfo/ui_about_.ui

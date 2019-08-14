@@ -138,26 +138,29 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
             # in case a valid driver is selected, add its widget to the interface
             source = self.sourceNameDict[currentDbSource]
             if source != DsgEnums.NoDriver:
-                w = DatasourceContainerWidget(source=source, isInput=inputPage)
+                container = DatasourceContainerWidget(source=source, isInput=inputPage)
                 # connect removal widget signal to new widget
-                w.removeWidget.connect(self.removeWidget)
+                container.removeWidget.connect(self.removeWidget)
                 # connect datasource change signal to this class datasource signal change
-                emitWidgetAlias = lambda newAbstract : self.datasourceChanged(newAbstract=newAbstract, containerWidget=w)
-                w.connectionWidget.selectionWidget.dbChanged.connect(emitWidgetAlias)
+                emitWidgetAlias = lambda newAbstract : self.datasourceChanged(
+                                                            newAbstract=newAbstract,
+                                                            containerWidget=container
+                                                        )
+                container.connectionWidget.selectionWidget.dbChanged.connect(emitWidgetAlias)
                 # connect datasource change signal to its filters reset method
-                w.connectionWidget.selectionWidget.dbChanged.connect(w.clearFilters)
+                container.connectionWidget.selectionWidget.dbChanged.connect(container.clearFilters)
                 # connect filtering settings changed signal to this class signal on filtering settings change
-                w.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
+                container.filterSettingsChanged.connect(self.containerFilterSettingsChanged)
                 # add new driver container to GUI 
-                self.datasourceLayout.addWidget(w)
+                self.datasourceLayout.addWidget(container)
                 # update dict of active widgets
-                self.addElementToDict(k=currentDbSource, e=w, d=self.activeDrivers)
+                self.addElementToDict(k=currentDbSource, e=container, d=self.activeDrivers)
                 # reset all driver's groupboxes names
                 self.resetWidgetsTitle()
                 # emit active widget that has been added
-                self.activeWidgetAdded.emit(w)
+                self.activeWidgetAdded.emit(container)
                 # returns newly added widget
-                return w
+                return container
 
     def addMultiDatasourceWidgets(self):
         """
@@ -167,13 +170,10 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         # identify source
         source = self.sourceNameDict[self.datasourceComboBox.currentText()]
         if source != DsgEnums.NoDriver:
-            # get driver's multi selection dialog
             dlg = MultiDsWidgetFactory.getMultiDsSelector(driver=source)
-            result = dlg.exec_()
-            if not result:
+            if not dlg.exec_():
                 # in case Ok was selected
-                datasourcesDict = dlg.datasources
-                for ds, dsPath in datasourcesDict.items():
+                for ds, dsPath in dlg.datasources.items():
                     # add new widget container for it
                     container = self.addDatasourceWidget()
                     # set datasource to it
@@ -197,13 +197,12 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
     def removeWidget(self, w):
         """
         Removes driver widget from GUI.
-        :param w: (QWidget) driver widget to be removed. 
+        :param w: (QWidget) driver container widget to be removed. 
         """
         # disconnect all widget connected signals
         w.blockSignals(True)
         # remove from active dict
-        driverName = w.connectionWidget.getSelectionWidgetName(source=w.connectionWidget.source)
-        self.activeDrivers[self.tr(driverName)].remove(w)
+        self.activeDrivers[self.tr(w.selectionWidgetName())].remove(w)
         self.datasourceLayout.removeWidget(w)
         # reset all driver's groupboxes names
         self.resetWidgetsTitle()
@@ -218,8 +217,8 @@ class DatasourceManagementWidget(QtWidgets.QWizardPage, FORM_CLASS):
         Keeps track of every container widget's abstract database change.
         """
         # if any abstractDb changes
-        # keep orignal abstract change signal behavior
-        self.datasourceChangedSignal.emit(newAbstract)
+        # # keep orignal abstract change signal behavior
+        # self.datasourceChangedSignal.emit(newAbstract)
         # clear widget's filters
         containerWidget.clearFilters()
         # advise which widget was updated

@@ -59,21 +59,38 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="Geopackage">
+      <attribute name="title">
+       <string>Geopackage</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="SelectFileWidget" name="outputDirSelectorGeopackage" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>ExploreServerWidget</class>
-   <extends>QWidget</extends>
-   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>SelectFileWidget</class>
    <extends>QWidget</extends>
    <header>DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ExploreServerWidget</class>
+   <extends>QWidget</extends>
+   <header>DsgTools.gui.CustomWidgets.ConnectionWidgets.ServerConnectionWidgets.exploreServerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

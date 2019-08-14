@@ -62,19 +62,6 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
         self.abstractDb = None
         self.databases = None
         self.abstractDbFactory = DbFactory()
-    
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'complex.png'
-        text = self.tr('Build Complex Structures')
-        action = manager.add_action(
-            icon_path,
-            text=text,
-            callback=callback,
-            add_to_menu=False,
-            add_to_toolbar=False,
-            parentMenu = parentMenu,
-            parentButton = parentStackButton
-            )
 
     def __del__(self):
         """

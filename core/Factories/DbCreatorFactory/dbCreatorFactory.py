@@ -23,10 +23,12 @@
 from builtins import object
 import os
 
+from qgis.core import Qgis
 from qgis.PyQt.QtSql import QSqlDatabase
 #DSG Tools imports
 from .spatialiteDbCreator import SpatialiteDbCreator
 from .postgisDbCreator import PostgisDbCreator
+from .geopackageDbCreator import GeopackageDbCreator
 
 class DbCreatorFactory(object):
     def createDbCreatorFactory(self, driverName, createParam, parentWidget = None):
@@ -37,10 +39,9 @@ class DbCreatorFactory(object):
         if not ('QSQLITE' in QSqlDatabase.drivers()): #Driver wasn't loaded
             QgsMessageLog.logMessage('QT QSQLITE driver not installed!', 'DSG Tools Plugin', Qgis.Critical)
             return None        
-        
-        if driverName == "QSQLITE":
-            return SpatialiteDbCreator(createParam, parentWidget)
-        if driverName == "QPSQL":
-            return PostgisDbCreator(createParam, parentWidget)
-        else:
-            return None
+        creators = {
+            "QSQLITE" : SpatialiteDbCreator,
+            "QPSQL" : PostgisDbCreator,
+            "GPKG" : GeopackageDbCreator
+        }
+        return creators[driverName](createParam, parentWidget) if driverName in creators else None

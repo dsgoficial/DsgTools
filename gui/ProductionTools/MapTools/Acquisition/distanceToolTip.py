@@ -21,7 +21,14 @@
  ***************************************************************************/
 """
 
-from qgis.core import QgsDistanceArea, QgsCoordinateTransformContext
+from qgis.core import (
+		QgsDistanceArea, 
+		QgsCoordinateTransformContext, 
+		QgsCoordinateReferenceSystem, 
+		QgsCoordinateTransform, 
+		QgsProject, 
+		QgsGeometry
+	)
 
 from DsgTools.gui.ProductionTools.MapTools.Acquisition.toolTip import ToolTip
 
@@ -35,11 +42,15 @@ class DistanceToolTip(ToolTip):
 		self.minSegmentDistance = minSegmentDistance
 
 	def calculateDistance(self, p1, p2):
+		source_crs = self.iface.mapCanvas().mapSettings().destinationCrs()
+		dest_crs = QgsCoordinateReferenceSystem(3857)
+		tr = QgsCoordinateTransform(source_crs, dest_crs, QgsCoordinateTransformContext())
+		p1t = QgsGeometry().fromPointXY(p1)
+		p1t.transform(tr)
+		p2t = QgsGeometry().fromPointXY(p2)
+		p2t.transform(tr)
 		distance = QgsDistanceArea()
-		distance.setSourceCrs(self.iface.activeLayer().crs(), QgsCoordinateTransformContext())
-		# Sirgas 2000
-		distance.setEllipsoid('GRS1980')
-		m = distance.measureLine(p1, p2) 
+		m = distance.measureLine(p1t.asPoint(), p2t.asPoint()) 
 		return m
 
 	def canvasMoveEvent(self, last_p, current_p):

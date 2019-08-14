@@ -79,9 +79,9 @@ class MultiPostgisSelector(QDialog, FORM_CLASS):
         self.clearGridLayout()
         # get selected server
         serverName = self.exploreServerWidget.serversCombo.currentText()
-        serverName = serverName.split(' ')[0] if serverName != self.tr('Select Server') else ''
+        serverName = serverName.split(' ')[0] if self.exploreServerWidget.serversCombo.currentIndex() != 0 else ''
         # get available databases
-        if serverName and serverName != self.tr('Select Server'):
+        if serverName:
             dbList = self.getDbsFromServer(name=serverName)
         else:
             dbList = []
@@ -203,7 +203,8 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         if not dbList:
             dbList = self.getAvailableDb(serverName=self.selector.serverName)
-        serverInfo = self.getDbServerInfo(serverName=self.selector.serverName)
+        serverInfo = list(self.getDbServerInfo(serverName=self.selector.serverName))
+        serverInfo.insert(0, self.selector.serverName)
         return { dbname : serverInfo for dbname in dbList }
 
     def exec_(self):
@@ -213,13 +214,10 @@ class MultiPostgisSelectorWidget(AbstractMultiDsSelectorWidget):
         """
         # datasources are cleared once dialog is re-opened
         self.datasources = {}
-        # execute selector dialog
-        result = self.selector.exec_()
-        if not result:
+        if not self.selector.exec_():
             # if ok was selected on multiselector, check for database selection
-            dbList = self.selector.dbList
-            if dbList:
-                self.datasources = self.getDbListServerInfo(dbList=dbList)
+            if self.selector.dbList:
+                self.datasources = self.getDbListServerInfo(dbList=self.selector.dbList)
             if self.datasources:
                 # there was a selection (operation was successful)
                 return 0

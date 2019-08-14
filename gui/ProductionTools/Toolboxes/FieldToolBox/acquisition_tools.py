@@ -28,10 +28,8 @@ def sqlParser(sqlFile, isSpatialite):
         data = file.read()
         file.close()
     except:
-        return dict()     
-
-    commandList = data.split('#')
-    createList = [command for command in commandList if 'CREATE TABLE' in command]
+        return dict(), dict()
+    createList = [command for command in data.split('#') if 'CREATE TABLE' in command]
     
     notNullDict = dict()
 
@@ -53,14 +51,14 @@ def sqlParser(sqlFile, isSpatialite):
         
         for field in attString.split(','):
             if 'NOT NULL' in field:
-                att = field.split(' ')[0]
-                if att not in  ['','id','geom']:
-                    if tableKey in list(notNullDict.keys()):
+                att = field.strip().split(' ')[0]
+                if att not in ['','id','geom']:
+                    if tableKey in notNullDict:
                         notNullDict[tableKey].append(att)
             else:
-                att = field.split(' ')[0]
+                att = field.strip().split(' ')[0]
                 if  att not in  ['','id','geom'] and 'id_' not in att and 'CONSTRAINT' not in att:
-                    if tableKey in list(otherAttrDict.keys()):
+                    if tableKey in otherAttrDict:
                         if att not in otherAttrDict[tableKey]:
                             otherAttrDict[tableKey].append(att)
                         

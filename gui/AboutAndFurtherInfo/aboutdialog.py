@@ -19,12 +19,26 @@
  ***************************************************************************/
 """
 import os
-from qgis.PyQt import QtWidgets, uic
+from string import Template
 
-FORM_CLASS, _ = uic.loadUiType(os.path.join(
-    os.path.dirname(__file__), 'ui_about.ui'))
+from qgis.PyQt import uic
+from qgis.PyQt.QtWidgets import QDialog
 
-class AboutDialog(QtWidgets.QDialog, FORM_CLASS):
+# replace version from metada file
+with open(os.path.join(os.path.dirname(__file__), 'ui_about.ui'), 'r', encoding="utf-8") as about, \
+     open(os.path.join(os.path.dirname(__file__), '..', '..', 'metadata.txt'), 'r', encoding="utf-8") as meta, \
+     open(os.path.join(os.path.dirname(__file__), 'ui_about_.ui'), 'w') as filledUi:
+    t = Template(about.read())
+    for line in meta.readlines():
+        if line.strip().startswith("version="):
+            version = line.split("=")[1].strip()
+            break
+    t = t.safe_substitute(version=version)
+    filledUi.write(t)
+
+FORM_CLASS, _ = uic.loadUiType(os.path.join(os.path.dirname(__file__), 'ui_about_.ui'))
+
+class AboutDialog(QDialog, FORM_CLASS):
     def __init__(self, parent = None):
         """
         Constructor

@@ -33,7 +33,7 @@ import sys
 from . import resources_rc
 
 currentPath = os.path.dirname(__file__)
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+sys.path.append(os.path.abspath(currentPath))
 
 from qgis.utils import showPluginHelp
 from qgis.core import QgsApplication

@@ -46,7 +46,6 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
     ATTRIBUTE_BLACK_LIST = 'ATTRIBUTE_BLACK_LIST'
     IGNORE_VIRTUAL_FIELDS = 'IGNORE_VIRTUAL_FIELDS'
     IGNORE_PK_FIELDS = 'IGNORE_PK_FIELDS'
-    IGNORE_NETWORK = 'IGNORE_NETWORK'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config):
@@ -91,13 +90,6 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
                 defaultValue=True
             )
         )
-        self.addParameter(
-            QgsProcessingParameterBoolean(
-                self.IGNORE_NETWORK,
-                self.tr('Ignore network construction'),
-                defaultValue=False
-            )
-        )
         self.addOutput(
             QgsProcessingOutputVectorLayer(
                 self.OUTPUT,
@@ -135,11 +127,6 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             self.IGNORE_PK_FIELDS,
             context
             )
-        ignoreNetwork = self.parameterAsBool(
-            parameters,
-            self.IGNORE_NETWORK,
-            context
-            )
 
         layerHandler.mergeLinesOnLayer(
             inputLyr,
@@ -147,8 +134,7 @@ class MergeLinesAlgorithm(ValidationAlgorithm):
             onlySelected=onlySelected,
             ignoreVirtualFields=ignoreVirtual,
             attributeBlackList=attributeBlackList,
-            excludePrimaryKeys=ignorePK,
-            ignoreNetwork=ignoreNetwork
+            excludePrimaryKeys=ignorePK
             )
 
         return {self.OUTPUT: inputLyr}

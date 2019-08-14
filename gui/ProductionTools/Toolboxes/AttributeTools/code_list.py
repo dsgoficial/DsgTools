@@ -20,232 +20,307 @@
  *                                                                         *
  ***************************************************************************/
 """
-from builtins import str
-from builtins import map
+from collections import defaultdict
 import os
 
-# Qt imports
-from qgis.PyQt import QtWidgets, uic, QtCore
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
-
-# QGIS imports
-from qgis.core import QgsMapLayer, QgsField, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer, Qgis
-from qgis.PyQt.QtWidgets import QTableWidgetItem, QMessageBox
+from qgis.PyQt import uic
+from qgis.PyQt.QtCore import pyqtSlot
+from qgis.PyQt.QtWidgets import QTableWidgetItem, QDockWidget
 from qgis.PyQt.QtSql import QSqlDatabase, QSqlQuery
+from qgis.core import QgsVectorLayer, QgsProject
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'code_list.ui'))
 
-class CodeList(QtWidgets.QDockWidget, FORM_CLASS):
+class CodeList(QDockWidget, FORM_CLASS):
     def __init__(self, iface):
         """Constructor."""
         super(CodeList, self).__init__()
         self.setupUi(self)
         self.iface = iface
-        self.currLayer = None
-        self.refreshClassesDictList() # creates and populates self.classesFieldDict
-        self.setState()
-    
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'codelist.png'
-        text = self.tr('View Code List Codes and Values')
-        action = manager.add_action(
-            icon_path,
-            text=text,
-            callback=callback,
-            add_to_menu=False,
-            add_to_toolbar=False,
-            parentMenu = parentMenu,
-            parentButton = parentStackButton
-            )
-        
-    @pyqtSlot()
-    def setState(self):
+        self.setInitialState()
+
+    def blockAllSignals(self, status):
         """
-        Sets the code list viewer initial state.
-        Populates the field comboBox.
+        Blocks (or unblocks) signals emitted from all GUI components.
+        :param status: (bool) whether should be blocked
+        """
+        self.comboBox.blockSignals(status)
+        self.classComboBox.blockSignals(status)
+        self.refreshButton.blockSignals(status)
+
+    def readClassFieldMap(self, preferEdgvMapping=True):
+        """
+        Gets all layers with value maps.
+        :param preferEdgvMapping: (bool) whether edgv mapping should be preferred, if exists.
+        :return: (dict) a map from layer to list of fields with a value map. 
+        """
+        classFieldMap = defaultdict(dict)
+        for layer in self.iface.mapCanvas().layers():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            layername = layer.name()
+            if preferEdgvMapping:
+                fMap = self.getAllEdgvDomainsFromTableName(layername)
+                if fMap:
+                    classFieldMap[layername] = fMap
+                    continue
+            for field in layer.fields():
+                fieldName = field.name()
+                fieldConfig = field.editorWidgetSetup().config()
+                if 'map' not in fieldConfig or fieldName in ('UseHtml', 'IsMultiline'):
+                    continue
+                if isinstance(fieldConfig['map'], list):
+                    for map_ in fieldConfig['map']:
+                        if fieldName not in classFieldMap[layername]:
+                            classFieldMap[layername][fieldName] = map_
+                        else:
+                            classFieldMap[layername][fieldName].update(map_)
+                else:
+                    classFieldMap[layername][fieldName] = fieldConfig['map']
+        return classFieldMap
+
+    def updateClassFieldMap(self):
+        """
+        Updates current registry of layers and their value map.
+        """
+        self._classFieldMap = self.readClassFieldMap()
+
+    def availableLayers(self):
+        """
+        Gets all layers that have attributes with a value map associated to it.
+        :return: (list-of-str) sorted list of layers.
+        """
+        layers = []
+        for layer in self._classFieldMap.keys():
+            uriString = self.layerByName(layer).dataProvider().dataSourceUri()
+            if "|" in uriString:
+                db_name = os.path.basename(uriString.split("|")[0])
+            elif "'" in uriString:
+                db_name = os.path.basename(uriString.split("'")[1])
+            else:
+                db_name = uriString
+            layers.append("{db}: {layer}".format(db=db_name, layer=layer))
+        layers.sort()
+        return layers
+
+    def resetClasses(self):
+        """
+        Sets current class-fields map data to combo boxes.
+        """
+        self.classComboBox.clear()
+        self.classComboBox.addItem(self.tr('Select a layer...'))
+        self.classComboBox.addItems(self.availableLayers())
+
+    @pyqtSlot(int, name='on_classComboBox_currentIndexChanged')
+    def resetFields(self):
+        """
+        Resets current available fields
         """
         self.comboBox.clear()
-        # in case reload is used or index changed and comboBox is empty, for some reason
-        try:
-            # gets the layer to be "translated"
-            for lyr in list(self.classesFieldDict.keys()):
-                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
-                    self.currLayer = lyr
-                    break
-        except: # leaves self.currLayer set as None
-            pass
-        if not self.currLayer:
-            return        
-        try:
-            if QgsMapLayer is not None:
-                if self.currLayer.type() != QgsMapLayer.VectorLayer:
-                    return        
-                for field in self.classesFieldDict[self.currLayer]:
-                    # iterates over every field that has a value map on database
-                    valueDict, keys = self.getCodeListDict(field.name())
-                    if len(keys) > 0:
-                        self.comboBox.addItem(field.name())
-                self.comboBox.setCurrentIndex(0)            
-                self.loadCodeList()
-        except:
-            pass
-        
-    def getCodeListDict(self, field):
+        self.comboBox.addItem(self.tr('Select a field...'))
+        self.comboBox.addItems(self.availableFields())
+
+    def layerByName(self, layerName):
         """
-        Gets the code list dictionary
+        Gets vector layer from current selection.
+        :param layerName: (str) layer name to have its layer object retrieved.
+        :return: (QgsVectorLayer)
         """
-        fieldList = self.currLayer.fields()
-        fieldIndex = fieldList.lookupField(field)
-        if fieldIndex == -1:
-            return dict(), list()
-        valueDict = fieldList[fieldIndex].editorWidgetSetup().config()
-        if 'map' in valueDict:
-            valueDict = valueDict['map']
-        keys = [value for value in valueDict if not (value == 'UseHtml' or value == 'IsMultiline')]
-        return valueDict, keys
-    
-    def makeValueRelationDict(self, valueDict):
+        l = QgsProject.instance().mapLayersByName(layerName)
+        return l[0] if l else QgsVectorLayer()
+
+    def currentLayerName(self):
         """
-        Gets the value relation dictionary. This is necessary for multi valued attributes.
+        Gets current selected layer name.
+        :return: (str) current layer's name.
+        """
+        return self.classComboBox.currentText().split(': ')[-1]
+
+    def availableFieldsFromLayerName(self, layerName):
+        """
+        Gets all available fields that have value maps.
+        :param layerName: (str) layer to have its layers checked.
+        :return: (list-of-str) list of field names available. 
+        """
+        return [] if layerName not in self._classFieldMap else list(self._classFieldMap[layerName].keys())
+
+    def availableFields(self):
+        """
+        Gets all available fields that have value maps from current layer selection.
+        :return: (list-of-str) list of field names available. 
+        """
+        return self.availableFieldsFromLayerName(self.currentLayerName())
+
+    def currentLayer(self):
+        """
+        Gets vector layer from current selection.
+        :return: (QgsVectorLayer)
+        """
+        return self.layerByName(self.currentLayerName())
+
+    def fieldMapFromFieldName(self, fieldName, layerName):
+        """
+        Gets a field map from an attribute name.
+        :param layerName: (str) layer name to have its fielf map checked.
+        :param layerName: (str) field name to have its map retrieved.
+        :return: (dict) field map.
+        """
+        if layerName in self._classFieldMap and fieldName in self._classFieldMap[layerName]:
+            return self._classFieldMap[layerName][fieldName]
+        return dict()
+
+    def currentField(self):
+        """
+        Gets current field selection.
+        :return: (str) field name.
+        """
+        ct = self.comboBox.currentText()
+        return '' if ct == self.tr('Select a field...') else ct
+
+    def currentFieldMap(self):
+        """
+        Gets current selection's field map.
+        :return: (dict) field map
+        """
+        return self.fieldMapFromFieldName(self.currentField(), self.currentLayerName())
+
+    @pyqtSlot(bool, name='on_refreshButton_clicked')
+    def setInitialState(self):
+        """
+        Sets interface components to its initial state.
+        """
+        self.blockAllSignals(True)
+        self.updateClassFieldMap()
+        self.resetClasses()
+        self.blockAllSignals(False)
+        self.resetFields()
+
+    def getAllEdgvDomainsFromTableName(self, table):
+        """
+        EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
+        It checks for all attributes found.
+        :param table: (str) layer to be checked for its EDGV mapping.
+        :param table: (QgsVectorLayer) overloaded method - layer to be checked for its EDGV mapping.
+        :param field: (str) field to be checked.
+        :return: (dict) value map for all attributes that have one.
+        """
+        ret = defaultdict(dict)
+        currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        if currentLayer.isValid():
+            try:
+                uri = currentLayer.dataProvider().uri()
+                if uri.host() == '':
+                    db = QSqlDatabase('QSQLITE')
+                    db.setDatabaseName(
+                        uri.uri().split("|")[0].strip() if uri.uri().split("|")[0].strip().endswith(".gpkg") \
+                            else uri.database()
+                    )
+                    sql = 'select code, code_name from dominios_{field} order by code'
+                else:
+                    db = QSqlDatabase('QPSQL')
+                    db.setHostName(uri.host())
+                    db.setPort(int(uri.port()))
+                    db.setDatabaseName(uri.database())
+                    db.setUserName(uri.username())
+                    db.setPassword(uri.password())
+                    sql = 'select code, code_name from dominios.{field} order by code'   
+                if not db.open():
+                    db.close()
+                    return ret
+                for field in currentLayer.fields():
+                    fieldName = field.name()
+                    if fieldName in self.specialEdgvAttributes():
+                        # EDGV "special" attributes that are have different domains depending on 
+                        # which class it belongs to
+                        category = (table if isinstance(table, str) else table.name()).split("_")[0]
+                        fieldN = "{attribute}_{cat}".format(attribute=fieldName, cat=category)
+                        query = QSqlQuery(sql.format(field=fieldN), db)
+                    else:
+                        query = QSqlQuery(sql.format(field=fieldName), db)
+                    if not query.isActive():
+                        continue
+                    while query.next():
+                        code = str(query.value(0))
+                        code_name = query.value(1)
+                        ret[fieldName][code_name] = code    
+                db.close()
+            except:
+                pass
+        return ret
+
+    def specialEdgvAttributes(self):
+        """
+        Gets the list of attributes shared by many EDGV classes and have a different domain
+        depending on which category the EDGV class belongs to.
+        :return: (list-of-str) list of "special" EDGV classes. 
+        """
+        return ["finalidade", "relacionado", "coincidecomdentrode"]
+
+    def getEdgvDomainsFromTableName(self, table, field=None):
+        """
+        EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
+        :param table: (str) layer to be checked for its EDGV mapping.
+        :param table: (QgsVectorLayer) overloaded method - layer to be checked for its EDGV mapping.
+        :param field: (str) field to be checked.
+        :return: (dict) value map.
         """
         ret = dict()
-
-        codes = valueDict['FilterExpression'].replace('code in (', '').replace(')','').split(',')
-        in_clause = ','.join(map(str, codes))
-        keyColumn = valueDict['Key']
-        valueColumn = valueDict['Value']
-        table = valueDict['Layer'][:-17]#removing the date-time characters
-        
-        uri = QgsDataSourceUri(self.currLayer.dataProvider().dataSourceUri())
-        if uri.host() == '':
-            db = QSqlDatabase('QSQLITE')
-            db.setDatabaseName(uri.database())
-            sql = 'select code, code_name from dominios_%s where code in (%s)' % (table, in_clause)
-        else:
-            db = QSqlDatabase('QPSQL')
-            db.setHostName(uri.host())
-            db.setPort(int(uri.port()))
-            db.setDatabaseName(uri.database())
-            db.setUserName(uri.username())
-            db.setPassword(uri.password())
-            sql = 'select code, code_name from dominios.%s where code in (%s)' % (table, in_clause)
-        
-        if not db.open():
-            db.close()
-            return ret
-
-        query = QSqlQuery(sql, db)
-        if not query.isActive():
-            QMessageBox.critical(self.iface.mainWindow(), self.tr("Error!"), self.tr("Problem obtaining domain values: ")+query.lastError().text())
-            return ret
-        
-        while next(query):
-            code = str(query.value(0))
-            code_name = query.value(1)
-            ret[code_name] = code
-            
-        db.close()
-                
+        currentLayer = table if isinstance(table, QgsVectorLayer) else self.layerByName(table)
+        if currentLayer.isValid():
+            try:
+                uri = currentLayer.dataProvider().uri()
+                field = field or self.currentField()
+                if field in self.specialEdgvAttributes():
+                    # EDGV "special" attributes that are have different domains depending on 
+                    # which class it belongs to
+                    category = self.currentLayerName().split("_")[0]
+                    field = "{attribute}_{cat}".format(attribute=field, cat=category)
+                if uri.host() == '':
+                    db = QSqlDatabase('QSQLITE')
+                    db.setDatabaseName(
+                        uri.uri().split("|")[0].strip() if uri.uri().split("|")[0].strip().endswith(".gpkg") \
+                            else uri.database()
+                    )
+                    sql = 'select code, code_name from dominios_{field} order by code'.format(field=field)
+                else:
+                    db = QSqlDatabase('QPSQL')
+                    db.setHostName(uri.host())
+                    db.setPort(int(uri.port()))
+                    db.setDatabaseName(uri.database())
+                    db.setUserName(uri.username())
+                    db.setPassword(uri.password())
+                    sql = 'select code, code_name from dominios.{field} order by code'.format(field=field)    
+                if not db.open():
+                    db.close()
+                    return ret
+                query = QSqlQuery(sql, db)
+                if not query.isActive():
+                    return ret       
+                while query.next():
+                    code = str(query.value(0))
+                    code_name = query.value(1)
+                    ret[code_name] = code      
+                db.close()
+            except:
+                pass
         return ret
-        
-    @pyqtSlot(int)
-    def on_comboBox_currentIndexChanged(self):
-        """
-        Slot that updates the code lists when the current active layers changes.
-        """
-        try:
-            for lyr in list(self.classesFieldDict.keys()):
-                if lyr.name() == self.classComboBox.currentText().split(": ")[1]:
-                    self.currLayer = lyr
-            self.loadCodeList()   
-        except:
-            pass
-        
-    def loadCodeList(self):
-        """
-        Loads the current code lists viewer for the active layer
-        """
-        self.tableWidget.clear()
-        self.tableWidget.setColumnCount(2)
-        self.tableWidget.setHorizontalHeaderLabels([self.tr('Value'), self.tr('Code')])
-        
-        field = self.comboBox.currentText()
-        valueDict, keys = self.getCodeListDict(field)
-        
-        if 'FilterExpression' in keys:
-            valueDict = self.makeValueRelationDict(valueDict)
-            keys = list(valueDict.keys())
-        elif 'Relation' in keys:
-            return
 
-        self.tableWidget.setRowCount(len(keys))
-        row = 0
-        for code, value in valueDict.items():
-            valueItem = QTableWidgetItem(value)
-            codeItem = QTableWidgetItem(code)
-            self.tableWidget.setItem(row, 0, valueItem)
-            self.tableWidget.setItem(row, 1, codeItem)
-            row += 1
+    def getEdgvDomains(self):
+        """
+        EDGV databases deployed by DSGTools have a set of domain tables. Gets the value map from such DB.
+        :return: (dict) value map.
+        """
+        return self.getEdgvDomainsFromTableName(self.currentLayerName())
+
+    @pyqtSlot(int, name='on_comboBox_currentIndexChanged')
+    def populateFieldsTable(self):
+        """
+        Populates field map to codelist table.
+        """
+        fieldMap = self.currentFieldMap()
+        self.tableWidget.setRowCount(len(fieldMap))
+        for row, (code, value) in enumerate(fieldMap.items()):
+            self.tableWidget.setItem(row, 0, QTableWidgetItem(value))
+            self.tableWidget.setItem(row, 1, QTableWidgetItem(code))
         self.tableWidget.sortItems(1)
-
-    def refreshClassesDictList(self):        
-        """
-        Refreshs the list of classes having Value Map set.
-        Populates the classComboBox.
-        Returns the dict of classes and their attributes that have the value map set (classesFieldDict)
-        """
-        # checks if the selected class has a value map and fills the field combobox if necessary
-        self.classComboBox.clear()
-        try:
-            self.classesFieldDict.clear()
-        except:
-            # this dict is composed by [ QgsLayer obj : [ 'Every attribute (QgsField obj) that has a value map of this specific layer' ] ]
-            self.classesFieldDict = dict()
-        layers = self.iface.mapCanvas().layers()
-        for layer in layers:
-            if isinstance(layer, QgsVectorLayer):
-                for field in layer.fields():
-                    # only classes that have value maps may be enlisted on the feature
-                    if field.editorWidgetSetup().type() in ['ValueMap', 'ValueRelation']:
-                        if layer not in self.classesFieldDict:
-                            self.classesFieldDict[layer] = []
-                            # in case more tha a db is loaded and they have the same layer
-                            # name for some class. 
-                            uriString = layer.dataProvider().dataSourceUri()
-                            if "'" in uriString:
-                                splitToken = "'" 
-                                idx = 1
-                            elif "|" in uriString:
-                                splitToken = "|"
-                                idx = 1
-                            else:
-                                splitToken = ""
-                                idx = 0
-                            db_name = uriString.split(splitToken)[idx] if splitToken != "" else uriString
-                            self.classComboBox.addItem("{0}: {1}".format(db_name, layer.name()))
-                        if field not in self.classesFieldDict[layer]:
-                            self.classesFieldDict[layer].append(field)
-        self.classComboBox.setCurrentIndex(0)
-
-    @pyqtSlot(int)
-    def on_classComboBox_currentIndexChanged(self):
-        """
-        Slot that updates the code lists when the selected layer changes.
-        """
-        # if index is changed, no need to reset dict, just updates field list and attr table...
-        self.setState()
-        self.loadCodeList()
-
-    @pyqtSlot(bool)
-    def on_refreshButton_clicked(self):
-        """
-         Refreshs the list of classes having Value Map set when refresh button is clicked.
-        """
-        try:
-            self.refreshClassesDictList()
-            self.setState()
-            self.loadCodeList()
-        except Exception as e:
-            QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Do the layers have Value Maps?)'))
-            QgsMessageLog.logMessage(self.tr('Error loading classes to Code List Viewer: ')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
