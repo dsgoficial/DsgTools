@@ -21,13 +21,31 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
-from qgis.core import QgsProcessingProvider, QgsApplication
+from qgis.core import QgsApplication, QgsProcessingProvider
 from qgis.PyQt.QtGui import QIcon
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
+    CreateEditingGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import \
     DonutHoleExtractorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundingBoxFilterToLayersAlgorithm import \
+    AssignBoundingBoxFilterToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
+    AssignFilterToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
+    AssignMeasureColumnToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
+    GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
+    CreateFrameAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
+    FileInventoryAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import \
+    RaiseFlagsAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (ParameterFMEManagerType,
+                                                                                       RunRemoteFMEAlgorithm)
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import \
     UpdateOriginalLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import \
@@ -40,8 +58,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.deaggregateGeometr
     DeaggregatorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.dissolvePolygonsWithSameAttributesAlgorithm import \
     DissolvePolygonsWithSameAttributesAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import \
-    HierarchicalSnapLayerOnLayerAndUpdateAlgorithm, ParameterSnapHierarchyType
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.hierarchicalSnapLayerOnLayerAndUpdateAlgorithm import (HierarchicalSnapLayerOnLayerAndUpdateAlgorithm,
+                                                                                                                     ParameterSnapHierarchyType)
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
+    IdentifyAndFixInvalidGeometriesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDanglesAlgorithm import \
     IdentifyDanglesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyDuplicatedFeaturesAlgorithm import \
@@ -94,37 +114,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalCleanLi
     TopologicalCleanLinesAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalDouglasSimplificationAlgorithm import \
     TopologicalDouglasSimplificationAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineConnectivityAdjustmentAlgorithm import \
+    TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
-    RunRemoteFMEAlgorithm, ParameterFMEManagerType
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
-    CreateFrameAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
-    FileInventoryAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import \
-    RaiseFlagsAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
-    IdentifyAndFixInvalidGeometriesAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
-    CreateEditingGridAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
-    AssignFilterToLayersAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundingBoxFilterToLayersAlgorithm import \
-    AssignBoundingBoxFilterToLayersAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
-    AssignMeasureColumnToLayersAlgorithm
-
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAlgorithm import \
-    GroupLayersAlgorithm
-
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -183,7 +176,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 AssignFilterToLayersAlgorithm(),
                 AssignBoundingBoxFilterToLayersAlgorithm(),
                 AssignMeasureColumnToLayersAlgorithm(),
-                GroupLayersAlgorithm()]
+                GroupLayersAlgorithm(),
+                TopologicalLineConnectivityAdjustment()]
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
