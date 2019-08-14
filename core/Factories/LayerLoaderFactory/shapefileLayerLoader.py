@@ -74,7 +74,7 @@ class ShapefileLayerLoader(EDGVLayerLoader):
                     return ll
         return loaded
 
-    def load(self, inputList, useQml = False, uniqueLoad = False, useInheritance = False, stylePath = None, onlyWithElements = False, geomFilterList = [], isEdgv = True, customForm = False, parent = None):
+    def load(self, inputList, useQml=False, uniqueLoad=False, useInheritance=False, stylePath=None, onlyWithElements=False, geomFilterList=[], isEdgv=True, customForm=False, editingDict=None, parent=None):
         """
         1. Get loaded layers
         2. Filter layers;
