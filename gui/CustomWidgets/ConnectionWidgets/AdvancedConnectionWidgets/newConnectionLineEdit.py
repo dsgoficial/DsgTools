@@ -28,7 +28,6 @@ from qgis.PyQt import uic
 from qgis.core import Qgis, QgsMessageLog
 
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
-from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.dsgEnums import DsgEnums
 
@@ -46,13 +45,21 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
     dbChanged = pyqtSignal(AbstractDb)
     problemOccurred = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, isStatic=False):
         """
         Class contructor.
+        :param parent: (QWidget) widget parent to newly instantiated NewConnectionLineEdit.
+        :param isStatic: (bool) indicates whether server selection will be static (no default).
         """
         super(NewConnectionLineEdit, self).__init__()
         self.setupUi(self)
-        self.viewServers = ViewServers()
+        self.isStatic = isStatic
+        if self.isStatic:
+            from DsgTools.gui.ServerTools.viewServers import ViewServersStatic
+            self.viewServers = ViewServersStatic()
+        else:
+            from DsgTools.gui.ServerTools.viewServers import ViewServers
+            self.viewServers = ViewServers()
         self.fillEdgvVersions()
         self.reset()
 
@@ -132,8 +139,8 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         Checks if connection to server is valid.
         """
         # for files, server check is not necessary
-        h = self.viewServers.getDefaultConnectionParameters()[1]
-        return self.viewServers.testServer(h)
+        conn = self.viewServers.getDefaultConnectionParameters()[0]
+        return self.viewServers.testServer(conn)
 
     def databaseExists(self):
         """
@@ -157,8 +164,8 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
             msg = self.validate()
             self.dbChanged.emit(self.abstractDb)
             self.connectionChanged.emit()
-            if msg:
-                raise Exception(msg)
+            # if msg:
+            #     raise Exception(msg)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
@@ -214,7 +221,6 @@ class NewConnectionLineEdit(QWidget, FORM_CLASS):
         filename, __ = fd.getSaveFileName(caption=self.caption, filter=self.filter)
         if filename:
             self.dsLineEdit.setText(filename)
-            print(self.isValid())
         self.loadDatabase(currentText=filename)
 
     @pyqtSlot(bool)

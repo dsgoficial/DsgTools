@@ -129,8 +129,6 @@ class AcquisitionFreeController(object):
         #Parâmetro de entrada: layer (camada em uso)
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
-        if layer.crs().projectionAcronym() == "longlat":
-            return 0.000
         return parameters[u'freeHandTolerance']
 
     def simplifyGeometry(self, geom, tolerance):
@@ -139,6 +137,10 @@ class AcquisitionFreeController(object):
         #Parâmetro de retorno: sGeom (Geometria simplificada)
         parameters = self.getParametersFromConfig()
         sGeom = geom
+        source_crs = self.iface.activeLayer().crs()
+        dest_crs = core.QgsCoordinateReferenceSystem(3857)
+        tr = core.QgsCoordinateTransform(source_crs, dest_crs, core.QgsCoordinateTransformContext())
+        sGeom.transform(tr)
         for x in range(int(parameters[u'algIterations'])):
             sGeom = sGeom.simplify(float(tolerance))
             try:
@@ -155,7 +157,8 @@ class AcquisitionFreeController(object):
                 )
                 QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
                 return geom
-                
+        tr = core.QgsCoordinateTransform(dest_crs, source_crs, core.QgsCoordinateTransformContext())
+        sGeom.transform(tr)
         return sGeom
 
     def reprojectGeometry(self, geom):
@@ -213,7 +216,7 @@ class AcquisitionFreeController(object):
                     feature.setAttribute(i, defaultClauseCandidate)
             formSuppressOnLayer = layer.editFormConfig().suppress()
             formSuppressOnSettings = self.getFormSuppressStateSettings()
-            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or (formSuppressOnSettings == u"true"):
+            if formSuppressOnLayer == core.QgsEditFormConfig.SuppressOff or formSuppressOnSettings:
                 self.addFeatureWithoutForm(layer, feature)
             else:
                 self.addFeatureWithForm(layer, feature)
@@ -225,8 +228,7 @@ class AcquisitionFreeController(object):
         reshapeLine_ = self.reprojectGeometry(reshapeLine)
         rsLine = self.simplifyGeometry(reshapeLine_, tolerance)
         request = core.QgsFeatureRequest().setFilterRect(rsLine.boundingBox())
-        
-        for feat in layer.getFeatures(request):
+        for feat in layer.getSelectedFeatures(request) if layer.selectedFeatureCount() > 0 else layer.getFeatures(request):
             geom = feat.geometry() # geometria que receberá o reshape.
             if geom.intersects(rsLine): # Se intersecta e transforma frompolyline em geometria.
                 geom.reshapeGeometry(QgsLineString([QgsPoint(p) for p in rsLine.asPolyline()])) # realiza o reshape entre a linha e a geometria.
@@ -238,7 +240,7 @@ class AcquisitionFreeController(object):
         #Método para verificar se o formulário de aquisição está suprimido nas configurações do projeto
         #Parâmetro de retorno: suppressForm ( boleano )
         s = QtCore.QSettings()
-        suppressForm = s.value(u"Qgis/digitizing/disable_enter_attribute_values_dialog")
+        suppressForm = s.value(u"qgis/digitizing/disable_enter_attribute_values_dialog")
         return suppressForm
 
     def addFeatureWithForm(self, layer, feature):

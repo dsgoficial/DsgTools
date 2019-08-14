@@ -44,7 +44,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
     # InDs, Filter, SpatialFilterFanOut, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
     InDs, Filter, InEdgv, OutDs, OutEdgv, outCrs, ConversionMode = list(range(COLUMN_COUNT))
 
-    def __init__(self, manager, parentMenu, parent=None):
+    def __init__(self, manager, parentMenu, parentButton, parent=None):
         """
         Class constructor.
         :param manager:
@@ -56,7 +56,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # self.setTitle(self.tr('Datasource Conversion Wizard'))
         self.manager = manager
         self.parentMenu = parentMenu
-        self.parentButton = None
+        self.parentButton = parentButton
         # fill output datasources including new datasources options
         self.datasourceManagementWidgetOut.fillSupportedDatasources(inputPage=False)
         self.connectToolSignals()
@@ -81,8 +81,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.datasourceManagementWidgetOut.activeWidgetAdded.connect(self.addOutputDatasource)
         self.datasourceManagementWidgetIn.activeWidgetRemoved.connect(self.removeInputDatasource)
         self.datasourceManagementWidgetOut.activeWidgetRemoved.connect(self.removeOutputDatasource)
-        self.datasourceManagementWidgetIn.containerFilterSettingsChanged.connect(self.updateFilterSettings)
-        self.datasourceManagementWidgetOut.containerFilterSettingsChanged.connect(self.updateFilterSettings)
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.widgetUpdated.connect(self.updateInputInformation)
         self.datasourceManagementWidgetOut.widgetUpdated.connect(self.updateOutputInformation)
@@ -100,8 +98,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.datasourceManagementWidgetOut.activeWidgetAdded.disconnect(self.addOutputDatasource)
         self.datasourceManagementWidgetIn.activeWidgetRemoved.disconnect(self.removeInputDatasource)
         self.datasourceManagementWidgetOut.activeWidgetRemoved.disconnect(self.removeOutputDatasource)
-        self.datasourceManagementWidgetIn.containerFilterSettingsChanged.disconnect(self.updateFilterSettings)
-        self.datasourceManagementWidgetOut.containerFilterSettingsChanged.disconnect(self.updateFilterSettings)
         # if datasource is changed (e.g. user changed his postgis database selection, for instance)
         self.datasourceManagementWidgetIn.widgetUpdated.disconnect(self.updateInputInformation)
         self.datasourceManagementWidgetOut.widgetUpdated.disconnect(self.updateOutputInformation)
@@ -186,8 +182,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # update table rows #
         lastRow = self.tableWidget.rowCount()
         self.tableWidget.insertRow(lastRow)
-        filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
-        crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
+        # crsIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'CRS_qgis.svg'))
         # create the item containing current loop's input ds
         t = '{0}: {1}'.format(containerWidget.groupBox.title(), containerWidget.getDatasourceConnectionName())
         self.addItemToTable(col=DatasourceConversion.InDs, row=lastRow, text=t, isEditable=False)
@@ -197,27 +192,30 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.addItemToTable(col=DatasourceConversion.InEdgv, row=lastRow, text=t, isEditable=False)
         # create filter push button
         filterPushButton = QtWidgets.QPushButton()
-        filterPushButton.setIcon(filterIcon)
-        # create  push button
-        fanOutCheckBox = QtWidgets.QCheckBox()
-        # set enable status if necessary
-        fanOutCheckBox.setEnabled(bool(containerWidget.filters['spatial_filter']))
-        # add tooltip to it
-        fanOutCheckBox.setToolTip(self.tr('Fan-out by filtered features from reference layer'))
+        filterPushButton.setIcon(
+            QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
+        )
+        # # create  push button
+        # fanOutCheckBox = QtWidgets.QCheckBox()
+        # # set enable status if necessary
+        # fanOutCheckBox.setEnabled(bool(containerWidget.filters()['spatial_filter']))
+        # # add tooltip to it
+        # fanOutCheckBox.setToolTip(self.tr('Fan-out by filtered features from reference layer'))
         # create the combobox containing all output ds
         outDsComboBox = QtWidgets.QComboBox()
         outDsComboBox.addItems(outDsList)
         # create combobox containing conversion mode options
         convModeComboBox = QtWidgets.QComboBox()
         convModeComboBox.addItems([
-                self.tr('Choose Conversion Mode'), self.tr('Flexible Conversion'), self.tr('Strict Conversion')])
+            self.tr('Choose Conversion Mode'), self.tr('Flexible Conversion'), self.tr('Strict Conversion')
+        ])
         # set each widget to their column
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.OutDs, outDsComboBox)
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.Filter, filterPushButton)
         # self.tableWidget.setCellWidget(lastRow, DatasourceConversion.SpatialFilterFanOut, fanOutCheckBox)
         self.tableWidget.setCellWidget(lastRow, DatasourceConversion.ConversionMode, convModeComboBox)
         # start filter widget
-        self.prepareRowFilterDialog(row=lastRow)
+        filterPushButton.clicked.connect(partial(self.prepareRowFilterDialog, container=containerWidget))
         # set table output information population to its widget
         outDsComboBox.currentIndexChanged.connect(partial(self.fillOutDsInfoRow, row=lastRow))
         if resizeColumns:
@@ -312,8 +310,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         # update edgv and input name
         self.addItemToTable(col=DatasourceConversion.InDs, row=row, text=dsName, isEditable=False)
         self.addItemToTable(col=DatasourceConversion.InEdgv, row=row, text=inEdgv, isEditable=False)
-        # update its filters
-        self.updateFilterSettings(containerWidget=containerWidget)
 
     def updateOutputInformation(self, containerWidget):
         """
@@ -395,28 +391,6 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
                 return row, [inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode]
         return -1, []
 
-    def updateFilterSettings(self, containerWidget):
-        """
-        Updates a container widget's filtering settings.
-        :param containerWidget: (DatasourceContainerWidget) widget that had its filtering settings modified.
-        """
-        row, contents = self.getInputDatasourceRow(inputDatasourceWidget=containerWidget)
-        if row > -1:
-            # clear filter push button
-            _filter = contents[DatasourceConversion.Filter]
-            if _filter:
-                _filter.blockSignals(True)
-                _filter.setParent(None)
-                _filter = None
-            # create and reset push button
-            newFilter = QtWidgets.QPushButton()
-            filterIcon = QIcon(os.path.join(os.path.dirname(__file__), '..', '..', '..', 'icons', 'filter.png'))
-            newFilter.setIcon(filterIcon)
-            # set it as the new widget to cell
-            self.tableWidget.setCellWidget(row, DatasourceConversion.Filter, newFilter)
-            # contents[DatasourceConversion.SpatialFilterFanOut].setEnabled(bool(containerWidget.filters['spatial_filter']['layer_name']))
-            # reset filter dialog
-            self.prepareRowFilterDialog(row=row)
 
     def clearOutDsInforRow(self, row):
         """
@@ -494,146 +468,20 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         self.tableWidget.setItem(row, col, newItem)
         return newItem
 
-    def getSpatialFilterSummary(self, spatialFilterDict):
-        """
-        Gets the spatial filter contents, if any, and set up widgets for GUI population.
-        :param spatialFilterDict: (dict) dictionary containing spatial filter information. 
-        :return: (tuple-of-QWidgets) widgets containing spatial filter, if exists.
-        """
-        # spatial dict format:
-        # self.filters['spatial_filter'] = {
-        #         'layer_name' : (str) layer,
-        #         'layer_filter' : (str) spatialExpression,
-        #         'filter_type' : (str) topologicalComparison,
-        #         'topological_relation' : (str) topologyParameter
-        #     }
-        layerNameWidget, layerFilterWidget, topologyTestWidget, topologyParameter = None, None, None, None
-        if spatialFilterDict:
-            if spatialFilterDict['layer_name']:
-                layerNameWidget = QtWidgets.QLineEdit()
-                layerNameWidget.setText(spatialFilterDict['layer_name'])
-            if spatialFilterDict['layer_filter']:
-                layerFilterWidget = QtWidgets.QLineEdit()
-                layerFilterWidget.setText(spatialFilterDict['layer_filter'])
-            if spatialFilterDict['filter_type']:
-                topologyTestWidget = QtWidgets.QLineEdit()
-                topologyTestWidget.setText(spatialFilterDict['filter_type'])
-            if not isinstance(spatialFilterDict['topological_relation'], int):
-                topologyParameter = QtWidgets.QLineEdit()
-                topologyParameter.setText(str(spatialFilterDict['topological_relation']))
-        return layerNameWidget, layerFilterWidget, topologyTestWidget, topologyParameter
-
-    def setupSpatialSummaryGui(self, spatialFilterDict, filterDlg):
-        """
-        Sets up the spatial filter contents summary GUI into filter dialog.
-        :param spatialFilterDict: (dict) dictionary containing spatial filter information. 
-        :para filterDlg: (QDialog) filter dialog on which spatial filter summary is setup.
-        """
-        # label list must have the same order as the output from spatial summary
-        labelList = [
-            self.tr('Reference Layer'),
-            self.tr('Layer Filtering Exp.'),
-            self.tr('Topological Test'),
-            self.tr('Topology Relation')
-        ]
-        for idx, w in enumerate(self.getSpatialFilterSummary(spatialFilterDict=spatialFilterDict)):
-            if w:
-                # add label before it
-                lW = QtWidgets.QLabel(labelList[idx])
-                filterDlg.outHLayout.addWidget(lW)
-                w.setEnabled(False)
-                filterDlg.outHLayout.addWidget(w)
-
-    def setupGroupBoxFilters(self, container, filterDlg, isSpatial):
-        """
-        Sets up the part the complex layers' GUI part.
-        :param container: (DatasourceContainerWidget) datasource container to have its filters set up.
-        :para filterDlg: (QDialog) filter dialog on filters summary will be setup.
-        :param isSpatial: (bool) indicates whether groupbox is spatial (or complex).
-        """
-        filterDict = container.filters
-        if isSpatial:
-            layers = container.connectionWidget.getLayersDict()
-            title = self.tr('Spatial Layers')
-            getLayerAlias = lambda layerName : container.connectionWidget.getLayerByName(layerName)
-            # if it's spatial, CRS will be requested
-            crsDict = container.connectionWidget.getLayersCrs()
-        else:
-            layers = container.connectionWidget.getComplexDict()
-            title = self.tr('Complex Layers')
-            getLayerAlias = lambda layerName : container.connectionWidget.getComplexLayerByName(layerName)
-        # spatial box should always be exposed whilst complexes are only when layers are found
-        if isSpatial or layers:
-            # create groupbox and add it to the vertical layout
-            gb = QgsCollapsibleGroupBox()
-            gb.setTitle(title)
-            filterDlg.vLayout.addWidget(gb)
-            # add a grid layout to add the widgets
-            layout = QtWidgets.QGridLayout(gb)
-            # gb.addLayout(layout)
-            # initiate row counter
-            row = 0
-            for layerName, featCount in layers.items():
-                if layerName:
-                    # initiate widgets
-                    checkbox = QtWidgets.QCheckBox()
-                    filterExpression = QtWidgets.QLineEdit()
-                    # since it is only for reading and confirmation purposes, widgets are all disabled
-                    checkbox.setEnabled(False)
-                    filterExpression.setEnabled(False)
-                    # add a new checkbox widget to layout for each layer found
-                    msg = self.tr('{0} ({1} features)') if featCount > 1 else self.tr('{0} ({1} feature)')
-                    checkbox.setText(msg.format(layerName, featCount))
-                    if not filterDict['layer'] or (filterDict['layer'] and layerName in filterDict['layer']):
-                        # in case no filters are added or if layer is among the filtered ones, set it checked
-                        checkbox.setChecked(True)
-                    # fill up an edit line containing filtering expression, if any
-                    if layerName in filterDict['layer_filter']:
-                        filterExpression.setText(filterDict['layer_filter'][layerName])
-                    # add widgets to the layouts
-                    layout.addWidget(checkbox, row, 0)
-                    layout.addWidget(filterExpression, row, 1)
-                    # CRS is only necessary for spatial layers
-                    if isSpatial:
-                        crs = QtWidgets.QLineEdit()
-                        crs.setEnabled(False)
-                        # fill crs
-                        if layerName in crsDict:
-                            crs.setText(crsDict[layerName])
-                        layout.addWidget(crs, row, 2)
-                    row += 1
-
-    def prepareRowFilterDialog(self, row):
+    def prepareRowFilterDialog(self, container):
         """
         Prepares filter dialog for current dataset in a given row.
-        :param row: (int) row containing dataset information.
+        :param container: (DatasourceContainerWidget) container widget added to the GUI.
         """
-        # get row information
-        # inDs, _filter, spatialFanOut, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
-        inDs, _filter, inEdgv, outDs, outEdgv, outCrs, conversionMode = self.getRowContents(row=row)
-        # retrieve input widget
-        self.inDs = self.getWidgetNameDict(self.datasourceManagementWidgetIn.activeDrivers)
-        inWidget = self.inDs[inDs.split(':')[0]]
-        # instantiate a new filter dialog
-        filterDlg = GenericDialogLayout()
-        # prepare its own GUI
-        filterDlg.hideButtons() # hide Ok and Cancel
-        # filterDlg.horizontalSpacer.hide() # no need for the horizontal spacer if no buttons are displayed
-        title = '{0}: {2} ({1})'.format(inWidget.groupBox.title(), inWidget.connectionWidget.getDatasourcePath(), \
-                                     inWidget.connectionWidget.getDatasourceConnectionName())
-        # set dialog title to current datasource path
-        filterDlg.setWindowTitle(title)
-        # setup spatial layers filters
-        self.setupGroupBoxFilters(container=inWidget, filterDlg=filterDlg, isSpatial=True)
-        # setup complex layers filters
-        self.setupGroupBoxFilters(container=inWidget, filterDlg=filterDlg, isSpatial=False)
-        # retrieve filter dict
-        filterDict = inWidget.filters
-        # setup spatial filtering settings
-        self.setupSpatialSummaryGui(spatialFilterDict=filterDict['spatial_filter'], filterDlg=filterDlg)
-        # connect filter pushbutton signal to newly created dialog
-        openDialog = lambda : filterDlg.exec_()
-        _filter.clicked.connect(openDialog)
+        if container.filterDlg is None:
+            container.refreshFilterDialog()
+        container.filterDlg.enableEdition(False)
+        container.filterDlg.okPushButton.hide()
+        container.filterDlg.cancelPushButton.hide()
+        container.on_filterPushButton_clicked()
+        container.filterDlg.okPushButton.show()
+        container.filterDlg.cancelPushButton.show()
+        container.filterDlg.enableEdition(True)
 
     def setTableInitialState(self):
         """
@@ -669,7 +517,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # get input information to be mapped - input datasource identification and filtering options
             containerWidget = self.inDs[inDs.split(':')[0]] # input group box title (widget's dict key)
             inputDatasourceId =  containerWidget.connectionWidget.getDatasourcePath()
-            inputFilteredLayers = containerWidget.filters
+            inputFilteredLayers = containerWidget.filters()
             # get output information to be mapped - output datasource identification and if it's
             containerWidget = self.outDs[outDs.currentText().split(':')[0]] # output group box title (widget's dict key)
             # populate row's conversion map
@@ -747,6 +595,7 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # maybe we should connect to some parent resizing signal or something...
             msgBar.resize(QSize(self.geometry().size().width(), msgBar.geometry().height()))
             msgBar.pushMessage(self.tr('Warning!'), msg, level=Qgis.Warning, duration=5)
+            QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
         return msg == ''
 
     def validateCurrentPage(self):
@@ -772,12 +621,16 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             if msg:
                 return msg
         # lists of inputs/outputs already checked
-        inChecked, outChecked = [], []
+        inChecked, outChecked = [], set()
         # it is assumed that containers' contents were already checked previously
         for row in range(self.tableWidget.rowCount()):
             # get row contents
             # inDsName, _, _, inEdgv, outDs, _, outEdgv, conversionMode = self.getRowContents(row=row)
             inDsName, _, inEdgv, outDs, outEdgv, _, conversionMode = self.getRowContents(row=row)
+            outDsName = outDs.currentText()
+            # FTer was discontinued. conv should not allow dataset creation for this EDGV version
+            if outEdgv == 'EDGV 2.1.3 F Ter' and self.tr('new') in outDsName.split(' #')[0]:
+                return self.tr('EDGV 2.1.3 F Ter model was terminated. DSGTools no longer support its creation (row {1})').format(inDsName, row + 1)
             # check if a conversion mode was selected
             if conversionMode.currentText() == self.tr('Choose Conversion Mode'):
                 return self.tr('Conversion mode not selected for input {0} (row {1})').format(inDsName, row + 1)
@@ -787,11 +640,9 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             # # add input to the checked ones list
             # inChecked.append(inDsName)
             # add output to checked ones list, if it's not 'select a datasource'
-            outDsName = outDs.currentText()
             if outDsName == self.tr('Select a datasource'):
                 return self.tr('Output datasource not selected for {0} (row {1})').format(inDsName, row + 1)
-            if outDsName not in outChecked:
-                outChecked.append(outDsName)
+            outChecked.add(outDsName)
         # last check: if all chosen outputs are listed
         splitAlias = lambda x : x.split(':')[0]
         if len(outChecked) != len(self.outDs):
@@ -855,14 +706,15 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
             QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
         summaryDlg.exec_()
 
-    def startConversion(self):
+    def startConversion(self, exportMap=False):
         """
         Starts the conversion process.
         """
         if self.validate():
             # from this point, interface is already validated and map produced from it also validated
             conversionMap = self.getConversionMap()
-            self.exportConversionJson()
+            if exportMap:
+                self.exportConversionJson()
             # call conversion method taking the mapping json
             self.run(conversionMap=conversionMap)
 
@@ -872,13 +724,20 @@ class DatasourceConversion(QtWidgets.QWizard, FORM_CLASS):
         """
         pass
 
+    def execute(self):
+        """
+        Changes the default icon for stack button and opens dialog.
+        """
+        self.parentButton.setDefaultAction(self.sender())
+        self.exec_()
+
     def initGui(self):
         """
         Instantiate GUI for user, including button shortcut (if necessary) and tool insertion on DSGTools tab on QGIS. 
         """
         self.manager.addTool(
             text=self.tr('Convert Databases'),
-            callback=self.exec_,
+            callback=self.execute,
             parentMenu=self.parentMenu,
             icon='install.png',
             parentButton=self.parentButton,

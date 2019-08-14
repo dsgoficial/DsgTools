@@ -24,6 +24,8 @@
 from __future__ import absolute_import
 from builtins import range
 from itertools import combinations
+from collections import defaultdict
+from functools import partial
 
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, QgsVectorDataProvider, \
                       QgsFeatureRequest, QgsExpression, QgsFeature, QgsSpatialIndex, Qgis, \
@@ -93,7 +95,7 @@ class LayerHandler(QObject):
         reclassifyCount = 0
         destinationLayer.startEditing()
         destinationLayer.beginEditCommand(self.tr('DsgTools reclassification'))
-        for lyr, featureList in selectedDict.items():
+        for lyr, featureList in [(k, v) for k, v in selectedDict.items() if len(v[0]) > 0]:
             featureList = featureList[0] if isinstance(featureList, tuple) else featureList
             coordinateTransformer = self.getCoordinateTransformer(lyr, destinationLayer)
             newFeatList, deleteList = self.featureHandler.reclassifyFeatures(featureList, lyr, reclassificationDict, coordinateTransformer, parameterDict)
@@ -335,7 +337,7 @@ class LayerHandler(QObject):
             lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
-    def mergeLinesOnLayer(self, lyr, onlySelected = False, feedback = None, ignoreVirtualFields = True, attributeBlackList = None, excludePrimaryKeys = True, ignoreNetwork = False):
+    def mergeLinesOnLayer(self, lyr, onlySelected=False, feedback=None, ignoreVirtualFields=True, attributeBlackList=None, excludePrimaryKeys=True):
         attributeBlackList = [] if attributeBlackList is None else attributeBlackList
         if feedback:
             localFeedback = QgsProcessingMultiStepFeedback(3, feedback)
@@ -357,14 +359,20 @@ class LayerHandler(QObject):
             mergeFeedback = QgsProcessingMultiStepFeedback(len(attributeFeatDict), localFeedback)
         lyr.startEditing()
         lyr.beginEditCommand(self.tr('Merging Lines'))
-        mergeLines = lambda x : self.featureHandler.mergeLineFeatures(featList=x[0], lyr=lyr, idsToRemove=x[1], parameterDict=parameterDict, feedback=x[2], networkDict=networkDict, ignoreNetwork = ignoreNetwork)
 
         for current, (key, featList) in enumerate(attributeFeatDict.items()):
             if feedback:
                 if feedback.isCanceled():
                     break
                 mergeFeedback.setCurrentStep(current)
-            mergeLines([featList,idsToRemove, mergeFeedback])
+            self.featureHandler.mergeLineFeatures(
+                featList=featList,
+                lyr=lyr,
+                idsToRemove=idsToRemove,
+                parameterDict=parameterDict,
+                feedback=mergeFeedback,
+                networkDict=networkDict
+            )
         lyr.deleteFeatures(idsToRemove)
         lyr.endEditCommand()
     
@@ -415,7 +423,12 @@ class LayerHandler(QObject):
                 feedback.setProgress(size*current)
         return endVerticesDict
     
-    def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, feedback = None):
+    def getDuplicatedFeaturesDict(self, lyr, onlySelected = False, attributeBlackList = None, ignoreVirtualFields = True, excludePrimaryKeys = True, useAttributes=False, feedback = None):
+        """
+        returns geomDict = {
+            'bbox_geom' : {geomKey : -list of duplicated feats-}
+        }
+        """
         geomDict = dict()
         isMulti = QgsWkbTypes.isMultiType(int(lyr.wkbType()))
         iterator, featCount = self.getFeatureList(lyr, onlySelected=onlySelected)
@@ -424,24 +437,23 @@ class LayerHandler(QObject):
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback) if feedback else None
         multiStepFeedback.setCurrentStep(0)
         #builds bounding box dict to do a geos comparison for each feat in list
-        bbDict = self.getFeaturesWithSameBoundingBox(iterator, columns=columns, feedback=feedback)
+        bbDict = self.getFeaturesWithSameBoundingBox(iterator, isMulti, featCount, columns=columns, feedback=feedback)
         multiStepFeedback.setCurrentStep(1)
         for current, (key, featList) in enumerate(bbDict.items()):
             if feedback is not None and feedback.isCanceled():
                 break
-            if len(value) <= 1:
-                continue
-            duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns)
-            geomDict.update(duplicatedDict)
+            if len(featList) > 1:
+                duplicatedDict = self.searchDuplicatedFeatures(featList, columns=columns, useAttributes=useAttributes)
+                geomDict.update(duplicatedDict)
             if feedback is not None:
                 feedback.setProgress(size * current)
         return geomDict
     
-    def getFeaturesWithSameBoundingBox(self, iterator, columns=None, feedback=None):
+    def getFeaturesWithSameBoundingBox(self, iterator, isMulti, size, columns=None, feedback=None):
         """
         Iterates over iterator and gets 
         """
-        bbDict = dict()
+        bbDict = defaultdict(list)
         for current, feat in enumerate(iterator):
             if feedback is not None and feedback.isCanceled():
                 break
@@ -450,34 +462,46 @@ class LayerHandler(QObject):
                 geom.convertToMultiType()
             geomKey = geom.asWkb()
             geomBB_key = geom.boundingBox().asWktPolygon()
-            if geomBB_key not in bbDict:
-                bbDict[geomBB_key] = dict()
             attrKey = ','.join(['{}'.format(feat[column]) for column in columns]) if columns is not None else ''
             bbDict[geomBB_key].append({'geom':geom, 'feat':feat, 'attrKey':attrKey})
             if feedback is not None:
                 feedback.setProgress(size * current)
+        return bbDict
     
-    def searchDuplicatedFeatures(self, featList, useAttributes=False):
+    def searchDuplicatedFeatures(self, featList, columns, useAttributes=False):
         """
         featList = list of {'geom': geom, 'feat':feat}
-        returns geomKey, duplicatedFeats
+        returns {geomKey : -list of duplicated feats-}
         """
         duplicatedDict = dict()
+        if featList:
+            fields = [f.name() for f in featList[0]['feat'].fields()]
         for dict_feat1, dict_feat2 in combinations(featList, 2):
             geom1 = dict_feat1['geom']
             geom2 = dict_feat2['geom']
+            feat1 = dict_feat1['feat']
+            feat2 = dict_feat2['feat']
             wkb1 = geom1.asWkb()
             wkb2 = geom2.asWkb()
             if not geom1.isGeosEqual(geom2):
                 continue
-            if wkb1 not in duplicatedDict:
-                duplicatedDict[wkb1] = []
-            if wkb2 not in duplicatedDict:
-                duplicatedDict[wkb2] = []
-            duplicatedDict[wkb1].append(dict_feat1['feat'])
-            duplicatedDict[wkb1].append(dict_feat2['feat'])
-
-
+            elif useAttributes:
+                # do things to check attributes
+                try:
+                    for attr in fields:
+                        if attr not in columns:
+                            continue
+                        elif feat1[attr] != feat2[attr]:
+                            raise Exception('Skip outter loop')
+                except:
+                    continue
+            if wkb1 in duplicatedDict:
+                duplicatedDict[wkb1].append(feat2)
+            elif wkb2 in duplicatedDict:
+                duplicatedDict[wkb2].append(feat1)
+            else:
+                duplicatedDict[wkb1] = [feat1, feat2]
+        return duplicatedDict
 
     def addFeatToDict(self, endVerticesDict, line, featid):
         self.addPointToDict(line[0], endVerticesDict, featid)
@@ -795,7 +819,7 @@ class LayerHandler(QObject):
             multiStepFeedback = None
         localLyr = inputLyr
         currentStep = 0
-        if inputExpression is not None:
+        if inputExpression is not None and inputExpression != '':
             if multiStepFeedback is not None:
                 multiStepFeedback.setCurrentStep(currentStep)
             localLyr = algRunner.runFilterExpression(

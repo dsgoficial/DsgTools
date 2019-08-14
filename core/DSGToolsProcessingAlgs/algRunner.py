@@ -135,7 +135,8 @@ class AlgRunner:
             'GRASS_MIN_AREA_PARAMETER': minArea,
             'GRASS_OUTPUT_TYPE_PARAMETER': 0,
             'GRASS_VECTOR_DSCO':'',
-            'GRASS_VECTOR_LCO':''
+            'GRASS_VECTOR_LCO':'',
+            'GRASS_VECTOR_EXPORT_NOCAT':False
             }
         outputDict = processing.run('grass7:v.clean', parameters, context = context, feedback = feedback)
         return self.getGrassReturn(outputDict, context, returnError=returnError)

@@ -5,11 +5,11 @@ CREATE EXTENSION postgis#
 SET search_path TO pg_catalog,public,edgv,dominios#
 
 CREATE TABLE public.db_metadata(
-	 edgvversion varchar(50) NOT NULL DEFAULT 'EDGV 2.1.3 Pro',
+	 edgvversion varchar(50) NOT NULL DEFAULT '2.1.3 Pro',
 	 dbimplversion varchar(50) NOT NULL DEFAULT '5.00',
-	 CONSTRAINT edgvversioncheck CHECK (edgvversion = 'EDGV 2.1.3 Pro')
+	 CONSTRAINT edgvversioncheck CHECK (edgvversion = '2.1.3 Pro')
 )#
-INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('EDGV 2.1.3 Pro','5.00')#
+INSERT INTO public.db_metadata (edgvversion, dbimplversion) VALUES ('2.1.3 Pro','5.00')#
 
 CREATE TABLE dominios.tipo_comprovacao (
 	 code smallint NOT NULL,

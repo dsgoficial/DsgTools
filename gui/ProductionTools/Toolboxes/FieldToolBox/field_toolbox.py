@@ -62,20 +62,6 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         self.addedFeatures = []
         self.configFromDbDict = dict()
         self.layerHandler = LayerHandler(iface)
-
-    def addTool(self, manager, callback, parentMenu, iconBasePath, parentStackButton):
-        icon_path = iconBasePath + 'fieldToolbox.png'
-        text = self.tr('Feature Classification Tool')
-        action = manager.add_action(
-            icon_path,
-            text=text,
-            callback=callback,
-            add_to_menu=False,
-            add_to_toolbar=False,
-            parentMenu = parentMenu,
-            parentButton = parentStackButton
-            )
-        parentStackButton.setDefaultAction(action)
     
     def defineFactory(self, abstractDb):
         """
@@ -83,6 +69,8 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         :param abstractDb:
         :return:
         """
+        if abstractDb.db.databaseName() == "":
+            return
         self.layerLoader = LayerLoaderFactory().makeLoader(self.iface, abstractDb)
         try:
             self.populateConfigFromDb()
@@ -448,7 +436,9 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             try:
                 self.prevLayer.featureAdded.disconnect(self.setAttributesFromButton)
                 self.prevLayer.editCommandEnded.disconnect(self.updateAttributesAfterAdding)
-                self.prevLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressDefault)
+                setup = self.prevLayer.editFormConfig()
+                setup.setSuppress(QgsEditFormConfig.SuppressDefault)
+                self.prevLayer.setEditFormConfig(setup)
             except:
                 pass
 
@@ -489,7 +479,9 @@ class FieldToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             (reclassificationLayer, self.category, self.edgvClass) = self.getLayerFromButton(self.buttonName)
             if reclassificationLayer is not None:
                 #suppressing the form dialog
-                reclassificationLayer.editFormConfig().setSuppress(QgsEditFormConfig.SuppressOn)
+                setup = reclassificationLayer.editFormConfig()
+                setup.setSuppress(QgsEditFormConfig.SuppressOn)
+                reclassificationLayer.setEditFormConfig(setup)
                 #connecting addedFeature signal
                 reclassificationLayer.featureAdded.connect(self.setAttributesFromButton)
                 reclassificationLayer.editCommandEnded.connect(self.updateAttributesAfterAdding)

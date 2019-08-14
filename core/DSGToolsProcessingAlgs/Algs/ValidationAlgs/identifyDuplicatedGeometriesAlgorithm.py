@@ -20,18 +20,20 @@
  ***************************************************************************/
 """
 
-from PyQt5.QtCore import QCoreApplication
+from collections import defaultdict
+from itertools import combinations
 
+from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingException, QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean,
+                       QgsProcessingParameterBoolean, QgsProcessingMultiStepFeedback,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes)
 
 from .validationAlgorithm import ValidationAlgorithm
-
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -77,30 +79,30 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)           
-        geomDict = dict()
-        for current, feat in enumerate(featureList):
-            # Stop the algorithm if cancel button has been clicked
-            if feedback.isCanceled():
-                break
-            geom = feat.geometry()
-            if isMulti and not geom.isMultipart():
-                geom.convertToMultiType()
-            geomKey = geom.asWkb()
-            if geomKey not in geomDict:
-                geomDict[geomKey] = []
-            geomDict[geomKey].append(feat)
-            # # Update the progress bar
-            feedback.setProgress(int(current * total))
-        for k, v in geomDict.items():
-            if feedback.isCanceled():
-                break
-            if len(v) > 1:
-                idStrList = ','.join( map(str, [i.id() for i in v] ) )
-                flagText = self.tr('Features from layer {0} with ids=({1}) have duplicated geometries.').format(inputLyr.name(), idStrList)
-                self.flagFeature(v[0].geometry(), flagText)      
-
+        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)
+        geomDict = defaultdict(set)
+        featureList = tuple(featureList)
+        layerHandler = LayerHandler()
+        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
+        geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback)
+        multiStepFeedback.setCurrentStep(1)
+        self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
+        multiStepFeedback.setCurrentStep(2)
+        
         return {self.FLAGS: self.flag_id}
+
+    def raiseDuplicatedFeaturesFlags(self, inputLyr, geomDict, feedback):
+        size = 100/len(geomDict) if geomDict else 0
+        for current, featList in enumerate(geomDict.values()):
+            if feedback.isCanceled():
+                break
+            if len(featList) > 1:
+                idStrList = ', '.join(map(str, [feat.id() for feat in featList]))
+                flagText = self.tr('Features from layer {0} with ids=({1}) have the same set of attributes.').format(inputLyr.name(), idStrList)
+                self.flagFeature(featList[0].geometry(), flagText)
+            feedback.setProgress(size * current)
 
     def name(self):
         """

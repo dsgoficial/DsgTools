@@ -28,7 +28,6 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.core import QgsMessageLog, Qgis
 
 from DsgTools.gui.CustomWidgets.BasicInterfaceWidgets.dsgCustomComboBox import DsgCustomComboBox
-from DsgTools.gui.ServerTools.viewServers import ViewServers
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.DbFactory.abstractDb import AbstractDb
 from DsgTools.gui.CustomWidgets.DatabaseConversionWidgets.datasourceInfoTable import DatasourceInfoTable
@@ -42,7 +41,12 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
     connectionChanged = pyqtSignal()
     dbChanged = pyqtSignal(AbstractDb)
     problemOccurred = pyqtSignal(str)
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, isStatic=False):
+        """
+        Class constructor.
+        :param parent: (QWidget) widget parent to newly instantiated ConnectionComboBox.
+        :param isStatic: (bool) indicates whether server selection will be static (no default).
+        """
         super(ConnectionComboBox, self).__init__(parent)
         self.setupUi(self)
         self.parent = parent
@@ -51,7 +55,13 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         self.serverAbstractDb = None
         self.displayDict = {'2.1.3':'EDGV 2.1.3', '2.1.3 Pro':'EDGV 2.1.3 Pro','FTer_2a_Ed':'EDGV FTer 2a Ed', 'Non_EDGV':self.tr('Other database model'), '3.0':'EDGV 3.0'}
         self.instantiateAbstractDb = False
-        self.viewServers = ViewServers()
+        self.isStatic = isStatic
+        if self.isStatic:
+            from DsgTools.gui.ServerTools.viewServers import ViewServersStatic
+            self.viewServers = ViewServersStatic()
+        else:
+            from DsgTools.gui.ServerTools.viewServers import ViewServers
+            self.viewServers = ViewServers()
         self.viewServers.defaultChanged.connect(self.loadServerAbstractDb)
         self.connectionSelectorComboBox.addItem(self.tr('Select database'))
         self.loadServerAbstractDb()
@@ -68,7 +78,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         Checks if there is a default db in self.viewServers . If there isn't one, disables connection combo
         """
-        if self.viewServers.defaultConnectionDict == dict():
+        if self.viewServers.connectionParameters() == dict():
             self.connectionSelectorComboBox.setEnabled(False)
         else:
             self.connectionSelectorComboBox.setEnabled(True)
@@ -140,7 +150,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
                 if not self.instantiateAbstractDb:
                     self.abstractDb = self.abstractDbFactory.createDbFactory(DsgEnums.DriverPostGIS)
                     (host, port, user, password) = self.serverAbstractDb.getDatabaseParameters()
-                    dbName = self.connectionSelectorComboBox.currentText().split(' (')[0]
+                    dbName = self.connectionSelectorComboBox.itemText(idx).split(' (')[0]
                     self.abstractDb.connectDatabaseWithParameters(host, port, dbName, user, password)
                     self.abstractDb.checkAndOpenDb()
                     self.dbChanged.emit(self.abstractDb)
@@ -159,8 +169,8 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         Checks if connection to server is valid.
         """
         # for files, server check is not necessary
-        h = self.viewServers.getDefaultConnectionParameters()[1]
-        return self.viewServers.testServer(h)
+        conn = self.viewServers.getDefaultConnectionParameters()[0]
+        return self.viewServers.testServer(conn)
 
     def databaseExists(self):
         """
@@ -175,7 +185,7 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
 
     def validate(self):
         """
-        Validates current widget. To be validated, it is necessary:
+        Validates current widget. To be valid, it is necessary:
         - a valid datasource selection; and
         - a valid database structure.
         :return: (str) invalidation reason.
@@ -213,3 +223,11 @@ class ConnectionComboBox(QtWidgets.QWidget, FORM_CLASS):
         """
         contents = self.abstractDb.databaseInfo() if self.abstractDb else []
         DatasourceInfoTable(contents=contents).exec_()
+
+    def setHost(self, hostname):
+        """
+        Sets a hostname as selected from its name.
+        :param serverName: (str) host to be set as selected.
+        """
+        # method needs to be ported to 'non-static' view server! 
+        self.viewServers.setHost(hostname)

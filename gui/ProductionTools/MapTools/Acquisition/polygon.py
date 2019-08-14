@@ -144,12 +144,12 @@ class Polygon(GeometricaAcquisition):
             if self.qntPoint == 1:
                 self.distanceToolTip.canvasMoveEvent(self.geometry[0], point)
                 geom = QgsGeometry.fromPolylineXY([self.geometry[0], point])
-                self.rubberBand.setToGeometry(geom, self.iface.activeLayer())
+                self.rubberBand.setToGeometry(geom, None)
             elif self.qntPoint >= 2:                
                 if self.free:
                     self.distanceToolTip.canvasMoveEvent(self.geometry[-1], point)
                     geom = QgsGeometry.fromPolygonXY([self.geometry+[QgsPointXY(point.x(), point.y())]])
-                    self.rubberBand.setToGeometry(geom, self.iface.activeLayer())                    
+                    self.rubberBand.setToGeometry(geom, None)
                 else:   
                     if (self.qntPoint % 2 == 1): 
                         self.setAvoidStyleSnapRubberBand()

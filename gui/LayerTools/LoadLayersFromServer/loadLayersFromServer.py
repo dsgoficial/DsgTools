@@ -145,7 +145,8 @@ class LoadLayersFromServer(QtWidgets.QDialog, FORM_CLASS):
             selectedStyle = self.customServerConnectionWidget.stylesDict[self.styleComboBox.currentText()]
         uniqueLoad = self.uniqueLoadCheckBox.isChecked()
         onlyParents = self.onlyParentsCheckBox.isChecked()
-        customForm = not self.customFormCheckBox.isChecked() if 'Pro' in edgvVersion else False
+        # customForm = not self.customFormCheckBox.isChecked() if 'Pro' in edgvVersion else False
+        customForm = not self.customFormCheckBox.isChecked() and self.customFormCheckBox.isEnabled()
         #3- Build factory dict
         factoryDict = dict()
         dbList = list(self.customServerConnectionWidget.selectedDbsDict.keys())

@@ -38,6 +38,7 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAl
     GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
     CreateFrameAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
@@ -46,6 +47,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm imp
     RaiseFlagsAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import (ParameterFMEManagerType,
                                                                                        RunRemoteFMEAlgorithm)
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
+    RuleStatisticsAlgorithm
+
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.updateOriginalLayerAlgorithm import \
     UpdateOriginalLayerAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.adjustNetworkConnectivityAlgorithm import \
@@ -118,6 +123,23 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.topologicalLineCon
     TopologicalLineConnectivityAdjustment
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.verifyNetworkDirectioningAlgorithm import \
     VerifyNetworkDirectioningAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.runRemoteFMEAlgorithm import \
+    RunRemoteFMEAlgorithm, ParameterFMEManagerType
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
+    CreateFrameAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.fileInventoryAlgorithm import \
+    FileInventoryAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.raiseFlagsAlgorithm import \
+    RaiseFlagsAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInvalidGeometriesAlgorithm import \
+    IdentifyAndFixInvalidGeometriesAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import PecCalculatorAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -178,6 +200,9 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                 AssignMeasureColumnToLayersAlgorithm(),
                 GroupLayersAlgorithm(),
                 TopologicalLineConnectivityAdjustment()]
+                PecCalculatorAlgorithm(),
+                RuleStatisticsAlgorithm()]
+
 
     def load(self):
         ProcessingConfig.settingIcons[self.name()] = self.icon()
