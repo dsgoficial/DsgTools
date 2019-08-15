@@ -347,3 +347,17 @@ class AlgRunner:
             }
         output = processing.run("native:extractbyexpression", parameters, context=context, feedback=feedback)
         return output['OUTPUT']
+    
+    def runRemoveDuplicatedFeatures(self, inputLyr, context, onlySelected=False, attributeBlackList=None, excludePrimaryKeys=True, ignoreVirtualFields=True, feedback = None, outputLyr = 'memory:'):
+        attributeBlackList = [] if attributeBlackList is None else attributeBlackList
+        parameters = {
+            'INPUT' : inputLyr,
+            'SELECTED' : onlySelected,
+            'FLAGS': flagLyr,
+            'ATTRIBUTE_BLACK_LIST' : attributeBlackList,
+            'IGNORE_VIRTUAL_FIELDS' : ignoreVirtualFields,
+            'IGNORE_PK_FIELDS' : excludePrimaryKeys
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run('dsgtools:removeduplicatedfeatures', parameters, context = context, feedback = feedback)
+        return output['OUTPUT']
