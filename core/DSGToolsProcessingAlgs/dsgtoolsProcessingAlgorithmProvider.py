@@ -204,7 +204,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     PecCalculatorAlgorithm(),
                     RuleStatisticsAlgorithm()
                 ]
-            return algList
+        return algList
 
 
     def load(self):
