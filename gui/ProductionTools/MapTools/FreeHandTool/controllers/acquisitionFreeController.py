@@ -174,24 +174,24 @@ class AcquisitionFreeController(object):
         if srid != epsg:
             # Creating a transformer
             coordinateTransformer = core.QgsCoordinateTransform(crsSrc, crsDest, QgsProject.instance())
-            lyrType = iface.activeLayer().geometryType()
+            geomType =  geom.type()
             # Transforming the points
-            if lyrType == core.QgsWkbTypes.LineGeometry:
+            if geomType == core.QgsWkbTypes.LineGeometry:
                 geomList = geom.asPolyline()
-            elif lyrType == core.QgsWkbTypes.PolygonGeometry:
+            elif geomType == core.QgsWkbTypes.PolygonGeometry:
                 geomList = geom.asPolygon()
             newGeom = []
             for j in range(len(geomList)):
-                if lyrType == core.QgsWkbTypes.LineGeometry:
+                if geomType == core.QgsWkbTypes.LineGeometry:
                     newGeom.append(coordinateTransformer.transform(geomList[j]))
-                elif lyrType == core.QgsWkbTypes.PolygonGeometry:
+                elif geomType == core.QgsWkbTypes.PolygonGeometry:
                     line = geomList[j]
                     for i in range(len(line)):
                         point = line[i]
                         newGeom.append(coordinateTransformer.transform(point))
-            if lyrType == core.QgsWkbTypes.LineGeometry:
+            if geomType == core.QgsWkbTypes.LineGeometry:
                 return core.QgsGeometry.fromPolylineXY(newGeom)
-            elif lyrType == core.QgsWkbTypes.PolygonGeometry:
+            elif geomType == core.QgsWkbTypes.PolygonGeometry:
                 return core.QgsGeometry.fromPolygonXY([newGeom])
         return geom        
 
