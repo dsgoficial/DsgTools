@@ -933,7 +933,7 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getStyle(self, styleName, table_name):
-        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and stylename = '{1}' and f_table_catalog = current_database()""".format(table_name, styleName)
+        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and (stylename = '{1}' or stylename like '{1}/%')and f_table_catalog = current_database()""".format(table_name, styleName)
         return sql
     
     def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
