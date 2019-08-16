@@ -356,7 +356,7 @@ class AlgRunner:
             'FLAGS': flagLyr,
             'ATTRIBUTE_BLACK_LIST' : attributeBlackList,
             'IGNORE_VIRTUAL_FIELDS' : ignoreVirtualFields,
-            'IGNORE_PK_FIELDS' : excludePrimaryKeys
+            'IGNORE_PK_FIELDS' : excludePrimaryKeys,
             'OUTPUT' : outputLyr
         }
         output = processing.run('dsgtools:removeduplicatedfeatures', parameters, context = context, feedback = feedback)
