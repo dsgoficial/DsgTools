@@ -220,7 +220,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
                     self.utils.deleteQml(fullPath)
                     # clear fullPath variable
                     del fullPath
-            if not customForm:
+            if customForm:
                 vlayer = self.loadFormCustom(vlayer)
             if editingDict is not None:
                 editLyr, joinLyrFieldName = self.loadEditLayer(lyrName, editingDict)
