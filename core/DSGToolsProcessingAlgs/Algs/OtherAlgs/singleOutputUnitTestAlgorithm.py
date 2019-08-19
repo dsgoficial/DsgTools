@@ -27,13 +27,14 @@ from qgis.PyQt.QtCore import QCoreApplication
 from qgis.core import (QgsProcessingAlgorithm,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterEnum,
-                       QgsProcessingException,
+                       QgsFeatureSink,
                        QgsCoordinateReferenceSystem,
                        QgsFields,
                        QgsField,
                        QgsWkbTypes)
 
 from DsgTools.tests.test_ValidationAlgorithms import Tester
+from DsgTools.core.GeometricTools.featureHandler import FeatureHandler
 
 class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
     __description__ = """Runs unit tests for a set of DSGTools algorithms that""" \
@@ -71,7 +72,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterEnum(
                 self.INPUT_ALGS,
-                self.tr('Algorithms to be tested:'),
+                self.tr('Algorithms to be tested'),
                 options=self.AVAILABLE_ALGS,
                 optional=False,
                 allowMultiple=True
@@ -81,7 +82,7 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         self.addParameter(
             QgsProcessingParameterFeatureSink(
                 self.OUTPUT,
-                self.tr("DSGTools Algorithms Unit Tests")
+                self.tr("DSGTools Single Output Algorithms Unit Tests")
             )
         )
         
@@ -133,34 +134,43 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         Gets all fields for output layer.
         """
         fields = QgsFields()
-        fields.append(QgsField('node_type', QVariant.String))
-        fields.append(QgsField('layer', QVariant.String))
+        fields.append(QgsField('algorithm', QVariant.String))
+        fields.append(QgsField('tests_output', QVariant.String))
+        fields.append(QgsField('status', QVariant.String))
         return fields
 
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
         """
-        if not self.INPUT_ALGS:
-            raise QgsProcessingException(
-                self.invalidSourceError(parameters, self.INPUT_ALGS)
-            )
         algsOutput, dest_id = self.parameterAsSink(
             parameters, self.OUTPUT, context, self.getFields(),
             QgsWkbTypes.NoGeometry, QgsCoordinateReferenceSystem('EPSG:4326')
         )
         tester = Tester()
-        size = len(self.INPUT_ALGS)
-        for i, alg in enumerate(self.INPUT_ALGS):
+        featureHandler = FeatureHandler()
+        fields = self.getFields()
+        feats = set()
+        algIndexes = self.parameterAsEnums(parameters, self.INPUT_ALGS, context)
+        totalProgress = 100 / len(algIndexes) if algIndexes else 0
+        feedback.setProgress(0)
+        for currentStep, algIdx in enumerate(algIndexes):
             if feedback.isCanceled():
                 break
+            alg = self.AVAILABLE_ALGS[algIdx]
             feedback.pushInfo(self.tr("Testing {alg}'s...").format(alg=alg))
-            try:
-                # if any test fails, an exception is raised
-                tester.testAlg(alg)
-                msg = self.tr("All tests are OK.")
-                feedback.pushInfo(msg)
-            except Exception as e:
-                msg = str(e)
-                feedback.pushInfo(msg)
+            msg = tester.testAlg(alg, feedback=feedback, context=context)
+            status = self.tr("Failed") if msg else self.tr("Passed")
+            pushMethod = feedback.reportError if msg else feedback.pushDebugInfo
+            msg = msg or self.tr("All tests for {alg} are OK.").format(alg=alg)
+            pushMethod("{msg}\n".format(msg=msg))
+            feats.add(
+                featureHandler.createFeatureFromLayer(
+                    algsOutput,
+                    attributes={"algorithm" : alg, "tests_output" : msg, "status" : status},
+                    fields=fields
+                )
+            )
+            feedback.setProgress(currentStep * totalProgress)
+        algsOutput.addFeatures(feats, QgsFeatureSink.FastInsert)
         return { self.OUTPUT : dest_id }
