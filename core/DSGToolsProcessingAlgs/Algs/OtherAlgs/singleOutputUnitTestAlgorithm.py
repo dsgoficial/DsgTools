@@ -152,16 +152,20 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
         fields = self.getFields()
         feats = set()
         algIndexes = self.parameterAsEnums(parameters, self.INPUT_ALGS, context)
-        totalProgress = 100 / len(algIndexes) if algIndexes else 0
+        size = len(algIndexes)
+        failCount = 0
+        totalProgress = 100 / size if size else 0
         feedback.setProgress(0)
         for currentStep, algIdx in enumerate(algIndexes):
             if feedback.isCanceled():
                 break
             alg = self.AVAILABLE_ALGS[algIdx]
             feedback.pushInfo(self.tr("Testing {alg}'s...").format(alg=alg))
-            msg = tester.testAlg(alg, feedback=feedback, context=context)
+            # decided not to pass feedback to not pollute this alg's log
+            msg = tester.testAlg(alg) #, feedback=feedback, context=context)
             status = self.tr("Failed") if msg else self.tr("Passed")
             pushMethod = feedback.reportError if msg else feedback.pushDebugInfo
+            failCount += 1 if msg else 0
             msg = msg or self.tr("All tests for {alg} are OK.").format(alg=alg)
             pushMethod("{msg}\n".format(msg=msg))
             feats.add(
@@ -173,4 +177,8 @@ class SingleOutputUnitTestAlgorithm(QgsProcessingAlgorithm):
             )
             feedback.setProgress(currentStep * totalProgress)
         algsOutput.addFeatures(feats, QgsFeatureSink.FastInsert)
+        if failCount:
+            feedback.reportError(self.tr("{0} algorithms failed their unit tests.").format(failCount))
+        else:
+            feedback.pushDebugInfo(self.tr("All algorithms passed their unit tests."))
         return { self.OUTPUT : dest_id }

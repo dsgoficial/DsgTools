@@ -79,8 +79,7 @@ class FeatureHandler(QObject):
                         if not provided, it will be read from input layer (non-optimal).
         :return: (QgsFeature) new feature.
         """
-        fields = fields or layer.fields()
-        newFeature = QgsFeature(fields)
+        newFeature = QgsFeature(fields or layer.fields())
         if geom:
             newFeature.setGeometry(geom)
         if attributes:
