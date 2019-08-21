@@ -19,8 +19,9 @@
 
 import os
 
-from processing.gui.AlgorithmDialog import AlgorithmDialog
-from qgis.core import QgsProcessingModelAlgorithm, QgsProcessingFeedback, QgsProcessingContext
+import processing
+from processing.modeler.ModelerUtils import ModelerUtils
+from qgis.core import QgsProject, QgsProcessingFeedback, QgsProcessingContext
 from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QFileDialog
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
@@ -30,9 +31,10 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 class DataValidationTool(QWidget, FORM_CLASS):
-    __defaultModelPath__ = os.path.join(
-        os.path.dirname(__file__), "..", "..", "..", "..", "core", "Misc", "QGIS_Models"
-    )
+    # __defaultModelPath__ = os.path.join(
+    #     os.path.dirname(__file__), "..", "..", "..", "..", "core", "Misc", "QGIS_Models"
+    # )
+    __defaultModelPath__ = ModelerUtils.modelsFolders()[0]
     modelAdded = pyqtSignal(str)
     modelRemoved = pyqtSignal(str)
 
@@ -103,7 +105,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             ).readlines()
         ])
 
-    @pyqtSlot(bool, name = 'on_validationPushButton_toggled')
+    @pyqtSlot(bool, name='on_validationPushButton_toggled')
     def activateTool(self, toggled=None):
         """
         Shows/hides the toolbar.
@@ -137,7 +139,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             os.path.join(self.__defaultModelPath__, os.path.basename(modelName))
         )
 
-    @pyqtSlot(bool, name = 'on_addModelPushButton_clicked')
+    @pyqtSlot(bool, name='on_addModelPushButton_clicked')
     def registerModel(self, modelPath=None):
         """
         Registers a model to the model runner. This application register all
@@ -166,7 +168,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             self.modelComboBox.addItem(modelName)
             self.modelAdded.emit(modelName)
 
-    @pyqtSlot(bool, name = 'on_removeModelPushButton_clicked')
+    @pyqtSlot(bool, name='on_removeModelPushButton_clicked')
     def unregisterModel(self, modelName=None):
         """
         Unregisters a model to the model runner. Removes the model from the 
@@ -187,7 +189,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
                 self.modelRemoved.emit(modelName)
 
-    @pyqtSlot(bool, name = 'on_runModelPushButton_clicked')
+    @pyqtSlot(bool, name='on_runModelPushButton_clicked')
     def runModel(self, modelName=None):
         """
         Executes chosen model, if possible.
@@ -200,10 +202,14 @@ class DataValidationTool(QWidget, FORM_CLASS):
             modelPath = self.modelPath()
         else:
             modelPath = os.path.join(self.__defaultModelPath__, modelName)
-        alg = QgsProcessingModelAlgorithm()
-        alg.fromFile(modelPath)
-        # dlg = AlgorithmDialog(alg.create(), parent=self.iface.mainWindow())
-        # dlg.runAlgorithm()
+        # it seems models can only be run through QGIS' model paths
+        output = processing.run(
+                "model:drenagem_duplicada", {
+                'dsgtools:identifyduplicatedgeometries_1:Flags Drenagem Duplicada' : 'memory:'
+            })
+        QgsProject.instance().addMapLayer(
+            output['dsgtools:identifyduplicatedgeometries_1:Flags Drenagem Duplicada']
+        )
 
     def unload(self):
         """
