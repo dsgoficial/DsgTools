@@ -128,7 +128,7 @@
        </size>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="removeModelPushButton">
@@ -167,7 +167,7 @@
        </size>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
      <widget class="QPushButton" name="runModelPushButton">
@@ -206,7 +206,7 @@
        </size>
       </property>
       <property name="checkable">
-       <bool>true</bool>
+       <bool>false</bool>
       </property>
      </widget>
     </widget>
