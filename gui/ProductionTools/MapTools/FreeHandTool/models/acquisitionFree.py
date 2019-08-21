@@ -168,16 +168,11 @@ class AcquisitionFree(gui.QgsMapTool):
         elif event.key() == QtCore.Qt.Key_Escape:
             self.cancelEdition()
             event.ignore()
-        # elif event.key() == QtCore.Qt.Key_Control:
-        #     self.controlPressed = True
-
-    # def keyReleaseEvent(self, event):
-        # if event.key() == QtCore.Qt.Key_Control:
-        #     self.controlPressed = False
 
     def cancelEdition(self): 
         #Método para cancelar aquisição
         self.getRubberBand().reset() if self.getRubberBand() else None
+        self.getRubberBandToStopState().reset() if self.getRubberBandToStopState() else None
         self.setRubberBand(None)
         self.setDrawingState(False)
         self.setActiveState(False)
@@ -195,20 +190,32 @@ class AcquisitionFree(gui.QgsMapTool):
    
     def removeVertice(self):
         #Método para remover vertices
+        firstPoint = None
+        lastPoint = None
         rubberBand = self.getRubberBand()
         qtnUndoPoints = self.getParametersFromConfig()
         if rubberBand and rubberBand.numberOfVertices() > qtnUndoPoints:
             for x in range(qtnUndoPoints):
                 rubberBand.removeLastPoint()
-            if self.isPolygon():
-                lastPoint = rubberBand.asGeometry().asPolygon()[-2]
-            else:
+            if not self.isPolygon():
                 lastPoint = rubberBand.asGeometry().asPolyline()[-1]
-            self.startRubberBandToStopState(
-                core.QgsPointXY(
-                    lastPoint[0], lastPoint[1]
-                )
-            )
+                new_rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.LineGeometry)
+                new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
+            else:                
+                if len(rubberBand.asGeometry().asPolygon()[0]) > 1:
+                    firstPoint = rubberBand.asGeometry().asPolygon()[0][0]
+                    lastPoint = rubberBand.asGeometry().asPolygon()[0][-2]
+                new_rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.PolygonGeometry)
+                new_rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
+            new_rubberBand.setWidth(1)
+            rubberBandToStopState = self.getRubberBandToStopState()
+            if rubberBandToStopState:
+                rubberBandToStopState.reset()
+            new_rubberBand.setLineStyle(QtCore.Qt.DotLine)
+            new_rubberBand.addPoint(lastPoint)
+            if firstPoint:
+                new_rubberBand.addPoint(firstPoint)
+            self.setRubberBandToStopState(new_rubberBand)
         elif rubberBand:
             self.setStopedState(False)
             self.getRubberBandToStopState().reset()
@@ -257,24 +264,6 @@ class AcquisitionFree(gui.QgsMapTool):
         layer = self.getCanvas().currentLayer()
         if layer:
             self.startRubberBand(pointMap, layer)
-
-    def startRubberBandToStopState(self, point):
-        #Método para iniciar o rubberBand do pause da ferramenta
-        #Parâmetro de entrada: point (Último ponto da feição em aquisição)
-        rubberBandToStopState = self.getRubberBandToStopState()
-        if rubberBandToStopState:
-            rubberBandToStopState.reset()
-        if self.isPolygon():
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.PolygonGeometry)
-            rubberBand.setColor(QtGui.QColor(255, 0, 0, 63))
-            rubberBand.setWidth(2)
-        else:
-            rubberBand = gui.QgsRubberBand(self.getCanvas(), core.QgsWkbTypes.LineGeometry)
-            rubberBand.setColor(QtGui.QColor(255, 0, 0, 150))
-            rubberBand.setWidth(1)
-        rubberBand.setLineStyle(QtCore.Qt.DotLine)
-        rubberBand.addPoint(point)
-        self.setRubberBandToStopState(rubberBand)
     
     def startRubberBand(self, pointMap, layer):
         #Método para iniciar o rubberBand da aquisição
@@ -324,11 +313,16 @@ class AcquisitionFree(gui.QgsMapTool):
         rubberBand = self.getRubberBandToStopState()
         if rubberBand.asGeometry():
             listPoints = rubberBand.asGeometry().asPolygon() if self.isPolygon() else rubberBand.asGeometry().asPolyline()
-            if self.isPolygon() and len(listPoints) >= 3:
+            if self.isPolygon() and self.getRubberBand():
+                rubberBand.reset(geometryType=core.QgsWkbTypes.PolygonGeometry)
+                firstPoint = self.getRubberBand().asGeometry().asPolygon()[0][0]
+                secondPoint = self.getRubberBand().asGeometry().asPolygon()[0][-2]
+                rubberBand.addPoint(secondPoint)
+                rubberBand.addPoint(point)
+                rubberBand.addPoint(firstPoint)
+            elif not(self.isPolygon()) and len(listPoints) >= 1:
                 rubberBand.removeLastPoint()
-            elif not(self.isPolygon()) and len(listPoints) >= 2:
-                rubberBand.removeLastPoint()
-            rubberBand.addPoint(point)
+                rubberBand.addPoint(point)
 
     def finishEdition(self, event):
         #Método para finalizar a aquisição
