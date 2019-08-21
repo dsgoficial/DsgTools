@@ -30,7 +30,8 @@ from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterVectorLayer, QgsWkbTypes)
+                       QgsProcessingParameterVectorLayer, QgsWkbTypes,
+                       QgsProcessingException)
 
 from .validationAlgorithm import ValidationAlgorithm
 
