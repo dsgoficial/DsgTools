@@ -161,7 +161,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         if self.modelExists(modelName) and not self.confirmAction(msg):
             return
         dest = os.path.join(self.__defaultModelPath__, modelName)
-        os.popen('cp "{source}" "{dest}"'.format(source=modelPath, dest=dest))
+        os.popen("cp '{source}' '{dest}'".format(source=modelPath, dest=dest))
         if os.path.exists(dest):
             self.modelComboBox.addItem(modelName)
             self.modelAdded.emit(modelName)
