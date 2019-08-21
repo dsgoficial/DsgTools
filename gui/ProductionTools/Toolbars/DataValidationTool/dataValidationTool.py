@@ -20,8 +20,22 @@
 import os
 
 import processing
+from processing import Processing
+from processing.tools import dataobjects
+from processing.gui.MessageBarProgress import MessageBarProgress
+from processing.gui.AlgorithmExecutor import execute
 from processing.modeler.ModelerUtils import ModelerUtils
-from qgis.core import QgsProject, QgsProcessingFeedback, QgsProcessingContext
+from qgis.core import (QgsProject,
+                       QgsProcessingContext,
+                       QgsApplication,
+                       QgsMapLayer,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingException,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingOutputRasterLayer,
+                       QgsProcessingOutputMapLayer,
+                       QgsProcessingOutputMultipleLayers,
+                       QgsProcessingFeedback)
 from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QFileDialog
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
@@ -189,6 +203,83 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
                 self.modelRemoved.emit(modelName)
 
+    def runAlgorithm(self, algOrName, parameters, onFinish=None, feedback=None, context=None):
+        """
+        Copied from processing.Processing.Processing and modified.
+        """
+        if isinstance(algOrName, QgsProcessingAlgorithm):
+            alg = algOrName
+        else:
+            alg = QgsApplication.processingRegistry().createAlgorithmById(algOrName)
+
+        if feedback is None:
+            feedback = QgsProcessingFeedback()
+
+        if alg is None:
+            msg = Processing.tr('Error: Algorithm {0} not found\n').format(algOrName)
+            feedback.reportError(msg)
+            raise QgsProcessingException(msg)
+
+        if context is None:
+            context = dataobjects.createContext(feedback)
+
+        if context.feedback() is None:
+            context.setFeedback(feedback)
+
+        ok, msg = alg.checkParameterValues(parameters, context)
+        if not ok:
+            msg = Processing.tr('Unable to execute algorithm\n{0}').format(msg)
+            feedback.reportError(msg)
+            raise QgsProcessingException(msg)
+
+        if not alg.validateInputCrs(parameters, context):
+            feedback.pushInfo(
+                Processing.tr('Warning: Not all input layers use the same CRS.\nThis can cause unexpected results.'))
+
+        ret, results = execute(alg, parameters, context, feedback)
+        if ret:
+            feedback.pushInfo(
+                Processing.tr('Results: {}').format(results))
+
+            if onFinish is not None:
+                onFinish(alg, context, feedback)
+            else:
+                # auto convert layer references in results to map layers
+                for out in alg.outputDefinitions():
+                    if out.name() not in results:
+                        continue
+
+                    if isinstance(out, (QgsProcessingOutputVectorLayer, QgsProcessingOutputRasterLayer, QgsProcessingOutputMapLayer)):
+                        result = results[out.name()]
+                        if not isinstance(result, QgsMapLayer):
+                            layer = context.takeResultLayer(result) # transfer layer ownership out of context
+                            if layer:
+                                results[out.name()] = layer # replace layer string ref with actual layer (+ownership)
+                    elif isinstance(out, QgsProcessingOutputMultipleLayers):
+                        result = results[out.name()]
+                        if result:
+                            layers_result = []
+                            for l in result:
+                                if not isinstance(result, QgsMapLayer):
+                                    layer = context.takeResultLayer(l) # transfer layer ownership out of context
+                                    if layer:
+                                        layers_result.append(layer)
+                                    else:
+                                        layers_result.append(l)
+                                else:
+                                    layers_result.append(l)
+
+                            results[out.name()] = layers_result # replace layers strings ref with actual layers (+ownership)
+
+        else:
+            msg = Processing.tr("There were errors executing the algorithm.")
+            feedback.reportError(msg)
+            raise QgsProcessingException(msg)
+
+        if isinstance(feedback, MessageBarProgress):
+            feedback.close()
+        return results
+
     @pyqtSlot(bool, name='on_runModelPushButton_clicked')
     def runModel(self, modelName=None):
         """
@@ -203,7 +294,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         else:
             modelPath = os.path.join(self.__defaultModelPath__, modelName)
         # it seems models can only be run through QGIS' model paths
-        output = processing.run(
+        output = self.runAlgorithm(
                 "model:drenagem_duplicada", {
                 'dsgtools:identifyduplicatedgeometries_1:Flags Drenagem Duplicada' : 'memory:'
             })
