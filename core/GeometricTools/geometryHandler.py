@@ -261,17 +261,22 @@ class GeometryHandler(QObject):
     def getSegmentDict(self, lineLyr):
         segmentDict = dict()
         geomList = []
+        if lineLyr.featureCount() > 0:
+            toLineAlias = lambda geom : geom.asMultiPolyline()[0] if next(lineLyr.getFeatures()).geometry().isMultipart() \
+                            else geom.asPolyline()
+            fromLineAlias = lambda x : QgsGeometry.fromMultiPolylineXY([x]) if next(lineLyr.getFeatures()).geometry().isMultipart() \
+                            else QgsGeometry.fromPolyline(x[0], x[1])
         for feat in lineLyr.getFeatures():
             geom = feat.geometry()
             if geom not in geomList:
                 geomList.append(geom)
-                lineList = geom.asPolyline()
+                lineList = toLineAlias(geom)
                 if lineList[0] not in segmentDict:
                     segmentDict[lineList[0]] = []
-                segmentDict[lineList[0]].append(QgsGeometry.fromPolyline([lineList[0], lineList[1]]))
+                segmentDict[lineList[0]].append(fromLineAlias([lineList[0], lineList[1]]))
                 if lineList[-1] not in segmentDict:
                     segmentDict[lineList[-1]] = []
-                segmentDict[lineList[-1]].append(QgsGeometry.fromPolyline([lineList[-1], lineList[-2]]))
+                segmentDict[lineList[-1]].append(fromLineAlias([lineList[-1], lineList[-2]]))
         return segmentDict
     
     def handleGeometry(self, geom, parameterDict = {}, coordinateTransformer = None):
