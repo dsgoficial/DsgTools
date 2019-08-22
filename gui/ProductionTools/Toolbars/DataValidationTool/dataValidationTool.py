@@ -20,22 +20,13 @@
 import os
 
 import processing
-from processing import Processing
-from processing.tools import dataobjects
-from processing.gui.MessageBarProgress import MessageBarProgress
-from processing.gui.AlgorithmExecutor import execute
 from processing.modeler.ModelerUtils import ModelerUtils
 from qgis.core import (QgsProject,
-                       QgsProcessingContext,
-                       QgsApplication,
                        QgsMapLayer,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingException,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingOutputRasterLayer,
-                       QgsProcessingOutputMapLayer,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingFeedback)
+                       QgsProcessingModelAlgorithm,
+                       QgsProcessingContext,
+                       QgsProcessingFeedback,
+                       QgsLayerTreeLayer)
 from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QFileDialog
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
@@ -45,10 +36,16 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 class DataValidationTool(QWidget, FORM_CLASS):
-    # __defaultModelPath__ = os.path.join(
-    #     os.path.dirname(__file__), "..", "..", "..", "..", "core", "Misc", "QGIS_Models"
-    # )
-    __defaultModelPath__ = ModelerUtils.modelsFolders()[0]
+    """
+    Toolbar for fast usage of processing methods. It is assumed that the models
+    have all of its child algorithm's variable's well defined and the only 
+    variables expected on input are the output layers, whenever needed and as 
+    many as it may be. 
+    """
+    __dsgToolsModelPath__ = os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "..", "core", "Misc", "QGIS_Models"
+    )
+    __qgisModelPath__ = ModelerUtils.modelsFolders()[0]
     modelAdded = pyqtSignal(str)
     modelRemoved = pyqtSignal(str)
 
@@ -97,24 +94,31 @@ class DataValidationTool(QWidget, FORM_CLASS):
         :return: (str) model path.
         """
         model = self.model(idx)
-        return os.path.join(self.__defaultModelPath__, model) if model else ""
+        return os.path.join(self.defaultModelPath(), model) if model else ""
+
+    def defaultModelPath(self):
+        """
+        Gets the directory used to read and save the models shown on toolbar.
+        :return: (str) default models path.
+        """
+        # change for DSGTools options input
+        return self.__dsgToolsModelPath__ if True else self.__qgisModelPath__
 
     def resetModelList(self):
         """
         Clear models listed and look refill it with current models.
         """
         self.modelComboBox.clear()
-        print(self.__defaultModelPath__)
         self.modelComboBox.addItem(self.tr("Select a model..."))
         self.modelComboBox.addItems([
             x.strip() for x in os.popen("ls {path} | grep '.model3$'".format(
-                    path=self.__defaultModelPath__
+                    path=self.defaultModelPath()
                 )
             ).readlines()
         ])
         self.modelComboBox.addItems([
             x.strip() for x in os.popen("ls {path} | grep '.model$'".format(
-                    path=self.__defaultModelPath__
+                    path=self.defaultModelPath()
                 )
             ).readlines()
         ])
@@ -132,16 +136,22 @@ class DataValidationTool(QWidget, FORM_CLASS):
         else:
             self.splitter.hide()
 
-    def confirmAction(self, msg):
+    def confirmAction(self, msg, showCancel=True):
         """
         Raises a message box for confirmation before executing an action.
         :param msg: (str) message to be exposed.
         :return: (bool) whether action was confirmed.
         """
-        return QMessageBox.question(
-            self, self.tr('Confirm Action'), msg,
-            QMessageBox.Ok|QMessageBox.Cancel
-        ) == QMessageBox.Ok
+        if showCancel:
+            return QMessageBox.question(
+                self, self.tr('Confirm Action'), msg,
+                QMessageBox.Ok|QMessageBox.Cancel
+            ) == QMessageBox.Ok
+        else:
+            return QMessageBox.question(
+                self, self.tr('Confirm Action'), msg,
+                QMessageBox.Ok
+            ) == QMessageBox.Ok
 
     def modelExists(self, modelName):
         """
@@ -150,8 +160,43 @@ class DataValidationTool(QWidget, FORM_CLASS):
         :return: (str) whether model exists into default directory.
         """
         return os.path.exists(
-            os.path.join(self.__defaultModelPath__, os.path.basename(modelName))
+            os.path.join(self.defaultModelPath(), os.path.basename(modelName))
         )
+
+    @pyqtSlot(int, name='on_modelComboBox_currentIndexChanged')
+    def modelIsValid(self, idx):
+        """
+        Checks if a model is valid and sets GUI buttons enabled if so.
+        :param idx: (int) index for the model to be checked.
+        """
+        enabled = idx > 0
+        self.removeModelPushButton.setEnabled(enabled)
+        self.runModelPushButton.setEnabled(enabled)
+        return enabled
+
+    def addLayerToGroup(self, layer, groupname, subgroupname=None):
+        """
+        Adds a layer to a group into layer panel.
+        :param layer: (QgsMapLayer) layer to be added to canvas.
+        :param groupname: (str) name for group to nest the layer.
+        :param subgroupname: (str) name for the subgroup to be added.
+        """
+        root = QgsProject.instance().layerTreeRoot()
+        for g in root.children():
+            if g.name() == groupname:
+                group = g
+                break
+        else:
+            group = root.addGroup(groupname)
+        if subgroupname is not None:
+            for sg in group.children():
+                if sg.name() == subgroupname:
+                    subgroup = sg
+                    break
+            else:
+                subgroup = group.addGroup(subgroupname)
+        QgsProject.instance().addMapLayer(layer, False)
+        subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
 
     @pyqtSlot(bool, name='on_addModelPushButton_clicked')
     def registerModel(self, modelPath=None):
@@ -176,7 +221,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         modelName = os.path.basename(modelPath)
         if self.modelExists(modelName) and not self.confirmAction(msg):
             return
-        dest = os.path.join(self.__defaultModelPath__, modelName)
+        dest = os.path.join(self.defaultModelPath(), modelName)
         os.popen("cp '{source}' '{dest}'".format(source=modelPath, dest=dest))
         if os.path.exists(dest):
             self.modelComboBox.addItem(modelName)
@@ -195,90 +240,13 @@ class DataValidationTool(QWidget, FORM_CLASS):
             modelName = self.model()
             modelPath = self.modelPath()
         else:
-            modelPath = os.path.join(self.__defaultModelPath__, modelName)
+            modelPath = os.path.join(self.defaultModelPath(), modelName)
         msg = self.tr("Remove model '{modelName}'?".format(modelName=modelName))
         if self.confirmAction(msg):
             os.popen("rm {modelPath}".format(modelPath=modelPath))
             if not os.path.exists(modelPath):
                 self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
                 self.modelRemoved.emit(modelName)
-
-    def runAlgorithm(self, algOrName, parameters, onFinish=None, feedback=None, context=None):
-        """
-        Copied from processing.Processing.Processing and modified.
-        """
-        if isinstance(algOrName, QgsProcessingAlgorithm):
-            alg = algOrName
-        else:
-            alg = QgsApplication.processingRegistry().createAlgorithmById(algOrName)
-
-        if feedback is None:
-            feedback = QgsProcessingFeedback()
-
-        if alg is None:
-            msg = Processing.tr('Error: Algorithm {0} not found\n').format(algOrName)
-            feedback.reportError(msg)
-            raise QgsProcessingException(msg)
-
-        if context is None:
-            context = dataobjects.createContext(feedback)
-
-        if context.feedback() is None:
-            context.setFeedback(feedback)
-
-        ok, msg = alg.checkParameterValues(parameters, context)
-        if not ok:
-            msg = Processing.tr('Unable to execute algorithm\n{0}').format(msg)
-            feedback.reportError(msg)
-            raise QgsProcessingException(msg)
-
-        if not alg.validateInputCrs(parameters, context):
-            feedback.pushInfo(
-                Processing.tr('Warning: Not all input layers use the same CRS.\nThis can cause unexpected results.'))
-
-        ret, results = execute(alg, parameters, context, feedback)
-        if ret:
-            feedback.pushInfo(
-                Processing.tr('Results: {}').format(results))
-
-            if onFinish is not None:
-                onFinish(alg, context, feedback)
-            else:
-                # auto convert layer references in results to map layers
-                for out in alg.outputDefinitions():
-                    if out.name() not in results:
-                        continue
-
-                    if isinstance(out, (QgsProcessingOutputVectorLayer, QgsProcessingOutputRasterLayer, QgsProcessingOutputMapLayer)):
-                        result = results[out.name()]
-                        if not isinstance(result, QgsMapLayer):
-                            layer = context.takeResultLayer(result) # transfer layer ownership out of context
-                            if layer:
-                                results[out.name()] = layer # replace layer string ref with actual layer (+ownership)
-                    elif isinstance(out, QgsProcessingOutputMultipleLayers):
-                        result = results[out.name()]
-                        if result:
-                            layers_result = []
-                            for l in result:
-                                if not isinstance(result, QgsMapLayer):
-                                    layer = context.takeResultLayer(l) # transfer layer ownership out of context
-                                    if layer:
-                                        layers_result.append(layer)
-                                    else:
-                                        layers_result.append(l)
-                                else:
-                                    layers_result.append(l)
-
-                            results[out.name()] = layers_result # replace layers strings ref with actual layers (+ownership)
-
-        else:
-            msg = Processing.tr("There were errors executing the algorithm.")
-            feedback.reportError(msg)
-            raise QgsProcessingException(msg)
-
-        if isinstance(feedback, MessageBarProgress):
-            feedback.close()
-        return results
 
     @pyqtSlot(bool, name='on_runModelPushButton_clicked')
     def runModel(self, modelName=None):
@@ -292,15 +260,25 @@ class DataValidationTool(QWidget, FORM_CLASS):
             modelName = self.model()
             modelPath = self.modelPath()
         else:
-            modelPath = os.path.join(self.__defaultModelPath__, modelName)
-        # it seems models can only be run through QGIS' model paths
-        output = self.runAlgorithm(
-                "model:drenagem_duplicada", {
-                'dsgtools:identifyduplicatedgeometries_1:Flags Drenagem Duplicada' : 'memory:'
-            })
-        QgsProject.instance().addMapLayer(
-            output['dsgtools:identifyduplicatedgeometries_1:Flags Drenagem Duplicada']
-        )
+            modelPath = os.path.join(self.defaultModelPath(), modelName)
+        alg = QgsProcessingModelAlgorithm()
+        alg.fromFile(modelPath)
+        alg.initAlgorithm()
+        param = {vl.name() : "memory:" for vl in alg.parameterDefinitions()}
+        msg = self.tr("Would you like to run {model}").format(model=modelName)
+        if not self.confirmAction(msg):
+            return
+        try:
+            out = processing.run(alg, param)
+                # "model:{modelName}".format(modelName=modelName.split(".")[0]), param
+            # )
+        except Exception as e:
+            msg = self.tr("Unable to run {model}:\n{error}").format(model=modelName, error=str(e))
+            self.confirmAction(msg, showCancel=False)
+        for var, value in out.items():
+            if isinstance(value, QgsMapLayer):
+                value.setName("{model} {layername}".format(model=modelName, layername=var))
+                self.addLayerToGroup(value, "DSGTools Validation Toolbar Output", modelName)
 
     def unload(self):
         """
@@ -310,4 +288,3 @@ class DataValidationTool(QWidget, FORM_CLASS):
         for w in self._widgets():
             w.blockSignals(True)
             del w
-        del self
