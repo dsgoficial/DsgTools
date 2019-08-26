@@ -24,22 +24,31 @@ from builtins import range
 import os
 from os.path import expanduser
 
-# Qt imports
+from processing.modeler.ModelerUtils import ModelerUtils
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot, Qt, QSettings
-from qgis.PyQt.QtWidgets import QMessageBox, QDialog
-
-# DSGTools imports
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt, QSettings
+from qgis.PyQt.QtWidgets import QMessageBox, QDialog, QFileDialog
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'options.ui'))
 
 class Options(QDialog, FORM_CLASS):
+    __dsgToolsModelPath__ = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), "..", "..", "..", "core", "Misc", "QGIS_Models"
+    ))
+    __qgisModelPath__ = ModelerUtils.modelsFolders()[0]
+
+    # # some options signals
+    # modelPathChanged = pyqtSignal()
+
     def __init__(self, parent = None):
         """Constructor."""
         super(Options, self).__init__(parent)
         self.setupUi(self)
         self.setInterfaceWithParametersFromConfig()
+        self.setupValidationToolbarConfig()
+        # project option still not implemented
+        self.removeModelsProjectCheckBox.hide()
     
     @pyqtSlot(bool)
     def on_addPushButton_clicked(self):
@@ -52,7 +61,7 @@ class Options(QDialog, FORM_CLASS):
             QMessageBox.warning(self, self.tr('Warning!'), self.tr('Value already in black list!'))
             return
         self.blackListWidget.addItem(newValue)
-        self.blackListWidget.sortItems(order = Qt.AscendingOrder)
+        self.blackListWidget.sortItems(order=Qt.AscendingOrder)
         self.addParameterLineEdit.setText('')
     
     def getParameters(self):
@@ -118,6 +127,7 @@ class Options(QDialog, FORM_CLASS):
     @pyqtSlot()
     def on_buttonBox_accepted(self):
         self.storeParametersInConfig()
+        self.updateValidationToolbarConfig()
         self.close()
     
     @pyqtSlot(bool)
@@ -135,3 +145,98 @@ class Options(QDialog, FORM_CLASS):
         (freeHandTolerance, freeHandSmoothIterations, freeHandSmoothOffset, algIterations, minSegmentDistance, valueList, undoPoints, decimals) = self.loadParametersFromConfig()
         if not (freeHandTolerance and freeHandSmoothIterations and freeHandSmoothOffset and algIterations and valueList and undoPoints and decimals is not None):
             self.storeParametersInConfig()
+
+    def setupModelPath(self):
+        """
+        Clears all model paths and leaves the default options.
+        """
+        self.modelPathComboBox.clear()
+        self.modelPathComboBox.addItems([
+            self.__dsgToolsModelPath__,
+            self.__qgisModelPath__
+        ])
+
+    def setupValidationToolbarConfig(self):
+        """
+        Sets up Validation Toolbar parameters to DSGTools default values.
+        """
+        # reset combo box to default as well
+        self.setupModelPath()
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        settings.setValue('loadModelOutput', True)
+        settings.setValue('checkBeforeRunModel', True)
+        settings.setValue('removeModelsOnExit', False)
+        settings.setValue('removeModelsOnNewProject', False)
+        settings.setValue('defaultModelPath', self.modelPathComboBox.currentText())
+        settings.endGroup()
+        
+
+    def validationToolbarConfig(self):
+        """
+        Reads all parameters for Validation Toolbar.
+        :return: (dict) set of parameters for Validation Toolbar.
+        """
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        loadModelOutput = settings.value('loadModelOutput')
+        checkBeforeRunModel = settings.value('checkBeforeRunModel')
+        removeModelsOnExit = settings.value('removeModelsOnExit')
+        removeModelsOnNewProject = settings.value('removeModelsOnNewProject')
+        defaultModelPath = settings.value('defaultModelPath')
+        settings.endGroup()
+        return {
+            "loadModelOutput" : loadModelOutput,
+            "checkBeforeRunModel" : checkBeforeRunModel,
+            "removeModelsOnExit" : removeModelsOnExit,
+            "removeModelsOnNewProject" : removeModelsOnNewProject,
+            "defaultModelPath" : defaultModelPath
+        }
+
+    def updateValidationToolbarConfig(self):
+        """
+        Updates current Validation Toolbar parameter values from GUI.
+        """
+        
+        settings = QSettings()
+        settings.beginGroup('PythonPlugins/DsgTools/Options')
+        settings.setValue('loadModelOutput', self.loadModelOutputCheckBox.isChecked())
+        settings.setValue('checkBeforeRunModel', self.checkBeforeRunModelCheckBox.isChecked())
+        settings.setValue('removeModelsOnExit', self.resetModelsCheckBox.isChecked())
+        settings.setValue('removeModelsOnNewProject', self.removeModelsProjectCheckBox.isChecked())
+        # oldModelPath = settings.value('defaultModelPath')
+        # newModelPath = self.modelPathComboBox.currentText()
+        settings.setValue('defaultModelPath', self.modelPathComboBox.currentText())
+        settings.endGroup()
+        # if oldModelPath != newModelPath:
+        #     self.modelPathChanged.emit()
+
+    def addNewModelPath(self, modelPath, setAsDefault=True):
+        """
+        Adds a custom model path as an option.
+        :param modelPath: (str) path to look for QGIS Processing models.
+        :param setAsDefault: (bool) whether current selection should be updated to new model path.
+        :return: (int) index for new model path on its selection combo box.
+        """
+        if not os.path.exists(modelPath) or self.modelPathComboBox.findText(modelPath) >= 0:
+            return -1
+        self.modelPathComboBox.addItem(modelPath)
+        idx = self.modelPathComboBox.findText(modelPath)
+        if setAsDefault:
+            self.modelPathComboBox.setCurrentIndex(idx)
+        return idx
+
+    @pyqtSlot(bool, name="on_addModelPathPushButton_clicked")
+    def setCustomModelPath(self):
+        """
+        Adds a custom model path and sets it as default.
+        """
+        fd = QFileDialog()
+        newModelPath = fd.getExistingDirectory(
+            caption=self.tr('Select a directory for DSGTools Validation'
+                            ' Toolbar to look for QGIS Processing models')
+        )
+        newModelPath = newModelPath[0] if isinstance(newModelPath, tuple) else newModelPath
+        if not newModelPath:
+            return
+        self.addNewModelPath(newModelPath)
