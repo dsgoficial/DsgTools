@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
                        QgsProcessingAlgorithm,
@@ -92,10 +93,7 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            try:
-                self.createMeasureColumn(lyr)
-            except:
-                notSuccessfulList.append(lyr)
+            self.createMeasureColumn(lyr)
 
         return {self.OUTPUT: inputLyrList}
 
@@ -103,15 +101,18 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
             layer.addExpressionField(
                     '$area',
-                    QgsField(self.tr('area_otf'),
-                    QVariant.Double
+                    QgsField(
+                        'area_otf',
+                        QVariant.Double
                     )
                 )
         elif layer.geometryType() == QgsWkbTypes.LineGeometry:
             layer.addExpressionField(
                     '$length',
-                    QgsField(self.tr('lenght_otf'),
-                    QVariant.Double)
+                    QgsField(
+                        'lenght_otf',
+                        QVariant.Double
+                    )
                 )
         return layer
 
