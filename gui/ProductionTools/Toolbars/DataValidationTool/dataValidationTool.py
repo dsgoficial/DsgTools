@@ -33,6 +33,8 @@ from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 
+from DsgTools.gui.AboutAndFurtherInfo.Options.options import Options
+
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'dataValidationTool.ui')
 )
@@ -60,10 +62,13 @@ class DataValidationTool(QWidget, FORM_CLASS):
         super(DataValidationTool, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
+        self.dsgToolsOptions = Options(self)
+        # self.dsgToolsOptions.modelPathChanged.connect(self.resetModelList)
         self.activateTool()
         self.resetModelList()
         self._feedback = QgsProcessingFeedback()
         self._context = QgsProcessingContext()
+        self._newModels = []
 
     def _widgets(self):
         """
@@ -78,6 +83,13 @@ class DataValidationTool(QWidget, FORM_CLASS):
             self.runModelPushButton,
             self.splitter
         ]
+
+    def options(self):
+        """
+        Reads tool parameters.
+        :return: (dict) map of parameters for Validation Toolbar.
+        """
+        return self.dsgToolsOptions.validationToolbarConfig()
 
     def model(self, idx=None):
         """
@@ -103,8 +115,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         Gets the directory used to read and save the models shown on toolbar.
         :return: (str) default models path.
         """
-        # change for DSGTools options input
-        return self.__dsgToolsModelPath__ if True else self.__qgisModelPath__
+        return self.options()["defaultModelPath"]
 
     def resetModelList(self):
         """
@@ -229,25 +240,27 @@ class DataValidationTool(QWidget, FORM_CLASS):
         """
         if modelPath is None or not isinstance(modelPath, str):
             fd = QFileDialog()
-            modelPath = fd.getOpenFileName(
+            modelPathList = fd.getOpenFileNames(
                 caption=self.tr('Select a QGIS processing model to be added'),
                 filter=self.tr('QGIS Processing Model (*.model *.model3)')
             )
-            modelPath = modelPath[0] if isinstance(modelPath, tuple) else modelPath
-            if modelPath == "":
+            modelPathList = modelPathList[0] if modelPathList else modelPathList
+            if modelPathList == []:
                 return
         msg = self.tr(
             "Model seems to be already registered, would you like to overwrite"
             " it?"
         )
-        modelName = os.path.basename(modelPath)
-        if self.modelExists(modelName) and not self.confirmAction(msg):
-            return
-        dest = os.path.join(self.defaultModelPath(), modelName)
-        copy(modelPath, dest)
-        if os.path.exists(dest):
-            self.modelComboBox.addItem(modelName)
-            self.modelAdded.emit(modelName)
+        for modelPath in modelPathList:
+            modelName = os.path.basename(modelPath)
+            if self.modelExists(modelName) and not self.confirmAction(msg):
+                return
+            dest = os.path.join(self.defaultModelPath(), modelName)
+            copy(modelPath, dest)
+            if os.path.exists(dest):
+                self.modelComboBox.addItem(modelName)
+                self._newModels.append(dest)
+                self.modelAdded.emit(modelName)
 
     @pyqtSlot(bool, name='on_removeModelPushButton_clicked')
     def unregisterModel(self, modelName=None):
@@ -296,12 +309,12 @@ class DataValidationTool(QWidget, FORM_CLASS):
         # be passed on - ALL outputs from this tool is set to memory layers.
         param = {vl.name() : "memory:" for vl in alg.parameterDefinitions()}
         msg = self.tr("Would you like to run {model}").format(model=modelName)
-        if not self.confirmAction(msg):
+        if self.options()["checkBeforeRunModel"] and not self.confirmAction(msg):
             return
         try:
             out = processing.run(alg, param)
-                # "model:{modelName}".format(modelName=modelName.split(".")[0]), param
-            # )
+            if not self.options()["loadModelOutput"]:
+                return
             for var, value in out.items():
                 if isinstance(value, QgsMapLayer):
                     value.setName(
@@ -319,6 +332,10 @@ class DataValidationTool(QWidget, FORM_CLASS):
         Method called whenever tool is being destructed. Blocks signals and clears
         all objects that it parents.
         """
+        if self.options()["removeModelsOnExit"]:
+            for model in self._newModels:
+                if os.path.exists(model):
+                    os.remove(model)
         for w in self._widgets():
             w.blockSignals(True)
             del w
