@@ -244,7 +244,6 @@ class DataValidationTool(QWidget, FORM_CLASS):
         if self.modelExists(modelName) and not self.confirmAction(msg):
             return
         dest = os.path.join(self.defaultModelPath(), modelName)
-        # os.popen("cp '{source}' '{dest}'".format(source=modelPath, dest=dest)
         copy(modelPath, dest)
         if os.path.exists(dest):
             self.modelComboBox.addItem(modelName)
@@ -265,11 +264,17 @@ class DataValidationTool(QWidget, FORM_CLASS):
         else:
             modelPath = os.path.join(self.defaultModelPath(), modelName)
         msg = self.tr("Remove model '{modelName}'?".format(modelName=modelName))
-        if self.confirmAction(msg):
-            os.popen("rm {modelPath}".format(modelPath=modelPath))
-            if not os.path.exists(modelPath):
-                self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
-                self.modelRemoved.emit(modelName)
+        if self.confirmAction(msg) and self.modelExists(modelName):
+            try:
+                os.remove(modelName)
+                if not os.path.exists(modelPath):
+                    self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
+                    self.modelRemoved.emit(modelName)
+            except Exception as e:
+                msg = self.tr("Unable to remove '{model}':\n{error}.").format(
+                    model=modelName, error=", ".join(map(str, e.args))
+                )
+                self.confirmAction(msg, showCancel=False)
 
     @pyqtSlot(bool, name='on_runModelPushButton_clicked')
     def runModel(self, modelName=None):
