@@ -18,6 +18,7 @@
 """
 
 import os
+from shutil import copy
 
 import processing
 from processing.modeler.ModelerUtils import ModelerUtils
@@ -111,18 +112,13 @@ class DataValidationTool(QWidget, FORM_CLASS):
         """
         self.modelComboBox.clear()
         self.modelComboBox.addItem(self.tr("Select a model..."))
-        self.modelComboBox.addItems([
-            x.strip() for x in os.popen("ls {path} | grep '.model3$'".format(
-                    path=self.defaultModelPath()
-                )
-            ).readlines()
-        ])
-        self.modelComboBox.addItems([
-            x.strip() for x in os.popen("ls {path} | grep '.model$'".format(
-                    path=self.defaultModelPath()
-                )
-            ).readlines()
-        ])
+        models = []
+        for _, _, ml in os.walk(self.defaultModelPath()):
+            for m in ml:
+                if m.endswith('.model') or m.endswith('.model3'):
+                    models.append(m)
+        if models:
+            self.modelComboBox.addItems(models)
 
     @pyqtSlot(bool, name='on_validationPushButton_toggled')
     def activateTool(self, toggled=None):
@@ -248,7 +244,8 @@ class DataValidationTool(QWidget, FORM_CLASS):
         if self.modelExists(modelName) and not self.confirmAction(msg):
             return
         dest = os.path.join(self.defaultModelPath(), modelName)
-        os.popen("cp '{source}' '{dest}'".format(source=modelPath, dest=dest))
+        # os.popen("cp '{source}' '{dest}'".format(source=modelPath, dest=dest)
+        copy(modelPath, dest)
         if os.path.exists(dest):
             self.modelComboBox.addItem(modelName)
             self.modelAdded.emit(modelName)
@@ -300,13 +297,17 @@ class DataValidationTool(QWidget, FORM_CLASS):
             out = processing.run(alg, param)
                 # "model:{modelName}".format(modelName=modelName.split(".")[0]), param
             # )
+            for var, value in out.items():
+                if isinstance(value, QgsMapLayer):
+                    value.setName(
+                        "{model} {layername}".format(model=modelName, layername=var)
+                    )
+                    self.addLayerToGroup(
+                        value, "DSGTools Validation Toolbar Output", modelName
+                    )
         except Exception as e:
             msg = self.tr("Unable to run {model}:\n{error}").format(model=modelName, error=str(e))
             self.confirmAction(msg, showCancel=False)
-        for var, value in out.items():
-            if isinstance(value, QgsMapLayer):
-                value.setName("{model} {layername}".format(model=modelName, layername=var))
-                self.addLayerToGroup(value, "DSGTools Validation Toolbar Output", modelName)
 
     def unload(self):
         """
