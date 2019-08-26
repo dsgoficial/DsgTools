@@ -27,9 +27,10 @@ from qgis.core import (QgsProject,
                        QgsProcessingContext,
                        QgsProcessingFeedback,
                        QgsLayerTreeLayer)
-from qgis.PyQt.QtWidgets import QWidget, QMessageBox, QFileDialog
+from qgis.PyQt.QtWidgets import QApplication, QWidget, QMessageBox, QFileDialog
+from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'dataValidationTool.ui')
@@ -127,7 +128,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
     def activateTool(self, toggled=None):
         """
         Shows/hides the toolbar.
-        :param active: (bool) toolbar status.
+        :param toggled: (bool) toolbar status.
         """
         if toggled is None:
             toggled = self.validationPushButton.isChecked()
@@ -140,6 +141,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         """
         Raises a message box for confirmation before executing an action.
         :param msg: (str) message to be exposed.
+        :param showCancel: (bool) whether Cancel button should be exposed.
         :return: (bool) whether action was confirmed.
         """
         if showCancel:
@@ -162,6 +164,18 @@ class DataValidationTool(QWidget, FORM_CLASS):
         return os.path.exists(
             os.path.join(self.defaultModelPath(), os.path.basename(modelName))
         )
+
+    def setActiveModel(self, modelName):
+        """
+        Sets a model as current selected, if found on default directory.
+        :param modelName: (str) model name to be set as active.
+        :return: (bool) whether model was set.
+        """
+        idx = self.modelComboBox.findText(modelName)
+        if idx >= 0:
+            self.modelComboBox.setCurrentIndex(idx)
+            return True
+        return False
 
     @pyqtSlot(int, name='on_modelComboBox_currentIndexChanged')
     def modelIsValid(self, idx):
@@ -197,6 +211,18 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 subgroup = group.addGroup(subgroupname)
         QgsProject.instance().addMapLayer(layer, False)
         subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
+
+    @pyqtSlot(bool, name='on_updatePushButton_clicked')
+    def updateModelList(self):
+        """
+        Checks current default path for models and refreshes current displayed
+        list. If current selection is found, it is kept as active.
+        """
+        QApplication.setOverrideCursor(QCursor(Qt.WaitCursor))
+        currentModel = self.model()
+        self.resetModelList()
+        self.setActiveModel(currentModel)
+        QApplication.restoreOverrideCursor()
 
     @pyqtSlot(bool, name='on_addModelPushButton_clicked')
     def registerModel(self, modelPath=None):
@@ -264,6 +290,8 @@ class DataValidationTool(QWidget, FORM_CLASS):
         alg = QgsProcessingModelAlgorithm()
         alg.fromFile(modelPath)
         alg.initAlgorithm()
+        # as this tool assumes that every parameter is pre-set, only output shall
+        # be passed on - ALL outputs from this tool is set to memory layers.
         param = {vl.name() : "memory:" for vl in alg.parameterDefinitions()}
         msg = self.tr("Would you like to run {model}").format(model=modelName)
         if not self.confirmAction(msg):
