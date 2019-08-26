@@ -27,7 +27,10 @@ from qgis.core import (QgsProject,
                        QgsProcessingModelAlgorithm,
                        QgsProcessingContext,
                        QgsProcessingFeedback,
-                       QgsLayerTreeLayer)
+                       QgsLayerTreeLayer,
+                       QgsMessageLog,
+                       Qgis)
+from qgis.utils import iface
 from qgis.PyQt.QtWidgets import QApplication, QWidget, QMessageBox, QFileDialog
 from qgis.PyQt.QtGui import QCursor
 from qgis.PyQt import uic
@@ -124,10 +127,9 @@ class DataValidationTool(QWidget, FORM_CLASS):
         self.modelComboBox.clear()
         self.modelComboBox.addItem(self.tr("Select a model..."))
         models = []
-        for _, _, ml in os.walk(self.defaultModelPath()):
-            for m in ml:
-                if m.endswith('.model') or m.endswith('.model3'):
-                    models.append(m)
+        for file_ in os.listdir(self.defaultModelPath()):
+            if file_.endswith('.model') or file_.endswith('.model3'):
+                models.append(file_)
         if models:
             self.modelComboBox.addItems(models)
 
@@ -254,6 +256,11 @@ class DataValidationTool(QWidget, FORM_CLASS):
         for modelPath in modelPathList:
             modelName = os.path.basename(modelPath)
             if self.modelExists(modelName) and not self.confirmAction(msg):
+                QgsMessageLog.logMessage(
+                    self.tr("Model {model} was not imported.").format(model=modelName),
+                    'DSG Tools Plugin',
+                    Qgis.Info
+                )
                 return
             dest = os.path.join(self.defaultModelPath(), modelName)
             copy(modelPath, dest)
@@ -261,6 +268,12 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 self.modelComboBox.addItem(modelName)
                 self._newModels.append(dest)
                 self.modelAdded.emit(modelName)
+                QgsMessageLog.logMessage(
+                    self.tr("Model {model} imported to {dest}.").format(model=modelName, dest=dest),
+                    'DSG Tools Plugin',
+                    Qgis.Info
+                )
+
 
     @pyqtSlot(bool, name='on_removeModelPushButton_clicked')
     def unregisterModel(self, modelName=None):
@@ -323,9 +336,26 @@ class DataValidationTool(QWidget, FORM_CLASS):
                     self.addLayerToGroup(
                         value, "DSGTools Validation Toolbar Output", modelName
                     )
+            iface.messageBar().pushMessage(
+                self.tr('Sucess'), 
+                self.tr("model {model} finished.").format(model=modelName),
+                level=Qgis.Info,
+                duration=5
+            )
+            QgsMessageLog.logMessage(
+                    self.tr("Model {model} finished running with no errors.").format(model=modelName),
+                    'DSG Tools Plugin',
+                    Qgis.Info
+                )
         except Exception as e:
             msg = self.tr("Unable to run {model}:\n{error}").format(model=modelName, error=str(e))
-            self.confirmAction(msg, showCancel=False)
+            iface.messageBar().pushMessage(
+                self.tr("Model {model} failed").format(model=modelName), 
+                self.tr("check log for more information."),
+                level=Qgis.Critical,
+                duration=5
+            )
+            QgsMessageLog.logMessage(msg, 'DSG Tools Plugin',Qgis.Info)
 
     def unload(self):
         """
