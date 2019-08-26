@@ -321,6 +321,15 @@ class DataValidationTool(QWidget, FORM_CLASS):
         else:
             modelPath = os.path.join(self.defaultModelPath(), modelName)
         alg = QgsProcessingModelAlgorithm()
+        if not self.modelExists(modelName):
+            # if model was manually removed and combo box was not refreshed
+            self.iface.messageBar().pushMessage(
+                self.tr('Failed'), 
+                self.tr("model {model} seems to have been deleted.").format(model=modelName),
+                level=Qgis.Critical,
+                duration=5
+            )
+            return
         alg.fromFile(modelPath)
         alg.initAlgorithm()
         # as this tool assumes that every parameter is pre-set, only output shall
