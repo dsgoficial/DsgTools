@@ -65,3 +65,4 @@ class ToolbarsGuiManager(QObject):
         self.minimumAreaTool.unload()
         self.inspectFeaturesTool.unload()
         self.rasterInfoTool.unload()
+        self.dataValidationTool.unload()
