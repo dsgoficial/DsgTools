@@ -47,7 +47,7 @@
       </size>
      </property>
      <property name="toolTip">
-      <string>Raster Info Tool</string>
+      <string>Validation Toolbar</string>
      </property>
      <property name="text">
       <string/>
@@ -112,7 +112,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string/>
+       <string>Refresh model list.</string>
       </property>
       <property name="text">
        <string/>
@@ -151,7 +151,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string/>
+       <string>Add a model  to default path.</string>
       </property>
       <property name="text">
        <string/>
@@ -190,7 +190,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string/>
+       <string>Remove current model from default path (caution: it DELETES the file).</string>
       </property>
       <property name="text">
        <string/>
@@ -229,7 +229,7 @@
        </size>
       </property>
       <property name="toolTip">
-       <string/>
+       <string>Run current model.</string>
       </property>
       <property name="text">
        <string/>
