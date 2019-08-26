@@ -30,9 +30,12 @@ from qgis.core import (QgsProject,
                        QgsLayerTreeLayer,
                        QgsMessageLog,
                        Qgis)
-from qgis.utils import iface
-from qgis.PyQt.QtWidgets import QApplication, QWidget, QMessageBox, QFileDialog
-from qgis.PyQt.QtGui import QCursor
+from qgis.PyQt.QtWidgets import (QApplication,
+                                 QWidget,
+                                 QMessageBox,
+                                 QFileDialog,
+                                 QAction)
+from qgis.PyQt.QtGui import QCursor, QIcon
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import pyqtSlot, pyqtSignal, Qt
 
@@ -63,11 +66,13 @@ class DataValidationTool(QWidget, FORM_CLASS):
         :param parent: (QtWidgets) widget parent to new instance of DataValidationTool.
         """
         super(DataValidationTool, self).__init__(parent)
+        self.parent = parent
         self.setupUi(self)
         self.iface = iface
         self.dsgToolsOptions = Options(self)
         # self.dsgToolsOptions.modelPathChanged.connect(self.resetModelList)
         self.activateTool()
+        self.addShortcut()
         self.resetModelList()
         self._feedback = QgsProcessingFeedback()
         self._context = QgsProcessingContext()
@@ -336,7 +341,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                     self.addLayerToGroup(
                         value, "DSGTools Validation Toolbar Output", modelName
                     )
-            iface.messageBar().pushMessage(
+            self.iface.messageBar().pushMessage(
                 self.tr('Sucess'), 
                 self.tr("model {model} finished.").format(model=modelName),
                 level=Qgis.Info,
@@ -349,7 +354,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 )
         except Exception as e:
             msg = self.tr("Unable to run {model}:\n{error}").format(model=modelName, error=str(e))
-            iface.messageBar().pushMessage(
+            self.iface.messageBar().pushMessage(
                 self.tr("Model {model} failed").format(model=modelName), 
                 self.tr("check log for more information."),
                 level=Qgis.Critical,
@@ -369,3 +374,18 @@ class DataValidationTool(QWidget, FORM_CLASS):
         for w in self._widgets():
             w.blockSignals(True)
             del w
+        self.iface.unregisterMainWindowAction(self.runAction)    
+
+    def addShortcut(self):
+        """
+        Adds the action to main menu allowing QGIS to assign a shortcut for run.
+        """
+        self.runAction = QAction(
+            QIcon(':/plugins/DsgTools/icons/validationtools.png'),
+            self.tr('DSGTools: Validation Toolbar'),
+            self.parent
+        )
+        self.runAction.triggered.connect(self.runModel)
+        if self.parent:
+            self.parent.addAction(self.runAction)
+        self.iface.registerMainWindowAction(self.runAction, '')
