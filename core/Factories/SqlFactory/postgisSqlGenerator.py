@@ -920,15 +920,20 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getStylesFromDb(self, dbVersion):
-        sql = None
-        if dbVersion == '2.1.3':
-            sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_213%'"""
-        elif dbVersion == 'FTer_2a_Ed':
-            sql = """select distinct description from public.layer_styles where f_table_catalog = current_database() and description like 'edgv_FTer_2a_Ed%'"""
+        """
+        Returns the stylenames of the database.
+        The replace(stylename,'/' || f_table_name, '') is done due to compatibility issues
+        with previous DSGTools behaviour.
+        """
+        sql = """
+            select distinct replace(stylename,'/' || f_table_name, '') 
+                from public.layer_styles 
+                where f_table_catalog = current_database()
+        """
         return sql
     
     def getStyle(self, styleName, table_name):
-        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and description = '{1}' and f_table_catalog = current_database()""".format(table_name, styleName)
+        sql = """SELECT styleqml from public.layer_styles where f_table_name = '{0}' and (stylename = '{1}' or stylename like '{1}/%')and f_table_catalog = current_database()""".format(table_name, styleName)
         return sql
     
     def updateStyle(self, styleName, table_name, parsedQml, tableSchema):
