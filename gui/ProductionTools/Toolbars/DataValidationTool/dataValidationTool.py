@@ -298,7 +298,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
         msg = self.tr("Remove model '{modelName}'?".format(modelName=modelName))
         if self.confirmAction(msg) and self.modelExists(modelName):
             try:
-                os.remove(modelName)
+                os.remove(modelPath)
                 if not os.path.exists(modelPath):
                     self.modelComboBox.removeItem(self.modelComboBox.findText(modelName))
                     self.modelRemoved.emit(modelName)
@@ -341,16 +341,6 @@ class DataValidationTool(QWidget, FORM_CLASS):
             return
         try:
             out = processing.run(alg, param)
-            if not self.options()["loadModelOutput"]:
-                return
-            for var, value in out.items():
-                if isinstance(value, QgsMapLayer):
-                    value.setName(
-                        "{model} {layername}".format(model=modelName, layername=var)
-                    )
-                    self.addLayerToGroup(
-                        value, "DSGTools Validation Toolbar Output", modelName
-                    )
             self.iface.messageBar().pushMessage(
                 self.tr('Sucess'), 
                 self.tr("model {model} finished.").format(model=modelName),
@@ -362,6 +352,16 @@ class DataValidationTool(QWidget, FORM_CLASS):
                     'DSG Tools Plugin',
                     Qgis.Info
                 )
+            if not self.options()["loadModelOutput"]:
+                return
+            for var, value in out.items():
+                if isinstance(value, QgsMapLayer):
+                    value.setName(
+                        "{model} {layername}".format(model=modelName, layername=var)
+                    )
+                    self.addLayerToGroup(
+                        value, "DSGTools Validation Toolbar Output", modelName
+                    )
         except Exception as e:
             msg = self.tr("Unable to run {model}:\n{error}").format(model=modelName, error=str(e))
             self.iface.messageBar().pushMessage(
