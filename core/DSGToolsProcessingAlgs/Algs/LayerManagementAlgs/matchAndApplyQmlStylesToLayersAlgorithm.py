@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2019-04-26
+        begin                : 2019-08-26
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -20,6 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+import os
 from PyQt5.QtCore import QCoreApplication
 from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
@@ -56,8 +57,9 @@ from qgis.core import (QgsProcessing,
                        QgsProcessingOutputMultipleLayers,
                        QgsProcessingParameterString)
 
-class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
+class MatchAndApplyQmlStylesToLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
+    QML_FOLDER = 'QML_FOLDER'
     OUTPUT = 'OUTPUT'
     def initAlgorithm(self, config):
         """
@@ -71,6 +73,14 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
             )
         )
 
+        self.addParameter(
+            QgsProcessingParameterFile(
+                self.QML_FOLDER,
+                self.tr('Input QML Folder'),
+                behavior = QgsProcessingParameterFile.Folder
+            )
+        )
+
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
@@ -81,40 +91,46 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
     def processAlgorithm(self, parameters, context, feedback):
         """
         Here is where the processing itself takes place.
+
+        This process matches the layer name to the qml name.
         """
         inputLyrList = self.parameterAsLayerList(
             parameters,
             self.INPUT_LAYERS,
             context
         )
+        inputDirectory = self.parameterAsFile(
+            parameters,
+            self.QML_FOLDER,
+            context
+        )
         listSize = len(inputLyrList)
-        stepSize = 100/listSize if listSize else 0
+        progressStep = 100/listSize if listSize else 0
         notSuccessfulList = []
+        qmlDict = self.buildQmlDict(inputDirectory)
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            self.createMeasureColumn(lyr)
+            if lyr.name() in qmlDict:
+                lyr.loadNamedStyle(qmlDict[lyr.name()], True)
+                lyr.triggerRepaint()
+            feedback.setProgress(current*progressStep)
 
         return {self.OUTPUT: inputLyrList}
+    
+    def buildQmlDict(self, inputDir):
+        """
+        Builds a dict with the format 
+        {'fileName':'filePath'}
+        """
+        qmlDict = dict()
+        for fileNameWithExtension in os.listdir(inputDir):
+            if '.qml' not in fileNameWithExtension:
+                continue
+            fileName = fileNameWithExtension.split('.')[0]
+            qmlDict[fileName] = os.path.join(inputDir, fileNameWithExtension)
+        return qmlDict
 
-    def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
-            layer.addExpressionField(
-                    '$area',
-                    QgsField(
-                        'area_otf',
-                        QVariant.Double
-                    )
-                )
-        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField(
-                    '$length',
-                    QgsField(
-                        'lenght_otf',
-                        QVariant.Double
-                    )
-                )
-        return layer
 
     def name(self):
         """
@@ -124,14 +140,14 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignmeasurecolumntolayers'
+        return 'matchandapplyqmlstylestolayersalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Measure Column to Layers')
+        return self.tr('Match and Apply QML Styles to Layers')
 
     def group(self):
         """
@@ -151,7 +167,7 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignMeasureColumnToLayersAlgorithm', string)
+        return QCoreApplication.translate('MatchAndApplyQmlStylesToLayersAlgorithm', string)
 
     def createInstance(self):
-        return AssignMeasureColumnToLayersAlgorithm()
+        return MatchAndApplyQmlStylesToLayersAlgorithm()

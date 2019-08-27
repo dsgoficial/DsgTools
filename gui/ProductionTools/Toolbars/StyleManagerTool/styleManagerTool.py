@@ -71,8 +71,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         #populate database list
         for dbName in self.getDatabaseList():
             self.dbComboBox.addItem(dbName)
-    
-    @pyqtSlot(int, name = 'on_dbComboBox_currentIndexChanged')
+
     @pyqtSlot(int, name = 'on_styleComboBox_currentIndexChanged')
     def enableApply(self):
         dbIdx = self.dbComboBox.currentIndex()
@@ -189,6 +188,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
 
     @pyqtSlot(int)
     def on_dbComboBox_currentIndexChanged(self, idx):
+        self.enableApply()
         if self.sender().objectName() == 'dbComboBox':
             if idx <= 0:
                 self.styleComboBox.clear()
