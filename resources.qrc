@@ -73,5 +73,6 @@
         <file>icons/toggleAllLabels.png</file>
         <file>icons/toggleSelectedLayersLabel.png</file>
         <file>icons/toggleActiveLayerLabel.png</file>
+        <file>icons/reload.png</file>
     </qresource>
 </RCC>
