@@ -38,6 +38,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAl
     GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
+    ExportToMemoryLayer
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
     CreateFrameAlgorithm
@@ -139,8 +141,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInva
     IdentifyAndFixInvalidGeometriesAlgorithm
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import PecCalculatorAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
-    MatchAndApplyQmlStylesToLayersAlgorithm
+
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
@@ -205,7 +207,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     TopologicalLineConnectivityAdjustment(),
                     PecCalculatorAlgorithm(),
                     RuleStatisticsAlgorithm(),
-                    MatchAndApplyQmlStylesToLayersAlgorithm()
+                    SingleOutputUnitTestAlgorithm(),
+                    ExportToMemoryLayer()
                 ]
         return algList
 
