@@ -658,7 +658,8 @@ class AbstractDb(QObject):
         styleDict = dict()
         try:
             for s in styleList:
-                styleDict['dir:'+s] = os.path.join(styleDir, s)
+                if '.DS_Store' not in s: #mac os ignore
+                    styleDict['dir:'+s] = os.path.join(styleDir, s)
             #here we get the styles from db if there are any
         except:
             pass
