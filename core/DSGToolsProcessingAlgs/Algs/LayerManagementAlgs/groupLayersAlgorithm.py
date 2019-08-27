@@ -126,6 +126,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             1 : self.tr('Line'),
             2 : self.tr('Polygon')
         }
+        removeList = []
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
@@ -134,7 +135,9 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             geometryNode = self.createGroup(geometryNodeDict[lyr.geometryType()], rootDatabaseNode)
             categoryNode = self.getLayerCategoryNode(lyr, geometryNode, categoryToken, categoryTokenIndex)
             lyrNode = rootNode.findLayer(lyr.id())
-            categoryNode.addChildNode(lyrNode)
+            myClone = lyrNode.clone()
+            categoryNode.addChildNode(myClone)
+            rootNode.removeChildNode(lyrNode) # not thread safe, must set flag to FlagNoThreading
             feedback.setProgress(current*progressStep)
 
         return {self.OUTPUT: inputLyrList}
@@ -207,3 +210,10 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return GroupLayersAlgorithm()
+    
+    def flags(self):
+        """
+        This process is not thread safe due to the fact that removeChildNode method
+        from QgsLayerTreeGroup is not thread safe.
+        """
+        return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
