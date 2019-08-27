@@ -272,6 +272,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             if os.path.exists(dest):
                 self.modelComboBox.addItem(modelName)
                 self._newModels.append(dest)
+                self.setActiveModel(modelName)
                 self.modelAdded.emit(modelName)
                 QgsMessageLog.logMessage(
                     self.tr("Model {model} imported to {dest}.").format(model=modelName, dest=dest),
