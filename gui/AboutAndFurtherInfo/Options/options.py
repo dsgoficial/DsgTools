@@ -164,13 +164,25 @@ class Options(QDialog, FORM_CLASS):
         self.setupModelPath()
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
-        settings.setValue('loadModelOutput', True)
-        settings.setValue('checkBeforeRunModel', True)
-        settings.setValue('removeModelsOnExit', False)
-        settings.setValue('removeModelsOnNewProject', False)
-        settings.setValue('defaultModelPath', self.modelPathComboBox.currentText())
-        settings.endGroup()
-        
+        if settings.value('loadModelOutput') is None:
+            settings.setValue('loadModelOutput', True)
+        self.loadModelOutputCheckBox.setChecked(settings.value('loadModelOutput') == "true")
+        if settings.value('checkBeforeRunModel') is None:
+            settings.setValue('checkBeforeRunModel', True)
+        self.checkBeforeRunModelCheckBox.setChecked(settings.value('checkBeforeRunModel') == "true")
+        if settings.value('removeModelsOnExit') is None:
+            settings.setValue('', False)
+        self.resetModelsCheckBox.setChecked(settings.value('removeModelsOnExit') == "true")
+        if settings.value('removeModelsOnNewProject') is None:
+            settings.setValue('removeModelsOnNewProject', False)
+        self.removeModelsProjectCheckBox.setChecked(settings.value('removeModelsOnNewProject') == "true")
+        if settings.value('defaultModelPath') is None:
+            settings.setValue('defaultModelPath', self.modelPathComboBox.currentText())
+        idx = self.modelPathComboBox.findText(settings.value('defaultModelPath'))
+        if idx < 0:
+            self.modelPathComboBox.addItem(settings.value('defaultModelPath'))
+        self.modelPathComboBox.setCurrentText(settings.value('defaultModelPath'))
+        settings.endGroup() 
 
     def validationToolbarConfig(self):
         """
@@ -197,7 +209,6 @@ class Options(QDialog, FORM_CLASS):
         """
         Updates current Validation Toolbar parameter values from GUI.
         """
-        
         settings = QSettings()
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         settings.setValue('loadModelOutput', self.loadModelOutputCheckBox.isChecked())
