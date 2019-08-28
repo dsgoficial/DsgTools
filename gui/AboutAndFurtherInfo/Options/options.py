@@ -166,16 +166,16 @@ class Options(QDialog, FORM_CLASS):
         settings.beginGroup('PythonPlugins/DsgTools/Options')
         if settings.value('loadModelOutput') is None:
             settings.setValue('loadModelOutput', True)
-        self.loadModelOutputCheckBox.setChecked(settings.value('loadModelOutput') == "true")
+        self.loadModelOutputCheckBox.setChecked(settings.value('loadModelOutput') in (True, "true"))
         if settings.value('checkBeforeRunModel') is None:
             settings.setValue('checkBeforeRunModel', True)
-        self.checkBeforeRunModelCheckBox.setChecked(settings.value('checkBeforeRunModel') == "true")
+        self.checkBeforeRunModelCheckBox.setChecked(settings.value('checkBeforeRunModel') in (True, "true"))
         if settings.value('removeModelsOnExit') is None:
             settings.setValue('', False)
-        self.resetModelsCheckBox.setChecked(settings.value('removeModelsOnExit') == "true")
+        self.resetModelsCheckBox.setChecked(settings.value('removeModelsOnExit') in (True, "true"))
         if settings.value('removeModelsOnNewProject') is None:
             settings.setValue('removeModelsOnNewProject', False)
-        self.removeModelsProjectCheckBox.setChecked(settings.value('removeModelsOnNewProject') == "true")
+        self.removeModelsProjectCheckBox.setChecked(settings.value('removeModelsOnNewProject') in (True, "true"))
         if settings.value('defaultModelPath') is None:
             settings.setValue('defaultModelPath', self.modelPathComboBox.currentText())
         idx = self.modelPathComboBox.findText(settings.value('defaultModelPath'))
@@ -198,10 +198,10 @@ class Options(QDialog, FORM_CLASS):
         defaultModelPath = settings.value('defaultModelPath')
         settings.endGroup()
         return {
-            "loadModelOutput" : loadModelOutput,
-            "checkBeforeRunModel" : checkBeforeRunModel,
-            "removeModelsOnExit" : removeModelsOnExit,
-            "removeModelsOnNewProject" : removeModelsOnNewProject,
+            "loadModelOutput" : loadModelOutput in (True, "true"),
+            "checkBeforeRunModel" : checkBeforeRunModel in (True, "true"),
+            "removeModelsOnExit" : removeModelsOnExit in (True, "true"),
+            "removeModelsOnNewProject" : removeModelsOnNewProject in (True, "true"),
             "defaultModelPath" : defaultModelPath
         }
 
