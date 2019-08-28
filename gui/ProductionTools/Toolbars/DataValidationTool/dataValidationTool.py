@@ -348,7 +348,10 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 duration=5
             )
             QgsMessageLog.logMessage(
-                    self.tr("Model {model} finished running with no errors.").format(model=modelName),
+                    self.tr(
+                        "Model {model} finished running with no errors. You may"
+                        " check model output on Processing log tab."
+                    ).format(model=modelName),
                     'DSG Tools Plugin',
                     Qgis.Info
                 )
@@ -363,7 +366,10 @@ class DataValidationTool(QWidget, FORM_CLASS):
                         value, "DSGTools Validation Toolbar Output", modelName
                     )
         except Exception as e:
-            msg = self.tr("Unable to run {model}:\n{error}").format(model=modelName, error=str(e))
+            msg = self.tr(
+                "Unable to run (check Processing tab for details on model "
+                "execution log) {model}:\n{error}"
+            ).format(model=modelName, error=str(e))
             self.iface.messageBar().pushMessage(
                 self.tr("Model {model} failed").format(model=modelName), 
                 self.tr("check log for more information."),
