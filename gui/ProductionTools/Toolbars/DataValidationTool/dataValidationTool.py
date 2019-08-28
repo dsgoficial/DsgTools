@@ -391,8 +391,8 @@ class DataValidationTool(QWidget, FORM_CLASS):
         Adds the action to main menu allowing QGIS to assign a shortcut for run.
         """
         self.runAction = QAction(
-            QIcon(':/plugins/DsgTools/icons/validationtools.png'),
-            self.tr('DSGTools: Validation Toolbar'),
+            QIcon(':/plugins/DsgTools/icons/runModel.png'),
+            self.tr('DSGTools: Validation Toolbar - Run Processing Model'),
             self.parent
         )
         self.runAction.triggered.connect(self.runModel)

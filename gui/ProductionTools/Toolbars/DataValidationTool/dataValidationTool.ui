@@ -236,7 +236,7 @@
       </property>
       <property name="icon">
        <iconset resource="../../../../resources.qrc">
-        <normaloff>:/plugins/DsgTools/icons/areaTool.png</normaloff>:/plugins/DsgTools/icons/areaTool.png</iconset>
+        <normaloff>:/plugins/DsgTools/icons/runModel.png</normaloff>:/plugins/DsgTools/icons/runModel.png</iconset>
       </property>
       <property name="iconSize">
        <size>
