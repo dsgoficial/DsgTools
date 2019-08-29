@@ -20,7 +20,7 @@
  ***************************************************************************/
 """
 
-import os
+import os, json
 from time import time
 
 from qgis.core import QgsProcessingModelAlgorithm
@@ -41,7 +41,9 @@ class DsgToolsProcessingModel(QObject):
     def __init__(self, parameters):
         """
         Class constructor.
+        :param parameters: (dict) map of attributes for a model.
         """
+        super(DsgToolsProcessingModel, self).__init__()
         self._param = {} if self.validateParameters(parameters) else parameters
 
     def validateParameters(self, parameters):
@@ -94,13 +96,21 @@ class DsgToolsProcessingModel(QObject):
         os.remove(temp)
         return alg
 
+    def isValid(self):
+        """
+        Checks whether current model is a valid instance of DSGTools processing
+        model.
+        :return: (bool) validity status.
+        """
+        return self._param != dict()
+
     def _data(self):
         """
         Current model's source data. If it's from a file, it's its filepath,
         if from an XML, its contents.
         :return: (str) model's source data.
         """
-        return self._param["source"]["data"] if self._param else ""
+        return self._param["source"]["data"] if self.isValid() else ""    
 
     def name(self):
         """
@@ -108,13 +118,18 @@ class DsgToolsProcessingModel(QObject):
         if from an XML, its contents.
         :return: (str) model's source data.
         """
-        return self._param["displayName"] if self._param else ""
+        if not self.isValid():
+            return ""
+        return self._param["displayName"] if "displayName" in self._param \
+                 else self.model().displayName()
 
     def model(self):
         """
         Gets the processing model nested into parameters.
         :return: (QgsProcessingModelAlgorithm) model as a processing algorithm.
         """
+        if not self.isValid():
+            return QgsProcessingModelAlgorithm()
         method = {
             "xml" : DsgToolsProcessingModel.modelFromXml,
             "file" : DsgToolsProcessingModel.modelFromFile
@@ -167,6 +182,13 @@ class DsgToolsProcessingModel(QObject):
                       checked.
         :return: (list-of-str) 
         """
+        # IMPORTANT: this method seems to be causing QGIS to crash when called 
+        # from command line. Error is "corrupted double-linked list / Aborted (core dumped)"
+        # seems to be a QGIS mishandling, but should be lloked into deeper.
+        # It works just fine running on plugin's thread - e.g. does not crash
+        # whilst running an algorithm or using it internally
+        # It seems the culprit is the parameterDefinitions method, from
+        # QgsProcessingModelAlgorithm
         if not self._param:
             return []
         return [
@@ -174,7 +196,7 @@ class DsgToolsProcessingModel(QObject):
                 for param in (model or self.model()).parameterDefinitions()
         ]
 
-    def runAlgorithm(self):
+    def runModel(self):
         """
         Executes current model.
         :return: ?
@@ -187,3 +209,21 @@ class DsgToolsProcessingModel(QObject):
             {param : "memory:" for param in self.modelParameters(model)}
         )
         return out
+
+    def export(self, filepath):
+        """
+        Dumps model parameters as a JSON file.
+        :param filepath: (str) path to JSON file.
+        :return: (bool) operation success.
+        """
+        with open(filepath, "w", encoding="utf-8") as fp:
+            fp.write(json.dumps(self._param, sort_keys=True, indent=4))
+        return os.path.exists(filepath)
+
+    def exportAsDict(self):
+        """
+        Dumps model parameters as a JSON file.
+        :param filepath: (str) path to JSON file.
+        :return: (dict) DSGTools processing model definitions.
+        """
+        return self._param
