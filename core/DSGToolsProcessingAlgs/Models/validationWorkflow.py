@@ -69,6 +69,13 @@ class ValidationWorkflow(QObject):
         return self._param["displayName"] if \
                 "displayName" in self._param else ""
 
+    def name(self):
+        """
+        Proxy method for displayName.
+        :return: (str) display name.
+        """
+        return self.displayName()
+
     def models(self):
         """
         Model parameters defined to run in this workflow.
