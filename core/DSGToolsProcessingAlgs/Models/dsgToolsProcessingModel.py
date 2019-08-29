@@ -112,7 +112,7 @@ class DsgToolsProcessingModel(QObject):
         """
         return self._param["source"]["data"] if self.isValid() else ""    
 
-    def name(self):
+    def displayName(self):
         """
         Current model's source data. If it's from a file, it's its filepath,
         if from an XML, its contents.
@@ -122,6 +122,13 @@ class DsgToolsProcessingModel(QObject):
             return ""
         return self._param["displayName"] if "displayName" in self._param \
                  else self.model().displayName()
+
+    def name(self):
+        """
+        Proxy method for displayName.
+        :return: (str) display name.
+        """
+        return self.displayName()
 
     def model(self):
         """
