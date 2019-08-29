@@ -102,6 +102,14 @@ class DsgToolsProcessingModel(QObject):
         """
         return self._param["source"]["data"] if self._param else ""
 
+    def name(self):
+        """
+        Current model's source data. If it's from a file, it's its filepath,
+        if from an XML, its contents.
+        :return: (str) model's source data.
+        """
+        return self._param["displayName"] if self._param else ""
+
     def model(self):
         """
         Gets the processing model nested into parameters.
