@@ -21,13 +21,15 @@
 """
 
 import os, json
-from time import time
+from time import time, sleep
 
-from qgis.core import QgsProcessingModelAlgorithm
+from qgis.core import (QgsProcessingModelAlgorithm,
+                       QgsTask,
+                       QgsProcessingFeedback)
 from qgis.PyQt.QtCore import QObject
 import processing
 
-class DsgToolsProcessingModel(QObject):
+class DsgToolsProcessingModel(QgsTask):
     """
     Handles models and materializes QgsProcessingModels from a DSGTools default
     model parameter set.
@@ -38,13 +40,21 @@ class DsgToolsProcessingModel(QObject):
     # file: path to a local file    #
     # model: qgis resgistered model #
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, taskName=None, flags=None):
         """
         Class constructor.
         :param parameters: (dict) map of attributes for a model.
+        :param taskName: (str) name to be exposed on progress bar.
+        :param flags: (list) a list of QgsTask flags to be set to current model.
         """
-        super(DsgToolsProcessingModel, self).__init__()
+        super(DsgToolsProcessingModel, self).__init__(
+            taskName or QObject().tr("DSGTools Validation Model"),
+            QgsTask.CanCancel if flags is None else flags
+        )
         self._param = {} if self.validateParameters(parameters) else parameters
+        self.feedback = QgsProcessingFeedback()
+        self.feedback.progressChanged.connect(self.setProgress)
+        self.feedback.canceled.connect(self.cancel)
 
     def validateParameters(self, parameters):
         """
@@ -213,7 +223,8 @@ class DsgToolsProcessingModel(QObject):
         model = self.model()
         out = processing.run(
             model,
-            {param : "memory:" for param in self.modelParameters(model)}
+            {param : "memory:" for param in self.modelParameters(model)},
+            feedback=self.feedback
         )
         return out
 
@@ -234,3 +245,22 @@ class DsgToolsProcessingModel(QObject):
         :return: (dict) DSGTools processing model definitions.
         """
         return self._param
+
+    def run(self):
+        """
+        Method reimplemented in order to run models in thread as a QgsTask.
+        """
+        start = time()
+        time
+        try:
+            out = {
+                "result" : self.runModel(),
+                "status" : self.tr("Successful")
+            }
+        except Exception as e:
+            out = {
+                "result" : {},
+                "status" : self.tr("Model has failed: '{error}'").format(str(e))
+            }
+        out["executionTime"] = time() - start
+        return out
