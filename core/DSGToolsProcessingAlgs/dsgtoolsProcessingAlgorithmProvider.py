@@ -141,6 +141,10 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInva
     IdentifyAndFixInvalidGeometriesAlgorithm
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import PecCalculatorAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
+    MatchAndApplyQmlStylesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
+    ApplyStylesFromDatabaseToLayersAlgorithm
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 
@@ -207,6 +211,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     TopologicalLineConnectivityAdjustment(),
                     PecCalculatorAlgorithm(),
                     RuleStatisticsAlgorithm(),
+                    MatchAndApplyQmlStylesToLayersAlgorithm(),
+                    ApplyStylesFromDatabaseToLayersAlgorithm()
                     SingleOutputUnitTestAlgorithm(),
                     ExportToMemoryLayer()
                 ]

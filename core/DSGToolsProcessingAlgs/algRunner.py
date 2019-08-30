@@ -361,3 +361,23 @@ class AlgRunner:
         }
         output = processing.run('dsgtools:removeduplicatedfeatures', parameters, context = context, feedback = feedback)
         return output['OUTPUT']
+    
+    def runApplStylesFromDatabaseToLayers(self, inputList, context, styleName, feedback = None, outputLyr = None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT_LAYERS' : inputList,
+            'STYLE_NAME' : styleName,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run('dsgtools:applystylesfromdatabasetolayersalgorithm', parameters, context = context, feedback = feedback)
+        return output['OUTPUT']
+    
+    def runMatchAndApplyQmlStylesToLayer(self, inputList, context, qmlFolder, feedback = None, outputLyr = None):
+        outputLyr = 'memory:' if outputLyr is None else outputLyr
+        parameters = {
+            'INPUT_LAYERS' : inputList,
+            'QML_FOLDER' : qmlFolder,
+            'OUTPUT' : outputLyr
+        }
+        output = processing.run('dsgtools:matchandapplyqmlstylestolayersalgorithm', parameters, context = context, feedback = feedback)
+        return output['OUTPUT']

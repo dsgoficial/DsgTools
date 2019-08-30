@@ -28,13 +28,14 @@ from qgis.PyQt.QtCore import QSettings, pyqtSignal, pyqtSlot, QObject, Qt
 from qgis.PyQt import QtGui, uic, QtCore
 from qgis.PyQt.Qt import QWidget, QObject
 
-from qgis.core import QgsMapLayer, Qgis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer
+from qgis.core import QgsMapLayer, Qgis, QgsDataSourceUri, QgsMessageLog, QgsVectorLayer, QgsProcessingContext
 
 from .....core.Factories.DbFactory.dbFactory import DbFactory
 from .....core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 from .....core.Utils.utils import Utils
 from .....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import ProgressWidget
 from DsgTools.core.dsgEnums import DsgEnums
+from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'styleManagerTool.ui'))
@@ -52,6 +53,7 @@ class StyleManagerTool(QWidget, FORM_CLASS):
         self.dbFactory = DbFactory()
         # self.applyPushButton.setEnabled(False)
         self.utils = Utils()
+        self.algRunner = AlgRunner()
         
     @pyqtSlot(bool)
     def on_layerPushButton_toggled(self, toggled):
@@ -92,21 +94,37 @@ class StyleManagerTool(QWidget, FORM_CLASS):
             dbVersion = abstractDb.getDatabaseVersion()
             stylesDict = abstractDb.getStyleDict(dbVersion)
             selectedStyle = stylesDict[styleName]
-            localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
-            for lyr in lyrList:
-                try:
-                    uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
-                    fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
-                    if fullPath:
-                        lyr.loadNamedStyle(fullPath, True)
-                        # remove qml temporary file
-                        self.utils.deleteQml(fullPath)
-                        # clear fullPath variable
-                        del fullPath
-                except:
-                    pass
-                localProgress.step()
-            self.iface.mapCanvas().refreshAllLayers()
+            if 'db:' in selectedStyle:
+                self.algRunner.runApplStylesFromDatabaseToLayers(
+                    inputList=lyrList,
+                    context=QgsProcessingContext(),
+                    styleName=selectedStyle.split(':')[-1]
+                )
+            else:
+                stylePath = os.path.join(
+                    abstractDb.getStyleDirectory(dbVersion),
+                    selectedStyle
+                )
+                self.algRunner.runMatchAndApplyQmlStylesToLayer(
+                    inputList=lyrList,
+                    qmlFolder=stylePath,
+                    context=QgsProcessingContext()
+                )
+            # localProgress = ProgressWidget(1, len(lyrList) - 1, self.tr('Loading style {0}').format(styleName), parent=self.iface.mapCanvas())
+            # for lyr in lyrList:
+            #     try:
+            #         uri = QgsDataSourceUri(lyr.dataProvider().dataSourceUri())
+            #         fullPath = self.getStyle(abstractDb, selectedStyle, lyr.name())
+            #         if fullPath:
+            #             lyr.loadNamedStyle(fullPath, True)
+            #             # remove qml temporary file
+            #             self.utils.deleteQml(fullPath)
+            #             # clear fullPath variable
+            #             del fullPath
+            #     except:
+            #         pass
+            #     localProgress.step()
+            # self.iface.mapCanvas().refreshAllLayers()
             QApplication.restoreOverrideCursor()
         except Exception as e:
             QgsMessageLog.logMessage(self.tr('Error setting style ') + styleName + ': ' +':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
@@ -199,23 +217,3 @@ class StyleManagerTool(QWidget, FORM_CLASS):
                 dbName = self.dbComboBox.currentText()
                 abstractDb = self.getAbstractDb(dbName)
                 self.loadStylesCombo(abstractDb)
-        
-    def getStyle(self, abstractDb, stylePath, className):
-        if 'db:' in stylePath:
-            return abstractDb.getStyle(stylePath.split(':')[-1], className)
-        else:
-            return self.getStyleFromFile(stylePath, className)
-    
-    def getStyleFromFile(self, stylePath, className):
-        styleName = "{0}.qml".format(className)
-        if styleName.lower() in [f.lower() for f in os.listdir(stylePath)]:
-            qml = self.utils.parseStyle(os.path.join(stylePath, styleName))
-            # dsgtools have the right to write on its own directory
-            # a temporary file "temp.qml"
-            tempPath = os.path.join(stylePath, "temp.qml")
-            with open(tempPath, "w", encoding='utf-8') as f:
-                f.writelines(qml)
-                f.close()
-            return tempPath
-        else:
-            return None

@@ -259,11 +259,9 @@ class Utils(object):
         try:
             if tempQml[-4:].lower() == '.qml':
                 try:
-                    # linux/unix env
-                    os.system('rm {0}'.format(tempQml))
+                    os.remove(tempQml)
                 except:
-                    # windows/dos env
-                    os.system('del {0}'.format(tempQml))
+                    pass
                 return True
             else:
                 return False
