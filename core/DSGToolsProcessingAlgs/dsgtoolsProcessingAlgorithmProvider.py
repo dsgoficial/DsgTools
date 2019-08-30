@@ -38,6 +38,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.groupLayersAl
     GroupLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.convertLayer2LayerAlgorithm import \
     ConvertLayer2LayerAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.exportToMemoryLayer import \
+    ExportToMemoryLayer
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.createFrameAlgorithm import \
     CreateFrameAlgorithm
@@ -144,6 +146,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApply
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
     ApplyStylesFromDatabaseToLayersAlgorithm
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
+
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
 
@@ -209,6 +213,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     RuleStatisticsAlgorithm(),
                     MatchAndApplyQmlStylesToLayersAlgorithm(),
                     ApplyStylesFromDatabaseToLayersAlgorithm()
+                    SingleOutputUnitTestAlgorithm(),
+                    ExportToMemoryLayer()
                 ]
         return algList
 

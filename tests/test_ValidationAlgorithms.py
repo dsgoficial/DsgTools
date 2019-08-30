@@ -40,7 +40,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import LayerLoaderFactory
 
-class Tester:
+class Tester(object):
     
     CURRENT_PATH = os.path.dirname(__file__)
     DEFAULT_ALG_PATH = os.path.join(
@@ -49,7 +49,27 @@ class Tester:
                         )
 
     def __init__(self):
+        """
+        Class constructor.
+        """
+        super(Tester, self).__init__()
         self.datasets = dict()
+
+    def clearDatasets(self):
+        """
+        Clears all testing datasets set to memory. 
+        """
+        del self.datasets
+        self.datasets = dict()
+
+    def __del__(self):
+        """
+        Class destructor.
+        Clears all datasets set to memory and any memory usage it has set.
+        """
+        self.clearDatasets()
+        super(Tester, self).__del__()
+        del self
 
     def readAvailableAlgs(self, path):
         """
@@ -515,12 +535,17 @@ class Tester:
         }
         return parameters[algName] if algName in parameters else dict()
 
-    def runAlg(self, algName, parameters):
+    def runAlg(self, algName, parameters, feedback=None, context=None):
         """
         Executes a given algorithm.
+        :param algName: (str) target algorithm's name.
+        :param parameters: (dict) set of arguments for target algorithm.
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
+        :param context: (QgsProcessingContext) execution's environmental parameters.
         """
         out = processing.run(algName, parameters, None,\
-                    QgsProcessingFeedback(), QgsProcessingContext()
+                    feedback or QgsProcessingFeedback(),
+                    context or QgsProcessingContext()
                 )
         outputstr = 'FLAGS' if 'FLAGS' in out else 'OUTPUT' if 'OUTPUT' in out else ''
         if outputstr:
@@ -600,11 +625,14 @@ class Tester:
                     return "Incorrect set o attributes for feature {fid}.".format(fid=featId)
         return ""
 
-    def testAlg(self, algName, loadLayers=False):
+    def testAlg(self, algName, feedback=None, context=None, loadLayers=False):
         """
         Tests if the output of a given algorithm is the expected one.
         :param algName: (str) target algorithm's name.
-        :param loadLayers: (bool) 
+        :param feedback: (QgsProcessingFeedback) QGIS progress tracking object.
+        :param context: (QgsProcessingContext) execution's environmental parameters.
+        :param loadLayers: (bool) indicates whether expected and output layers
+                            should be loaded to canvas.
         :return: (str) failing reason.
         """
         parameters = self.algorithmParameters(algName)
@@ -614,7 +642,7 @@ class Tester:
                 )
         try:
             for i, param in enumerate(parameters):
-                output = self.runAlg(algName, param)
+                output = self.runAlg(algName, param, feedback, context)
                 expected = self.expectedOutput(algName, i + 1)
                 if isinstance(output, QgsVectorLayer):
                     if not output.isValid():

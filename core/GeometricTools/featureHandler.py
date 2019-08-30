@@ -67,6 +67,25 @@ class FeatureHandler(QObject):
             newFeatureList.append(newFeature)
         return newFeatureList
 
+    def createFeatureFromLayer(self, layer, attributes=None, geom=None, fields=None):
+        """
+        Creates a feature for a layer. Attributes for new feature may be passed on
+        for pre-populating it.
+        :param layer: (QgsVectorLayer) layer from which a new feature will be
+                      generated.
+        :param attributes: (dict) attributes to be set to new feature.
+        :param geom: (QgsGeometry) geometry to be for the new feature.
+        :param fields: (QgsFields) a set of fields to be set to the new feature,
+                        if not provided, it will be read from input layer (non-optimal).
+        :return: (QgsFeature) new feature.
+        """
+        newFeature = QgsFeature(fields or layer.fields())
+        if geom:
+            newFeature.setGeometry(geom)
+        if attributes:
+            newFeature = self.attributeHandler.setFeatureAttributes(newFeature, attributes)
+        return newFeature
+
     def createUnifiedFeature(self, unifiedLyr, feature, classname, bList = None, attributeTupple = False, coordinateTransformer = None, parameterDict = None):
         parameterDict = {} if parameterDict is None else parameterDict
         bList = [] if bList is None else bList
