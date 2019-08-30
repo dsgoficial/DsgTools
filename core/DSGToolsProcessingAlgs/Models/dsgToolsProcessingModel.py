@@ -55,6 +55,12 @@ class DsgToolsProcessingModel(QgsTask):
         self.feedback = QgsProcessingFeedback()
         self.feedback.progressChanged.connect(self.setProgress)
         self.feedback.canceled.connect(self.cancel)
+        self.output = {
+            "result" : dict(),
+            "status" : False,
+            "executionTime" : .0,
+            "errorMessage" : self.tr("Thread not started yet.")
+        }
 
     def validateParameters(self, parameters):
         """
@@ -249,18 +255,21 @@ class DsgToolsProcessingModel(QgsTask):
     def run(self):
         """
         Method reimplemented in order to run models in thread as a QgsTask.
+        :return: (bool) task success status.
         """
         start = time()
         time
         try:
-            out = {
+            self.output = {
                 "result" : self.runModel(),
-                "status" : self.tr("Successful")
+                "status" : True,
+                "errorMessage" : ""
             }
         except Exception as e:
-            out = {
+            self.output = {
                 "result" : {},
-                "status" : self.tr("Model has failed: '{error}'").format(str(e))
+                "status" : False,
+                "errorMessage" : self.tr("Model has failed:\n'{error}'").format(str(e))
             }
-        out["executionTime"] = time() - start
-        return out
+        self.output["executionTime"] = time() - start
+        return self.output["status"]
