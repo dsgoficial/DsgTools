@@ -40,7 +40,7 @@ class DsgToolsProcessingModel(QgsTask):
     # file: path to a local file    #
     # model: qgis resgistered model #
 
-    def __init__(self, parameters, taskName=None, flags=None):
+    def __init__(self, parameters, taskName=None, flags=None, feedback=None):
         """
         Class constructor.
         :param parameters: (dict) map of attributes for a model.
@@ -52,7 +52,7 @@ class DsgToolsProcessingModel(QgsTask):
             QgsTask.CanCancel if flags is None else flags
         )
         self._param = {} if self.validateParameters(parameters) else parameters
-        self.feedback = QgsProcessingFeedback()
+        self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.progressChanged.connect(self.setProgress)
         self.feedback.canceled.connect(self.cancel)
         self.output = {
@@ -214,9 +214,10 @@ class DsgToolsProcessingModel(QgsTask):
         # QgsProcessingModelAlgorithm
         if not self._param:
             return []
+        model = model or self.model()
         return [
             param.name() \
-                for param in (model or self.model()).parameterDefinitions()
+                for param in model.parameterDefinitions()
         ]
 
     def runModel(self):
