@@ -141,6 +141,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.ValidationAlgs.identifyAndFixInva
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.pecCalculatorAlgorithm import PecCalculatorAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.matchAndApplyQmlStylesToLayersAlgorithm import \
     MatchAndApplyQmlStylesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFromDatabaseToLayersAlgorithm import \
+    ApplyStylesFromDatabaseToLayersAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
@@ -205,7 +207,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     TopologicalLineConnectivityAdjustment(),
                     PecCalculatorAlgorithm(),
                     RuleStatisticsAlgorithm(),
-                    MatchAndApplyQmlStylesToLayersAlgorithm()
+                    MatchAndApplyQmlStylesToLayersAlgorithm(),
+                    ApplyStylesFromDatabaseToLayersAlgorithm()
                 ]
         return algList
 
