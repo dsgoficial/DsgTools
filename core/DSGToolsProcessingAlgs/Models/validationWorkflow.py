@@ -21,8 +21,10 @@
 """
 
 import os, json
+from functools import partial
 
-from qgis.PyQt.QtCore import QObject
+from qgis.core import QgsApplication
+from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
 
@@ -31,6 +33,8 @@ class ValidationWorkflow(QObject):
     Works as a multi-model runner. Understands all models' parameters as an
     output vector layer.
     """
+    workflowFinished = pyqtSignal()
+
     def __init__(self, parameters):
         """
         Class constructor. Materializes an workflow set of parameters.
@@ -43,6 +47,7 @@ class ValidationWorkflow(QObject):
                 self.tr("Invalid workflow parameter:\n{msg}").format(msg=msg)
             )
         self._param = parameters
+        self.output = dict()
 
     def validateParameters(self, parameters):
         """
@@ -157,3 +162,72 @@ class ValidationWorkflow(QObject):
         :return: (dict) DSGTools processing model definitions.
         """
         return self._param
+
+    def runOnMainThread(self):
+        """
+        If, for some reason, Workflow should not be run from secondary threads,
+        this method provides a 'static' execution alternative.
+        """
+        pass
+
+    def setupModelTask(self, model):
+        """
+        Sets model to run on QGIS task manager.
+        """
+        QgsApplication.taskManager().addTask(model)
+
+    def raiseFlagWarning(self):
+        pass
+    
+    def raiseFlagError(self):
+        pass
+
+    def handleFlags(self, model):
+        """
+        Handles Workflow behaviour for a model's flag output.
+        :param model: (DsgToolsProcessingModel) model to have its output handled.
+        """
+        onFlagsMethod = {
+            "alert" : self.raiseFlagWarning,
+            "halt" : self.raiseFlagError,
+            "ignore" : lambda : None
+        }[model.onFlagsRaised()]()
+
+    def run(self):
+        """
+        Executes all models in secodary threads.
+        
+        """
+        models = self.validModels()
+        modelCount = len(models)
+        if self.hasInvalidModel() or modelCount == 0:
+            return {}
+        # make sure models do not run in parallel - they must follow the order!
+        modelIterator = (m for m in models.values())
+        currentModel = next(modelIterator)
+        firstModel = currentModel
+        def addOutput(model):
+            self.output[model.name()] = model.output
+        while True:
+            # this loop is just for execution order setup
+            currentModel.taskCompleted.connect(
+                partial(self.handleFlags, currentModel)
+            )
+            currentModel.taskCompleted.connect(
+                partial(addOutput, currentModel)
+            )
+            # check if there is a next model and connect previous model
+            try:
+                nextModel = next(modelIterator)
+            except:
+                nextModel = None
+            if nextModel is None:
+                currentModel.taskCompleted.connect(self.workflowFinished)
+                break
+            else:
+                currentModel.taskCompleted.connect(
+                    partial(self.setupModelTask, nextModel)
+                )
+            currentModel = nextModel
+        # this trigger the events
+        self.setupModelTask(firstModel)
