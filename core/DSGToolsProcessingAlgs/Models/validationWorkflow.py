@@ -23,7 +23,7 @@
 import os, json
 from functools import partial
 
-from qgis.core import QgsApplication
+from qgis.core import QgsApplication, QgsProcessingFeedback, QgsMapLayer
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
@@ -48,6 +48,7 @@ class ValidationWorkflow(QObject):
             )
         self._param = parameters
         self.output = dict()
+        self.feedback = QgsProcessingFeedback()
 
     def validateParameters(self, parameters):
         """
@@ -102,7 +103,7 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam)
+            model = DsgToolsProcessingModel(modelParam, feedback=self.feedback)
             if model.isValid():
                 models[modelName] = model
         return models
@@ -114,7 +115,7 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam)
+            model = DsgToolsProcessingModel(modelParam, feedback=self.feedback)
             if not model.isValid():
                 models[modelName] = model.validateParameters(modelParam)
         return models
@@ -126,7 +127,7 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam)
+            model = DsgToolsProcessingModel(modelParam, feedback=self.feedback)
             if not model.isValid():
                 return True
         return False
@@ -179,8 +180,15 @@ class ValidationWorkflow(QObject):
     def raiseFlagWarning(self):
         pass
     
-    def raiseFlagError(self):
-        pass
+    def raiseFlagError(self, output):
+        """
+        It stops the workflow execution if flags are identified.
+        :param output: (dict) a map to DsgToolsProcessingModel output.
+        """
+        for vl in output["result"].values():
+            if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
+                self.feedback.cancel()
+                return self.feedback.isCanceled()
 
     def handleFlags(self, model):
         """
@@ -191,7 +199,7 @@ class ValidationWorkflow(QObject):
             "alert" : self.raiseFlagWarning,
             "halt" : self.raiseFlagError,
             "ignore" : lambda : None
-        }[model.onFlagsRaised()]()
+        }[model.onFlagsRaised()](model.output)
 
     def run(self):
         """
