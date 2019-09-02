@@ -212,7 +212,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     PecCalculatorAlgorithm(),
                     RuleStatisticsAlgorithm(),
                     MatchAndApplyQmlStylesToLayersAlgorithm(),
-                    ApplyStylesFromDatabaseToLayersAlgorithm()
+                    ApplyStylesFromDatabaseToLayersAlgorithm(),
                     SingleOutputUnitTestAlgorithm(),
                     ExportToMemoryLayer()
                 ]
