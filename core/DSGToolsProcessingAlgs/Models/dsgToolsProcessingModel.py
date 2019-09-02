@@ -26,7 +26,6 @@ from time import time, sleep
 from qgis.core import (QgsProcessingModelAlgorithm,
                        QgsTask,
                        QgsProcessingFeedback)
-from qgis.PyQt.QtCore import QObject
 import processing
 
 class DsgToolsProcessingModel(QgsTask):
@@ -48,9 +47,9 @@ class DsgToolsProcessingModel(QgsTask):
         :param flags: (list) a list of QgsTask flags to be set to current model.
         """
         super(DsgToolsProcessingModel, self).__init__(
-            taskName or QObject().tr("DSGTools Validation Model"),
-            QgsTask.CanCancel if flags is None else flags
+            "", QgsTask.CanCancel if flags is None else flags
         )
+        self.setDescription(taskName or self.tr("DSGTools Validation Model"))
         self._param = {} if self.validateParameters(parameters) else parameters
         self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.progressChanged.connect(self.setProgress)
@@ -61,6 +60,13 @@ class DsgToolsProcessingModel(QgsTask):
             "executionTime" : .0,
             "errorMessage" : self.tr("Thread not started yet.")
         }
+
+    def setTitle(self, title):
+        """
+        Defines task's title (e.g. text shown as the task's name on QGIS task
+        manager).
+        """
+        self.setDescription(title)
 
     def validateParameters(self, parameters):
         """
@@ -106,7 +112,7 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (QgsProcessingModelAlgorithm) model as a processing algorithm.
         """
         temp = "./temp_model_{0}.model3".format(hash(time()))
-        with open(temp, "w") as xmlFile:
+        with open(temp, "w", encoding="utf-8") as xmlFile:
             xmlFile.write(xml)
         alg = DsgToolsProcessingModel.modelFromFile(temp)
         os.remove(temp)
@@ -223,17 +229,16 @@ class DsgToolsProcessingModel(QgsTask):
     def runModel(self):
         """
         Executes current model.
-        :return: ?
+        :return: (dict) map to model's outputs.
         """
         # this tool understands every parameter to be filled as an output LAYER
         # it also sets all output to a MEMORY LAYER.
         model = self.model()
-        out = processing.run(
+        return processing.run(
             model,
-            {param : "memory:" for param in self.modelParameters(model)},
+            { param : "memory:" for param in self.modelParameters(model) },
             feedback=self.feedback
         )
-        return out
 
     def export(self, filepath):
         """
@@ -245,7 +250,7 @@ class DsgToolsProcessingModel(QgsTask):
             fp.write(json.dumps(self._param, sort_keys=True, indent=4))
         return os.path.exists(filepath)
 
-    def exportAsDict(self):
+    def asDict(self):
         """
         Dumps model parameters as a JSON file.
         :param filepath: (str) path to JSON file.
@@ -262,7 +267,7 @@ class DsgToolsProcessingModel(QgsTask):
         time
         try:
             self.output = {
-                "result" : self.runModel(),
+                "result" : { k.split(":", 2)[-1] : v for k, v in self.runModel().items() },
                 "status" : True,
                 "errorMessage" : ""
             }
@@ -270,7 +275,8 @@ class DsgToolsProcessingModel(QgsTask):
             self.output = {
                 "result" : {},
                 "status" : False,
-                "errorMessage" : self.tr("Model has failed:\n'{error}'").format(str(e))
+                "errorMessage" : self.tr("Model has failed:\n'{error}'")\
+                                 .format(error=str(e))
             }
         self.output["executionTime"] = time() - start
         return self.output["status"]

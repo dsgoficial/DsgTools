@@ -61,6 +61,12 @@ class ValidationWorkflow(QObject):
             parameters["displayName"] = self.tr("DSGTools Validation Workflow")
         if "models" not in parameters or not parameters["models"]:
             return self.tr("This workflow seems to have no models associated to it.")
+        for modelName, modelParam in parameters["models"].items():
+            model=DsgToolsProcessingModel(modelParam)
+            if not model.isValid():
+                return self.tr("Model {model} is invalid: '{reason}'.").format(
+                    model=modelName, reason=model.validateParameters(modelParam)
+                )
         # if "flagLayer" not in parameters or not parameters["flagLayer"]:
         #     self.tr("No flag layer was provided.")
         # if "historyLayer" not in parameters or not parameters["historyLayer"]:
@@ -164,12 +170,27 @@ class ValidationWorkflow(QObject):
         """
         return self._param
 
+    def finished(self):
+        """
+        Executes all post-processing actions.
+        """
+        # Add default post-processing actions here!
+        self.workflowFinished.emit()
+
     def runOnMainThread(self):
         """
         If, for some reason, Workflow should not be run from secondary threads,
         this method provides a 'static' execution alternative.
+        :return: (dict) a map to each model's output.
         """
-        pass
+        output = dict()
+        for model in self.validModels().values():
+            try:
+                output[model.name()] = model.runModel()
+            except:
+                output[model.name()] = None
+        self.finished()
+        return output
 
     def setupModelTask(self, model):
         """
@@ -201,10 +222,10 @@ class ValidationWorkflow(QObject):
             "ignore" : lambda : None
         }[model.onFlagsRaised()](model.output)
 
-    def run(self):
+    def run(self, firstModelName=None):
         """
-        Executes all models in secodary threads.
-        
+        Executes all models in secondary threads.
+        :param firstModelName: (str) first model's name to be executed.
         """
         models = self.validModels()
         modelCount = len(models)
@@ -212,8 +233,20 @@ class ValidationWorkflow(QObject):
             return {}
         # make sure models do not run in parallel - they must follow the order!
         modelIterator = (m for m in models.values())
-        currentModel = next(modelIterator)
-        firstModel = currentModel
+        if firstModelName is not None:
+            while True:
+                try:
+                    currentModel = next(modelIterator)
+                except StopIteration:
+                    self.output = dict()
+                    # if no model is identified, none shall be run
+                    return
+                if currentModel.name() == firstModelName:
+                    firstModel = currentModel
+                    break
+        else:
+            currentModel = next(modelIterator)
+            firstModel = currentModel
         def addOutput(model):
             self.output[model.name()] = model.output
         while True:
@@ -227,10 +260,10 @@ class ValidationWorkflow(QObject):
             # check if there is a next model and connect previous model
             try:
                 nextModel = next(modelIterator)
-            except:
+            except StopIteration:
                 nextModel = None
             if nextModel is None:
-                currentModel.taskCompleted.connect(self.workflowFinished)
+                currentModel.taskCompleted.connect(self.finished)
                 break
             else:
                 currentModel.taskCompleted.connect(
