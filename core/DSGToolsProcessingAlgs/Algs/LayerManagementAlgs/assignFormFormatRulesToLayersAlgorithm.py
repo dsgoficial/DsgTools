@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2019-04-26
+        begin                : 2019-09-03
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -21,6 +21,7 @@
  ***************************************************************************/
 """
 from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtGui import QColor
 from qgis.PyQt.Qt import QVariant
 from qgis.core import (QgsProcessing,
                        QgsFeatureSink,
@@ -54,29 +55,16 @@ from qgis.core import (QgsProcessing,
                        QgsField,
                        QgsFields,
                        QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
+                       QgsProcessingParameterString,
+                       QgsConditionalStyle)
 
-class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
-    INPUT_LAYERS = 'INPUT_LAYERS'
-    OUTPUT = 'OUTPUT'
-    def initAlgorithm(self, config):
-        """
-        Parameter setting.
-        """
-        self.addParameter(
-            QgsProcessingParameterMultipleLayers(
-                self.INPUT_LAYERS,
-                self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
-            )
-        )
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
+    RuleStatisticsAlgorithm
+from operator import itemgetter
+from collections import defaultdict
 
-        self.addOutput(
-            QgsProcessingOutputMultipleLayers(
-                self.OUTPUT,
-                self.tr('Original layers with measure column')
-            )
-        )
+
+class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -84,38 +72,78 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         inputLyrList = self.parameterAsLayerList(
             parameters,
-            self.INPUT_LAYERS,
+            self.INPUTLAYERS,
             context
         )
+        input_data = self.load_rules_from_parameters(parameters)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
-        notSuccessfulList = []
+        ruleDict = self.buildRuleDict(input_data)
+
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
-                break
-            self.createMeasureColumn(lyr)
+                    break
+            for field in lyr.fields():
+                if feedback.isCanceled():
+                    break
+                self.addRuleToLayer(lyr, field, ruleDict)
             feedback.setProgress(current * stepSize)
 
-        return {self.OUTPUT: inputLyrList}
-
-    def createMeasureColumn(self, layer):
-        if layer.geometryType() == QgsWkbTypes.PolygonGeometry:
-            layer.addExpressionField(
-                    '$area',
-                    QgsField(
-                        'area_otf',
-                        QVariant.Double
-                    )
-                )
-        elif layer.geometryType() == QgsWkbTypes.LineGeometry:
-            layer.addExpressionField(
-                    '$length',
-                    QgsField(
-                        'lenght_otf',
-                        QVariant.Double
-                    )
-                )
-        return layer
+        return {}
+    
+    def buildRuleDict(self, input_data):
+        input_data = input_data[0] if isinstance(input_data, list) else input_data
+        sortedRuleList = sorted(
+            input_data.values(),
+            key = itemgetter('camada', 'atributo', 'ordem'),
+            reverse=False
+        )
+        ruleDict = defaultdict(
+            lambda : defaultdict(list)
+        )
+        for data in sortedRuleList:
+            ruleDict[data['camada']][data['atributo']].append(data)
+        return ruleDict
+    
+    def addRuleToLayer(self, lyr, field, ruleDict):
+        data = ruleDict[lyr.name()][field.name()]
+        if not data:
+            return
+        fieldStyleList = [self.createConditionalStyle(i) for i in data if i['tipo_regra'] == 'Atributo']
+        rowStyleList = [self.createConditionalStyle(i) for i in data if i['tipo_regra'] != 'Atributo']
+        if fieldStyleList:
+            lyr.conditionalStyles().setFieldStyles(
+                field.name(),
+                fieldStyleList
+            )
+        elif rowStyleList:
+            lyr.conditionalStyles().setRowStyes(rowStyleList)
+    
+    def createConditionalStyle(self, data):
+        """
+        data: {
+            'descricao' : 'descricao da regra',
+            'regra' : 'regra condicional',
+            'corRgb' : 'cor da regra'
+        }
+        Returns a QgsConditionalStyle
+        """
+        conditionalStyle = QgsConditionalStyle()
+        conditionalStyle.setName( data['descricao'] )
+        conditionalStyle.setRule( data['regra'] )
+        conditionalStyle.setBackgroundColor(
+            QColor(
+                data['corRgb'][0],
+                data['corRgb'][1],
+                data['corRgb'][2]
+            ) 
+        )
+        return conditionalStyle
+    
+    def cleanRules(self, inputLayerList):
+        for lyr in inputLayerList:
+            for field in lyr.fields():
+                lyr.conditionalStyles().setFieldStyles(field.name(), '')
 
     def name(self):
         """
@@ -125,14 +153,14 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignmeasurecolumntolayers'
+        return 'assignformformatrulestolayersalgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Measure Column to Layers')
+        return self.tr('Assign Form Format Rules to Layers')
 
     def group(self):
         """
@@ -152,7 +180,7 @@ class AssignMeasureColumnToLayersAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignMeasureColumnToLayersAlgorithm', string)
+        return QCoreApplication.translate('AssignFormFormatRulesToLayersAlgorithm', string)
 
     def createInstance(self):
-        return AssignMeasureColumnToLayersAlgorithm()
+        return AssignFormFormatRulesToLayersAlgorithm()

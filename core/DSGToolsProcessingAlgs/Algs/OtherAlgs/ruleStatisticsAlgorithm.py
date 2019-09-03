@@ -45,7 +45,7 @@ class RuleStatisticsAlgorithm(QgsProcessingAlgorithm):
     INPUTLAYERS = 'INPUTLAYERS'
     RULEFILE = 'RULEFILE'
     RULEDATA = 'RULEDATA'
-    OUTPUT = 'RESULT'
+    OUTPUT = 'OUTPUT'
 
     def __init__(self):
         super(RuleStatisticsAlgorithm, self).__init__()
