@@ -96,7 +96,7 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         sortedRuleList = sorted(
             input_data.values(),
             key = itemgetter('camada', 'atributo', 'ordem'),
-            reverse=False
+            reverse=True
         )
         ruleDict = defaultdict(
             lambda : defaultdict(list)
