@@ -77,6 +77,29 @@ class ValidationWorkflow(QObject):
         #     self.tr("No history layer was provided.")
         return ""
 
+    def metadata(self):
+        """
+        A map to Worflow's metadata.
+        :return: (dict) metadata.
+        """
+        meta = dict()
+        def checkMeta(key):
+            return "metadata" in self._param and key in self._param["metadata"]
+        for k in ["author", "version", "lastModified"]:
+            meta[k] = self._param["metadata"][k] if checkMeta(k) else ""
+        return meta
+
+    def metadataText(self):
+        """
+        Retrieves Workflow's metadata string.
+        :return: (str) Workflow's metadata string.
+        """
+        if "metadata" not in self._param:
+            return ""
+        return self.tr(
+            "Workflow {name} v{version} ({lastModified}) by {author}."
+        ).format(name=self.displayName(), **self.metadata())
+
     def displayName(self):
         """
         Friendly name for the workflow.
