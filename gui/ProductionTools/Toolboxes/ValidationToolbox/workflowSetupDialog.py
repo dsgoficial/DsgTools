@@ -43,10 +43,16 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.parent = parent
         self.setupUi(self)
         self.orderedTableWidget.setHeaders({
-            "Model name" : "item",
-            "Model source" : "item",
-            "Model data" : "item",
-            "On flags" : "widget"
+            "Model name" : {
+                "type" : "item",
+                "editable" : "True"
+            },
+            "Model source" : {
+                "type" : "widget"
+            },
+            "On flags" : {
+                "type" : "widget"
+            }
         })
 
     def now(self):
