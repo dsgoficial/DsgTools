@@ -147,6 +147,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFr
     ApplyStylesFromDatabaseToLayersAlgorithm
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormFormatRulesToLayersAlgorithm import \
+    AssignFormFormatRulesToLayersAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
@@ -214,7 +216,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     MatchAndApplyQmlStylesToLayersAlgorithm(),
                     ApplyStylesFromDatabaseToLayersAlgorithm(),
                     SingleOutputUnitTestAlgorithm(),
-                    ExportToMemoryLayer()
+                    ExportToMemoryLayer(),
+                    AssignFormFormatRulesToLayersAlgorithm()
                 ]
         return algList
 
