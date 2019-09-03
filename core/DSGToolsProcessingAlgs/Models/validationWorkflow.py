@@ -23,7 +23,10 @@
 import os, json
 from functools import partial
 
-from qgis.core import QgsApplication, QgsProcessingFeedback, QgsMapLayer
+from qgis.core import (QgsMapLayer,
+                       QgsApplication,
+                       QgsProcessingFeedback,
+                       QgsProcessingMultiStepFeedback)
 from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
@@ -47,6 +50,7 @@ class ValidationWorkflow(QObject):
                 self.tr("Invalid workflow parameter:\n{msg}").format(msg=msg)
             )
         self._param = parameters
+        self._modelOrderMap = dict()
         self.output = dict()
         self.feedback = QgsProcessingFeedback()
 
@@ -62,7 +66,7 @@ class ValidationWorkflow(QObject):
         if "models" not in parameters or not parameters["models"]:
             return self.tr("This workflow seems to have no models associated to it.")
         for modelName, modelParam in parameters["models"].items():
-            model=DsgToolsProcessingModel(modelParam)
+            model=DsgToolsProcessingModel(modelParam, modelName)
             if not model.isValid():
                 return self.tr("Model {model} is invalid: '{reason}'.").format(
                     model=modelName, reason=model.validateParameters(modelParam)
@@ -94,8 +98,13 @@ class ValidationWorkflow(QObject):
         :return: (dict) models maps to valid and invalid models.
         """
         models = {"valid" : dict(), "invalid" : dict()}
+        self._multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(self._param["models"]), self.feedback
+        )
         for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam)
+            model = DsgToolsProcessingModel(
+                modelParam, modelName, feedback=self._multiStepFeedback
+            )
             if not model.isValid():
                 models["invalid"][modelName] = model.validateParameters(modelParam)
             else:
@@ -108,10 +117,16 @@ class ValidationWorkflow(QObject):
         :return: (dict) models maps to valid and invalid models.
         """
         models = dict()
-        for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam, feedback=self.feedback)
+        self._multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(self._param["models"]), self.feedback
+        )
+        for idx, (modelName, modelParam) in enumerate(self._param["models"].items()):
+            model = DsgToolsProcessingModel(
+                modelParam, modelName, feedback=self._multiStepFeedback
+            )
             if model.isValid():
                 models[modelName] = model
+            self._modelOrderMap[modelName] = idx
         return models
 
     def invalidModels(self):
@@ -120,8 +135,13 @@ class ValidationWorkflow(QObject):
         :return: (dict) models maps invalid models to their invalidation reason.
         """
         models = dict()
+        self._multiStepFeedback = QgsProcessingMultiStepFeedback(
+            len(self._param["models"]), self.feedback
+        )
         for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam, feedback=self.feedback)
+            model = DsgToolsProcessingModel(
+                modelParam, modelName, feedback=self._multiStepFeedback
+            )
             if not model.isValid():
                 models[modelName] = model.validateParameters(modelParam)
         return models
@@ -133,7 +153,7 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         for modelName, modelParam in self._param["models"].items():
-            model = DsgToolsProcessingModel(modelParam, feedback=self.feedback)
+            model = DsgToolsProcessingModel(modelParam, modelName)
             if not model.isValid():
                 return True
         return False
@@ -219,7 +239,7 @@ class ValidationWorkflow(QObject):
         onFlagsMethod = {
             "alert" : self.raiseFlagWarning,
             "halt" : self.raiseFlagError,
-            "ignore" : lambda : None
+            "ignore" : lambda x : None
         }[model.onFlagsRaised()](model.output)
 
     def run(self, firstModelName=None):
@@ -227,6 +247,7 @@ class ValidationWorkflow(QObject):
         Executes all models in secondary threads.
         :param firstModelName: (str) first model's name to be executed.
         """
+        self.output = dict()
         models = self.validModels()
         modelCount = len(models)
         if self.hasInvalidModel() or modelCount == 0:
@@ -238,7 +259,6 @@ class ValidationWorkflow(QObject):
                 try:
                     currentModel = next(modelIterator)
                 except StopIteration:
-                    self.output = dict()
                     # if no model is identified, none shall be run
                     return
                 if currentModel.name() == firstModelName:
@@ -248,6 +268,8 @@ class ValidationWorkflow(QObject):
             currentModel = next(modelIterator)
             firstModel = currentModel
         def addOutput(model):
+            # register last model executed
+            self.__lastModel = model.name()
             self.output[model.name()] = model.output
         while True:
             # this loop is just for execution order setup
@@ -256,6 +278,12 @@ class ValidationWorkflow(QObject):
             )
             currentModel.taskCompleted.connect(
                 partial(addOutput, currentModel)
+            )
+            currentModel.taskCompleted.connect(
+                partial(
+                    self._multiStepFeedback.setCurrentStep,
+                    self._modelOrderMap[currentModel.name()]
+                )
             )
             # check if there is a next model and connect previous model
             try:

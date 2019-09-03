@@ -39,18 +39,20 @@ class DsgToolsProcessingModel(QgsTask):
     # file: path to a local file    #
     # model: qgis resgistered model #
 
-    def __init__(self, parameters, taskName=None, flags=None, feedback=None):
+    def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
         """
         Class constructor.
         :param parameters: (dict) map of attributes for a model.
+        :param name: (str) name to identify current model.
         :param taskName: (str) name to be exposed on progress bar.
         :param flags: (list) a list of QgsTask flags to be set to current model.
         """
         super(DsgToolsProcessingModel, self).__init__(
             "", QgsTask.CanCancel if flags is None else flags
         )
-        self.setDescription(taskName or self.tr("DSGTools Validation Model"))
+        self._name = name
         self._param = {} if self.validateParameters(parameters) else parameters
+        self.setDescription(self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.progressChanged.connect(self.setProgress)
         self.feedback.canceled.connect(self.cancel)
@@ -136,21 +138,20 @@ class DsgToolsProcessingModel(QgsTask):
 
     def displayName(self):
         """
-        Current model's source data. If it's from a file, it's its filepath,
-        if from an XML, its contents.
-        :return: (str) model's source data.
+        Model's friendly name, if available.
+        :return: (str) model's friendly name.
         """
         if not self.isValid():
             return ""
-        return self._param["displayName"] if "displayName" in self._param \
-                 else self.model().displayName()
+        return self._param["displayName"] if "displayName" in self._param else \
+                self.tr("DSGTools Validation Model ({0})").format(self.name())
 
     def name(self):
         """
-        Proxy method for displayName.
-        :return: (str) display name.
+        Name for model identification.
+        :return: (str) model's name.
         """
-        return self.displayName()
+        return self._name
 
     def model(self):
         """
