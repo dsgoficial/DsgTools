@@ -24,6 +24,7 @@
 import os
 
 from qgis.PyQt import uic
+from qgis.PyQt.QtCore import Qt
 from qgis.PyQt.QtWidgets import QWidget, QTableWidgetItem
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -49,8 +50,11 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         self.resetTable()
         self.headers = { 
-            header : { "col" : col, "type" : headerMap[header] } \
-                for col, header in enumerate(headerMap)
+            header : {
+                "col" : col,
+                "type" : prop["type"],
+                "editable" : prop["editable"]
+            } for col, (header, prop) in enumerate(headerMap.items())
         }
         self.tableWidget.setColumnCount(len(self.headers))
         self.tableWidget.setHorizontalHeaderLabels(list(self.headers.keys()))
@@ -77,7 +81,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         return len(self.headers)
 
-    def addRow(self, row=None, **contents):
+    def addRow(self, contents, row=None):
         """
         Adds a new row of items and fill it into table.
         :param row: (int) position to add the new row.
@@ -85,17 +89,19 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         row = row if row is not None else self.rowCount()
         self.tableWidget.insertRow(row)
-        for property_, value in contents.items():
-            if property_ not in self.headers:
-                # ignore properties not present on table
-                continue
-            if self.headers[property_]["type"] == "item":
-                self.tableWidget.addItem(
-                    row, self.headers[property_]["col"], QTableWidgetItem(value)
+        for header, properties in self.headers.items():
+            value = contents[header] if header in contents else None
+            if properties["type"] == "item":
+                item = QTableWidgetItem(value)
+                # it "flips" current state, which, by default, is "editable"
+                if not properties["editable"]:
+                    item.setFlags(Qt.ItemIsEditable)
+                self.tableWidget.setItem(
+                    row, properties["col"], item
                 )
             else:
                 self.tableWidget.setCellWidget(
-                    row, self.headers[property_]["col"], value
+                    row, properties["col"], value
                 )
 
     def removeRow(self, row=None):
