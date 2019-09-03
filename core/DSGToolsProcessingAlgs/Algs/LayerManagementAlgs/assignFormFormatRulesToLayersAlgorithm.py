@@ -65,6 +65,16 @@ from collections import defaultdict
 
 
 class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
+    CLEAN_BEFORE_ASSIGN = 'CLEAN_BEFORE_ASSIGN'
+
+    def initAlgorithm(self, config=None):
+        super(AssignFormFormatRulesToLayersAlgorithm, self).initAlgorithm(config=config)
+        self.addParameter(
+            QgsProcessingParameterBoolean(
+                self.CLEAN_BEFORE_ASSIGN,
+                self.tr('Clean before assign format rules')
+            )
+        )
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -75,7 +85,16 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             self.INPUTLAYERS,
             context
         )
+        if not inputLyrList:
+            return {}
         input_data = self.load_rules_from_parameters(parameters)
+        cleanBefore = self.parameterAsBool(
+            parameters,
+            self.CLEAN_BEFORE_ASSIGN,
+            context
+            )
+        if cleanBefore:
+            self.cleanRules(inputLayerList)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
         ruleDict = self.buildRuleDict(input_data)
