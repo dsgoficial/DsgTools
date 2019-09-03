@@ -157,7 +157,7 @@ class DsgToolsProcessingModel(QgsTask):
         if from an XML, its contents.
         :return: (str) model's source data.
         """
-        return self._param["source"]["data"] if self.isValid() else ""    
+        return self._param["source"]["data"] if self.isValid() else ""
 
     def displayName(self):
         """
