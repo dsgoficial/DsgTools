@@ -25,7 +25,13 @@ import os, json
 from datetime import datetime
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtWidgets import QDialog, QTableWidgetItem
+from qgis.PyQt.QtWidgets import (QDialog,
+                                 QComboBox,
+                                 QCheckBox,
+                                 QLineEdit,
+                                 QTableWidgetItem)
+
+from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'workflowSetupDialog.ui')
@@ -44,16 +50,77 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.orderedTableWidget.setHeaders({
             "Model name" : {
-                "type" : "item",
-                "editable" : "True"
+                "type" : "widget",
+                "class" : self.modelNameWidget
             },
             "Model source" : {
-                "type" : "widget"
+                "type" : "widget",
+                "class" : self.modelWidget
             },
             "On flags" : {
-                "type" : "widget"
+                "type" : "widget",
+                "class" : self.onFlagsWidget
+            },
+            "Load output" : {
+                "type" : "widget",
+                "class" : self.loadOutputWidget
             }
         })
+
+    def modelNameWidget(self):
+        """
+        Gets a new instance of model name's setter widget.
+        :return: (QLineEdit) widget for model's name setting.
+        """
+        # no need to pass parenthood as it will be set to the table when added
+        # to a cell
+        le = QLineEdit()
+        # setPlace"h"older, with a lower case "h"...
+        le.setPlaceholderText(self.tr("Set a name for the model..."))
+        le.setFrame(False)
+        return le
+
+    def modelWidget(self):
+        """
+        Gets a new instance of model settter's widget.
+        :return: (SelectFileWidget) DSGTools custom file selection widget.
+        """
+        widget = SelectFileWidget()
+        widget.label.hide()
+        widget.selectFilePushButton.setText("...")
+        widget.selectFilePushButton.setMaximumWidth(32)
+        widget.lineEdit.setPlaceholderText(self.tr("Select a model..."))
+        widget.lineEdit.setFrame(False)
+        widget.setCaption(self.tr("Select a QGIS Processing model file"))
+        widget.setFilter(
+            self.tr("Select a QGIS Processing model (*.model *.model3)")
+        )
+        return widget
+
+    def onFlagsWidget(self):
+        """
+        Gets a new instance for the widget that sets model's behaviour when
+        flags are raised.
+        :return: (QComboBox) model's behaviour selection widget. 
+        """
+        combo = QComboBox()
+        combo.addItems([
+            self.tr("Halt"),
+            self.tr("Warn"),
+            self.tr("Ignore")
+        ])
+        return combo
+
+    def loadOutputWidget(self):
+        """
+        Gets a new instance for the widget that sets output layer loading
+        definitions.
+        :return: (QWidget) widget for output layer loading behaviour
+                 definition.
+        """
+        cb = QCheckBox()
+        cb.setStyleSheet("margin:auto;")
+        return cb
 
     def now(self):
         """
