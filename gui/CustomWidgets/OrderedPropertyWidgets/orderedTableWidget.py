@@ -24,8 +24,10 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt
-from qgis.PyQt.QtWidgets import QWidget, QTableWidgetItem
+from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtWidgets import (QWidget,
+                                 QTableWidgetItem,
+                                 QAbstractItemView)
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'orderedTableWidget.ui')
@@ -48,18 +50,19 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         Sets headers to table and prepare each row for their contents.
         """
-        self.resetTable()
+        self.clear()
         self.headers = { 
             header : {
                 "col" : col,
                 "type" : prop["type"],
-                "editable" : prop["editable"]
+                "editable" if prop["type"] == "item" else "class" : \
+                    prop["editable" if prop["type"] == "item" else "class"]
             } for col, (header, prop) in enumerate(headerMap.items())
         }
         self.tableWidget.setColumnCount(len(self.headers))
         self.tableWidget.setHorizontalHeaderLabels(list(self.headers.keys()))
 
-    def resetTable(self):
+    def clear(self):
         """
         Resets table to initial state.
         """
@@ -101,7 +104,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 )
             else:
                 self.tableWidget.setCellWidget(
-                    row, properties["col"], value
+                    row, properties["col"], properties["class"]()
                 )
 
     def removeRow(self, row=None):
@@ -119,17 +122,16 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) row to be read.
         :return: (dict) a map to row's contents.
         """
-        if row >= self.rowCount():
+        if row >= self.rowCount() or row < 0:
             return {}
-        self.tableWidget.insertRow(row)
         contents = dict()
-        for row in self.rowCount():
-            for header, properties in self.headers.items():
-                col = properties["col"]
-                if properties["type"] == "item":
-                    contents[header] = self.tableWidget.item(row, col).text()
-                else:
-                    contents[header] = self.tableWidget.cellWidget(row, col)
+        for header, properties in self.headers.items():
+            col = properties["col"]
+            if properties["type"] == "item":
+                item = self.tableWidget.item(row, col)
+                contents[header] = item.text() if item is not None else None
+            else:
+                contents[header] = self.tableWidget.cellWidget(row, col)
         return contents
 
     def item(self, row, col):
@@ -139,7 +141,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param col: (int) item's column to be read.
         :return: (str/QWidget) cell contents.
         """
-        if row >= self.rowCount() or col >= self.columnCount():
+        if row >= self.rowCount() or col >= self.columnCount() \
+           or row < 0 or col < 0:
             return None
         for header, properties in self.headers.items():
             if col == properties["col"]:
@@ -147,3 +150,101 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                     return self.tableWidget.item(row, col).text()
                 else:
                     return self.tableWidget.cellWidget(row, col)
+
+    def selectedItems(self):
+        """
+        List of all rows that have selected items on the table.
+        :return: (list-of-int) selected rows' indexes.
+        """
+        return self.tableWidget.selectedItems()
+
+    def selectedRows(self, reverseOrder=False):
+        """
+        List of all rows that have selected items on the table.
+        :param reverOrder: (bool) indicates if the row order is reversed.
+        :return: (list-of-int) ordered list of selected rows' indexes.
+        """
+        rows = set()
+        for item in self.selectedItems():
+            rows.add(item.row())
+        return sorted(rows, reverse=reverseOrder)
+
+    def selectedColumns(self, reverseOrder=False):
+        """
+        List of all columns that have selected items on the table.
+        :param reverOrder: (bool) indicates if the column order is reversed.
+        :return: (list-of-int) ordered list of selected columns' indexes.
+        """
+        cols = set()
+        for item in self.selectedItems():
+            cols.add(item.column())
+        return sorted(cols, reverse=reverseOrder)
+
+    def selectRow(self, row):
+        """
+        Adds a row to selection.
+        """
+        if row not in self.selectedRows():
+            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
+            self.tableWidget.selectRow(row)
+            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+
+    def moveRowUp(self, row):
+        """
+        Moves a row one position up, if possible.
+        :param row: (int) row be moved.
+        """
+        if row == 0:
+            return
+        self.addRow(self.row(row), row - 1)
+        self.removeRow(row + 1)
+        self.selectRow(row - 1)
+
+    def moveRowDown(self, row):
+        """
+        Moves a row one position up, if possible.
+        :param row: (int) row be moved.
+        """
+        if row == self.rowCount() - 1:
+            return
+        self.addRow(self.row(row), row + 2)
+        self.removeRow(row)
+        self.selectRow(row + 1)
+
+    @pyqtSlot()
+    def on_removePushButton_clicked(self):
+        """
+        Method triggered when remove button is clicked.
+        """
+        rows = self.selectedRows()
+        while rows:
+            self.removeRow(rows[0])
+            rows = self.selectedRows()
+
+    @pyqtSlot()
+    def on_addPushButton_clicked(self):
+        """
+        Method triggered when add button is clicked.
+        """
+        self.addRow({})
+        
+    @pyqtSlot()
+    def on_moveUpPushButton_clicked(self):
+        """
+        Method triggered when move row up button is clicked.
+        """
+        # selected rows method is sorted!
+        for row in self.selectedRows():
+            if row - 1 in self.selectedRows():
+                continue
+            self.moveRowUp(row)
+
+    @pyqtSlot()
+    def on_moveDownPushButton_clicked(self):
+        """
+        Method triggered when move row down button is clicked.
+        """
+        for row in self.selectedRows(True):
+            if row + 1 in self.selectedRows():
+                continue
+            self.moveRowDown(row)
