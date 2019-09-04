@@ -182,7 +182,15 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
 
     def selectRow(self, row):
         """
+        Clears all selected rows and selects row.
+        :param row: (int) index for the row to be select.
+        """
+        self.tableWidget.selectRow(row)
+
+    def addRowToSelection(self, row):
+        """
         Adds a row to selection.
+        :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
             self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
@@ -198,7 +206,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             return
         self.addRow(self.row(row), row - 1)
         self.removeRow(row + 1)
-        self.selectRow(row - 1)
+        self.addRowToSelection(row - 1)
 
     def moveRowDown(self, row):
         """
@@ -209,7 +217,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             return
         self.addRow(self.row(row), row + 2)
         self.removeRow(row)
-        self.selectRow(row + 1)
+        self.addRowToSelection(row + 1)
 
     @pyqtSlot()
     def on_removePushButton_clicked(self):
@@ -225,8 +233,17 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
     def on_addPushButton_clicked(self):
         """
         Method triggered when add button is clicked.
+        Adds a row below selected rows or, if no row is selected, adds it as
+        last item.
         """
-        self.addRow({})
+        rows = self.selectedRows()
+        if rows:
+            row = max(rows) + 1
+            self.addRow({}, row)
+            self.selectRow(row)
+        else:
+            self.addRow({})
+            self.selectRow(self.rowCount() - 1)
         
     @pyqtSlot()
     def on_moveUpPushButton_clicked(self):
