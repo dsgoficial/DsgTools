@@ -37,6 +37,7 @@ from qgis.PyQt.QtWidgets import (QDialog,
 from processing.modeler.ModelerUtils import ModelerUtils
 
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
+from DsgTools.core.DSGToolsProcessingAlgs.Models.validationWorkflow import ValidationWorkflow
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'workflowSetupDialog.ui')
@@ -96,7 +97,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.messageBar.resize(
             QSize(
                 self.geometry().size().width(),
-                self.messageBar.geometry().height()
+                40 # this felt nicer than the original height (30)
             )
         )
 
@@ -305,4 +306,20 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.tr('Invalid workflow'), msg, level=Qgis.Critical, duration=5
             )
             return False
-        
+        try:
+            ValidationWorkflow(self.workflowParameterMap()).export(filepath)
+        except:
+            self.messageBar.pushMessage(
+                self.tr('Invalid workflow'),
+                self.tr("Unable to export workflow to '{fp}'").format(fp=filepath),
+                level=Qgis.Critical,
+                duration=5
+            )
+            return False
+        result = os.path.exists(filepath)
+        msg = (self.tr("exported to {fp}") if result else \
+                self.tr("Unable to export workflow to '{fp}'")).format(fp=filepath)
+        self.messageBar.pushMessage(
+                self.tr('Invalid workflow'), msg, level=Qgis.Critical, duration=5
+            )
+        return result
