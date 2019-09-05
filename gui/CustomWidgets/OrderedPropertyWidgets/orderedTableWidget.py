@@ -151,12 +151,21 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 else:
                     return self.tableWidget.cellWidget(row, col)
 
+    def selectedIndexes(self):
+        """
+        :return: (list-of-QModelIndex) table's selected indexes.
+        """
+        return self.tableWidget.selectedIndexes()
+
     def selectedItems(self):
         """
         List of all rows that have selected items on the table.
-        :return: (list-of-int) selected rows' indexes.
+        :return: (set) selected items (text or widgets).
         """
-        return self.tableWidget.selectedItems()
+        items = set()
+        for idx in self.selectedIndexes():
+            items.add(self.item(idx.row(), idx.col()))
+        return items
 
     def selectedRows(self, reverseOrder=False):
         """
@@ -165,8 +174,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (list-of-int) ordered list of selected rows' indexes.
         """
         rows = set()
-        for item in self.selectedItems():
-            rows.add(item.row())
+        for idx in self.selectedIndexes():
+            rows.add(idx.row())
         return sorted(rows, reverse=reverseOrder)
 
     def selectedColumns(self, reverseOrder=False):
@@ -176,8 +185,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (list-of-int) ordered list of selected columns' indexes.
         """
         cols = set()
-        for item in self.selectedItems():
-            cols.add(item.column())
+        for idx in self.selectedIndexes():
+            cols.add(idx.column())
         return sorted(cols, reverse=reverseOrder)
 
     def selectRow(self, row):
