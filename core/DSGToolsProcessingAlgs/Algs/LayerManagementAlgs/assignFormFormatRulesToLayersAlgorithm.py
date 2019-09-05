@@ -94,7 +94,7 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             context
             )
         if cleanBefore:
-            self.cleanRules(inputLayerList)
+            self.cleanRules(inputLyrList)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
         ruleDict = self.buildRuleDict(input_data)
