@@ -164,7 +164,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         items = set()
         for idx in self.selectedIndexes():
-            items.add(self.item(idx.row(), idx.col()))
+            items.add(self.item(idx.row(), idx.column()))
         return items
 
     def selectedRows(self, reverseOrder=False):
