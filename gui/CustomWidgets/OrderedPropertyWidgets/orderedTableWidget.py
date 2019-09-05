@@ -84,6 +84,27 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         return len(self.headers)
 
+    def addNewRow(self, row=None):
+        """
+        Adds a new row of items and fill it into table.
+        :param row: (int) position to add the new row.
+        """
+        row = row if row is not None else self.rowCount()
+        self.tableWidget.insertRow(row)
+        for header, properties in self.headers.items():
+            if properties["type"] == "item":
+                item = QTableWidgetItem()
+                # it "flips" current state, which, by default, is "editable"
+                if not properties["editable"]:
+                    item.setFlags(Qt.ItemIsEditable)
+                self.tableWidget.setItem(
+                    row, properties["col"], item
+                )
+            else:
+                self.tableWidget.setCellWidget(
+                    row, properties["col"], properties["class"]()
+                )
+
     def addRow(self, contents, row=None):
         """
         Adds a new row of items and fill it into table.
@@ -104,7 +125,9 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 )
             else:
                 self.tableWidget.setCellWidget(
-                    row, properties["col"], properties["class"]()
+                    row,
+                    properties["col"],
+                    value if value is not None else properties["class"]()
                 )
 
     def removeRow(self, row=None):
