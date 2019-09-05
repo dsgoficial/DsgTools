@@ -22,22 +22,25 @@
 """
 
 import os, json
+from time import time
 from datetime import datetime
 
 from qgis.PyQt import uic
 from qgis.core import Qgis
 from qgis.gui import QgsMessageBar
-from qgis.PyQt.QtCore import QSize, QCoreApplication
+from qgis.PyQt.QtCore import QSize, QCoreApplication, pyqtSlot
 from qgis.PyQt.QtWidgets import (QDialog,
                                  QComboBox,
                                  QCheckBox,
                                  QLineEdit,
                                  QFileDialog,
+                                 QMessageBox,
                                  QTableWidgetItem)
 from processing.modeler.ModelerUtils import ModelerUtils
 
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
 from DsgTools.core.DSGToolsProcessingAlgs.Models.validationWorkflow import ValidationWorkflow
+from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'workflowSetupDialog.ui')
@@ -56,6 +59,13 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         ON_FLAGS_WARN : "warn",
         ON_FLAGS_IGNORE : "ignore"
     }
+    MODEL_NAME_HEADER, MODEL_SOURCE_HEADER, ON_FLAGS_HEADER, LOAD_OUT_HEADER = range(4)
+    headerNameMap = {
+        MODEL_NAME_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "Model name"),
+        MODEL_SOURCE_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "Model source"),
+        ON_FLAGS_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "On flags"),
+        LOAD_OUT_HEADER : QCoreApplication.translate('WorkflowSetupDialog', "Load output")
+    }
 
     def __init__(self, parent=None):
         """
@@ -69,19 +79,19 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.setupUi(self)
         self.messageBar = QgsMessageBar(self)
         self.orderedTableWidget.setHeaders({
-            self.tr("Model name") : {
+            self.headerNameMap[self.MODEL_NAME_HEADER] : {
                 "type" : "widget",
                 "class" : self.modelNameWidget
             },
-            self.tr("Model source") : {
+            self.headerNameMap[self.MODEL_SOURCE_HEADER] : {
                 "type" : "widget",
                 "class" : self.modelWidget
             },
-            self.tr("On flags") : {
+            self.headerNameMap[self.ON_FLAGS_HEADER] : {
                 "type" : "widget",
                 "class" : self.onFlagsWidget
             },
-            self.tr("Load output") : {
+            self.headerNameMap[self.LOAD_OUT_HEADER] : {
                 "type" : "widget",
                 "class" : self.loadOutputWidget
             }
@@ -101,9 +111,28 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             )
         )
 
-    def modelNameWidget(self):
+    def confirmAction(self, msg, showCancel=True):
+        """
+        Raises a message box for confirmation before executing an action.
+        :param msg: (str) message to be exposed.
+        :param showCancel: (bool) whether Cancel button should be exposed.
+        :return: (bool) whether action was confirmed.
+        """
+        if showCancel:
+            return QMessageBox.question(
+                self, self.tr('Confirm Action'), msg,
+                QMessageBox.Ok|QMessageBox.Cancel
+            ) == QMessageBox.Ok
+        else:
+            return QMessageBox.question(
+                self, self.tr('Confirm Action'), msg,
+                QMessageBox.Ok
+            ) == QMessageBox.Ok
+
+    def modelNameWidget(self, name=None):
         """
         Gets a new instance of model name's setter widget.
+        :param name: (str) model name to be filled.
         :return: (QLineEdit) widget for model's name setting.
         """
         # no need to pass parenthood as it will be set to the table when added
@@ -111,12 +140,15 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         le = QLineEdit()
         # setPlace"h"older, with a lower case "h"...
         le.setPlaceholderText(self.tr("Set a name for the model..."))
+        if name is not None:
+            le.setText(name)
         le.setFrame(False)
         return le
 
-    def modelWidget(self):
+    def modelWidget(self, filepath=None):
         """
         Gets a new instance of model settter's widget.
+        :parma filepath: (str) path to a model.
         :return: (SelectFileWidget) DSGTools custom file selection widget.
         """
         widget = SelectFileWidget()
@@ -129,12 +161,15 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         widget.setFilter(
             self.tr("Select a QGIS Processing model (*.model *.model3)")
         )
+        if filepath is not None:
+            widget.lineEdit.setText(filepath)
         return widget
 
-    def onFlagsWidget(self):
+    def onFlagsWidget(self, option=None):
         """
         Gets a new instance for the widget that sets model's behaviour when
         flags are raised.
+        :param option: (str) on flags raised behaviour (non translatable text).
         :return: (QComboBox) model's behaviour selection widget. 
         """
         combo = QComboBox()
@@ -143,17 +178,28 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             self.onFlagsDisplayNameMap[self.ON_FLAGS_WARN],
             self.onFlagsDisplayNameMap[self.ON_FLAGS_IGNORE]
         ])
+        if option is not None:
+            optIdx = None
+            for idx, txt in self.onFlagsValueMap.items():
+                if option == txt:
+                    optIdx = idx
+                    break
+            optIdx = optIdx if optIdx is not None else 0
+            combo.setCurrentIndex(optIdx)
         return combo
 
-    def loadOutputWidget(self):
+    def loadOutputWidget(self, option=None):
         """
         Gets a new instance for the widget that sets output layer loading
         definitions.
+        :param option: (bool) if output should be loaded.
         :return: (QWidget) widget for output layer loading behaviour
                  definition.
         """
         cb = QCheckBox()
         cb.setStyleSheet("margin:auto;")
+        if option is not None:
+            cb.setChecked(option)
         return cb
 
     def now(self):
@@ -177,21 +223,42 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Reads filled workflow name from GUI.
         :return: (str) workflow's name.
         """
-        return self.nameLineEdit.text()
+        return self.nameLineEdit.text().strip()
+
+    def setWorkflowName(self, name):
+        """
+        Sets workflow name to GUI.
+        :param name: (str) workflow's name.
+        """
+        self.nameLineEdit.setText(name)
 
     def author(self):
         """
         Reads filled workflow name from GUI.
         :return: (str) workflow's author.
         """
-        return self.authorLineEdit.text()
+        return self.authorLineEdit.text().strip()
+
+    def setWorkflowAuthor(self, author):
+        """
+        Sets workflow author name to GUI.
+        :param author: (str) workflow's author name.
+        """
+        self.authorLineEdit.setText(author)
 
     def version(self):
         """
         Reads filled workflow name from GUI.
         :return: (str) workflow's version.
         """
-        return self.versionLineEdit.text()
+        return self.versionLineEdit.text().strip()
+
+    def setWorkflowVersion(self, version):
+        """
+        Sets workflow version to GUI.
+        :param version: (str) workflow's version.
+        """
+        self.versionLineEdit.setText(version)
 
     def modelCount(self):
         """
@@ -207,26 +274,62 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :return: (dict) parameters map.
         """
         contents = self.orderedTableWidget.row(row)
-        filepath = contents[self.tr("Model source")].lineEdit.text()
-        onFlagsIdx = contents[self.tr("On flags")].currentIndex()
+        filepath = contents[self.headerNameMap[self.MODEL_SOURCE_HEADER]].lineEdit.text().strip()
+        onFlagsIdx = contents[self.headerNameMap[self.ON_FLAGS_HEADER]].currentIndex()
+        name = contents[self.headerNameMap[self.MODEL_NAME_HEADER]].text().strip()
+        loadOutput = contents[self.headerNameMap[self.LOAD_OUT_HEADER]].isChecked()
         if not os.path.exists(filepath):
-            raise Exception(
-                self.tr("Model from row {0} does not exist. Check filepath.")\
-                    .format(row + 1)
-            )
-        with open(filepath, "r", encoding="utf-8") as f:
-            xml = f.read()
+            xml = ""
+        else:
+            with open(filepath, "r", encoding="utf-8") as f:
+                xml = f.read()
         return {
-            "displayName" : contents[self.tr("Model name")].text().strip(),
+            "displayName" : name,
             "flags" : {
                 "onFlagsRaised" : self.onFlagsValueMap[onFlagsIdx],
-                "loadOutput" : contents[self.tr("Load output" )].isChecked()
+                "loadOutput" : loadOutput
             },
             "source" : {
                 "type" : "xml",
                 "data" : xml
             }
         }
+
+    def setModelToRow(self, row, modelParam):
+        """
+        Reads model's parameters from model parameters default map.
+        :param row: (int) row to have its widgets filled with model's
+                    parameters.
+        :param modelParam: (dict) model's parameters map.
+        """
+        model = DsgToolsProcessingModel(modelParam, "")
+        # all model files handled by this tool are read/written on QGIS model dir
+        data = model._data()
+        if model.source() == "file" and os.path.exists(data):
+            with open(data, "r", encoding="utf-8") as f:
+                xml = f.read()
+            originalName = os.path.basename(data)
+        elif model.source() == "xml":
+            xml = data
+            meta = model.metadata()
+            originalName = meta["originalName"] if "originalName" in meta \
+                else "temp_{0}.dsgtoolsmodel".format(hash(time()))
+        else:
+            return False
+        path = os.path.join(self.__qgisModelPath__, originalName)
+        msg = self.tr("Model '{0}' is already imported would you like overwrite it?").format(path)
+        if os.path.exists(path) and self.confirmAction(msg):
+            os.remove(path)
+        if not os.path.exists(path):
+            with open(path, "w") as f:
+                f.write(xml)
+        self.orderedTableWidget.addRow(contents={
+            self.headerNameMap[self.MODEL_NAME_HEADER] : self.modelNameWidget(model.displayName()),
+            self.headerNameMap[self.MODEL_SOURCE_HEADER] : self.modelWidget(path),
+            self.headerNameMap[self.ON_FLAGS_HEADER] : self.onFlagsWidget(model.onFlagsRaised()),
+            self.headerNameMap[self.LOAD_OUT_HEADER] : self.loadOutputWidget(model.loadOutput())
+        })
+        return True
 
     def validateRowContents(self, contents):
         """
@@ -295,7 +398,15 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             return msg
         return ""
 
-    def export(self, filepath):
+    def exportWorkflow(self, filepath):
+        """
+        Exports current data to a JSON file.
+        :param filepath: (str) output file directory.
+        """
+        ValidationWorkflow(self.workflowParameterMap()).export(filepath)
+
+    @pyqtSlot(bool, name="on_exportPushButton_clicked")
+    def export(self):
         """
         Exports current input data as a workflow JSON, IF input is valid.
         :return: (bool) operation success.
@@ -306,20 +417,47 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.tr('Invalid workflow'), msg, level=Qgis.Critical, duration=5
             )
             return False
+        fd = QFileDialog()
+        filename = fd.getSaveFileName(
+            caption=self.tr("Export DSGTools Workflow"),
+            filter=self.tr("DSGTools Workflow (*.workflow)")
+        )
+        filename = filename[0] if isinstance(filename, tuple) else ""
+        if filename == "":
+            return False
+        filename = filename if filename.lower().endswith(".workflow") \
+                    else "{0}.workflow".format(filename)
         try:
-            ValidationWorkflow(self.workflowParameterMap()).export(filepath)
-        except:
+            self.exportWorkflow(filename)
+        except Exception as e:
             self.messageBar.pushMessage(
                 self.tr('Invalid workflow'),
-                self.tr("Unable to export workflow to '{fp}'").format(fp=filepath),
+                self.tr("Unable to export workflow to '{fp}' ({error}).").format(
+                    fp=filename, error=str(e)
+                ),
                 level=Qgis.Critical,
                 duration=5
             )
             return False
-        result = os.path.exists(filepath)
-        msg = (self.tr("exported to {fp}") if result else \
-                self.tr("Unable to export workflow to '{fp}'")).format(fp=filepath)
+        result = os.path.exists(filename)
+        msg = (self.tr("Workflow exported to {fp}") if result else \
+                self.tr("Unable to export workflow to '{fp}'")).format(fp=filename)
+        lvl = Qgis.Info if result else Qgis.Critical
         self.messageBar.pushMessage(
-                self.tr('Invalid workflow'), msg, level=Qgis.Critical, duration=5
+                self.tr('Workflow exportation'), msg, level=lvl, duration=5
             )
         return result
+
+    def importWorkflow(self, filepath):
+        """
+        Sets workflow contents from an imported DSGTools Workflow dump file.
+        :param filepath: (str) workflow file to be imported.
+        """
+        with open(filepath, "r", encoding="utf-8") as f:
+            xml = json.load(f)
+        workflow = ValidationWorkflow(xml)
+        self.setWorkflowAuthor(workflow.author())
+        self.setWorkflowVersion(workflow.version())
+        self.setWorkflowName(workflow.displayName())
+        for row, (modelName, model) in enumerate(xml["models"].items()):
+            self.setModelToRow(row, model)

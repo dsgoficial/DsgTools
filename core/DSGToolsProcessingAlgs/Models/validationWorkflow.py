@@ -64,7 +64,7 @@ class ValidationWorkflow(QObject):
             # this is not a mandatory item, but it defaults to a value
             parameters["displayName"] = self.tr("DSGTools Validation Workflow")
         if "models" not in parameters or not parameters["models"]:
-            return self.tr("This workflow seems to have no models associated to it.")
+            return self.tr("Workflow seems to have no models associated with it.")
         for modelName, modelParam in parameters["models"].items():
             model=DsgToolsProcessingModel(modelParam, modelName)
             if not model.isValid():
@@ -79,22 +79,41 @@ class ValidationWorkflow(QObject):
 
     def metadata(self):
         """
-        A map to Worflow's metadata.
+        A map to Workflow's metadata.
         :return: (dict) metadata.
         """
-        meta = dict()
-        def checkMeta(key):
-            return "metadata" in self._param and key in self._param["metadata"]
-        for k in ["author", "version", "lastModified"]:
-            meta[k] = self._param["metadata"][k] if checkMeta(k) else ""
-        return meta
+        return self._param["metadata"] if "metadata" in self._param else dict()
+
+    def author(self):
+        """
+        Retrieves Workflow's author, if available.
+        :return: (str) Workflow's author.
+        """
+        meta = self.metadata()
+        return meta["author"] if "author" in meta else ""
+
+    def version(self):
+        """
+        Retrieves Workflow's version, if available.
+        :return: (str) Workflow's version.
+        """
+        meta = self.metadata()
+        return meta["version"] if "version" in meta else ""
+
+    def lastModified(self):
+        """
+        Retrieves Workflow's last modification "timestamp", if available.
+        :return: (str) Workflow's last modification time and date.
+        """
+        meta = self.metadata()
+        return meta["lastModified"] if "lastModified" in meta else ""
 
     def metadataText(self):
         """
         Retrieves Workflow's metadata string.
         :return: (str) Workflow's metadata string.
         """
-        if "metadata" not in self._param:
+        if not self.metadata():
             return ""
         return self.tr(
             "Workflow {name} v{version} ({lastModified}) by {author}."
