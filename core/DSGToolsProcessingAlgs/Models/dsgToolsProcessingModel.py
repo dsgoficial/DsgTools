@@ -83,7 +83,8 @@ class DsgToolsProcessingModel(QgsTask):
             # this is a mandatory item, but it's has a default to be set if missing
             parameters["flags"] = {
                 "onFlagsRaised" : "halt",
-                "enableLocalFlags" : False
+                "enableLocalFlags" : False,
+                "loadOutput" : False
             }
         if "source" not in parameters or not parameters["source"]:
             return self.tr("Model source is not defined.")
@@ -132,6 +133,26 @@ class DsgToolsProcessingModel(QgsTask):
             meta[k] = self._param["metadata"][k] if checkMeta(k) else ""
         return meta
 
+    def author(self):
+        """
+        Retrieves the model's author name, if available.
+        :return: (str) author name.
+        """
+        if "metadata" not in self._param:
+            return ""
+        meta = self._param["metadata"]
+        return meta["author"] if "author" in meta else ""
+
+    def version(self):
+        """
+        Retrieves the model's author name, if available.
+        :return: (str) author name.
+        """
+        if "metadata" not in self._param:
+            return ""
+        meta = self._param["metadata"]
+        return meta["version"] if "version" in meta else ""
+
     def metadataText(self):
         """
         Retrieves Workflow's metadata string.
@@ -158,6 +179,13 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (str) model's source data.
         """
         return self._param["source"]["data"] if self.isValid() else ""
+
+    def source(self):
+        """
+        Current model's input mode (XML text, file...).
+        :return: (str) model's input source.
+        """
+        return self._param["source"]["type"] if self.isValid() else ""
 
     def displayName(self):
         """
@@ -209,6 +237,13 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (str) model behaviour on Workflow.
         """
         return self.flags()["onFlagsRaised"] if self.flags() else "halt"
+
+    def loadOutput(self):
+        """
+        Model behavior when running on a Workflow if flags are raised.
+        :return: (str) model behaviour on Workflow.
+        """
+        return self.flags()["loadOutput"] if self.flags() else False
 
     def enableLocalFlags(self):
         """
