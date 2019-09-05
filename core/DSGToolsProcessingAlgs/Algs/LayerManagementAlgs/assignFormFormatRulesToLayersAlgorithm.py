@@ -101,7 +101,7 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
 
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
-                    break
+                break
             for field in lyr.fields():
                 if feedback.isCanceled():
                     break
@@ -109,21 +109,21 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             feedback.setProgress(current * stepSize)
 
         return {}
-    
+
     def buildRuleDict(self, input_data):
         input_data = input_data[0] if isinstance(input_data, list) else input_data
         sortedRuleList = sorted(
             input_data.values(),
-            key = itemgetter('camada', 'atributo', 'ordem'),
-            reverse=True
+            key=itemgetter('camada', 'atributo', 'ordem'),
+            reverse=False
         )
         ruleDict = defaultdict(
-            lambda : defaultdict(list)
+            lambda: defaultdict(list)
         )
         for data in sortedRuleList:
             ruleDict[data['camada']][data['atributo']].append(data)
         return ruleDict
-    
+
     def addRuleToLayer(self, lyr, field, ruleDict):
         data = ruleDict[lyr.name()][field.name()]
         if not data:
@@ -137,7 +137,7 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             )
         elif rowStyleList:
             lyr.conditionalStyles().setRowStyes(rowStyleList)
-    
+
     def createConditionalStyle(self, data):
         """
         data: {
@@ -148,8 +148,8 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         Returns a QgsConditionalStyle
         """
         conditionalStyle = QgsConditionalStyle()
-        conditionalStyle.setName( data['descricao'] )
-        conditionalStyle.setRule( data['regra'] )
+        conditionalStyle.setName(data['descricao'])
+        conditionalStyle.setRule(data['regra'])
         conditionalStyle.setBackgroundColor(
             QColor(
                 data['corRgb'][0],
@@ -158,11 +158,11 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             ) 
         )
         return conditionalStyle
-    
+
     def cleanRules(self, inputLayerList):
         for lyr in inputLayerList:
             for field in lyr.fields():
-                lyr.conditionalStyles().setFieldStyles(field.name(), '')
+                lyr.conditionalStyles().setFieldStyles(field.name(), [])
 
     def name(self):
         """
