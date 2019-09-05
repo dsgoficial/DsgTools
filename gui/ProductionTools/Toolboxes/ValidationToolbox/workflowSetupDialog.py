@@ -129,6 +129,15 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 QMessageBox.Ok
             ) == QMessageBox.Ok
 
+    def clear(self):
+        """
+        Clears all input data from GUI.
+        """
+        self.authorLineEdit.setText("")
+        self.nameLineEdit.setText("")
+        self.versionLineEdit.setText("")
+        self.orderedTableWidget.clear()
+
     def modelNameWidget(self, name=None):
         """
         Gets a new instance of model name's setter widget.
@@ -456,8 +465,46 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         with open(filepath, "r", encoding="utf-8") as f:
             xml = json.load(f)
         workflow = ValidationWorkflow(xml)
+        self.clear()
         self.setWorkflowAuthor(workflow.author())
         self.setWorkflowVersion(workflow.version())
         self.setWorkflowName(workflow.displayName())
         for row, (modelName, model) in enumerate(xml["models"].items()):
             self.setModelToRow(row, model)
+
+    @pyqtSlot(bool, name="on_importPushButton_clicked")
+    def import_(self):
+        """
+        Request a file for Workflow importation and sets it to GUI.
+        :return: (bool) operation status.
+        """
+        fd = QFileDialog()
+        filename = fd.getOpenFileName(
+            caption=self.tr('Select a Workflow file'),
+            filter=self.tr('DSGTools Workflow (*.workflow *.json)')
+        )
+        filename = filename[0] if isinstance(filename, tuple) else ""
+        if not filename:
+            return False
+        try:
+            self.importWorkflow(filename)
+        except Exception as e:
+            self.messageBar.pushMessage(
+                self.tr('Invalid workflow'),
+                self.tr("Unable to export workflow to '{fp}' ({error}).").format(
+                    fp=filename, error=str(e)
+                ),
+                level=Qgis.Critical,
+                duration=5
+            )
+            return False
+        self.messageBar.pushMessage(
+            self.tr('Success'),
+            self.tr("Workflow '{fp}' imported!").format(
+                fp=filename
+            ),
+            level=Qgis.Info,
+            duration=5
+        )
+        return True
+        
