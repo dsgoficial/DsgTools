@@ -104,6 +104,8 @@ class DsgToolsProcessingModel(QgsTask):
         """
         alg = QgsProcessingModelAlgorithm()
         alg.fromFile(filepath)
+        alg.setProvider("models")
+        alg.setGroup("DSGTools")
         alg.initAlgorithm()
         return alg
 
@@ -152,6 +154,17 @@ class DsgToolsProcessingModel(QgsTask):
             return ""
         meta = self._param["metadata"]
         return meta["version"] if "version" in meta else ""
+
+    def originalName(self):
+        """
+        When a model is imported from a file-based model, one might want to
+        store the original model's name.
+        :return: (str) original model's name.
+        """
+        if "metadata" not in self._param:
+            return ""
+        meta = self._param["metadata"]
+        return meta["originalName"] if "originalName" in meta else ""
 
     def metadataText(self):
         """

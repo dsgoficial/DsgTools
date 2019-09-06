@@ -24,8 +24,9 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot
+from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
 from qgis.PyQt.QtWidgets import (QWidget,
+                                 QHeaderView,
                                  QTableWidgetItem,
                                  QAbstractItemView)
 
@@ -34,6 +35,10 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 class OrderedTableWidget(QWidget, FORM_CLASS):
+    rowAdded = pyqtSignal(int)
+    rowRemoved = pyqtSignal(int)
+    # rowModified = pyqtSignal(int)
+
     def __init__(self, parent=None, headerMap=None):
         """
         Class constructor.
@@ -83,6 +88,48 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :return: (int) column count.
         """
         return len(self.headers)
+
+    def horizontalHeader(self):
+        """
+        Retrieves table's horizontal header object
+        :return: (QHeaderView) table's horizontal header object.
+        """
+        return self.tableWidget.horizontalHeader()
+
+    def setSectionResizeMode(self, col, mode):
+        """
+        Set resizing policy of a column.
+        :param col: (int) column index to have its resize policy changed.
+        :param mode: (str) resize policy identifier.
+        """
+        policies = {
+            "interactive" : QHeaderView.Interactive,
+            "stretch" : QHeaderView.Stretch,
+            "fixed" : QHeaderView.Fixed,
+            "resizetocontents" : QHeaderView.ResizeToContents,
+        }
+        if col < 0 or col >= self.rowCount() or mode not in policies:
+            return
+        header = self.horizontalHeader()
+        header.setSectionResizeMode(col, policies[mode])
+
+    def resizeSection(self, col, width):
+        """
+        Resizes a column width, if resize policy allows.
+        :param col: (int) column index to be resized.
+        :param width: (width) new column width.
+        """
+        if col < 0 or col >= self.rowCount():
+            return
+        self.horizontalHeader().resizeSection(col, width)
+
+    def sectionSize(self, col):
+        """
+        Retrieves a column's width.
+        :param col: (int) column index to be have its width identified.
+        :return: (int) column's width
+        """
+        return self.horizontalHeader().sectionSize(col)
 
     def addNewRow(self, row=None):
         """
@@ -138,6 +185,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         row = row if row is not None else self.rowCount() - 1
         self.tableWidget.removeRow(row)
+        self.rowRemoved.emit(row)
 
     def row(self, row):
         """
@@ -228,6 +276,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
             self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
             self.tableWidget.selectRow(row)
             self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.rowAdded.emit(row)
 
     def moveRowUp(self, row):
         """
