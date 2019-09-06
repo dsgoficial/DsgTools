@@ -23,9 +23,12 @@
 import os, json
 from time import time, sleep
 
-from qgis.core import (QgsProcessingModelAlgorithm,
-                       QgsTask,
-                       QgsProcessingFeedback)
+from qgis.core import (QgsTask,
+                       QgsProject,
+                       QgsMapLayer,
+                       QgsLayerTreeLayer,
+                       QgsProcessingFeedback,
+                       QgsProcessingModelAlgorithm)
 import processing
 
 class DsgToolsProcessingModel(QgsTask):
@@ -104,8 +107,6 @@ class DsgToolsProcessingModel(QgsTask):
         """
         alg = QgsProcessingModelAlgorithm()
         alg.fromFile(filepath)
-        alg.setProvider("models")
-        alg.setGroup("DSGTools")
         alg.initAlgorithm()
         return alg
 
@@ -298,6 +299,30 @@ class DsgToolsProcessingModel(QgsTask):
                 for param in model.parameterDefinitions()
         ]
 
+    def addLayerToGroup(self, layer, groupname, subgroupname=None):
+        """
+        Adds a layer to a group into layer panel.
+        :param layer: (QgsMapLayer) layer to be added to canvas.
+        :param groupname: (str) name for group to nest the layer.
+        :param subgroupname: (str) name for the subgroup to be added.
+        """
+        root = QgsProject.instance().layerTreeRoot()
+        for g in root.children():
+            if g.name() == groupname:
+                group = g
+                break
+        else:
+            group = root.addGroup(groupname)
+        if subgroupname is not None:
+            for sg in group.children():
+                if sg.name() == subgroupname:
+                    subgroup = sg
+                    break
+            else:
+                subgroup = group.addGroup(subgroupname)
+        QgsProject.instance().addMapLayer(layer, False)
+        subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
+
     def runModel(self):
         """
         Executes current model.
@@ -306,11 +331,20 @@ class DsgToolsProcessingModel(QgsTask):
         # this tool understands every parameter to be filled as an output LAYER
         # it also sets all output to a MEMORY LAYER.
         model = self.model()
-        return processing.run(
+        out = processing.run(
             model,
             { param : "memory:" for param in self.modelParameters(model) },
             feedback=self.feedback
         )
+        if self.loadOutput():
+            for vl in out.values():
+                if isinstance(vl, QgsMapLayer):
+                    self.addLayerToGroup(
+                        vl,
+                        self.tr("DSGTools Validation Models"),
+                        model.displayName()
+                    )
+        return out
 
     def export(self, filepath):
         """
