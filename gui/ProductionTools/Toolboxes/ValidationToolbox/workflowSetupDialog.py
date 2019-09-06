@@ -483,7 +483,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         result = os.path.exists(filename)
         msg = (self.tr("Workflow exported to {fp}") if result else \
                 self.tr("Unable to export workflow to '{fp}'")).format(fp=filename)
-        lvl = Qgis.Info if result else Qgis.Warning
+        lvl = Qgis.Success if result else Qgis.Warning
         self.messageBar.pushMessage(
                 self.tr('Workflow exportation'), msg, level=lvl, duration=5
             )
