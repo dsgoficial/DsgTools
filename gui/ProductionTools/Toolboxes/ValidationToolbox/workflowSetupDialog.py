@@ -96,6 +96,25 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "class" : self.loadOutputWidget
             }
         })
+        self.resizeTable()
+
+    def resizeTable(self):
+        """
+        Adjusts table columns sizes.
+        """
+        dSize = self.orderedTableWidget.geometry().width() - \
+                self.orderedTableWidget.horizontalHeader().geometry().width()
+        onFlagsColSize = self.orderedTableWidget.sectionSize(2)
+        loadOutColSize = self.orderedTableWidget.sectionSize(3)
+        missingBarSize = self.geometry().size().width() - dSize\
+                         - onFlagsColSize - loadOutColSize
+        # the "-11" is empiric: it makes it fit header to table
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            0, int(0.4 * missingBarSize) - 11
+        )
+        self.orderedTableWidget.tableWidget.horizontalHeader().resizeSection(
+            1, missingBarSize - int(0.4 * missingBarSize) - 11
+        )
 
     def resizeEvent(self, e):
         """
@@ -110,6 +129,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 40 # this felt nicer than the original height (30)
             )
         )
+        self.resizeTable()
 
     def confirmAction(self, msg, showCancel=True):
         """
@@ -301,17 +321,19 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             "source" : {
                 "type" : "xml",
                 "data" : xml
+            },
+            "metadata" : {
+                "originalName" : os.path.basename(filepath)
             }
         }
 
-    def setModelToRow(self, row, modelParam):
+    def setModelToRow(self, row, model):
         """
         Reads model's parameters from model parameters default map.
         :param row: (int) row to have its widgets filled with model's
                     parameters.
-        :param modelParam: (dict) model's parameters map.
+        :param model: (DsgToolsProcessingModel) model object.
         """
-        model = DsgToolsProcessingModel(modelParam, "")
         # all model files handled by this tool are read/written on QGIS model dir
         data = model._data()
         if model.source() == "file" and os.path.exists(data):
@@ -321,8 +343,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         elif model.source() == "xml":
             xml = data
             meta = model.metadata()
-            originalName = meta["originalName"] if "originalName" in meta \
-                else "temp_{0}.dsgtoolsmodel".format(hash(time()))
+            originalName = model.originalName() if model.originalName() \
+                            else "temp_{0}.model3".format(hash(time()))
         else:
             return False
         path = os.path.join(self.__qgisModelPath__, originalName)
@@ -390,6 +412,16 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "lastModified" : self.now()
             }
         }
+
+    def currentWorkflow(self):
+        """
+        Returns current workflow object as read from GUI.
+        :return: (ValidationWorkflow) current workflow object.
+        """
+        try:
+            return ValidationWorkflow(self.workflowParameterMap())
+        except:
+            return None
 
     def validate(self):
         """
@@ -469,8 +501,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         self.setWorkflowAuthor(workflow.author())
         self.setWorkflowVersion(workflow.version())
         self.setWorkflowName(workflow.displayName())
-        for row, (modelName, model) in enumerate(xml["models"].items()):
-            self.setModelToRow(row, model)
+        for row, modelParam in enumerate(xml["models"].values()):
+            self.setModelToRow(row, DsgToolsProcessingModel(modelParam, ""))
 
     @pyqtSlot(bool, name="on_importPushButton_clicked")
     def import_(self):
@@ -507,4 +539,17 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
             duration=5
         )
         return True
-        
+
+    @pyqtSlot(bool, name="on_okPushButton_clicked")
+    def updateWorkflowObject(self):
+        """
+        Closes dialog and checks if current workflow is valid.
+        """
+        self.done(0 if self.currentWorkflow() else 1)
+
+    @pyqtSlot(bool, name="on_okPushButton_clicked")
+    def cancel(self):
+        """
+        Restores GUI to last state and closes it.
+        """
+        self.done(0)
