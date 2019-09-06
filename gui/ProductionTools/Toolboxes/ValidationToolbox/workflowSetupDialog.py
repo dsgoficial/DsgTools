@@ -455,7 +455,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         msg = self.validate()
         if msg != "":
             self.messageBar.pushMessage(
-                self.tr('Invalid workflow'), msg, level=Qgis.Critical, duration=5
+                self.tr('Invalid workflow'), msg, level=Qgis.Warning, duration=5
             )
             return False
         fd = QFileDialog()
@@ -476,14 +476,14 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 self.tr("Unable to export workflow to '{fp}' ({error}).").format(
                     fp=filename, error=str(e)
                 ),
-                level=Qgis.Critical,
+                level=Qgis.Warning,
                 duration=5
             )
             return False
         result = os.path.exists(filename)
         msg = (self.tr("Workflow exported to {fp}") if result else \
                 self.tr("Unable to export workflow to '{fp}'")).format(fp=filename)
-        lvl = Qgis.Info if result else Qgis.Critical
+        lvl = Qgis.Info if result else Qgis.Warning
         self.messageBar.pushMessage(
                 self.tr('Workflow exportation'), msg, level=lvl, duration=5
             )
@@ -541,15 +541,15 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         return True
 
     @pyqtSlot(bool, name="on_okPushButton_clicked")
-    def updateWorkflowObject(self):
+    def ok(self):
         """
         Closes dialog and checks if current workflow is valid.
         """
         self.done(0 if self.currentWorkflow() else 1)
 
-    @pyqtSlot(bool, name="on_okPushButton_clicked")
+    @pyqtSlot(bool, name="on_cancelPushButton_clicked")
     def cancel(self):
         """
         Restores GUI to last state and closes it.
         """
-        self.done(0)
+        self.done(1)
