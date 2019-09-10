@@ -148,7 +148,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         self.clearTable()
         self.tableWidget.setColumnCount(3)
         self.tableWidget.setHorizontalHeaderLabels([
-            self.tr("Workflow name"), self.tr("Status"), self.tr("Progress")
+            self.tr("Model name"), self.tr("Status"), self.tr("Progress")
         ])
 
     def resetComboBox(self):
