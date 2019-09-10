@@ -545,7 +545,15 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         Closes dialog and checks if current workflow is valid.
         """
-        self.done(0 if self.currentWorkflow() else 1)
+        if self.currentWorkflow():
+            self.done(0)
+        else:
+            self.messageBar.pushMessage(
+                self.tr('Invalid workflow'),
+                self.validate(),
+                level=Qgis.Warning,
+                duration=5
+            )
 
     @pyqtSlot(bool, name="on_cancelPushButton_clicked")
     def cancel(self):
