@@ -15,6 +15,38 @@
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="3" column="0">
+     <widget class="QPushButton" name="runPushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Run</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../../../resources.qrc">
+        <normaloff>:/plugins/DsgTools/icons/model_run.png</normaloff>:/plugins/DsgTools/icons/model_run.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
@@ -95,15 +127,38 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QTableView" name="tableView"/>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="resumePushButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>Resume from last model</string>
+      </property>
+      <property name="icon">
+       <iconset resource="../../../../resources.qrc">
+        <normaloff>:/plugins/DsgTools/icons/model_continue.png</normaloff>:/plugins/DsgTools/icons/model_continue.png</iconset>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
     </item>
     <item row="2" column="0" colspan="2">
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QProgressBar" name="progressBar">
         <property name="value">
-         <number>24</number>
+         <number>0</number>
         </property>
        </widget>
       </item>
@@ -191,63 +246,8 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="0">
-     <widget class="QPushButton" name="runPushButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Run</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../resources.qrc">
-        <normaloff>:/plugins/DsgTools/icons/model_run.png</normaloff>:/plugins/DsgTools/icons/model_run.png</iconset>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="3" column="1">
-     <widget class="QPushButton" name="resumePushButton">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>16777215</height>
-       </size>
-      </property>
-      <property name="text">
-       <string>Resume from last model</string>
-      </property>
-      <property name="icon">
-       <iconset resource="../../../../resources.qrc">
-        <normaloff>:/plugins/DsgTools/icons/model_continue.png</normaloff>:/plugins/DsgTools/icons/model_continue.png</iconset>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
-      </property>
-     </widget>
+    <item row="1" column="0" colspan="2">
+     <widget class="QTableWidget" name="tableWidget"/>
     </item>
    </layout>
   </widget>
