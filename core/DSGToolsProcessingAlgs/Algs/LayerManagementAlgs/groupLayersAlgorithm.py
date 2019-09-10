@@ -21,41 +21,16 @@
  ***************************************************************************/
 """
 import os
-from PyQt5.QtCore import QCoreApplication
-from qgis.core import (QgsProcessing,
-                       QgsFeatureSink,
-                       QgsProcessingAlgorithm,
-                       QgsProcessingParameterFeatureSource,
-                       QgsProcessingParameterFeatureSink,
-                       QgsFeature,
-                       QgsDataSourceUri,
-                       QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterVectorLayer,
-                       QgsWkbTypes,
-                       QgsProcessingParameterBoolean,
-                       QgsProcessingParameterEnum,
-                       QgsProcessingParameterNumber,
-                       QgsProcessingParameterMultipleLayers,
-                       QgsProcessingUtils,
-                       QgsSpatialIndex,
-                       QgsGeometry,
-                       QgsProcessingParameterField,
-                       QgsProcessingMultiStepFeedback,
-                       QgsProcessingParameterFile,
-                       QgsProcessingParameterExpression,
-                       QgsProcessingException,
-                       QgsProcessingParameterString,
-                       QgsProcessingParameterDefinition,
-                       QgsProcessingParameterType,
-                       QgsProcessingParameterCrs,
-                       QgsCoordinateTransform,
-                       QgsProject,
-                       QgsCoordinateReferenceSystem,
-                       QgsField,
-                       QgsFields,
-                       QgsProcessingOutputMultipleLayers,
-                       QgsProcessingParameterString)
 
+from PyQt5.QtCore import QCoreApplication
+
+from qgis.core import (QgsDataSourceUri, QgsProcessing,
+                       QgsProcessingAlgorithm,
+                       QgsProcessingOutputMultipleLayers,
+                       QgsProcessingParameterMultipleLayers,
+                       QgsProcessingParameterNumber,
+                       QgsProcessingParameterString,
+                       QgsProject)
 class GroupLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
     CATEGORY_TOKEN = 'CATEGORY_TOKEN'
@@ -88,7 +63,6 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
                 defaultValue=0
             )
         )
-
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
@@ -117,7 +91,6 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         )
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
-        notSuccessfulList = []
         rootNode = QgsProject.instance().layerTreeRoot()
         rootNodeSet = set()
         inputLyrList.sort(key= lambda x: x.name())
@@ -126,14 +99,21 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             1 : self.tr('Line'),
             2 : self.tr('Polygon')
         }
-        removeList = []
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
             rootDatabaseNode = self.getLayerRootNode(lyr, rootNode)
             rootNodeSet.add(rootDatabaseNode)
-            geometryNode = self.createGroup(geometryNodeDict[lyr.geometryType()], rootDatabaseNode)
-            categoryNode = self.getLayerCategoryNode(lyr, geometryNode, categoryToken, categoryTokenIndex)
+            geometryNode = self.createGroup(
+                geometryNodeDict[lyr.geometryType()],
+                rootDatabaseNode
+            )
+            categoryNode = self.getLayerCategoryNode(
+                lyr,
+                geometryNode,
+                categoryToken,
+                categoryTokenIndex
+            )
             lyrNode = rootNode.findLayer(lyr.id())
             myClone = lyrNode.clone()
             categoryNode.addChildNode(myClone)
@@ -154,10 +134,13 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
     def getRootNodeName(self, uriText):
         if 'memory?' in uriText:
             rootNodeName = 'memory'
-        elif not database and 'dbname' in uriText:
+        elif 'dbname' in uriText:
             rootNodeName = uriText.replace('dbname=','').split(' ')[0]
-        elif not database and '|' in uriText:
+        elif '|' in uriText:
             rootNodeName = os.path.dirname(uriText.split(' ')[0].split('|')[0])
+        else:
+            rootNodeName = 'unrecognised_format'
+        return rootNodeName
 
     def getLayerCategoryNode(self, lyr, rootNode, categoryToken, categoryTokenIndex):
         categorySplit = lyr.name().split(categoryToken)
@@ -210,7 +193,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
 
     def createInstance(self):
         return GroupLayersAlgorithm()
-    
+
     def flags(self):
         """
         This process is not thread safe due to the fact that removeChildNode method
