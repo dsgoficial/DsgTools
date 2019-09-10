@@ -546,7 +546,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Closes dialog and checks if current workflow is valid.
         """
         if self.currentWorkflow():
-            self.done(0)
+            self.done(1)
         else:
             self.messageBar.pushMessage(
                 self.tr('Invalid workflow'),
@@ -560,4 +560,4 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         Restores GUI to last state and closes it.
         """
-        self.done(1)
+        self.done(0)
