@@ -36,6 +36,8 @@ class ValidationWorkflow(QObject):
     Works as a multi-model runner. Understands all models' parameters as an
     output vector layer.
     """
+    haltedOnFlags = pyqtSignal()
+    flagsRaisedWarning = pyqtSignal()
     workflowFinished = pyqtSignal()
 
     def __init__(self, parameters):
@@ -141,8 +143,9 @@ class ValidationWorkflow(QObject):
         """
         models = {"valid" : dict(), "invalid" : dict()}
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(self._param["models"]), self.feedback
+            len(self._param["models"]) - 1, self.feedback
         )
+        self._multiStepFeedback.setCurrentStep(0)
         for modelName, modelParam in self._param["models"].items():
             model = DsgToolsProcessingModel(
                 modelParam, modelName, feedback=self._multiStepFeedback
@@ -160,8 +163,9 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(self._param["models"]), self.feedback
+            len(self._param["models"]) - 1, self.feedback
         )
+        self._multiStepFeedback.setCurrentStep(0)
         for idx, (modelName, modelParam) in enumerate(self._param["models"].items()):
             model = DsgToolsProcessingModel(
                 modelParam, modelName, feedback=self._multiStepFeedback
@@ -178,8 +182,9 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(self._param["models"]), self.feedback
+            len(self._param["models"]) - 1, self.feedback
         )
+        self._multiStepFeedback.setCurrentStep(0)
         for modelName, modelParam in self._param["models"].items():
             model = DsgToolsProcessingModel(
                 modelParam, modelName, feedback=self._multiStepFeedback
@@ -260,9 +265,16 @@ class ValidationWorkflow(QObject):
         """
         QgsApplication.taskManager().addTask(model)
 
-    def raiseFlagWarning(self):
-        pass
-    
+    def raiseFlagWarning(self, model):
+        """
+        Advises connected objects that flags were raised even though workflow
+        :param output: (DsgToolsProcessingModel) model have its flags checked.
+        """
+        for vl in model.output["result"].values():
+            if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
+                model.flagsRaisedWarning.emit()
+                return
+
     def raiseFlagError(self, output):
         """
         It stops the workflow execution if flags are identified.
@@ -270,6 +282,7 @@ class ValidationWorkflow(QObject):
         """
         for vl in output["result"].values():
             if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
+                self.haltedOnFlags.emit()
                 self.feedback.cancel()
                 return self.feedback.isCanceled()
 
@@ -279,10 +292,10 @@ class ValidationWorkflow(QObject):
         :param model: (DsgToolsProcessingModel) model to have its output handled.
         """
         onFlagsMethod = {
-            "alert" : self.raiseFlagWarning,
-            "halt" : self.raiseFlagError,
-            "ignore" : lambda x : None
-        }[model.onFlagsRaised()](model.output)
+            "warn" : partial(self.raiseFlagWarning, model),
+            "halt" : partial(self.raiseFlagError, model.output),
+            "ignore" : lambda : None
+        }[model.onFlagsRaised()]()
 
     def run(self, firstModelName=None):
         """
@@ -324,7 +337,7 @@ class ValidationWorkflow(QObject):
             currentModel.taskCompleted.connect(
                 partial(
                     self._multiStepFeedback.setCurrentStep,
-                    self._modelOrderMap[currentModel.name()]
+                    self._modelOrderMap[currentModel.name()] + 1
                 )
             )
             # check if there is a next model and connect previous model
