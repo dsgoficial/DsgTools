@@ -21,9 +21,12 @@
 """
 
 import os
+from functools import partial
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import pyqtSlot
+from qgis.core import Qgis
+from qgis.PyQt.QtGui import QBrush, QColor
+from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QDockWidget,
                                  QProgressBar,
                                  QTableWidgetItem)
@@ -35,6 +38,9 @@ FORM_CLASS, _ = uic.loadUiType(
 )
 
 class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
+    # current execution status
+    INITIAL, RUNNING, PAUSED, HALTED, CANCELED, FAILED, FINISHED, FINISHED_WITH_FLAGS = range(8)
+
     def __init__(self, iface, parent=None):
         """
         Class constructor.
@@ -46,11 +52,64 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         super(QualityAssutanceDockWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
+        self._previousWorkflow = None
         self.parent = parent
+        self.statusMap = {
+            self.INITIAL : self.tr("Not yet run"),
+            self.RUNNING : self.tr("Running..."),
+            self.PAUSED : self.tr("On hold"),
+            self.HALTED : self.tr("Halted on flags"),
+            self.CANCELED : self.tr("Canceled"),
+            self.FAILED : self.tr("Failed"),
+            self.FINISHED : self.tr("Completed"),
+            self.FINISHED_WITH_FLAGS : self.tr("Completed (raised flags)")
+        }
         self.setState()
         self.workflows = dict()
         self.resetTable()
+        self.resizeTable()
         self.resetComboBox()
+        self.prepareProgressBar()
+
+    @pyqtSlot(bool, name="on_pausePushButton_clicked")
+    def workflowOnHold(self):
+        """
+        Sets workflow to be on hold.
+        """
+        pass
+
+    def setProgress(self, value):
+        """
+        Sets progress to global (Workflow) progress.
+        :param value: (int/float) current percentage progress.
+        """
+        try:
+            self.progressBar.setValue(int(value))
+        except:
+            self.progressBar.setValue(0)
+
+    def prepareProgressBar(self):
+        """
+        Sets global progress bar to 0 and connects progress with current model's
+        progress feedback.
+        """
+        self.progressBar.setValue(0)
+        if self._previousWorkflow is not None:
+            self._previousWorkflow.feedback.progressChanged.\
+                disconnect(self.setProgress)
+        self._previousWorkflow = self.currentWorkflow()
+        if self._previousWorkflow is not None:
+            self._previousWorkflow.feedback.progressChanged.\
+                connect(self.setProgress)
+
+    def showEditionButton(self, show=False):
+        """
+        Shows/hides buttons for workflow edition.
+        :param show: (bool) visibility status.
+        """
+        for button in [self.addPushButton, self.editPushButton,
+                        self.removePushButton]:
+            getattr(button, "show" if show else "hide")
 
     def resizeTable(self):
         """
@@ -59,8 +118,12 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         header = self.tableWidget.horizontalHeader()
         dSize = self.geometry().width() - header.geometry().width()
         missingBarSize = self.geometry().size().width() - dSize
-        header.resizeSection(0, int(0.65 * missingBarSize))
-        header.resizeSection(1, missingBarSize - int(0.65 * missingBarSize))
+        col1Size = int(0.5 * missingBarSize)
+        col2Size = int(0.25 * missingBarSize)
+        col3Size = missingBarSize - col1Size - col2Size
+        header.resizeSection(0, col1Size)
+        header.resizeSection(1, col2Size)
+        header.resizeSection(2, col3Size)
 
     def resizeEvent(self, e):
         """
@@ -83,9 +146,9 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         Sets table to initial state.
         """
         self.clearTable()
-        self.tableWidget.setColumnCount(2)
+        self.tableWidget.setColumnCount(3)
         self.tableWidget.setHorizontalHeaderLabels([
-            self.tr("Workflow name"), self.tr("Progress")
+            self.tr("Workflow name"), self.tr("Status"), self.tr("Progress")
         ])
 
     def resetComboBox(self):
@@ -132,7 +195,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
                 self.comboBox.addItem(name)
                 self.comboBox.setCurrentText(name)
                 self.workflows[name] = workflow
-                self.setWorkflow(workflow)
+                self.setCurrentWorkflow()
             else:
                 self.comboBox.setCurrentIndex(idx)
                 # what should we do? check version/last modified? replace model?
@@ -145,6 +208,21 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         idx = self.comboBox.currentIndex()
         if idx < 1:
             return
+        # raise any confirmation question?
+        self.comboBox.removeItem(idx)
+        self.comboBox.setCurrentIndex(0)
+        name = self.currentWorkflowName()
+        self.workflows.pop(name, None)
+
+    @pyqtSlot(bool, name="on_removePushButton_clicked")
+    def removeWorkflow(self):
+        """
+        Removes current workflow selection from combo box options.
+        """
+        idx = self.comboBox.currentIndex()
+        if idx < 1:
+            return
+        # raise any confirmation question?
         self.comboBox.removeItem(idx)
         self.comboBox.setCurrentIndex(0)
         name = self.currentWorkflowName()
@@ -167,16 +245,57 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         name = self.currentWorkflowName()
         return self.workflows[name] if name in self.workflows else None
 
+    def setModelStatus(self, row, code):
+        """
+        Sets model execution status to its cell.
+        """
+        item = QTableWidgetItem(self.statusMap[code])
+        # togle editable flag to make it NOT editable
+        item.setFlags(Qt.ItemIsEditable)
+        color = {
+            self.INITIAL : QColor(0, 0, 0),
+            self.RUNNING : QColor(0, 0, 125),
+            self.PAUSED : QColor(187, 201, 25),
+            self.HALTED : QColor(187, 201, 25),
+            self.CANCELED : QColor(200, 0, 0),
+            self.FAILED : QColor(169, 18, 28),
+            self.FINISHED : QColor(0, 125, 0),
+            self.FINISHED_WITH_FLAGS : QColor(90, 135, 39)
+        }[code]
+        item.setForeground(QBrush(color))
+        self.tableWidget.setItem(row, 1, item)
+
     def setWorkflow(self, workflow):
         """
         Sets workflow to GUI.
         """
         self.clearTable()
+        if workflow is None:
+            return
         models = workflow.validModels()
         self.tableWidget.setRowCount(len(models))
-        for row, modelName in enumerate(models):
-            self.tableWidget.setItem(row, 0, QTableWidgetItem(modelName))
-            self.tableWidget.setCellWidget(row, 1, self.progressWidget())
+        for row, (modelName, model) in enumerate(models.items()):
+            feedback = model.feedback
+            item = QTableWidgetItem(modelName)
+            item.setFlags(Qt.ItemIsEditable)
+            item.setForeground(QBrush(QColor(0, 0, 0)))
+            self.tableWidget.setItem(row, 0, item)
+            self.setModelStatus(row, self.INITIAL)
+            pb = self.progressWidget()
+            feedback.progressChanged.connect(pb.setValue)
+            self.tableWidget.setCellWidget(row, 2, pb)
+            feedback.canceled.connect(
+                partial(self.setModelStatus, row, self.CANCELED)
+            )
+            model.modelFinished.connect(
+                partial(self.setModelStatus, row, self.FINISHED)
+            )
+            model.modelFailed.connect(
+                partial(self.setModelStatus, row, self.FAILED)
+            )
+            model.flagsRaisedWarning.connect(
+                partial(self.setModelStatus, row, self.FINISHED_WITH_FLAGS)
+            )
 
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     @pyqtSlot(str, name="on_comboBox_currentTextChanged")
@@ -184,8 +303,25 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets current workflow to table.
         """
+        self.prepareProgressBar()
+        workflow = self.currentWorkflow()
+        enable = workflow is not None
+        self.setWorkflow(workflow)
+        self.editPushButton.setEnabled(enable)
+        self.removePushButton.setEnabled(enable)
+
+    @pyqtSlot(bool, name="on_runPushButton_clicked")
+    def runWorkflow(self):
+        """
+        Executes current selected workflow.
+        """
         workflow = self.currentWorkflow()
         if workflow is not None:
-            self.setWorkflow(workflow)
+            workflow.run()
         else:
-            self.clearTable()
+            self.iface.messageBar().pushMessage(
+                self.tr("DSGTools Q&A Toolbox Workflow"),
+                self.tr("please select a valid Workflow."),
+                Qgis.Warning,
+                duration=3
+            )
