@@ -29,6 +29,7 @@ from qgis.core import (QgsTask,
                        QgsLayerTreeLayer,
                        QgsProcessingFeedback,
                        QgsProcessingModelAlgorithm)
+from qgis.PyQt.QtCore import pyqtSignal
 import processing
 
 class DsgToolsProcessingModel(QgsTask):
@@ -41,6 +42,9 @@ class DsgToolsProcessingModel(QgsTask):
     # xml: XML string               #
     # file: path to a local file    #
     # model: qgis resgistered model #
+    modelFinished = pyqtSignal()
+    modelFailed = pyqtSignal()
+    flagsRaisedWarning = pyqtSignal()
 
     def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
         """
@@ -377,6 +381,7 @@ class DsgToolsProcessingModel(QgsTask):
                 "status" : True,
                 "errorMessage" : ""
             }
+            self.modelFinished.emit()
         except Exception as e:
             self.output = {
                 "result" : {},
@@ -384,5 +389,6 @@ class DsgToolsProcessingModel(QgsTask):
                 "errorMessage" : self.tr("Model has failed:\n'{error}'")\
                                  .format(error=str(e))
             }
+            self.modelFailed.emit()
         self.output["executionTime"] = time() - start
         return self.output["status"]
