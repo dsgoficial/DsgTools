@@ -347,7 +347,7 @@ class DsgToolsProcessingModel(QgsTask):
                 if isinstance(vl, QgsMapLayer):
                     self.addLayerToGroup(
                         vl,
-                        self.tr("DSGTools Validation Models"),
+                        self.tr("DSGTools Quality Assurance Models"),
                         model.displayName()
                     )
         return out
