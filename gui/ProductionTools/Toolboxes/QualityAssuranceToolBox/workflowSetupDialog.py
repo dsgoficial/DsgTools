@@ -335,7 +335,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         :param model: (DsgToolsProcessingModel) model object.
         """
         # all model files handled by this tool are read/written on QGIS model dir
-        data = model._data()
+        data = model.data()
         if model.source() == "file" and os.path.exists(data):
             with open(data, "r", encoding="utf-8") as f:
                 xml = f.read()
