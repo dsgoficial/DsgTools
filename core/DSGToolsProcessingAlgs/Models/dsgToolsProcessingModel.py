@@ -59,9 +59,9 @@ class DsgToolsProcessingModel(QgsTask):
         )
         self._name = name
         self._param = {} if self.validateParameters(parameters) else parameters
-        self.setDescription(self.displayName())
+        self.setDescription(taskName or self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
-        self.feedback.progressChanged.connect(self.setProgress)
+        self.feedback.progressChanged.connect(lambda x : self.setProgress(int(x)))
         self.feedback.canceled.connect(self.cancel)
         self.output = {
             "result" : dict(),
@@ -101,6 +101,7 @@ class DsgToolsProcessingModel(QgsTask):
         if "data" not in parameters["source"] or \
           not parameters["source"]["data"]:
             return self.tr("Input model source was not identified.")
+        return ""
 
     @staticmethod
     def modelFromFile(filepath):
@@ -122,7 +123,7 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (QgsProcessingModelAlgorithm) model as a processing algorithm.
         """
         temp = "./temp_model_{0}.model3".format(hash(time()))
-        with open(temp, "w", encoding="utf-8") as xmlFile:
+        with open(temp, "w+", encoding="utf-8") as xmlFile:
             xmlFile.write(xml)
         alg = DsgToolsProcessingModel.modelFromFile(temp)
         os.remove(temp)
@@ -190,7 +191,7 @@ class DsgToolsProcessingModel(QgsTask):
         """
         return self._param != dict()
 
-    def _data(self):
+    def data(self):
         """
         Current model's source data. If it's from a file, it's its filepath,
         if from an XML, its contents.
@@ -233,8 +234,7 @@ class DsgToolsProcessingModel(QgsTask):
             "xml" : DsgToolsProcessingModel.modelFromXml,
             "file" : DsgToolsProcessingModel.modelFromFile
         }
-        modelType = self._param["source"]["type"]
-        return method[modelType](self._data()) if modelType in method\
+        return method[self.source()](self.data()) if self.source() in method\
              else QgsProcessingModelAlgorithm()
 
     def flags(self):
