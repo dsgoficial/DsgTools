@@ -53,6 +53,8 @@ class DsgToolsProcessingModel(QgsTask):
         :param name: (str) name to identify current model.
         :param taskName: (str) name to be exposed on progress bar.
         :param flags: (list) a list of QgsTask flags to be set to current model.
+        :param feedback: (QgsProcessingFeedback) task progress tracking QGIS
+                         object.
         """
         super(DsgToolsProcessingModel, self).__init__(
             "", QgsTask.CanCancel if flags is None else flags

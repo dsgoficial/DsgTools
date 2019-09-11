@@ -40,10 +40,12 @@ class ValidationWorkflow(QObject):
     flagsRaisedWarning = pyqtSignal()
     workflowFinished = pyqtSignal()
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, feedback=None):
         """
         Class constructor. Materializes an workflow set of parameters.
         :param parameters: (dict) map of workflow attributes.
+        :param feedback: (QgsProcessingFeedback) task progress tracking QGIS
+                         object.
         """
         super(ValidationWorkflow, self).__init__()
         msg = self.validateParameters(parameters)
@@ -54,7 +56,7 @@ class ValidationWorkflow(QObject):
         self._param = parameters
         self._modelOrderMap = dict()
         self.output = dict()
-        self.feedback = QgsProcessingFeedback()
+        self.feedback = feedback or QgsProcessingFeedback()
 
     def validateParameters(self, parameters):
         """
@@ -143,7 +145,7 @@ class ValidationWorkflow(QObject):
         """
         models = {"valid" : dict(), "invalid" : dict()}
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(self._param["models"]) - 1, self.feedback
+            len(self._param["models"]), self.feedback
         )
         self._multiStepFeedback.setCurrentStep(0)
         for modelName, modelParam in self._param["models"].items():
@@ -163,7 +165,7 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(self._param["models"]) - 1, self.feedback
+            len(self._param["models"]), self.feedback
         )
         self._multiStepFeedback.setCurrentStep(0)
         for idx, (modelName, modelParam) in enumerate(self._param["models"].items()):
@@ -182,7 +184,7 @@ class ValidationWorkflow(QObject):
         """
         models = dict()
         self._multiStepFeedback = QgsProcessingMultiStepFeedback(
-            len(self._param["models"]) - 1, self.feedback
+            len(self._param["models"]), self.feedback
         )
         self._multiStepFeedback.setCurrentStep(0)
         for modelName, modelParam in self._param["models"].items():
@@ -229,7 +231,7 @@ class ValidationWorkflow(QObject):
             fp.write(json.dumps(self._param, sort_keys=True, indent=4))
         return os.path.exists(filepath)
 
-    def exportAsDict(self):
+    def asDict(self):
         """
         Dumps model parameters as a JSON file.
         :param filepath: (str) path to JSON file.
