@@ -254,7 +254,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
                 msg = self.tr("{0} updated (make sure you exported it).")\
                           .format(newName)
             else:
-                self.comboBox.setCurrentText(newName)
+                self.comboBox.setItemText(self.comboBox.currentIndex(), newName)
                 self.workflows.pop(previousName, None)
                 msg = self.tr(
                     "{1} renamed to {0} and updated (make sure you exported it)."
