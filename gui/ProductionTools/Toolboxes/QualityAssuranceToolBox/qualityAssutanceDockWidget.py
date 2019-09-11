@@ -356,7 +356,15 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
                 self.tr("DSGTool Q&A Toolbox"),
                 self.tr("model {0} finished with status {1}.")\
                     .format(modelName, status),
-                Qgis.Info,
+                {
+                    self.RUNNING : Qgis.Info,
+                    self.PAUSED : Qgis.Info,
+                    self.HALTED : Qgis.Critical,
+                    self.CANCELED : Qgis.Warning,
+                    self.FAILED : Qgis.Critical,
+                    self.FINISHED : Qgis.Info,
+                    self.FINISHED_WITH_FLAGS : Qgis.Warning
+                }[code],
                 duration=3
             )
 
