@@ -387,12 +387,18 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
             pb = self.progressWidget()
             feedback.progressChanged.connect(pb.setValue)
             self.tableWidget.setCellWidget(row, 2, pb)
-            feedback.canceled.connect(
-                partial(self.setModelStatus, row, self.CANCELED, modelName)
-            )
-            model.modelFinished.connect(
-                partial(self.setModelStatus, row, self.FINISHED, modelName)
-            )
+            def statusChangedWrapper(status):
+                """code: (QgsTask.Enum) status enum"""
+                code = {
+                    model.Queued : self.INITIAL,
+                    model.OnHold : self.PAUSED,
+                    model.Running : self.RUNNING,
+                    model.Complete : self.FINISHED,
+                    model.Terminated : self.FAILED
+                }[status]
+                if code != self.INITIAL:
+                    self.setModelStatus(row, code, modelName)
+            model.statusChanged.connect(partial(statusChangedWrapper))
             model.modelFailed.connect(
                 partial(self.setModelStatus, row, self.FAILED, modelName)
             )
