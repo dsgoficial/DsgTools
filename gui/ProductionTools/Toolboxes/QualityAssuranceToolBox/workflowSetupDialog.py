@@ -96,7 +96,6 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
                 "class" : self.loadOutputWidget
             }
         })
-        self.resizeTable()
 
     def resizeTable(self):
         """

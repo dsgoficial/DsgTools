@@ -20,7 +20,8 @@
  ***************************************************************************/
 """
 
-import os
+import os, json
+from time import time
 from functools import partial
 
 from qgis.PyQt import uic
@@ -76,7 +77,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets workflow to be on hold.
         """
-        pass
+        workflow = self.currentWorkflow()
 
     def setProgress(self, value):
         """
@@ -169,6 +170,9 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         else:
             self.cancelPushButton.hide()
             self.continuePushButton.show()
+        self.pausePushButton.setEnabled(isActive)
+        self.cancelPushButton.setEnabled(isActive)
+        self.continuePushButton.setEnabled(isActive)
 
     def currentWorkflowName(self):
         """
@@ -214,19 +218,55 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         name = self.currentWorkflowName()
         self.workflows.pop(name, None)
 
-    @pyqtSlot(bool, name="on_removePushButton_clicked")
-    def removeWorkflow(self):
+    @pyqtSlot(bool, name="on_editPushButton_clicked")
+    def editCurrentWorkflow(self):
         """
-        Removes current workflow selection from combo box options.
+        Edits current workflow selection from combo box options.
         """
-        idx = self.comboBox.currentIndex()
-        if idx < 1:
+        workflow = self.currentWorkflow()
+        previousName = workflow.displayName()
+        if workflow is None:
             return
-        # raise any confirmation question?
-        self.comboBox.removeItem(idx)
-        self.comboBox.setCurrentIndex(0)
-        name = self.currentWorkflowName()
-        self.workflows.pop(name, None)
+        dlg = WorkflowSetupDialog(self)
+        dlg.show()
+        temp = "./temp_workflow_{0}.workflow".format(hash(time()))
+        with open(temp, "w+", encoding="utf-8") as f:
+            json.dump(workflow.asDict(), f)
+        dlg.importWorkflow(temp)
+        os.remove(temp)
+        if dlg.exec_() == 1:
+            # block "if modifications are confirmed by user"
+            newWorkflow = dlg.currentWorkflow()
+            newName = newWorkflow.displayName()
+            if newName != previousName and newName in self.workflows:
+                self.iface.messageBar().pushMessage(
+                    self.tr("DSGTools Q&A Tool Box"),
+                    self.tr(
+                        "modified name is already set for other"
+                        " workflow. Nothing changed."
+                    ),
+                    Qgis.Warning,
+                    duration=3
+                )
+                return
+            if newName == previousName:
+                self.setCurrentWorkflow()
+                msg = self.tr("{0} updated (make sure you exported it).")\
+                          .format(newName)
+            else:
+                self.comboBox.setCurrentText(newName)
+                self.workflows.pop(previousName, None)
+                msg = self.tr(
+                    "{1} renamed to {0} and updated (make sure you exported it)."
+                ).format(newName, previousName)
+            self.workflows[newName] = newWorkflow
+            self.setCurrentWorkflow()
+            self.iface.messageBar().pushMessage(
+                self.tr("DSGTools Q&A Tool Box"),
+                msg,
+                Qgis.Info,
+                duration=3
+            )
 
     def progressWidget(self):
         """
@@ -245,11 +285,17 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         name = self.currentWorkflowName()
         return self.workflows[name] if name in self.workflows else None
 
-    def setModelStatus(self, row, code):
+    def setModelStatus(self, row, code, modelName=None):
         """
         Sets model execution status to its cell.
+        :param row: (int) model's row on GUI.
+        :param code: (int) code to current status (check this class enumerator).
+        :param modelName: (str) para to notify user of status change. This 
+                          should be passed only through dynamic changes in order
+                          to avoid polluting QGIS main window.
         """
-        item = QTableWidgetItem(self.statusMap[code])
+        status = self.statusMap[code]
+        item = QTableWidgetItem(status)
         # togle editable flag to make it NOT editable
         item.setFlags(Qt.ItemIsEditable)
         color = {
@@ -264,6 +310,16 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         }[code]
         item.setForeground(QBrush(color))
         self.tableWidget.setItem(row, 1, item)
+        if modelName is not None:
+            # advise user a model status has changed only if it came from a 
+            # signal call
+            self.iface.messageBar().pushMessage(
+                self.tr("DSGTool Q&A Toolbox"),
+                self.tr("model {0} finished with status {1}.")\
+                    .format(modelName, status),
+                Qgis.Info,
+                duration=3
+            )
 
     def setWorkflow(self, workflow):
         """
@@ -285,16 +341,16 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
             feedback.progressChanged.connect(pb.setValue)
             self.tableWidget.setCellWidget(row, 2, pb)
             feedback.canceled.connect(
-                partial(self.setModelStatus, row, self.CANCELED)
+                partial(self.setModelStatus, row, self.CANCELED, modelName)
             )
             model.modelFinished.connect(
-                partial(self.setModelStatus, row, self.FINISHED)
+                partial(self.setModelStatus, row, self.FINISHED, modelName)
             )
             model.modelFailed.connect(
-                partial(self.setModelStatus, row, self.FAILED)
+                partial(self.setModelStatus, row, self.FAILED, modelName)
             )
             model.flagsRaisedWarning.connect(
-                partial(self.setModelStatus, row, self.FINISHED_WITH_FLAGS)
+                partial(self.setModelStatus, row, self.FINISHED_WITH_FLAGS, modelName)
             )
 
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
@@ -317,11 +373,14 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         """
         workflow = self.currentWorkflow()
         if workflow is not None:
+            self.setState(True)
             workflow.run()
         else:
             self.iface.messageBar().pushMessage(
-                self.tr("DSGTools Q&A Toolbox Workflow"),
+                self.tr("DSGTools Q&A Tool Box"),
                 self.tr("please select a valid Workflow."),
                 Qgis.Warning,
                 duration=3
             )
+        self.setState(False)
+        
