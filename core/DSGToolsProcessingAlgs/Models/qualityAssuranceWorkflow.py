@@ -21,6 +21,7 @@
 """
 
 import os, json
+from time import sleep
 from functools import partial
 
 from qgis.core import (QgsMapLayer,
@@ -299,10 +300,11 @@ class QualityAssuranceWorkflow(QObject):
             "ignore" : lambda : None
         }[model.onFlagsRaised()]()
 
-    def run(self, firstModelName=None):
+    def run(self, firstModelName=None, cooldown=None):
         """
         Executes all models in secondary threads.
         :param firstModelName: (str) first model's name to be executed.
+        :param cooldown: (float) time to wait till next model is started.
         """
         self.output = dict()
         models = self.validModels()
@@ -324,23 +326,20 @@ class QualityAssuranceWorkflow(QObject):
         else:
             currentModel = next(modelIterator)
             firstModel = currentModel
-        def addOutput(model):
+        def modelFinished(model):
             # register last model executed
             self.__lastModel = model.name()
             self.output[model.name()] = model.output
+            self._multiStepFeedback.setCurrentStep(self._modelOrderMap[currentModel.name()] + 1)
+            self.handleFlags(model)
+        def startNextModel(model):
+            # always give a "wait time" for the next model
+            sleep(cooldown or 0.05)
+            self.setupModelTask(model)
         while True:
             # this loop is just for execution order setup
             currentModel.taskCompleted.connect(
-                partial(self.handleFlags, currentModel)
-            )
-            currentModel.taskCompleted.connect(
-                partial(addOutput, currentModel)
-            )
-            currentModel.taskCompleted.connect(
-                partial(
-                    self._multiStepFeedback.setCurrentStep,
-                    self._modelOrderMap[currentModel.name()] + 1
-                )
+                partial(modelFinished, currentModel)
             )
             # check if there is a next model and connect previous model
             try:
@@ -349,11 +348,11 @@ class QualityAssuranceWorkflow(QObject):
                 nextModel = None
             if nextModel is None:
                 currentModel.taskCompleted.connect(self.finished)
+                # this trigger the events
+                self.setupModelTask(firstModel)
                 break
             else:
                 currentModel.taskCompleted.connect(
-                    partial(self.setupModelTask, nextModel)
+                    partial(startNextModel, nextModel)
                 )
             currentModel = nextModel
-        # this trigger the events
-        self.setupModelTask(firstModel)

@@ -63,7 +63,7 @@ class DsgToolsProcessingModel(QgsTask):
         self._param = {} if self.validateParameters(parameters) else parameters
         self.setDescription(taskName or self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
-        self.feedback.progressChanged.connect(lambda x : self.setProgress(int(x)))
+        # self.feedback.progressChanged.connect(lambda x : self.setProgress(int(x)))
         self.feedback.canceled.connect(self.cancel)
         self.output = {
             "result" : dict(),
@@ -329,10 +329,12 @@ class DsgToolsProcessingModel(QgsTask):
         QgsProject.instance().addMapLayer(layer, False)
         subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
 
-    def runModel(self):
+    def runModel(self, feedback=None):
         """
         Executes current model.
         :return: (dict) map to model's outputs.
+        :param feedback: (QgsProcessingFeedback) task progress tracking QGIS
+                         object.
         """
         # this tool understands every parameter to be filled as an output LAYER
         # it also sets all output to a MEMORY LAYER.
@@ -340,7 +342,7 @@ class DsgToolsProcessingModel(QgsTask):
         out = processing.run(
             model,
             { param : "memory:" for param in self.modelParameters(model) },
-            feedback=self.feedback
+            feedback=feedback
         )
         if self.loadOutput():
             for vl in out.values():
@@ -376,10 +378,9 @@ class DsgToolsProcessingModel(QgsTask):
         :return: (bool) task success status.
         """
         start = time()
-        time
         try:
             self.output = {
-                "result" : { k.split(":", 2)[-1] : v for k, v in self.runModel().items() },
+                "result" : { k.split(":", 2)[-1] : v for k, v in self.runModel(self.feedback).items() },
                 "status" : True,
                 "errorMessage" : ""
             }
