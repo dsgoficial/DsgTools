@@ -159,6 +159,22 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.clear()
         self.comboBox.addItem(self.tr("Select a workflow..."))
 
+    def setWorkflowTooltip(self, idx, metadata):
+        """
+        Sets tooltip for a workflow based on its metadata.
+        :para idx: (int) index for target workflow.
+        :param metadata: (dict) workflow's metadata.
+        """
+        self.comboBox.setItemData(
+            idx, 
+            self.tr(
+                "Workflow author: {author}\n"
+                "Workflow version: {version}\n"
+                "Last modification: {lastModified}"
+            ).format(**metadata),
+            Qt.ToolTipRole
+        )
+
     def setState(self, isActive=False):
         """
         Sets GUI to idle (not running a Workflow) or active state (running it).
@@ -203,6 +219,9 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
             else:
                 self.comboBox.setCurrentIndex(idx)
                 # what should we do? check version/last modified? replace model?
+            self.setWorkflowTooltip(
+                self.comboBox.currentIndex(), workflow.metadata()
+            )
 
     @pyqtSlot(bool, name="on_removePushButton_clicked")
     def removeWorkflow(self):
@@ -260,6 +279,9 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
                     "{1} renamed to {0} and updated (make sure you exported it)."
                 ).format(newName, previousName)
             self.workflows[newName] = newWorkflow
+            self.setWorkflowTooltip(
+                self.comboBox.currentIndex(), newWorkflow.metadata()
+            )
             self.setCurrentWorkflow()
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
