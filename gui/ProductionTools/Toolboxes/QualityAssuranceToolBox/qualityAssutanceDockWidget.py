@@ -319,7 +319,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
     def currentWorkflow(self):
         """
         Retrieves current selected workflow.
-        :return: (ValidationWorkflow) current workflow.
+        :return: (QualityAssuranceWorkflow) current workflow.
         """
         name = self.currentWorkflowName()
         return self.workflows[name] if name in self.workflows else None

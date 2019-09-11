@@ -31,7 +31,7 @@ from qgis.PyQt.QtCore import QObject, pyqtSignal
 
 from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
 
-class ValidationWorkflow(QObject):
+class QualityAssuranceWorkflow(QObject):
     """
     Works as a multi-model runner. Understands all models' parameters as an
     output vector layer.
@@ -47,7 +47,7 @@ class ValidationWorkflow(QObject):
         :param feedback: (QgsProcessingFeedback) task progress tracking QGIS
                          object.
         """
-        super(ValidationWorkflow, self).__init__()
+        super(QualityAssuranceWorkflow, self).__init__()
         msg = self.validateParameters(parameters)
         if msg:
             raise Exception(
