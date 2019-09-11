@@ -29,6 +29,7 @@ from qgis.core import Qgis
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QDockWidget,
+                                 QMessageBox,
                                  QProgressBar,
                                  QTableWidgetItem)
 
@@ -71,6 +72,18 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         self.resizeTable()
         self.resetComboBox()
         self.prepareProgressBar()
+
+    def confirmAction(self, msg, showCancel=True):
+        """
+        Raises a message box for confirmation before executing an action.
+        :param msg: (str) message to be exposed.
+        :param showCancel: (bool) whether Cancel button should be exposed.
+        :return: (bool) whether action was confirmed.
+        """
+        return QMessageBox.question(
+            self, self.tr('DSGTools Q&A Tool Box: Confirm action'), msg,
+            QMessageBox.Ok|QMessageBox.Cancel if showCancel else QMessageBox.Ok
+        ) == QMessageBox.Ok
 
     @pyqtSlot(bool, name="on_pausePushButton_clicked")
     def workflowOnHold(self):
@@ -232,6 +245,10 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         if idx < 1:
             return
         # raise any confirmation question?
+        msg = self.tr("Are you sure you want to remove {0}")\
+                  .format(self.currentWorkflowName())
+        if not self.confirmAction(msg):
+            return
         self.comboBox.removeItem(idx)
         self.comboBox.setCurrentIndex(0)
         name = self.currentWorkflowName()
@@ -405,4 +422,3 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
                 duration=3
             )
         self.setState(False)
-        
