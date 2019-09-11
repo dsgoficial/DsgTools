@@ -39,7 +39,7 @@ from qgis.PyQt.QtWidgets import (QDialog,
 from processing.modeler.ModelerUtils import ModelerUtils
 
 from DsgTools.gui.CustomWidgets.SelectionWidgets.selectFileWidget import SelectFileWidget
-from DsgTools.core.DSGToolsProcessingAlgs.Models.validationWorkflow import ValidationWorkflow
+from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow import QualityAssuranceWorkflow
 from DsgTools.core.DSGToolsProcessingAlgs.Models.dsgToolsProcessingModel import DsgToolsProcessingModel
 
 FORM_CLASS, _ = uic.loadUiType(
@@ -415,10 +415,10 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
     def currentWorkflow(self):
         """
         Returns current workflow object as read from GUI.
-        :return: (ValidationWorkflow) current workflow object.
+        :return: (QualityAssuranceWorkflow) current workflow object.
         """
         try:
-            return ValidationWorkflow(self.workflowParameterMap())
+            return QualityAssuranceWorkflow(self.workflowParameterMap())
         except:
             return None
 
@@ -443,7 +443,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         Exports current data to a JSON file.
         :param filepath: (str) output file directory.
         """
-        ValidationWorkflow(self.workflowParameterMap()).export(filepath)
+        QualityAssuranceWorkflow(self.workflowParameterMap()).export(filepath)
 
     @pyqtSlot(bool, name="on_exportPushButton_clicked")
     def export(self):
@@ -495,7 +495,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         with open(filepath, "r", encoding="utf-8") as f:
             xml = json.load(f)
-        workflow = ValidationWorkflow(xml)
+        workflow = QualityAssuranceWorkflow(xml)
         self.clear()
         self.setWorkflowAuthor(workflow.author())
         self.setWorkflowVersion(workflow.version())
