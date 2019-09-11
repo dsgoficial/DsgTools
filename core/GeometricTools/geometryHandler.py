@@ -25,6 +25,7 @@ from builtins import range
 from itertools import combinations
 import math
 from math import pi
+from functools import partial
 from qgis.core import QgsMessageLog, QgsVectorLayer, QgsGeometry, QgsField, \
                       QgsVectorDataProvider, QgsFeatureRequest, QgsExpression, \
                       QgsFeature, QgsSpatialIndex, Qgis, QgsCoordinateTransform, \
@@ -200,11 +201,26 @@ class GeometryHandler(QObject):
             return reversedFeatureList, failedFeatureList
         else:
             return reversedFeatureList
+
+    def isclose(self, a, b, rel_tol=1e-09, abs_tol=0.0):
+        """
+        Fuzzy compare from https://www.python.org/dev/peps/pep-0485/#proposed-implementation
+        :param a:
+        :param b:
+        :param rel_tol:
+        :param abs_tol:
+        :return:
+        """
+        return abs(a - b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
     
-    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList):
+    def getOutOfBoundsAngleInPolygon(self, feat, part, angle, outOfBoundsList, exactAngleMatch=False, angTol=0.1):
         for linearRing in part.asPolygon():
             linearRing = self.getClockWiseList(linearRing)
             nVertex = len(linearRing)-1
+            def clause(x):
+                return x < angle if not exactAngleMatch \
+                    else not self.isclose(x, angle, abs_tol=angTol)
+            clauseLambda = partial(clause)
             for i in range(nVertex):
                 if i == 0:
                     vertexAngle = (linearRing[i].azimuth(linearRing[-2]) - linearRing[i].azimuth(linearRing[i+1]) + 360)
@@ -214,7 +230,7 @@ class GeometryHandler(QObject):
                 if vertexAngle > 180:
                     # if angle calculated is the outter one
                     vertexAngle = 360 - vertexAngle
-                if vertexAngle < angle:
+                if clauseLambda(vertexAngle):
                     geomDict = {'angle':vertexAngle,'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(linearRing[i])}
                     outOfBoundsList.append(geomDict)
     
@@ -230,12 +246,15 @@ class GeometryHandler(QObject):
                 geomDict = {'angle':vertexAngle,'feat_id':feat.id(), 'geom':QgsGeometry.fromPointXY(line[i])}
                 outOfBoundsList.append(geomDict)
     
-    def getOutOfBoundsAngle(self, feat, angle):
+    def getInvalidBuildingAngle(self, feat, angTol):
+        return self.getOutOfBoundsAngle(feat, 90, exactAngleMatch=True, angTol=angTol)
+    
+    def getOutOfBoundsAngle(self, feat, angle, exactAngleMatch=False, angTol=0.1):
         outOfBoundsList = []
         geom = feat.geometry()
         for part in geom.asGeometryCollection():
             if part.type() == QgsWkbTypes.PolygonGeometry:
-                self.getOutOfBoundsAngleInPolygon(feat, part, angle, outOfBoundsList)
+                self.getOutOfBoundsAngleInPolygon(feat, part, angle, outOfBoundsList, exactAngleMatch=exactAngleMatch, angTol=angTol)
             if part.type() == QgsWkbTypes.LineGeometry:
                 self.getOutOfBoundsAngleInLine(feat, part, angle, outOfBoundsList)            
         return outOfBoundsList
