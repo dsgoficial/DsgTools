@@ -307,52 +307,41 @@ class QualityAssuranceWorkflow(QObject):
         :param cooldown: (float) time to wait till next model is started.
         """
         self.output = dict()
-        models = self.validModels()
-        modelCount = len(models)
+        self._executionOrder = {
+            idx : model for idx, model in enumerate(self.validModels().values())
+        }
+        modelCount = len(self._executionOrder)
         if self.hasInvalidModel() or modelCount == 0:
             return {}
-        # make sure models do not run in parallel - they must follow the order!
-        modelIterator = (m for m in models.values())
-        if firstModelName is not None:
-            while True:
-                try:
-                    currentModel = next(modelIterator)
-                except StopIteration:
-                    # if no model is identified, none shall be run
-                    return
-                if currentModel.name() == firstModelName:
-                    firstModel = currentModel
-                    break
-        else:
-            currentModel = next(modelIterator)
-            firstModel = currentModel
-        def modelFinished(model):
+        def modelFinished(model, step):
             # register last model executed
             self.__lastModel = model.name()
             self.output[model.name()] = model.output
-            self._multiStepFeedback.setCurrentStep(self._modelOrderMap[currentModel.name()] + 1)
+            self._multiStepFeedback.setCurrentStep(step)
+            print(self.feedback.progress())
             self.handleFlags(model)
-        def startNextModel(model):
-            # always give a "wait time" for the next model
-            sleep(cooldown or 0.05)
-            self.setupModelTask(model)
-        while True:
-            # this loop is just for execution order setup
+        if firstModelName is not None:
+            for idx, model in self._executionOrder.items():
+                if model.name() == firstModelName:
+                    initialIdx = idx
+            else:
+                # name was not found
+                return {}
+        else:
+            initialIdx = 0
+        for idx, currentModel in self._executionOrder.items():
+            if idx < initialIdx:
+                continue
+            # all models MUST pass through this postprocessing method
             currentModel.taskCompleted.connect(
-                partial(modelFinished, currentModel)
+                partial(modelFinished, currentModel, idx + 1)
             )
-            # check if there is a next model and connect previous model
-            try:
-                nextModel = next(modelIterator)
-            except StopIteration:
-                nextModel = None
-            if nextModel is None:
+            if idx == modelCount - 1:
+                # last model has indicates workflow finish
                 currentModel.taskCompleted.connect(self.finished)
                 # this trigger the events
-                self.setupModelTask(firstModel)
                 break
-            else:
-                currentModel.taskCompleted.connect(
-                    partial(startNextModel, nextModel)
-                )
-            currentModel = nextModel
+            self._executionOrder[idx + 1].addSubTask(currentModel)
+        # last model will trigger every dependent model till the first added to
+        # the task manager
+        self.setupModelTask(self._executionOrder[modelCount - 1 - initialIdx])

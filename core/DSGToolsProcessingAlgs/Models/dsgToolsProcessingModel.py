@@ -345,8 +345,9 @@ class DsgToolsProcessingModel(QgsTask):
             feedback=feedback
         )
         if self.loadOutput():
-            for vl in out.values():
+            for name, vl in out.items():
                 if isinstance(vl, QgsMapLayer):
+                    vl.setName(name.split(":", 2)[-1])
                     self.addLayerToGroup(
                         vl,
                         self.tr("DSGTools Quality Assurance Models"),
