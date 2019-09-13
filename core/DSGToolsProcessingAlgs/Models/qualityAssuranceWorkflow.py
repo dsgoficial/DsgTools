@@ -377,8 +377,19 @@ class QualityAssuranceWorkflow(QObject):
         # the task manager
         self.setupModelTask(currentModel)
 
-    def runFromLast(self):
+    def lastModelName(self):
         """
-        Executes run from last executed (unsucessfully) model.
+        Gets the last model prepared to execute but has either failed or not
+        run.
+        :return: (str) first model's name not to run.
         """
-        self.run(self.__lastModel.displayName())
+        if not hasattr(self, "__lastModel"):
+            return None
+        else:
+            lastModel = self.__lastModel.displayName()
+            modelCount = len(self._executionOrder)
+            for idx, model in self._executionOrder.items():
+                if model.displayName() == lastModel and idx < modelCount - 2:
+                    return self._executionOrder[idx + 1].displayName()
+            else:
+                return None

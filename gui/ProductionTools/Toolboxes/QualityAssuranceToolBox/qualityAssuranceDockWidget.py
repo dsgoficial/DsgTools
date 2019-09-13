@@ -55,6 +55,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self._previousWorkflow = None
+        self._firstModel = None
         self.parent = parent
         self.statusMap = {
             self.INITIAL : self.tr("Not yet run"),
@@ -409,6 +410,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.removePushButton.setEnabled(enable)
 
     @pyqtSlot(bool, name="on_runPushButton_clicked")
+    @pyqtSlot(bool, name="on_resumePushButton_clicked")
     def runWorkflow(self):
         """
         Executes current selected workflow.
@@ -420,6 +422,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 pb.setValue(int(v))
             def statusChangedWrapper(row, model, status):
                 """code: (QgsTask.Enum) status enum"""
+                if row is None:
+                    for row in range(self.tableWidget.rowCount()):
+                        if self.tableWidget.item(row, 0).text() == model.name():
+                            break
                 code = {
                     model.Queued : self.INITIAL,
                     model.OnHold : self.PAUSED,
@@ -437,9 +443,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                         intWrapper, self.tableWidget.cellWidget(row, 2)
                     )
                     model.feedback.progressChanged.connect(self.__progressFunc)
-                    # self.__statusUpdtFunc = partial(statusChangedWrapper, row, model)
                     model.statusChanged.connect(
-                        # self.__statusUpdtFunc
                         partial(statusChangedWrapper, row, model)
                     )
                     return
@@ -451,7 +455,11 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     return
             workflow.modelStarted.connect(begin)
             workflow.modelFinished.connect(end)
-            workflow.run()
+            if self.sender().objectName() == "runPushButton":
+                workflow.run()
+            else:
+                workflow.run(firstModelName=self._firstModel)
+            self._firstModel = workflow.lastModelName()
         else:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
