@@ -7,7 +7,8 @@
                               -------------------
         begin                : 2019-04-26
         git sha              : $Format:%H$
-        copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
+        copyright            : (C) 2019 by Philipe Borba -
+                                    Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
  ***************************************************************************/
 
@@ -24,14 +25,21 @@ import os
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsProcessing,
-                       QgsProcessingAlgorithm,
+from qgis.core import (QgsDataSourceUri, QgsProcessing, QgsProcessingAlgorithm,
                        QgsProcessingOutputMultipleLayers,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
-                       QgsProcessingParameterString,
-                       QgsProject)
+                       QgsProcessingParameterString, QgsProject)
+from qgis.utils import iface
+
 class GroupLayersAlgorithm(QgsProcessingAlgorithm):
+    """
+    Algorithm to group layers according to primitive, dataset and a category.
+    INPUT_LAYERS: list of QgsVectorLayer
+    CATEGORY_TOKEN: token used to split layer name
+    CATEGORY_TOKEN_INDEX: index of the split list
+    OUTPUT: list of outputs
+    """
     INPUT_LAYERS = 'INPUT_LAYERS'
     CATEGORY_TOKEN = 'CATEGORY_TOKEN'
     CATEGORY_TOKEN_INDEX = 'CATEGORY_TOKEN_INDEX'
@@ -92,18 +100,17 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
         rootNode = QgsProject.instance().layerTreeRoot()
-        rootNodeSet = set()
         inputLyrList.sort(key=lambda x: (x.geometryType(), x.name()))
         geometryNodeDict = {
             0 : self.tr('Point'),
             1 : self.tr('Line'),
             2 : self.tr('Polygon')
         }
+        iface.mapCanvas().freeze(True)
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
             rootDatabaseNode = self.getLayerRootNode(lyr, rootNode)
-            rootNodeSet.add(rootDatabaseNode)
             geometryNode = self.createGroup(
                 geometryNodeDict[lyr.geometryType()],
                 rootDatabaseNode
@@ -117,12 +124,19 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             lyrNode = rootNode.findLayer(lyr.id())
             myClone = lyrNode.clone()
             categoryNode.addChildNode(myClone)
-            rootNode.removeChildNode(lyrNode) # not thread safe, must set flag to FlagNoThreading
+            # not thread safe, must set flag to FlagNoThreading
+            rootNode.removeChildNode(lyrNode)
             feedback.setProgress(current*progressStep)
-
+        iface.mapCanvas().freeze(False)
         return {self.OUTPUT: inputLyrList}
-    
+
     def getLayerRootNode(self, lyr, rootNode):
+        """
+        Finds the database name of the layer and creates (if not exists)
+        a node with the found name.
+        lyr: (QgsVectorLayer)
+        rootNode: (node item)
+        """
         uriText = lyr.dataProvider().dataSourceUri()
         candidateUri = QgsDataSourceUri(uriText)
         rootNodeName = candidateUri.database()
@@ -130,12 +144,15 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             rootNodeName = self.getRootNodeName(uriText)
         #creates database root
         return self.createGroup(rootNodeName, rootNode)
-    
+
     def getRootNodeName(self, uriText):
+        """
+        Gets root node name from uri according to provider type.
+        """
         if 'memory?' in uriText:
             rootNodeName = 'memory'
         elif 'dbname' in uriText:
-            rootNodeName = uriText.replace('dbname=','').split(' ')[0]
+            rootNodeName = uriText.replace('dbname=', '').split(' ')[0]
         elif '|' in uriText:
             rootNodeName = os.path.dirname(uriText.split(' ')[0].split('|')[0])
         else:
@@ -143,11 +160,18 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         return rootNodeName
 
     def getLayerCategoryNode(self, lyr, rootNode, categoryToken, categoryTokenIndex):
+        """
+        Finds category node and creates (if not exists a node)
+        """
         categorySplit = lyr.name().split(categoryToken)
-        categoryText = categorySplit[categoryTokenIndex] if categoryTokenIndex <= len(categorySplit) else 0
+        categoryText = categorySplit[categoryTokenIndex] \
+            if categoryTokenIndex <= len(categorySplit) else 0
         return self.createGroup(categoryText, rootNode)
 
     def createGroup(self, groupName, rootNode):
+        """
+        Create group with the name groupName and parent rootNode.
+        """
         groupNode = rootNode.findGroup(groupName)
         if groupNode:
             return groupNode
@@ -189,14 +213,20 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
+        """
+        Translates input string.
+        """
         return QCoreApplication.translate('GroupLayersAlgorithm', string)
 
     def createInstance(self):
+        """
+        Creates an instance of this class
+        """
         return GroupLayersAlgorithm()
 
     def flags(self):
         """
-        This process is not thread safe due to the fact that removeChildNode method
-        from QgsLayerTreeGroup is not thread safe.
+        This process is not thread safe due to the fact that removeChildNode
+        method from QgsLayerTreeGroup is not thread safe.
         """
         return super().flags() | QgsProcessingAlgorithm.FlagNoThreading
