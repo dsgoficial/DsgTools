@@ -90,7 +90,14 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets workflow to be on hold.
         """
-        workflow = self.currentWorkflow()
+        self.currentWorkflow().hold()
+
+    @pyqtSlot(bool, name="on_pausePushButton_clicked")
+    def workflowOnHold(self):
+        """
+        Sets workflow to be on hold.
+        """
+        self.currentWorkflow().unhold()
 
     def setProgress(self, value):
         """
@@ -378,14 +385,13 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         models = workflow.validModels()
         self.tableWidget.setRowCount(len(models))
         for row, (modelName, model) in enumerate(models.items()):
-            feedback = model.feedback
             item = QTableWidgetItem(modelName)
             item.setFlags(Qt.ItemIsEditable)
             item.setForeground(QBrush(QColor(0, 0, 0)))
             self.tableWidget.setItem(row, 0, item)
             self.setModelStatus(row, self.INITIAL)
             pb = self.progressWidget()
-            feedback.progressChanged.connect(pb.setValue)
+            model.feedback.progressChanged.connect(pb.setValue)
             self.tableWidget.setCellWidget(row, 2, pb)
             def statusChangedWrapper(status):
                 """code: (QgsTask.Enum) status enum"""
