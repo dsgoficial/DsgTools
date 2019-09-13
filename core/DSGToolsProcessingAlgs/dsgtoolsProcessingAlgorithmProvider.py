@@ -149,6 +149,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.applyStylesFr
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.singleOutputUnitTestAlgorithm import SingleOutputUnitTestAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormFormatRulesToLayersAlgorithm import \
     AssignFormFormatRulesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
+    AssignValueMapToLayersAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
 
@@ -217,7 +219,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     ApplyStylesFromDatabaseToLayersAlgorithm(),
                     SingleOutputUnitTestAlgorithm(),
                     ExportToMemoryLayer(),
-                    AssignFormFormatRulesToLayersAlgorithm()
+                    AssignFormFormatRulesToLayersAlgorithm(),
+                    AssignValueMapToLayersAlgorithm()
                 ]
         return algList
 
