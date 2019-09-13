@@ -93,7 +93,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         progressStep = 100/listSize if listSize else 0
         rootNode = QgsProject.instance().layerTreeRoot()
         rootNodeSet = set()
-        inputLyrList.sort(key= lambda x: x.name())
+        inputLyrList.sort(key=lambda x: (x.geometryType(), x.name()))
         geometryNodeDict = {
             0 : self.tr('Point'),
             1 : self.tr('Line'),
