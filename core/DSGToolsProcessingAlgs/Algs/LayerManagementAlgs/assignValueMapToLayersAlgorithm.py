@@ -20,17 +20,21 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QCoreApplication
-from qgis.core import (QgsEditorWidgetSetup,
-                       QgsProcessing,
+import json
+
+from qgis.core import (QgsEditorWidgetSetup, QgsProcessing,
                        QgsProcessingAlgorithm,
                        QgsProcessingOutputMultipleLayers,
+                       QgsProcessingParameterFile,
                        QgsProcessingParameterMultipleLayers,
-                       QgsProcessingParameterString
-                       )
+                       QgsProcessingParameterString)
+from qgis.PyQt.QtCore import QCoreApplication
+
+
 class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
     INPUT_LAYERS = 'INPUT_LAYERS'
-    STYLE_NAME = 'STYLE_NAME'
+    VALUE_MAP_FILE = 'VALUE_MAP_FILE'
+    VALUE_MAP = 'VALUE_MAP'
     OUTPUT = 'OUTPUT'
 
     def initAlgorithm(self, config=None):
@@ -42,15 +46,24 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
             )
         )
         self.addParameter(
+            QgsProcessingParameterFile(
+                self.VALUE_MAP_FILE,
+                description=self.tr('Json file with value maps'),
+                defaultValue='.json'
+            )
+        )
+        self.addParameter(
             QgsProcessingParameterString(
-                self.STYLE_NAME,
-                self.tr('Style Name')
+                self.VALUE_MAP,
+                description=self.tr('Json data'),
+                multiLine=True,
+                defaultValue='{}'
             )
         )
         self.addOutput(
             QgsProcessingOutputMultipleLayers(
                 self.OUTPUT,
-                self.tr('Original layers with styles applied column')
+                self.tr('Original layers with values mapped')
             )
         )
 
@@ -60,10 +73,10 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         inputLyrList = self.parameterAsLayerList(
             parameters,
-            self.INPUTLAYERS,
+            self.INPUT_LAYERS,
             context
         )
-        input_data = self.load_rules_from_parameters(parameters)
+        self.domainDict = self.loadMapFromParameters(parameters)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
 
@@ -75,6 +88,20 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
 
         return {self.OUTPUT: inputLyrList}
 
+    def loadMapFromParameters(self, parameters):
+        """
+        Loads value map from json.
+        :param parameters: dict with the parameters of the alg
+        """
+        rules_path = parameters[self.VALUE_MAP_FILE]
+        rules_text = parameters[self.VALUE_MAP]
+        if rules_path and rules_path != '.json':
+            with open(rules_path, 'r') as f:
+                rules_input = json.load(f)
+        if rules_text and rules_text != '{}':
+            rules_input = json.loads(rules_text)
+        return rules_input
+
     def setDomainsAndRestrictions(self, lyr):
         """
         Adjusts the domain restriction to all attributes in the layer
@@ -85,10 +112,13 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
         """
         pkIdxList = lyr.primaryKeyAttributes()
         lyrName = lyr.name()
+        self.multiColumnsDict = {}
         for i, field in enumerate(lyr.fields()):
             attrName = field.name()
             if attrName == 'id' or 'id_' in attrName or i in pkIdxList:
-                lyr.editFormConfig().setReadOnly(i, True)
+                formConfig = lyr.editFormConfig()
+                formConfig.setReadOnly(i, True)
+                lyr.setEditFormConfig(formConfig)
             elif lyrName in self.domainDict \
                 and attrName in self.domainDict[lyrName]['columns']:
                 attrMetadataDict = self.domainDict[lyrName]['columns'][attrName]
@@ -123,10 +153,11 @@ class AssignValueMapToLayersAlgorithm(QgsProcessingAlgorithm):
                 else:
                     #filter value dict
                     valueDict = attrMetadataDict['values']
-                    if attrMetadataDict['constraintList'] != []:
+                    if attrMetadataDict['constraintList'] != [] and \
+                        attrMetadataDict['constraintList'] != list(valueDict.keys()):
                         valueRelationDict = {
                             v: str(k) for k, v in valueDict.items()
-                            if k in attrMetadataDict['constraintList']
+                            if str(k) in map(str, attrMetadataDict['constraintList'])
                         }
                     else:
                         valueRelationDict = {
