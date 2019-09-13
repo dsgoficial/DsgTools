@@ -37,9 +37,12 @@ class QualityAssuranceWorkflow(QObject):
     Works as a multi-model runner. Understands all models' parameters as an
     output vector layer.
     """
-    haltedOnFlags = pyqtSignal()
-    flagsRaisedWarning = pyqtSignal()
     workflowFinished = pyqtSignal()
+    haltedOnFlags = pyqtSignal(DsgToolsProcessingModel)
+    modelStarted = pyqtSignal(DsgToolsProcessingModel)
+    modelFinished = pyqtSignal(DsgToolsProcessingModel)
+    modelFinishedWithFlags = pyqtSignal(DsgToolsProcessingModel)
+    modelFailed = pyqtSignal(DsgToolsProcessingModel)
 
     def __init__(self, parameters, feedback=None):
         """
@@ -291,23 +294,27 @@ class QualityAssuranceWorkflow(QObject):
     def raiseFlagWarning(self, model):
         """
         Advises connected objects that flags were raised even though workflow
-        :param output: (DsgToolsProcessingModel) model have its flags checked.
+        :param model: (DsgToolsProcessingModel) model to have its flags checked.
         """
         for vl in model.output["result"].values():
             if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
-                model.flagsRaisedWarning.emit()
+                self.modelFinishedWithFlags.emit(model)
                 return
+        else:
+            self.modelFinished.emit(model)
 
-    def raiseFlagError(self, output):
+    def raiseFlagError(self, model):
         """
         It stops the workflow execution if flags are identified.
-        :param output: (dict) a map to DsgToolsProcessingModel output.
+        :param model: (DsgToolsProcessingModel) model to have its flags checked.
         """
         for vl in output["result"].values():
             if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
-                self.haltedOnFlags.emit()
+                self.haltedOnFlags.emit(model)
                 self.feedback.cancel()
                 return self.feedback.isCanceled()
+        else:
+            self.modelFinished.emit(model)
 
     def handleFlags(self, model):
         """
@@ -316,8 +323,8 @@ class QualityAssuranceWorkflow(QObject):
         """
         onFlagsMethod = {
             "warn" : partial(self.raiseFlagWarning, model),
-            "halt" : partial(self.raiseFlagError, model.output),
-            "ignore" : lambda : None
+            "halt" : partial(self.raiseFlagError, model),
+            "ignore" : partial(self.modelFinished.emit, model)
         }[model.onFlagsRaised()]()
 
     def run(self, firstModelName=None, cooldown=None):
@@ -333,12 +340,11 @@ class QualityAssuranceWorkflow(QObject):
         modelCount = len(self._executionOrder)
         if self.hasInvalidModel() or modelCount == 0:
             return {}
-        def modelFinished(model, step):
+        def modelCompleted(model, step):
             # register last model executed
             self.__lastModel = model.name()
             self.output[model.name()] = model.output
             self._multiStepFeedback.setCurrentStep(step)
-            print(self.feedback.progress())
             self.handleFlags(model)
         if firstModelName is not None:
             for idx, model in self._executionOrder.items():
@@ -354,7 +360,10 @@ class QualityAssuranceWorkflow(QObject):
                 continue
             # all models MUST pass through this postprocessing method
             currentModel.taskCompleted.connect(
-                partial(modelFinished, currentModel, idx + 1)
+                partial(modelCompleted, currentModel, idx + 1)
+            )
+            currentModel.begun.connect(
+                partial(self.modelStarted.emit, currentModel)
             )
             if idx != modelCount - 1:
                 self._executionOrder[idx + 1].addSubTask(

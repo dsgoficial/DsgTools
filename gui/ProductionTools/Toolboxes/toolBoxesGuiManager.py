@@ -31,7 +31,7 @@ from .AttributeTools.code_list import CodeList
 from .FieldToolBox.field_toolbox import FieldToolbox
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
-from .QualityAssuranceToolBox.qualityAssutanceDockWidget import QualityAssutanceDockWidget
+from .QualityAssuranceToolBox.qualityAssuranceDockWidget import QualityAssuranceDockWidget
 
 class ToolBoxesGuiManager(QObject):
 
@@ -47,7 +47,7 @@ class ToolBoxesGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        self.qaToolBox = QualityAssutanceDockWidget(self.iface)
+        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
         self.addTool(self.showQaToolBox, 'validationtools.png', self.tr("Geospatial Data Quality Assurance Tool"), setDefaultAction=True)
         self.fieldToolbox = None
         self.addTool(self.showFieldToolbox, 'fieldToolbox.png', self.tr('Feature Classification Tool'))
@@ -102,7 +102,7 @@ class ToolBoxesGuiManager(QObject):
         if self.qaToolBox:
             self.iface.removeDockWidget(self.qaToolBox)
         else:
-            self.qaToolBox = QualityAssutanceDockWidget(self.iface)
+            self.qaToolBox = QualityAssuranceDockWidget(self.iface)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
 
     def showCalcContourToolbox(self):
