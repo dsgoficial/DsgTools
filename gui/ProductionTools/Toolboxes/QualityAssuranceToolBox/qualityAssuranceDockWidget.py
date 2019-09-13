@@ -36,10 +36,10 @@ from qgis.PyQt.QtWidgets import (QDockWidget,
 from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import WorkflowSetupDialog
 
 FORM_CLASS, _ = uic.loadUiType(
-    os.path.join(os.path.dirname(__file__), 'qualityAssutanceDockWidget.ui')
+    os.path.join(os.path.dirname(__file__), 'qualityAssuranceDockWidget.ui')
 )
 
-class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
+class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
     # current execution status
     INITIAL, RUNNING, PAUSED, HALTED, CANCELED, FAILED, FINISHED, FINISHED_WITH_FLAGS = range(8)
 
@@ -51,7 +51,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         :param parent: (QtWidgets.*) any widget to parent this object's
                        instance.
         """
-        super(QualityAssutanceDockWidget, self).__init__(parent)
+        super(QualityAssuranceDockWidget, self).__init__(parent)
         self.setupUi(self)
         self.iface = iface
         self._previousWorkflow = None
@@ -384,6 +384,8 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
             return
         models = workflow.validModels()
         self.tableWidget.setRowCount(len(models))
+        def progressInt(pb, x):
+            pb.setValue(int(x))
         for row, (modelName, model) in enumerate(models.items()):
             item = QTableWidgetItem(modelName)
             item.setFlags(Qt.ItemIsEditable)
@@ -391,26 +393,7 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
             self.tableWidget.setItem(row, 0, item)
             self.setModelStatus(row, self.INITIAL)
             pb = self.progressWidget()
-            model.feedback.progressChanged.connect(pb.setValue)
             self.tableWidget.setCellWidget(row, 2, pb)
-            def statusChangedWrapper(status):
-                """code: (QgsTask.Enum) status enum"""
-                code = {
-                    model.Queued : self.INITIAL,
-                    model.OnHold : self.PAUSED,
-                    model.Running : self.RUNNING,
-                    model.Complete : self.FINISHED,
-                    model.Terminated : self.FAILED
-                }[status]
-                if code != self.INITIAL:
-                    self.setModelStatus(row, code, modelName)
-            model.statusChanged.connect(partial(statusChangedWrapper))
-            model.modelFailed.connect(
-                partial(self.setModelStatus, row, self.FAILED, modelName)
-            )
-            model.flagsRaisedWarning.connect(
-                partial(self.setModelStatus, row, self.FINISHED_WITH_FLAGS, modelName)
-            )
 
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     @pyqtSlot(str, name="on_comboBox_currentTextChanged")
@@ -433,6 +416,41 @@ class QualityAssutanceDockWidget(QDockWidget, FORM_CLASS):
         workflow = self.currentWorkflow()
         if workflow is not None:
             self.setState(True)
+            def intWrapper(pb, v):
+                pb.setValue(int(v))
+            def statusChangedWrapper(row, model, status):
+                """code: (QgsTask.Enum) status enum"""
+                code = {
+                    model.Queued : self.INITIAL,
+                    model.OnHold : self.PAUSED,
+                    model.Running : self.RUNNING,
+                    model.Complete : self.FINISHED,
+                    model.Terminated : self.FAILED
+                }[status]
+                if code != self.INITIAL:
+                    self.setModelStatus(row, code, model.displayName())
+            def begin(model):
+                for row in range(self.tableWidget.rowCount()):
+                    if self.tableWidget.item(row, 0).text() != model.name():
+                        continue
+                    self.__progressFunc = partial(
+                        intWrapper, self.tableWidget.cellWidget(row, 2)
+                    )
+                    model.feedback.progressChanged.connect(self.__progressFunc)
+                    # self.__statusUpdtFunc = partial(statusChangedWrapper, row, model)
+                    model.statusChanged.connect(
+                        # self.__statusUpdtFunc
+                        partial(statusChangedWrapper, row, model)
+                    )
+                    return
+            def end(model):
+                for row in range(self.tableWidget.rowCount()):
+                    if self.tableWidget.item(row, 0).text() != model.name():
+                        continue
+                    model.feedback.progressChanged.disconnect(self.__progressFunc)
+                    return
+            workflow.modelStarted.connect(begin)
+            workflow.modelFinished.connect(end)
             workflow.run()
         else:
             self.iface.messageBar().pushMessage(
