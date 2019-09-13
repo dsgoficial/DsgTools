@@ -159,7 +159,8 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             rootNodeName = 'unrecognised_format'
         return rootNodeName
 
-    def getLayerCategoryNode(self, lyr, rootNode, categoryToken, categoryTokenIndex):
+    def getLayerCategoryNode(self, lyr, rootNode, categoryToken,\
+                                                categoryTokenIndex):
         """
         Finds category node and creates (if not exists a node)
         """
