@@ -268,6 +268,26 @@ class QualityAssuranceWorkflow(QObject):
         """
         QgsApplication.taskManager().addTask(model)
 
+    def hold(self):
+        """
+        Puts current active tasks/models on hold.
+        """
+        if not hasattr(self, "_executionOrder"):
+            return
+        for m in self._executionOrder.values():
+            if m.status() == m.Running:
+                m.hold()
+
+    def unhold(self):
+        """
+        Puts current paused tasks/models back to active status.
+        """
+        if not hasattr(self, "_executionOrder"):
+            return
+        for m in self._executionOrder.values():
+            if m.status() == m.OnHold:
+                m.unhold()
+
     def raiseFlagWarning(self, model):
         """
         Advises connected objects that flags were raised even though workflow
@@ -336,12 +356,20 @@ class QualityAssuranceWorkflow(QObject):
             currentModel.taskCompleted.connect(
                 partial(modelFinished, currentModel, idx + 1)
             )
-            if idx == modelCount - 1:
-                # last model has indicates workflow finish
+            if idx != modelCount - 1:
+                self._executionOrder[idx + 1].addSubTask(
+                    currentModel,
+                    subTaskDependency=currentModel.ParentDependsOnSubTask
+                )
+            else:
+                # last model indicates workflow finish
                 currentModel.taskCompleted.connect(self.finished)
-                # this trigger the events
-                break
-            self._executionOrder[idx + 1].addSubTask(currentModel)
         # last model will trigger every dependent model till the first added to
         # the task manager
-        self.setupModelTask(self._executionOrder[modelCount - 1 - initialIdx])
+        self.setupModelTask(currentModel)
+
+    def runFromLast(self):
+        """
+        Executes run from last executed (unsucessfully) model.
+        """
+        self.run(self.__lastModel.displayName())
