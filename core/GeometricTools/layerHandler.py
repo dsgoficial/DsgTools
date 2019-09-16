@@ -25,6 +25,7 @@ from __future__ import absolute_import
 
 from collections import defaultdict
 from functools import partial
+from itertools import combinations
 
 from DsgTools.core.DSGToolsProcessingAlgs.algRunner import AlgRunner
 from DsgTools.core.Utils.FrameTools.map_index import UtmGrid
