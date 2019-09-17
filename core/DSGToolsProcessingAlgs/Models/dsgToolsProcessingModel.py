@@ -29,7 +29,7 @@ from qgis.core import (QgsTask,
                        QgsLayerTreeLayer,
                        QgsProcessingFeedback,
                        QgsProcessingModelAlgorithm)
-from qgis.PyQt.QtCore import pyqtSignal
+from qgis.PyQt.QtCore import pyqtSignal, QCoreApplication
 import processing
 
 class DsgToolsProcessingModel(QgsTask):
@@ -45,6 +45,17 @@ class DsgToolsProcessingModel(QgsTask):
     modelFinished = pyqtSignal()
     modelFailed = pyqtSignal()
     flagsRaisedWarning = pyqtSignal()
+    
+    # Appending status flags to the existing ones
+    n = max([
+        QgsTask.Queued,
+        QgsTask.OnHold,
+        QgsTask.Running,
+        QgsTask.Complete,
+        QgsTask.Terminated
+    ])
+    WarningFlags, HaltedOnFlags = range(n + 1, n + 3)
+    del n
 
     def __init__(self, parameters, name, taskName=None, flags=None, feedback=None):
         """
@@ -57,13 +68,17 @@ class DsgToolsProcessingModel(QgsTask):
                          object.
         """
         super(DsgToolsProcessingModel, self).__init__(
-            "", QgsTask.CanCancel if flags is None else flags
+            # "", QgsTask.CanCancel if flags is None else flags
+            QCoreApplication.translate(
+                "DsgToolsProcessingModel",
+                "DSGTools Quality Assurance Model"
+            ) or taskName,
+            QgsTask.CanCancel if flags is None else flags
         )
         self._name = name
         self._param = {} if self.validateParameters(parameters) else parameters
-        self.setDescription(taskName or self.displayName())
+        self.setTitle(taskName or self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
-        # self.feedback.progressChanged.connect(lambda x : self.setProgress(int(x)))
         self.feedback.canceled.connect(self.cancel)
         self.output = {
             "result" : dict(),

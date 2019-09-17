@@ -308,7 +308,7 @@ class QualityAssuranceWorkflow(QObject):
         It stops the workflow execution if flags are identified.
         :param model: (DsgToolsProcessingModel) model to have its flags checked.
         """
-        for vl in output["result"].values():
+        for vl in model.output["result"].values():
             if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
                 self.haltedOnFlags.emit(model)
                 self.feedback.cancel()
