@@ -310,11 +310,12 @@ class QualityAssuranceWorkflow(QObject):
         """
         for vl in model.output["result"].values():
             if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
-                self.haltedOnFlags.emit(model)
                 self.feedback.cancel()
+                self.haltedOnFlags.emit(model)
                 return self.feedback.isCanceled()
         else:
             self.modelFinished.emit(model)
+        return self.feedback.isCanceled()
 
     def handleFlags(self, model):
         """

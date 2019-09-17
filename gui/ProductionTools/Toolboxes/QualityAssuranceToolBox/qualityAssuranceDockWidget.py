@@ -25,7 +25,7 @@ from time import time
 from functools import partial
 
 from qgis.PyQt import uic
-from qgis.core import Qgis
+from qgis.core import Qgis, QgsProcessingFeedback
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QDockWidget,
@@ -357,14 +357,14 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         }[code]
         item.setForeground(QBrush(color))
         self.tableWidget.setItem(row, 1, item)
-        if modelName is not None:
+        if modelName is not None and code != self.INITIAL:
             # advise user a model status has changed only if it came from a 
             # signal call
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTool Q&A Toolbox"),
                 self.tr("model {0} finished with status {1}.")\
                     .format(modelName, status),
-                {
+                {   
                     self.RUNNING : Qgis.Info,
                     self.PAUSED : Qgis.Info,
                     self.HALTED : Qgis.Critical,
@@ -420,7 +420,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.setState(True)
             # these methods are defined locally as they are not supposed to be
             # outside thread execution setup and should all be handled from
-            # within this method - at runtime 
+            # within this method - at runtime
+            def refreshFeedback():
+                # refresh feedback track to not carry "bias" to next execution
+                workflow.feedback.progressChanged.disconnect(self.setProgress)
+                del workflow.feedback
+                workflow.feedback = QgsProcessingFeedback()
+                workflow.feedback.progressChanged.connect(self.setProgress)
             def intWrapper(pb, v):
                 pb.setValue(int(v))
             def statusChangedWrapper(row, model, status):
@@ -448,25 +454,37 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                         intWrapper, self.tableWidget.cellWidget(row, 2)
                     )
                     model.feedback.progressChanged.connect(self.__progressFunc)
-                    model.statusChanged.connect(
-                        partial(statusChangedWrapper, row, model)
-                    )
+                    self.__progressFunc = partial(statusChangedWrapper, row, model)
+                    model.statusChanged.connect(self.__progressFunc)
                     return
             def end(model):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
                         continue
-                    model.feedback.progressChanged.disconnect(self.__progressFunc)
+                    try:
+                        model.feedback.progressChanged.disconnect(self.__progressFunc)
+                    except:
+                        pass
                     return
             def stopOnFlags(model):
+                refreshFeedback()
+                isAfter = False
                 for row in range(self.tableWidget.rowCount()):
-                    if self.tableWidget.item(row, 0).text() != model.name():
+                    if self.tableWidget.item(row, 0).text() != model.name() and not isAfter:
                         continue
+                    if isAfter:
+                        code = self.INITIAL
+                        try:
+                            model.statusChanged.disconnect(self.__progressFunc)
+                        except:
+                            pass
+                        self.tableWidget.cellWidget(row, 2).setValue(0)
+                    else:
+                        code = self.HALTED
+                    isAfter = True
                     self.setModelStatus(
-                        row, self.HALTED, model.displayName()
+                        row, code, model.displayName()
                     )
-                    workflow.feedback.cancel()
-                    return
             def warningFlags(model):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
@@ -485,6 +503,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 workflow.haltedOnFlags.disconnect(stopOnFlags)
                 workflow.modelFinishedWithFlags.disconnect(warningFlags)
                 workflow.workflowFinished.disconnect(postProcessing)
+                refreshFeedback()
             workflow.modelStarted.connect(begin)
             workflow.modelFinished.connect(end)
             workflow.haltedOnFlags.connect(stopOnFlags)

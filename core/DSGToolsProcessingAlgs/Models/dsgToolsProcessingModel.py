@@ -77,14 +77,15 @@ class DsgToolsProcessingModel(QgsTask):
         )
         self._name = name
         self._param = {} if self.validateParameters(parameters) else parameters
-        self.setTitle(taskName or self.displayName())
+        # self.setTitle(taskName or self.displayName())
         self.feedback = feedback or QgsProcessingFeedback()
         self.feedback.canceled.connect(self.cancel)
         self.output = {
             "result" : dict(),
             "status" : False,
             "executionTime" : .0,
-            "errorMessage" : self.tr("Thread not started yet.")
+            "errorMessage" : self.tr("Thread not started yet."),
+            "hasFlags" : False
         }
 
     def setTitle(self, title):
@@ -354,6 +355,8 @@ class DsgToolsProcessingModel(QgsTask):
         # this tool understands every parameter to be filled as an output LAYER
         # it also sets all output to a MEMORY LAYER.
         model = self.model()
+        if self.isCanceled():
+            return {}
         out = processing.run(
             model,
             { param : "memory:" for param in self.modelParameters(model) },
@@ -395,19 +398,45 @@ class DsgToolsProcessingModel(QgsTask):
         """
         start = time()
         try:
-            self.output = {
-                "result" : { k.split(":", 2)[-1] : v for k, v in self.runModel(self.feedback).items() },
-                "status" : True,
-                "errorMessage" : ""
-            }
-            self.modelFinished.emit()
+            if not self.feedback.isCanceled() or not self.isCanceled():
+                self.output = {
+                    "result" : { k.split(":", 2)[-1] : v for k, v in self.runModel(self.feedback).items() },
+                    "status" : True,
+                    "errorMessage" : "",
+                    "hasFlags" : self.hasFlags()
+                }
+                
         except Exception as e:
             self.output = {
                 "result" : {},
                 "status" : False,
                 "errorMessage" : self.tr("Model has failed:\n'{error}'")\
-                                 .format(error=str(e))
+                                 .format(error=str(e)),
+                "hasFlags" : False
             }
-            self.modelFailed.emit()
         self.output["executionTime"] = time() - start
         return self.output["status"]
+    
+    def hasFlags(self):
+        """
+        Iterates over the results and finds if there are flags.
+        """
+        for lyr in self.output['result'].values():
+            if isinstance(QgsMapLayer, lyr) and lyr.featureCount() > 0:
+                return True
+        return False
+
+    
+    def finished(self, result):
+        """
+        Reimplemented from parent QgsTask.
+        Esp continua o docstring pq eu sou preguiçoso
+        """
+        if result and self.output['hasFlags'] and self.onFlagsRaised() == 'halt':
+            self.cancel()
+            self.feedback.cancel()
+            self.modelFinished.emit()
+        elif not result:
+            self.modelFailed.emit()
+        else:
+            self.modelFinished()
