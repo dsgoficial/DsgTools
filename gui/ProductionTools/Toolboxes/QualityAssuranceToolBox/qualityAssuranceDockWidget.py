@@ -421,7 +421,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             def intWrapper(pb, v):
                 pb.setValue(int(v))
             def statusChangedWrapper(row, model, status):
-                """code: (QgsTask.Enum) status enum"""
+                """status: (QgsTask.Enum) status enum"""
                 if row is None:
                     for row in range(self.tableWidget.rowCount()):
                         if self.tableWidget.item(row, 0).text() == model.name():
@@ -431,7 +431,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     model.OnHold : self.PAUSED,
                     model.Running : self.RUNNING,
                     model.Complete : self.FINISHED,
-                    model.Terminated : self.FAILED
+                    model.Terminated : self.FAILED,
+                    model.WarningFlags : self.FINISHED_WITH_FLAGS,
+                    model.HaltedOnFlags : self.HALTED
                 }[status]
                 if code != self.INITIAL:
                     self.setModelStatus(row, code, model.displayName())
@@ -453,9 +455,36 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                         continue
                     model.feedback.progressChanged.disconnect(self.__progressFunc)
                     return
+            def stopOnFlags(model):
+                for row in range(self.tableWidget.rowCount()):
+                    if self.tableWidget.item(row, 0).text() != model.name():
+                        continue
+                    statusChangedWrapper(row, model, model.HaltedOnFlags)
+                    workflow.feedback.cancel()
+                    return
+            def warningFlags(model):
+                for row in range(self.tableWidget.rowCount()):
+                    if self.tableWidget.item(row, 0).text() != model.name():
+                        continue
+                    statusChangedWrapper(row, model, model.WarningFlags)
+                    return
+            def postProcessing():
+                """
+                When workflow finishes, its signals are kept connected and that
+                might cause missbehaviour on next executions.
+                """
+                workflow.modelStarted.disconnect(begin)
+                workflow.modelFinished.disconnect(end)
+                workflow.haltedOnFlags.disconnect(stopOnFlags)
+                workflow.modelFinishedWithFlags.disconnect(warningFlags)
+                workflow.workflowFinished.disconnect(postProcessing)
             workflow.modelStarted.connect(begin)
             workflow.modelFinished.connect(end)
-            if self.sender().objectName() == "runPushButton":
+            workflow.haltedOnFlags.connect(stopOnFlags)
+            workflow.modelFinishedWithFlags.connect(warningFlags)
+            workflow.workflowFinished.connect(postProcessing)
+            sender = self.sender()
+            if sender is None or sender.objectName() == "runPushButton":
                 workflow.run()
             else:
                 workflow.run(firstModelName=self._firstModel)
