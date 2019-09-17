@@ -418,6 +418,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         workflow = self.currentWorkflow()
         if workflow is not None:
             self.setState(True)
+            # these methods are defined locally as they are not supposed to be
+            # outside thread execution setup and should all be handled from
+            # within this method - at runtime 
             def intWrapper(pb, v):
                 pb.setValue(int(v))
             def statusChangedWrapper(row, model, status):
@@ -459,14 +462,18 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
                         continue
-                    statusChangedWrapper(row, model, model.HaltedOnFlags)
+                    self.setModelStatus(
+                        row, self.HALTED, model.displayName()
+                    )
                     workflow.feedback.cancel()
                     return
             def warningFlags(model):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
                         continue
-                    statusChangedWrapper(row, model, model.WarningFlags)
+                    self.setModelStatus(
+                        row, self.FINISHED_WITH_FLAGS, model.displayName()
+                    )
                     return
             def postProcessing():
                 """
