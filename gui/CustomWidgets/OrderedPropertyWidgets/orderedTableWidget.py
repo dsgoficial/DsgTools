@@ -222,6 +222,22 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                 else:
                     return self.tableWidget.cellWidget(row, col)
 
+    def itemAt(self, row, col):
+        """
+        Similiar to item, but returns QTableWIdgetItem instead of its text.
+        :param row: (int) item's row to be read.
+        :param col: (int) item's column to be read.
+        :return: (QTableWIdgetItem/QWidget) cell contents.
+        """
+        if row >= self.rowCount() or col >= self.columnCount() \
+           or row < 0 or col < 0:
+            return None
+        for header, properties in self.headers.items():
+            if col == properties["col"]:
+                if properties["type"] == "item":
+                    return self.tableWidget.item(row, col)
+                else:
+                    return self.tableWidget.cellWidget(row, col)
     def selectedIndexes(self):
         """
         :return: (list-of-QModelIndex) table's selected indexes.
