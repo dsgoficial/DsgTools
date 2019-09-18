@@ -25,7 +25,7 @@ from time import time
 from functools import partial
 
 from qgis.PyQt import uic
-from qgis.core import Qgis, QgsProcessingFeedback
+from qgis.core import Qgis, QgsMessageLog, QgsProcessingFeedback
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QDockWidget,
@@ -33,7 +33,8 @@ from qgis.PyQt.QtWidgets import (QDockWidget,
                                  QProgressBar,
                                  QTableWidgetItem)
 
-from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox.workflowSetupDialog import WorkflowSetupDialog
+from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox\
+    .workflowSetupDialog import WorkflowSetupDialog
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'qualityAssuranceDockWidget.ui')
@@ -219,6 +220,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.pausePushButton.setEnabled(isActive)
         self.cancelPushButton.setEnabled(isActive)
         self.continuePushButton.setEnabled(isActive)
+        self.runPushButton.setEnabled(not isActive)
+        self.resumePushButton.setEnabled(not isActive)
 
     def currentWorkflowName(self):
         """
@@ -262,7 +265,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         if idx < 1:
             return
         # raise any confirmation question?
-        msg = self.tr("Are you sure you want to remove {0}")\
+        msg = self.tr("Are you sure you want to remove workflow {0}?")\
                   .format(self.currentWorkflowName())
         if not self.confirmAction(msg):
             return
@@ -369,12 +372,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         }[code]
         item.setForeground(QBrush(color))
         self.tableWidget.setItem(row, 1, item)
-        if modelName is not None and code != self.INITIAL:
+        if modelName is not None and code in [self.HALTED, self.FAILED]:
             # advise user a model status has changed only if it came from a 
             # signal call
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTool Q&A Toolbox"),
-                self.tr("model {0} finished with status {1}.")\
+                self.tr("model {0} status changed to {1}.")\
                     .format(modelName, status),
                 {   
                     self.RUNNING : Qgis.Info,
@@ -387,6 +390,21 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 }[code],
                 duration=3
             )
+        if code != self.INITIAL:
+            QgsMessageLog.logMessage(
+                self.tr("model {0} status changed to {1}.")\
+                    .format(modelName, status),
+                "DSG Tools Plugin",
+                {   
+                    self.RUNNING : Qgis.Info,
+                    self.PAUSED : Qgis.Info,
+                    self.HALTED : Qgis.Critical,
+                    self.CANCELED : Qgis.Warning,
+                    self.FAILED : Qgis.Critical,
+                    self.FINISHED : Qgis.Info,
+                    self.FINISHED_WITH_FLAGS : Qgis.Warning
+                }[code]
+        )
 
     def setWorkflow(self, workflow):
         """
@@ -468,6 +486,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     model.feedback.progressChanged.connect(self.__progressFunc)
                     self.__statusFunc = partial(statusChangedWrapper, row, model)
                     model.statusChanged.connect(self.__statusFunc)
+                    self.setModelStatus(
+                        row, self.RUNNING, model.displayName()
+                    )
                     return
             def end(model):
                 for row in range(self.tableWidget.rowCount()):
@@ -518,8 +539,23 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.setState(False)
                 self.pausePushButton.show()
                 self.continuePushButton.hide()
+                for m in workflow.validModels().values():
+                    if m.hasFlags():
+                        msg = self.tr("workflow {0} finished with flags.")
+                        lvl = Qgis.Warning
+                        break
+                else:
+                    msg = self.tr("workflow {0} finished.")
+                    lvl = Qgis.Success
+                self.iface.messageBar().pushMessage(
+                    self.tr("DSGTool Q&A Toolbox"),
+                    msg.format(workflow.displayName()),
+                    lvl,
+                    duration=3
+                )
             workflow.modelStarted.connect(begin)
             workflow.modelFinished.connect(end)
+            workflow.feedback.canceled.connect(end)
             workflow.haltedOnFlags.connect(stopOnFlags)
             workflow.modelFinishedWithFlags.connect(warningFlags)
             workflow.workflowFinished.connect(postProcessing)

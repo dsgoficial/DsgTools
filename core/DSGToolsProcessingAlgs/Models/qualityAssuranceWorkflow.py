@@ -240,7 +240,7 @@ class QualityAssuranceWorkflow(QObject):
         :param filepath: (str) path to JSON file.
         :return: (dict) DSGTools processing model definitions.
         """
-        return self._param
+        return dict(self._param)
 
     def finished(self):
         """
@@ -335,7 +335,7 @@ class QualityAssuranceWorkflow(QObject):
         }
         modelCount = len(self._executionOrder)
         if self.hasInvalidModel() or modelCount == 0:
-            return {}
+            return None
         def modelCompleted(model, step):
             # register last model executed
             self.__lastModel = model.name()
@@ -346,9 +346,10 @@ class QualityAssuranceWorkflow(QObject):
             for idx, model in self._executionOrder.items():
                 if model.name() == firstModelName:
                     initialIdx = idx
+                    break
             else:
                 # name was not found
-                return {}
+                return None
         else:
             initialIdx = 0
         for idx, currentModel in self._executionOrder.items():
