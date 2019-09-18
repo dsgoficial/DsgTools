@@ -140,7 +140,10 @@ class DsgToolsProcessingModel(QgsTask):
         :param xml: (str) XML file contents.
         :return: (QgsProcessingModelAlgorithm) model as a processing algorithm.
         """
-        temp = "./temp_model_{0}.model3".format(hash(time()))
+        temp = os.path.join(
+            os.path.dirname(__file__),
+            "temp_model_{0}.model3".format(hash(time()))
+        )
         with open(temp, "w+", encoding="utf-8") as xmlFile:
             xmlFile.write(xml)
         alg = DsgToolsProcessingModel.modelFromFile(temp)
