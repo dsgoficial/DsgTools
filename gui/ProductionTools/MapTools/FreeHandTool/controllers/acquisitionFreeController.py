@@ -155,7 +155,7 @@ class AcquisitionFreeController(object):
                     QMessageBox().tr('Error!'),
                     msg
                 )
-                QgsMessageLog.logMessage(msg, 'DSG Tools Plugin', Qgis.Critical)
+                QgsMessageLog.logMessage(msg, 'DSGTools Plugin', Qgis.Critical)
                 return geom
         tr = core.QgsCoordinateTransform(dest_crs, source_crs, core.QgsCoordinateTransformContext())
         sGeom.transform(tr)

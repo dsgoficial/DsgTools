@@ -261,7 +261,7 @@ class CreateDatabaseCustomization(QtWidgets.QDialog, FORM_CLASS):
             if len(exceptionList)> 0:
                 msg += self.tr('\Errors occured while trying to export customs built. Check qgis log for further details.')
                 for error in exceptionList:
-                    QgsMessageLog.logMessage(self.tr('Customization error: ') + error, "DSG Tools Plugin", Qgis.Critical)
+                    QgsMessageLog.logMessage(self.tr('Customization error: ') + error, "DSGTools Plugin", Qgis.Critical)
                 QMessageBox.warning(self, self.tr('Error!'), msg)
     
     def validateJsonDict(self, customJsonDict):

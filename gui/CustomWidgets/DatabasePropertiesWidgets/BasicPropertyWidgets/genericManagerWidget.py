@@ -308,7 +308,7 @@ class GenericManagerWidget(QtWidgets.QWidget, FORM_CLASS):
             for config in configList:
                 for dbName in list(exceptionDict[config].keys()):
                     if exceptionDict[config][dbName] != dict():
-                        QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSG Tools Plugin", Qgis.Critical)
+                        QgsMessageLog.logMessage(self.tr('Error for config ')+ config + ' in database ' +dbName+' : '+exceptionDict[config][dbName], "DSGTools Plugin", Qgis.Critical)
         return msg 
 
     def manageSetting(self, config, manageType, dbList = [], parameterDict = dict()):
