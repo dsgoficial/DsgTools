@@ -42,9 +42,7 @@ class DsgToolsProcessingModel(QgsTask):
     # xml: XML string               #
     # file: path to a local file    #
     # model: qgis resgistered model #
-    modelFinished = pyqtSignal()
-    modelFailed = pyqtSignal()
-    flagsRaisedWarning = pyqtSignal()
+    modelFinished = pyqtSignal(QgsTask)
     
     # Appending status flags to the existing ones
     n = max([
@@ -85,7 +83,7 @@ class DsgToolsProcessingModel(QgsTask):
             "status" : False,
             "executionTime" : .0,
             "errorMessage" : self.tr("Thread not started yet."),
-            "hasFlags" : False
+            "finishStatus" : "initial"
         }
 
     def setTitle(self, title):
@@ -345,6 +343,7 @@ class DsgToolsProcessingModel(QgsTask):
                     break
             else:
                 subgroup = group.addGroup(subgroupname)
+        subgroup = root.findGroup(subgroupname)
         QgsProject.instance().addMapLayer(layer, False)
         subgroup.insertChildNode(1, QgsLayerTreeLayer(layer))
 
@@ -388,11 +387,11 @@ class DsgToolsProcessingModel(QgsTask):
 
     def asDict(self):
         """
-        Dumps model parameters as a JSON file.
-        :param filepath: (str) path to JSON file.
+        Dumps model parameters as a dict. Returns a copy of current parameters
+        and modifications on the output does not modify this object.
         :return: (dict) DSGTools processing model definitions.
         """
-        return self._param
+        return dict(self._param)
 
     def run(self):
         """
@@ -403,19 +402,19 @@ class DsgToolsProcessingModel(QgsTask):
         try:
             if not self.feedback.isCanceled() or not self.isCanceled():
                 self.output = {
-                    "result" : { k.split(":", 2)[-1] : v for k, v in self.runModel(self.feedback).items() },
+                    "result" : {
+                        k.split(":", 2)[-1] : v \
+                            for k, v in self.runModel(self.feedback).items()
+                    },
                     "status" : True,
-                    "errorMessage" : "",
-                    "hasFlags" : self.hasFlags()
+                    "errorMessage" : ""
                 }
-                
         except Exception as e:
             self.output = {
                 "result" : {},
                 "status" : False,
                 "errorMessage" : self.tr("Model has failed:\n'{error}'")\
-                                 .format(error=str(e)),
-                "hasFlags" : False
+                                 .format(error=str(e))
             }
         self.output["executionTime"] = time() - start
         return self.output["status"]
@@ -425,21 +424,22 @@ class DsgToolsProcessingModel(QgsTask):
         Iterates over the results and finds if there are flags.
         """
         for lyr in self.output['result'].values():
-            if isinstance(QgsMapLayer, lyr) and lyr.featureCount() > 0:
+            if isinstance(lyr, QgsMapLayer) and lyr.featureCount() > 0:
                 return True
         return False
-
     
     def finished(self, result):
         """
-        Reimplemented from parent QgsTask.
-        Esp continua o docstring pq eu sou preguiçoso
+        Reimplemented from parent QgsTask. Method works a postprocessing one,
+        always called right after run is finished (read the docs on QgsTask).
+        :param result: (bool) run returned valued.
         """
-        if result and self.output['hasFlags'] and self.onFlagsRaised() == 'halt':
+        if result and self.onFlagsRaised() == 'halt' and self.hasFlags():
             self.cancel()
             self.feedback.cancel()
-            self.modelFinished.emit()
+            self.output["finishStatus"] = 'halt'
         elif not result:
-            self.modelFailed.emit()
+            self.output["finishStatus"] = 'failed'
         else:
-            self.modelFinished()
+            self.output["finishStatus"] = 'finished'
+        self.modelFinished.emit(self)
