@@ -552,7 +552,7 @@ Tecla Ctrl: ferramenta é pausada enquanto Ctrl é pressionado.</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/adjustNetworkConnectivityAlgorithm.py" line="131"/>
-        <source>Validation Tools (Network Processes)</source>
+        <source>Quality Assurance Tools (Network Processes)</source>
         <translation>Ferramentas de Validação (Processos de Rede)</translation>
     </message>
 </context>
@@ -2046,7 +2046,7 @@ Mensagens de erro para cada banco de dados foram registradas no log do QGIS.</tr
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/cleanGeometriesAlgorithm.py" line="191"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -3173,7 +3173,7 @@ A conversão deve ser entre bancos de dados com a mesma versão!</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/createNetworkNodesAlgorithm.py" line="303"/>
-        <source>Validation Tools (Network Processes)</source>
+        <source>Quality Assurance Tools (Network Processes)</source>
         <translation>Ferramentas de Validação (Processos de Rede)</translation>
     </message>
     <message>
@@ -4809,7 +4809,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/deaggregateGeometriesAlgorithm.py" line="137"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -5924,7 +5924,7 @@ camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/dissolvePolygonsWithSameAttributesAlgorithm.py" line="168"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -6484,7 +6484,7 @@ Shift + clique esquerdo + arrastar do mouse: selecione um conjunto de pontos e d
     </message>
     <message>
         <location filename="../dsg_tools.py" line="244"/>
-        <source>Validation Tools</source>
+        <source>Quality Assurance Tools</source>
         <translation type="obsolete">Ferramentas de validação</translation>
     </message>
     <message>
@@ -8729,7 +8729,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/hierarchicalSnapLayerOnLayerAndUpdateAlgorithm.py" line="154"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -8822,7 +8822,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyAndFixInvalidGeometriesAlgorithm.py" line="144"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -8890,7 +8890,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyContourLineOutOfThresholdAlgorithm.py" line="199"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -8978,7 +8978,7 @@ Shift+Clique de botão esquerdo+arrastar e soltar: seleciona todas as feições 
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDanglesAlgorithm.py" line="355"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -9159,7 +9159,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedFeaturesAlgorithm.py" line="164"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -9192,7 +9192,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedGeometriesAlgorithm.py" line="129"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
@@ -9330,7 +9330,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedLinesBetweenLayersAlgorithm.py" line="132"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
@@ -9368,7 +9368,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPointsBetweenLayersAlgorithm.py" line="132"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
@@ -9406,7 +9406,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyDuplicatedPolygonsBetweenLayersAlgorithm.py" line="132"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
@@ -9444,7 +9444,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAlgorithm.py" line="140"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -9492,7 +9492,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyGapsAndOverlapsInCoverageAlgorithm.py" line="234"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
     <message>
@@ -9750,7 +9750,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidAttributeCombinationsAlgorithm.py" line="146"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -9938,7 +9938,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyInvalidSpatialRelationshipAlgorithm.py" line="182"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -10076,7 +10076,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesAlgorithm.py" line="130"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -10109,7 +10109,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOutOfBoundsAnglesInCoverageAlgorithm.py" line="176"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -10328,7 +10328,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifyOverlapsAlgorithm.py" line="164"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -10551,7 +10551,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallLinesAlgorithm.py" line="128"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -10694,7 +10694,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/identifySmallPolygonsAlgorithm.py" line="127"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -11157,7 +11157,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/lineOnLineOverlayerAlgorithm.py" line="167"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -12019,7 +12019,7 @@ Usuários com erro:</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/mergeLinesAlgorithm.py" line="164"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -13112,7 +13112,7 @@ Verificar o Direcionamento de Rede: linhas invertidas/unidas
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/overlayElementsWithAreasAlgorithm.py" line="242"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -15106,7 +15106,7 @@ Usuários com erro:</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedFeaturesAlgorithm.py" line="184"/>
-        <source>Validation Tools (Correction Processes)</source>
+        <source>Quality Assurance Tools (Correction Processes)</source>
         <translation>Ferramentas de Validação (Processos de Correção)</translation>
     </message>
 </context>
@@ -15149,7 +15149,7 @@ Usuários com erro:</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeDuplicatedGeometriesAlgorithm.py" line="150"/>
-        <source>Validation Tools (Correction Processes)</source>
+        <source>Quality Assurance Tools (Correction Processes)</source>
         <translation>Ferramentas de Validação (Processos de Correção)</translation>
     </message>
 </context>
@@ -15260,7 +15260,7 @@ Usuários com erro:</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeEmptyAndUpdateAlgorithm.py" line="147"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -15484,7 +15484,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallLinesAlgorithm.py" line="154"/>
-        <source>Validation Tools (Correction Processes)</source>
+        <source>Quality Assurance Tools (Correction Processes)</source>
         <translation>Ferramentas de Validação (Processos de Correção)</translation>
     </message>
 </context>
@@ -15600,7 +15600,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/removeSmallPolygonsAlgorithm.py" line="158"/>
-        <source>Validation Tools (Correction Processes)</source>
+        <source>Quality Assurance Tools (Correction Processes)</source>
         <translation>Ferramentas de Validação (Processos de Correção)</translation>
     </message>
 </context>
@@ -16674,7 +16674,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapLayerOnLayerAndUpdateAlgorithm.py" line="184"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -16928,7 +16928,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/snapToGridAndUpdateAlgorithm.py" line="167"/>
-        <source>Validation Tools (Manipulation Processes)</source>
+        <source>Quality Assurance Tools (Manipulation Processes)</source>
         <translation>Ferramentas de Validação (Processos de Manipulação)</translation>
     </message>
 </context>
@@ -17251,7 +17251,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/spatialRulesCheckerAlgorithm.py" line="104"/>
-        <source>Validation Tools (Identification Processes)</source>
+        <source>Quality Assurance Tools (Identification Processes)</source>
         <translation>Ferramentas de Validação (Processos de Identificação)</translation>
     </message>
 </context>
@@ -17645,7 +17645,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanAlgorithm.py" line="220"/>
-        <source>Validation Tools (Topological Processes)</source>
+        <source>Quality Assurance Tools (Topological Processes)</source>
         <translation>Ferramentas de Validação (Processos Topológicos)</translation>
     </message>
 </context>
@@ -17683,7 +17683,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalCleanLinesAlgorithm.py" line="117"/>
-        <source>Validation Tools (Topological Processes)</source>
+        <source>Quality Assurance Tools (Topological Processes)</source>
         <translation>Ferramentas de Validação (Processos Topológicos)</translation>
     </message>
 </context>
@@ -17862,7 +17862,7 @@ Camada</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/topologicalDouglasSimplificationAlgorithm.py" line="196"/>
-        <source>Validation Tools (Topological Processes)</source>
+        <source>Quality Assurance Tools (Topological Processes)</source>
         <translation>Ferramentas de Validação (Processos Topológicos)</translation>
     </message>
 </context>
@@ -18889,7 +18889,7 @@ fluxo de trabalho</translation>
     </message>
     <message>
         <location filename="../core/DSGToolsProcessingAlgs/Algs/ValidationAlgs/verifyNetworkDirectioningAlgorithm.py" line="314"/>
-        <source>Validation Tools (Network Processes)</source>
+        <source>Quality Assurance Tools (Network Processes)</source>
         <translation>Ferramentas de Validação (Processos de Rede)</translation>
     </message>
     <message>

@@ -196,7 +196,7 @@ class IdentifyContourLineOutOfThresholdAlgorithm(ValidationAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Validation Tools (Identification Processes)')
+        return self.tr('Quality Assurance Tools (Identification Processes)')
 
     def groupId(self):
         """
@@ -206,7 +206,7 @@ class IdentifyContourLineOutOfThresholdAlgorithm(ValidationAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Validation Tools (Identification Processes)'
+        return 'DSGTools: Quality Assurance Tools (Identification Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('IdentifyContourLineOutOfThresholdAlgorithm', string)
