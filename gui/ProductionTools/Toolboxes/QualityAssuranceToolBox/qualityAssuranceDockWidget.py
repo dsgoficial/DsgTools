@@ -57,6 +57,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.iface = iface
         self._previousWorkflow = None
         self._firstModel = None
+        self.__workflowCanceled = False
         self.parent = parent
         self.statusMap = {
             self.INITIAL : self.tr("Not yet run"),
@@ -115,6 +116,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.pausePushButton.show()
         self.continuePushButton.hide()
         self.setState(False)
+        self.__workflowCanceled = True
 
     def setProgress(self, value):
         """
@@ -347,6 +349,22 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         name = self.currentWorkflowName()
         return self.workflows[name] if name in self.workflows else None
 
+    def setRowColor(self, row, backgroundColor, foregroundColor):
+        """
+        Sets cell colors for model's name and its status.
+        :param row: (int) model's row on GUI.
+        :param backgroundColor: (QColor) color to be set to the background.
+        :param foregroundColor: (QColor) color to be set to the letters.
+        """
+        # change to cell widget
+        self.tableWidget.item(row, 0).setBackground(QBrush(backgroundColor))
+        self.tableWidget.item(row, 0).setForeground(QBrush(foregroundColor))
+        item  = QTableWidgetItem()
+        item.setFlags(Qt.ItemIsEditable)
+        item.setBackground(QBrush(backgroundColor))
+        item.setForeground(QBrush(foregroundColor))
+        self.tableWidget.setItem(row, 1, item)
+
     def setModelStatus(self, row, code, modelName=None):
         """
         Sets model execution status to its cell.
@@ -357,10 +375,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                           to avoid polluting QGIS main window.
         """
         status = self.statusMap[code]
-        item = QTableWidgetItem(status)
-        # togle editable flag to make it NOT editable
-        item.setFlags(Qt.ItemIsEditable)
-        color = {
+        colorForeground = {
             self.INITIAL : QColor(0, 0, 0),
             self.RUNNING : QColor(0, 0, 125),
             self.PAUSED : QColor(187, 201, 25),
@@ -370,8 +385,18 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FINISHED : QColor(0, 125, 0),
             self.FINISHED_WITH_FLAGS : QColor(90, 135, 39)
         }[code]
-        item.setForeground(QBrush(color))
-        self.tableWidget.setItem(row, 1, item)
+        colorBackground = {
+            self.INITIAL : QColor(255, 255, 255, 75),
+            self.RUNNING : QColor(0, 0, 125, 90),
+            self.PAUSED : QColor(187, 201, 25, 20),
+            self.HALTED : QColor(200, 215, 40, 20),
+            self.CANCELED : QColor(200, 0, 0, 85),
+            self.FAILED : QColor(169, 18, 28, 85),
+            self.FINISHED : QColor(0, 125, 0, 90),
+            self.FINISHED_WITH_FLAGS : QColor(90, 135, 39, 90)
+        }[code]
+        self.setRowColor(row, colorBackground, colorForeground)
+        self.tableWidget.item(row, 1).setText(status)
         if modelName is not None and code in [self.HALTED, self.FAILED]:
             # advise user a model status has changed only if it came from a 
             # signal call
@@ -488,12 +513,14 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     model.WarningFlags : self.FINISHED_WITH_FLAGS,
                     model.HaltedOnFlags : self.HALTED
                 }[status]
-                if status == model.Terminated:
-                    # check if cancel status changed came from a "halt on flags"
-                    # or a cancel workflow call
-                    if not (model.output["finishStatus"] == "halt" \
-                            and model.hasFlags()):
+                if status == model.Terminated and \
+                   model.output["finishStatus"] != "halt":
+                    if self.__workflowCanceled:
                         code = self.CANCELED
+                    # if workflow was canceled (through the cancel push button),
+                    # workflowFinished signal will not be emited...
+                    postProcessing()
+                    self.__workflowCanceled = False
                 if code != self.INITIAL:
                     self.setModelStatus(row, code, model.displayName())
             def begin(model):
