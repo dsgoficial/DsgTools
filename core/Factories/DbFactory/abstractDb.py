@@ -661,8 +661,9 @@ class AbstractDb(QObject):
                 styleList.append(f)
         except FileNotFoundError:
             # in case style folder is not found, it will be created
-            os.system('mkdir {0}'.format(os.path.join(currentPath, '..', '..', 'Styles')))
-            os.system('mkdir {0}'.format(styleDir))
+            currentPath = os.path.dirname(__file__)
+            os.makedirs(os.path.join(currentPath, '..', '..', 'Styles'))
+            os.makedirs(styleDir)
         styleDict = dict()
         try:
             for s in styleList:
