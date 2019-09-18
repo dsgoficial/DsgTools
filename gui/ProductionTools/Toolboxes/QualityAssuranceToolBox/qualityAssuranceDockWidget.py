@@ -273,7 +273,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             return
         dlg = WorkflowSetupDialog(self)
         dlg.show()
-        temp = "./temp_workflow_{0}.workflow".format(hash(time()))
+        temp = os.path.join(
+            os.path.dirname(__file__),
+            "temp_workflow_{0}.workflow".format(hash(time()))
+        )
         with open(temp, "w+", encoding="utf-8") as f:
             json.dump(workflow.asDict(), f)
         dlg.importWorkflow(temp)
