@@ -153,6 +153,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMa
     AssignValueMapToLayersAlgorithm
 
 from processing.core.ProcessingConfig import ProcessingConfig, Setting
+from core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.loadLayersFromPostgisAlgorithm import (
+    LoadLayersFromPostgisAlgorithm)
 
 
 class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
@@ -220,7 +222,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     SingleOutputUnitTestAlgorithm(),
                     ExportToMemoryLayer(),
                     AssignFormFormatRulesToLayersAlgorithm(),
-                    AssignValueMapToLayersAlgorithm()
+                    AssignValueMapToLayersAlgorithm(),
+                    LoadLayersFromPostgisAlgorithm()
                 ]
         return algList
 
