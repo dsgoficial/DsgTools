@@ -426,6 +426,20 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             pb = self.progressWidget()
             self.tableWidget.setCellWidget(row, 2, pb)
 
+    def preProcessing(self, firstModel=None):
+        """
+        Clears all progresses and set status to intial state.
+        :param firstModel: (str) first model to be run.
+        """
+        isAfter = False
+        for row in range(self.tableWidget.rowCount()):
+            if firstModel is not None and self.tableWidget.item(row, 0).text()\
+               and not isAfter:
+                continue
+            isAfter = True
+            self.setModelStatus(row, self.INITIAL)
+            self.tableWidget.cellWidget(row, 2).setValue(0)
+
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     @pyqtSlot(str, name="on_comboBox_currentTextChanged")
     def setCurrentWorkflow(self):
@@ -566,8 +580,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             workflow.workflowFinished.connect(postProcessing)
             sender = self.sender()
             if sender is None or sender.objectName() == "runPushButton":
+                self.preProcessing()
                 workflow.run()
             else:
+                self.preProcessing(self._firstModel)
                 workflow.run(firstModelName=self._firstModel)
             self._firstModel = workflow.lastModelName()
         else:
