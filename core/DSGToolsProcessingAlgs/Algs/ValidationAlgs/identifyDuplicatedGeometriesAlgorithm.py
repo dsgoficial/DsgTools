@@ -19,21 +19,18 @@
  *                                                                         *
  ***************************************************************************/
 """
-
-from collections import defaultdict
-from itertools import combinations
-
-from qgis.PyQt.QtCore import QCoreApplication
+from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 from qgis.core import (QgsDataSourceUri, QgsFeature, QgsFeatureSink,
                        QgsProcessing, QgsProcessingAlgorithm,
-                       QgsProcessingException, QgsProcessingOutputVectorLayer,
-                       QgsProcessingParameterBoolean, QgsProcessingMultiStepFeedback,
+                       QgsProcessingException, QgsProcessingMultiStepFeedback,
+                       QgsProcessingOutputVectorLayer,
+                       QgsProcessingParameterBoolean,
                        QgsProcessingParameterFeatureSink,
                        QgsProcessingParameterFeatureSource,
                        QgsProcessingParameterVectorLayer, QgsWkbTypes)
+from qgis.PyQt.QtCore import QCoreApplication
 
 from .validationAlgorithm import ValidationAlgorithm
-from DsgTools.core.GeometricTools.layerHandler import LayerHandler
 
 class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
     FLAGS = 'FLAGS'
@@ -48,7 +45,7 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             QgsProcessingParameterVectorLayer(
                 self.INPUT,
                 self.tr('Input layer'),
-                [QgsProcessing.TypeVectorAnyGeometry ]
+                [QgsProcessing.TypeVectorAnyGeometry]
             )
         )
 
@@ -70,27 +67,22 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
         """
         Here is where the processing itself takes place.
         """
-
         inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
-        isMulti = QgsWkbTypes.isMultiType(int(inputLyr.wkbType()))
         if inputLyr is None:
-            raise QgsProcessingException(self.invalidSourceError(parameters, self.INPUT))
+            raise QgsProcessingException(
+                self.invalidSourceError(parameters, self.INPUT))
         onlySelected = self.parameterAsBool(parameters, self.SELECTED, context)
         self.prepareFlagSink(parameters, inputLyr, inputLyr.wkbType(), context)
         # Compute the number of steps to display within the progress bar and
         # get features from source
-        featureList, total = self.getIteratorAndFeatureCount(inputLyr, onlySelected=onlySelected)
-        geomDict = defaultdict(set)
-        featureList = tuple(featureList)
         layerHandler = LayerHandler()
-        inputLyr = self.parameterAsVectorLayer(parameters, self.INPUT, context)
         multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
         multiStepFeedback.setCurrentStep(0)
-        geomDict = layerHandler.getDuplicatedFeaturesDict(inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback)
+        geomDict = layerHandler.getDuplicatedFeaturesDict(
+            inputLyr, onlySelected=onlySelected, feedback=multiStepFeedback)
         multiStepFeedback.setCurrentStep(1)
-        self.raiseDuplicatedFeaturesFlags(inputLyr, geomDict, multiStepFeedback)
-        multiStepFeedback.setCurrentStep(2)
-        
+        self.raiseDuplicatedFeaturesFlags(
+            inputLyr, geomDict, multiStepFeedback)
         return {self.FLAGS: self.flag_id}
 
     def raiseDuplicatedFeaturesFlags(self, inputLyr, geomDict, feedback):
@@ -99,8 +91,10 @@ class IdentifyDuplicatedGeometriesAlgorithm(ValidationAlgorithm):
             if feedback.isCanceled():
                 break
             if len(featList) > 1:
-                idStrList = ', '.join(map(str, [feat.id() for feat in featList]))
-                flagText = self.tr('Features from layer {0} with ids=({1}) have the same set of attributes.').format(inputLyr.name(), idStrList)
+                idStrList = ', '.join(
+                    map(str, [feat.id() for feat in featList]))
+                flagText = self.tr('Features from layer {0} with ids=({1}) have the same set of attributes.').format(
+                    inputLyr.name(), idStrList)
                 self.flagFeature(featList[0].geometry(), flagText)
             feedback.setProgress(size * current)
 
