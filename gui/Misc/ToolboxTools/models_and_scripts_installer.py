@@ -109,7 +109,7 @@ class ModelsAndScriptsInstaller(QDialog, FORM_CLASS):
                     try:
                         shutil.copy2(file, destination)
                     except IOError as e:
-                        QgsMessageLog.logMessage(self.tr('Error copying file: ')+text+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+                        QgsMessageLog.logMessage(self.tr('Error copying file: ')+text+'\n'+e.strerror, "DSGTools Plugin", QgsMessageLog.INFO)
                         continue
 
     @pyqtSlot(QAbstractButton)

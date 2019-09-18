@@ -54,7 +54,7 @@ class ValidationHistory(QtWidgets.QDialog, FORM_CLASS):
             self.refreshViewTable(createTable=True)
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details. (Did you select a database?)'))
-            QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSG Tools Plugin", Qgis.Critical)        
+            QgsMessageLog.logMessage(': (did you choose )'.join(e.args), "DSGTools Plugin", Qgis.Critical)        
     
     @pyqtSlot(bool)
     def on_closePushButton_clicked(self):

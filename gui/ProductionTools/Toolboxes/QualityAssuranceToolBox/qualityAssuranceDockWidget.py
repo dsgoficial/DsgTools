@@ -394,7 +394,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             QgsMessageLog.logMessage(
                 self.tr("model {0} status changed to {1}.")\
                     .format(modelName, status),
-                "DSG Tools Plugin",
+                "DSGTools Plugin",
                 {   
                     self.RUNNING : Qgis.Info,
                     self.PAUSED : Qgis.Info,
