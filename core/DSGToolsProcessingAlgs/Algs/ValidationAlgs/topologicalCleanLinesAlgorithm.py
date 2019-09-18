@@ -114,7 +114,7 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
         Returns the name of the group this algorithm belongs to. This string
         should be localised.
         """
-        return self.tr('Validation Tools (Topological Processes)')
+        return self.tr('Quality Assurance Tools (Topological Processes)')
 
     def groupId(self):
         """
@@ -124,7 +124,7 @@ class TopologicalCleanLinesAlgorithm(TopologicalCleanAlgorithm):
         contain lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'DSGTools: Validation Tools (Topological Processes)'
+        return 'DSGTools: Quality Assurance Tools (Topological Processes)'
 
     def tr(self, string):
         return QCoreApplication.translate('TopologicalCleanLinesAlgorithm', string)
