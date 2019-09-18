@@ -25,12 +25,16 @@ import os
 
 from PyQt5.QtCore import QCoreApplication
 
-from qgis.core import (QgsDataSourceUri, QgsProcessing, QgsProcessingAlgorithm,
+from qgis.core import (QgsDataSourceUri, QgsExpression, QgsExpressionContext,
+                       QgsExpressionContextUtils, QgsProcessing,
+                       QgsProcessingAlgorithm,
                        QgsProcessingOutputMultipleLayers,
+                       QgsProcessingParameterExpression,
                        QgsProcessingParameterMultipleLayers,
                        QgsProcessingParameterNumber,
                        QgsProcessingParameterString, QgsProject)
 from qgis.utils import iface
+
 
 class GroupLayersAlgorithm(QgsProcessingAlgorithm):
     """
@@ -41,8 +45,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
     OUTPUT: list of outputs
     """
     INPUT_LAYERS = 'INPUT_LAYERS'
-    CATEGORY_TOKEN = 'CATEGORY_TOKEN'
-    CATEGORY_TOKEN_INDEX = 'CATEGORY_TOKEN_INDEX'
+    CATEGORY_EXPRESSION = 'CATEGORY_EXPRESSION'
     OUTPUT = 'OUTPUT'
     def initAlgorithm(self, config):
         """
@@ -52,23 +55,14 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             QgsProcessingParameterMultipleLayers(
                 self.INPUT_LAYERS,
                 self.tr('Input Layers'),
-                QgsProcessing.TypeVectorAnyGeometry
+                QgsProcessing.TypeVector
             )
         )
         self.addParameter(
-            QgsProcessingParameterString(
-                self.CATEGORY_TOKEN,
-                self.tr('Category Token'),
-                defaultValue='_'
-            )
-        )
-        self.addParameter(
-            QgsProcessingParameterNumber(
-                self.CATEGORY_TOKEN_INDEX,
-                self.tr('Category token index'),
-                minValue=0,
-                type=QgsProcessingParameterNumber.Integer,
-                defaultValue=0
+            QgsProcessingParameterExpression(
+                self.CATEGORY_EXPRESSION,
+                self.tr('Expression used to find out the category'),
+                defaultValue="regexp_substr(@layer_name ,'([^_]+)')"
             )
         )
         self.addOutput(
@@ -87,16 +81,11 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             self.INPUT_LAYERS,
             context
         )
-        categoryToken = self.parameterAsString(
+        categoryExpression = self.parameterAsExpression(
             parameters,
-            self.CATEGORY_TOKEN,
+            self.CATEGORY_EXPRESSION,
             context
-        )
-        categoryTokenIndex = self.parameterAsInt(
-            parameters,
-            self.CATEGORY_TOKEN_INDEX,
-            context
-        )
+        ) 
         listSize = len(inputLyrList)
         progressStep = 100/listSize if listSize else 0
         rootNode = QgsProject.instance().layerTreeRoot()
@@ -104,7 +93,8 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         geometryNodeDict = {
             0 : self.tr('Point'),
             1 : self.tr('Line'),
-            2 : self.tr('Polygon')
+            2 : self.tr('Polygon'),
+            4 : self.tr('Non spatial')
         }
         iface.mapCanvas().freeze(True)
         for current, lyr in enumerate(inputLyrList):
@@ -118,8 +108,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             categoryNode = self.getLayerCategoryNode(
                 lyr,
                 geometryNode,
-                categoryToken,
-                categoryTokenIndex
+                categoryExpression
             )
             lyrNode = rootNode.findLayer(lyr.id())
             myClone = lyrNode.clone()
@@ -128,7 +117,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             rootNode.removeChildNode(lyrNode)
             feedback.setProgress(current*progressStep)
         iface.mapCanvas().freeze(False)
-        return {self.OUTPUT: inputLyrList}
+        return {self.OUTPUT: [i.id() for i in inputLyrList]}
 
     def getLayerRootNode(self, lyr, rootNode):
         """
@@ -159,14 +148,21 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
             rootNodeName = 'unrecognised_format'
         return rootNodeName
 
-    def getLayerCategoryNode(self, lyr, rootNode, categoryToken,\
-                                                categoryTokenIndex):
+    def getLayerCategoryNode(self, lyr, rootNode, categoryExpression):
         """
-        Finds category node and creates (if not exists a node)
+        Finds category node based on category expression
+        and creates it (if not exists a node)
         """
-        categorySplit = lyr.name().split(categoryToken)
-        categoryText = categorySplit[categoryTokenIndex] \
-            if categoryTokenIndex <= len(categorySplit) else 0
+        exp = QgsExpression(categoryExpression)
+        context = QgsExpressionContext()
+        context.appendScopes(
+            QgsExpressionContextUtils.globalProjectLayerScopes(lyr)
+        )
+        if exp.hasParserError():
+            raise Exception(exp.parserErrorString())
+        if exp.hasEvalError():
+            raise ValueError(exp.evalErrorString())
+        categoryText = exp.evaluate(context)
         return self.createGroup(categoryText, rootNode)
 
     def createGroup(self, groupName, rootNode):
@@ -174,10 +170,7 @@ class GroupLayersAlgorithm(QgsProcessingAlgorithm):
         Create group with the name groupName and parent rootNode.
         """
         groupNode = rootNode.findGroup(groupName)
-        if groupNode:
-            return groupNode
-        else:
-            return rootNode.addGroup(groupName)
+        return groupNode if groupNode else rootNode.addGroup(groupName)
 
     def name(self):
         """
