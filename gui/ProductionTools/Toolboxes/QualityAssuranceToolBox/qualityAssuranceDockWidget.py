@@ -392,7 +392,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             )
         if code != self.INITIAL:
             QgsMessageLog.logMessage(
-                self.tr("model {0} status changed to {1}.")\
+                self.tr("Model {0} status changed to {1}.")\
                     .format(modelName, status),
                 "DSGTools Plugin",
                 {   
@@ -474,6 +474,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     model.WarningFlags : self.FINISHED_WITH_FLAGS,
                     model.HaltedOnFlags : self.HALTED
                 }[status]
+                if status == model.Terminated:
+                    # check if cancel status changed came from a "halt on flags"
+                    # or a cancel workflow call
+                    if not (model.output["finishStatus"] == "halt" \
+                            and model.hasFlags()):
+                        code = self.CANCELED
                 if code != self.INITIAL:
                     self.setModelStatus(row, code, model.displayName())
             def begin(model):
@@ -555,7 +561,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 )
             workflow.modelStarted.connect(begin)
             workflow.modelFinished.connect(end)
-            workflow.feedback.canceled.connect(end)
             workflow.haltedOnFlags.connect(stopOnFlags)
             workflow.modelFinishedWithFlags.connect(warningFlags)
             workflow.workflowFinished.connect(postProcessing)

@@ -290,6 +290,18 @@ class QualityAssuranceWorkflow(QObject):
             if m.status() == m.OnHold:
                 m.unhold()
 
+    def currentModel(self):
+        """
+        Retrieves the model currently running, if any.
+        :return: (DsgToolsProcessingModel) current active model.
+        """
+        if not hasattr(self, "_executionOrder"):
+            return None
+        for m in self._executionOrder.values():
+            if m.status() == m.Running:
+                return m
+        return None
+
     def raiseFlagWarning(self, model):
         """
         Advises connected objects that flags were raised even though workflow
@@ -338,7 +350,7 @@ class QualityAssuranceWorkflow(QObject):
             return None
         def modelCompleted(model, step):
             # register last model executed
-            self.__lastModel = model.name()
+            self.__lastModel = model.displayName()
             self.output[model.name()] = model.output
             self._multiStepFeedback.setCurrentStep(step)
             self.handleFlags(model)
@@ -380,13 +392,16 @@ class QualityAssuranceWorkflow(QObject):
         run.
         :return: (str) first model's name not to run.
         """
-        if not hasattr(self, "__lastModel"):
+        # no way to check whether a private attribute (e.g. "__attr") exists
+        try:
+            if self.__lastModel is None:
+                return None
+        except:
             return None
         else:
-            lastModel = self.__lastModel.displayName()
             modelCount = len(self._executionOrder)
             for idx, model in self._executionOrder.items():
-                if model.displayName() == lastModel and idx < modelCount - 2:
+                if model.displayName() == self.__lastModel and idx < modelCount - 2:
                     return self._executionOrder[idx + 1].displayName()
             else:
                 return None
