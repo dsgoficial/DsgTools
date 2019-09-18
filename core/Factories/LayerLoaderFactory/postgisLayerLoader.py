@@ -415,7 +415,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         table = layer.split('.')[1]
         return loadQgsVectorLayer(table)
     
-    def loadQgsVectorLayer(self, inputParam, uniqueLoad=False, addToCanvas=False):
+    def loadQgsVectorLayer(self, inputParam, uniqueLoad=False, addToCanvas=False, nonSpatial=False):
         """
         Returns a QgsVectorLayer using the parameters from inputParam.
         If uniqueLoad=True, checks if layer is already loaded and if it is,
@@ -431,13 +431,26 @@ class PostGISLayerLoader(EDGVLayerLoader):
                 table_name=tableName
             )
         )
-        self.setDataSource(schema, tableName, geomColumn, '', pkColumn=pkColumn)
+        if nonSpatial:
+            uri = "dbname='{dbname}' host={host} port={port} user='{user}' password='{password}' key={pk} table=\"{table_schema}\".\"{table_name}\" sql=".format(
+                dbname=self.database,
+                host=self.host,
+                port=self.port,
+                user=self.user,
+                password=self.password,
+                pk=pkColumn,
+                table_schema=schema,
+                table_name=tableName
+            )
+        else:
+            self.setDataSource(schema, tableName, geomColumn, '', pkColumn=pkColumn)
+            uri = self.uri.uri()
         lyr = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
         QgsProject.instance().addMapLayer(lyr, addToLegend=addToCanvas)
         return lyr
 
     
-    def loadLayersInsideProcessing(self, inputParamList, uniqueLoad=False, addToCanvas=True, feedback=None):
+    def loadLayersInsideProcessing(self, inputParamList, uniqueLoad=False, addToCanvas=True, nonSpatial=False, feedback=None):
         """
         Loads layer inside qgis using processing. If uniqueLoad=True, only loads
         if it is not loaded.
@@ -450,7 +463,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
             lyr = self.loadQgsVectorLayer(
                 inputParam=inputParam,
                 uniqueLoad=uniqueLoad,
-                addToCanvas=addToCanvas
+                addToCanvas=addToCanvas,
+                nonSpatial=nonSpatial
             )
             outputLayers.append(lyr)
             if feedback is not None:
