@@ -68,6 +68,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FINISHED_WITH_FLAGS : self.tr("Completed (raised flags)")
         }
         self.setState()
+        self.continuePushButton.hide()
         self.workflows = dict()
         self.resetTable()
         self.resizeTable()
@@ -92,13 +93,27 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Sets workflow to be on hold.
         """
         self.currentWorkflow().hold()
+        self.pausePushButton.hide()
+        self.continuePushButton.show()
 
-    @pyqtSlot(bool, name="on_pausePushButton_clicked")
-    def workflowOnHold(self):
+    @pyqtSlot(bool, name="on_continuePushButton_clicked")
+    def continueWorkflow(self):
         """
         Sets workflow to be on hold.
         """
         self.currentWorkflow().unhold()
+        self.pausePushButton.show()
+        self.continuePushButton.hide()
+
+    @pyqtSlot(bool, name="on_cancelPushButton_clicked")
+    def cancelWorkflow(self):
+        """
+        Cancels current workflow's execution.
+        """
+        self.currentWorkflow().feedback.cancel()
+        self.pausePushButton.show()
+        self.continuePushButton.hide()
+        self.setState(False)
 
     def setProgress(self, value):
         """
@@ -201,12 +216,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         Sets GUI to idle (not running a Workflow) or active state (running it).
         :param isActive: (bool) whether GUI is running a Workflow.
         """
-        if isActive:
-            self.cancelPushButton.show()
-            self.continuePushButton.hide()
-        else:
-            self.cancelPushButton.hide()
-            self.continuePushButton.show()
         self.pausePushButton.setEnabled(isActive)
         self.cancelPushButton.setEnabled(isActive)
         self.continuePushButton.setEnabled(isActive)
@@ -484,6 +493,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     self.setModelStatus(
                         row, code, model.displayName()
                     )
+                postProcessing()
             def warningFlags(model):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
@@ -505,6 +515,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 workflow.modelFinishedWithFlags.disconnect(warningFlags)
                 workflow.workflowFinished.disconnect(postProcessing)
                 refreshFeedback()
+                self.setState(False)
+                self.pausePushButton.show()
+                self.continuePushButton.hide()
             workflow.modelStarted.connect(begin)
             workflow.modelFinished.connect(end)
             workflow.haltedOnFlags.connect(stopOnFlags)
@@ -523,4 +536,3 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 Qgis.Warning,
                 duration=3
             )
-        self.setState(False)
