@@ -24,8 +24,7 @@ import os, json
 from time import sleep
 from functools import partial
 
-from qgis.core import (QgsMapLayer,
-                       QgsApplication,
+from qgis.core import (QgsApplication,
                        QgsProcessingFeedback,
                        QgsProcessingMultiStepFeedback)
 from qgis.PyQt.QtCore import QObject, pyqtSignal
@@ -296,10 +295,8 @@ class QualityAssuranceWorkflow(QObject):
         Advises connected objects that flags were raised even though workflow
         :param model: (DsgToolsProcessingModel) model to have its flags checked.
         """
-        for vl in model.output["result"].values():
-            if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
-                self.modelFinishedWithFlags.emit(model)
-                return
+        if model.hasFlags():
+            self.modelFinishedWithFlags.emit(model)
         else:
             self.modelFinished.emit(model)
 
@@ -308,11 +305,9 @@ class QualityAssuranceWorkflow(QObject):
         It stops the workflow execution if flags are identified.
         :param model: (DsgToolsProcessingModel) model to have its flags checked.
         """
-        for vl in model.output["result"].values():
-            if isinstance(vl, QgsMapLayer) and vl.featureCount() > 0:
-                self.feedback.cancel()
-                self.haltedOnFlags.emit(model)
-                return self.feedback.isCanceled()
+        if model.hasFlags():
+            self.feedback.cancel()
+            self.haltedOnFlags.emit(model)
         else:
             self.modelFinished.emit(model)
         return self.feedback.isCanceled()

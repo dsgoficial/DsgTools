@@ -10,7 +10,7 @@
 name=DSG Tools
 qgisMinimumVersion=3.0
 description=Brazilian Army Cartographic Production Tools
-version=4.0-dev_3f75014e8ea2dd8e76cb3d87101eb0f4cb7f9bbe
+version=4.0-dev_c892adcab1872174b24b8b7cb681481d787688f6
 author=Brazilian Army - Geographic Service Bureau
 email=suporte.dsgtools@dsg.eb.mil.br
 about=

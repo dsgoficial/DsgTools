@@ -457,17 +457,15 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                         intWrapper, self.tableWidget.cellWidget(row, 2)
                     )
                     model.feedback.progressChanged.connect(self.__progressFunc)
-                    self.__progressFunc = partial(statusChangedWrapper, row, model)
-                    model.statusChanged.connect(self.__progressFunc)
+                    self.__statusFunc = partial(statusChangedWrapper, row, model)
+                    model.statusChanged.connect(self.__statusFunc)
                     return
             def end(model):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
                         continue
-                    try:
-                        model.feedback.progressChanged.disconnect(self.__progressFunc)
-                    except:
-                        pass
+                    model.feedback.progressChanged.disconnect(self.__progressFunc)
+                    model.statusChanged.disconnect(self.__statusFunc)
                     return
             def stopOnFlags(model):
                 refreshFeedback()
@@ -477,12 +475,10 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                         continue
                     if isAfter:
                         code = self.INITIAL
-                        try:
-                            model.statusChanged.disconnect(self.__progressFunc)
-                        except:
-                            pass
                         self.tableWidget.cellWidget(row, 2).setValue(0)
                     else:
+                        model.feedback.progressChanged.disconnect(self.__progressFunc)
+                        model.statusChanged.disconnect(self.__statusFunc)
                         code = self.HALTED
                     isAfter = True
                     self.setModelStatus(
@@ -492,6 +488,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 for row in range(self.tableWidget.rowCount()):
                     if self.tableWidget.item(row, 0).text() != model.name():
                         continue
+                    model.feedback.progressChanged.disconnect(self.__progressFunc)
+                    model.statusChanged.disconnect(self.__statusFunc)
                     self.setModelStatus(
                         row, self.FINISHED_WITH_FLAGS, model.displayName()
                     )
