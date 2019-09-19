@@ -393,7 +393,7 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         for row in range(self.modelCount()):
             msg = self.validateRowContents(self.readRow(row))
             if msg:
-                return "Row {row}: '{error}'".format(row=row, error=msg)
+                return "Row {row}: '{error}'".format(row=row + 1, error=msg)
         if len(self.models()) != self.modelCount():
             return self.tr("Check if no model name is repeated.")
         return ""
@@ -544,7 +544,8 @@ class WorkflowSetupDialog(QDialog, FORM_CLASS):
         """
         Closes dialog and checks if current workflow is valid.
         """
-        if self.currentWorkflow():
+        msg = self.validate()
+        if msg == "" and self.currentWorkflow():
             self.done(1)
         else:
             self.messageBar.pushMessage(
