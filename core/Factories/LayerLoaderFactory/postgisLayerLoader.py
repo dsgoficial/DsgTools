@@ -432,7 +432,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
             )
         )
         if nonSpatial:
-            uri = "dbname='{dbname}' host={host} port={port} user='{user}' password='{password}' key={pk} table=\"{table_schema}\".\"{table_name}\" sql=".format(
+            uri = """dbname='{dbname}' host={host} port={port} user='{user}' password='{password}' key={pk} checkPrimaryKeyUnicity='0' table="{table_schema}"."{table_name}" sql=""".format(
                 dbname=self.database,
                 host=self.host,
                 port=self.port,
@@ -445,7 +445,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         else:
             self.setDataSource(schema, tableName, geomColumn, '', pkColumn=pkColumn)
             uri = self.uri.uri()
-        lyr = QgsVectorLayer(self.uri.uri(), tableName, self.provider)
+        lyr = QgsVectorLayer(uri, tableName, self.provider)
         QgsProject.instance().addMapLayer(lyr, addToLegend=addToCanvas)
         return lyr
 
