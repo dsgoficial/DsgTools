@@ -25,7 +25,11 @@ from time import time
 from functools import partial
 
 from qgis.PyQt import uic
-from qgis.core import Qgis, QgsMessageLog, QgsProcessingFeedback
+from qgis.core import (Qgis,
+                       QgsProject,
+                       QgsMessageLog,
+                       QgsProcessingFeedback,
+                       QgsExpressionContextUtils)
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QDockWidget,
@@ -35,6 +39,9 @@ from qgis.PyQt.QtWidgets import (QDockWidget,
 
 from DsgTools.gui.ProductionTools.Toolboxes.QualityAssuranceToolBox\
     .workflowSetupDialog import WorkflowSetupDialog
+from DsgTools.core.DSGToolsProcessingAlgs.Models.qualityAssuranceWorkflow\
+    import QualityAssuranceWorkflow
+
 
 FORM_CLASS, _ = uic.loadUiType(
     os.path.join(os.path.dirname(__file__), 'qualityAssuranceDockWidget.ui')
@@ -72,10 +79,15 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.setState()
         self.continuePushButton.hide()
         self.workflows = dict()
-        self.resetTable()
-        self.resizeTable()
         self.resetComboBox()
+        self.resetTable()
+        self.loadState()
         self.prepareProgressBar()
+        # make sure workflows are loaded as per project instances
+        QgsProject.instance().projectSaved.connect(self.saveWorkflowsToProject)
+        self.iface.newProjectCreated.connect(self.saveWorkflowsToProject)
+        self.iface.newProjectCreated.connect(self.loadState)
+        self.iface.projectRead.connect(self.loadState)
 
     def confirmAction(self, msg, showCancel=True):
         """
@@ -153,13 +165,13 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
 
     def resizeTable(self):
         """
-        Resizes table to the proportion 65% display name and 35% progress bar.
+        Resizes table to the proportion 40% display name and 40% progress bar.
         """
         header = self.tableWidget.horizontalHeader()
-        dSize = self.geometry().width() - header.geometry().width()
+        dSize = abs(self.geometry().width() - header.geometry().width())
         missingBarSize = self.geometry().size().width() - dSize
-        col1Size = int(0.5 * missingBarSize)
-        col2Size = int(0.25 * missingBarSize)
+        col1Size = int(0.4 * missingBarSize)
+        col2Size = int(0.3 * missingBarSize)
         col3Size = missingBarSize - col1Size - col2Size
         header.resizeSection(0, col1Size)
         header.resizeSection(1, col2Size)
@@ -257,6 +269,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.setWorkflowTooltip(
                 self.comboBox.currentIndex(), workflow.metadata()
             )
+            self.saveWorkflowsToProject()
 
     @pyqtSlot(bool, name="on_removePushButton_clicked")
     def removeWorkflow(self):
@@ -275,6 +288,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.setCurrentIndex(0)
         name = self.currentWorkflowName()
         self.workflows.pop(name, None)
+        self.saveWorkflowsToProject()
 
     @pyqtSlot(bool, name="on_editPushButton_clicked")
     def editCurrentWorkflow(self):
@@ -331,6 +345,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 Qgis.Info,
                 duration=3
             )
+            self.saveWorkflowsToProject()
 
     def progressWidget(self):
         """
@@ -464,6 +479,41 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             isAfter = True
             self.setModelStatus(row, self.INITIAL)
             self.tableWidget.cellWidget(row, 2).setValue(0)
+
+    def saveWorkflowsToProject(self):
+        """
+        Makes sure all added workflows are stored to active instance of
+        QgsProject, making it "loadable" along with saved QGIS projects.
+        """
+        workflows = dict()
+        for w in self.workflows.values():
+            workflows[w.displayName()] = w.asDict()
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(),
+            "dsgtools_workflows",
+            json.dumps(workflows)
+        )
+        QgsExpressionContextUtils.setProjectVariable(
+            QgsProject.instance(),
+            "dsgtools_current_workflow",
+            str(self.comboBox.currentIndex())
+        )
+
+    def loadState(self):
+        """
+        Loads all loaded workflows from current QgsProject instance.
+        """
+        workflows = QgsExpressionContextUtils.projectScope(QgsProject.instance())\
+                            .variable("dsgtools_workflows") or "{}"
+        workflows = json.loads(workflows)
+        self.resetComboBox()
+        for idx, (name, workflowMap) in enumerate(workflows.items()):
+            self.workflows[name] = QualityAssuranceWorkflow(workflowMap)
+            self.comboBox.addItem(name)
+            self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata())
+        current = QgsExpressionContextUtils.projectScope(QgsProject.instance())\
+                        .variable("dsgtools_current_workflow") or 0
+        self.comboBox.setCurrentIndex(int(current))
 
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     @pyqtSlot(str, name="on_comboBox_currentTextChanged")
@@ -620,3 +670,9 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 Qgis.Warning,
                 duration=3
             )
+
+    def unload(self):
+        """
+        Safely clears GUI.
+        """
+        pass

@@ -238,6 +238,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
                     return self.tableWidget.item(row, col)
                 else:
                     return self.tableWidget.cellWidget(row, col)
+
     def selectedIndexes(self):
         """
         :return: (list-of-QModelIndex) table's selected indexes.
