@@ -22,6 +22,8 @@
 """
 from PyQt5.QtCore import QCoreApplication
 
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignAliasesToLayersAlgorithm import \
+    AssignAliasesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.EditingAlgs.createEditingGridAlgorithm import \
     CreateEditingGridAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.GeometricAlgs.donutHoleExtractorAlgorithm import \
@@ -208,7 +210,8 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     AssignFormFormatRulesToLayersAlgorithm(),
                     AssignValueMapToLayersAlgorithm(),
                     LoadLayersFromPostgisAlgorithm(),
-                    LoadNonSpatialLayersFromPostgreSQLAlgorithm()
+                    LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
+                    AssignAliasesToLayersAlgorithm()
                 ]
         return algList
 
