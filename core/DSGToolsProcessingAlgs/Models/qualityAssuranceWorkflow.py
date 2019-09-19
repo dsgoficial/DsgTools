@@ -341,7 +341,6 @@ class QualityAssuranceWorkflow(QObject):
         :param firstModelName: (str) first model's name to be executed.
         :param cooldown: (float) time to wait till next model is started.
         """
-        self.output = dict()
         self._executionOrder = {
             idx : model for idx, model in enumerate(self.validModels().values())
         }
@@ -362,6 +361,7 @@ class QualityAssuranceWorkflow(QObject):
                 return None
         else:
             initialIdx = 0
+            self.output = dict()
         for idx, currentModel in self._executionOrder.items():
             if idx < initialIdx:
                 continue
