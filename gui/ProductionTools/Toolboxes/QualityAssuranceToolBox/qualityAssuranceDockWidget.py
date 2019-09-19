@@ -65,6 +65,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self._previousWorkflow = None
         self._firstModel = None
         self.__workflowCanceled = False
+        self._showButtons = True
         self.parent = parent
         self.statusMap = {
             self.INITIAL : self.tr("Not yet run"),
@@ -84,8 +85,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.loadState()
         self.prepareProgressBar()
         # make sure workflows are loaded as per project instances
-        QgsProject.instance().projectSaved.connect(self.saveWorkflowsToProject)
-        self.iface.newProjectCreated.connect(self.saveWorkflowsToProject)
+        QgsProject.instance().projectSaved.connect(self.saveState)
+        self.iface.newProjectCreated.connect(self.saveState)
         self.iface.newProjectCreated.connect(self.loadState)
         self.iface.projectRead.connect(self.loadState)
 
@@ -162,6 +163,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         for button in [self.addPushButton, self.editPushButton,
                         self.removePushButton]:
             getattr(button, "show" if show else "hide")
+        self._showButtons = show
 
     def resizeTable(self):
         """
@@ -269,7 +271,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.setWorkflowTooltip(
                 self.comboBox.currentIndex(), workflow.metadata()
             )
-            self.saveWorkflowsToProject()
+            self.saveState()
 
     @pyqtSlot(bool, name="on_removePushButton_clicked")
     def removeWorkflow(self):
@@ -288,7 +290,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.comboBox.setCurrentIndex(0)
         name = self.currentWorkflowName()
         self.workflows.pop(name, None)
-        self.saveWorkflowsToProject()
+        self.saveState()
 
     @pyqtSlot(bool, name="on_editPushButton_clicked")
     def editCurrentWorkflow(self):
@@ -345,7 +347,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 Qgis.Info,
                 duration=3
             )
-            self.saveWorkflowsToProject()
+            self.saveState()
 
     def progressWidget(self):
         """
@@ -480,40 +482,50 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.setModelStatus(row, self.INITIAL)
             self.tableWidget.cellWidget(row, 2).setValue(0)
 
-    def saveWorkflowsToProject(self):
+    def saveState(self):
         """
         Makes sure all added workflows are stored to active instance of
         QgsProject, making it "loadable" along with saved QGIS projects.
         """
+        # workflow objects cannot be serialized, so they must be passed as dict
         workflows = dict()
         for w in self.workflows.values():
             workflows[w.displayName()] = w.asDict()
+        
         QgsExpressionContextUtils.setProjectVariable(
             QgsProject.instance(),
-            "dsgtools_workflows",
-            json.dumps(workflows)
-        )
-        QgsExpressionContextUtils.setProjectVariable(
-            QgsProject.instance(),
-            "dsgtools_current_workflow",
-            str(self.comboBox.currentIndex())
+            "dsgtools_qatoolbox_state",
+            json.dumps({
+                "workflows" : workflows,
+                "current_workflow" : self.comboBox.currentIndex(),
+                "showButtons" : self._showButtons
+            })
         )
 
-    def loadState(self):
+    def loadState(self, state=None):
         """
         Loads all loaded workflows from current QgsProject instance.
+        :param state: (str) this should be a strigfied map to QA's state
+                      variables. If none is given, state is retrieved from the
+                      project.
         """
-        workflows = QgsExpressionContextUtils.projectScope(QgsProject.instance())\
-                            .variable("dsgtools_workflows") or "{}"
-        workflows = json.loads(workflows)
+        state = json.loads(
+            state or\
+            QgsExpressionContextUtils.projectScope(QgsProject.instance())\
+                    .variable("dsgtools_qatoolbox_state") or\
+            "{}"
+        )
+        workflows = state["workflows"] if "workflows" in state else {}
         self.resetComboBox()
         for idx, (name, workflowMap) in enumerate(workflows.items()):
             self.workflows[name] = QualityAssuranceWorkflow(workflowMap)
             self.comboBox.addItem(name)
             self.setWorkflowTooltip(idx + 1, self.workflows[name].metadata())
-        current = QgsExpressionContextUtils.projectScope(QgsProject.instance())\
-                        .variable("dsgtools_current_workflow") or 0
-        self.comboBox.setCurrentIndex(int(current))
+        currentIdx = state["current_workflow"] if "current_workflow" in state \
+                        else 0
+        self.comboBox.setCurrentIndex(currentIdx)
+        showButtons = state["show_buttons"] if "show_buttons" in state else True
+        self.showEditionButton(showButtons)
 
     @pyqtSlot(int, name="on_comboBox_currentIndexChanged")
     @pyqtSlot(str, name="on_comboBox_currentTextChanged")
