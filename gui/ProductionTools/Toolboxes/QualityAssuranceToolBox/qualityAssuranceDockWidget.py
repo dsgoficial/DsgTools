@@ -33,6 +33,7 @@ from qgis.core import (Qgis,
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
 from qgis.PyQt.QtWidgets import (QLineEdit,
+                                 QFileDialog,
                                  QDockWidget,
                                  QMessageBox,
                                  QProgressBar,
@@ -444,7 +445,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     self.FINISHED : Qgis.Info,
                     self.FINISHED_WITH_FLAGS : Qgis.Warning
                 }[code]
-        )
+            )
 
     def customLineWidget(self, text, tooltip=None):
         """
@@ -705,6 +706,55 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.tr("please select a valid Workflow."),
                 Qgis.Warning,
                 duration=3
+            )
+
+    @pyqtSlot(bool, name="on_importPushButton_clicked")
+    def importWorkflow(self):
+        """
+        Directly imports an workflow instead of going through the Workflow
+        Setup Dialog.
+        """
+        fd = QFileDialog()
+        paths = fd.getOpenFileNames(
+            caption=self.tr('Select Workflow files'),
+            filter=self.tr('DSGTools Workflow (*.workflow *.json)')
+        )
+        paths = paths[0] if isinstance(paths, tuple) else ""
+        if not paths:
+            return
+        for wPath in paths:
+            try:
+                with open(wPath, "r", encoding="utf-8") as f:
+                    wMap = json.load(f)
+                workflow = QualityAssuranceWorkflow(wMap)
+            except Exception as e:
+                self.iface.messageBar().pushMessage(
+                    self.tr("DSGTools Q&A Tool Box"),
+                    self.tr("workflow '{path}' was not imported: '{msg}'")
+                        .format(path=wPath, msg=str(e)),
+                    Qgis.Critical,
+                    duration=3
+                )
+                continue
+            name = workflow.displayName()
+            idx = self.comboBox.findText(name)
+            if idx < 0:
+                self.comboBox.addItem(name)
+                self.comboBox.setCurrentText(name)
+                self.workflows[name] = workflow
+                self.setCurrentWorkflow()
+            else:
+                self.comboBox.setCurrentIndex(idx)
+                # what should we do? check version/last modified? replace model?
+            self.setWorkflowTooltip(
+                self.comboBox.currentIndex(), workflow.metadata()
+            )
+            self.saveState()
+            QgsMessageLog.logMessage(
+                self.tr("Model {model} imported.")\
+                    .format(model=name),
+                "DSGTools Plugin",
+                Qgis.Info
             )
 
     def unload(self):
