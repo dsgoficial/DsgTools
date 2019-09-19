@@ -5,7 +5,7 @@
                                  A QGIS plugin
  Brazilian Army Cartographic Production Tools
                               -------------------
-        begin                : 2019-09-17
+        begin                : 2019-09-18
         git sha              : $Format:%H$
         copyright            : (C) 2019 by Philipe Borba - Cartographic Engineer @ Brazilian Army
         email                : borba.philipe@eb.mil.br
@@ -26,6 +26,7 @@ from DsgTools.core.dsgEnums import DsgEnums
 from DsgTools.core.Factories.DbFactory.dbFactory import DbFactory
 from DsgTools.core.Factories.LayerLoaderFactory.layerLoaderFactory import \
     LayerLoaderFactory
+import processing
 from qgis.core import (QgsCoordinateReferenceSystem, QgsCoordinateTransform,
                        QgsDataSourceUri, QgsFeature, QgsFeatureSink, QgsField,
                        QgsFields, QgsGeometry, QgsProcessing,
@@ -58,7 +59,7 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
     LAYER_LIST = 'LAYER_LIST'
     LOAD_TO_CANVAS = 'LOAD_TO_CANVAS'
     UNIQUE_LOAD = 'UNIQUE_LOAD'
-    GROUP_NAME = 'GROUP_NAME'
+    SCHEMA_NAME = 'SCHEMA_NAME'
     OUTPUT = 'OUTPUT'
     def initAlgorithm(self, config):
         """
@@ -116,9 +117,8 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
         )
         self.addParameter(
             QgsProcessingParameterString(
-                self.GROUP_NAME,
-                self.tr('Group name'),
-                optional=True
+                self.SCHEMA_NAME,
+                self.tr('Schema name')
             )
         )
         self.addOutput(
@@ -172,24 +172,39 @@ class LoadNonSpatialLayersFromPostgreSQLAlgorithm(QgsProcessingAlgorithm):
             self.UNIQUE_LOAD,
             context
         )
-        groupName = self.parameterAsString(
+        tableSchema = self.parameterAsString(
             parameters,
-            self.GROUP_NAME,
+            self.SCHEMA_NAME,
             context
         )
         abstractDb = self.getAbstractDb(host, port, database, user, password)
-        inputParamList = layerStringList.split(',')
+        inputParamList = [(tableSchema, i) for i in layerStringList.split(',')]
         layerLoader = LayerLoaderFactory().makeLoader(
             iface, abstractDb
         )
         if loadToCanvas:
             iface.mapCanvas().freeze(True)
+        multiStepFeedback = QgsProcessingMultiStepFeedback(2, feedback)
+        multiStepFeedback.setCurrentStep(0)
         outputLayers = layerLoader.loadLayersInsideProcessing(
             inputParamList,
             uniqueLoad=uniqueLoad,
             addToCanvas=loadToCanvas,
             nonSpatial=True,
-            feedback=feedback
+            feedback=multiStepFeedback
+        )
+        multiStepFeedback.setCurrentStep(1)
+        output = processing.run(
+            'dsgtools:grouplayers',
+            {
+                'INPUT_LAYERS' : outputLayers,
+                'CATEGORY_EXPRESSION' : "to_string('{name}')".format(
+                        name=tableSchema
+                    ),
+                'OUTPUT' : ':memory'
+            },
+            context=context,
+            feedback=multiStepFeedback
         )
         if loadToCanvas:
             iface.mapCanvas().freeze(False)
