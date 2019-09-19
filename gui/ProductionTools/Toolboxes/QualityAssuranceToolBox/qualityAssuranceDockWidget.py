@@ -401,7 +401,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             # advise user a model status has changed only if it came from a 
             # signal call
             self.iface.messageBar().pushMessage(
-                self.tr("DSGTool Q&A Toolbox"),
+                self.tr("DSGTools Q&A Toolbox"),
                 self.tr("model {0} status changed to {1}.")\
                     .format(modelName, status),
                 {   
@@ -595,7 +595,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     msg = self.tr("workflow {0} finished.")
                     lvl = Qgis.Success
                 self.iface.messageBar().pushMessage(
-                    self.tr("DSGTool Q&A Toolbox"),
+                    self.tr("DSGTools Q&A Toolbox"),
                     msg.format(workflow.displayName()),
                     lvl,
                     duration=3
