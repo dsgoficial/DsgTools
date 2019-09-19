@@ -32,7 +32,8 @@ from qgis.core import (Qgis,
                        QgsExpressionContextUtils)
 from qgis.PyQt.QtGui import QBrush, QColor
 from qgis.PyQt.QtCore import Qt, pyqtSlot
-from qgis.PyQt.QtWidgets import (QDockWidget,
+from qgis.PyQt.QtWidgets import (QLineEdit,
+                                 QDockWidget,
                                  QMessageBox,
                                  QProgressBar,
                                  QTableWidgetItem)
@@ -370,17 +371,14 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Sets cell colors for model's name and its status.
         :param row: (int) model's row on GUI.
-        :param backgroundColor: (QColor) color to be set to the background.
-        :param foregroundColor: (QColor) color to be set to the letters.
+        :param backgroundColor: (tuple-of-int) tuple containing RGBA values.
+        :param foregroundColor: (tuple-of-int) tuple containing RGB values.
         """
-        # change to cell widget
-        self.tableWidget.item(row, 0).setBackground(QBrush(backgroundColor))
-        self.tableWidget.item(row, 0).setForeground(QBrush(foregroundColor))
-        item  = QTableWidgetItem()
-        item.setFlags(Qt.ItemIsEditable)
-        item.setBackground(QBrush(backgroundColor))
-        item.setForeground(QBrush(foregroundColor))
-        self.tableWidget.setItem(row, 1, item)
+        styleSheet = "*{ background-color:rgba" + str(backgroundColor) + \
+                     "; color:rgb" + str(foregroundColor) + "; } " + \
+                     "QToolTip{ background-color:black; color:white; }"
+        self.tableWidget.cellWidget(row, 0).setStyleSheet(styleSheet)
+        self.tableWidget.cellWidget(row, 1).setStyleSheet(styleSheet)
 
     def setModelStatus(self, row, code, modelName=None):
         """
@@ -393,27 +391,27 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         status = self.statusMap[code]
         colorForeground = {
-            self.INITIAL : QColor(0, 0, 0),
-            self.RUNNING : QColor(0, 0, 125),
-            self.PAUSED : QColor(187, 201, 25),
-            self.HALTED : QColor(187, 201, 25),
-            self.CANCELED : QColor(200, 0, 0),
-            self.FAILED : QColor(169, 18, 28),
-            self.FINISHED : QColor(0, 125, 0),
-            self.FINISHED_WITH_FLAGS : QColor(90, 135, 39)
+            self.INITIAL : (0, 0, 0),
+            self.RUNNING : (0, 0, 125),
+            self.PAUSED : (187, 201, 25),
+            self.HALTED : (187, 201, 25),
+            self.CANCELED : (200, 0, 0),
+            self.FAILED : (169, 18, 28),
+            self.FINISHED : (0, 125, 0),
+            self.FINISHED_WITH_FLAGS : (100, 150, 20)
         }[code]
         colorBackground = {
-            self.INITIAL : QColor(255, 255, 255, 75),
-            self.RUNNING : QColor(0, 0, 125, 90),
-            self.PAUSED : QColor(187, 201, 25, 20),
-            self.HALTED : QColor(200, 215, 40, 20),
-            self.CANCELED : QColor(200, 0, 0, 85),
-            self.FAILED : QColor(169, 18, 28, 85),
-            self.FINISHED : QColor(0, 125, 0, 90),
-            self.FINISHED_WITH_FLAGS : QColor(90, 135, 39, 90)
+            self.INITIAL : (255, 255, 255, 75),
+            self.RUNNING : (0, 0, 125, 90),
+            self.PAUSED : (187, 201, 25, 20),
+            self.HALTED : (200, 215, 40, 20),
+            self.CANCELED : (200, 0, 0, 85),
+            self.FAILED : (169, 18, 28, 85),
+            self.FINISHED : (0, 125, 0, 90),
+            self.FINISHED_WITH_FLAGS : (100, 150, 20, 45)
         }[code]
         self.setRowColor(row, colorBackground, colorForeground)
-        self.tableWidget.item(row, 1).setText(status)
+        self.tableWidget.cellWidget(row, 1).setText(status)
         if modelName is not None and code in [self.HALTED, self.FAILED]:
             # advise user a model status has changed only if it came from a 
             # signal call
@@ -448,6 +446,22 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 }[code]
         )
 
+    def customLineWidget(self, text, tooltip=None):
+        """
+        Retrieves a QLineEdit widget ready to be added to the model's table.
+        :param text: (str) text to be filled.
+        :param tooltip: (str) text to be shown when cell is hovered.
+        """
+        le = QLineEdit()
+        le.setReadOnly(True)
+        le.setText(text)
+        if tooltip:
+            le.setToolTip(tooltip)
+        le.setFrame(False)
+        # make it not selectable
+        le.selectionChanged.connect(lambda: le.setSelection(0, 0))
+        return le
+
     def setWorkflow(self, workflow):
         """
         Sets workflow to GUI.
@@ -460,10 +474,19 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         def progressInt(pb, x):
             pb.setValue(int(x))
         for row, (modelName, model) in enumerate(models.items()):
-            item = QTableWidgetItem(modelName)
-            item.setFlags(Qt.ItemIsEditable)
-            item.setForeground(QBrush(QColor(0, 0, 0)))
-            self.tableWidget.setItem(row, 0, item)
+            tooltip = self.tr(
+                "Model author: {0}\n"
+                "Model version: {1}\n"
+                "Last modification: {2}\n"
+                "\n{3}"
+            ).format(
+                model.author(), model.version(),
+                model.lastModified(), model.description()
+            )
+            nameWidget = self.customLineWidget(modelName, tooltip)
+            self.tableWidget.setCellWidget(row, 0, nameWidget)
+            statusWidget = self.customLineWidget("", tooltip)
+            self.tableWidget.setCellWidget(row, 1, statusWidget)
             self.setModelStatus(row, self.INITIAL)
             pb = self.progressWidget()
             self.tableWidget.setCellWidget(row, 2, pb)
@@ -475,7 +498,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         isAfter = False
         for row in range(self.tableWidget.rowCount()):
-            if firstModel is not None and self.tableWidget.item(row, 0).text()\
+            if firstModel is not None and \
+               self.tableWidget.cellWidget(row, 0).text() != firstModel \
                and not isAfter:
                 continue
             isAfter = True
@@ -564,7 +588,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 """status: (QgsTask.Enum) status enum"""
                 if row is None:
                     for row in range(self.tableWidget.rowCount()):
-                        if self.tableWidget.item(row, 0).text() == model.name():
+                        if self.tableWidget.cellWidget(row, 0)\
+                               .text() == model.name():
                             break
                 code = {
                     model.Queued : self.INITIAL,
@@ -587,7 +612,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     self.setModelStatus(row, code, model.displayName())
             def begin(model):
                 for row in range(self.tableWidget.rowCount()):
-                    if self.tableWidget.item(row, 0).text() != model.name():
+                    if self.tableWidget.cellWidget(row, 0).text() != model.name():
                         continue
                     self.__progressFunc = partial(
                         intWrapper, self.tableWidget.cellWidget(row, 2)
@@ -601,7 +626,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                     return
             def end(model):
                 for row in range(self.tableWidget.rowCount()):
-                    if self.tableWidget.item(row, 0).text() != model.name():
+                    if self.tableWidget.cellWidget(row, 0).text() != model.name():
                         continue
                     model.feedback.progressChanged.disconnect(self.__progressFunc)
                     model.statusChanged.disconnect(self.__statusFunc)
@@ -610,7 +635,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 refreshFeedback()
                 isAfter = False
                 for row in range(self.tableWidget.rowCount()):
-                    if self.tableWidget.item(row, 0).text() != model.name() and not isAfter:
+                    if self.tableWidget.cellWidget(row, 0).text() != model.name() and not isAfter:
                         continue
                     if isAfter:
                         code = self.INITIAL
@@ -626,7 +651,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 postProcessing()
             def warningFlags(model):
                 for row in range(self.tableWidget.rowCount()):
-                    if self.tableWidget.item(row, 0).text() != model.name():
+                    if self.tableWidget.cellWidget(row, 0).text() != model.name():
                         continue
                     model.feedback.progressChanged.disconnect(self.__progressFunc)
                     model.statusChanged.disconnect(self.__statusFunc)
