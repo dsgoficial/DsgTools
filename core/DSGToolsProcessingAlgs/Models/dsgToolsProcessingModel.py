@@ -67,10 +67,10 @@ class DsgToolsProcessingModel(QgsTask):
         """
         super(DsgToolsProcessingModel, self).__init__(
             # "", QgsTask.CanCancel if flags is None else flags
-            QCoreApplication.translate(
+            taskName or QCoreApplication.translate(
                 "DsgToolsProcessingModel",
                 "DSGTools Quality Assurance Model"
-            ) or taskName,
+            ),
             QgsTask.CanCancel if flags is None else flags
         )
         self._name = name
@@ -148,37 +148,50 @@ class DsgToolsProcessingModel(QgsTask):
         os.remove(temp)
         return alg
 
+    def description(self):
+        """
+        Retrieves description text as set on model's definition.
+        """
+        model = self.model()
+        return model.shortDescription()
+
     def metadata(self):
         """
         A map to Worflow's metadata.
         :return: (dict) metadata.
         """
-        meta = dict()
-        def checkMeta(key):
-            return "metadata" in self._param and key in self._param["metadata"]
-        for k in ["author", "version", "lastModified"]:
-            meta[k] = self._param["metadata"][k] if checkMeta(k) else ""
-        return meta
+        if "metadata" not in self._param:
+            return {
+                "author" : "",
+                "version" : "",
+                "lastModified" : "",
+                "originalName" : ""
+            }
+        return self._param["metadata"]
 
     def author(self):
         """
         Retrieves the model's author name, if available.
         :return: (str) author name.
         """
-        if "metadata" not in self._param:
-            return ""
-        meta = self._param["metadata"]
+        meta = self.metadata()
         return meta["author"] if "author" in meta else ""
 
     def version(self):
         """
-        Retrieves the model's author name, if available.
-        :return: (str) author name.
+        Retrieves the model's version, if available.
+        :return: (str) model's version.
         """
-        if "metadata" not in self._param:
-            return ""
-        meta = self._param["metadata"]
+        meta = self.metadata()
         return meta["version"] if "version" in meta else ""
+
+    def lastModified(self):
+        """
+        Retrieves the model's last modification timestamp, if available.
+        :return: (str) last modification timestamp.
+        """
+        meta = self.metadata()
+        return meta["lastModified"] if "lastModified" in meta else ""
 
     def originalName(self):
         """
@@ -186,9 +199,7 @@ class DsgToolsProcessingModel(QgsTask):
         store the original model's name.
         :return: (str) original model's name.
         """
-        if "metadata" not in self._param:
-            return ""
-        meta = self._param["metadata"]
+        meta = self.metadata()
         return meta["originalName"] if "originalName" in meta else ""
 
     def metadataText(self):
