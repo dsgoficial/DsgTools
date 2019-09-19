@@ -63,7 +63,6 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.setupUi(self)
         self.iface = iface
         self._previousWorkflow = None
-        self._firstModel = None
         self.__workflowCanceled = False
         self._showButtons = True
         self.parent = parent
@@ -77,7 +76,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FINISHED : self.tr("Completed"),
             self.FINISHED_WITH_FLAGS : self.tr("Completed (raised flags)")
         }
-        self.setState()
+        self.setGuiState()
         self.continuePushButton.hide()
         self.workflows = dict()
         self.resetComboBox()
@@ -128,7 +127,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.currentWorkflow().feedback.cancel()
         self.pausePushButton.show()
         self.continuePushButton.hide()
-        self.setState(False)
+        self.setGuiState(False)
         self.__workflowCanceled = True
 
     def setProgress(self, value):
@@ -204,6 +203,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         self.tableWidget.setHorizontalHeaderLabels([
             self.tr("Model name"), self.tr("Status"), self.tr("Progress")
         ])
+        self.resizeTable()
 
     def resetComboBox(self):
         """
@@ -228,7 +228,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             Qt.ToolTipRole
         )
 
-    def setState(self, isActive=False):
+    def setGuiState(self, isActive=False):
         """
         Sets GUI to idle (not running a Workflow) or active state (running it).
         :param isActive: (bool) whether GUI is running a Workflow.
@@ -548,7 +548,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         workflow = self.currentWorkflow()
         if workflow is not None:
-            self.setState(True)
+            self.setGuiState(True)
             # these methods are defined locally as they are not supposed to be
             # outside thread execution setup and should all be handled from
             # within this method - at runtime
@@ -645,7 +645,7 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 workflow.modelFinishedWithFlags.disconnect(warningFlags)
                 workflow.workflowFinished.disconnect(postProcessing)
                 refreshFeedback()
-                self.setState(False)
+                self.setGuiState(False)
                 self.pausePushButton.show()
                 self.continuePushButton.hide()
                 for m in workflow.validModels().values():
@@ -672,9 +672,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
                 self.preProcessing()
                 workflow.run()
             else:
-                self.preProcessing(self._firstModel)
-                workflow.run(firstModelName=self._firstModel)
-            self._firstModel = workflow.lastModelName()
+                self.preProcessing(workflow.lastModelName())
+                workflow.run(firstModelName=workflow.lastModelName())
         else:
             self.iface.messageBar().pushMessage(
                 self.tr("DSGTools Q&A Tool Box"),
