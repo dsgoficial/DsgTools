@@ -687,4 +687,8 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
         """
         Safely clears GUI.
         """
-        pass
+        QgsProject.instance().projectSaved.disconnect(self.saveState)
+        self.iface.newProjectCreated.disconnect(self.saveState)
+        self.iface.newProjectCreated.disconnect(self.loadState)
+        self.iface.projectRead.disconnect(self.loadState)
+        self.blockSignals(True)
