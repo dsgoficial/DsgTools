@@ -349,8 +349,6 @@ class QualityAssuranceWorkflow(QObject):
         if self.hasInvalidModel() or modelCount == 0:
             return None
         def modelCompleted(model, step):
-            # register last model executed
-            self.__lastModel = model.displayName()
             self.output[model.name()] = model.output
             self._multiStepFeedback.setCurrentStep(step)
             self.handleFlags(model)
@@ -392,16 +390,13 @@ class QualityAssuranceWorkflow(QObject):
         run.
         :return: (str) first model's name not to run.
         """
-        # no way to check whether a private attribute (e.g. "__attr") exists
-        try:
-            if self.__lastModel is None:
-                return None
-        except:
+        if not hasattr(self, "_executionOrder"):
             return None
+        modelCount = len(self._executionOrder)
+        for idx, model in self._executionOrder.items():
+            modelName = self._executionOrder[idx].displayName()
+            if modelName not in self.output or \
+                self.output[modelName]["finishStatus"] != "finished":
+                return modelName
         else:
-            modelCount = len(self._executionOrder)
-            for idx, model in self._executionOrder.items():
-                if model.displayName() == self.__lastModel and idx < modelCount - 2:
-                    return self._executionOrder[idx + 1].displayName()
-            else:
-                return None
+            return None
