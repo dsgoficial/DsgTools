@@ -411,7 +411,12 @@ class QualityAssuranceDockWidget(QDockWidget, FORM_CLASS):
             self.FINISHED : (0, 125, 0, 90),
             self.FINISHED_WITH_FLAGS : (100, 150, 20, 45)
         }[code]
-        self.setRowColor(row, colorBackground, colorForeground)
+        if code == self.INITIAL:
+            # dark mode does not look good with this color pallete...
+            self.tableWidget.cellWidget(row, 0).setStyleSheet("")
+            self.tableWidget.cellWidget(row, 1).setStyleSheet("")
+        else:
+            self.setRowColor(row, colorBackground, colorForeground)
         self.tableWidget.cellWidget(row, 1).setText(status)
         if modelName is not None and code in [self.HALTED, self.FAILED]:
             # advise user a model status has changed only if it came from a 
