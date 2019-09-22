@@ -263,7 +263,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
             if self.modelExists(modelName) and not self.confirmAction(msg):
                 QgsMessageLog.logMessage(
                     self.tr("Model {model} was not imported.").format(model=modelName),
-                    'DSG Tools Plugin',
+                    'DSGTools Plugin',
                     Qgis.Info
                 )
                 return
@@ -276,7 +276,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 self.modelAdded.emit(modelName)
                 QgsMessageLog.logMessage(
                     self.tr("Model {model} imported to {dest}.").format(model=modelName, dest=dest),
-                    'DSG Tools Plugin',
+                    'DSGTools Plugin',
                     Qgis.Info
                 )
 
@@ -352,7 +352,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                         "Model {model} finished running with no errors. You may"
                         " check model output on Processing log tab."
                     ).format(model=modelName),
-                    'DSG Tools Plugin',
+                    'DSGTools Plugin',
                     Qgis.Info
                 )
             if not self.options()["loadModelOutput"]:
@@ -376,7 +376,7 @@ class DataValidationTool(QWidget, FORM_CLASS):
                 level=Qgis.Critical,
                 duration=5
             )
-            QgsMessageLog.logMessage(msg, 'DSG Tools Plugin',Qgis.Info)
+            QgsMessageLog.logMessage(msg, 'DSGTools Plugin',Qgis.Info)
 
     def unload(self):
         """

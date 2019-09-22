@@ -106,7 +106,7 @@ class FieldSetup(QtWidgets.QDialog, FORM_CLASS):
             self.geomClasses = self.abstractDb.listGeomClassesFromDatabase()
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
         self.geomClasses.sort()
         self.tableComboBox.addItems(self.geomClasses)
         self.tableComboBox.setCurrentIndex(-1)  

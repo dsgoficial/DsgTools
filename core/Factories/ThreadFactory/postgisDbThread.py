@@ -177,7 +177,7 @@ class PostgisDbThread(GenericThread):
             for command in commands:
                 if not self.stopped[0]:
                     if not query.exec_(command):
-                        QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", Qgis.Critical)
+                        QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSGTools Plugin", Qgis.Critical)
                         self.db.rollback()
                         self.db.close()
                         self.dropDatabase(self.db)
@@ -189,7 +189,7 @@ class PostgisDbThread(GenericThread):
                     self.db.rollback()
                     self.db.close()
                     self.dropDatabase(self.db)                
-                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", Qgis.Info)
+                    QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", Qgis.Info)
                     return (-1, self.messenger.getUserCanceledFeedbackMessage())
     
             self.db.commit()
@@ -204,7 +204,7 @@ class PostgisDbThread(GenericThread):
             
             if sql:
                 if not query.exec_(sql):
-                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSG Tools Plugin", Qgis.Critical)
+                    QgsMessageLog.logMessage(self.messenger.getProblemMessage(command, query), "DSGTools Plugin", Qgis.Critical)
                     return (0, self.messenger.getProblemFeedbackMessage())
             #this commit was missing, so alter database statement was not commited.
             self.db.commit()
@@ -221,13 +221,13 @@ class PostgisDbThread(GenericThread):
             errorTuple = createdDb.updateDbSRID(self.epsg, parentWidget = self.parent, threading = True)
             # if an error occur during the thread we should pass the message to the main thread
             if errorTuple:
-                QgsMessageLog.logMessage(self.messenger.getProblemMessage(errorTuple[0], errorTuple[1]), "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(self.messenger.getProblemMessage(errorTuple[0], errorTuple[1]), "DSGTools Plugin", Qgis.Critical)
                 return (0, self.messenger.getProblemFeedbackMessage())                
             self.signals.stepProcessed.emit(self.getId())
         else:
-            QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", Qgis.Info)
+            QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", Qgis.Info)
             return (-1, self.messenger.getUserCanceledFeedbackMessage())
-        QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSG Tools Plugin", Qgis.Info)
+        QgsMessageLog.logMessage(self.messenger.getSuccessFeedbackMessage(), "DSGTools Plugin", Qgis.Info)
         return (1, self.messenger.getSuccessFeedbackMessage())
 
     def dropDatabase(self,db):

@@ -208,7 +208,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                 self.setCRS()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)   
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)   
 
     def setCRS(self):
         """
@@ -228,7 +228,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
                     self.postGISCrsEdit.setReadOnly(True)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
 
         
     def isDBConnected(self):
@@ -246,7 +246,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             ret = self.abstractDb.getDatabaseVersion()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
         return ret
     
     def getQmlPath(self):
@@ -258,7 +258,7 @@ class ConnectionWidget(QtWidgets.QWidget, FORM_CLASS):
             ret = self.abstractDb.getQmlDir()
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
         return ret
     
     def getDatabasesFromServer(self):

@@ -73,7 +73,7 @@ class CreateProfileWithProfileManager(QtWidgets.QDialog, FORM_CLASS):
             geomDict = self.abstractDb.getGeomDict(geomTypeDict, insertCategory = True)
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
             return
         version = self.abstractDb.getDatabaseVersion()
         self.profile = dict()

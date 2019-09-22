@@ -98,7 +98,7 @@ class CreateBatchFromCsv(QtWidgets.QWizardPage, FORM_CLASS):
                     frameList.append(key)
                 else:
                     errorList.append(key)
-                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(self.tr('Error on {0}: ').format(key)+errorDict[key], "DSGTools Plugin", Qgis.Critical)
             if len(frameList) > 0:
                 errorFrameMsg += self.tr('Frame was not created on the following databases: {0}').format(', '.join(frameList))
             if len(errorList) > 0:

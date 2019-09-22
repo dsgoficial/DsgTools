@@ -149,7 +149,7 @@ class DpiThread(GenericThread):
         #Open image
         imgIn = osgeo.gdal.Open(inFile)
         if not imgIn:
-            QgsMessageLog.logMessage(self.messenger.getProblemMessage() + inFile, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getProblemMessage() + inFile, "DSGTools Plugin", QgsMessageLog.INFO)
             return 0
 
         #Setting the output file name
@@ -221,9 +221,9 @@ class DpiThread(GenericThread):
                 # Updating progress
                 self.signals.stepProcessed.emit(self.getId())
 
-                QgsMessageLog.logMessage("Band " + str(bandNumber) + ": "+str(minValue)+" , "+str(maxValue), "DSG Tools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage("Band " + str(bandNumber) + ": "+str(minValue)+" , "+str(maxValue), "DSGTools Plugin", QgsMessageLog.INFO)
             else:
-                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
                 return -1
 
         #creating final image for reprojection
@@ -236,7 +236,7 @@ class DpiThread(GenericThread):
 
         #Checking if the output file was created with success
         if os.path.exists(outFile):
-            QgsMessageLog.logMessage(self.messenger.getSuccessfullFileCreation() + outFile, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getSuccessfullFileCreation() + outFile, "DSGTools Plugin", QgsMessageLog.INFO)
             # Updating progress
             self.signals.stepProcessed.emit(self.getId())
 
