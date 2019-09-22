@@ -24,7 +24,7 @@
 import os
 
 from qgis.PyQt import uic
-from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal
+from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QItemSelectionModel
 from qgis.PyQt.QtWidgets import (QWidget,
                                  QHeaderView,
                                  QTableWidgetItem,
@@ -183,7 +183,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) position to add the new row.
         :param contents: (dict) a map to items to be filled.
         """
-        row = row if row is not None else self.rowCount() - 1
+        # row = row if row is not None else self.rowCount() - 1
         self.tableWidget.removeRow(row)
         self.rowRemoved.emit(row)
 
@@ -243,7 +243,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         :return: (list-of-QModelIndex) table's selected indexes.
         """
-        return self.tableWidget.selectedIndexes()
+        return self.tableWidget.selectionModel().selectedItems()
 
     def selectedItems(self):
         """
@@ -261,10 +261,10 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param reverOrder: (bool) indicates if the row order is reversed.
         :return: (list-of-int) ordered list of selected rows' indexes.
         """
-        rows = set()
-        for idx in self.selectedIndexes():
-            rows.add(idx.row())
-        return sorted(rows, reverse=reverseOrder)
+        return sorted(
+            set(i.row() for i in self.tableWidget.selectionModel().selectedRows()),
+            reverse=reverseOrder
+        )
 
     def selectedColumns(self, reverseOrder=False):
         """
@@ -272,17 +272,25 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param reverOrder: (bool) indicates if the column order is reversed.
         :return: (list-of-int) ordered list of selected columns' indexes.
         """
-        cols = set()
-        for idx in self.selectedIndexes():
-            cols.add(idx.column())
-        return sorted(cols, reverse=reverseOrder)
+        return sorted(
+            set(i.column() for i in self.tableWidget.selectionModel().selectedColumns()),
+            reverse=reverseOrder
+        )
 
     def selectRow(self, row):
         """
         Clears all selected rows and selects row.
         :param row: (int) index for the row to be select.
         """
-        self.tableWidget.selectRow(row)
+        self.tableWidget.selectionModel().select(
+            self.tableWidget.selectionModel().model().index(row, 0),
+            QItemSelectionModel.SelectionFlags(
+                QItemSelectionModel.Clear |
+                QItemSelectionModel.Select |
+                QItemSelectionModel.Current |
+                QItemSelectionModel.Rows
+            )
+        )
 
     def addRowToSelection(self, row):
         """
@@ -290,17 +298,23 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         :param row: (int) index for the row to be added to selection.
         """
         if row not in self.selectedRows():
-            self.tableWidget.setSelectionMode(QAbstractItemView.MultiSelection)
-            self.tableWidget.selectRow(row)
-            self.tableWidget.setSelectionMode(QAbstractItemView.ExtendedSelection)
-            self.rowAdded.emit(row)
+            self.tableWidget.selectionModel().select(
+                self.tableWidget.selectionModel().model().index(row, 0),
+                QItemSelectionModel.SelectionFlags(
+                    QItemSelectionModel.Clear |
+                    QItemSelectionModel.Select |
+                    QItemSelectionModel.Current |
+                    QItemSelectionModel.Rows
+                )
+            )
+        self.rowAdded.emit(row)
 
     def moveRowUp(self, row):
         """
         Moves a row one position up, if possible.
         :param row: (int) row be moved.
         """
-        if row == 0:
+        if row <= 0:
             return
         self.addRow(self.row(row), row - 1)
         self.removeRow(row + 1)
@@ -311,7 +325,7 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         Moves a row one position up, if possible.
         :param row: (int) row be moved.
         """
-        if row == self.rowCount() - 1:
+        if row >= self.rowCount() - 1:
             return
         self.addRow(self.row(row), row + 2)
         self.removeRow(row)
@@ -322,10 +336,12 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         Method triggered when remove button is clicked.
         """
-        rows = self.selectedRows()
-        while rows:
-            self.removeRow(rows[0])
-            rows = self.selectedRows()
+        if not self.tableWidget.selectionModel().hasSelection():
+            return
+        self.tableWidget.setUpdatesEnabled(False)
+        for row in self.selectedRows():
+            self.removeRow(row)
+        self.tableWidget.setUpdatesEnabled(True)
 
     @pyqtSlot()
     def on_addPushButton_clicked(self):
@@ -348,10 +364,11 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         Method triggered when move row up button is clicked.
         """
+        if not self.tableWidget.selectionModel().hasSelection():
+            return
         # selected rows method is sorted!
-        for row in self.selectedRows():
-            if row - 1 in self.selectedRows():
-                continue
+        selected = self.selectedRows()
+        for row in selected:
             self.moveRowUp(row)
 
     @pyqtSlot()
@@ -359,7 +376,8 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         Method triggered when move row down button is clicked.
         """
-        for row in self.selectedRows(True):
-            if row + 1 in self.selectedRows():
-                continue
+        if not self.tableWidget.selectionModel().hasSelection():
+            return
+        selected = self.selectedRows(True)
+        for row in selected:
             self.moveRowDown(row)
