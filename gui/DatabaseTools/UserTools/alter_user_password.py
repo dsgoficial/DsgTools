@@ -27,6 +27,8 @@ from qgis.PyQt import QtWidgets, uic
 from qgis.PyQt.QtCore import pyqtSlot
 from qgis.PyQt.QtWidgets import QMessageBox
 
+from qgis.core import Qgis, QgsMessageLog
+
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
     os.path.dirname(__file__), 'alter_user_password.ui'))
 

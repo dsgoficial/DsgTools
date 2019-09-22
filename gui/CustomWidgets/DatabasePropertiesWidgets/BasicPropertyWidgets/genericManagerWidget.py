@@ -35,7 +35,7 @@ from DsgTools.gui.CustomWidgets.SelectionWidgets.listSelector import ListSelecto
 from DsgTools.core.Utils.utils import Utils
 from DsgTools.core.dsgEnums import DsgEnums
 
-from qgis.core import QgsMessageLog
+from qgis.core import QgsMessageLog, Qgis
 import json
 
 FORM_CLASS, _ = uic.loadUiType(os.path.join(
