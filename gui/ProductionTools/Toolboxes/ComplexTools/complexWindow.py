@@ -161,7 +161,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             complexClasses = self.abstractDb.listComplexClassesFromDatabase()
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), ':'.join(e.args))
-            QgsMessageLog.logMessage(e.args[0], 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(e.args[0], 'DSGTools Plugin', Qgis.Critical)
 
         self.complexCombo.addItems(complexClasses)
 
@@ -283,7 +283,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
 
         #getting the layer the needs to be updated
         aggregated_layer = None
@@ -317,7 +317,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             link_column = self.abstractDb.obtainLinkColumn(complex, aggregated_class)
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
 
         #getting the layer the needs to be updated
         aggregated_layer = None
@@ -356,7 +356,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 layer.dataProvider().changeAttributeValues({int(id):attrs})
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), e.args[0])
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
 
     @pyqtSlot(bool)
     def on_disassociatePushButton_clicked(self):
@@ -398,7 +398,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
             associatedDict = self.abstractDb.loadAssociatedFeatures(complex)
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
             
         for name in list(associatedDict.keys()):
             for complex_uuid in list(associatedDict[name].keys()):
@@ -455,7 +455,7 @@ class ComplexWindow(QtWidgets.QDockWidget, FORM_CLASS):
                 column_name = self.abstractDb.obtainLinkColumn(complex, layer.name())
             except Exception as e:
                 QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
-                QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+                QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
 
             #storing the names of the incompatible layers
             if column_name == '':

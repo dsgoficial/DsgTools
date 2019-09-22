@@ -170,7 +170,7 @@ class NewDatabaseLineEdit(QWidget, FORM_CLASS):
             #     raise Exception(msg)
         except Exception as e:
             self.problemOccurred.emit(self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
 
     def validate(self):
         """

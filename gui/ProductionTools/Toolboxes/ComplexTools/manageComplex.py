@@ -271,7 +271,7 @@ class ManageComplexDialog(QDialog, FORM_CLASS):
             qmlDirPath = abstractDb.getQmlDir()
         except Exception as e:
             QMessageBox.critical(self.iface.mainWindow(), self.tr("Critical!"), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), 'DSG Tools Plugin', Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), 'DSGTools Plugin', Qgis.Critical)
         qmlPath = os.path.join(qmlDirPath, fileName)
 
         #getting the domain dictionary that will be used to generate the comboboxes

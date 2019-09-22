@@ -199,7 +199,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
         except Exception as e:
             QApplication.restoreOverrideCursor()
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(self.tr('Error loading db: ')+':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
             self.processTreeWidget.clear()    
 
     def on_filterLineEdit_textChanged(self, text):
@@ -245,7 +245,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             procReturn = self.validationManager.runLastProcess()
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()
@@ -275,7 +275,7 @@ class ValidationToolbox(QtWidgets.QDockWidget, FORM_CLASS):
             procReturn = self.validationManager.executeProcessV2(processName)
         except Exception as e:
             QMessageBox.critical(self, self.tr('Critical!'), self.tr('A problem occurred! Check log for details.'))
-            QgsMessageLog.logMessage(':'.join(e.args), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(':'.join(e.args), "DSGTools Plugin", Qgis.Critical)
             procReturn = 0
             QApplication.restoreOverrideCursor()
         QApplication.restoreOverrideCursor()

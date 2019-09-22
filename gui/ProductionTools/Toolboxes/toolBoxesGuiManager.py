@@ -29,9 +29,9 @@ from qgis.PyQt.QtCore import QObject, Qt
 
 from .AttributeTools.code_list import CodeList
 from .FieldToolBox.field_toolbox import FieldToolbox
-#from .ValidationToolbox.validation_toolbox import ValidationToolbox
 from .ContourTool.calc_contour import CalcContour
 from .ComplexTools.complexWindow import ComplexWindow
+from .QualityAssuranceToolBox.qualityAssuranceDockWidget import QualityAssuranceDockWidget
 
 class ToolBoxesGuiManager(QObject):
 
@@ -47,10 +47,10 @@ class ToolBoxesGuiManager(QObject):
         self.iconBasePath = ':/plugins/DsgTools/icons/'
     
     def initGui(self):
-        #self.validationToolbox = ValidationToolbox(self.iface)
-        #self.validationToolbox.addTool(self.manager, self.showValidationToolbox, self.parentMenu, self.iconBasePath, self.stackButton)
+        self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+        self.addTool(self.showQaToolBox, 'validationtools.png', self.tr("Geospatial Data Quality Assurance Tool"), setDefaultAction=True)
         self.fieldToolbox = None
-        self.addTool(self.showFieldToolbox, 'fieldToolbox.png', self.tr('Feature Classification Tool'), setDefaultAction=True)
+        self.addTool(self.showFieldToolbox, 'fieldToolbox.png', self.tr('Feature Classification Tool'))
         self.calcContour = None
         self.addTool(self.showCalcContourToolbox, 'calccontour.png', self.tr('Assign Contour Values'))
         self.codeList = None
@@ -93,17 +93,17 @@ class ToolBoxesGuiManager(QObject):
             self.iface.removeDockWidget(self.fieldToolbox)
         else:
             self.fieldToolbox = FieldToolbox(self.iface)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.fieldToolbox) 
 
-    # def showValidationToolbox(self):
-    #     """
-    #     Shows the Validation Dock
-    #     """
-    #     if self.validationToolbox:
-    #         self.iface.removeDockWidget(self.validationToolbox)
-    #     else:
-    #         self.validationToolbox = ValidationToolbox(self.iface)
-    #     self.iface.addDockWidget(Qt.RightDockWidgetArea, self.validationToolbox)
+    def showQaToolBox(self):
+        """
+        Shows/Hides the Quality Assurance Dock on main window.
+        """
+        if self.qaToolBox:
+            self.iface.removeDockWidget(self.qaToolBox)
+        else:
+            self.qaToolBox = QualityAssuranceDockWidget(self.iface)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.qaToolBox)
 
     def showCalcContourToolbox(self):
         """

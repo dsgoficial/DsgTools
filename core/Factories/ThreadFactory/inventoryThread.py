@@ -208,7 +208,7 @@ class InventoryThread(GenericThread):
         try:
             csvfile = open(outputFile, 'wb')
         except IOError as e:
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSGTools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
 
         try:
@@ -252,19 +252,19 @@ class InventoryThread(GenericThread):
                             
                         self.signals.stepProcessed.emit(self.getId())
                     else:
-                        QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                        QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
                         return (-1, self.messenger.getUserCanceledFeedbackMessage())
         except csv.Error as e:
             csvfile.close()
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e, "DSGTools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e)
         except OSError as e:
             csvfile.close()
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+e.strerror, "DSGTools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage()+'\n'+e.strerror)
         except Exception as e:
             csvfile.close()
-            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getInventoryErrorMessage()+'\n'+':'.join(e.args), "DSGTools Plugin", QgsMessageLog.INFO)
             return (0, self.messenger.getInventoryErrorMessage())
         csvfile.close()
         
@@ -275,7 +275,7 @@ class InventoryThread(GenericThread):
             # return self.copyFiles(destinationFolder)
             return self.copy(destinationFolder)
         else:
-            QgsMessageLog.logMessage(self.messenger.getSuccessInventoryMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+            QgsMessageLog.logMessage(self.messenger.getSuccessInventoryMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
             return (1, self.messenger.getSuccessInventoryMessage())
         
     def computeBoxAndAttributes(self, layer, line, extension, insertIntoMemory=True):
@@ -314,13 +314,13 @@ class InventoryThread(GenericThread):
                 try:
                     shutil.copy2(fileName, newFileName)
                 except IOError as e:
-                    QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSG Tools Plugin", QgsMessageLog.INFO)
+                    QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+e.strerror, "DSGTools Plugin", QgsMessageLog.INFO)
                     return (0, self.messenger.getCopyErrorMessage()+'\n'+e.strerror)
             else:
-                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage(self.messenger.getUserCanceledFeedbackMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
                 return (-1, self.messenger.getUserCanceledFeedbackMessage())
 
-        QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+        QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
 
     def copy(self, destinationFolder):
@@ -343,10 +343,10 @@ class InventoryThread(GenericThread):
                 elif gdalSrc:
                     self.copyGDALDataSource(gdalSrc, newFileName)
             except Exception as e:
-                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+':'.join(e.args), "DSG Tools Plugin", QgsMessageLog.INFO)
+                QgsMessageLog.logMessage(self.messenger.getCopyErrorMessage()+'\n'+':'.join(e.args), "DSGTools Plugin", QgsMessageLog.INFO)
                 return (0, self.messenger.getCopyErrorMessage()+'\n'+':'.join(e.args))
         
-        QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSG Tools Plugin", QgsMessageLog.INFO)
+        QgsMessageLog.logMessage(self.messenger.getSuccessInventoryAndCopyMessage(), "DSGTools Plugin", QgsMessageLog.INFO)
         return (1, self.messenger.getSuccessInventoryAndCopyMessage())
     
     def copy_single_file(self, file_name, destination_folder):

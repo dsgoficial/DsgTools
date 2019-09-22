@@ -113,13 +113,13 @@ class FlipLine(QgsMapTool):
             logMsg = self.getLogMessage(None, None)
             self.iface.messageBar().pushMessage(self.tr('Error'), logMsg, level=Qgis.Critical, duration=3)
             # QMessageBox.critical(self, self.tr('Critical!'), logMsg)
-            QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.Critical)
             return
         # call the method for flipping features from geometry module
         flippedLines, failedLines = self.DsgGeometryHandler.flipFeatureList(featureList=selectedFeatures, debugging=True)
         logMsg = self.getLogMessage(flippedLines, failedLines)
         self.iface.messageBar().pushMessage(self.tr('Success'), logMsg, level=Qgis.Info, duration=3)
-        QgsMessageLog.logMessage(logMsg, "DSG Tools Plugin", Qgis.Info)
+        QgsMessageLog.logMessage(logMsg, "DSGTools Plugin", Qgis.Info)
  
     def getLogMessage(self, flippedLines, failedLines):
         """

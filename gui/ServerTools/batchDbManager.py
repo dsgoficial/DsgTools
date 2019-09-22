@@ -159,7 +159,7 @@ class BatchDbManager(QtWidgets.QDialog, FORM_CLASS):
             msg+= self.tr('\nError messages for each database were output in qgis log.')
             for errorDb in errorDbList:
                 msg = self.tr("Error for database {0}: ").format(errorDb, exceptionDict[errorDb])
-                QgsMessageLog.logMessage(msg, "DSG Tools Plugin", Qgis.Critical)
+                QgsMessageLog.logMessage(msg, "DSGTools Plugin", Qgis.Critical)
         return msg 
 
     @pyqtSlot(bool)

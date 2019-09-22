@@ -132,7 +132,7 @@ class ExploreServerWidget(QtWidgets.QWidget, FORM_CLASS):
         postgisDb = self.dbFactory.createDbFactory(DsgEnums.DriverPostGIS)
         postgisDb.connectDatabaseWithParameters(host, port, database, user, password)
         if not postgisDb.db.open():
-            QgsMessageLog.logMessage(db.lastError().text(), "DSG Tools Plugin", Qgis.Critical)
+            QgsMessageLog.logMessage(db.lastError().text(), "DSGTools Plugin", Qgis.Critical)
             QMessageBox.critical(self.iface.mainWindow(), self.tr('Critical'), self.tr('A problem occurred! Check log for details.'))
         
         query = QSqlQuery(gen.getDatabasesFromServer(), postgisDb.db)
