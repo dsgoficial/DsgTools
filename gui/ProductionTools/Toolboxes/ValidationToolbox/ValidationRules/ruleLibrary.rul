@@ -1,3 +1,0 @@
-cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_floresta_a,1..*
-cb.veg_campo_a,1_não deve (ser),6_sobrepor,cb.veg_campo_a,1..*
-cb.veg_floresta_a,1_não deve (ser),7_conter,cb.hid_terreno_suj_inundacao_a,
