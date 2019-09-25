@@ -60,21 +60,39 @@ from qgis.core import (QgsProcessing,
 
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.OtherAlgs.ruleStatisticsAlgorithm import \
     RuleStatisticsAlgorithm
+from DsgTools.core.LayerTools.CustomFormTools.customFormGenerator import CustomFormGenerator
+from DsgTools.core.LayerTools.CustomFormTools.customInitCodeGenerator import \
+    CustomInitCodeGenerator
 from operator import itemgetter
 from collections import defaultdict
 
-
-class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
+class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
     CLEAN_BEFORE_ASSIGN = 'CLEAN_BEFORE_ASSIGN'
+    MODE = 'MODE'
 
     def initAlgorithm(self, config=None):
-        super(AssignFormFormatRulesToLayersAlgorithm, self).initAlgorithm(config=config)
+        super(AssignCustomFormAndFormatRulesToLayersAlgorithm, self).initAlgorithm(config=config)
         self.addParameter(
             QgsProcessingParameterBoolean(
                 self.CLEAN_BEFORE_ASSIGN,
                 self.tr('Clean before assign format rules')
             )
         )
+        self.modes = [
+            self.tr('Assing only custom form'),
+            self.tr('Assign only format rules'),
+            self.tr('Assign custom form and format rules')
+        ]
+
+        self.addParameter(
+            QgsProcessingParameterEnum(
+                self.MODE,
+                self.tr('Mode'),
+                options=self.modes,
+                defaultValue=0
+            )
+        )
+        
 
     def processAlgorithm(self, parameters, context, feedback):
         """
@@ -88,6 +106,11 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         if not inputLyrList:
             return {}
         input_data = self.load_rules_from_parameters(parameters)
+        mode = self.parameterAsEnum(
+            parameters,
+            self.MODE,
+            context
+        )
         cleanBefore = self.parameterAsBool(
             parameters,
             self.CLEAN_BEFORE_ASSIGN,
@@ -97,17 +120,24 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             self.cleanRules(inputLyrList)
         listSize = len(inputLyrList)
         stepSize = 100/listSize if listSize else 0
-        ruleDict = self.buildRuleDict(input_data)
+        self.ruleDict = self.buildRuleDict(input_data)
+        self.customFormGenerator = CustomFormGenerator()
+        self.customInitGenerator = CustomInitCodeGenerator()
 
         for current, lyr in enumerate(inputLyrList):
             if feedback.isCanceled():
                 break
-            for field in lyr.fields():
-                if feedback.isCanceled():
-                    break
-                self.addRuleToLayer(lyr, field, ruleDict)
+            if mode == 0:
+                #only custom form
+                self.assignFormToLayer(lyr)
+            elif mode == 1:
+                #only format rules
+                self.addRuleToLayer(lyr, feedback=feedback)
+            else:
+                #both
+                self.assignFormToLayer(lyr)
+                self.addRuleToLayer(lyr, feedback=feedback)
             feedback.setProgress(current * stepSize)
-
         return {}
 
     def buildRuleDict(self, input_data):
@@ -124,19 +154,31 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
             ruleDict[data['camada']][data['atributo']].append(data)
         return ruleDict
 
-    def addRuleToLayer(self, lyr, field, ruleDict):
-        data = ruleDict[lyr.name()][field.name()]
-        if not data:
-            return
-        fieldStyleList = [self.createConditionalStyle(i) for i in data if i['tipo_regra'] == 'Atributo']
-        rowStyleList = [self.createConditionalStyle(i) for i in data if i['tipo_regra'] != 'Atributo']
-        if fieldStyleList:
-            lyr.conditionalStyles().setFieldStyles(
-                field.name(),
-                fieldStyleList
-            )
-        elif rowStyleList:
-            lyr.conditionalStyles().setRowStyes(rowStyleList)
+    def addRuleToLayer(self, lyr, feedback=None):
+        for field in lyr.fields():
+            if feedback is not None and feedback.isCanceled():
+                break
+            if lyr.name() not in self.ruleDict or \
+                field.name() not in self.ruleDict[lyr.name()]:
+                continue
+            data = self.ruleDict[lyr.name()][field.name()]
+            if not data:
+                return
+            fieldStyleList = [
+                self.createConditionalStyle(i) \
+                    for i in data if i['tipo_regra'] == 'Atributo'
+            ]
+            rowStyleList = [
+                self.createConditionalStyle(i) \
+                    for i in data if i['tipo_regra'] != 'Atributo'
+            ]
+            if fieldStyleList:
+                lyr.conditionalStyles().setFieldStyles(
+                    field.name(),
+                    fieldStyleList
+                )
+            elif rowStyleList:
+                lyr.conditionalStyles().setRowStyes(rowStyleList)
 
     def createConditionalStyle(self, data):
         """
@@ -163,6 +205,30 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         for lyr in inputLayerList:
             for field in lyr.fields():
                 lyr.conditionalStyles().setFieldStyles(field.name(), [])
+    
+    def assignFormToLayer(self, lyr, layer_data):
+        editFormConfig = lyr.editFormConfig()
+        editFormConfig.setInitCodeSource(2)
+        editFormConfig.setLayout(2)
+        file_name = self.customFormGenerator.create(lyr, layer_data) #TODO: Verificar esse layer_data no FP
+        editFormConfig.setUiForm(file_name)
+        editFormConfig.setInitFunction("formOpen")
+        code_init = self.create_custom_code_init(layer_data)
+        editFormConfig.setInitCode(code_init)
+    
+    def create_custom_code_init(self, layer_data):
+        rules_form = []
+        if self.rules:
+            rules_form = self.rules.get_rules_form(layer_data["layer_name"])  
+        if 'filter' in layer_data["layer_fields"]:
+            filter_data = layer_data["layer_fields"]["filter"]
+            code_init = self.customInitGenerator.getInitCodeWithFilter(
+                filter_data,
+                rules_form
+            )
+        else:
+            code_init = self.customInitGenerator.getInitCodeWithoutFilter(rules_form)
+        return code_init
 
     def name(self):
         """
@@ -172,14 +238,14 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         lowercase alphanumeric characters only and no spaces or other
         formatting characters.
         """
-        return 'assignformformatrulestolayersalgorithm'
+        return 'AssignCustomFormAndFormatRulesToLayersAlgorithm'
 
     def displayName(self):
         """
         Returns the translated algorithm name, which should be used for any
         user-visible display of the algorithm name.
         """
-        return self.tr('Assign Form Format Rules to Layers')
+        return self.tr('Assign Custom Form and Format Rules to Layers')
 
     def group(self):
         """
@@ -199,7 +265,7 @@ class AssignFormFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         return 'DSGTools: Layer Management Algorithms'
 
     def tr(self, string):
-        return QCoreApplication.translate('AssignFormFormatRulesToLayersAlgorithm', string)
+        return QCoreApplication.translate('AssignCustomFormAndFormatRulesToLayersAlgorithm', string)
 
     def createInstance(self):
-        return AssignFormFormatRulesToLayersAlgorithm()
+        return AssignCustomFormAndFormatRulesToLayersAlgorithm()

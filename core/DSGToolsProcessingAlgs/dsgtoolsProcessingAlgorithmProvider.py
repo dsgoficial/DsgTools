@@ -36,8 +36,8 @@ from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignBoundin
     AssignBoundingBoxFilterToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFilterToLayersAlgorithm import \
     AssignFilterToLayersAlgorithm
-from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignFormFormatRulesToLayersAlgorithm import \
-    AssignFormFormatRulesToLayersAlgorithm
+from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignCustomFormAndFormatRulesToLayersAlgorithm import \
+    AssignCustomFormAndFormatRulesToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignMeasureColumnToLayersAlgorithm import \
     AssignMeasureColumnToLayersAlgorithm
 from DsgTools.core.DSGToolsProcessingAlgs.Algs.LayerManagementAlgs.assignValueMapToLayersAlgorithm import \
@@ -211,7 +211,7 @@ class DSGToolsProcessingAlgorithmProvider(QgsProcessingProvider):
                     ApplyStylesFromDatabaseToLayersAlgorithm(),
                     SingleOutputUnitTestAlgorithm(),
                     ExportToMemoryLayer(),
-                    AssignFormFormatRulesToLayersAlgorithm(),
+                    AssignCustomFormAndFormatRulesToLayersAlgorithm(),
                     AssignValueMapToLayersAlgorithm(),
                     LoadLayersFromPostgisAlgorithm(),
                     LoadNonSpatialLayersFromPostgreSQLAlgorithm(),
