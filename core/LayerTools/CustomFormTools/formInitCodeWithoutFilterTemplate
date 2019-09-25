@@ -63,9 +63,6 @@ class ValidateForm:
 class ManagerForm(QtCore.QObject):
     def __init__(self, dialog, layer, feature):
         super(ManagerForm, self).__init__()
-        itemsFilter = {filter}
-        itemsFilter.pop('A SER PREENCHIDO')
-        self.itemsFilter = { item : str(((itemsFilter[item]-(itemsFilter[item]%100))/100)) for item in itemsFilter.keys() }
         self.myDialog = dialog
         self.lyr = layer
         self.validadeForm = ""
@@ -75,16 +72,6 @@ class ManagerForm(QtCore.QObject):
         self.logBtn = dialog.findChild(QPushButton, "logBtn")
         self.logBtn.setCheckable(True)
         self.logBtn.clicked.connect(self.showLog)
-        self.typeField = dialog.findChild(QComboBox, "tipo")
-        optFilter = {"Edificação de energia": 2.0, "Edificação de serviço social": 21.0, "Edificação de lazer": 8.0, "Edificação de comércio e serviço": 9.0, "Habitacão indigena": 14.0, "Edificação pública civil": 13.0, "Edificação de extração mineral": 11.0, "Edificação ferroviária ou metroviária": 23.0, "Edificação de saúde": 20.0, "Medição de fenômenos": 16.0, "Edificação industrial": 10.0, "Edificação agropecuária": 12.0, "Posto de combustivel": 26.0, "Edificação ou construção turística": 7.0, "Edificação de comunicação": 1.0, "A SER PREENCHIDO": 9.0, "Edificação de ensino": 5.0, "Edificação religiosa": 6.0, "Edificação de abastecimento de água": 3.0, "Edificação habitacional": 27.0, "Edificação rodoviária": 22.0, "Edificação genérica": 0.0, "Edificação portuária": 25.0, "Edificação de saneamento": 4.0, "Posto de polícia rodoviária": 18.0, "Edificação aeroportuária": 24.0, "Posto fiscal": 19.0, "Edificação militar": 17.0}
-        optFilter.pop('A SER PREENCHIDO')
-        self.optFilter = {item : optFilter[item] for item in optFilter}
-        self.filterField = dialog.findChild(QComboBox, "filter")
-        self.filterField.addItem(u'Filtro')
-        self.filterField.addItems(sorted(self.optFilter.keys()))
-        self.filterField.currentIndexChanged.connect(self.filterTypeField)
-        idx_field = self.lyr.fields().indexOf('tipo')
-        self.mapValue = self.lyr.editorWidgetSetup(idx_field).config()['map']
         buttonBox = dialog.findChild(QDialogButtonBox,"buttonBox")
         buttonBox.rejected.connect(self.finishedForm)
         buttonBox.accepted.connect(self.finishedForm)
@@ -101,12 +88,12 @@ class ManagerForm(QtCore.QObject):
             self.logFrame.show()
         else:
             self.logFrame.hide()
-
+		
     def eventFilter(self, o, event):
         if event.type() in [7, 10, 11, 100]:
             self.validateLayerByRules()
         return False
-
+		
     def validateLayerByRules(self):
         formValues = {}
         for cb in self.myDialog.findChildren(QComboBox):
@@ -117,45 +104,18 @@ class ManagerForm(QtCore.QObject):
                 cb
             ]
         for le in self.myDialog.findChildren(QLineEdit):
-            formValues[le.objectName()] = [
+                formValues[le.objectName()] = [
                 le.text(),
                 le
             ]
         self.validadeForm = ValidateForm(self.lyr, formValues, self.logBrowser)
 		
-    def filterTypeField(self):
-        value =  self.filterField.currentText()
-        itemsFiltered = self.getItemsFiltered(value)
-        self.typeField.clear()
-        for k, v in sorted(itemsFiltered.items()):
-            self.typeField.addItem(k, v)
-							
-    def getItemsFiltered(self, value):
-        result = {}
-        if value == "Filtro":
-            return self.mapValue
-        elif value in self.optFilter:
-            valueDefault = int(self.optFilter[value])
-            for k, v in self.mapValue.items():
-                valueTest = int(v)
-                if ((valueTest-(valueTest%100))/100) == valueDefault:
-                    result[k] = v
-            result.update({'A SER PREENCHIDO' : '999'})
-            return result
-        return result
-		
     def finishedForm(self):
-        idx_field = self.lyr.fields().indexOf('tipo')
-        setup = core.QgsEditorWidgetSetup( 'ValueMap', {
-                'map': self.mapValue
-            }
-        )                
-        self.lyr.setEditorWidgetSetup(idx_field, setup)
-    
+        pass
 
 def formOpen(dialog, layer, featureid):
-	try:
-		global a
-		a = ManagerForm(dialog, layer, featureid)
-	except:
-		pass
+    try:
+        global a
+        a = ManagerForm(dialog, layer, featureid)
+    except:
+        pass
