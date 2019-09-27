@@ -20,6 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 """
+import json
+
 from PyQt5.QtCore import QCoreApplication
 
 import processing
@@ -220,7 +222,7 @@ class ParameterSnapHierarchy(QgsProcessingParameterDefinition):
         return True
 
     def valueAsPythonString(self, value, context):
-        return str(value)
+        return json.dumps(value)
 
     def asScriptCode(self):
         raise NotImplementedError()

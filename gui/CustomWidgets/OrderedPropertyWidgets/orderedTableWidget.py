@@ -21,7 +21,7 @@
  ***************************************************************************/
 """
 
-import os
+import os, json
 
 from qgis.PyQt import uic
 from qgis.PyQt.QtCore import Qt, pyqtSlot, pyqtSignal, QItemSelectionModel
@@ -57,11 +57,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         """
         self.clear()
         self.headers = { 
-            header : {
-                "col" : col,
+            col : {
+                "name" : header,
                 "type" : prop["type"],
                 "editable" if prop["type"] == "item" else "class" : \
-                    prop["editable" if prop["type"] == "item" else "class"]
+                    prop["editable" if prop["type"] == "item" else "class"],
+                "getter" : prop["getter"] if "getter" in prop else None,
+                "setter" : prop["setter"] if "setter" in prop else None
             } for col, (header, prop) in enumerate(headerMap.items())
         }
         self.tableWidget.setColumnCount(len(self.headers))
@@ -74,6 +76,36 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         for row in range(self.rowCount()):
             self.tableWidget.removeRow(row)
         self.tableWidget.setRowCount(0)
+    
+    def getValue(self, row, column):
+        """
+        Gets value from row, column item according to type.
+        If it is an item type, returns item.text()
+        Else, returns the getter funcion applied to the item.
+        """
+        if self.headers[column]['type'] == 'item':
+            return self.tableWidget.item(row, column).text()
+        else:
+            getter = self.headers[column]['getter']
+            widget = self.tableWidget.cellWidget(row, column)
+            if not getter:
+                raise Exception(self.tr('Getter must be defined for widget type'))
+            return getattr(widget, getter)
+
+    def setValue(self, row, column, value):
+        """
+        Sets value from row, column item according to type.
+        If it is an item type, applies item.setText()
+        Else, applies the value to the item using the setter function.
+        """
+        if self.headers[column]['type'] == 'item':
+            return self.tableWidget.item(row, column).setText(value)
+        else:
+            setter = self.headers[column]['setter']
+            widget = self.tableWidget.cellWidget(row, column)
+            if not setter:
+                raise Exception(self.tr('Setter must be defined for widget type'))
+            return getattr(widget, setter)(value)
 
     def rowCount(self):
         """
@@ -381,3 +413,19 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         selected = self.selectedRows(True)
         for row in selected:
             self.moveRowDown(row)
+    
+    def exportState(self):
+        """
+        Exports the state of the interface
+        The state of the interface is a dictionary used to populate it.
+        """
+        for row in self.tab:
+            pass
+
+    def importState(self, stateDict):
+        """
+        Imports the state of the interface
+        :param stateDict: dict of the state of the interface. The state
+        of the interface is a dictionary used to populate it.
+        """
+        pass
