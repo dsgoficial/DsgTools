@@ -33,10 +33,10 @@ from qgis.PyQt.Qt import QObject
 from qgis.PyQt.QtCore import pyqtSignal, pyqtSlot
 from qgis.utils import iface
 
-from ....core.LayerTools.CustomFormTools.generatorCustomForm import \
-    GeneratorCustomForm
-from ....core.LayerTools.CustomFormTools.generatorCustomInitCode import \
-    GeneratorCustomInitCode
+from ....core.LayerTools.CustomFormTools.customFormGenerator import \
+    CustomFormGenerator
+from ....core.LayerTools.CustomFormTools.customInitCodeGenerator import \
+    CustomInitCodeGenerator
 from ....gui.CustomWidgets.BasicInterfaceWidgets.progressWidget import \
     ProgressWidget
 #DsgTools imports
@@ -51,8 +51,8 @@ class PostGISLayerLoader(EDGVLayerLoader):
         self.provider = 'postgres'
         self.setDatabaseConnection()
         self.buildUri()
-        self.generatorCustomForm = GeneratorCustomForm()
-        self.generatorCustomInitCode = GeneratorCustomInitCode()
+        self.customFormGenerator = CustomFormGenerator()
+        self.customInitCodeGenerator = GeneratorCustomInitCode()
 
     def checkLoaded(self, name):
         """
@@ -369,7 +369,7 @@ class PostGISLayerLoader(EDGVLayerLoader):
         formFile = self.newUiForm(pathUiForm)
         #inserir flag do filtro
         withFilter = True if lyr.name() in list(self.filterDict.keys()) else False
-        self.generatorCustomForm.create(formFile, lyr, withFilter = withFilter)
+        self.customFormGenerator.create(formFile, lyr, withFilter = withFilter)
         lyr.editFormConfig().setInitCodeSource(2)
         lyr.editFormConfig().setLayout(2)
         lyr.editFormConfig().setUiForm(pathUiForm)
@@ -399,10 +399,10 @@ class PostGISLayerLoader(EDGVLayerLoader):
         # dbData = data['userData']['dbJson'][data['dbAlias']]
         # layerData = dbData[data['nameGeom']][data['nameCatLayer']][data['layerName']]
         if lyr.name() in list(self.filterDict.keys()):
-            initCode = self.generatorCustomInitCode.getInitCodeWithFilter(self.filterDict[lyr.name()], rules) #layerData['filter'] é o resultado da query select * from dominios.<nome do dominio do atributo com filtro>
+            initCode = self.customInitCodeGenerator.getInitCodeWithFilter(self.filterDict[lyr.name()], rules) #layerData['filter'] é o resultado da query select * from dominios.<nome do dominio do atributo com filtro>
             return initCode
         else:
-            initCode = self.generatorCustomInitCode.getInitCodeNotFilter(rules)
+            initCode = self.customInitCodeGenerator.getInitCodeNotFilter(rules)
             return initCode
 
     def getLayerByName(self, layer):
