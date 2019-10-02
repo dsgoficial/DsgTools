@@ -980,7 +980,9 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = 'select srid, f_geometry_column, type, f_table_schema, f_table_name from public.geometry_columns'
         return sql
     
-    def getGeomTablesDomains(self):
+    def getGeomTablesDomains(self, layerFilter = None):
+        inClause = ','.join(layerFilter) if layerFilter \
+            else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
         sql = """select distinct case 
             when split_part(conrelid::regclass::text,'.',2) = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
             else replace(split_part(conrelid::regclass::text,'.',2),'"','')
@@ -988,11 +990,13 @@ class PostGISSqlGenerator(SqlGenerator):
             pg_constraint WHERE contype = 'f' and case 
             when replace(split_part(conrelid::regclass::text,'.',2),'"','') = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
             else replace(split_part(conrelid::regclass::text,'.',2),'"','')
-        end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
-        """
+        end in ({in_clause})
+        """.format(in_clause=inClause)
         return sql
     
-    def getGeomTableConstraints(self):
+    def getGeomTableConstraints(self, layerFilter = None):
+        inClause = ','.join(layerFilter) if layerFilter \
+            else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
         sql = """select distinct case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
@@ -1000,9 +1004,9 @@ class PostGISSqlGenerator(SqlGenerator):
              pg_constraint WHERE contype = 'c' and case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
             else split_part(conrelid::regclass::text,'.',2)
-        end in (select f_table_name from public.geometry_columns where f_table_schema <> 'views')
+        end in ({in_clause})
         order by cl
-        """
+        """.format(in_clause=inClause)
         return sql
     
     def getMultiColumns(self, schemaList):
@@ -1013,6 +1017,16 @@ class PostGISSqlGenerator(SqlGenerator):
                 ) as t group by t.table_name
             ) as a
         """.format("'"+"','".join(schemaList)+"'")
+        return sql
+    
+    def getMultiColumnsFromTableList(self, tableList):
+        sql = """select row_to_json(a) from (
+                select t.table_name, array_agg(t.column_name::text) as attributes from 
+                (select table_name, column_name from information_schema.columns  
+                where data_type = 'ARRAY' and table_name in ({0}) 
+                ) as t group by t.table_name
+            ) as a
+        """.format("'"+"','".join(tableList)+"'")
         return sql
     
     def getGeomByPrimitive(self):
@@ -1027,16 +1041,40 @@ class PostGISSqlGenerator(SqlGenerator):
         sql = """select row_to_json(row(f_table_name, f_geometry_column)) from public.geometry_columns where f_table_schema not in ('views','topology')"""
         return sql
 
-    def getGeomColumnTupleList(self, showViews = False):
+    def getGeomColumnTupleList(self, showViews = False, filterList = None):
+        filterLayersClause = 'AND f_table_name in ({table_name_list})'.format(
+                table_name_list=','.join(filterList)
+            ) if not filterList else """ """
+        showViewsClause = """ AND table_type = 'BASE TABLE'""" if not showViews else """ """
         sql = """select f_table_schema, f_table_name, f_geometry_column, type, table_type from (select distinct f_table_schema, f_table_name, f_geometry_column, type, f_table_schema || '.' || f_table_name as jc  from public.geometry_columns as gc) as inn
             left join (select table_schema || '.' || table_name as jc, table_type from information_schema.tables) as infs on inn.jc = infs.jc
-            where inn.type <> 'GEOMETRY' """
-        if not showViews:
-            sql += """ and table_type = 'BASE TABLE'"""
+            where inn.type <> 'GEOMETRY' {where_layer_filter} {where_show_views}""".format(
+                where_layer_filter=filterLayersClause,
+                where_show_views=showViewsClause
+            )
         return sql
     
-    def getNotNullDict(self):
-        sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text))) from information_schema.columns where table_name in (select distinct f_table_name from public.geometry_columns) and is_nullable = 'NO' and data_type = 'smallint' group by table_name, table_schema"""
+    def getNotNullDict(self, layerFilter=None):
+        tableNameClause = ','.join(layerFilter) if layerFilter \
+            else """select distinct f_table_name from public.geometry_columns"""
+        sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text)))
+                    from information_schema.columns 
+                    where table_name in ({table_name_clause}) 
+                        and is_nullable = 'NO' and data_type = 'smallint'
+                    group by table_name, table_schema
+            """.format(table_name_clause=tableNameClause)
+        return sql
+    
+    def getTableMetadataDict(self, layerFilter=None):
+        sql = """select row_to_json(a) from (
+	                select table_schema, table_name, column_name as attr_name, is_nullable::boolean as nullable, data_type as column_type, gc.f_geometry_column as geometry_column, gc.type as geometry_type
+					    from information_schema.columns as c 
+					left join public.geometry_columns as gc 
+						on c.table_name = gc.f_table_name and c.table_schema = gc.f_table_schema ) as a
+	            where a.table_name in ({filter})
+        """.format(
+            filter=','.join(layerFilter) if layerFilter else "select f_table_name from public.geometry_columns"
+        )
         return sql
     
     def getDomainDict(self, domainTable):
@@ -1045,6 +1083,14 @@ class PostGISSqlGenerator(SqlGenerator):
 
     def getDomainCodeDict(self, domainTable):
         sql = """select row_to_json(a) from (select * from {0}) as a""".format(domainTable)
+        return sql
+    
+    def getDomainCodeDictWithColumns(self, domainTable, refPk, otherKey):
+        sql = """select row_to_json(a) from (select {pk}, {fk} from {table}) as a""".format(
+                table=domainTable,
+                pk=refPk,
+                fk=otherKey
+            )
         return sql
 
     def getGeomStructDict(self):
@@ -1524,11 +1570,11 @@ class PostGISSqlGenerator(SqlGenerator):
                 AND pid <> pg_backend_pid();""".format(dbName)
         return sql
 
-    def getAttributesFromTable(self, tableSchema, tableName, typeFilter = []):
-        if typeFilter != []:
-            whereClause = """ and data_type in ('{0}') """.format("','".join(typeFilter))
-        else:
-            whereClause = """"""
+    def getAttributesFromTable(self, tableSchema, tableName, typeFilter = None):
+        whereClause = """""" if not typeFilter \
+            else """ and data_type in ('{0}') """.format(
+                "','".join(typeFilter)
+            )
         sql = """select column_name, data_type from information_schema.columns where 
             table_schema = '{0}' and table_name = '{1}' {2} order by column_name """.format(tableSchema, tableName, whereClause)
         return sql
