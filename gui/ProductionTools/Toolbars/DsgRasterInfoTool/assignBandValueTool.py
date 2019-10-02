@@ -68,15 +68,10 @@ class AssignBandValueTool(QgsMapTool):
     
     def getSuppressOptions(self):
         qgisSettings = QSettings()
-        qgisSettings.beginGroup('Qgis/digitizing')
+        qgisSettings.beginGroup('qgis/digitizing')
         setting = qgisSettings.value('disable_enter_attribute_values_dialog')
         qgisSettings.endGroup()
-        if not setting:
-            return False
-        if setting.lower() == u'false':
-            return False
-        else:
-            return True
+        return setting
 
     def setRubberbandParameters(self):
         self.rubberBand = QgsRubberBand(self.canvas, QgsWkbTypes.PolygonGeometry)
