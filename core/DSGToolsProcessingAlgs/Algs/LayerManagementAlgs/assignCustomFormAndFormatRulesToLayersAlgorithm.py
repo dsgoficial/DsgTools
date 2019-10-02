@@ -210,7 +210,7 @@ class AssignCustomFormAndFormatRulesToLayersAlgorithm(RuleStatisticsAlgorithm):
         editFormConfig = lyr.editFormConfig()
         editFormConfig.setInitCodeSource(2)
         editFormConfig.setLayout(2)
-        file_name = self.customFormGenerator.create(lyr, layer_data) #TODO: Verificar esse layer_data no FP
+        file_name = self.customFormGenerator.create(lyr, layer_data) #TODO: Verificar esse layer_data no
         editFormConfig.setUiForm(file_name)
         editFormConfig.setInitFunction("formOpen")
         code_init = self.create_custom_code_init(layer_data)
