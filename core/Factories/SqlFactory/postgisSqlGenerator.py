@@ -981,7 +981,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeomTablesDomains(self, layerFilter = None):
-        inClause = ','.join(layerFilter) if layerFilter \
+        inClause = """'{text}'""".format(
+                text='","'.join(layerFilter)
+            ) if layerFilter \
             else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
         sql = """select distinct case 
             when split_part(conrelid::regclass::text,'.',2) = '' then replace(split_part(conrelid::regclass::text,'.',1),'"','')
@@ -995,7 +997,9 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getGeomTableConstraints(self, layerFilter = None):
-        inClause = ','.join(layerFilter) if layerFilter \
+        inClause = """'{text}'""".format(
+                text='","'.join(layerFilter)
+            ) if layerFilter \
             else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
         sql = """select distinct case 
             when split_part(conrelid::regclass::text,'.',2) = '' then split_part(conrelid::regclass::text,'.',1)
@@ -1055,8 +1059,10 @@ class PostGISSqlGenerator(SqlGenerator):
         return sql
     
     def getNotNullDict(self, layerFilter=None):
-        tableNameClause = ','.join(layerFilter) if layerFilter \
-            else """select distinct f_table_name from public.geometry_columns"""
+        tableNameClause = """'{text}'""".format(
+                text='","'.join(layerFilter)
+            ) if layerFilter \
+            else """select distinct f_table_name from public.geometry_columns """
         sql = """select row_to_json(row(table_name, table_schema,  array_agg(column_name::text)))
                     from information_schema.columns 
                     where table_name in ({table_name_clause}) 
@@ -1073,7 +1079,10 @@ class PostGISSqlGenerator(SqlGenerator):
 						on c.table_name = gc.f_table_name and c.table_schema = gc.f_table_schema ) as a
 	            where a.table_name in ({filter})
         """.format(
-            filter=','.join(layerFilter) if layerFilter else "select f_table_name from public.geometry_columns"
+            filter= """'{text}'""".format(
+                text='","'.join(layerFilter)
+            ) if layerFilter \
+            else """select f_table_name from public.geometry_columns where f_table_schema <> 'views'"""
         )
         return sql
     
