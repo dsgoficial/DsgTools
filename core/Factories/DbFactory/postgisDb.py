@@ -2426,17 +2426,19 @@ class PostgisDb(AbstractDb):
             domainPk = self.getPrimaryKeyColumn(domainTable)
             newAttrDict['references'] = domainTable
             newAttrDict['refPk'] = domainPk
-            newAttrDict['otherKey'] = domainReferencedAttribute
+            values, otherKey = self.getLayerColumnDict(domainPk, domainTable)
+            newAttrDict['otherKey'] = otherKey
+            newAttrDict['values'] = values
             newAttrDict['filterAttr'] = self.getFilter(
-                    domainTable, domainPk, domainReferencedAttribute
+                    domainTable, domainPk, otherKey
                 )
             
             
         return attributeDomainDict
 
-    def getFilter(self, domainTable, domainPk, domainReferencedAttribute):
+    def getFilter(self, domainTable, domainPk, otherKey):
         tableSchema, tableName = domainTable.split('.')
-        knownColumns = [domainPk, domainReferencedAttribute]
+        knownColumns = [domainPk, otherKey]
         sql = self.gen.getAttributesFromTable(tableSchema, tableName)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
@@ -2467,7 +2469,8 @@ class PostgisDb(AbstractDb):
                     'values' : [--list of values--] (optional),
                     'constraintList' : [--list of constraints--] (optional),
                     'isMulti' : --true or false--,
-                    'nullable': --true or false--
+                    'nullable': --true or false--,
+                    'column_type' : --type of the column--
                 },
             'sqlFilter' : --
             }
@@ -2475,11 +2478,11 @@ class PostgisDb(AbstractDb):
         """
         layerFilter = [] if layerFilter is None else layerFilter
         auxInfoDict = self.getAuxInfoDict(layerFilter)
-        sql = self.gen.getTableMetadataDict(filterList=layerFilter)
+        sql = self.gen.getTableMetadataDict(layerFilter=layerFilter)
         query = QSqlQuery(sql, self.db)
         if not query.isActive():
             raise Exception(self.tr("Problem getting geom tuple list: ")+query.lastError().text())
-        metadataDict = defaultdict(lambda :{"columns" : {}})
+        metadataDict = defaultdict(lambda :{"columns" : defaultdict(dict)})
         while query.next():
             auxDict = json.loads(query.value(0))
             newDict = metadataDict[auxDict["table_name"]]
@@ -2506,6 +2509,7 @@ class PostgisDb(AbstractDb):
     def setNewAttrInfo(self, attrDict, auxDict, auxInfoDict):
         attrDict["name"] = auxDict["attr_name"]
         attrDict["nullable"] = auxDict["nullable"]
+        attrDict["column_type"] = auxDict["column_type"]
         attrDict["isMulti"] = True if 'ARRAY' in auxDict["column_type"] else False
         self.setReferenceInfo(attrDict, auxDict, auxInfoDict['attributeDomainDict'])
         self.setConstraintInfo(attrDict, auxDict, auxInfoDict['checkConstraintDict'])
@@ -2513,13 +2517,9 @@ class PostgisDb(AbstractDb):
     def setReferenceInfo(self, attrDict, auxDict, attributeDomainDict):
         if auxDict['table_name'] in attributeDomainDict and \
             auxDict["attr_name"] in attributeDomainDict[auxDict['table_name']]:
+            attr_name_dict = attributeDomainDict[auxDict['table_name']][auxDict["attr_name"]]
             attrDict.update(
-                attributeDomainDict[auxDict['table_name']][auxDict["attr_name"]]
-            )
-            attrDict["values"] = self.getDomainDictFromDomainTable(
-                auxDict["refPk"],
-                auxDict["references"],
-                auxDict["otherKey"]
+                attr_name_dict
             )
     
     def getDomainDictFromDomainTable(self, refPk, domainTable, otherKey):
@@ -2541,7 +2541,7 @@ class PostgisDb(AbstractDb):
     def setConstraintInfo(self, attrDict, auxDict, checkConstraintDict):
         if auxDict["table_name"] in checkConstraintDict and \
             auxDict["attr_name"] in checkConstraintDict[auxDict["table_name"]]:
-            attrDict["constraintList"] = attributeDomainDict[auxDict["table_name"]][auxDict["attr_name"]]
+            attrDict["constraintList"] = checkConstraintDict[auxDict["table_name"]][auxDict["attr_name"]]
 
     def getLayersFilterByInheritance(self, layerList):
         filter = [i.split('.')[-1] for i in self.getOrphanGeomTables(loading = True)]
