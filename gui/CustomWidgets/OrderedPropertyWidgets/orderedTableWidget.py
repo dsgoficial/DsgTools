@@ -58,13 +58,13 @@ class OrderedTableWidget(QWidget, FORM_CLASS):
         self.clear()
         self.headers = { 
             col : {
-                "name" : header,
+                "header" : prop["header"],
                 "type" : prop["type"],
-                "editable" if prop["type"] == "item" else "class" : \
-                    prop["editable" if prop["type"] == "item" else "class"],
+                "editable" if prop["type"] == "item" else "widget" : \
+                    prop["editable" if prop["type"] == "item" else "widget"],
                 "getter" : prop["getter"] if "getter" in prop else None,
                 "setter" : prop["setter"] if "setter" in prop else None
-            } for col, (header, prop) in enumerate(headerMap.items())
+            } for col, prop in headerMap.items()
         }
         self.tableWidget.setColumnCount(len(self.headers))
         self.tableWidget.setHorizontalHeaderLabels(list(self.headers.keys()))
